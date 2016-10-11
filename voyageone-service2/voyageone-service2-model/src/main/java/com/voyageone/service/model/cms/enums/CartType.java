@@ -9,9 +9,9 @@ package com.voyageone.service.model.cms.enums;
  */
 public enum CartType {
 
-    TMALL("TMall", "天猫", "TM", 22, 1),
+    TMALL("TMall", "天猫", "TM", 20, 1),
 
-    TAOBAO("Taobao", "淘宝", "TB", 20, 1),
+    TAOBAO("Taobao", "淘宝", "TB", 21, 1),
 
     OFFLINE("Off Line", "线下订单", "OF", 22, 0),
 
@@ -31,11 +31,11 @@ public enum CartType {
 
     TMALL_MINIMALL("Tmall MiniMall", "Tmall MiniMall(JG)", "JGY", 30, 1),
 
-    USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "USJGJ", 928, 2),
+    USJOI_JGJ_928("USJOI匠心界", "USJOI匠心界", "USJGJ", 928, 0),
 
-    USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "USJGY", 929, 2),
+    USJOI_JGY_929("USJOI匠心界", "USJOI匠心界", "USJGY", 929, 0),
 
-    USJOI_JGT_998("USJOI匠心界", "USJOI测试", "USJGT", 998, 2),
+    USJOI_JGT_998("USJOI匠心界", "USJOI测试", "USJGT", 998, 0),
 
     MASTER("Master", "主数据", "MT", 0, 0),
 

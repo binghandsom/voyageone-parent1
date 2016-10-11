@@ -10,6 +10,7 @@
     <import resource="classpath*:data-cache-config.xml"/>
     <import resource="classpath*:datasource-cms2-config.xml"/>
     <import resource="classpath*:datasource-cms2-config-new.xml"/>
+    <import resource="classpath*:datasource-vms-config.xml"/>
     <import resource="classpath*:datasource-config-mongo-cms2.xml"/>
     <import resource="classpath*:datasource-security-config.xml"/>
     <import resource="classpath*:datasource-admin-common-config.xml"/>

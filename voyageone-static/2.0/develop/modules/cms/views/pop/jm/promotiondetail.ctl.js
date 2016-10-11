@@ -34,7 +34,6 @@ define([
 
             /** 默认值设置 */
             $scope.vm.currentTime = new Date();
-            $scope.editModel.model.promotionType = "0";
         };
 
         $scope.addTag = function () {
@@ -61,9 +60,6 @@ define([
         $scope.ok = function() {
             var start = new Date($scope.editModel.model.activityStart);
             var end = new Date($scope.editModel.model.activityEnd);
-
-            if (!$scope.promotionForm.$valid)
-                return;
 
             if($scope.editModel.model.activityStart > $scope.editModel.model.activityEnd){
                 alert("活动时间检查：请输入结束时间>开始时间，最小间隔为30分钟。");
@@ -94,6 +90,13 @@ define([
                 alert("请至少添加一个标签");
                 return;
             }
+
+            var hasTag = _.every(getTagList(),function(element){
+                return element.tagName;
+            });
+
+            if(!hasTag)
+                return;
 
             var _upEntity = angular.copy($scope.editModel);
 

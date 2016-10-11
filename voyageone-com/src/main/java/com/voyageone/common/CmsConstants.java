@@ -38,8 +38,8 @@ public class CmsConstants {
         ToInStock 		// 在库
     }
 
-	/**
-	 * workload type
+    /**
+     * workload type
      */
     // TODO: 16/4/28 无人使用就删除了
     public enum WorkloadType {
@@ -122,6 +122,10 @@ public class CmsConstants {
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
+        // 别名相关
+        String ALIAS = "ALIAS";
+        String COLOR_ALIAS = ".color_alias";
+
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
 
         // App端启用开关(用于控制所有平台的)
@@ -141,6 +145,9 @@ public class CmsConstants {
 
         // 新建product时是否自动设置PC端自拍商品图images6(1:自动设置  空，0:不设置)
         String AUTO_SET_IMAGES6_FLG = "AUTO_SET_IMAGES6_FLG";
+
+        // 该店铺每次feed-master导入最大件数
+        String FEED_IMPORT_MAX = "FEED_IMPORT_MAX";
     }
 
     public interface DataAmount {

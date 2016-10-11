@@ -17,7 +17,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel;
 import com.voyageone.service.model.cms.constants.SkuTemplateConstants;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
@@ -327,7 +327,9 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
                         ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
                         if (complexValue != null) {
                             Field oldField = complexValue.getValueField(fieldId);
-                            skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+                            }
                         }
                         continue;
                     }
@@ -335,7 +337,9 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
                         ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
                         if (complexValue != null) {
                             Field oldField = complexValue.getValueField(fieldId);
-                            skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
+                            if (oldField != null) {
+                                skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
+                            }
                         }
                         continue;
                     }
@@ -420,7 +424,7 @@ public class TmallGjSkuFieldBuilderImpl2 extends AbstractSkuFieldBuilder {
     }
 
     @Override
-    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         List<Field> skuInfoFields = new ArrayList<>();
 
         MappingBean skuMappingBean = null;

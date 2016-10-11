@@ -89,6 +89,16 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     /**
+     * 获取当前页的product列表Cnt
+     * @param searchValue
+     * @param userInfo
+     * @return
+     */
+    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
+        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
+    }
+
+    /**
      * 获取当前页的FEED信息
      * @param searchValue
      * @param userInfo
@@ -104,16 +114,6 @@ public class CmsFeedSearchService extends BaseAppService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
         return feedInfoService.getList(userInfo.getSelChannelId(), queryObject);
-    }
-
-    /**
-     * 获取当前页的product列表Cnt
-     * @param searchValue
-     * @param userInfo
-     * @return
-     */
-    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
     }
 
 
@@ -145,9 +145,9 @@ public class CmsFeedSearchService extends BaseAppService {
 
     public void updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
 
-        Integer searchStatus = null;
+        List<Integer> searchStatus = null;
         if(searchValue.get("status") != null){
-            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+            searchStatus=(List<Integer>)searchValue.get("status");
         }else{
             if (status == CmsConstants.FeedUpdFlgStatus.Pending){
                 searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
@@ -156,14 +156,14 @@ public class CmsFeedSearchService extends BaseAppService {
             }
         }
         if(status == CmsConstants.FeedUpdFlgStatus.Pending){
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
             }
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.Succeed){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.Succeed)){
                 throw new BusinessException("导入成功是不能设为不导入的，请重新选择状态");
             }
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
             }
         }
@@ -213,12 +213,11 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
-        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
-        if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
+        if (cmsBtExportTaskService.checkExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName) == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
             sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
-        }else{
+        } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
         }
     }

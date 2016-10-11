@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
@@ -57,7 +58,7 @@ public class MybatisSchemaInterceptor implements Interceptor, Serializable {
 //            System.out.println(o);
 //        }
         final Statement ms = (Statement) queryArgs[STATEMENT_INDEX];
-        Statement stmt = null;
+        PreparedStatement stmt = null;
         try {
             //get connection
             Connection connection = ms.getConnection();
@@ -66,11 +67,11 @@ public class MybatisSchemaInterceptor implements Interceptor, Serializable {
                 dbSchema = (String) properties.get(DB_SCHEMA_SET);
             }
             if (!StringUtils.isEmpty(dbSchema)) {
-                stmt = connection.createStatement();
-                stmt.execute("use " + dbSchema + ";");
+                stmt = connection.prepareStatement("USE " + dbSchema + ";");
+                stmt.execute();
             }
         } catch (SQLException e) {
-            logger.error("The total number of access to the database failure.", e);
+            logger.error("The change database failure.", e);
         } finally {
             try {
                 if (stmt != null) {

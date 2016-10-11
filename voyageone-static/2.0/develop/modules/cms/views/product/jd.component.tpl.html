@@ -17,6 +17,11 @@
                                             </a>
                                         </li>
                                         <li>
+                                            <a href="javascript:void(0)" ng-click="openHistoryPriceConfirm(vm.mastData.productCode,vm.platform.skus,null,cartInfo.value)">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;价格确认历史
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a href="javascript:void(0)" ng-click="openHistoryPromotion('lg', vm.mastData.productCode,cartInfo.value)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史
                                             </a>
@@ -36,7 +41,7 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
                                             </a>
                                         </li>
-                                        <li ng-if="cartInfo.value!=27">
+                                        <li>
                                             <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(vm.mastData.productCode,cartInfo.value)">
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                             </a>
@@ -231,7 +236,7 @@
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
                                     <div class="text-warnings" style="padding-left:0px">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，然后联系IT处理
+                                        <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击右侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置
                                     </div>
                                 </div>
                             </div>
@@ -302,11 +307,12 @@
                                         <th class="text-center">skuCode</th>
                                         <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
                                         <th class="text-center">size</th>
-                                        <th class="text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                        <th class="text-center">platform size</th>
+                                        <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
                                         <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
                                         <th class="text-center">容量/尺码</th>
                                         <th class="text-center" ng-if="cartInfo.value == 27">规格</th>
-                                        <th class="text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                        <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
                                         <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
                                     </tr>
                                 </thead>
@@ -322,7 +328,8 @@
                                         <td class="text-center v-middle">{{entity.skuCode}}</td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].size}}</td>
-                                        <td class="text-center v-middle">
+                                        <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
+                                        <td class="mfb-xxx text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" scale="15,2" required>
                                         </td>
@@ -335,7 +342,7 @@
                                                 <option value="MS">中小样</option>
                                             </select>
                                         </td>
-                                        <td class="text-center v-middle">
+                                        <td class="mfb-xxx text-center v-middle">
                                             <label class="col-sm-3 control-label vo_reqfield"></label>
                                             <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-disabled="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
                                         <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>

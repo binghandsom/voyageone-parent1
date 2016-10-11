@@ -1,9 +1,19 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jumei.JumeiHtMallService;
+import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +33,8 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     CmsBuildPlatformProductUploadJMService cmsBuildPlatformProductUploadJMService;
+    @Autowired
+    private JumeiHtMallService jumeiHtMallService;
 
 
     @Autowired
@@ -33,6 +45,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     CmsBtJmSkuDao cmsBtJmSkuDao;
+
+    @Autowired
+    SxProductService sxProductService;
 
 
     @Test
@@ -125,6 +140,71 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         cmsBuildPlatformProductUploadJMService.updateProduct(workload);
 
+    }
+
+    /**
+     * 上新成功的数据，上传到聚美商城
+     */
+    @Test
+    public void testUploadMallForAll() {
+        String channelId = "012";
+        int cartId = 27;
+        ShopBean shop = Shops.getShop(channelId, cartId);
+
+        String query = "{\"cartId\": " + cartId + "}";
+        List<CmsBtProductGroupModel> listGroup = cmsBtProductGroupDao.select(query, channelId);
+
+        List<Long> listSkipGroupId = new ArrayList<>(); // 跳过一些不上新的数据
+
+        System.out.println("============ 上传聚美商城 start !!! ============");
+
+        for (CmsBtProductGroupModel groupModel : listGroup) {
+            if (!StringUtils.isEmpty(groupModel.getPlatformMallId())) {
+                // 上传过，不再处理，注掉这段if的话，就支持更新了(但是注意uploadMall方法最后两个参数，null的话，不支持追加sku)
+                continue;
+            }
+            if (StringUtils.isEmpty(groupModel.getPlatformPid()) || StringUtils.isEmpty(groupModel.getNumIId())) {
+                // 没有成功上新过
+                continue;
+            }
+
+            Long groupId = groupModel.getGroupId();
+            SxData sxData;
+            try {
+                sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+                if (sxData == null) {
+                    throw new BusinessException("SxData取得失败!");
+                }
+                if (!StringUtils.isEmpty(sxData.getErrorMessage())) {
+                    throw new BusinessException(sxData.getErrorMessage());
+                }
+
+            } catch (Exception e) {
+                if (e instanceof BusinessException) {
+                    String errorMsg = "GroupId [" + groupId + "]跳过:" + ((BusinessException) e).getMessage();
+                    listSkipGroupId.add(groupId);
+                } else {
+                    System.out.println("GroupId [" + groupId + "]SxData取得失败!" + e.getMessage());
+                }
+                continue;
+            }
+
+            ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+            CmsBtProductModel product = sxData.getMainProduct();
+            if (StringUtils.isEmpty(product.getPlatform(cartId).getpProductId()) || StringUtils.isEmpty(product.getPlatform(cartId).getpNumIId())) {
+                System.out.println("GroupId [" + groupId + "] product表的产品id(pProductId)或商品id(pNumIId)为空!");
+                continue;
+            }
+
+            try {
+                cmsBuildPlatformProductUploadJMService.uploadMall(product, shop, expressionParser, null, null);
+            } catch (Exception e) {
+                System.out.println("GroupId [" + groupId + "] 上传聚美商城失败!" + e.getMessage());
+            }
+        }
+
+        System.out.println("跳过的groupId:" + listSkipGroupId);
+        System.out.println("============ 上传聚美商城 end !!! ============");
     }
 
 }

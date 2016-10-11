@@ -4,7 +4,8 @@ import com.voyageone.ims.rule_expression.*;
 import org.junit.Test;
 
 /**
- * Jewelry京东国际平台详情页描述JSON生成工具
+ * 京东国际平台详情页描述JSON生成工具
+ *  (929) 悦境店: 默认、保健品
  *
  * @author desmond on 2016/6/12.
  * @version 2.1.0
@@ -38,7 +39,7 @@ public class Jingdong_929_YueJing_LuckyVitamin_DictTest {
     @Test
     public void startupTest() {
 
-        doCreateJson("京东详情页描述", false, doDict_详情页描述());
+        doCreateJson("京东详情页描述【保健品】", false, doDict_详情页描述());
 //        doCreateJson("京东详情页描述", false, doDict_详情页描述_TEST());
 //        doCreateJson("关联版式", false, doDict_关联版式_TEST());
 

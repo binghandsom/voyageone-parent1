@@ -76,7 +76,9 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     public InitResult init(InitParameter parameter, String channelId, String language) {
         InitResult result = new InitResult();
-        result.setModelPromotion(daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId()));//CmsBtJmPromotion
+        CmsBtJmPromotionModel model=daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId());
+        if(model==null) throw new  BusinessException("该活动不存在");
+        result.setModelPromotion(model);//CmsBtJmPromotion
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
 

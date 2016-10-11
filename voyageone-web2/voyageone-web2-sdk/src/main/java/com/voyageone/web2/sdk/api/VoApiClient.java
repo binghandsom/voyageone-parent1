@@ -18,12 +18,4 @@ public interface VoApiClient {
      * @throws ApiException
      */
     public <T extends VoApiResponse> T execute(VoApiRequest<T> request) throws ApiException;
-    /**
-     * 执行TOP隐私API请求。
-     * @param <T> request
-     * @param request 具体的TOP请求
-     * @param session 用户会话授权码
-     * @throws ApiException
-     */
-    public <T extends VoApiResponse> T execute(VoApiRequest<T> request, String session) throws ApiException ;
 }

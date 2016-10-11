@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -21,16 +22,15 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
-import com.voyageone.components.jd.service.JdShopService;
+import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.impl.cms.CmsMtPlatformSkusService;
-import com.voyageone.service.impl.cms.DictService;
-import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -121,9 +121,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
     @Autowired
-    private JdShopService jdShopService;
-    @Autowired
     private JdWareService jdWareService;
+    @Autowired
+    private JdSaleService jdSaleService;
     @Autowired
     private CmsMtPlatformSkusService cmcMtPlatformSkusService;
     @Autowired
@@ -132,6 +132,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
     private ProductService productService;
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private CmsBtPlatformActiveLogDao cmsBtPlatformActiveLogDao;
+    @Autowired
+    private MongoSequenceService sequenceService;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -285,21 +291,21 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             // 没有lock并且已Approved的产品列表为空的时候,中止该产品的上新流程
             if (ListUtils.isNull(cmsBtProductList)) {
-                String errMsg = String.format("未lock并且已Approved产品列表为空");
+                String errMsg = "未被锁定且已完成审批的产品列表为空";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
 
             // 主产品取得结果判断
             if (mainProduct == null) {
-                String errMsg = String.format("取得主商品信息失败 [mainProduct=null]");
+                String errMsg = "取得主商品信息失败 [mainProduct=null]";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
 
             // 如果产品没有common信息，数据异常不上新
             if (mainProduct.getCommon() == null || mainProduct.getCommon().getFields() == null) {
-                String errMsg = String.format("取得主商品common信息失败");
+                String errMsg = "取得主商品common信息失败";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -313,7 +319,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 如果已Approved产品skuList为空，则把库存表里面所有的数据（几万条）数据全部查出来了，很花时间
             // 如果已Approved产品skuList为空，则中止该产品的上新流程
             if (strSkuCodeList.isEmpty()) {
-                String errMsg = String.format("已Approved产品sku列表为空");
+                String errMsg = "已完成审批的产品sku列表为空";
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -324,7 +330,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 属性值准备
             // 2016/06/01 Delete by desmond start   京东不需要mapping表了
             // 取得主产品类目对应的platform mapping数据
-//            CmsMtPlatformMappingModel cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
+//            CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel = platformMappingService.getMappingByMainCatId(shopProp.getOrder_channel_id(),
 //                    Integer.parseInt(shopProp.getCart_id()), mainProduct.getCatId());
 //            if (cmsMtPlatformMappingModel == null) {
 //                String errMsg = String.format("共通PlatformMapping表中对应的平台Mapping信息不存在！[ChannelId:%s] [CartId:%s] [主产品类目:%s]", channelId, cartId, mainProduct.getCatId());
@@ -396,6 +402,22 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
                     jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap);
 
+            // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
+            List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
+            // 取得cms_mt_platform_skus表里平台类目id对应的尺寸信息列表
+            List<CmsMtPlatformSkusModel> cmsSizeList = new ArrayList<>();
+            for (CmsMtPlatformSkusModel skuModel : cmsMtPlatformSkusList) {
+                // 颜色
+                if (AttrType_Color.equals(skuModel.getAttrType())) {
+                    cmsColorList.add(skuModel);
+                } else if (AttrType_Size.equals(skuModel.getAttrType())) {
+                    // 尺寸
+                    cmsSizeList.add(skuModel);
+                }
+            }
+            // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
+            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList);
+
             // 产品和颜色值的Mapping关系表(设置SKU属性时填入值，上传SKU图片时也会用到)
             Map<String, Object> productColorMap = new HashMap<>();
 
@@ -461,8 +483,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 // 新增商品id
                 updateProductBean.setWareId(String.valueOf(jdWareId));
                 // 构造更新用商品bean，主要设置SKU相关属性
-                updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, cmsMtPlatformSkusList,
-                        shopProp, productColorMap, skuLogicQtyMap);
+                updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, shopProp, productColorMap,
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
@@ -512,9 +534,25 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
             } else {
                 // 更新商品的时候
+                // added by morse.lu 2016/09/02 start
+                // 取一下最新的jd上的商品信息，可能catId被jd的管理员改掉了，就不能上了，如果改了，回写下表(pCatId,pCatPath)
+                String jdCatId = jdWareService.getJdProductCatId(shopProp, String.valueOf(jdWareId));
+                if (!StringUtils.isEmpty(jdCatId)) {
+                    if (!jdCatId.equals(platformCategoryId)) {
+                        // 不一样
+                        // 回写
+                        // 这一版回写完还是会直接尝试上新
+                        updateCategory(channelId, cartId, mainProduct.getCommon().getFields().getCode(), jdCatId);
+                    }
+                } else {
+                    // 有错误，没取到
+                    // 先不管，继续做下去吧
+                }
+                // added by morse.lu 2016/09/02 end
+
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
-                jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, cmsMtPlatformSkusList,
-                        shopProp, productColorMap, skuLogicQtyMap);
+                jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, shopProp, productColorMap,
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
 
                 // 京东商品更新API返回的更新时间
                 // 调用京东商品更新API
@@ -522,8 +560,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
                 // 更新商品是否成功
                 if (!StringUtils.isEmpty(retModified)) {
-                     // 更新该商品下所有产品的图片
-                    retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap);
+                    // 更新该商品下所有产品的图片
+                    retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap, salePropStatus);
                     if (!retStatus) {
                         String errMsg = String.format("更新商品的产品图片失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
@@ -593,20 +631,26 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             String errMsg = String.format("京东单个商品新增或更新信息异常结束！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
                     channelId, cartId, groupId, jdWareId);
             $error(errMsg);
-            ex.printStackTrace();
+
             if (sxData == null) {
                 // 回写详细错误信息表(cms_bt_business_log)用
                 sxData = new SxData();
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请向管理员确认 [上新数据为null]");
+                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请跟管理员联系 [上新数据为null]");
+            }
+            if (ex instanceof BusinessException) {
+                if (StringUtils.isEmpty(sxData.getErrorMessage())) {
+                    sxData.setErrorMessage(((BusinessException)ex).getMessage());
+                }
             }
             // 如果上新数据中的errorMessage为空
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现异常，请向管理员确认. " + ex.getStackTrace()[0].toString());
+                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现不可预知的错误，请跟管理员联系. " + ex.getStackTrace()[0].toString());
+                    ex.printStackTrace();
                 } else {
                     sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
                 }
@@ -852,7 +896,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
-                                                       ShopBean shopBean, ExpressionParser expressionParser) {
+                                                ShopBean shopBean, ExpressionParser expressionParser) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -929,7 +973,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                           ShopBean shopBean, ExpressionParser expressionParser) {
+                                                       ShopBean shopBean, ExpressionParser expressionParser) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1054,40 +1098,31 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      *
      * @param targetProductBean JdProductBean   产品对象
      * @param sxData SxData     产品对象
-     * @param cmsMtPlatformSkusList List<CmsMtPlatformSkusModel>  SKU颜色和尺寸列表
      * @param shop ShopBean 店铺信息
      * @param productColorMap Map<String, Object> 产品和颜色值Mapping关系表
      * @param skuLogicQtyMap Map<String, Integer> 所有SKU的逻辑库存列表
-//     * @param jdSizeMap  Map<String, String> 尺码对照表
+     * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
+     * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
+     * @param salePropStatus String 当前平台主类目对应的销售属性状况
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
-    private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData, List<CmsMtPlatformSkusModel> cmsMtPlatformSkusList,
+    private JdProductBean setJdProductSkuInfo(JdProductBean targetProductBean, SxData sxData,
                                               ShopBean shop, Map<String, Object> productColorMap,
-                                              Map<String, Integer> skuLogicQtyMap) throws BusinessException {
+                                              Map<String, Integer> skuLogicQtyMap,
+                                              List<CmsMtPlatformSkusModel> cmsColorList,
+                                              List<CmsMtPlatformSkusModel> cmsSizeList,
+                                              String salePropStatus) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
-
-        // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
-        List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
-        // 取得cms_mt_platform_skus表里平台类目id对应的尺寸信息列表
-        List<CmsMtPlatformSkusModel> cmsSizeList = new ArrayList<>();
-        for (CmsMtPlatformSkusModel skuModel : cmsMtPlatformSkusList) {
-            // 颜色
-            if (AttrType_Color.equals(skuModel.getAttrType())) {
-                cmsColorList.add(skuModel);
-            } else if (AttrType_Size.equals(skuModel.getAttrType())) {
-                // 尺寸
-                cmsSizeList.add(skuModel);
-            }
-        }
 
         // 产品和颜色的Mapping表(因为后面上传SKU图片的时候也要用到，所以从外面传进来)
         // SKU尺寸和尺寸值的Mapping表(Map<上新用尺码, 平台取下来的尺码值value>)
         Map<String, Object> skuSizeMap = new HashMap<>();
 
         // 如果该平台类目颜色属性和尺寸信息都有的时候，则把每个product作为一种颜色
-        if (cmsColorList.size() > 0 && cmsSizeList.size() > 0) {
+        // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
+        if ("1".equals(salePropStatus)) {
             // 根据product列表取得要上新的产品颜色Mapping关系
             for (CmsBtProductModel product : productList) {
                 // 取得颜色值列表中的第一个颜色值
@@ -1119,7 +1154,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     }
                 }
             }
-        } else if (cmsColorList.size() > 0 && cmsSizeList.size() == 0) {
+        } else if ("2".equals(salePropStatus)) {
             // 如果该平台类目只有颜色属性，没有尺寸信息，则把product下面的每个sku作为一种颜色
             // 根据product列表取得要上新的产品颜色Mapping关系
             for (CmsBtProductModel product : productList) {
@@ -1152,7 +1187,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     }
                 }
             }
-        } else if (cmsColorList.size() == 0 && cmsSizeList.size() > 0) {
+        } else if ("3".equals(salePropStatus)) {
             // 如果该平台类目没有颜色属性，只有尺寸信息，则把product下面的每个sku作为一种尺寸
             // 根据product列表取得要上新的产品尺寸Mapping关系
             for (CmsBtProductModel product : productList) {
@@ -1215,7 +1250,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             }
             // 20160630 tom 防止code超长 END
             // 如果平台类目颜色和尺寸都存在的时候，颜色存在尺寸不存在的时候在后面SKU循环里面做
-            if (cmsColorList.size() > 0 && cmsSizeList.size() > 0) {
+            if ("1".equals(salePropStatus)) {
                 if (productColorMap.containsKey(objProduct.getCommon().getFields().getCode())) {
                     sbPropertyAlias.append(productColorMap.get(objProduct.getCommon().getFields().getCode())); // 产品CODE对应的颜色值ID
                     sbPropertyAlias.append(Separtor_Colon);         // ":"
@@ -1240,7 +1275,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     String sizeSx = objSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
 
                     // 如果平台类目颜色和尺寸都存在的时候
-                    if (cmsColorList.size() > 0 && cmsSizeList.size() > 0) {
+                    if ("1".equals(salePropStatus)) {
                         // sku属性(1000021641:1523005913^1000021641:1523005771|1000021641:1523005913^1000021641:1523005772)
                         // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                         if (productColorMap.containsKey(productCode)) {
@@ -1254,10 +1289,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                                 || skuSizeMap.containsKey(sizeSx)) {
                             sbSkuProperties.append(Separtor_Vertical);   // "|"
                         }
-                    } else if (cmsColorList.size() > 0 && cmsSizeList.size() == 0) {
+                    } else if ("2".equals(salePropStatus)) {
+                        // 如果平台类目只有颜色没有尺寸信息时，productColorMap中的key为productCode_sizeSx
                         String colorKey = productCode + "_" + sizeSx;
                         if (productColorMap.containsKey(colorKey)) {
-                            // 如果平台类目只有颜色，或者只有尺寸信息时，productColorMap中的key为productCode_sizeSx
                             // 颜色1|颜色2|颜色3|颜色4
                             sbSkuProperties.append(productColorMap.get(colorKey));
                             sbSkuProperties.append(Separtor_Vertical);   // "|"
@@ -1272,8 +1307,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                             sbPropertyAlias.append(color);
                             sbPropertyAlias.append(Separtor_Xor);           // "^"
                         }
-                    } else if (cmsColorList.size() == 0 && cmsSizeList.size() > 0) {
-                        // 如果平台类目只有颜色，或者只有尺寸信息时，productSizeMap中的key为productCode_sizeSx
+                    } else if ("3".equals(salePropStatus)) {
+                        // 如果平台类目没有颜色只有尺寸信息时，skuSizeMap中的key为productCode_sizeSx
                         // 尺码1|尺码2|尺码3|尺码4
                         String sizeKey =  productCode + "_" + sizeSx;
                         if (skuSizeMap.containsKey(sizeKey)) {
@@ -1362,7 +1397,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @return boolean 新增商品上传SKU图片是否成功
      */
     private boolean uploadJdProductAddPics(ShopBean shopProp, long wareId, SxData sxData,
-                                        Map<String, Object> productColorMap) {
+                                           Map<String, Object> productColorMap) {
         boolean retUploadAddPics = true;
         List<CmsBtProductModel> productList = sxData.getProductList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -1451,10 +1486,18 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param wareId long 商品id
      * @param sxData SxData 产品对象
      * @param productColorMap Map<String Object> 产品和颜色值Mapping关系表
+     * @param salePropStatus String 当前平台主类目对应的销售属性状况
      * @return boolean 上传指定商品SKU图片是否成功
      */
     private boolean uploadJdProductUpdatePics(ShopBean shopProp, long wareId, SxData sxData,
-                                           Map<String, Object> productColorMap) {
+                                              Map<String, Object> productColorMap,
+                                              String salePropStatus) {
+
+        // 如果该平台类目没有颜色，只有尺寸的时候，不用上传图片，直接返回true
+        // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
+        if ("3".equals(salePropStatus)) {
+            return true;
+        }
 
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
@@ -1523,16 +1566,20 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 新增或更新商品的时候，从产品和颜色值Mapping关系表中取得该产品对应的颜色值
 //            String colorId = "";
             List<String> colorIds = new ArrayList<>();
-            if (productColorMap.containsKey(productCode)) {
-                if (!StringUtil.isEmpty(String.valueOf(productColorMap.get(productCode)))) {
-                    String[] colorIdArray = productColorMap.get(product.getCommon().getFields().getCode()).toString().split(Separtor_Colon);
-                    if (colorIdArray.length >= 2) {
-                        // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
-                        colorIds.add(colorIdArray[1]);
+            if ("1".equals(salePropStatus)) {
+                // 该平台类目颜色和尺寸都有的时候，根据productCode去查找对应的颜色
+                if (productColorMap.containsKey(productCode)) {
+                    if (!StringUtil.isEmpty(String.valueOf(productColorMap.get(productCode)))) {
+                        String[] colorIdArray = productColorMap.get(product.getCommon().getFields().getCode()).toString().split(Separtor_Colon);
+                        if (colorIdArray.length >= 2) {
+                            // 产品颜色值Mapping关系表里面取得的颜色值为"1000021641:1523005913",取得后面的颜色值"1523005913"
+                            colorIds.add(colorIdArray[1]);
+                        }
                     }
                 }
-            } else {
-                // 如果类目只有颜色没有尺寸的时候，每种尺寸都作为一种颜色（没有颜色只有尺寸的时候不上传图片，因为图片用的颜色id）
+            } else if ("2".equals(salePropStatus)) {
+                // 如果类目只有颜色没有尺寸的时候，每种尺寸都作为一种颜色,用sizeSx去查找对应的颜色
+                // (如果没有颜色只有尺寸的时候不上传图片，因为图片用的颜色id）
                 CmsBtProductModel_Platform_Cart platformCart = product.getPlatform(sxData.getCartId());
                 if (platformCart == null || ListUtils.isNull(platformCart.getSkus())) continue;
                 List<BaseMongoMap<String, Object>> platformSkuList = platformCart.getSkus();
@@ -1984,13 +2031,109 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         // platformActive平台上新状态类型(ToOnSale/ToInStock)
         if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
             // platformActive是(ToOnSale)时，执行商品上架操作
-            updateListingResult = jdWareService.doWareUpdateListing(shop, wareId, updateFlg);
+            updateListingResult = jdSaleService.doWareUpdateListing(shop, wareId, updateFlg);
         } else {
             // platformActive是(ToInStock)时，执行商品下架操作
-            updateListingResult = jdWareService.doWareUpdateDelisting(shop, wareId, updateFlg);
+            updateListingResult = jdSaleService.doWareUpdateDelisting(shop, wareId, updateFlg);
         }
+
+        // 插入mongoDB上下架履历表cms_bt_platform_active_log_cXXX
+        insertPlatformActiveLog(sxData, wareId, updateListingResult);
 
         return updateListingResult;
     }
 
+    /**
+     * 记录商品上架/下架处理履历表cms_bt_platform_active_log_cXXX
+     *
+     * @param sxData SxData 上新数据
+     * @param wareId long 商品id
+     * @param updateListingResult boolean 上下架是否成功
+     */
+    public void insertPlatformActiveLog(SxData sxData, long wareId, boolean updateListingResult) {
+        CmsBtPlatformActiveLogModel platformActiveLogModel = new CmsBtPlatformActiveLogModel();
+
+        platformActiveLogModel.setChannelId(sxData.getChannelId());
+        platformActiveLogModel.setGroupId(sxData.getGroupId());
+        platformActiveLogModel.setCartId(sxData.getCartId());
+        platformActiveLogModel.setNumIId(Long.toString(wareId));
+        platformActiveLogModel.setProdCode(sxData.getMainProduct().getCommon().getFields().getCode());
+        platformActiveLogModel.setResult(updateListingResult ? "1" : "2"); // 1:上/下架成功 2:上/下架失败 3:不满足上下架条件
+        String strComment = "";
+        String strFailComment = "";
+        String platformStatus = "";
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToInStock.equals(sxData.getPlatform().getPlatformActive())) {
+            strComment = "下架处理";
+            strFailComment = "调用京东下架API失败";
+            platformStatus = CmsConstants.PlatformStatus.InStock.name();
+        } else if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+            strComment = "上架处理";
+            strFailComment = "调用京东上架API失败";
+            platformStatus = CmsConstants.PlatformStatus.OnSale.name();
+        }
+        if (!updateListingResult) {
+            // 上下架失败的时候，设为老的状态
+            platformStatus = sxData.getPlatform().getPlatformStatus() != null ?
+                    sxData.getPlatform().getPlatformStatus().name() : "";
+        }
+        platformActiveLogModel.setComment("京东上新结束之后商品" + strComment);
+        platformActiveLogModel.setFailedComment(updateListingResult ? "" : strFailComment);
+        platformActiveLogModel.setPlatformStatus(platformStatus);
+        platformActiveLogModel.setActiveStatus(sxData.getPlatform().getPlatformActive().name());
+        platformActiveLogModel.setMainProdCode(sxData.getMainProduct().getCommon().getFields().getCode());
+        long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
+        platformActiveLogModel.setBatchNo(batchNo);
+        platformActiveLogModel.setCreater(getTaskName());
+        platformActiveLogModel.setModifier(getTaskName());
+
+        cmsBtPlatformActiveLogDao.insert(platformActiveLogModel);
+    }
+
+    /**
+     * 取得当前平台主类目对应的销售属性状况
+     * 1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性
+     *
+     * @param cmsColorList List<CmsMtPlatformSkusModel> 颜色对象列表
+     * @param cmsSizeList List<CmsMtPlatformSkusModel> 颜色对象列表
+     * @return String 当前平台主类目对应的销售属性状况
+     */
+    private String getSalePropStatus(List<CmsMtPlatformSkusModel> cmsColorList, List<CmsMtPlatformSkusModel> cmsSizeList) {
+        // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
+        String salePropStatus = "4";
+
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (ListUtils.notNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+            // 1:颜色和尺寸属性都有
+            salePropStatus = "1";
+        } else if (ListUtils.notNull(cmsColorList) && ListUtils.isNull(cmsSizeList)) {
+            // 2:只有颜色没有尺寸属性
+            salePropStatus = "2";
+        } else if (ListUtils.isNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+            // 3:没有颜色只有尺寸属性
+            salePropStatus = "3";
+        }
+
+        return salePropStatus;
+    }
+
+    /**
+     * 回写pCatId,pCatPath
+     */
+    public void updateCategory(String channelId, int cartId, String code, String catId) {
+        CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchema = platformCategoryService.getPlatformCatSchema(catId, cartId);
+        if (cmsMtPlatformCategorySchema == null) {
+            throw new BusinessException(String.format("获取平台类目信息失败 [平台类目Id:%s] [CartId:%s]", catId, cartId));
+        }
+
+        JongoUpdate updateProductQuery = new JongoUpdate();
+        updateProductQuery.setQuery("{\"common.fields.code\": #}");
+        updateProductQuery.setQueryParameters(code);
+
+        updateProductQuery.setUpdate("{$set:{\"platforms.P"+ cartId +".pCatId\": #, \"platforms.P"+ cartId +".pCatPath\": #}}");
+        updateProductQuery.setUpdateParameters(catId, cmsMtPlatformCategorySchema.getCatFullPath());
+
+        cmsBtProductDao.updateFirst(updateProductQuery, channelId);
+
+    }
 }

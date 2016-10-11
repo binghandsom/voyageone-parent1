@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.sx.sku_field.tmall;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -17,7 +16,7 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.model.cms.CmsMtPlatformPropSkuModel;
 import com.voyageone.service.model.cms.constants.SkuTemplateConstants;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -387,44 +386,64 @@ public class TmallGjSkuFieldBuilderImpl8 extends AbstractSkuFieldBuilder {
      * 图片设值
      */
     private void setImageFieldValue(ExpressionParser expressionParser, CmsBtProductModel sxProduct, String barcode, ComplexValue skuFieldValue, ShopBean shopBean, String user) throws Exception {
-        SxData sxData = expressionParser.getSxData();
-        String imageTemplate =getCodeImageTemplate();
-
-        // Map<Field, oriUrl>
-        Map<Field, String> mapFieldUrl = new HashMap<>();
-        Set<String> url = new HashSet<>();
-
-        if (sku_cspuImgField != null) {
-            // 规格主图
-            String propImage = expressionParser.getSxProductService().getProductImages(sxProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
-            String codePropFullImageUrl = String.format(imageTemplate, propImage);
-            url.add(codePropFullImageUrl);
-            mapFieldUrl.put(sku_cspuImgField, codePropFullImageUrl);
-        }
-
-        for (Field attachImg : list_sku_attachImgField) {
-            // 资质图
-            String propImage = getCspuValue(sxProduct, attachImg.getId(), barcode);
-            if (StringUtils.isEmpty(propImage)) {
-                // 资质图没有填
-                throw new BusinessException(String.format("产品规格的%s没有上传!", attachImg.getName()));
+        // 暂时画面写死已经上传到平台的url完整路径，所以先用下 {}2， 以后改回成画面有上传按钮，只填写图片名，再用回{}1，
+//        { // {}1
+//            SxData sxData = expressionParser.getSxData();
+//            String imageTemplate = getCodeImageTemplate();
+//
+//            // Map<Field, oriUrl>
+//            Map<Field, String> mapFieldUrl = new HashMap<>();
+//            Set<String> url = new HashSet<>();
+//
+//            if (sku_cspuImgField != null) {
+//                // 规格主图
+//                String propImage = expressionParser.getSxProductService().getProductImages(sxProduct, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE).get(0).getName();
+//                String codePropFullImageUrl = String.format(imageTemplate, propImage);
+//                url.add(codePropFullImageUrl);
+//                mapFieldUrl.put(sku_cspuImgField, codePropFullImageUrl);
+//            }
+//
+//            for (Field attachImg : list_sku_attachImgField) {
+//                // 资质图
+//                String propImage = getCspuValue(sxProduct, attachImg.getId(), barcode);
+//                if (StringUtils.isEmpty(propImage)) {
+//                    // 资质图没有填
+//                    throw new BusinessException(String.format("产品规格的%s没有上传!", attachImg.getName()));
+//                }
+//                String codePropFullImageUrl = String.format(imageTemplate, propImage);
+//                url.add(codePropFullImageUrl);
+//                mapFieldUrl.put(attachImg, codePropFullImageUrl);
+//            }
+//
+//            // 上传图片到天猫图片空间
+//            Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//
+//            for (Map.Entry<Field, String> entry : mapFieldUrl.entrySet()) {
+//                Field imageField = entry.getKey();
+//                String oriUrl = entry.getValue();
+//                String platformUrl = retMap.get(oriUrl);
+//                if (StringUtils.isEmpty(platformUrl)) {
+//                    throw new BusinessException(String.format("产品规格的%s的图片上传失败!", imageField.getName()));
+//                }
+//                skuFieldValue.setInputFieldValue(imageField.getId(), platformUrl);
+//            }
+//        }
+        { // {}2
+            if (sku_cspuImgField != null) {
+                // 规格主图
+                String propImage = getCspuValue(sxProduct, sku_cspuImgField.getId(), barcode);
+                if (StringUtils.isEmpty(propImage)) {
+                    // 资质图没有填
+                    throw new BusinessException(String.format("产品规格的%s没有填!", sku_cspuImgField.getName()));
+                }
+                skuFieldValue.setInputFieldValue(sku_cspuImgField.getId(), propImage);
             }
-            String codePropFullImageUrl = String.format(imageTemplate, propImage);
-            url.add(codePropFullImageUrl);
-            mapFieldUrl.put(attachImg, codePropFullImageUrl);
-        }
 
-        // 上传图片到天猫图片空间
-        Map<String, String> retMap = expressionParser.getSxProductService().uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-
-        for (Map.Entry<Field, String> entry : mapFieldUrl.entrySet()) {
-            Field imageField = entry.getKey();
-            String oriUrl = entry.getValue();
-            String platformUrl = retMap.get(oriUrl);
-            if (StringUtils.isEmpty(platformUrl)) {
-                throw new BusinessException(String.format("产品规格的%s的图片上传失败!", imageField.getName()));
+            for (Field attachImg : list_sku_attachImgField) {
+                // 资质图
+                String propImage = getCspuValue(sxProduct, attachImg.getId(), barcode);
+                skuFieldValue.setInputFieldValue(attachImg.getId(), propImage);
             }
-            skuFieldValue.setInputFieldValue(imageField.getId(), platformUrl);
         }
     }
 
@@ -520,7 +539,7 @@ public class TmallGjSkuFieldBuilderImpl8 extends AbstractSkuFieldBuilder {
     }
 
     @Override
-    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    public List<Field> buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         List<Field> skuInfoFields = new ArrayList<>();
 
         MappingBean skuMappingBean = null;

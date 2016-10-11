@@ -42,14 +42,8 @@ public class UserService extends BaseAppService {
     private ComUserService comUserService;
 
 
-
-
 //    @Autowired
 //    private UserConfigDao userConfigDao;
-
-
-
-
 //    public UserSessionBean login(String username, String password, int timezone) {
 //
 //        UserBean userBean = new UserBean();
@@ -58,13 +52,13 @@ public class UserService extends BaseAppService {
 //        userBean = userDao.selectUser(userBean);
 //
 //        if (userBean == null)
-//            throw new BusinessException("没有用户");
+//            throw new BusinessException("UserName or Password is invalidate");
 //
 //        String cryptoPassword = new Md5Hash(password, username.toLowerCase() + CoreConstants.MD5_FIX_SALT,
 //                CoreConstants.MD5_HASHITERATIONS).toHex();
 //
 //        if (!userBean.getPassword().equals(cryptoPassword))
-//            throw new BusinessException("密码错误");
+//            throw new BusinessException("UserName or Password is invalidate.");
 //
 //        // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
 //        UserSessionBean userSessionBean = new UserSessionBean();
@@ -155,6 +149,17 @@ public class UserService extends BaseAppService {
             ret.add(bean);
         }
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+    }
+
+    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
+        List<UserConfigBean> ret = userConfigDao.select(userId);
+        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+    }
+
+    public String getVendorUserLanguage (UserSessionBean user) {
+        List<UserConfigBean> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
+
+        return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {

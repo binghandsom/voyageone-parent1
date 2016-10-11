@@ -380,6 +380,7 @@ define(function () {
         "TXT_MAIN_PRODUCT": "主商品",
         "TXT_GET_TASK_COUNT": "获取任务数量",
         "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "产品标题 / 长描述",
+        "TXT_ACTIVITY_DISCOUNT": "促销活动",
         "TXT_LONG_TITLE_WITH_LONG_DESCRIPTION": "长标题中文",
         "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "中标题 / 长描述中文",
         "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "短标题标题 / 短描述中文",
@@ -449,7 +450,7 @@ define(function () {
         "TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY": "如果您继承父类目,以前设置的属性将会被替换点.<br>您确定要执行这个操作吗?",
         "TXT_MSG_NO_FIND_FORWARD_CATEGORY": "没有可继承的父类目.",
         "TXT_MSG_DELETE_ITEM": "您确定要删除这条数据吗?",
-        "TXT_MSG_STARTUP_ITEM": "您确定要全部启动吗?",
+        "TXT_MSG_STARTUP_ITEM": "您确定要启动吗?",
         "TXT_MSG_DELETE_SUCCESS": "删除操作成功",
         "TXT_MSG_DELETE_FAIL": "删除操作失败.",
         "TXT_MSG_ADD_ITEM": "您确定要更新这条数据吗?",
@@ -496,6 +497,7 @@ define(function () {
         "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
         "TXT_MSG_ACTIVITIES": "请选择对应的活动!",
         "TXT_MSG_TAG": "请正确选择和填写标签!",
+        "TXT_ADD_TAG": "请至少添加一个标签!",
         "TXT_MSG_TAG_EDITOR": "标签编辑页!",
         "TXT_MSG_TAG_PATH": "标签路径!",
         "TXT_MSG_TAG_NAME": "标签名",
@@ -532,7 +534,6 @@ define(function () {
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
         "TXT_FeedStatus_DateError": "Feed数据异常错误",
-
 
         "BTN_CREATE_TASK": "新建任务",
         "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
@@ -614,6 +615,7 @@ define(function () {
         "TXT_PAGER_SIZE": "每页显示",
         /**尺码表*/
         "TXT_SIZE_CHART": "尺码表",
+        "TXT_SIZE_IMAGE": "尺码图",
         "TXT_SIZE_CHART_DETAIL": "尺码表明细",
         "TXT_SIZE_CHART_ADD": "新增尺码表",
         "TXT_SIZE_CHART_IMPORT": "导入尺码表",
@@ -790,7 +792,11 @@ define(function () {
         "TXT_DEFAULT_MAPPING": "平台默认属性设置",
         "TXT_DEFAULT_PLATEFORM_MAPPING": "平台类目属性匹配",
         "TXT_DEFAULT_SETTING":"新建默认设置",
-        "TXT_UPDATER":"更新人"
+        "TXT_UPDATER":"更新人",
 
+        "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
+        "TXT_CONFIRM_STATUS": "确认状态",
+        "TXT_CONFIRM_PRICE": "确认指导价",
+        "TXT_FLOATING_RATE": "价格波动"
     };
 });

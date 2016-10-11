@@ -20,14 +20,21 @@ public class CmsBtExportTaskService extends BaseService {
     @Autowired
     private CmsBtExportTaskDaoExt cmsBtExportTaskDao;
 
+    // feed检索
     public static final int FEED = 0;
+    // 高级检索
+    public static final int ADV_SEARCH = 1;
 
     public static final String templatePath = "/usr/web/contents/cms/file_template/feed-template.xlsx";
-
+    // feed检索文件下载路径-- TODO 这两个路径应该写到配置文件里 “\voyageone-task2\task2-cms\src\main\resources\config\cms_keyvalue.properties”
     public static final String savePath = "/usr/web/contents/cms/feed_export/";
 
     public Integer add(CmsBtExportTaskModel cmsBtExportTaskModel){
         return cmsBtExportTaskDao.insert(cmsBtExportTaskModel);
+    }
+
+    public CmsBtExportTaskModel getExportById(int taskId) {
+        return cmsBtExportTaskDao.select(taskId);
     }
 
     public List<CmsBtExportTaskModel> getExportByChannelTypeStatus(String channelId, Integer taskType, Integer status){
@@ -42,8 +49,16 @@ public class CmsBtExportTaskService extends BaseService {
         return cmsBtExportTaskDao.update(cmsBtExportTaskModel);
     }
 
-    public List<CmsBtExportTaskModel> getExportTaskByUser(String channelId, Integer taskType, String user){
-        return getExportTaskByUser(channelId,taskType,user,null,null);
+    /**
+     * 检查指定用户是否有任务在执行
+     * @return int 有任务在执行时返回任务数，没有则返回0
+     */
+    public int checkExportTaskByUser(String channelId, Integer taskType, String user) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("taskType", taskType);
+        param.put("creater", user);
+        return cmsBtExportTaskDao.checkTaskByUser(param);
     }
 
     public List<CmsBtExportTaskModel> getExportTaskByUser(String channelId, Integer taskType, String user,Integer pageStart, Integer pageSize){

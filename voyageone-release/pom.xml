@@ -33,6 +33,8 @@
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-web2-security</artifactId>
 			<version>${voyageone.web2.security.version}</version>
+			<artifactId>voyageone-web2-vms</artifactId>
+			<version>${voyageone.web2.vms.version}</version>
 		</dependency>
 	</dependencies>
 	<build>

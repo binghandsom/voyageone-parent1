@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -35,7 +36,8 @@ import java.util.Map;
  * 平台Schema取得后，对应一些处理操作
  *
  * @author morse.lu 2016/06/22
- * @version 2.1.0
+ * @author jonas
+ * @version 2.4.0
  * @since 2.1.0
  */
 @Service
@@ -44,14 +46,48 @@ public class PlatformSchemaService extends BaseService {
     public static final String KEY_PRODUCT = "product";
     public static final String KEY_ITEM = "item";
 
+    private final PlatformCategoryService platformCategoryService;
+    private final CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
+    private final CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
+    private final CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+
     @Autowired
-    private PlatformCategoryService platformCategoryService;
-    @Autowired
-    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
-    @Autowired
-    private CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao;
-    @Autowired
-    private CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao;
+    public PlatformSchemaService(PlatformCategoryService platformCategoryService,
+                                 CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao,
+                                 CmsMtPlatformCategoryInvisibleFieldDao cmsMtPlatformCategoryInvisibleFieldDao,
+                                 CmsMtPlatformCategoryExtendFieldDao cmsMtPlatformCategoryExtendFieldDao) {
+        this.platformCategoryService = platformCategoryService;
+        this.cmsMtPlatformPropMappingCustomDao = cmsMtPlatformPropMappingCustomDao;
+        this.cmsMtPlatformCategoryInvisibleFieldDao = cmsMtPlatformCategoryInvisibleFieldDao;
+        this.cmsMtPlatformCategoryExtendFieldDao = cmsMtPlatformCategoryExtendFieldDao;
+    }
+
+    /**
+     * 通过 categoryPath 查询类目 Schema 定义
+     *
+     * @param categoryPath 类目路径
+     * @param channelId    渠道
+     * @param cartId       平台(店铺)
+     * @return 使用 {@link PlatformSchemaService#KEY_ITEM} 和 {@link PlatformSchemaService#KEY_PRODUCT} 作为 KEY 的字段集合字典
+     */
+    public Map<String, List<Field>> getFieldsByCategoryPath(String categoryPath, String channelId, int cartId, String language) {
+
+        if (CartEnums.Cart.JM.getValue() == cartId)
+            return getFieldForProductImage(null, channelId, cartId, language);
+
+        CmsMtPlatformCategorySchemaModel platformCategorySchemaModel;
+
+        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
+            platformCategorySchemaModel = platformCategoryService.getTmallSchemaByCategoryPath(categoryPath, channelId, cartId);
+        } else {
+            platformCategorySchemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, cartId);
+        }
+
+        if (platformCategorySchemaModel == null)
+            return null;
+
+        return getFieldListMap(platformCategorySchemaModel, channelId, language);
+    }
 
     /**
      * 产品画面属性list取得
@@ -65,7 +101,7 @@ public class PlatformSchemaService extends BaseService {
         // 20160727 tom 天猫schema结构变更修改 START
 //        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
 
-        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel;
         if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
         } else {
@@ -75,15 +111,29 @@ public class PlatformSchemaService extends BaseService {
         if (platformCatSchemaModel == null) {
             return null;
         }
+
+        return getFieldListMap(platformCatSchemaModel, channelId, language);
+    }
+
+    private Map<String, List<Field>> getFieldListMap(CmsMtPlatformCategorySchemaModel platformCatSchemaModel, String channelId, String language) {
+
+        String catId = platformCatSchemaModel.getCatId();
+
+        int cartId = platformCatSchemaModel.getCartId();
+
         CmsMtPlatformCategoryInvisibleFieldModel invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId(catId, cartId);
         if (invisibleFieldModel == null) {
             // 自己没有的话，用共通catId=0
             invisibleFieldModel = cmsMtPlatformCategoryInvisibleFieldDao.selectOneByCatId("0", cartId);
         }
-        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId);
+        CmsMtPlatformCategoryExtendFieldModel extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId(catId, cartId, channelId);
         if (extendFieldModel == null) {
             // 自己没有的话，用共通catId=0
-            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId);
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, channelId);
+        }
+        if (extendFieldModel == null) {
+            // 还没有的话，用共通catId=0,channelId=000
+            extendFieldModel = cmsMtPlatformCategoryExtendFieldDao.selectOneByCatId("0", cartId, ChannelConfigEnums.Channel.NONE.getId());
         }
 
         Map<String, List<Field>> retMap = new HashMap<>();
@@ -388,7 +438,6 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 if (multiComplexField.getFieldMap().get(addField.getId()) == null) {
@@ -396,10 +445,8 @@ public class PlatformSchemaService extends BaseService {
                 } else {
                     $warn("原先相同的field_id已经存在!");
                 }
-                return;
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,无法增加属性", field.getId()));
-                return;
             }
         } else {
             String newFieldId = fieldIds[1];
@@ -415,7 +462,6 @@ public class PlatformSchemaService extends BaseService {
                 addExtendField(multiComplexField.getFieldMap(), newFieldId, separator, addField);
             } else {
                 $warn(String.format("field_id=%s 不是复杂类型,没有下一层属性,无法增加属性", field.getId()));
-                return;
             }
         }
     }
@@ -430,6 +476,7 @@ public class PlatformSchemaService extends BaseService {
 
     private void setOption(Field field, String channelId, String language) {
         if (field.getType() == FieldTypeEnum.SINGLECHECK) {
+            List<Option> defaultOptions = ((SingleCheckField) field).getOptions();
             if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                 List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
@@ -442,6 +489,7 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
@@ -457,6 +505,7 @@ public class PlatformSchemaService extends BaseService {
                         opt.setValue(typeChannelBean.getValue());
                         options.add(opt);
                     }
+                    options.addAll(defaultOptions);
                     ((SingleCheckField) field).setOptions(options);
                 }
             }

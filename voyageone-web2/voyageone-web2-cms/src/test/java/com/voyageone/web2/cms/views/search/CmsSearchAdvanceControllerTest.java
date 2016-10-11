@@ -6,7 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.BaseConstants;
-import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Before;
 import org.junit.Test;

@@ -16,14 +16,16 @@ public class CmsBtExportTaskModel extends BaseModel {
     protected String channelId;
 
     /**
-     * 0:feed检索用 
+     * 0:feed检索用  1:高级检索用
      */
     protected Integer taskType;
-
+    /**
+     * 查询参数
+     */
     protected String parameter;
 
     /**
-     * 0:等待 1:完成 2:失败
+     * 0:等待 1:完成 2:失败 3:正在执行
      */
     protected Integer status;
 

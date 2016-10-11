@@ -31,33 +31,19 @@ public class CommonPropService extends BaseService {
         return cmsMtCommonPropDaoExt.selectCustColumns(selType);
     }
 
-    public List<Map<String, Object>> getCustColumnsByUserId(int userId) {
-        return cmsMtCommonPropDaoExt.selectUserCustColumns(userId);
-    }
-
     // 取得用户自定义显示列设置
-    public List<Map<String, Object>> getUserCustColumnsSalesType(int userId) {
-        return cmsMtCommonPropDaoExt.selectUserCustColumnsSalesType(userId);
+    public Map<String, Object> getCustColumnsByUserId(int userId, String cfgName) {
+        return cmsMtCommonPropDaoExt.selectUserCustColumns(userId, cfgName);
     }
 
     @VOTransactional
-    public int addUserCustColumn(int userId, String userName, String param1, String param2) {
-        return cmsMtCommonPropDaoExt.insertUserCustColumns(userId, userName, param1, param2);
+    public int addUserCustColumn(int userId, String userName, String cfgName, String param1, String param2) {
+        return cmsMtCommonPropDaoExt.insertUserCustColumns(userId, userName, cfgName, param1, param2);
     }
 
     @VOTransactional
-    public int saveUserCustColumn(int userId, String userName, String param1, String param2) {
-        return cmsMtCommonPropDaoExt.updateUserCustColumns(userId, userName, param1, param2);
-    }
-
-    @VOTransactional
-    public int addUserCustColumnsSalesType(int userId, String userName, String param1) {
-        return cmsMtCommonPropDaoExt.insertUserCustColumnsSalesType(userId, userName, param1);
-    }
-
-    @VOTransactional
-    public int saveUserCustColumnsSalesType(int userId, String userName, String param1) {
-        return cmsMtCommonPropDaoExt.updateUserCustColumnsSalesType(userId, userName, param1);
+    public int saveUserCustColumn(int userId, String userName, String cfgName, String param1, String param2) {
+        return cmsMtCommonPropDaoExt.updateUserCustColumns(userId, userName, cfgName, param1, param2);
     }
 
 }

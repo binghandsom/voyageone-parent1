@@ -23,8 +23,13 @@ public interface CmsUrlConstants {
             String SET_CATE_TYPE = "setPlatformType";
 
             String GetHomeSumData = "getHomeSumData";
+            String SumHome="sumHome";
 
             String GET_CMS_CONFIG = "getCmsConfig";
+
+            String GET_MAIN_CATEGORIES = "getMainCategories";
+
+            String GET_CARTS = "getCarts";
         }
     }
 
@@ -307,14 +312,14 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/search/advance/";
 
             String INIT = "init";
-
             String SEARCH = "search";
 
             String GET_GROUP_LIST = "getGroupList";
-
             String GET_PRODUCT_LIST = "getProductList";
 
             String EXPORT_PRODUCTS = "exportProducts";
+            String EXPORT_SERACH = "exportSearch";
+            String EXPORT_DOWNLOAD = "exportDownload";
         }
 
         interface FEED {
@@ -331,35 +336,6 @@ public interface CmsUrlConstants {
 
     // 匹配关系设置
     interface MAPPING {
-
-        interface FEED {
-
-            String ROOT = "/cms/mapping/feed";
-
-            String GET_TOP_CATEGORIES = "getTopCategories";
-
-            String GET_FEED_CATEGORY_TREE = "getFeedCategoryTree";
-
-            String GET_MAIN_CATEGORIES = "getMainCategories";
-
-            String SET_MAPPING = "setFeedMapping";
-
-            String EXTENDS_MAPPING = "extendsMapping";
-
-            String GET_FIELD_MAPPING = "getFieldMapping";
-
-            String GET_FEED_ATTRS = "getFeedAttributes";
-
-            String SAVE_FIELD_MAPPING = "saveFieldMapping";
-
-            String DIRECT_MATCH_OVER = "directMatchOver";
-
-            String GET_MAIN_MAPPING = "getMainMapping";
-
-            String GET_MAPPINGS = "getMappings";
-
-            String GET_MAPPING_INFO = "getMappingInfo";
-        }
 
         interface DICTIONARY {
 
@@ -503,6 +479,13 @@ public interface CmsUrlConstants {
             String EXPORT = "export";
         }
 
+        interface PRICE_CONFIRM {
+
+            String ROOT = "/cms/price/confirm";
+
+            String PAGE = "page";
+        }
+
         interface PROMOTION {
 
             String ROOT = "/cms/pop/history_promotion/";
@@ -568,7 +551,8 @@ public interface CmsUrlConstants {
             String HsCodeChg = "hsCodeChg";
             String CopyProperty = "copyProperty";
             String CopyCommonProperty = "copyCommonProperty";
-            String GET_PLATFORM_CATEGORIES ="getPlatformCategories";
+            String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
+            String PriceConfirm = "priceConfirm";
         }
 
         interface HISTORY {
@@ -659,6 +643,7 @@ public interface CmsUrlConstants {
             String SEARCH_CHANNEL_IMAGE_GROUP = "search";
             String SAVE_CHANNEL_IMAGE_GROUP = "save";
             String DELETE_CHANNEL_IMAGE_GROUP = "delete";
+            String GetNoMatchSizeImageGroupList="getNoMatchSizeImageGroupList";
         }
 
         interface CHANNEL_IMAGE_TEMPLATE {
@@ -692,6 +677,8 @@ public interface CmsUrlConstants {
                 String DELETE_SIZE_CHART = "sizeChartDelete";
                 String SEARCH_SIZE_CHART = "sizeChartSearch";
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
+                String GetNoMatchList="getNoMatchList";
+                String GetListImageGroupBySizeChartId="getListImageGroupBySizeChartId";
             }
 
             interface SIZE_CHART_DETAIL {
@@ -757,8 +744,11 @@ public interface CmsUrlConstants {
 
     interface PLATFORM_MAPPING {
         String ROOT = "/cms/platform/mapping/";
-        String LIST = "list";
+        String PAGE = "page";
         String GET = "get";
         String SAVE = "save";
+        String DELETE = "delete";
+        String GET_COMMONSCHEMA = "getCommonSchema";
+        String GET_FEEDCUSTOMPROPS = "getFeedCustomProps";
     }
 }

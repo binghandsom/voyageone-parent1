@@ -1,9 +1,12 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.PlatformService;
@@ -13,6 +16,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +47,9 @@ public class CmsMenuController extends CmsController {
     PlatformService platformService;
     @Autowired
     CmsBtDataAmountService serviceCmsBtDataAmount;
+    @Autowired
+    ChannelCategoryService channelCategoryService;
+
     /**
      * 返回categoryType, categoryList, categoryTreeList
      */
@@ -126,12 +133,28 @@ public class CmsMenuController extends CmsController {
     {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
     }
-
+    @RequestMapping(value = CmsUrlConstants.HOME.MENU.SumHome,method = RequestMethod.GET)
+    public AjaxResponse SumHome()
+    {
+        serviceCmsBtDataAmount.sumByChannelId(getUser().getSelChannelId());
+        return success("完成");
+    }
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CMS_CONFIG)
     public AjaxResponse getCmsConfig()
     {
         Map<String,Object> response = new HashMap<>();
         response.put("autoApprovePrice",CmsChannelConfigs.getConfigBeans(getUser().getSelChannelId(), CmsConstants.ChannelConfig.AUTO_APPROVE_PRICE));
         return success(response);
+    }
+
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_MAIN_CATEGORIES)
+    public AjaxResponse getMainCategories() {
+        return success(channelCategoryService.getCategoriesByChannelId(getUser().getSelChannelId()));
+    }
+
+
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CARTS)
+    public AjaxResponse getCarts() {
+        return success(TypeChannels.getTypeListSkuCarts(getUser().getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang()));
     }
 }

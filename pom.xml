@@ -28,13 +28,13 @@
             <name>Team Nexus Repository</name>
             <url>http://10.0.0.59:8081/nexus/content/groups/public</url>
         </repository>
-		<!-- 
+
         <repository>
             <id>local nexus repo</id>
             <name>local office site</name>
             <url>http://maven.oschina.net/content/groups/public/</url>
         </repository>
- 		-->
+
     </repositories>
     <distributionManagement>
         <repository>
@@ -74,12 +74,12 @@
 
         <!-- voyageone.web2 version -->
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
+        <voyageone.web2.cms.version>2.5.0-SNAPSHOT</voyageone.web2.cms.version>
+        <voyageone.web2.vms.version>1.0.0-SNAPSHOT</voyageone.web2.vms.version>
         <voyageone.web2.admin.version>2.0.0-SNAPSHOT</voyageone.web2.admin.version>
-        <voyageone.web2.cms.version>2.3.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.web2.openapi.version>2.0.0-SNAPSHOT</voyageone.web2.openapi.version>
         <!-- voyageone.web2.sdk version -->
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
-        <voyageone.web2.vendor.version>2.0.0-SNAPSHOT</voyageone.web2.vendor.version>
         <voyageone.web2.security.version>2.0.0-SNAPSHOT</voyageone.web2.security.version>
 
         <!-- voyageone.service version -->
@@ -271,6 +271,12 @@
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.1.0</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5-20110124</version>
+                <!--<scope>provided</scope>-->
             </dependency>
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>

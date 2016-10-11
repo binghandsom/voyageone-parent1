@@ -60,6 +60,13 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             },
+            "categoryMul":{
+                "templateUrl": "views/pop/bulkUpdate/categoryMul.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/categoryMul.ctl",
+                "controller": 'popCategoryMulCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
+            },
             "categoryNew": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategoryNew.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategoryNew.ctl",
@@ -187,69 +194,7 @@ define([
                 "controller": "popDictCustomCtl"
             }
         },
-        "feedMapping": {
-            "attribute": {
-                "templateUrl": "views/pop/feedMapping/attribute.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feedMapping/attribute.ctl",
-                "controller": 'propFeedMappingAttributeController as ctrl',
-                "backdrop": 'static',
-                "size": 'lg'
-            },
-            "value": {
-                "templateUrl": "views/pop/feedMapping/value.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feedMapping/value.ctl",
-                "controller": 'propFeedMappingValueController as ctrl',
-                "backdrop": 'static',
-                "size": 'xlg'
-            }
-        },
         "platformMapping": {
-            "complex": {
-                "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/platformMapping/ppComplex.ctl",
-                "controller": 'complexMappingPopupController as ctrl',
-                "size": 'md',
-                "backdrop": "static"
-            },
-            "simple": {
-                list: {
-                    "templateUrl": "views/pop/platformMapping/ppSimple.list.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.list.ctl",
-                    "controller": 'simpleListMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
-                },
-                item: {
-                    "templateUrl": "views/pop/platformMapping/ppSimple.item.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppSimple.item.ctl",
-                    "controller": 'simpleItemMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
-                }
-            },
-            "multiComplex": {
-                list: {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.list.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.list.ctl",
-                    "controller": 'multiComplexMappingPopupController as ctrl',
-                    "size": 'md',
-                    "backdrop": "static"
-                },
-
-                item: {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.item.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.item.ctl",
-                    "controller": 'multiComplexItemMappingPopupController as ctrl',
-                    "size": 'md',
-                    "backdrop": "static"
-                }
-            },
-            "otherPlatform": {
-                "templateUrl": "views/pop/platformMapping/ppOtherPlatform.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/platformMapping/ppOtherPlatform.ctl",
-                "controller": 'otherPlatformPopupController as ctrl',
-                "size": 'md'
-            },
             "propertyMapping":{
                 "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
@@ -293,6 +238,12 @@ define([
                 "controllerUrl": "modules/cms/views/pop/history/price.ctl",
                 "controller": "PriceLogPopupController as ctrl",
                 "size": "lg"
+            },
+            price_confirm: {
+                templateUrl: "views/pop/history/price.confirm.log.tpl.html",
+                controllerUrl: "modules/cms/views/pop/history/price.confirm.log.controller",
+                controller: "PriceConfirmLogController as ctrl",
+                size: "lg"
             },
             "promotion": {
                 "templateUrl": "views/pop/history/promotion.tpl.html",
@@ -485,6 +436,11 @@ define([
                     "templateUrl": "views/pop/store/listing/imagedetailadd.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/store/listing/imagedetailadd.ctl",
                     "controller": 'popImageDetailAddCtl'
+                },
+                "delConfirm": {
+                    "templateUrl": "views/pop/store/listing/delConfirm.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/store/listing/delConfirm.ctl",
+                    "controller": 'popDelConfirmCtl as ctrl'
                 }
             }
         },
@@ -513,6 +469,11 @@ define([
                 "templateUrl": "views/pop/product/hsCodeChange.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
                 "controller": 'HsCodeChangeController as ctrl'
+            },
+            "approveConfirm":{
+                "templateUrl": "views/pop/product/approveConfirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
+                "controller": 'ApproveConfirmController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -605,22 +566,23 @@ define([
          * pop出properties变更页面,用于批量更新产品属性
          */
         $scope.openFieldEdit = function openFieldEdit(selList, context) {
-            var productIds = [];
             var params = null;
-            if (context && context.isSelAll) {
-                // 全选
-                params = {"productIds": productIds, 'isSelAll': 1, "cartId": context.cartId, 'selCnt': context.selCnt};
-            } else {
-                if (selList && selList.length) {
-                    _.forEach(selList, function (object) {
-                        productIds.push(object.code);
-                    });
-                }
-                if (context) {
-                    params = {"productIds": productIds, "cartId": context.cartId, 'selCnt': context.selCnt};
+            if (context) {
+                if (context.isSelAll) {
+                    // 全选
+                    params = context;
                 } else {
-                    params = {"productIds": productIds, "cartId": null};
+                    var productIds = [];
+                    if (selList && selList.length) {
+                        _.forEach(selList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+                    params = context;
+                    params.productIds = productIds;
                 }
+            } else {
+                params = {};
             }
             return openModal(popActions.bulkUpdate.fieldEdit, params);
         };
@@ -632,6 +594,15 @@ define([
          */
         $scope.popupNewCategory = function popupNewCategory(context) {
             return openModal(popActions.bulkUpdate.category, context);
+        };
+
+        /**
+         * 打开多选类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popCategoryMul = function popCategoryMul(context){
+            return openModal(popActions.bulkUpdate.categoryMul, context);
         };
 
         /**
@@ -727,50 +698,8 @@ define([
             });
         };
 
-        $scope.popupFeed = function popupFeed(context) {
-            return openModal(popActions.feedMapping.attribute, context);
-        };
-
-        $scope.popupFeedValue = function popupFeedValue(context) {
-            return openModal(popActions.feedMapping.value, context);
-        };
-
         $scope.openOtherPlatform = function openOtherPlatform(context) {
             return openModal(popActions.platformMapping.otherPlatform, context);
-        };
-
-        $scope.ppPlatformMapping = function ppPlatformMapping(context) {
-
-            var last = context.path[0];
-            var mapping;
-            var config;
-
-            if (_.isNumber(last)) {
-                config = popActions.platformMapping.multiComplex.item;
-                return openModal(config, context);
-            }
-
-            mapping = last.mapping;
-
-            switch (mapping.type) {
-                case MappingTypes.SIMPLE_MAPPING:
-                    config = popActions.platformMapping.simple.list;
-                    break;
-                case MappingTypes.COMPLEX_MAPPING:
-                    config = popActions.platformMapping.complex;
-                    break;
-                case MappingTypes.MULTI_COMPLEX_MAPPING:
-                    config = popActions.platformMapping.multiComplex.list;
-                    break;
-                default:
-                    throw 'Unknown mapping type: ' + mapping.type;
-            }
-
-            return openModal(config, context);
-        };
-
-        $scope.ppPlatformMapping.simpleItem = function (context) {
-            return openModal(popActions.platformMapping.simple.item, context);
         };
 
         /**
@@ -856,6 +785,17 @@ define([
          */
         $scope.openHistoryPrice = function openHistoryPrice(code, skuList, selectedSku, selectedCart) {
             return openModal(popActions.history.price, {
+                skuList: skuList,
+                code: code,
+                selected: {
+                    sku: selectedSku,
+                    cart: selectedCart
+                }
+            });
+        };
+
+        $scope.openHistoryPriceConfirm = function openHistoryPriceConfirm(code, skuList, selectedSku, selectedCart) {
+            return openModal(popActions.history.price_confirm, {
                 skuList: skuList,
                 code: code,
                 selected: {
@@ -1073,11 +1013,18 @@ define([
          * 新增店铺管理-Listing-imagegroup页,add操作弹出
          * */
         $scope.openImgGroupAdd = function openImgGroupAdd(data) {
-            openModal(popActions.store.listing.imagegroupadd, {
+            return openModal(popActions.store.listing.imagegroupadd, {
                 data: function () {
                     return data;
                 }
             }, true);
+        };
+
+        /**
+         * 图片和尺码表确认框
+         */
+        $scope.openTemplateConfirm = function openTemplateConfirm(context){
+            return openModal(popActions.store.listing.delConfirm, context);
         };
 
         /**
@@ -1222,13 +1169,18 @@ define([
         };
 
         /**属性匹配*/
-        $scope.openPropertyMapping = function openPropertyMapping(context){
-            return openModal(popActions.platformMapping.propertyMapping,context);
+        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping,searchInfo){
+            return openModal(popActions.platformMapping.propertyMapping,_.extend(fieldMapping,searchInfo));
         };
 
         /**属性编辑*/
         $scope.openPropertySetting = function openPropertySetting(context){
             return openModal(popActions.platformMapping.propertySetting,context);
+        };
+
+        /**上新价格确认*/
+        $scope.openApproveConfirm = function openApproveConfirm(context){
+            return openModal(popActions.product.approveConfirm,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

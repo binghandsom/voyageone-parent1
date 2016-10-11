@@ -51,7 +51,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -320,6 +320,44 @@ public class SxProductService extends BaseService {
         businessLogModel.setModifier(modifier);
 
         businessLogService.insertBusinessLog(businessLogModel);
+    }
+
+    /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param sxData 上新数据
+     * @param modifier 更新者
+     */
+    public void clearBusinessLog(SxData sxData, String modifier) {
+        CmsBtProductGroupModel productGroup = sxData.getPlatform();
+
+        // code，没有code就不要设置
+        String mainCode = "";
+        if (productGroup != null) mainCode = productGroup.getMainProductCode();
+
+        int effectCnt = businessLogService.updateFinishStatusByCondition(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()),
+                null, mainCode, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%s] [GroupId:%s]",
+                effectCnt, sxData.getChannelId(), sxData.getCartId(), sxData.getGroupId());
+    }
+
+    /**
+     * cms_bt_business_log对应的以前的错误清一下,即把status更新成1:已解决
+     *
+     * @param channelId String 渠道id
+     * @param cartId Integer 平台id
+     * @param groupId Long GroupId
+     * @param model String feed model
+     * @param code String 产品code
+     * @param modifier String 更新者
+     */
+    public void clearBusinessLog(String channelId, Integer cartId, Long groupId,
+                                 String model, String code, String modifier) {
+        // 逻辑删除cms_bt_business_log表以前的错误信息
+        int effectCnt = businessLogService.updateFinishStatusByCondition(channelId, cartId,
+                LongUtils.toString(groupId), model, code, modifier);
+        $debug("cms_bt_business_log表以前的错误信息逻辑删除件数：%d件 [ChannelId:%s] [CatId:%d] [GroupId:%s] [Code:%s]",
+                effectCnt, channelId, cartId, LongUtils.toString(groupId), code);
     }
 
     /**
@@ -801,12 +839,6 @@ public class SxProductService extends BaseService {
                 }
 //            }
             // 2016/06/02 Update by desmond end
-            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 START
-            if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
-                removeProductList.add(productModel);
-                continue;
-            }
-            // 2016/06/28 add tom 临时修改, 下一个版本直接删除本段内容即可 END
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -940,7 +972,7 @@ public class SxProductService extends BaseService {
             // 没有对象
             // update by desmond 2016/07/12 start
 //            return null;
-            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未lock且已Approved的产品";
+            String errorMsg = "取得上新数据(SxData)失败! 在产品表中没找到groupId(" + groupId + ")对应的未锁定且已审批的产品，请确保产品未被锁定且已完成审批";
             $error(errorMsg);
             sxData.setErrorMessage(errorMsg);
             return sxData;
@@ -1061,7 +1093,7 @@ public class SxProductService extends BaseService {
      * Step3:schema的上记Step1,2以外的全部field
      *
      * @param fields List<Field> 直接把值set进这个fields对象
-     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingModel
+     * @param cmsMtPlatformMappingModel CmsMtPlatformMappingDeprecatedModel
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
      * @param user 上传图片用
@@ -1069,7 +1101,7 @@ public class SxProductService extends BaseService {
      * @return Map<field_id mt里转换后的值> （只包含叶子节点，即只包含简单类型，对于复杂类型，也只把复杂类型里的简单类型值put进Map，只为了外部可以不用再循环取值，只需要根据已知的field_id，取得转换后的值）
      * @throws Exception
      */
-    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
+    public Map<String, Field> constructMappingPlatformProps(List<Field> fields, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, ExpressionParser expressionParser, String user, boolean isItem) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -1557,7 +1589,7 @@ public class SxProductService extends BaseService {
      * 新版上新Field设值，不再根据Mapping，直接从product表platform下fields里取值
      * 做一个假的MASTER类型的WordParse的方式去处理
      */
-    private Map<String, Field> resolveMappingFromProductField(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+    public Map<String, Field> resolveMappingFromProductField(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
 
@@ -1797,7 +1829,7 @@ public class SxProductService extends BaseService {
      * @param skuInventoryMap sku对应逻辑库存
      * @throws Exception
      */
-    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    private Map<String, Field> constructCustomPlatformProps(Map<CustomMappingType, List<Field>> mappingTypePropsMap, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         Map<String, Field> retMap = new HashMap<>();
 
         SxData sxData = expressionParser.getSxData();
@@ -2207,13 +2239,16 @@ public class SxProductService extends BaseService {
                     List<Field> allSkuFields = new ArrayList<>();
                     recursiveGetFields(processFields, allSkuFields);
 
-                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
-                    if (StringUtils.isEmpty(imageTemplate)) {
-                        String err = "达尔文产品没有设值资质图片模板字典!";
-                        sxData.setErrorMessage(err);
-                        throw new BusinessException(err);
-                    }
-                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 start
+                    // 暂时画面写死已经上传到平台的url完整路径，所以先注了这段代码，以后改回成画面有上传按钮，只填写图片名，再恢复这段代码
+//                    String imageTemplate = resolveDict("资质图片模板",expressionParser,shopBean, user, null);
+//                    if (StringUtils.isEmpty(imageTemplate)) {
+//                        String err = "达尔文产品没有设值资质图片模板字典!";
+//                        sxData.setErrorMessage(err);
+//                        throw new BusinessException(err);
+//                    }
+//                    skuFieldService.setCodeImageTemplate(imageTemplate);
+                    // deleted by morse.lu 2016/08/25 end
 
                     try {
                         List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
@@ -2229,6 +2264,27 @@ public class SxProductService extends BaseService {
                     break;
                 }
                 // added by morse.lu 2016/08/10 end
+                // added by morse.lu 2016/08/18 start
+                case PRODUCT_ID: {
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        String value = inputField.getDefaultValue();
+                        if (!StringUtils.isEmpty(value)) {
+                            inputField.setValue(value);
+                        }
+                        retMap.put(field.getId(), inputField);
+                    }
+
+                    break;
+                }
+                // added by morse.lu 2016/08/18 end
             }
         }
 
@@ -2796,6 +2852,16 @@ public class SxProductService extends BaseService {
             }
             if (matchModels.size() == 1) {
                 $info("找到image_group记录!");
+                if (matchModels.get(0).getImage() == null || matchModels.get(0).getImage().size() == 0) {
+                    throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
+                            "channelId= " + channelId +
+                            ",cartId= " + cartId +
+                            ",imageType= " + imageType +
+                            ",viewType= "+ viewType +
+                            ",BrandName= " + paramBrandName +
+                            ",ProductType= " + paramProductType +
+                            ",SizeType=" + paramSizeType);
+                }
                 for (CmsBtImageGroupModel_Image imageInfo : matchModels.get(0).getImage()) {
                     if (getOriUrl) {
                         // 取原始图url
@@ -3362,6 +3428,9 @@ public class SxProductService extends BaseService {
             return;
         }
 
+//        // 不管上新成功还是失败，都先自动清空之前报的上新错误信息
+//        clearBusinessLog(sxData, modifier);
+
         // 上新成功时
         if (uploadStatus) {
             // 设置共通属性
@@ -3409,6 +3478,7 @@ public class SxProductService extends BaseService {
             // 回写workload表   (为了知道字段是哪个画面更新的，上新程序不更新workload表的modifier)
             this.updateSxWorkload(workload, CmsConstants.SxWorkloadPublishStatusNum.okNum,
                     StringUtils.isEmpty(workload.getModifier()) ? modifier : workload.getModifier());
+
         } else {
             // 上新失败后回写product表pPublishError的值("Error")
             productGroupService.updateUploadErrorStatus(sxData.getPlatform(), sxData.getErrorMessage());
@@ -3474,6 +3544,20 @@ public class SxProductService extends BaseService {
                 "[PlatformStatus,PlatformPid或pPublishError等关键状态信息没有变化]" : sbProcContent.toString());
 
         return cmsBtWorkloadHistoryDao.insert(insModel);
+    }
+
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier) {
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+            }
+        });
     }
 
     /**
@@ -3583,6 +3667,11 @@ public class SxProductService extends BaseService {
                 // 最后插入一次数据库
                 iCnt += sxWorkloadDao.insertSxWorkloadModels(modelListFaster);
             }
+
+            // 逻辑删除cms_bt_business_log中以前的错误,即把status更新成1:已解决
+            modelList.forEach(p -> {
+                clearBusinessLog(p.getChannelId(), p.getCartId(), p.getGroupId(), null, null, p.getModifier());
+            });
         }
         $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
     }

@@ -4,9 +4,8 @@
  */
 
 define([
-    'cms',
-    'modules/cms/enums/Carts'
-], function (cms,carts) {
+    'cms'
+], function (cms) {
     'use strict';
     return cms.controller('HsCodeChangeController', (function () {
 
@@ -19,27 +18,12 @@ define([
             }
         }
 
-        HsCodeChange.prototype = {
-            init:function(){
-                var self = this;
+        HsCodeChange.prototype.init = function(){
+            this.vm.result = this.context.results;
+        };
 
-                self.productDetailService.hsCodeChg({prodId:self.context.prodId,hsCode:self.context.hsCodeNew}).then(function(res){
-                    _.each(res.data, function(element,key){
-                        var _hsObject = {cartId:key,cartInfo:carts.valueOf(+key)};
-                        _.each(element,function(element,key){
-                            _.extend(_hsObject,{skuCode:key,prideOld:element[0],priceNew:element[1]});
-                        });
-                        self.vm.result.push(_hsObject);
-                    });
-
-                },function(){
-                    /**错误处理*/
-                    self.uibModalInstance.close("error");
-                });
-            },
-            update:function(mark){
-                this.uibModalInstance.close(mark);
-            }
+        HsCodeChange.prototype.update = function(mark){
+            this.uibModalInstance.close(mark);
         };
 
         return HsCodeChange;
