@@ -88,7 +88,9 @@ define([
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskName == self.taskSelList.selList[0].id) {
                             _.extend(Info, {'isReadOnly': true});
-                            self.popups.openTask(Info).then(function () {
+                            self.popups.openTask(Info).then(function (res) {
+                                res.runFlg == '1' ? Info.runFlg = '1' : Info.runFlg = '0';
+                                forEachTaskList(Info.taskConfig, Info.runFlg);
                                 self.init(1);
                             });
                         }
@@ -120,20 +122,12 @@ define([
                 var self = this;
                 if (item.type == 'Start') {
                     self.confirm('确定启动该任务吗？').then(function () {
-                        if (item.data.runFlg == "0") {
-                            item.data.runFlg = "1"
-                        } else(
-                            item.data.runFlg = "0"
-                        );
+                        item.data.runFlg == "0"?item.data.runFlg = "1":item.data.runFlg = "0";
                         forEachTaskList(item.data.taskConfig, item.data.runFlg);
                     })
                 } else {
                     self.confirm('确定停止该任务吗？').then(function () {
-                        if (item.data.runFlg == "0") {
-                            item.data.runFlg = "1"
-                        } else(
-                            item.data.runFlg = "0"
-                        );
+                        item.data.runFlg == "0"?item.data.runFlg = "1":item.data.runFlg = "0";
                         forEachTaskList(item.data.taskConfig, item.data.runFlg);
                     })
                 }
