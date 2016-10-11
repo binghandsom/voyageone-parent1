@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms.tools.product.common;
 
+import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
+import com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtMasterBrandDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtMasterBrandModel;
@@ -21,6 +23,15 @@ public class CmsMasterBrandMappingService extends BaseService {
     private CmsMtMasterBrandDaoExt cmsMtMasterBrandDaoExt;
 
     private static int noMatchBrand = 3;
+
+    public List<CmsMtMasterBrandModel> getMasterBrandListByChannelId(String channelId){
+        Map<String, Object> data = new HashMap<>();
+        //店铺渠道取得
+        data.put("channelId", channelId);
+        //返回数据类型
+        return cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
+    }
+
 
     /**
      * Master品牌匹配初始化

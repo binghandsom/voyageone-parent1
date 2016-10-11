@@ -8,6 +8,7 @@
 package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+import java.math.BigDecimal;
 
 /**
  * 
@@ -38,6 +39,31 @@ public class CmsBtPromotionSkusModel extends BaseModel {
     protected String synFlg;
 
     protected String errMsg;
+
+    /**
+     * 中国官网价格
+     */
+    protected BigDecimal msrpRmb;
+
+    /**
+     * 中国指导价格
+     */
+    protected BigDecimal retailPrice;
+
+    /**
+     * 中国最终售价
+     */
+    protected BigDecimal salePrice;
+
+    /**
+     * 活动价
+     */
+    protected BigDecimal promotionPrice;
+
+    /**
+     * 海外官网价格
+     */
+    protected BigDecimal msrpUsd;
 
     public Integer getPromotionId() {
         return promotionId;
@@ -141,5 +167,45 @@ public class CmsBtPromotionSkusModel extends BaseModel {
 
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg == null ? null : errMsg.trim();
+    }
+
+    public BigDecimal getMsrpRmb() {
+        return msrpRmb;
+    }
+
+    public void setMsrpRmb(BigDecimal msrpRmb) {
+        this.msrpRmb = msrpRmb;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public BigDecimal getPromotionPrice() {
+        return promotionPrice;
+    }
+
+    public void setPromotionPrice(BigDecimal promotionPrice) {
+        this.promotionPrice = promotionPrice;
+    }
+
+    public BigDecimal getMsrpUsd() {
+        return msrpUsd;
+    }
+
+    public void setMsrpUsd(BigDecimal msrpUsd) {
+        this.msrpUsd = msrpUsd;
     }
 }

@@ -40,6 +40,7 @@ import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang.math.NumberUtils;
@@ -695,9 +696,12 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(skuIncludes)) {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-                } else {
+                } else if(skuList != null && !skuList.isEmpty()){
+                    System.out.print(product.getCommon().getFields().getCode());
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+                }else{
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus();
                 }
             }
             if (skus == null || skus.size() == 0) return resultInfo;

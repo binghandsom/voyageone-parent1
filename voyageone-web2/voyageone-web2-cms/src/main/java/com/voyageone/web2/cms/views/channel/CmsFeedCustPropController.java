@@ -203,7 +203,7 @@ public class CmsFeedCustPropController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
         Map<String, Object> result = new HashMap<>();
-        result.put("categoryList", cmsFeedCustPropService.getCategoryList(getUser()));
+        result.put("categoryList", cmsFeedCustPropService.getCategoryList(getUser().getSelChannelId()));
         return success(result);
     }
 }

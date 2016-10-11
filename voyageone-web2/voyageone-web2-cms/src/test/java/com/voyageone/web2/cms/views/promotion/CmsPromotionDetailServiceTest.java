@@ -32,22 +32,22 @@ public class CmsPromotionDetailServiceTest {
     @Test
     public void testInsertPromotionProduct() throws Exception {
 
-        List< CmsPromotionProductPriceBean > productPrices = new ArrayList<>();
-        CmsPromotionProductPriceBean cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
-        cmsPromotionProductPriceBean.setCode("100004");
-        cmsPromotionProductPriceBean.setPrice(20.99);
-        cmsPromotionProductPriceBean.setTag("7折");
-        productPrices.add(cmsPromotionProductPriceBean);
-
-        cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
-        cmsPromotionProductPriceBean.setCode("100003");
-        cmsPromotionProductPriceBean.setPrice(10.99);
-        cmsPromotionProductPriceBean.setTag("7折");
-        productPrices.add(cmsPromotionProductPriceBean);
-
-        productPrices.add(cmsPromotionProductPriceBean);
-        cmsPromotionDetailService.insertPromotionProduct(productPrices, 15, "james");
-        System.out.println("");
+//        List< CmsPromotionProductPriceBean > productPrices = new ArrayList<>();
+//        CmsPromotionProductPriceBean cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
+//        cmsPromotionProductPriceBean.setCode("100004");
+//        cmsPromotionProductPriceBean.setPrice(20.99);
+//        cmsPromotionProductPriceBean.setTag("7折");
+//        productPrices.add(cmsPromotionProductPriceBean);
+//
+//        cmsPromotionProductPriceBean = new CmsPromotionProductPriceBean();
+//        cmsPromotionProductPriceBean.setCode("100003");
+//        cmsPromotionProductPriceBean.setPrice(10.99);
+//        cmsPromotionProductPriceBean.setTag("7折");
+//        productPrices.add(cmsPromotionProductPriceBean);
+//
+//        productPrices.add(cmsPromotionProductPriceBean);
+//        cmsPromotionDetailService.insertPromotionProduct(productPrices, 15, "james");
+//        System.out.println("");
     }
 
     @Test

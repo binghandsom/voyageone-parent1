@@ -87,7 +87,7 @@ public class HtMallStatusUpdateBatchResponse extends BaseJMResponse {
                         sbMsg.append("该mall不属于商家");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

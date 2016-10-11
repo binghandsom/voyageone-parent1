@@ -110,7 +110,7 @@ public class HtSpuAddResponse extends BaseJMResponse {
                         sbMsg.append("area_code， 货币符号Id错误");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

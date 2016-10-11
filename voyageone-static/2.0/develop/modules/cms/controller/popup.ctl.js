@@ -301,6 +301,12 @@ define([
                 "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                 "controller": 'popAddStockIncrementCtl'
+            },
+            "setSkuPrice":{
+                "templateUrl": "views/pop/promotion/setSkuPrice.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/promotion/setSkuPrice.ctl",
+                "controller": 'setSkuPriceCtl as ctrl',
+                "size":"lg"
             }
         },
         "jumei": {
@@ -911,6 +917,13 @@ define([
                     return data;
                 }
             }, true);
+        };
+
+        /**
+         * sku价格刷新
+         */
+        $scope.openSetSkuPrice = function openSetSkuPrice(context){
+            return openModal(popActions.promotion.setSkuPrice, context);
         };
 
         /**
