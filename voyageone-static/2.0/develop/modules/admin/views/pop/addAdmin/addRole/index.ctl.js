@@ -247,6 +247,7 @@ define([
                             } else {
                                 self.channelList.push(self.data);
                                 self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
+                                self.selectedChannelId = '';
                                 var data = self.search({
                                     'type': 'store',
                                     'value': self.data.orderChannelId,
@@ -276,6 +277,7 @@ define([
                             } else {
                                 self.channelAllList.push(self.data);
                                 self.channelList.splice(self.channelList.indexOf(self.data), 1);
+                                self.selectedChannelId = '';
                                 break;
                             }
                         } else {
@@ -336,6 +338,7 @@ define([
                             } else {
                                 self.storeList.push(self.data);
                                 self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
+                                self.selectedStoreId = '';
                                 break;
                             }
                         } else {
@@ -353,6 +356,7 @@ define([
                             }
                             self.storeAllList.push(self.data);
                             self.storeList.splice(self.storeList.indexOf(self.data), 1);
+                            self.selectedStoreId = '';
                             break;
                         } else {
                             self.alert('请在已选择仓库区 选择仓库后再点此按钮!');
