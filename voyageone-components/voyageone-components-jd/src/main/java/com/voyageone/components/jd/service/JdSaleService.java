@@ -4,53 +4,191 @@ import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.ware.Ware;
 import com.jd.open.api.sdk.request.ware.WareDelistingGetRequest;
 import com.jd.open.api.sdk.request.ware.WareListingGetRequest;
+import com.jd.open.api.sdk.request.ware.WareUpdateDelistingRequest;
+import com.jd.open.api.sdk.request.ware.WareUpdateListingRequest;
 import com.jd.open.api.sdk.response.ware.WareDelistingGetResponse;
 import com.jd.open.api.sdk.response.ware.WareListingGetResponse;
+import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
+import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.components.jd.JdBase;
+import com.voyageone.components.jd.JdConstants;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
- * 京东运营类 api 调用服务
+ * 京东运营类 api 调用服务 商品上下架，以及查询商品的在售/在库状态
  * <p/>
  * Created by Kylin on 2015/7/15.
  */
 @Component
 public class JdSaleService extends JdBase {
 
-    public List<Ware> getOnListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String strFieldList) throws JdException {
+    /**
+     * 商品上架
+     */
+    public WareUpdateListingResponse doWareUpdateListing(ShopBean shop, String wareId)  {
+        WareUpdateListingRequest request = new WareUpdateListingRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        // 调用京东商品上架API(360buy.ware.update.listing)
+        WareUpdateListingResponse response = reqApi(shop, request);
+        return response;
+    }
+
+    /**
+     * 商品上架
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId String  京东商品id
+     * @param updateFlg boolean 新增/更新商品flg
+     * @return boolean  商品上架结果
+     */
+    public boolean doWareUpdateListing(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
+        String errMsg = updateFlg ? "更新商品成功之后上架操作失败" : "新增商品成功之后上架操作失败";
+
+        WareUpdateListingRequest request = new WareUpdateListingRequest();
+        // 商品id(必须)
+        request.setWareId(String.valueOf(wareId));
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        try {
+            // 调用京东商品上架API(360buy.ware.update.listing)
+            WareUpdateListingResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回商品上架成功
+                    return true;
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API商品上架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                    + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ex.getMessage());
+
+            throw new BusinessException(errMsg + "[商品ID:" + wareId + "] " + ex.getMessage());
+        }
+
+        logger.error("调用京东API商品上架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ",response=null");
+        return false;
+    }
+
+    /**
+     * 商品下架
+     */
+    public WareUpdateDelistingResponse doWareUpdateDelisting(ShopBean shop, String wareId) {
+        WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
+        // 商品id(必须)
+        request.setWareId(wareId);
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        // 调用京东商品下架API(360buy.ware.update.delisting)
+        WareUpdateDelistingResponse response = reqApi(shop, request);
+        return response;
+    }
+
+    /**
+     * 商品下架
+     *
+     * @param shop ShopBean  店铺信息
+     * @param wareId String  京东商品id
+     * @param updateFlg boolean 新增/更新商品flg
+     * @return boolean  商品下架结果
+     */
+    public boolean doWareUpdateDelisting(ShopBean shop, long wareId, boolean updateFlg) throws BusinessException {
+        String errMsg = updateFlg ? "更新商品成功之后下架操作失败" : "新增商品成功之后下架操作失败";
+
+        WareUpdateDelistingRequest request = new WareUpdateDelistingRequest();
+        // 商品id(必须)
+        request.setWareId(String.valueOf(wareId));
+        // 流水号（无实际意义，不重复即可）
+        request.setTradeNo(DateTimeUtil.getNowTimeStamp());
+
+        try {
+            // 调用京东商品下架API(360buy.ware.update.delisting)
+            WareUpdateDelistingResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回商品下架成功
+                    return true;
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API商品下架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                    + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ex.getMessage());
+
+            throw new BusinessException(errMsg + "[商品ID:" + wareId + "] " + ex.getMessage());
+        }
+
+        logger.error("调用京东API商品下架操作失败 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                + shop.getCart_id() + ",ware_id:" + wareId + ",errorMsg:" + ",response=null");
+        return false;
+    }
+
+    /**
+     * 获取上架/在售状态的产品列表(目前获取所有时间段，不作过滤，不考虑优化，下同)
+     * 只返回 ware_id (即num_iid)
+     */
+    public List<Ware> getOnListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String pageSize) throws JdException {
         ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
         WareListingGetRequest request = new WareListingGetRequest();
 
         request.setPage(strPageIndex);
-        request.setPageSize("100");
-        request.setFields(strFieldList);
-        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtil.getDate(), -7), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-        request.setEndModified(DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-        WareListingGetResponse response = reqApi(shopInfo, request);
+        request.setPageSize(pageSize);
+        request.setFields("ware_id");
+//        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
+//        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
+        WareListingGetResponse response = reqApi(shopInfo, request);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, "0".equals(response.getCode()) ? "total=" + response.getTotal() : response.getMsg() };
+        logger.info("getOnListProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getWareInfos();
     }
 
-    public List<Ware> getDeListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String strFieldList) throws JdException {
-
-
+    /**
+     * 获取下架/在库状态的产品列表
+     * 只返回wareId(即num_iid)
+     */
+    public List<Ware> getDeListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String pageSize) throws JdException {
         ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
-
         WareDelistingGetRequest request = new WareDelistingGetRequest();
 
         request.setPage(strPageIndex);
-        request.setPageSize("100");
-        request.setFields(strFieldList);
-        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtil.getDate(), -7), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-        request.setEndModified(DateTimeUtil.format(DateTimeUtil.getDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-        WareDelistingGetResponse response = reqApi(shopInfo, request);
+        request.setPageSize(pageSize);
+        request.setFields("ware_id");
+//        request.setStartModified(DateTimeUtil.format(DateUtils.addDays(DateTimeUtilBeijing.getCurrentBeiJingDate(), -1), DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00");
+//        request.setEndModified(DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
 
+        WareDelistingGetResponse response = reqApi(shopInfo, request);
+        if (response == null) {
+            return null;
+        }
+        Object[] objs = { strOrderChannelId, strCardId, "0".equals(response.getCode()) ? "total=" + response.getTotal() : response.getMsg() };
+        logger.info("getDeListProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getWareInfos();
     }
 }

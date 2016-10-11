@@ -15,11 +15,11 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
+public abstract class BaseMongoChannelDao<T> extends BaseJongoDao<T> {
 
     public static final String SPLIT_PART = "c";
 
-    protected String getCollectionName(String channelId) {
+    public String getCollectionName(String channelId) {
         return mongoTemplate.getCollectionName(this.collectionName, channelId, SPLIT_PART);
     }
 
@@ -35,7 +35,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findOne(strQuery, entityClass, getCollectionName(channelId));
     }
 
-    public T selectOneWithQuery(JomgoQuery queryObject, String channelId) {
+    public T selectOneWithQuery(JongoQuery queryObject, String channelId) {
         return mongoTemplate.findOne(queryObject, entityClass, getCollectionName(channelId));
     }
 
@@ -55,7 +55,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.find(strQuery, projection, entityClass, getCollectionName(channelId));
     }
 
-    public List<T> select(JomgoQuery queryObject, String channelId) {
+    public List<T> select(JongoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, entityClass, getCollectionName(channelId));
     }
 
@@ -63,7 +63,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.findCursor(strQuery, null, entityClass, getCollectionName(channelId));
     }
 
-    public Iterator<T> selectCursor(JomgoQuery queryObject, String channelId) {
+    public Iterator<T> selectCursor(JongoQuery queryObject, String channelId) {
         return mongoTemplate.findCursor(queryObject, entityClass, getCollectionName(channelId));
     }
 
@@ -74,7 +74,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
     /**
      * 使用此方法时必须注意，此处只会更新符合条件的第一条数据
      */
-    public T findAndModify(JomgoUpdate updateObject, String channelId) {
+    public T findAndModify(JongoUpdate updateObject, String channelId) {
         return mongoTemplate.findAndModify(updateObject, entityClass, getCollectionName(channelId));
     }
 
@@ -111,11 +111,11 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
         return mongoTemplate.upsertFirst(strQuery, strUpdate, getCollectionName(channelId));
     }
 
-    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateFirst(JongoUpdate updObj, String channelId) {
         return mongoTemplate.updateFirst(updObj, getCollectionName(channelId));
     }
 
-    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
         return mongoTemplate.updateMulti(updObj, getCollectionName(channelId));
     }
 
@@ -126,7 +126,7 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @param rsMap 更新操作，参数中必须明确指定操作类型如 $set, $addToSet等等，例如：{'$set':{'creater':'LAOWANG'}}
      * @return WriteResult
      */
-    @Deprecated // 推荐使用 updateFirst(JomgoUpdate updObj, String channelId) 或 updateMulti(JomgoUpdate updObj, String channelId)
+    @Deprecated // 推荐使用 updateFirst(JongoUpdate updObj, String channelId) 或 updateMulti(JongoUpdate updObj, String channelId)
     public WriteResult update(String channelId, Map paraMap, Map rsMap) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
@@ -228,12 +228,12 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @param bulkList  更新条件
      * @return 运行结果
      */
-    public BulkWriteResult bulkUpdateWithJomgo(String channelId, List<JomgoUpdate> bulkList) {
+    public BulkWriteResult bulkUpdateWithJongo(String channelId, List<JongoUpdate> bulkList) {
         //获取集合名
         DBCollection coll = getDBCollection(channelId);
         BulkWriteOperation bwo = coll.initializeOrderedBulkOperation();
 
-        for (JomgoUpdate model: bulkList) {
+        for (JongoUpdate model: bulkList) {
             //生成更新对象
             Query updObj = mongoTemplate.jongo.createQuery(model.getUpdate(), model.getUpdateParameters());
 
@@ -262,12 +262,12 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * @return List<Map> 返回的Map数据结构和aggregate语句对应
      */
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(String channelId, List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<Map<String, Object>> aggregateToMap(String channelId, List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToMap(channelId, aggregates);
     }
     @SuppressWarnings("unchecked")
-    public List<Map<String, Object>> aggregateToMap(String channelId, JomgoAggregate... aggregates) {
+    public List<Map<String, Object>> aggregateToMap(String channelId, JongoAggregate... aggregates) {
         return (List<Map<String, Object>>) aggregateToObj(Map.class, getCollectionName(channelId), aggregates);
     }
 
@@ -276,11 +276,11 @@ public abstract class BaseMongoChannelDao<T> extends BaseJomgoDao<T> {
      * 必须注意：这里的Model不能简单使用表定义对应的Model，而是要和aggregate语句对应(要定义新的Model/Dao)，否则查询无正确数据
      */
     @SuppressWarnings("unchecked")
-    public List<T> aggregateToObj(String channelId, List<JomgoAggregate> aggregateList) {
-        JomgoAggregate[] aggregates = aggregateList.toArray(new JomgoAggregate[aggregateList.size()]);
+    public List<T> aggregateToObj(String channelId, List<JongoAggregate> aggregateList) {
+        JongoAggregate[] aggregates = aggregateList.toArray(new JongoAggregate[aggregateList.size()]);
         return aggregateToObj(channelId, aggregates);
     }
-    public List<T> aggregateToObj(String channelId, JomgoAggregate... aggregates) {
+    public List<T> aggregateToObj(String channelId, JongoAggregate... aggregates) {
         return aggregateToObj(entityClass, getCollectionName(channelId), aggregates);
     }
 }

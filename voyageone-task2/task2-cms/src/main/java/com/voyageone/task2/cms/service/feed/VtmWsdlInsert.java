@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +85,8 @@ public class VtmWsdlInsert extends BaseTaskService {
         private List<CmsBtFeedInfoModel> getModels(String category) throws Exception {
 
             Map colums = getColumns();
+            Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
+
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
@@ -105,9 +110,37 @@ public class VtmWsdlInsert extends BaseTaskService {
 
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
-                modelBeans.add(cmsBtFeedInfoModel);
 
+                //设置重量
+                List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+                for (CmsBtFeedInfoModel_Sku sku : skus) {
+                    String Weight = sku.getWeightOrg().trim();
+                    Pattern pattern = Pattern.compile("[^0-9.]");
+                    Matcher matcher = pattern.matcher(Weight);
+                    if (matcher.find()) {
+                        int index = Weight.indexOf(matcher.group());
+                        if (index != -1) {
+                            String weightOrg = Weight.substring(0, index);
+                            sku.setWeightOrg(weightOrg);
+                        }
+                    }
+                    sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+                }
+                cmsBtFeedInfoModel.setSkus(skus);
+                //设置重量结束
+
+                if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
+                    CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
+                    beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                    beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                    beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
+                    beforeFeed.setAttribute(BaseAnalysisService.attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
+                }else{
+                    modelBeans.add(cmsBtFeedInfoModel);
+                    codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);
+                }
             }
+
             $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
 
             return modelBeans;
@@ -146,6 +179,14 @@ public class VtmWsdlInsert extends BaseTaskService {
             map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
             map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
             map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
+
+            map.put("quantity", (Feeds.getVal1(channel, FeedEnums.Name.quantity)));
+            map.put("material", (Feeds.getVal1(channel, FeedEnums.Name.material)));
+            map.put("usage_en", (Feeds.getVal1(channel, FeedEnums.Name.usage_en)));
+            map.put("weight_org", (Feeds.getVal1(channel, FeedEnums.Name.weight_org)));
+            map.put("weight_org_unit", (Feeds.getVal1(channel, FeedEnums.Name.weight_org_unit)));
+            map.put("weight_calc", (Feeds.getVal1(channel, FeedEnums.Name.weight_calc)));
+
             return map;
         }
 

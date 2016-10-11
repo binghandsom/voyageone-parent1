@@ -12,19 +12,23 @@
                             <div class="form-horizontal">
                                 <div class="row form-group" ng-controller="popupCtrl">
                                     <div class="col-sm-3 text-right">
-                                        <button class="btn btn-pop btn-default ng-binding" ng-click="openFeedCategoryMapping(popupNewCategory)">
+                                        <button class="btn btn-pop btn-default ng-binding" ng-click="openFeedCategoryMapping(popCategoryMul)">
                                             <i class="fa fa-arrow-circle-right"></i>&nbsp;Feed类目
                                         </button>
                                     </div>
                                     <div class="col-sm-8">
-                                        <input class="form-control ng-pristine ng-valid ng-not-empty ng-valid-required ng-touched" ng-model="vm.searchInfo.category" disabled/>
+                                        <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.category"
+                                                 ng-options="cat as cat for cat in vm.searchInfo.category" ng-disabled="true"
+                                                 width="'100%'">
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
                                     <div class="col-sm-8">
                                         <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.brand"
-                                                ng-options="brand.value as brand.key for brand in vm.masterData.brandList" width="'100%'">
+                                                ng-options="brand.value as brand.key for brand in vm.masterData.brandList"
+                                                width="'100%'">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
@@ -84,9 +88,9 @@
                                     <div class="col-sm-8">
                                         <select class="form-control m-r-xs" ng-model="vm.searchInfo.priceType">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="priceClientMsrp">海外官方价格</option>
-                                            <option value="priceClientRetail">海外指导价格</option>
-                                            <option value="priceNet">海外成本价格</option>
+                                            <option value="priceClientMsrp" translate="TXT_CLIENT_MSRP_PRICE"></option>
+                                            <option value="priceClientRetail" translate="TXT_CLIENT_RETAIL_PRICE"></option>
+                                            <option value="priceNet" translate="TXT_CLIENT_NET_PRICE"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -102,27 +106,32 @@
                                     <label class="col-sm-3 control-label">{{'TXT_FEED_STATUS' | translate}}</label>
                                     <div class="col-sm-8">
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="9" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[9]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
                                             </label>&emsp;
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="0" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[0]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
                                             </label>
                                         </div>
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="1" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[1]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
                                             </label>
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="2" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox" ng-model="status[2]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
                                             </label>
                                         </div>
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="3" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[3]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
                                             </label>&emsp;
-                                            <label class="checkbox-inline c-radio">
-                                                <input name="priceType" type="radio" value="8" ng-model="vm.searchInfo.status"><span class="fa fa-check"></span> {{'TXT_FeedStatus_DateError' | translate}}
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input type="checkbox" ng-model="status[8]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_DateError' | translate}}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[7]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_BrandBlock' | translate}}
                                             </label>
                                         </div>
                                     </div>
@@ -309,7 +318,12 @@
                             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="min-width:2840px;table-layout: fixed;" ng-controller="popupCtrl">
                                 <thead>
                                 <tr><!--24-->
-                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">Select</th>
+                                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
+                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)" ng-checked="isAllSelected(vm.feedSelList)" ng-disabled="!vm.feedList.length || !vm.feedSelList.currPageRows.length">
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
                                     <th class="text-center mfb-x" translate="TXT_IMAGE"></th>
                                     <th class="text-left mfb-x" translate="TXT_CATEGORY"></th>
                                     <th class="text-center mfb-x" translate="TXT_PRODUCT_CODE"></th>
@@ -317,19 +331,19 @@
                                     <th class="text-left mfb-x" translate="TXT_MODEL"></th>
                                     <th class="text-left mfb-x" translate="TXT_STATUS"></th>
                                     <th class="text-center mfb-x" translate="TXT_INVENTORY"></th>
-                                    <th class="text-left mfb-x" translate="TXT_SHORT_NAME"></th>
-                                    <th class="text-left mfb-x" translate="TXT_LONG_TITLE_WITH_LONG_DESCRIPTION"></th>
+                                    <th class="text-left mfb-x" translate="TXT_SHORT_DESCRIPTION"></th>
+                                    <th class="text-left mfb-x" translate="TXT_LONG_DESCRIPTION"></th>
                                     <th class="text-left mfb-x" translate="TXT_COLOR"></th>
-                                    <th class="text-left mfb-x" >Origin</th>
+                                    <th class="text-left mfb-x" translate="TXT_PRODUCTION_AREA"></th>
                                     <th class="text-left mfb-x" translate="TXT_PRODUCT_TYPE"></th>
                                     <th class="text-left mfb-x" translate="TXT_SIZE_TYPE"></th>
                                     <th class="text-left mfb-x" translate="TXT_BRAND"></th>
-                                    <th class="text-right mfb-x" >MSRP(USD)</th>
-                                    <th class="text-right mfb-x" >Retail Price(USD)</th>
-                                    <th class="text-right mfb-x" >Cost Price(USD)</th>
-                                    <th class="text-right mfb-x" >MSRP(RMB)</th>
-                                    <th class="text-right mfb-x" >Retail Price(RMB)</th>
-                                    <th class="text-center mfb-x" translate="TXT_SKU_INVENTORY"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_MSRP_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_RETAIL_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CLIENT_NET_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CHINA_MSRP_PRICE"></th>
+                                    <th class="text-right mfb-x" translate="TXT_CHINA_RETAIL_PRICE"></th>
+                                    <th class="text-center mfb-x" translate="TXT_SKU_COUNT"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_ERROR_MESSAGE"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_CREATE_TIME"></th>
                                     <th class="text-center mfb-xxt" translate="TXT_UPDATE_TIME"></th>

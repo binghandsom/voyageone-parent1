@@ -21,6 +21,14 @@ define(['underscore'], function (_) {
 
     return {
         /**
+         * Master
+         */
+        MASTER:new Cart('MASTER' , 0 , '主数据',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('FEED' , 1 , 'Feed数据',''),
+        /**
          * 天猫
          */
         TM: new Cart('TM', 20, '天猫', ''),
@@ -61,6 +69,15 @@ define(['underscore'], function (_) {
         JM: new Cart('JM', 27, '聚美优品', 'http://item.jumeiglobal.com/'),
 
         /**
+         * 天猫国际官网同购
+         */
+        TT: new Cart('TT', 30, '天猫国际官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+        /**
+         * 天猫国际USJOI官网同购
+         */
+        USTT: new Cart('USTT', 31, '天猫国际USJOI官网同购', 'https://detail.tmall.hk/hk/item.htm?id='),
+
+        /**
          * 京东匠心界
          */
         USJGJ: new Cart('USJGJ', 928, 'USJOI匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
@@ -71,6 +88,11 @@ define(['underscore'], function (_) {
         USJGY: new Cart('USJGY', 929, 'USJOI悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
 
         /**
+         * 测试USJOI
+         */
+        USJGT: new Cart('USJGT', 998, 'USJOI测试京东', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+
+        /**
          * 京东匠心界
          */
         JGJ: new Cart('JGJ', 28, '京东匠心界', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
@@ -79,6 +101,11 @@ define(['underscore'], function (_) {
          * 京东悦境
          */
         JGY: new Cart('JGY', 29, '京东悦境', 'http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId='),
+
+        /**
+         * 测试USJOI
+         */
+        JGT: new Cart('JGT', 98, 'USJOI测试', 'https://detail.tmall.hk/hk/item.htm?id='),
 
         /**
          * Mini Mall

@@ -1,5 +1,6 @@
 package com.voyageone.service.model.cms.mongo.product;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.StringUtils;
@@ -29,8 +30,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private Long prodId;
     //商品lock
     private String lock = "";
-    //商品注释
-    private String comment = "";
     //共通属性
     private CmsBtProductModel_Common common = new CmsBtProductModel_Common();
     //平台属性Map
@@ -39,6 +38,8 @@ public class CmsBtProductModel extends ChannelPartitionModel {
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
     //销售数据统计
     private CmsBtProductModel_Sales sales = new CmsBtProductModel_Sales();
+    // BI数据统计
+    private BaseMongoMap bi = new BaseMongoMap();
     //标签
     private List<String> tags = new ArrayList<>();
     //品牌方标签
@@ -76,15 +77,6 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setLock(String lock) {
         this.lock = lock;
-    }
-
-    //comment
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     //common
@@ -220,6 +212,14 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     public void setSales(CmsBtProductModel_Sales sales) {
         this.sales = sales;
+    }
+
+    public BaseMongoMap getBi() {
+        return bi;
+    }
+
+    public void setBi(BaseMongoMap bi) {
+        this.bi = bi;
     }
 
     //tags

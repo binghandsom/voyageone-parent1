@@ -27,6 +27,7 @@ public class MySqlPageHelper {
     public static PageBoundsMap build() {
         return new PageBoundsMap(null);
     }
+
     /**
      * 加入检索条件
      *
@@ -52,7 +53,15 @@ public class MySqlPageHelper {
             }
             this.param.put(key, new PageBounds());
         }
-
+        /**
+         * 加入检索条件
+         *
+         * @param key 为字符串，即参数名，value 为值
+         */
+        public PageBoundsMap addQuery(String key, Object value) {
+            this.param.put(key, value);
+            return this;
+        }
         /**
          * 设置排序条件
          *
@@ -65,7 +74,8 @@ public class MySqlPageHelper {
 
         /**
          * 添加排序条件
-         * @param property 排序子段
+         *
+         * @param property  排序子段
          * @param direction 排序方向
          */
         public PageBoundsMap addSort(String property, Order.Direction direction) {

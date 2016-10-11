@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class ProductServiceTest {
 
     @Autowired
@@ -112,8 +112,13 @@ public class ProductServiceTest {
 
     @Test
     public void testGetProductById() throws Exception {
-        System.out.println(JacksonUtil.bean2Json(productService.getOmsProductsInfo("017", "017-101500", null, null, null, "27", null)));
-        System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
+        System.out.println(JacksonUtil.bean2Json(productService.getOmsProductsInfo("017", "", null, null, null, "27", null)));
+//        System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
     }
 
+    @Test
+    public void testGetProductByNumIid() throws Exception {
+        List<CmsBtProductModel> a = productService.getProductByNumIid("010", "527616787069", 23);
+        System.out.println(JacksonUtil.bean2Json(a));
+    }
 }

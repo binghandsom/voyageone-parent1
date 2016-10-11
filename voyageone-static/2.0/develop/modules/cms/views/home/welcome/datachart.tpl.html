@@ -4,7 +4,14 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;欢迎页面
+                        <!--/cms/home/menu/sumHome?channelId=010-->
                     </h4>
+                </div>
+                <div class="panel-body">
+                    <div class="text-warnings">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;
+                        首页&nbsp;<strong>【每小时刷新一次】</strong>&nbsp;，如与其它反馈有些许差异，请稍后重新确认。
+                    </div>
                 </div>
             </div>
         </div>
@@ -27,37 +34,44 @@
                                 </li>
                                 <li>
                                     <div class="right data-priority-3"
-                                         ng-click="jump('/feed/product_list',{status:'9'})">
+                                         ng-click="jump('/feed/product_list',{status:9})">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NEW.amountVal}}</strong>
                                         新品数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-4"
-                                         ng-click="jump('/feed/product_list',{status:'1'})">
+                                         ng-click="jump('/feed/product_list',{status:1})">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FINISH.amountVal}}</strong>
                                         导入完成数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-0"
-                                         ng-click="jump('/feed/product_list',{status:'3'})">
+                                         ng-click="jump('/feed/product_list',{status:3})">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_NOT_IMPORT.amountVal}}</strong>
                                         不导入数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-1"
-                                         ng-click="jump('/feed/product_list',{status:'2'})">
+                                         ng-click="jump('/feed/product_list',{status:2})">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_STATUS_IMPORT_FAILD.amountVal}}</strong>
                                         导入失败数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-1"
-                                         ng-click="jump('/feed/product_list',{status:'8'})">
+                                         ng-click="jump('/feed/product_list',{status:8})">
                                         <strong>{{vm.sumData.feedSum.CMS_FEED_DATA_ERROR.amountVal}}</strong>
                                         Feed数据错误数
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="right data-priority-1"
+                                         ng-click="jumpBlackBrand('0|1|0')">
+                                        <strong>{{vm.sumData.feedSum.CMS_FEED_feedBrand_block.amountVal}}</strong>
+                                        黑名单品牌数
                                     </div>
                                 </li>
                             </ul>
@@ -75,23 +89,30 @@
                             <ul class="stat-boxes">
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="goSearchPage(10,{mCatStatus:'0'})">
+                                         ng-click="goSearchPage(10,{mCatStatus:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_CATEGORY.amountVal}}</strong>
                                         等待设置主类目数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right  data-priority-2"
-                                         ng-click="goSearchPage(10,{taxNoStatus:'0'})">
+                                         ng-click="goSearchPage(10,{taxNoStatus:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_NO_HSCODE.amountVal}}</strong>
                                         等待设置税号数
                                     </div>
                                 </li>
                                 <li>
                                     <div class="right data-priority-2"
-                                         ng-click="goSearchPage(10,{transStsFlg:'0'})">
+                                         ng-click="goSearchPage(10,{transStsFlg:'0',lockFlg:'0'})">
                                         <strong>{{vm.sumData.masterSum.CMS_MASTER_UNTRANSLATED.amountVal}}</strong>
                                         等待翻译数
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="right data-priority-2"
+                                         ng-click="jumpBlackBrand('1|1|0')">
+                                        <strong>{{vm.sumData.masterSum.CMS_MASTER_Brand_block.amountVal}}</strong>
+                                        黑名单品牌数
                                     </div>
                                 </li>
                             </ul>
@@ -100,7 +121,7 @@
                 </div>
             </div>
             <div class="col-sm-12">
-                <div class="col-sm-4">
+                <div class="col-sm-5">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-bar-chart-o"></i>&nbsp;&nbsp;指导售价变化状态</h3>
@@ -113,15 +134,19 @@
                                             <thead>
                                             <tr>
                                                 <th class="mfb-xxt text-center">平台</th>
+                                                <th class="mfb-xxt text-center">无法计算</th>
                                                 <th class="mfb-xxt text-center">指导售价涨价数</th>
                                                 <th class="mfb-xxt text-center">指导售价降价数</th>
+                                                <th class="mfb-xxx text-center">比中国建议零售价高数</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="m in vm.sumData.listPlatformPriceSum">
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
+                                                <td class=" mfb-xxt text-center"><a ng-click="goSearchPage(180,{cartId:m.CMS_PLATFORM_priceSale_Equal_minus1.cartId,priceType:'priceRetail',priceStart:-1,priceEnd:-1})">{{m.CMS_PLATFORM_priceSale_Equal_minus1.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'U'})">{{m.CMS_PLATFORM_Retail_Price_UP.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_Retail_Price_DOWN.cartId,priceChgFlg:'D'})">{{m.CMS_PLATFORM_Retail_Price_DOWN.amountVal}}</a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(20,{cartId:m.CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE.cartId,priceChgFlg:'XU'})">{{m.CMS_PLATFORM_MSRP_LESS_THAN_RETAIL_PRICE.amountVal}}</a></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -155,8 +180,8 @@
                                                 <td class="mfb-xxt text-center">{{m.platformName}}</td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN.cartId,priceDiffFlg:'2'})">{{m.CMS_PLATFORM_PRICE_DOWN.amountVal}}</a></td>
                                                 <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP.cartId,priceDiffFlg:'3'})">{{m.CMS_PLATFORM_PRICE_UP.amountVal}}</a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.cartId,priceDiffFlg:'4'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.amountVal}}</label></a></td>
-                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.cartId,priceDiffFlg:'5'})"><label class="label label-danger">{{m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.amountVal}}</label></a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.cartId,priceDiffFlg:'4'})"><span class="label label-danger">{{m.CMS_PLATFORM_PRICE_UP_BREAKDOWN.amountVal}}</span></a></td>
+                                                <td class="mfb-xxt text-center"><a ng-click="goSearchPage(30,{cartId:m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.cartId,priceDiffFlg:'5'})"><span class="label label-danger">{{m.CMS_PLATFORM_PRICE_DOWN_BREAKDOWN.amountVal}}</span></a></td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -180,23 +205,30 @@
                                             <th class="mfb-xxt text-center">平台</th>
                                             <th class="mfb-xt text-center">商品数</th>
                                             <th class="mfb-xxt text-center">等待设置平台类目数</th>
-                                            <th class="mfb-xxt text-center">等待设置属性数</th>
+                                            <th class="mfb-xt text-center">等待设置属性数</th>
                                             <th class="mfb-xxt text-center">等待Approved数</th>
-                                            <th class="mfb-xxt text-center">等待上新数</th>
-                                            <th class="mfb-xxs text-center">上新成功数</th>
-                                            <th class="mfb-xxt text-center">上新失败数</th>
+                                            <th class="mfb-xt text-center">等待上新数</th>
+                                            <th class="mfb-xt text-center">上新成功数</th>
+                                            <th class="mfb-xt text-center">上新失败数</th>
+                                            <th class="mfb-xt text-center">品牌未匹配数</th>
+                                            <th class="mfb-xxt text-center">商品平台状态与实际相异数</th>
+                                            <th class="mfb-xxt text-center">黑名单品牌数</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="m in vm.sumData.listPlatformInfoSum">
-                                            <td class="mfb-xxt text-center">{{m.platformName}}</td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(110,{cartId:m.CMS_PLATFORM_ALL.cartId})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(120,{cartId:m.CMS_PLATFORM_NO_CATEGORY.cartId,pCatStatus:true})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
-                                            <td class="mfb-xxt text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:true})"><label class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</label></a></td>
+                                            <td>{{m.platformName}}</td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(110,{cartId:m.CMS_PLATFORM_ALL.cartId})">{{m.CMS_PLATFORM_ALL.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(120,{cartId:m.CMS_PLATFORM_NO_CATEGORY.cartId,pCatStatus:true})">{{m.CMS_PLATFORM_NO_CATEGORY.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(130,{cartId:m.CMS_PLATFORM_NO_ATTRIBUTE.cartId,propertyStatus:'0'})">{{m.CMS_PLATFORM_NO_ATTRIBUTE.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_READY.cartId,productStatus:{'Ready':true}})">{{m.CMS_PLATFORM_READY.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_WAITING_PUBLISH.cartId,productStatus:{'Approved':true},platformStatus:{'WaitingPublish':true}})">{{m.CMS_PLATFORM_WAITING_PUBLISH.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(140,{cartId:m.CMS_PLATFORM_PUBLISH_SUCCESS.cartId,hasErrorFlg:'1',productStatus:{'Approved':true},platformStatus:{'InStock':true,'OnSale':true}})">{{m.CMS_PLATFORM_PUBLISH_SUCCESS.amountVal}}</a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(150,{cartId:m.CMS_PLATFORM_PUBLISH_FAILD.cartId,hasErrorFlg:'2'})"><span class="label label-danger">{{m.CMS_PLATFORM_PUBLISH_FAILD.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a href="#/channel/brand_mapping_list/{{m.CMS_BrandNoMatchCount.cartId}}"><span class="label label-danger">{{m.CMS_BrandNoMatchCount.amountVal}}</span></a></td>
+                                            <td class=" text-center"><a ng-click="goSearchPage(170,{cartId:m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.cartId,hasErrorFlg:'3'})"><span class="label label-danger">{{m.CMS_PLATFORM_pStatus_pReallyStatus_notEqual.amountVal}}</span></a></td>
+
+                                            <td class=" text-center"><a ng-click="jumpBlackBrandNew(2,1,m.CMS_PLATFORM_Brand_block.cartId)"><span class="label label-danger">{{m.CMS_PLATFORM_Brand_block.amountVal}}</span></a></td>
                                         </tr>
                                         </tbody>
                                     </table>

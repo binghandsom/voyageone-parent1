@@ -1,0 +1,107 @@
+<div class="breadcrumbs">
+    <div class="container">
+        <h4 class="pull-left" translate="TXT_PRODUCT_FEED_SEARCH"></h4>
+        <ul class="pull-right breadcrumb">
+            <li><a href="#/home" translate="TXT_HOME"></a></li>
+            <li class="active disabled" translate="TXT_FEED"></li>
+            <li class="active selected" translate="TXT_PRODUCT_FEED_SEARCH"></li>
+        </ul>
+    </div>
+</div>
+
+<div class="container content" ng-init="ctrl.init()">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="form-inline" ng-if="ctrl.categories.length > 0">
+                <!-- Category -->
+                <nav class="navbar navbar-default" role="navigation">
+                    <div class="collapse navbar-collapse" ng-class="!navCollapsed && 'in'">
+                        <ul class="nav navbar-nav">
+                            <li uib-dropdown>
+                                <a href="#" uib-dropdown-toggle style="padding: 0 14px 0 0px;margin-left: -15px;color: #333;" ng-change="ctrl.deleteCat(ctrl.aa)" ng-model="ctrl.aa" result="ctrl.searchCats">
+                                    {{'TXT_CATEGORY'|translate}}&nbsp;&nbsp;<i class="fa fa-angle-down"></i>
+                                </a>
+                                <tree tree='ctrl.categories' result="ctrl.searchCats" search="ctrl"></tree>
+                            </li>
+                            <span ng-repeat="cat in ctrl.searchCats">
+                                <label class="selectedCat" title="click to remove" ng-click="ctrl.deleteCat(cat)">
+                                    <i class="fa fa-close"></i>&nbsp;&nbsp;{{cat}}</label>
+                            </span>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+            <div class="form-inline">
+                <div class="form-group">
+                    <!-- Parent SKU -->
+                    <label class="control-label" translate="TXT_SKU"></label>
+                    <input id="Parent SKU" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.parentSku" enter-click="#searchButton">
+                    <!-- Brand -->
+                    <label class="control-label" translate="TXT_NAME"></label>
+                    <input id="Brand" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.name" enter-click="#searchButton">
+                    <!-- Category -->
+                    <!--<label class="control-label" translate="TXT_CATEGORY"></label>
+                    <input id="Category" type="text" class="form-control input-sm m-r-sm" ng-model="ctrl.category" enter-click="#searchButton">-->
+                    <!-- Price -->
+                    <label class="control-label" translate="TXT_VO_PRICE"></label>
+                    <input id="startPrice" type="number" class="form-control input-sm" ng-model="ctrl.priceStart" enter-click="#searchButton">
+                    <span>~</span>
+                    <input id="endPrice" type="number" class="form-control input-sm m-r-sm" ng-model="ctrl.priceEnd" enter-click="#searchButton">
+                    <!-- Inventory -->
+                    <label class="control-label" translate="TXT_INVENTORY"></label>
+                    <input id="startQty" type="number" class="form-control input-sm" ng-model="ctrl.qtyStart" enter-click="#searchButton">
+                    <span>~</span>
+                    <input id="endQty" type="number" class="form-control input-sm" ng-model="ctrl.qtyEnd" enter-click="#searchButton">
+
+                </div>
+                <div class="pull-right">
+                    <button id="searchButton" class="btn btn-primary btn-sm" ng-click="ctrl.search()" translate="BTN_SEARCH"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-vo">
+        <div class="panel-body">
+            <div class="table-responsive" if-no-rows="ctrl.feedInfoList.length">
+                <table class="table table-fixed table-vo">
+                    <thead>
+                    <tr>
+                        <th class="text-right td-0-2-5" ng-click="ctrl.toggleAll()" ng-if="ctrl.showAll"><i ng-class="{'fa fa-plus': ctrl.collapse, 'fa fa-minus':!ctrl.collapse}"></i></th>
+                        <th class="v-middle td-1 text-center" translate="TXT_IMAGE"></th>
+                        <th class="v-middle td-3 text-left" translate="TXT_CATEGORY"></th>
+                        <th class="v-middle td-3 text-left" translate="TXT_CONTENT"></th>
+                        <th class="v-middle td-1-2-5 text-left" translate="TXT_SKU"></th>
+                        <th class="v-middle td-1 text-left" translate="TXT_VO_PRICE"></th>
+                        <th class="v-middle td-1 text-center" translate="TXT_INVENTORY"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat-start="feedInfo in ctrl.feedInfoList" ng-class="::feedInfo.className">
+                        <td class="text-right v-middle" ng-click="feedInfo.collapse = !feedInfo.collapse"  ng-if="ctrl.showAll"><i ng-if="feedInfo.skus.length > 1" ng-class="{'fa fa-plus': feedInfo.collapse, 'fa fa-minus':!feedInfo.collapse}"></i>
+                        </td>
+                        <td class="v-middle text-center"><img class="thumb-md" ng-src="{{feedInfo.image}}" ng-click="ctrl.open(feedInfo.image)"></td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.category}}</td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.name}} [{{feedInfo.skuNum}}SKU(s)]</td>
+                        <td class="v-middle word-wrap text-left" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.code}}</td>
+                        <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice == feedInfo.maxVoPrice">{{feedInfo.maxVoPrice | currency:'$':2}}</td>
+                        <td class="v-middle text-left" ng-click="feedInfo.collapse = !feedInfo.collapse" ng-if="feedInfo.minVoPrice != feedInfo.maxVoPrice">{{feedInfo.minVoPrice | currency:'$':2}}~{{feedInfo.maxVoPrice | currency:'$':2}}</td>
+                        <td class="v-middle text-center" ng-click="feedInfo.collapse = !feedInfo.collapse">{{feedInfo.qtyTotal}}</td>
+                    </tr>
+                    <tr ng-if="!feedInfo.collapse" ng-class="::feedInfo.subClassName" ng-repeat="skuInfo in feedInfo.skus" ng-repeat-end>
+                        <td class="text-right v-middle"></td>
+                        <td class="v-middle text-center"></td>
+                        <td class="v-middle"></td>
+                        <td class="v-middle">{{skuInfo.variationTheme}}:{{skuInfo.size}}; weight:{{skuInfo.weight}}</td>
+                        <td class="v-middle word-wrap">{{skuInfo.sku}}</td>
+                        <td class="v-middle">{{skuInfo.voPrice | currency:'$':2}}</td>
+                        <td class="v-middle text-center">{{skuInfo.qty}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-sm-12 m-t-lg no-padding">
+                <vpagination config="ctrl.pageOption" total="ctrl.pageOption.total"></vpagination>
+            </div>
+        </div>
+    </div>
+</div>

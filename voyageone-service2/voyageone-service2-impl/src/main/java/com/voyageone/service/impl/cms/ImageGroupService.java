@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -12,15 +14,17 @@ import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * ImageGroup Service
@@ -41,6 +45,8 @@ public class ImageGroupService extends BaseService {
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
+    @Autowired
+    CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
 
     /**
      * 新建ImageGroup信息
@@ -55,17 +61,25 @@ public class ImageGroupService extends BaseService {
      * @param productTypeList 相关产品类型列表
      * @param sizeTypeList    相关尺码列表
      */
-    public void save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
-                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+    public CmsBtImageGroupModel save(String channelId, String userName, String cartId, String imageGroupName, String imageType, String viewType,
+                                     List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, int sizeChartId, String sizeChartName) {
         CmsBtImageGroupModel model = new CmsBtImageGroupModel();
         model.setChannelId(channelId);
         model.setCreater(userName);
         model.setModifier(userName);
-        model.setCartId(Integer.parseInt(cartId));
+        model.setSizeChartId(sizeChartId);
+        model.setSizeChartName(sizeChartName);
+        if (cartId != null) {
+            model.setCartId(Integer.parseInt(cartId));
+        }
         model.setImageGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_GROUP_ID));
         model.setImageGroupName(imageGroupName);
-        model.setImageType(Integer.parseInt(imageType));
-        model.setViewType(Integer.parseInt(viewType));
+        if (imageType != null) {
+            model.setImageType(Integer.parseInt(imageType));
+        }
+        if (viewType != null) {
+            model.setViewType(Integer.parseInt(viewType));
+        }
         // 什么都不选的情况下，要设置成"All"
         if (brandNameList.isEmpty()) {
             List<String> lst = new ArrayList<>();
@@ -90,6 +104,7 @@ public class ImageGroupService extends BaseService {
         }
         model.setActive(1);
         cmsBtImageGroupDao.insert(model);
+        return model;
     }
 
     /**
@@ -131,7 +146,7 @@ public class ImageGroupService extends BaseService {
      * @param sizeTypeList    相关尺码列表
      */
     public void update(String userName, String imageGroupId, String cartId, String imageGroupName, String imageType, String viewType,
-                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList) {
+                       List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList, int sizeChartId, String sizeChartName) {
         CmsBtImageGroupModel model = getImageGroupModel(imageGroupId);
         if (model != null) {
             model.setModifier(userName);
@@ -139,6 +154,8 @@ public class ImageGroupService extends BaseService {
             model.setImageGroupName(imageGroupName);
             model.setImageType(Integer.parseInt(imageType));
             model.setViewType(Integer.parseInt(viewType));
+            model.setSizeChartId(sizeChartId);
+            model.setSizeChartName(sizeChartName);
             if (brandNameList.isEmpty()) {
                 List<String> lst = new ArrayList<>();
                 lst.add("All");
@@ -199,7 +216,7 @@ public class ImageGroupService extends BaseService {
     public List<CmsBtImageGroupModel> getList(String channelId, List<Integer> platFormChangeList, String imageType, String beginModified,
                                               String endModified, List<String> brandNameList, List<String> productTypeList, List<String> sizeTypeList,
                                               int curr, int size) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(getSearchQuery(channelId, platFormChangeList, imageType, beginModified,
                 endModified, brandNameList, productTypeList, sizeTypeList));
         queryObject.setSort("{imageGroupId:-1}");
@@ -234,8 +251,9 @@ public class ImageGroupService extends BaseService {
      * @param imageGroupId 图片组id
      */
     public CmsBtImageGroupModel getImageGroupModel(String imageGroupId) {
-        JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+        JongoQuery queryObject = new JongoQuery();
+        // queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + ",\"active\":1}");
+        queryObject.setQuery("{\"imageGroupId\":" + imageGroupId + "}");
         return cmsBtImageGroupDao.selectOneWithQuery(queryObject);
     }
 
@@ -478,5 +496,51 @@ public class ImageGroupService extends BaseService {
             ftpComponent.closeConnect();
         }
         return URL_PREFIX + ftpFileBean.getRemotePath() + "/" + ftpFileBean.getRemoteFilename();
+    }
+
+    //获取未匹配尺码表
+    public Map<String, List<Map<String, Object>>> getNoMatchSizeImageGroupList(String channelId, String lang) {
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"channelId\":\"" + channelId + "\",\"imageType\":2,\"active\":1}");
+        queryObject.setProjection("{'imageGroupId':1,'cartId':1,'imageGroupName':1,'_id':0}");
+        List<CmsBtImageGroupModel> grpList = cmsBtImageGroupDao.select(queryObject);
+
+        HashSet<String> hsSizeChart = new HashSet<>();//所有平台尺码
+        List<CmsBtSizeChartImageGroupModel> listCmsBtSizeChartImageGroup = cmsBtSizeChartImageGroupService.getList(channelId);
+        listCmsBtSizeChartImageGroup.forEach((o) -> {
+            hsSizeChart.add(o.getCmsBtImageGroupId() + "" + o.getCartId());
+        });
+
+        List<TypeChannelBean> listCart = TypeChannels.getTypeListSkuCarts(channelId, "A", lang); //TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, lang);
+        Map<String, List<Map<String, Object>>> mapResult = new HashedMap();
+        listCart.forEach(o -> {
+            mapResult.put(o.getValue(), new ArrayList<Map<String, Object>>());
+        });
+        grpList.forEach((o) -> {
+            //for (TypeChannelBean cart : listCart) {
+            if (!hsSizeChart.contains(o.getImageGroupId() + "" + o.getCartId()))//未匹配
+            {
+                Map<String, Object> map = new HashedMap();
+                map.put("imageGroupId", o.getImageGroupId());
+                map.put("imageGroupName", o.getImageGroupName());
+                map.put("cartId", o.getCartId());
+                if (mapResult.containsKey(String.valueOf(o.getCartId()))) {
+                    mapResult.get(String.valueOf(o.getCartId())).add(map);
+                }
+            }
+            //}
+        });
+        return mapResult;
+    }
+
+    public void update(CmsBtImageGroupModel model) {
+        cmsBtImageGroupDao.update(model);
+    }
+
+    public boolean EXISTSName(String channelId, int cartId, String imageGroupName, long imageGroupId) {
+        JongoQuery query = new JongoQuery().setQuery(new Criteria("imageGroupName").is(imageGroupName).and("imageGroupId").ne(imageGroupId).and("channelId").is(channelId));
+        //  long count = cmsBtImageGroupDao.countByQuery("{\"channelId\":\"" + channelId + "\""+",\"cartId\":" + cartId +",\"imageGroupName\":\"" + imageGroupName + "\"" + ",\"imageGroupId\": { $ne:" + imageGroupId + "}}");
+        long count = cmsBtImageGroupDao.countByQuery(query.getQuery());
+        return count > 0;
     }
 }

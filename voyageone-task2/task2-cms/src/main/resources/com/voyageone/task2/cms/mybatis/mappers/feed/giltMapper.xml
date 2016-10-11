@@ -2,12 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_zz_worktable_gilt_superfeed_insertList">
-        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
+        INSERT IGNORE INTO voyageone_cms2.cms_zz_feed_gilt_product_temp (id, product_id, product_look_id, locale, name,
         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
         prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
-        categories_key, updateFlag, md5) VALUES
+        categories_key, qty,updateFlag, md5) VALUES
         <foreach collection="items" item="i" separator=",">
             (#{i.id}, #{i.product_id}, #{i.product_look_id}, #{i.locale}, #{i.name}, #{i.description},
             #{i.country_code}, #{i.brand_id},
@@ -18,7 +18,7 @@
             #{i.prices_sale_currencty},
             #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
             #{i.product_codes_first},
-            #{i.categories_id}, #{i.categories_name}, #{i.categories_key}, #{i.updateFlag}, #{i.md5})
+            #{i.categories_id}, #{i.categories_name}, #{i.categories_key},#{i.qty}, #{i.updateFlag}, #{i.md5})
         </foreach>
     </insert>
 
@@ -29,13 +29,13 @@
          attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
          attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
          prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
-         categories_key, updateFlag, md5) VALUES
+         categories_key, qty, updateFlag, md5) VALUES
             (#{id}, #{product_id}, #{product_look_id}, #{locale}, #{name}, #{description}, #{country_code}, #{brand_id},
         #{brand_name}, #{images_url}, #{attributes_color_nfr_code}, #{attributes_color_name}, #{attributes_style_name},
         #{attributes_material_value}, #{attributes_size_size_chart_id}, #{attributes_size_type},
         #{attributes_size_value}, #{prices_retail_currency}, #{prices_retail_value}, #{prices_sale_currencty},
         #{prices_sale_value}, #{prices_cost_currency}, #{prices_cost_value}, #{product_codes}, #{product_codes_first},
-        #{categories_id}, #{categories_name}, #{categories_key}, #{updateFlag}, #{i.md5})
+        #{categories_id}, #{categories_name}, #{categories_key},#{i.qty}, #{updateFlag}, #{i.md5})
     </insert>
 
     <resultMap id="resultMap_gilt" type="com.voyageone.task2.cms.model.CmsBtFeedInfoGiltModel">
@@ -56,6 +56,10 @@
         <result column="attributes_style_name" property="attributes_style_name" />
         <result column="attributes_material_value" property="attributes_material_value" />
         <result column="attributes_size_size_chart_id" property="attributes_size_size_chart_id" />
+        <result column="categories_name" property="categories_name" />
+        <result column="attributes_size_type" property="attributes_size_type" />
+        <result column="material" property="material"/>
+        <result column="usage_en" property="usageEn"/>
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -66,6 +70,9 @@
             <result column="price_net" property="priceNet" />
             <result column="price_client_retail" property="priceClientRetail" />
             <result column="price_client_msrp" property="priceClientMsrp" />
+            <result column="quantity" property="qty" />
+            <result column="weight_org" property="weightOrg" />
+            <result column="weight_org_unit" property="weightOrgUnit" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -108,7 +115,15 @@
         ${product_type} as product_type,
         attributes_style_name,
         attributes_material_value,
-        attributes_size_size_chart_id
+        attributes_size_size_chart_id,
+        categories_name,
+        attributes_size_type
+        ,${quantity} as quantity
+        ,${material} as material
+        ,${usage_en} as usageEn
+        ,${weight_org} as weight_org
+        ,${weight_org_unit} as weight_org_unit
+        ,${weight_calc} as weightCalc
         from
         ${tableName}
         ${keyword}
@@ -127,7 +142,17 @@
     </update>
 
     <insert id="cms_zz_worktable_gilt_superfeed_full_insert"  parameterType="java.util.List">
-        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_full SELECT * from
+        INSERT INTO voyageone_cms2.cms_zz_feed_gilt_product_full  (id,product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, qty, updateFlag, md5) SELECT id,product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, qty, updateFlag, md5 from
         voyageone_cms2.cms_zz_feed_gilt_product_temp where `id` in
         (
         <foreach collection="list" item="itemIds" index="index" separator=",">

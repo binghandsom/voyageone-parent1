@@ -63,6 +63,12 @@ public class TbCategoryService extends TbBase {
 
         if (response.getErrorCode() == null) {
             List<ItemCat> itemCatList = response.getItemCats();
+            // 20160724 tom bug修正 START
+            if (itemCatList == null) {
+                // 如果返回为空, 那么久说明没有子类目 ( 下面的递归之前已经有过判断, 但是一级类目下面没有子类目的场合, 会有null的可能性 )
+                return itemCatListResult;
+            }
+            // 20160724 tom bug修正 END
             // 设置返回值
             for (ItemCat itemCat : itemCatList) {
 
@@ -112,7 +118,7 @@ public class TbCategoryService extends TbBase {
     /**
      * 获取天猫产品属性
      */
-    public String getTbProductAddSchema(ShopBean shop,Long cid) throws ApiException{
+    public String getTbProductAddSchema(ShopBean shop,Long cid, Long brandId) throws ApiException{
 
 
 //        ItemcatsAuthorizeGetResponse ret = null;
@@ -122,6 +128,9 @@ public class TbCategoryService extends TbBase {
         //调用tmall.product.add.schema.get 产品发布规则获取接
         TmallProductAddSchemaGetRequest request = new TmallProductAddSchemaGetRequest();
         request.setCategoryId(cid);
+        if (brandId != null) {
+            request.setBrandId(brandId);
+        }
         TmallProductAddSchemaGetResponse response = reqTaobaoApi(shop, request);
         if (response!=null && response.getErrorCode() == null) {
             // 设置返回值
@@ -137,16 +146,19 @@ public class TbCategoryService extends TbBase {
             switch(subMsg)
             {
                 case "参数无效;指定类目不需要发布产品;":
+                    // 正常现象, 无需打log
+                    break;
                 case "参数无效;此类目需要品牌;":
                     logger.error("channel_id:" + shop.getOrder_channel_id() + "  cart_id:" + shop.getCart_id() + "  cid:" + cid + " err:" + subMsg);
-                    return null;
+                    break;
                 default:
                     logger.error("channel_id:" + shop.getOrder_channel_id() + "  cart_id:" + shop.getCart_id() + "  cid:" + cid + " 未知错误err:" + response.getBody());
-                    return null;
+                    break;
             }
+            return "ERROR:" + subMsg;
         }
 
-        return  "";
+        return  "ERROR:API返回NULL";
     }
 
     /**
@@ -186,7 +198,8 @@ public class TbCategoryService extends TbBase {
                 case "商品类目已被冻结, 本类目已经不能发布商品，请重新选择类目":
                 case "商品类目未授权，请重新选择类目;商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
                 case "商品类目天猫已经废弃, 本类目已经不能发布商品，请重新选择类目":
-                    logger.error("channel_id:" + shop.getOrder_channel_id() + "  cart_id:" + shop.getCart_id() + "  cid:" + cid + " err:" + subMsg);
+                    // 此处虽然是异常, 但是log还是不用了, 直接在外面生成一条schema提示, 避免log太多
+                    // logger.error("channel_id:" + shop.getOrder_channel_id() + "  cart_id:" + shop.getCart_id() + "  cid:" + cid + " err:" + subMsg);
                     result.setResult(1); //异常
                     result.setItemResult(subMsg);
                     return result;

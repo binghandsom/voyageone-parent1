@@ -9,13 +9,12 @@ module.exports = {
         baseDir: "develop",
         index: "login.html"
     },
-    files: [
-        'develop/static/**/*.css',
-        'develop/modules/**/*.{html,js}',
-        'develop/components/**/*.js'
-    ],
+/*    files: [
+        'develop/static/!**!/!*.css',
+        'develop/modules/!**!/!*.{html,js}',
+        'develop/components/!**!/!*.js'
+    ],*/
     notify: false,
-    browser: 'google chrome',
     middleware: [
         morgan('dev'),
         function (req, res, next) {

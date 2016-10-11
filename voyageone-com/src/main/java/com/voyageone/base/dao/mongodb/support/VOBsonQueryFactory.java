@@ -17,6 +17,7 @@
 package com.voyageone.base.dao.mongodb.support;
 
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import com.mongodb.util.JSONCallback;
@@ -71,11 +72,13 @@ public class VOBsonQueryFactory implements QueryFactory {
         this.marshaller = marshaller;
     }
 
+    /**
+     * 解析查询字符串，注意这里的参数“query”不能为空串，否则返回为null（最好在调用前检查）
+     */
     @Override
     public Query createQuery(final String query, Object... parameters) {
-
-        if (query == null) {
-            return new BsonQuery((DBObject) JSON.parse(null));
+        if (query == null || query.length() == 0) {
+            return new BsonQuery(new BasicDBObject());
         }
         if (parameters == null) {
             parameters = new Object[]{null};

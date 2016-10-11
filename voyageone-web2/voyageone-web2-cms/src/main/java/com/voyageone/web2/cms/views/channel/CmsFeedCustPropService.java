@@ -9,7 +9,7 @@ import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0从
  */
 @Service
-public class CmsFeedCustPropService extends BaseAppService {
+public class CmsFeedCustPropService extends BaseViewService {
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;

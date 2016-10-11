@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
+import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -12,6 +14,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import com.voyageone.task2.cms.dao.feed.TargetFeedDao;
@@ -37,6 +40,10 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Autowired
     TargetFeedDao TargetFeedDao;
+
+    @Autowired
+    FeedInfoService feedInfoService;
+
     private Map<String, Map<String, String>> retailPriceList;
 
     @Override
@@ -48,6 +55,9 @@ public class TargetAnalysisService extends BaseAnalysisService {
     public String getTaskName() {
         return "CmsTargetAnalySisJob";
     }
+
+    private final List<String> SpecialModel = Arrays.asList(new String[]{"50854273", "14174648","50293996","50293972","50293981","13660400"});
+    private final List<String> SpecialSku = Arrays.asList(new String[]{"13624131", "13624370"});
 
     /**
      * JE产品信息插入
@@ -372,6 +382,14 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 }
             }
 
+            if(SpecialModel.contains(cmsBtFeedInfoModel.getModel())){
+                cmsBtFeedInfoModel.setModel(cmsBtFeedInfoModel.getModel() + "-" + attribute.get("size").get(0).toLowerCase().replaceAll(" ",""));
+                cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getCode() + "-" + attribute.get("size").get(0).toLowerCase().replaceAll(" ",""));
+            }
+            if(SpecialSku.contains(cmsBtFeedInfoModel.getSkus().get(0).getSku())){
+                cmsBtFeedInfoModel.setModel(cmsBtFeedInfoModel.getSkus().get(0).getSku());
+                cmsBtFeedInfoModel.setCode(cmsBtFeedInfoModel.getSkus().get(0).getSku());
+            }
 
             // productType
             cmsBtFeedInfoModel.setCategory(StringEscapeUtils.escapeHtml(cmsBtFeedInfoModel.getCategory()));
@@ -437,7 +455,15 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 int i = 0;
                 superFeedTargetBean.setSku(reader.get(i++));
                 superFeedTargetBean.setMarketprice(reader.get(i++));
-                retailPriceList.put(superFeedTargetBean.getSku(),superFeedTargetBean);
+                WriteResult writeResult = feedInfoService.updateFeedInfoSkuPrice("018", superFeedTargetBean.getSku(), Double.parseDouble(superFeedTargetBean.getMarketprice()));
+                if(!writeResult.isUpdateOfExisting()){
+                    retailPriceList.put(superFeedTargetBean.getSku(),superFeedTargetBean);
+                }else{
+                    CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductBySku("018",superFeedTargetBean.getSku());
+                    if(cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed || cmsBtFeedInfoModel.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Fail){
+                        feedInfoService.updateAllUpdFlg("018","{\"code\":\""+ cmsBtFeedInfoModel.getCode()+"\"}",CmsConstants.FeedUpdFlgStatus.Pending,getTaskName());
+                    }
+                }
             }
         } catch (FileNotFoundException e) {
             $info("Target价格列表不存在");
@@ -491,7 +517,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]) / 16.0);
                 return convertWeight.toString();
             }else if("lb".equalsIgnoreCase(temp[1])){
-                 Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
+                Integer convertWeight = (int) Math.ceil(Double.parseDouble(temp[0]));
                 return convertWeight.toString();
             }else{
                 throw new BusinessException("重量转换失败：" + weight);
@@ -523,7 +549,7 @@ public class TargetAnalysisService extends BaseAnalysisService {
 
     @Override
     protected boolean backupFeedFile(String channelId){
-        super.backupFeedFile(channelId);
+//        super.backupFeedFile(channelId);
         return backupFeedFile(channelId,FeedEnums.Name.file_id_import_sku);
     }
 }

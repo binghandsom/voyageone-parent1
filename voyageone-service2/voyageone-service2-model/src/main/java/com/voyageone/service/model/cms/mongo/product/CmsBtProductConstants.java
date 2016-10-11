@@ -14,7 +14,8 @@ public interface CmsBtProductConstants {
 		MOBILE_CUSTOM_IMAGE("image5"),
 		CUSTOM_PRODUCT_IMAGE("image6"),
 		M_CUSTOM_PRODUCT_IMAGE("image7"),
-		HANG_TAG_IMAGE("image8");
+		HANG_TAG_IMAGE("image8"),
+		DURABILITY_TAG_IMAGE("image9");
 
 		// 成员变量
 		private String name;
@@ -81,10 +82,18 @@ public interface CmsBtProductConstants {
 	enum Platform_SKU_COM {
 		/* skuCode(共通) */
 		skuCode,
+		/* 条形码 */
+		barcode,
         /* MSRP售价(中国建议零售价)(共通/分平台) */
         priceMsrp,
+		/* 品牌方MSRP售价(中国建议零售价)(共通/分平台) */
+		originalPriceMsrp,
+		/* 指导价和建议零售价比较状态(XD/XU/空格) */
+		priceMsrpFlg,
         /* 销售指导价(共通/分平台) */
         priceRetail,
+		/* 确认指导价 */
+		confPriceRetail,
 		/* 各平台最终零售价(分平台) */
 		priceSale,
 		/* 指导售价变化状态（U99%/D99%）(分平台) */

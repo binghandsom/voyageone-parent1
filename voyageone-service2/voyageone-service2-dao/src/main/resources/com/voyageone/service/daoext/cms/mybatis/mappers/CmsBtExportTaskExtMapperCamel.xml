@@ -254,4 +254,22 @@
         order by created desc
     </select>
 
+    <select id="checkTaskByUser" resultType="integer">
+        select
+        count(1)
+        from cms_bt_export_task
+        <where>
+            ( status = 0 OR status = 3)
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="taskType != null" >
+                and `task_type` = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

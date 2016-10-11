@@ -1,15 +1,19 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
+import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -25,65 +28,106 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 2016/4/19.
  */
 @Service
-public class CmsChannelTagService extends BaseAppService {
+public class CmsChannelTagService extends BaseViewService {
 
     @Autowired
     private TagService tagService;
+    @Autowired
+    private CmsAdvanceSearchService advanceSearchService;
+    @Autowired
+    private ProductService productService;
 
     /**
-     * 取得标签管理初始化数据
+     * 取得标签管理初始化数据（注意：高级检索画面(查询条件)使用时，查询的是最近90天的所有活动，包括已结束的）
      * @param param
      * @param lang
      * @return result
      */
-    public Map<String, Object> getInitTagInfo(Map param,String lang){
+    public Map<String, Object> getInitTagInfo(Map param, CmsSessionBean sessionBean, String lang) {
         Map<String, Object> result = new HashMap<>();
         List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
-        //取得所有的标签类型
-        result.put("tagTree",tagsList);
+        List<CmsBtTagBean> categoryList = convertToTree(tagsList);
 
-        List<TypeBean>  types = Types.getTypeList(74, lang);
-        if(types != null) {
+        //取得所有的标签类型
+        result.put("tagTree", categoryList);
+
+        List<TypeBean>  types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
+        if (types != null) {
             //标签类型
             result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
+        }
+
+        Integer orgFlg = (Integer) param.get("orgFlg");
+        if (orgFlg != null && orgFlg == 2) {
+            // 高级检索，设置自由标签的场合，需要检索一边所选择商品的自由标签设值，返回到前端
+            Integer isSelAll = (Integer) param.get("isSelAll");
+            if (isSelAll == null) {
+                isSelAll = 0;
+            }
+            List<String> prodCodes = null;
+            if (isSelAll == 1) {
+                // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+                prodCodes = advanceSearchService.getProductCodeList((String) param.get("channelId"), sessionBean);
+            } else {
+                prodCodes = (List<String>) param.get("productIds");
+            }
+            if (prodCodes == null || prodCodes.isEmpty()) {
+                $warn("没有code条件 params=" + param.toString());
+            } else {
+                // 检索商品的自由标签设值
+                JongoQuery queryObj = new JongoQuery();
+                queryObj.setQuery("{'common.fields.code':{$in:#}}");
+                queryObj.setParameters(prodCodes);
+                queryObj.setProjectionExt("prodId", "common.fields.code", "freeTags");
+                List<CmsBtProductModel> prodList = productService.getList((String) param.get("channelId"), queryObj);
+                if (prodList == null || prodList.isEmpty()) {
+                    $warn("根据条件查不到商品 params=" + param.toString());
+                } else {
+                    // 用于标识是否已勾选
+                    Map<String, Boolean> orgChkStsMap = new HashMap<>();
+                    // 用于标识是否半选（即不是所有商品都设置了该标签）
+                    Map<String, Boolean> orgDispMap = new HashMap<>();
+
+                    for (CmsBtTagBean tagBean : tagsList) {
+                        if (tagBean.getChildren() == null || tagBean.getChildren().size() == 0) {
+                            // 是子节点，遍历商品列表，查看是否勾选
+                            int selCnt = 0;
+                            for (CmsBtProductModel prodObj : prodList) {
+                                List<String> tags = prodObj.getFreeTags();
+                                if (tags == null || tags.isEmpty()) {
+                                    continue;
+                                }
+                                if (tags.indexOf(tagBean.getTagPath()) >= 0) {
+                                    // 有勾选
+                                    selCnt ++;
+                                }
+                            }
+                            if (selCnt == prodList.size()) {
+                                orgChkStsMap.put(tagBean.getTagPath(), true);
+                            } else if (0 < selCnt && selCnt < prodList.size()) {
+                                orgDispMap.put(tagBean.getTagPath(), true);
+                            }
+                        }
+                    }
+                    result.put("orgChkStsMap", orgChkStsMap);
+                    result.put("orgDispMap", orgDispMap);
+                }
+            }
         }
         //返回数据类型
         return result;
     }
 
     /**
-     * 根据channelId取得素有的标签并对其进行分类
+     * 根据channelId取得所有的标签并对其进行分类
      *
      * @param params Map
      * @return ret
      */
     public List<CmsBtTagBean> getTagInfoByChannelId(Map params) {
-        //公司平台销售渠道
-        String channelId = (String) params.get("channelId");
-        if (Channels.isUsJoi(channelId)) {
-            params.put("orgChannelId", channelId);
-            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
-        } else {
-            params.put("channelId", channelId);
-        }
         //取得所有的标签类型
         List<CmsBtTagBean> categoryList = tagService.getListByChannelIdAndTagType(params);
-
-        //返回数据类型
-        return convertToTree(categoryList);
-    }
-
-    /**
-     * 查询指定标签类型下的所有标签(list形式)
-     *
-     * @param param Map
-     * @return List<CmsBtTagModel>
-     */
-    public List<CmsBtTagModel> getTagInfoList(Map param) {
-        // 取得所有的标签类型
-        List<CmsBtTagBean> tagsList = getTagInfoByChannelId(param);
-        //返回数据类型
-        return convertToList(tagsList);
+        return categoryList;
     }
 
     /**

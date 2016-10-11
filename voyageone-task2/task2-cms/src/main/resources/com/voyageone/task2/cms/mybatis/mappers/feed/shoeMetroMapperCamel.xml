@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.ShoeMetroFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    <id column="SKU" property="sku" jdbcType="VARCHAR" />
+    <result column="parentid" property="parentid" jdbcType="VARCHAR" />
+    <result column="MSRP" property="msrp" jdbcType="VARCHAR" />
+    <result column="Size" property="size" jdbcType="VARCHAR" />
+    <result column="VoyageOnePrice" property="voyageoneprice" jdbcType="VARCHAR" />
+    <result column="Quantity" property="quantity" jdbcType="VARCHAR" />
+    <result column="Category" property="category" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" extends="BaseResultMap" >
+    <result column="Title" property="title" jdbcType="LONGVARCHAR" />
+    <result column="Featurebullet1" property="featurebullet1" jdbcType="LONGVARCHAR" />
+    <result column="Featurebullet2" property="featurebullet2" jdbcType="LONGVARCHAR" />
+    <result column="Featurebullet3" property="featurebullet3" jdbcType="LONGVARCHAR" />
+    <result column="Featurebullet4" property="featurebullet4" jdbcType="LONGVARCHAR" />
+    <result column="Featurebullet5" property="featurebullet5" jdbcType="LONGVARCHAR" />
+    <result column="Color" property="color" jdbcType="LONGVARCHAR" />
+    <result column="Countryoforigin" property="countryoforigin" jdbcType="LONGVARCHAR" />
+    <result column="Productid" property="productid" jdbcType="LONGVARCHAR" />
+    <result column="Weight" property="weight" jdbcType="LONGVARCHAR" />
+    <result column="ShoeMaterial" property="shoematerial" jdbcType="LONGVARCHAR" />
+    <result column="OuterMaterial" property="outermaterial" jdbcType="LONGVARCHAR" />
+    <result column="OccassionandLifestyle" property="occassionandlifestyle" jdbcType="LONGVARCHAR" />
+    <result column="Images" property="images" jdbcType="LONGVARCHAR" />
+    <result column="Bootopeningcircumference" property="bootopeningcircumference" jdbcType="LONGVARCHAR" />
+    <result column="Closuretype" property="closuretype" jdbcType="LONGVARCHAR" />
+    <result column="HeelHeight" property="heelheight" jdbcType="LONGVARCHAR" />
+    <result column="HeelType" property="heeltype" jdbcType="LONGVARCHAR" />
+    <result column="ShoeWidth" property="shoewidth" jdbcType="LONGVARCHAR" />
+    <result column="SoleMaterial" property="solematerial" jdbcType="LONGVARCHAR" />
+    <result column="Straptype" property="straptype" jdbcType="LONGVARCHAR" />
+    <result column="ToeStyle" property="toestyle" jdbcType="LONGVARCHAR" />
+    <result column="RelationshipName" property="relationshipname" jdbcType="LONGVARCHAR" />
+    <result column="Description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="Brand" property="brand" jdbcType="LONGVARCHAR" />
+    <result column="Gender" property="gender" jdbcType="LONGVARCHAR" />
+    <result column="ClothingMaterial" property="clothingmaterial" jdbcType="LONGVARCHAR" />
+    <result column="ClothingSizeType" property="clothingsizetype" jdbcType="LONGVARCHAR" />
+    <result column="ApparelClosure" property="apparelclosure" jdbcType="LONGVARCHAR" />
+    <result column="EyewearFrameMeasurement" property="eyewearframemeasurement" jdbcType="LONGVARCHAR" />
+    <result column="EyewearBridgeMeasurement" property="eyewearbridgemeasurement" jdbcType="LONGVARCHAR" />
+    <result column="Framematerial" property="framematerial" jdbcType="LONGVARCHAR" />
+    <result column="Eyewearlenscolor" property="eyewearlenscolor" jdbcType="LONGVARCHAR" />
+    <result column="Eyewearlensmaterialtype" property="eyewearlensmaterialtype" jdbcType="LONGVARCHAR" />
+    <result column="Eyewearlenswidth" property="eyewearlenswidth" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "SKU", "parentid", "MSRP", "Size", "VoyageOnePrice", "Quantity", "Category", "md5",
+    "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "Title", "Featurebullet1", "Featurebullet2", "Featurebullet3", "Featurebullet4",
+    "Featurebullet5", "Color", "Countryoforigin", "Productid", "Weight", "ShoeMaterial",
+    "OuterMaterial", "OccassionandLifestyle", "Images", "Bootopeningcircumference", "Closuretype",
+    "HeelHeight", "HeelType", "ShoeWidth", "SoleMaterial", "Straptype", "ToeStyle", "RelationshipName",
+    "Description", "Brand", "Gender", "ClothingMaterial", "ClothingSizeType", "ApparelClosure",
+    "EyewearFrameMeasurement", "EyewearBridgeMeasurement", "Framematerial", "Eyewearlenscolor",
+    "Eyewearlensmaterialtype", "Eyewearlenswidth"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_shoemetro_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_shoemetro_product_temp
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    insert into cms_zz_feed_shoemetro_product_temp ("SKU", "parentid", "MSRP",
+    "Size", "VoyageOnePrice", "Quantity",
+    "Category", "md5", "updateFlag",
+    "Title", "Featurebullet1", "Featurebullet2",
+    "Featurebullet3", "Featurebullet4",
+    "Featurebullet5", "Color", "Countryoforigin",
+    "Productid", "Weight", "ShoeMaterial",
+    "OuterMaterial", "OccassionandLifestyle",
+    "Images", "Bootopeningcircumference",
+    "Closuretype", "HeelHeight", "HeelType",
+    "ShoeWidth", "SoleMaterial", "Straptype",
+    "ToeStyle", "RelationshipName", "Description",
+    "Brand", "Gender", "ClothingMaterial",
+    "ClothingSizeType", "ApparelClosure",
+    "EyewearFrameMeasurement", "EyewearBridgeMeasurement",
+    "Framematerial", "Eyewearlenscolor",
+    "Eyewearlensmaterialtype", "Eyewearlenswidth"
+    )
+    values (#{sku,jdbcType=VARCHAR}, #{parentid,jdbcType=VARCHAR}, #{msrp,jdbcType=VARCHAR},
+    #{size,jdbcType=VARCHAR}, #{voyageoneprice,jdbcType=VARCHAR}, #{quantity,jdbcType=VARCHAR},
+    #{category,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
+    #{title,jdbcType=LONGVARCHAR}, #{featurebullet1,jdbcType=LONGVARCHAR}, #{featurebullet2,jdbcType=LONGVARCHAR},
+    #{featurebullet3,jdbcType=LONGVARCHAR}, #{featurebullet4,jdbcType=LONGVARCHAR},
+    #{featurebullet5,jdbcType=LONGVARCHAR}, #{color,jdbcType=LONGVARCHAR}, #{countryoforigin,jdbcType=LONGVARCHAR},
+    #{productid,jdbcType=LONGVARCHAR}, #{weight,jdbcType=LONGVARCHAR}, #{shoematerial,jdbcType=LONGVARCHAR},
+    #{outermaterial,jdbcType=LONGVARCHAR}, #{occassionandlifestyle,jdbcType=LONGVARCHAR},
+    #{images,jdbcType=LONGVARCHAR}, #{bootopeningcircumference,jdbcType=LONGVARCHAR},
+    #{closuretype,jdbcType=LONGVARCHAR}, #{heelheight,jdbcType=LONGVARCHAR}, #{heeltype,jdbcType=LONGVARCHAR},
+    #{shoewidth,jdbcType=LONGVARCHAR}, #{solematerial,jdbcType=LONGVARCHAR}, #{straptype,jdbcType=LONGVARCHAR},
+    #{toestyle,jdbcType=LONGVARCHAR}, #{relationshipname,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR},
+    #{brand,jdbcType=LONGVARCHAR}, #{gender,jdbcType=LONGVARCHAR}, #{clothingmaterial,jdbcType=LONGVARCHAR},
+    #{clothingsizetype,jdbcType=LONGVARCHAR}, #{apparelclosure,jdbcType=LONGVARCHAR},
+    #{eyewearframemeasurement,jdbcType=LONGVARCHAR}, #{eyewearbridgemeasurement,jdbcType=LONGVARCHAR},
+    #{framematerial,jdbcType=LONGVARCHAR}, #{eyewearlenscolor,jdbcType=LONGVARCHAR},
+    #{eyewearlensmaterialtype,jdbcType=LONGVARCHAR}, #{eyewearlenswidth,jdbcType=LONGVARCHAR}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    insert into cms_zz_feed_shoemetro_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        SKU,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="msrp != null" >
+        MSRP,
+      </if>
+      <if test="size != null" >
+        Size,
+      </if>
+      <if test="voyageoneprice != null" >
+        VoyageOnePrice,
+      </if>
+      <if test="quantity != null" >
+        Quantity,
+      </if>
+      <if test="category != null" >
+        Category,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="title != null" >
+        Title,
+      </if>
+      <if test="featurebullet1 != null" >
+        Featurebullet1,
+      </if>
+      <if test="featurebullet2 != null" >
+        Featurebullet2,
+      </if>
+      <if test="featurebullet3 != null" >
+        Featurebullet3,
+      </if>
+      <if test="featurebullet4 != null" >
+        Featurebullet4,
+      </if>
+      <if test="featurebullet5 != null" >
+        Featurebullet5,
+      </if>
+      <if test="color != null" >
+        Color,
+      </if>
+      <if test="countryoforigin != null" >
+        Countryoforigin,
+      </if>
+      <if test="productid != null" >
+        Productid,
+      </if>
+      <if test="weight != null" >
+        Weight,
+      </if>
+      <if test="shoematerial != null" >
+        ShoeMaterial,
+      </if>
+      <if test="outermaterial != null" >
+        OuterMaterial,
+      </if>
+      <if test="occassionandlifestyle != null" >
+        OccassionandLifestyle,
+      </if>
+      <if test="images != null" >
+        Images,
+      </if>
+      <if test="bootopeningcircumference != null" >
+        Bootopeningcircumference,
+      </if>
+      <if test="closuretype != null" >
+        Closuretype,
+      </if>
+      <if test="heelheight != null" >
+        HeelHeight,
+      </if>
+      <if test="heeltype != null" >
+        HeelType,
+      </if>
+      <if test="shoewidth != null" >
+        ShoeWidth,
+      </if>
+      <if test="solematerial != null" >
+        SoleMaterial,
+      </if>
+      <if test="straptype != null" >
+        Straptype,
+      </if>
+      <if test="toestyle != null" >
+        ToeStyle,
+      </if>
+      <if test="relationshipname != null" >
+        RelationshipName,
+      </if>
+      <if test="description != null" >
+        Description,
+      </if>
+      <if test="brand != null" >
+        Brand,
+      </if>
+      <if test="gender != null" >
+        Gender,
+      </if>
+      <if test="clothingmaterial != null" >
+        ClothingMaterial,
+      </if>
+      <if test="clothingsizetype != null" >
+        ClothingSizeType,
+      </if>
+      <if test="apparelclosure != null" >
+        ApparelClosure,
+      </if>
+      <if test="eyewearframemeasurement != null" >
+        EyewearFrameMeasurement,
+      </if>
+      <if test="eyewearbridgemeasurement != null" >
+        EyewearBridgeMeasurement,
+      </if>
+      <if test="framematerial != null" >
+        Framematerial,
+      </if>
+      <if test="eyewearlenscolor != null" >
+        Eyewearlenscolor,
+      </if>
+      <if test="eyewearlensmaterialtype != null" >
+        Eyewearlensmaterialtype,
+      </if>
+      <if test="eyewearlenswidth != null" >
+        Eyewearlenswidth,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageoneprice != null" >
+        #{voyageoneprice,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        #{quantity,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet1 != null" >
+        #{featurebullet1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet2 != null" >
+        #{featurebullet2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet3 != null" >
+        #{featurebullet3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet4 != null" >
+        #{featurebullet4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet5 != null" >
+        #{featurebullet5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productid != null" >
+        #{productid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoematerial != null" >
+        #{shoematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="outermaterial != null" >
+        #{outermaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="occassionandlifestyle != null" >
+        #{occassionandlifestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="images != null" >
+        #{images,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bootopeningcircumference != null" >
+        #{bootopeningcircumference,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closuretype != null" >
+        #{closuretype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heelheight != null" >
+        #{heelheight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heeltype != null" >
+        #{heeltype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoewidth != null" >
+        #{shoewidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="solematerial != null" >
+        #{solematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="straptype != null" >
+        #{straptype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="toestyle != null" >
+        #{toestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipname != null" >
+        #{relationshipname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clothingmaterial != null" >
+        #{clothingmaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clothingsizetype != null" >
+        #{clothingsizetype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="apparelclosure != null" >
+        #{apparelclosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearframemeasurement != null" >
+        #{eyewearframemeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearbridgemeasurement != null" >
+        #{eyewearbridgemeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="framematerial != null" >
+        #{framematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlenscolor != null" >
+        #{eyewearlenscolor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlensmaterialtype != null" >
+        #{eyewearlensmaterialtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlenswidth != null" >
+        #{eyewearlenswidth,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    update cms_zz_feed_shoemetro_product_temp
+    <set >
+      <if test="parentid != null" >
+        "parentid" = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="msrp != null" >
+        "MSRP" = #{msrp,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        "Size" = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="voyageoneprice != null" >
+        "VoyageOnePrice" = #{voyageoneprice,jdbcType=VARCHAR},
+      </if>
+      <if test="quantity != null" >
+        "Quantity" = #{quantity,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        "Category" = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="title != null" >
+        "Title" = #{title,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet1 != null" >
+        "Featurebullet1" = #{featurebullet1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet2 != null" >
+        "Featurebullet2" = #{featurebullet2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet3 != null" >
+        "Featurebullet3" = #{featurebullet3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet4 != null" >
+        "Featurebullet4" = #{featurebullet4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="featurebullet5 != null" >
+        "Featurebullet5" = #{featurebullet5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="color != null" >
+        "Color" = #{color,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryoforigin != null" >
+        "Countryoforigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="productid != null" >
+        "Productid" = #{productid,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weight != null" >
+        "Weight" = #{weight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoematerial != null" >
+        "ShoeMaterial" = #{shoematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="outermaterial != null" >
+        "OuterMaterial" = #{outermaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="occassionandlifestyle != null" >
+        "OccassionandLifestyle" = #{occassionandlifestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="images != null" >
+        "Images" = #{images,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="bootopeningcircumference != null" >
+        "Bootopeningcircumference" = #{bootopeningcircumference,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="closuretype != null" >
+        "Closuretype" = #{closuretype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heelheight != null" >
+        "HeelHeight" = #{heelheight,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="heeltype != null" >
+        "HeelType" = #{heeltype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shoewidth != null" >
+        "ShoeWidth" = #{shoewidth,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="solematerial != null" >
+        "SoleMaterial" = #{solematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="straptype != null" >
+        "Straptype" = #{straptype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="toestyle != null" >
+        "ToeStyle" = #{toestyle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="relationshipname != null" >
+        "RelationshipName" = #{relationshipname,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "Description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="brand != null" >
+        "Brand" = #{brand,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="gender != null" >
+        "Gender" = #{gender,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clothingmaterial != null" >
+        "ClothingMaterial" = #{clothingmaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="clothingsizetype != null" >
+        "ClothingSizeType" = #{clothingsizetype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="apparelclosure != null" >
+        "ApparelClosure" = #{apparelclosure,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearframemeasurement != null" >
+        "EyewearFrameMeasurement" = #{eyewearframemeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearbridgemeasurement != null" >
+        "EyewearBridgeMeasurement" = #{eyewearbridgemeasurement,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="framematerial != null" >
+        "Framematerial" = #{framematerial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlenscolor != null" >
+        "Eyewearlenscolor" = #{eyewearlenscolor,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlensmaterialtype != null" >
+        "Eyewearlensmaterialtype" = #{eyewearlensmaterialtype,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eyewearlenswidth != null" >
+        "Eyewearlenswidth" = #{eyewearlenswidth,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    update cms_zz_feed_shoemetro_product_temp
+    set "parentid" = #{parentid,jdbcType=VARCHAR},
+    "MSRP" = #{msrp,jdbcType=VARCHAR},
+    "Size" = #{size,jdbcType=VARCHAR},
+    "VoyageOnePrice" = #{voyageoneprice,jdbcType=VARCHAR},
+    "Quantity" = #{quantity,jdbcType=VARCHAR},
+    "Category" = #{category,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "Title" = #{title,jdbcType=LONGVARCHAR},
+    "Featurebullet1" = #{featurebullet1,jdbcType=LONGVARCHAR},
+    "Featurebullet2" = #{featurebullet2,jdbcType=LONGVARCHAR},
+    "Featurebullet3" = #{featurebullet3,jdbcType=LONGVARCHAR},
+    "Featurebullet4" = #{featurebullet4,jdbcType=LONGVARCHAR},
+    "Featurebullet5" = #{featurebullet5,jdbcType=LONGVARCHAR},
+    "Color" = #{color,jdbcType=LONGVARCHAR},
+    "Countryoforigin" = #{countryoforigin,jdbcType=LONGVARCHAR},
+    "Productid" = #{productid,jdbcType=LONGVARCHAR},
+    "Weight" = #{weight,jdbcType=LONGVARCHAR},
+    "ShoeMaterial" = #{shoematerial,jdbcType=LONGVARCHAR},
+    "OuterMaterial" = #{outermaterial,jdbcType=LONGVARCHAR},
+    "OccassionandLifestyle" = #{occassionandlifestyle,jdbcType=LONGVARCHAR},
+    "Images" = #{images,jdbcType=LONGVARCHAR},
+    "Bootopeningcircumference" = #{bootopeningcircumference,jdbcType=LONGVARCHAR},
+    "Closuretype" = #{closuretype,jdbcType=LONGVARCHAR},
+    "HeelHeight" = #{heelheight,jdbcType=LONGVARCHAR},
+    "HeelType" = #{heeltype,jdbcType=LONGVARCHAR},
+    "ShoeWidth" = #{shoewidth,jdbcType=LONGVARCHAR},
+    "SoleMaterial" = #{solematerial,jdbcType=LONGVARCHAR},
+    "Straptype" = #{straptype,jdbcType=LONGVARCHAR},
+    "ToeStyle" = #{toestyle,jdbcType=LONGVARCHAR},
+    "RelationshipName" = #{relationshipname,jdbcType=LONGVARCHAR},
+    "Description" = #{description,jdbcType=LONGVARCHAR},
+    "Brand" = #{brand,jdbcType=LONGVARCHAR},
+    "Gender" = #{gender,jdbcType=LONGVARCHAR},
+    "ClothingMaterial" = #{clothingmaterial,jdbcType=LONGVARCHAR},
+    "ClothingSizeType" = #{clothingsizetype,jdbcType=LONGVARCHAR},
+    "ApparelClosure" = #{apparelclosure,jdbcType=LONGVARCHAR},
+    "EyewearFrameMeasurement" = #{eyewearframemeasurement,jdbcType=LONGVARCHAR},
+    "EyewearBridgeMeasurement" = #{eyewearbridgemeasurement,jdbcType=LONGVARCHAR},
+    "Framematerial" = #{framematerial,jdbcType=LONGVARCHAR},
+    "Eyewearlenscolor" = #{eyewearlenscolor,jdbcType=LONGVARCHAR},
+    "Eyewearlensmaterialtype" = #{eyewearlensmaterialtype,jdbcType=LONGVARCHAR},
+    "Eyewearlenswidth" = #{eyewearlenswidth,jdbcType=LONGVARCHAR}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedShoeMetroBean" >
+    update cms_zz_feed_shoemetro_product_temp
+    set "parentid" = #{parentid,jdbcType=VARCHAR},
+    "MSRP" = #{msrp,jdbcType=VARCHAR},
+    "Size" = #{size,jdbcType=VARCHAR},
+    "VoyageOnePrice" = #{voyageoneprice,jdbcType=VARCHAR},
+    "Quantity" = #{quantity,jdbcType=VARCHAR},
+    "Category" = #{category,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "SKU" = #{sku,jdbcType=VARCHAR}
+  </update>
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_shoemetro_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoShoeMetroModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <result column="usage_en" property="usageEn"/>
+    <result column="clientProductURL" property="clientProductURL"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+      <result column="weight_org" property="weightOrg" />
+      <result column="weight_org_unit" property="weightOrgUnit" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperfeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    ,${usage_en} as usageEn
+    ,${weight_org} as weight_org
+    ,${weight_org_unit} as weight_org_unit
+    ,${weight_calc} as weightCalc
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_shoemetro_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_shoemetro_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_shoemetro_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_shoemetro_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+  <insert id="fullCopyTemp" >
+    INSERT INTO voyageone_cms2.cms_zz_feed_shoemetro_product_temp
+    SELECT * FROM voyageone_cms2.cms_zz_feed_shoemetro_product_full;
+  </insert>
+  <update id="updateMd5">
+    UPDATE voyageone_cms2.cms_zz_feed_shoemetro_product_full SET md5 = '1'
+  </update>
+  <update id="updateUpdateFlag">
+    UPDATE voyageone_cms2.cms_zz_feed_shoemetro_product_temp SET updateFlag = 1
+  </update>
+</mapper>

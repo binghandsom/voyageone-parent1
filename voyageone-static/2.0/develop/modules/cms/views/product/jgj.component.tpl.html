@@ -14,7 +14,7 @@
                                 </label>
                                 <div class="col-md-8">
                                     <span class="m-r-sm" ng-if="vm.platform.pNumIId">&nbsp;
-                                        <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
+                                        <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
                                     </span>&nbsp;
                                     <span class="m-r-sm" ng-if="vm.platform.pStatus == 'Failed'" title="{{vm.platform.pPublishError}}">&nbsp;
                                         {{vm.platform.pPublishError | limitTo: 30}}{{vm.platform.pPublishError.length > 30 ? '...' : ''}}
@@ -22,7 +22,6 @@
 
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;【{{cartInfo.name}} NumIID】，红灯时为上新/更新失败状态，请及时修正；绿灯时为在售状态；黄灯时为在库状态；灰灯时为未发布状态。点击以上{{cartInfo.name}} NumIID进入{{cartInfo.name}}商品页面。<br>
-                                        {{ cartInfo.value==27?"聚美存在特殊情况，JM Origin HID为聚美上新用原始Deal的HashID，所有聚美正式销售所使用的HashID，请参照聚美活动一览内的记录。":"" }}
                                     </div>
                                 </div>
                             </div>
@@ -31,7 +30,12 @@
                                 <div class="col-md-8">
                                     <div class="row">
                                         <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail" ng-class="{'current':image.productCode == vm.mastData.productCode}">
+                                            <a href="javascript:void(0)" class="thumbnail current" ng-if="image.productCode == vm.mastData.productCode">
+                                                <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
+                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                            </a>
+                                            <!--不是当前商品的话可以跳转到图片对应产品详情页-->
+                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail" ng-if="image.productCode != vm.mastData.productCode" target="_blank">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
@@ -56,7 +60,7 @@
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="vm.mastData.productCode" disabled>
-                                    <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
+                                    <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
                                 </div>

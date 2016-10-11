@@ -15,6 +15,10 @@ public class CacheKeyEnums {
     /* 公用分隔符，防止因分割符产生的bug而声明 */
     public static final String SKIP = "$-SKIP-$";
 
+    public static final String COMM_CACHE_DATA = "COMM_CACHE_DATA";
+
+    public static final String OAUTH_CACHE_DATA = "OATUH_CACHE_DATA";
+
     public enum KeyEnum {
 
         ConfigData_FeedConfigs,
@@ -55,6 +59,8 @@ public class CacheKeyEnums {
 
         ConfigData_UsJois,
 
-        ConfigData_VmsChannelConfigs;
+        ConfigData_VmsChannelConfigs,
+
+        COMM_CACHE_DATA;
     }
 }

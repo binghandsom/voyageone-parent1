@@ -4,11 +4,13 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -17,10 +19,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.OldCmsBtProductModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -45,6 +44,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.updateFirst(query, update, collectionName);
     }
 
+    /**
+     * 根据Id返回多条产品数据
+     */
     public List<CmsBtProductModel> selectProductByIds(List<Long> ids, String channelId) {
         if (ids == null || ids.size() == 0) {  // 对于list千万不要返回null
             return Collections.emptyList();
@@ -82,7 +84,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-    public List<CmsBtProductBean> selectBean(JomgoQuery queryObject, String channelId) {
+    public List<CmsBtProductBean> selectBean(JongoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
 
@@ -102,7 +104,12 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     @Override
     public WriteResult update(BaseMongoModel model) {
         throw new BusinessException("not suppert");
-        // return update(model);
+//         return super.update(model);
+    }
+
+    @Deprecated
+    public WriteResult updateByModel(BaseMongoModel model) {
+         return super.update(model);
     }
 
     /**
@@ -114,11 +121,11 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public boolean checkProductDataIsReady(String channelId, Long productId) {
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
-        jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}", productId));
-        jomgoQuery.setProjectionExt("prodId");
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}", productId));
+        jongoQuery.setProjectionExt("prodId");
 
-        List<CmsBtProductModel> result = select(jomgoQuery, channelId);
+        List<CmsBtProductModel> result = select(jongoQuery, channelId);
 
         return result.size() <= 0;
     }
@@ -267,11 +274,31 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes){
 
-        JomgoQuery jomgoQuery = new JomgoQuery();
+        JongoQuery jongoQuery = new JongoQuery();
         if (codes.size() > 0) {
-            jomgoQuery.setQuery("{\"fields.code\" : { $in : #}}");
-            jomgoQuery.setParameters(codes);
+            jongoQuery.setQuery("{\"fields.code\" : { $in : #}}");
+            jongoQuery.setParameters(codes);
         }
-        return mongoTemplate.find(jomgoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
+        return mongoTemplate.find(jongoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
+    }
+
+    /**
+     * 根据类目id找出所有code(检索时带上排序条件)
+     */
+    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId) {
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}}, \"platforms.P%s.pStatus\":'%s'", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+        jongoQuery.setParameters(channelId, catId);
+        jongoQuery.setProjection("{\"common.fields.code\": 1}");
+        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":-1}", cartId)); // 暂定pPublishTime
+
+        List<CmsBtProductModel> products = select(jongoQuery, channelId);
+
+        List<String> codes = new ArrayList<>();
+        if (ListUtils.notNull(products)) {
+            products.forEach(p -> codes.add(p.getCommon().getFields().getCode()));
+        }
+
+        return codes;
     }
 }

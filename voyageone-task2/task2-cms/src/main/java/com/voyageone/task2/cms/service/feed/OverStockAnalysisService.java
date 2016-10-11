@@ -14,7 +14,10 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.SuperFeedOverStockBean;
 import com.voyageone.task2.cms.dao.feed.OverStockFeedDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoOverStockModel;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.OverStock;
@@ -65,14 +70,27 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         init();
 
         zzWorkClear();
-
-        $info("产品信息插入开始");
-        int cnt = superFeedImport();
+        int cnt = 0;
+        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+            cnt = fullCopyTemp();
+        }else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
         $info("产品信息插入完成 共" + cnt + "条数据");
         if (cnt > 0) {
-            transformer.new Context(channel, this).transform();
+            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+                transformer.new Context(channel, this).transform();
+            }
             postNewProduct();
         }
+    }
+    @Override
+    public int fullCopyTemp(){
+        int cnt = overStockFeedDao.fullCopyTemp();
+        overStockFeedDao.updateMd5();
+        overStockFeedDao.updateUpdateFlag();
+        return cnt;
     }
 
     /**
@@ -153,8 +171,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         superFeedverStockBean.setMappriceAmount(String.valueOf(variationType.getMapPrice().getAmount()));
                                     }
                                     if (variationType.getMsrpPrice() == null) {
-                                        superFeedverStockBean.setMsrppriceAmount("");
-                                        superFeedverStockBean.setMsrppriceCurrency("");
+                                        superFeedverStockBean.setMsrppriceAmount(String.valueOf(variationType.getSellingPrice().getAmount()));
+                                        superFeedverStockBean.setMsrppriceCurrency(String.valueOf(variationType.getSellingPrice().getCurrency()));
                                     } else {
                                         superFeedverStockBean.setMsrppriceAmount(getValue(String.valueOf(variationType.getMsrpPrice().getAmount())));
                                         superFeedverStockBean.setMsrppriceCurrency(getValue(String.valueOf(variationType.getMsrpPrice().getCurrency())));
@@ -218,10 +236,10 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             if (name.contains("颜色") || name.contains("Color")) {
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbColorValue.append(value.replace(" ", "") + "-");
-                                                    }
-                                                    if (sbColorValue.toString().equals("N/A-")) {
-                                                        continue;
                                                     }
                                                 }
                                             }
@@ -229,11 +247,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             if (name.equals("金属") || name.equals("Metal")) {
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbMetalValue.append(value.replace(" ", "") + "-");
                                                     }
-                                                    if (sbMetalValue.toString().equals("N/A-")) {
-                                                        continue;
-                                                    }
+
                                                 }
                                             }
                                             //attributeSize
@@ -241,13 +260,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
                                                 if (valueList.size() > 0) {
                                                     for (String value : valueList) {
+                                                        if (value.toString().equals("N/A")) {
+                                                            continue;
+                                                        }
                                                         sbSizeValue.append(value.replace(" ", "") + "-");
                                                     }
-                                                    if (sbSizeValue.toString().equals("N/A-")) {
-                                                        continue;
-                                                    }
                                                 }
-
                                             }
                                         }
                                         //attributeColor
@@ -269,15 +287,6 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             superFeedverStockBean.setAttributeSize(String.valueOf(sbSizeValue.deleteCharAt(sbSizeValue.length() - 1)));
                                         }
                                     }
-                                    //SKU_Image
-                                    List<ImageType> imageTypeList = variationType.getImages().getImage();
-                                    if (imageTypeList.size() > 0) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (ImageType imageType : imageTypeList) {
-                                            sb.append(imageType.getCdnPath() + ",");
-                                        }
-                                        superFeedverStockBean.setImage(sb.deleteCharAt(sb.length() - 1).toString());
-                                    }
                                     //model_image
                                     List<ImageType> model_imageTypeList = product.getImages().getImage();
                                     if (model_imageTypeList.size() > 0) {
@@ -286,6 +295,16 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             sb.append(imageType.getCdnPath() + ",");
                                         }
                                         superFeedverStockBean.setModelImage(sb.deleteCharAt(sb.length() - 1).toString());
+                                    }
+                                    //SKU_Image
+                                    List<ImageType> imageTypeList = variationType.getImages().getImage();
+                                    if (imageTypeList.size() > 0) {
+                                        StringBuilder sb = new StringBuilder();
+                                        for (ImageType imageType : imageTypeList) {
+                                            sb.append(imageType.getCdnPath() + ",");
+                                        }
+                                        sb.append(superFeedverStockBean.getModelImage());
+                                        superFeedverStockBean.setImage(sb.toString());
                                     }
                                     superFeedverStockBean.setModelRetailerid(getValue(product.getRetailerId()));
                                     superFeedverStockBean.setModelTitle(getValue(product.getTitle()));
@@ -315,11 +334,12 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                             }
                                             if (valueList.size() > 0) {
                                                 for (String value : valueList) {
+                                                    if (value.toString().equals("N/A")) {
+                                                        continue;
+                                                    }
                                                     sbValue.append(value.replace(" ", "") + "-");
                                                 }
-                                                if (sbValue.toString().equals("N/A-")) {
-                                                    continue;
-                                                }
+
                                                 sb.append(sbValue);
                                             }
                                         }
@@ -332,7 +352,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
                                     count++;
-                                    $info("SKU:" + count + "---" + sku);
+                                    $debug("SKU:" + count + "---" + sku);
                                     if (superfeed.size() > 1000) {
                                         transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                                         superfeed.clear();
@@ -385,7 +405,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         for (SuperFeedOverStockBean superfeed : superfeedlist) {
 
             if (overStockFeedDao.insertSelective(superfeed) <= 0) {
-                $info("ShoeZoo产品信息插入失败sku = " + superfeed.getSku());
+                $info("OverStock产品信息插入失败sku = " + superfeed.getSku());
             }
         }
         return true;
@@ -439,6 +459,24 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
             cmsBtFeedInfoModel.setAttribute(attribute);
+
+            //设置重量
+            List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+            for (CmsBtFeedInfoModel_Sku sku : skus) {
+                String Weight = sku.getWeightOrg().trim();
+                Pattern pattern = Pattern.compile("[^0-9.]");
+                Matcher matcher = pattern.matcher(Weight);
+                if (matcher.find()) {
+                    int index = Weight.indexOf(matcher.group());
+                    if (index != -1) {
+                        String weightOrg = Weight.substring(0, index);
+                        sku.setWeightOrg(weightOrg);
+                    }
+                }
+                sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+            }
+            cmsBtFeedInfoModel.setSkus(skus);
+            //设置重量结束
 
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());

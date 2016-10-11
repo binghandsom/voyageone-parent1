@@ -1,7 +1,8 @@
 package com.voyageone.web2.cms.views.group;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -9,7 +10,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @version 2.0.0, 16/1/14
  */
 @Service
-public class CmsGroupDetailService extends BaseAppService {
+public class CmsGroupDetailService extends BaseViewService {
 
     @Autowired
     private ProductGroupService productGroupService;
@@ -52,7 +53,7 @@ public class CmsGroupDetailService extends BaseAppService {
         masterData.put("promotionList", promotionService.getPromotionsByChannelId(userInfo.getSelChannelId(), null));
 
         //add by holysky  新增一些页的聚美促销活动预加载
-        masterData.put("jmPromotionList", cmsBtJmPromotionService.getJMActivePromotions(userInfo.getSelChannelId()));
+        masterData.put("jmPromotionList", cmsBtJmPromotionService.getJMActivePromotions(CartEnums.Cart.JM.getValue(), userInfo.getSelChannelId()));
 
         return masterData;
     }
@@ -66,7 +67,7 @@ public class CmsGroupDetailService extends BaseAppService {
         Map<String, Object> result = new HashMap<>();
 
         // 先取得group信息，
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"groupId\": #}");
         queryObject.setParameters(Integer.valueOf(params.get("id").toString()));
         List<CmsBtProductGroupModel> rstList = productGroupService.getList(userInfo.getSelChannelId(), queryObject);
@@ -83,7 +84,7 @@ public class CmsGroupDetailService extends BaseAppService {
             throw new BusinessException("该group下没有product数据");
         }
 
-        JomgoQuery grpQueryObject = new JomgoQuery();
+        JongoQuery grpQueryObject = new JongoQuery();
         grpQueryObject.setQuery("{\"common.fields.code\": {$in:#}}");
         grpQueryObject.setParameters(codeList);
         List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), grpQueryObject);

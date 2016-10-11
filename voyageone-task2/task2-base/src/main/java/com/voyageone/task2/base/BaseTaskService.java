@@ -1,10 +1,10 @@
 package com.voyageone.task2.base;
 
-import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -26,8 +26,6 @@ import static java.lang.String.format;
  */
 public abstract class BaseTaskService extends VOAbsIssueLoggable {
 
-    protected static final Gson gson = new Gson();
-
     @Autowired
     protected TaskDao taskDao;
 
@@ -44,7 +42,7 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     /**
      * 获取 job 配置
      */
-    protected List<TaskControlBean> getControls() {
+    List<TaskControlBean> getControls() {
         return taskDao.getTaskControlList(getTaskName());
     }
 
@@ -103,7 +101,6 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
      *
      * @param threads         要运行的任务
      * @param taskControlList job 配置
-     * @throws InterruptedException
      */
     protected void runWithThreadPool(List<Runnable> threads, List<TaskControlBean> taskControlList) throws InterruptedException {
         runWithThreadPool(threads, taskControlList, 1);
@@ -115,7 +112,6 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
      * @param threads            要运行的任务
      * @param taskControlList    job 配置
      * @param defaultThreadCount 当配置中没有配置线程数量时，默认的数量
-     * @throws InterruptedException
      */
     protected void runWithThreadPool(List<Runnable> threads, List<TaskControlBean> taskControlList, int defaultThreadCount) throws InterruptedException {
 
@@ -153,7 +149,7 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     /**
      * 错误信息记录
      */
-    public void logIssue(Exception ex) {
+    public void logIssue(Throwable ex) {
         logIssue(ex, null);
     }
 
@@ -171,7 +167,7 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     /**
      * 错误信息记录
      */
-    public void logIssue(Exception ex, Object attJson) {
+    public void logIssue(Throwable ex, Object attJson) {
         issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), format("<p>出现未处理异常的任务是: [ %s ]</p>%s", getTaskName(), makeIssueAttach(attJson)));
     }
 
@@ -191,10 +187,11 @@ public abstract class BaseTaskService extends VOAbsIssueLoggable {
     }
 
     private String makeIssueAttach(Object attach) {
+
         if (attach == null) return com.voyageone.common.Constants.EmptyString;
 
         if (attach instanceof String) return (String) attach;
 
-        return gson.toJson(attach);
+        return JacksonUtil.bean2Json(attach);
     }
 }

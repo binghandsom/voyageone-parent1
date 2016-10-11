@@ -7,22 +7,28 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.factory.SchemaWriter;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.*;
+import com.voyageone.common.masterdate.schema.rule.Rule;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.bean.cms.product.SxData.SxDarwinSkuProps;
+import com.voyageone.service.dao.cms.CmsMtPlatformPropMappingCustomDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.model.cms.CmsMtPlatformPropMappingCustomModel;
+import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 天猫平台上新用产品相关服务
@@ -37,6 +43,13 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     private TbProductService tbProductService;
+    @Autowired
+    private ProductGroupService productGroupService;
+
+    @Autowired
+    private CmsMtPlatformPropMappingCustomDao cmsMtPlatformPropMappingCustomDao;
+
+    private static final String CSPU_FIELD_ID_MATCH = "cspu_list";
 
     /**
      * 去天猫(天猫国际)上去寻找是否有存在这个product
@@ -49,7 +62,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的天猫platformProductId列表 (如果没有找到, 返回null)
      */
     public List<String> getProductIdFromTmall(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                              CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
+                                              CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier){
         // 产品id列表(返回值)
         List<String> platformProductIdList = new ArrayList<>();
         // 上新数据
@@ -104,6 +117,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             // 这里不需要用返回值MAP(返回的不是全部，只是一个基本类型field子集
             // 想要使用包含复杂类型的全体field直接用第一个参数fieldList即可
             sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+        } catch (BusinessException ex) {
+            sxData.setErrorMessage(ex.getMessage());
+            throw ex;
         } catch (Exception ex) {
             String errMsg = String.format("匹配天猫产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
@@ -169,13 +185,26 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
     public String getUsefulProductId(SxData sxData, List<String> platformProductIdList, ShopBean shopBean) {
         String platformProductId = null;
         boolean wait_for_check = false; //产品是否在等待天猫审核
+        String platformErrorMsg = null; // 平台审核失败的信息
+
+        // added by morse.lu 2016/08/08 start
+        // barCode对应的是否更新
+        Map<String, SxDarwinSkuProps> mapBarcodeProps = new HashMap<>();
+        Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
+        if (mapDarwinSkuProps != null) {
+            mapDarwinSkuProps.forEach((sku, props)-> mapBarcodeProps.put(props.getBarcode(), props));
+        }
+        // added by morse.lu 2016/08/08 end
 
         for (String pid : platformProductIdList)
         {
             // 查询产品状态
-            String product_status;
+            String[] product_status;
             try {
-                product_status = getProductStatus(Long.parseLong(pid), shopBean);
+                // modified by morse.lu 2016/08/08 start
+//                product_status = getProductStatus(Long.parseLong(pid), shopBean);
+                product_status = getProductStatus(Long.parseLong(pid), shopBean, mapBarcodeProps);
+                // modified by morse.lu 2016/08/08 end
             } catch (Exception ex) {
                 String errMsg = String.format("调用天猫API查询产品状态失败！[PlatformProductId:%s]", pid);
                 $error(errMsg);
@@ -184,31 +213,57 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 throw new BusinessException(ex.getMessage());
             }
             // 可以发布商品
-            if ("true".equalsIgnoreCase(product_status)) {
+            if ("true".equalsIgnoreCase(product_status[0])) {
                 // 找到一个可以发布商品的产品id就退出循环
                 platformProductId = pid;
                 wait_for_check = false;
+                platformErrorMsg = product_status[1]; // 可能部分规格错误
                 break;
             }  // 没有款号
-            else if (product_status == null || "".equals(product_status)){
-                // 如果在循环中已经发现有产品存在但未审核，那么不会覆盖productId为null，
-                // 否则循环结束后，会被认为没有找到产品，从而重新上传产品
-                // 也就是说，天猫审核中的不重新上传产品
-                if (wait_for_check)
-                    continue;
-                else
-                    platformProductId = null;
-            } // 等待天猫审核中
-            else {
+            // modified by morse.lu 2016/08/04 start
+            // 这段逻辑改一下，感觉有点问题，但具体状态是什么样不确定，以后可能还会改
+//            else if (product_status == null || "".equals(product_status)){
+//                // 如果在循环中已经发现有产品存在但未审核，那么不会覆盖productId为null，
+//                // 否则循环结束后，会被认为没有找到产品，从而重新上传产品
+//                // 也就是说，天猫审核中的不重新上传产品
+//                if (wait_for_check)
+//                    continue;
+//                else
+//                    platformProductId = null;
+//            } // 等待天猫审核中
+//            else {
+//                platformProductId = pid;
+//                wait_for_check = true;
+//            }
+            else if ("false".equalsIgnoreCase(product_status[0])) {
+                // 审核失败 ?
+                if (!wait_for_check) {
+                    platformProductId = pid;
+                    if (StringUtils.isEmpty(product_status[1])) {
+                        product_status[1] = "错误原因取得失败!";
+                    }
+                    platformErrorMsg = product_status[1];
+                }
+            } else {
+                // 审核中或未审核?
                 platformProductId = pid;
                 wait_for_check = true;
+                platformErrorMsg = null;
             }
+            // modified by morse.lu 2016/08/04 end
         }
 
         if (wait_for_check) {
             // 如果循环完所有的平台产品id列表，没有可用的，只有天猫审核的产品，则抛出异常
             String errMsg = String.format("发现已有产品符合我们要上传的商品，但需要等待天猫审核该产品.  [PlatformProductId:%s]", platformProductId);
-            $error(errMsg);
+//            $error(errMsg);
+            sxData.setErrorMessage(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
+        if (!StringUtils.isEmpty(platformErrorMsg)) {
+            // 审核失败
+            String errMsg = String.format("产品[PlatformProductId:%s]审核失败!错误原因是:%s", platformProductId, platformErrorMsg);
             sxData.setErrorMessage(errMsg);
             throw new BusinessException(errMsg);
         }
@@ -216,8 +271,13 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         return  platformProductId;
     }
 
-    private String getProductStatus(Long product_id, ShopBean shopBean) throws ApiException, TopSchemaException {
+    private String[] getProductStatus(Long product_id, ShopBean shopBean, Map<String, SxDarwinSkuProps> mapBarcodeProps) throws ApiException, TopSchemaException {
 
+        // added by morse.lu 2016/08/08 start
+        String[] status = new String[]{"", ""}; // status[0] 状态 status[1] error的场合error信息
+        String[] errorKeys = {"不完整", "不规范", "不正确", "错误", "需", "未"}; // 以后视情况追加修正
+        List<String> listBarcode = new ArrayList<>();
+        // added by morse.lu 2016/08/08 end
         // 调用天猫API获取产品信息获取schema(tmall.product.schema.get )
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -227,11 +287,67 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             if (field instanceof InputField && "can_publish_item".equals(field.getId())) {
                 String productStatus = ((InputField) field).getDefaultValue();
                 $debug("product_id:" + product_id + ", productStatus:" + productStatus);
-                return productStatus;
+                status[0] = productStatus;
             }
+            // added by morse.lu 2016/08/08 start
+            if (CSPU_FIELD_ID_MATCH.equals(field.getId())) {
+                // 产品规格
+                MultiComplexField cspuListField = (MultiComplexField) field;
+                for (Field subField : cspuListField.getFields()) {
+                    if (subField.getType() != FieldTypeEnum.COMPLEX) {
+                        continue;
+                    }
+                    ComplexField cspuField = (ComplexField) subField;
+                    Map<String, Field> mapFields = cspuField.getFieldMap();
+                    String[] barcodeXml = ((InputField) mapFields.get("barcode")).getDefaultValue().split(":"); // 3:090891203253  1:3607342551800 冒号前面不知道是什么
+                    if (barcodeXml.length != 2) {
+                        throw new BusinessException("天猫条形码属性值保存方式变更!要修正代码重新解析!");
+                    }
+
+                    String barCode = barcodeXml[1];
+                    if (listBarcode.contains(barCode)) {
+                        throw new BusinessException(String.format("本产品的规格,天猫条形码[%s]有重复!请先在天猫后台修正正确的条形码,再Approve!", barCode));
+                    }
+                    listBarcode.add(barCode);
+
+                    SxDarwinSkuProps sxDarwinSkuProps = mapBarcodeProps.get(barCode);
+                    if (sxDarwinSkuProps != null) {
+                        // 是这次要上的barcode
+                        sxDarwinSkuProps.setCspuId(((InputField) mapFields.get("id")).getDefaultValue()); // 规格编号
+                        if (!sxDarwinSkuProps.isAllowUpdate()) {
+                            // 不允许更新，那么有错，就需要把错报出来
+                            if (cspuField.getRules() != null) {
+                                boolean isFirstErr = true;
+                                for (Rule rule : cspuField.getRules()) {
+                                    if ("tipRule".equals(rule.getName())) {
+                                        String info = StringUtils.null2Space2(rule.getValue());
+                                        boolean isErrorMsg = false;
+                                        for (String errorKey : errorKeys) {
+                                            if (info.indexOf(errorKey) > 0) {
+                                                isErrorMsg = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (isErrorMsg) {
+                                            if (isFirstErr) {
+                                                sxDarwinSkuProps.setErr(true);
+                                                isFirstErr = false;
+                                                status[1] = status[1] + "条形码[" + barCode + "]:";
+                                            }
+                                            status[1] = status[1] + info + ";";
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // added by morse.lu 2016/08/08 end
         }
 
-        return null;
+        return status;
     }
 
     /**
@@ -248,7 +364,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @return 返回的产品上传成功的天猫productId
      */
     public String addTmallProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel,
-                                  CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+                                  CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上传成功返回的产品id(返回值)
         String platformProductId = "";
         // 上新数据
@@ -291,6 +407,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         try {
             // 取得所有field对应的属性值
             sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("天猫新增产品时根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformCategoryId);
@@ -360,6 +479,8 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 
     /**
      * 上传产品到天猫(天猫国际)平台（更新）
+     * sxData.isUpdateProductFlg() == true 才会调用此方法
+     * 达尔文是特例，因为允许不更新产品信息，但是更新规格
      *
      * @param expressionParser ExpressionParser (包含SxData)
      * @param platformProductId  天猫productId
@@ -367,7 +488,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      * @param shopBean ShopBean 店铺信息
      * @param modifier 更新者
      */
-    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
+    public void updateTmallProduct(ExpressionParser expressionParser, String platformProductId, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, ShopBean shopBean, String modifier) {
         // 上新数据
         SxData sxData = expressionParser.getSxData();
         StringBuffer failCause = new StringBuffer();
@@ -398,10 +519,49 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             throw new BusinessException(e.getMessage());
         }
 
+        // added by morse.lu 2016/08/09 start
+        List<Field> cspuListField = new ArrayList<>();
+        if (sxData.isDarwin()) {
+            // 达尔文
+            Map<String, Object> searchParam = new HashMap<>();
+            searchParam.put("cartId", sxData.getCartId());
+            searchParam.put("mapping_type", CustomMappingType.CSPU.value());
+            List<CmsMtPlatformPropMappingCustomModel> cmsMtPlatformPropMappingCustomModels = cmsMtPlatformPropMappingCustomDao.selectList(searchParam);
+            List<String> listCspuFieldId = cmsMtPlatformPropMappingCustomModels.stream().map(CmsMtPlatformPropMappingCustomModel::getPlatformPropId).collect(Collectors.toList());
+            for (Field field : fieldList) {
+                if (listCspuFieldId.contains(field.getId())) {
+                    // 产品规格
+                    cspuListField.add(field);
+                } else{
+                    if (!sxData.isUpdateProductFlg()) {
+                        // 不更新产品，即只更新产品规则(达尔文特有，其余的产品不更新的话，不会调用本方法)
+                        // 把所有天猫取得的值(defaultValue)拷进value
+                        try {
+                            setFieldDefaultValues(field);
+                        } catch (Exception e) {
+                            String errMsg = StringUtils.format("达尔文产品属性值取得失败!field_id[%s],fieldName[%s]", field.getId(), field.getName());
+                            sxData.setErrorMessage(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                    }
+                }
+            }
+        }
+        // added by morse.lu 2016/08/09 end
+
         // 根据field列表取得属性值mapping数据
         try {
             // 取得所有field对应的属性值
-            sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+            if (sxData.isUpdateProductFlg()) {
+                sxProductService.constructMappingPlatformProps(fieldList, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+            } else {
+                // 不更新产品只更新产品规则的话，属性值直接从天猫取得(达尔文特有，其余的产品不更新的话，不会调用本方法)
+                // 只把产品规格的field传进去设值
+                sxProductService.constructMappingPlatformProps(cspuListField, cmsMtPlatformMappingModel, shopBean, expressionParser, modifier, false);
+            }
+        } catch (BusinessException be) {
+            sxData.setErrorMessage(be.getMessage());
+            throw be;
         } catch (Exception ex) {
             String errMsg = String.format("更新产品时,根据field列表取得属性值mapping数据失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformProductId);
@@ -478,4 +638,175 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         return isDarwin;
     }
 
+    /**
+     * 达尔文产品上新
+     *
+     * @param expressionParser ExpressionParser (包含SxData)
+     * @param cmsMtPlatformCategorySchemaModel MongoDB  propsProduct取得用
+     * @param dbProductId group表里平台产品id
+     * @param shopBean ShopBean 店铺信息
+     * @param modifier 更新者
+     * @return 返回的产品能否上新商品了
+     */
+    public boolean sxDarwinProduct(ExpressionParser expressionParser, CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel, String dbProductId, ShopBean shopBean, String modifier) {
+        boolean canSxDarwinItem = false; // 没有抛错(包括审核状态检查)，并且产品(或规格)没有追加或更新(这样会进入审核,无法上新商品)，才会返回true
+        SxData sxData = expressionParser.getSxData();
+        // 产品schema
+        String productSchema = cmsMtPlatformCategorySchemaModel.getPropsProduct();
+//        // 画面上的产品规格
+//        List<Map<String, Object>> masterWordEvaluationContexts = (List<Map<String, Object>>) sxData.getMainProduct().getPlatform(sxData.getCartId()).getFields().get(CSPU_FIELD_ID);
+        String platformProductId = "";
+
+        if (StringUtils.isEmpty(dbProductId)) {
+            // 新增产品到平台
+            // 匹配平台产品Id列表
+            // productGroup表中platformPid为空的时候，调用天猫API查找产品platformPid
+            List<String> platformProductIdList  = getProductIdFromTmall(expressionParser, cmsMtPlatformCategorySchemaModel, null, shopBean, modifier);
+            if (platformProductIdList == null) {
+                throw new BusinessException("达尔文产品获取的匹配规则失败!");
+            }
+
+            if (platformProductIdList.isEmpty()) {
+                // 没有找到产品，需要新增
+//                if (ListUtils.isNull(masterWordEvaluationContexts)) {
+//                    // 规格没有填
+//                    throw new BusinessException("这是新增的达尔文产品,所有规格都要填!");
+//                } else {
+                    platformProductId = addTmallProduct(expressionParser, cmsMtPlatformCategorySchemaModel, null, shopBean, modifier);
+//                }
+             } else {
+                // 对于找到的pid进行更新
+                // 判断产品状态，取得正确的pid
+                platformProductId = getUsefulProductId(sxData, platformProductIdList, shopBean);
+                if (judgeCspuNeedUpdate(sxData)) {
+                    // 要更新
+                    updateTmallProduct(expressionParser, platformProductId, null, shopBean, modifier);
+                 } else {
+                    // 不要更新
+                    canSxDarwinItem = true;
+                }
+            }
+
+            if (!StringUtils.isEmpty(platformProductId)) {
+                // 回写SxData和ProductGroup表中的platformPid
+                sxData.getPlatform().setPlatformPid(platformProductId); // 平台产品id
+                sxData.getPlatform().setModifier(modifier); // 更新者
+                // 更新ProductGroup表
+                productGroupService.update(sxData.getPlatform());
+            }
+        } else {
+            // 更新产品
+            // 判断产品状态，查看是否有审核中，或者审核失败的
+            platformProductId = getUsefulProductId(sxData, new ArrayList<String>(){{this.add(dbProductId);}}, shopBean);
+            if (judgeCspuNeedUpdate(sxData)) {
+                // 要更新
+                updateTmallProduct(expressionParser, platformProductId, null, shopBean, modifier);
+            } else {
+                // 不要更新
+                canSxDarwinItem = true;
+            }
+        }
+
+        return canSxDarwinItem;
+    }
+
+    /**
+     * 判读产品是否需要更新
+     * sxData.isUpdateProductFlg() || 有要更新或新增的规格
+     *
+     * @param sxData
+     * @return
+     */
+    private boolean judgeCspuNeedUpdate(SxData sxData) {
+        boolean needUpdate = false;
+        if (sxData.isUpdateProductFlg()) {
+            needUpdate = true;
+        } else {
+            Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
+            for (SxDarwinSkuProps skuProps : mapDarwinSkuProps.values()) {
+                if (skuProps.isAllowUpdate() || StringUtils.isEmpty(skuProps.getCspuId())) {
+                    // 允许更新 或者 增加规格
+                    needUpdate = true;
+                    break;
+                }
+            }
+        }
+
+        return needUpdate;
+    }
+
+    /**
+     * 把field里的默认值，设值进value
+     *
+     * @param field
+     * @throws Exception
+     */
+    private void setFieldDefaultValues(Field field) throws Exception {
+
+        switch (field.getType()) {
+            case INPUT: {
+                InputField inputField = (InputField) field;
+                inputField.setValue(inputField.getDefaultValue());
+                break;
+            }
+            case MULTIINPUT: {
+                MultiInputField multiInputField = (MultiInputField) field;
+                multiInputField.setValues(multiInputField.getDefaultValues());
+                break;
+            }
+            case LABEL:
+                break;
+            case SINGLECHECK: {
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+                singleCheckField.setValue(singleCheckField.getDefaultValue());
+                break;
+            }
+            case MULTICHECK: {
+                MultiCheckField multiCheckField = (MultiCheckField) field;
+                List<Value> values = new ArrayList<>();
+                multiCheckField.getDefaultValues().forEach(val -> values.add(new Value(val)));
+                multiCheckField.setValues(values);
+                break;
+            }
+            case COMPLEX: {
+                ComplexField complexField = (ComplexField) field;
+                ComplexValue complexValue = new ComplexValue();
+                complexField.setComplexValue(complexValue);
+
+                ComplexValue complexDefaultValue = complexField.getDefaultComplexValue();
+                if (complexDefaultValue != null) {
+                    for (String fieldId : complexDefaultValue.getFieldKeySet()) {
+                        // 克隆的这个方法不能copy出value，先直接用DefaultField吧
+//                        Field valueField = deepCloneField(complexDefaultValue.getValueField(fieldId));
+//                        setFieldDefaultValues(valueField);
+                        Field valueField = complexDefaultValue.getValueField(fieldId);
+                        complexValue.put(valueField);
+                    }
+                }
+                break;
+            }
+            case MULTICOMPLEX: {
+                MultiComplexField multiComplexField = (MultiComplexField) field;
+                List<ComplexValue> multiComplexValues = new ArrayList<>();
+                multiComplexField.setComplexValues(multiComplexValues);
+
+                List<ComplexValue> multiComplexDefaultValues = multiComplexField.getDefaultComplexValues();
+                if (multiComplexDefaultValues != null) {
+                    for (ComplexValue item : multiComplexDefaultValues) {
+                        ComplexValue complexValue = new ComplexValue();
+                        multiComplexValues.add(complexValue);
+
+                        for (String fieldId : item.getFieldKeySet()) {
+                            // 克隆的这个方法不能copy出value，先直接用DefaultField吧
+//                            Field valueField = deepCloneField(item.getValueField(fieldId));
+//                            setFieldDefaultValues(valueField);
+                            Field valueField = item.getValueField(fieldId);
+                            complexValue.put(valueField);
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
 }

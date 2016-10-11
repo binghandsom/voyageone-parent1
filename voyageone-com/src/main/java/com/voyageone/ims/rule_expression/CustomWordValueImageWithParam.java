@@ -15,8 +15,8 @@ public class CustomWordValueImageWithParam extends CustomWordValue{
     public CustomWordValueImageWithParam() {
     }
 
-    public CustomWordValueImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams) {
-        this.userParam = new CustomModuleUserParamImageWithParam(imageTemplate, imageParams);
+    public CustomWordValueImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate, RuleExpression viewType) {
+        this.userParam = new CustomModuleUserParamImageWithParam(imageTemplate, imageParams, useCmsBtImageTemplate, viewType);
     }
 
     public CustomModuleUserParamImageWithParam getUserParam() {

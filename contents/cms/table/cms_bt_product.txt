@@ -16,54 +16,55 @@
   * catPath  ->新的主类目完整路径
   * comment   ->添加产品注释(暂时功能不开放)
   * fields
-    * model
-    * code
-    * originalCode ->原始code
-    * brand
-    * isMasterMain    ->是否为默认主商品
+    * model                        <-款号
+    * code                         <-商品编码
+    * originalCode ->原始code 原商品编码
+    * brand                        <-品牌
+    * isMasterMain    ->是否为默认主商品("1", "0")
     * sizeChart       ->选择的尺码对照
-    * productNameEn
-    * originalTitleCn
-    * shortDesEn
-    * shortDesCn
-    * longDesEn
-    * longDesCn
-    * materialEn
-    * materialCn
-    * color
-    * origin
-    * productType
-    * sizeType
-    * hsCodeCrop
-    * hsCodePrivate
-    * quantity
-    * clientProductUrl
-    * images1
-    * images2
-    * images3
-    * images4
-    * images5
-    * images6
-    * images7
-    * images8
-    * priceMsrpSt
-    * priceMsrpEd
-    * priceRetailSt
-    * priceRetailEd
-    * categoryStatus
-    * categorySetter
-    * categorySetTime
-    * translateStatus
-    * translator
-    * translateTime
-    * hsCodeStatus
-    * hsCodeSetter
-    * hsCodeSetTime
+    * productNameEn                <-产品名称英文
+    * originalTitleCn              <-产品名称中文
+    * shortDesEn                   <-简短描述英语
+    * shortDesCn                   <-简短描述中文
+    * longDesEn                    <-详情描述英语
+    * longDesCn                    <-详情描述中文
+    * materialEn                   <-材质英文
+    * materialCn                   <-材质中文
+    * color                        <-颜色/口味/香型等
+    * origin                       <-产地
+    * productType                  <-产品分类
+    * sizeType                     <-适用人群
+    * hsCodeCrop                   <-税号集货
+    * hsCodePrivate                <-税号个人
+    * quantity  ->(Int)            <-库存
+    * clientProductUrl             <-品牌方商品地址
+    * images1                      <-品牌方商品图
+    * images2                      <-包装图
+    * images3                      <-角度图
+    * images4                      <-PC端自定义图
+    * images5                      <-APP端自定义图
+    * images6                      <-PC端自拍商品图
+    * images7                      <-App端自拍商品图
+    * images8                      <-吊牌图
+    * priceMsrpSt ->(double)       <-官方建议最低售价
+    * priceMsrpEd ->(double)       <-官方建议最高售价
+    * priceRetailSt ->(double)     <-中国指导最低售价
+    * priceRetailEd ->(double)     <-中国指导最高售价
+    * categoryStatus ->("1", "0")  <-类目设置状态
+    * categorySetter               <-类目设置者
+    * categorySetTime              <-类目设置时间
+    * translateStatus ->("1", "0") <-商品翻译状态
+    * translator                   <-翻译者
+    * translateTime                <-翻译时间
+    * hsCodeStatus ->("1", "0")    <-税号设置状态
+    * hsCodeSetter                 <-税号设置者
+    * hsCodeSetTime                <-税号设置时间
     * codeDiff ->20160627,商品特质英文（颜色/口味/香型等）
     * hsCodeCross ->20160627,税号跨境申报（10位）
     * usageEn ->20160627,使用说明英语
     * usageCn ->20160627,使用说明中文
     * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
+    * commissionRate ->20160713,VO佣金费率,商品级
   * skus[]
     * skuCode
     * barcode
@@ -72,38 +73,42 @@
     * size
     * sizeNick  ->20160627,售卖用尺码别名
     * sizeSx    ->20160707,只给上新用(getSxProductDataByGroupId生成这个字段的数据, 上新的地方直接用这个就行了)
-    * clientMsrpPrice     ->客户建议零售价
-    * clientRetailPrice   ->客户指导价
-    * clientNetPrice      ->客户成本价
-    * priceMsrp           ->中国建议零售价
-    * priceRetail         ->中国指导价
+    * clientMsrpPrice     ->客户建议零售价(double)
+    * clientRetailPrice   ->客户指导价(double)
+    * clientNetPrice      ->客户成本价(double)
+    * priceMsrp           ->中国建议零售价(double)
+    * priceRetail         ->中国指导价(double)
+    * weight              ->20160713,重量
+    * weightUnit          ->20160713,重量单位
 * platforms    ->平台属性
   * P0  ->主数据
     * cartId
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
   * P23  ->天猫国际
     * cartId
-    * status
+    * status ->("Pending", "Ready", "Approved")
     * pCatId
     * pCatPath
     * pCatStatus
-    * pIsMain   ->是否是该平台主商品
+    * pIsMain   ->是否是该平台主商品("1", "0")
     * pProductId
     * pNumIId
     * pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
     * pPublishError  ->表示平台上新是否失败，用于高级检索
+    * pPublishMessage  ->表示平台上新失败, 显示错误信息
     * pBrandId      ->平台品牌Id
     * pBrandName    ->平台品牌名称
     * pPublishTime
-    * pAttributeStatus
+    * pAttributeStatus ->("1", "0")
     * pAttributeSetter
     * pAttributeSetTime
-    * pPriceMsrpSt
-    * pPriceMsrpEd
-    * pPriceRetailSt
-    * pPriceRetailEd
-    * pPriceSaleSt
-    * pPriceSaleEd
+    * pPriceMsrpSt  ->(double)
+    * pPriceMsrpEd  ->(double)
+    * pPriceRetailSt  ->(double)
+    * pPriceRetailEd  ->(double)
+    * pPriceSaleSt  ->(double)
+    * pPriceSaleEd  ->(double)
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
     * modified -> 最终更新时间
     * fields
@@ -111,12 +116,15 @@
     * skus[]
       * 平台特有sku属性
       * skuCode
-      * priceMsrp   ->各平台的MSRP售价
-      * priceRetail ->各平台的销售指导价
-      * priceSale   ->各平台的最终售价
-      * priceChgFlg ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
-      * priceDiffFlg ->最终售价变化状态（比指导价低:2，比指导价高:3，等于指导价:1，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
-      * isSale    ->用于表示该sku是否在该平台销售(默认都是true,画面上不提供编辑)
+      * originalPriceMsrp ->各平台品牌方的MSRP售价(double),不可编辑   20160801 edward
+      * priceMsrp   ->各平台的MSRP售价(double)
+      * priceRetail ->各平台的销售指导价(double)
+      * confPriceRetail ->各平台确认后的销售指导价(double)
+      * priceSale   ->各平台的最终售价(double)
+      * priceMsrpFlg ->表示指导售价和建议售价的比较，(指导售价小于建议售价时，保存为"XD"; 指导售价大于建议售价时，保存为"XU";相等时清空其值)
+      * priceChgFlg  ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
+      * priceDiffFlg ->最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
+      * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)
     * sellerCats[]  ->店铺内分类
       * cId
       * cIds
@@ -132,7 +140,9 @@
 	* pIsMain
 	* pProductId
 	* pNumIId
+	* pPlatformMallId ->聚美商城的商品id
 	* pStatus
+    * pReallyStatus ->产品在平台上的真实状态,edward,20160802
 	* pBrandId
 	* pBrandName
 	* pPublishTime
@@ -162,8 +172,11 @@
 	  * userPurchaseLimit
 	* skus[]
 	  * skuCode
+      * originalPriceMsrp ->各平台品牌方的MSRP售价(double),不可编辑   20160801 edward
       * priceMsrp   ->各平台的MSRP售价
       * priceRetail ->各平台的销售指导价
+      * confPriceRetail ->各平台确认后的销售指导价(double)
+      * priceMsrpFlg ->表示指导售价和建议售价的比较，(指导售价小于建议售价时，保存为"XD"; 指导售价大于建议售价时，保存为"XU";相等时清空其值)
 	  * priceSale   ->各平台的中国最终售价
 	  * priceChgFlg ->各平台的价格变更状态（U/D/XU/XD）
 	  * property
@@ -202,5 +215,62 @@
     * cartIdxx
   * codeSumAll
     * cartIdxx
+
+* bi   ->BI数据统计  (这里的数据都是long型，将来添加其他项目如转化率等带小数位的数据时，必须是double型，不然没法排序!!不然没法排序!!)
+    "sum1" : {       // 1天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 10,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 2,
+        },
+        "gwc" : {    // 加购件数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {    // 收藏人数
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum7" : {       // 7天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    },
+    "sum30" : {       // 30天统计量
+        "pv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "uv" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "gwc" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        },
+        "scs" : {
+            "cartId26" : 0,
+            "cartId23" : 1,
+        }
+    }
+},
 * tags[]  ->标签
 * freeTags[] ->自定义标签

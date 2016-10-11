@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * HtSkuAddResponse
+ * HtSkuAddResponse 添加Sku信息
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0
  * @since 2.0.0
@@ -89,12 +89,43 @@ public class HtSkuAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setIs_Success(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setIs_Success(false);
+                StringBuffer sbMsg = new StringBuffer(" 添加Sku信息(/v1/htSku/add)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "100010":
+                        sbMsg.append("jumei_hash_id,聚美唯一Deal值错误");
+                        break;
+                    case "100011":
+                        sbMsg.append("jumei_spu_no,聚美SPU_NO错误");
+                        break;
+                    case "100012":
+                        sbMsg.append("stocks,库存错误");
+                        break;
+                    case "100013":
+                        sbMsg.append("deal_price 或 market_price错误");
+                        break;
+                    case "100014":
+                        sbMsg.append("businessman_num,商家商品唯一编码错误");
+                        break;
+                    case "100015":
+                        sbMsg.append("sale_on_this_deal,是否在本次团购售卖SKU参数错误");
+                        break;
+                    case "100016":
+                        sbMsg.append("发货仓库为保税区仓库时, 海关备案商品编码不能为空");
+                        break;
+                    default:
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setIs_Success(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtSkuAddResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 }

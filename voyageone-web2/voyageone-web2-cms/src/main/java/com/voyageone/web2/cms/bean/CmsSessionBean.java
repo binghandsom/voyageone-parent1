@@ -14,6 +14,7 @@ public class CmsSessionBean implements Serializable {
 
     // categoryType
     private Map<String, Object> platformType;
+
     // 其他附加信息
     private Map<String, Object> extraInfo;
 
@@ -47,4 +48,13 @@ public class CmsSessionBean implements Serializable {
         extraInfo.put(key, value);
     }
 
+    @Deprecated
+    public Map<String, Object> getExtraInfo() {
+        return extraInfo;
+    }
+
+    @Deprecated
+    public void setExtraInfo(Map<String, Object> extraInfo) {
+        this.extraInfo = extraInfo;
+    }
 }

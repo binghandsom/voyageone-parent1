@@ -21,6 +21,7 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
     private Integer cartId;
     private String numIId = "";
     private String platformPid = "";
+    private String platformMallId = "";
     private String publishTime = "";
     private String onSaleTime = "";
     private String inStockTime = "";
@@ -66,6 +67,14 @@ public class CmsBtProductGroupModel extends ChannelPartitionModel {
 
     public void setPlatformPid(String platformPid) {
         this.platformPid = platformPid;
+    }
+
+    public String getPlatformMallId() {
+        return platformMallId;
+    }
+
+    public void setPlatformMallId(String platformMallId) {
+        this.platformMallId = platformMallId;
     }
 
     public String getPublishTime() {

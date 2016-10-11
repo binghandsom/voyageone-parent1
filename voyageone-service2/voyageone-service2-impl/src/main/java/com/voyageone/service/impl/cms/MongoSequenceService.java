@@ -16,7 +16,9 @@ public class MongoSequenceService extends BaseService {
         CMS_BT_PRODUCT_GROUP_ID("cms_bt_product_groupId"),
         CMS_BT_SIZE_CHART_ID("cms_bt_size_chart_sizeChartId"),
         CMS_BT_IMAGE_GROUP_ID("cms_bt_image_group_imageGroupId"),
-        CMS_BT_IMAGE_TEMPLATE_ID("cms_bt_image_group_imageTemplateId");
+        CMS_BT_IMAGE_TEMPLATE_ID("cms_bt_image_group_imageTemplateId"),
+        CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID("cms_bt_product_platformActiveJobId"),
+        CMS_BT_CnShopCategory_ID("CMS_BT_CnShopCategory_ID");
 
         // 成员变量
         private String name;

@@ -4,12 +4,14 @@ import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsMtPlatformProductIdListDao;
+import com.voyageone.service.dao.cms.CmsMtPlatformCategoryExtendInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtPlatformProductIdListModel;
+import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +34,64 @@ public class PlatformCategoryService extends BaseService {
     private CmsMtPlatformCategorySchemaDao platformCategorySchemaDao;
 
     @Autowired
-    private CmsMtPlatformProductIdListDao platformCategoryProductIdListDao;
+    private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaTmDao;
+
+    @Autowired
+    private CmsMtPlatformCategoryExtendInfoDao cmsMtPlatformCategoryExtendInfoDao;
 
     public List<CmsMtPlatformCategoryTreeModel> getPlatformCategories(String channelId, Integer cartId) {
         return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
     }
 
+	/**
+     * 获取 "天猫以外" 的platform category schema
+     */
     public CmsMtPlatformCategorySchemaModel getPlatformCatSchema(String catId, int cartId) {
         return platformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
+    }
+
+	/**
+     * 获取 "天猫" 的platform category schema
+     * 在天猫, 不同店铺的schema不一样, 所以需要增加一个channel来区分
+     */
+    public CmsMtPlatformCategorySchemaModel getPlatformCatSchemaTm(String catId, String channelId, int cartId) {
+
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = null;
+        CmsMtPlatformCategorySchemaTmModel tmModel = platformCategorySchemaTmDao.selectPlatformCatSchemaTmModel(catId, channelId, cartId);
+
+        if (tmModel != null) {
+            platformCatSchemaModel = new CmsMtPlatformCategorySchemaModel();
+
+            platformCatSchemaModel.setCartId(cartId);
+            platformCatSchemaModel.setCatId(tmModel.getCatId());
+            platformCatSchemaModel.setCatFullPath(tmModel.getCatFullPath());
+            platformCatSchemaModel.setPropsProduct(tmModel.getPropsProduct());
+            platformCatSchemaModel.setPropsItem(tmModel.getPropsItem());
+        }
+
+        return platformCatSchemaModel;
+    }
+
+    public CmsMtPlatformCategorySchemaModel getPlatformSchemaByCategoryPath(String categoryPath, int cartId) {
+        return platformCategorySchemaDao.selectByCategoryPath(categoryPath, cartId);
+    }
+
+    public CmsMtPlatformCategorySchemaModel getTmallSchemaByCategoryPath(String categoryPath, String channelId, int cartId) {
+
+        CmsMtPlatformCategorySchemaTmModel tmModel = platformCategorySchemaTmDao.selectByCategoryPath(categoryPath, channelId, cartId);
+
+        if (tmModel == null)
+            return null;
+
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = new CmsMtPlatformCategorySchemaModel();
+
+        platformCatSchemaModel.setCartId(cartId);
+        platformCatSchemaModel.setCatId(tmModel.getCatId());
+        platformCatSchemaModel.setCatFullPath(tmModel.getCatFullPath());
+        platformCatSchemaModel.setPropsProduct(tmModel.getPropsProduct());
+        platformCatSchemaModel.setPropsItem(tmModel.getPropsItem());
+
+        return platformCatSchemaModel;
     }
 
     /**
@@ -170,15 +222,14 @@ public class PlatformCategoryService extends BaseService {
     }
 
     /**
-     * 获取指定active状态的平台产品ID列表
+     * 获取指定active状态的(获取平台类目schema时候, 必要的一些参数)列表
      */
-    public List<CmsMtPlatformProductIdListModel> getPlatformProductIdList(int active) {
+    public List<CmsMtPlatformCategoryExtendInfoModel> getPlatformCategoryExtendInfoList(int active) {
         Map<String, Object> paramsMap = new HashMap<>();
         paramsMap.put("active", active);
 
-        return platformCategoryProductIdListDao.selectList(paramsMap);
+        return cmsMtPlatformCategoryExtendInfoDao.selectList(paramsMap);
     }
-
 
     /**
      * 取得一级类目列表（平台数据）

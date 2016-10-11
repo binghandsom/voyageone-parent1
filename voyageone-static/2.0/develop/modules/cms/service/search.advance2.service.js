@@ -5,35 +5,21 @@
 define([
     'angularAMD',
     'underscore',
-    'modules/cms/enums/Carts'
-], function (angularAMD, _, Carts) {
+    'modules/cms/enums/Carts',
+    'modules/cms/enums/PlatformStatus'
+], function (angularAMD, _, Carts, PlatformStatus) {
     angularAMD.service('searchAdvanceService2', searchAdvanceService2);
 
     function searchAdvanceService2($q, blockUI, $translate, selectRowsFactory, $searchAdvanceService2, $filter, cActions) {
 
-        this.init = init;
         this.search = search;
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
         this.exportFile = exportFile;
-        this.addFreeTag = addFreeTag;
-        this.getCustSearchList = getCustSearchList;
         this.clearSelList = clearSelList;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
-
-        /**
-         * 初始化数据
-         * @returns {*}
-         */
-        function init() {
-            var defer = $q.defer();
-            $searchAdvanceService2.init().then(function (res) {
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
 
         /**
          * 检索group和product
@@ -43,9 +29,9 @@ define([
         function search(data, groupPagination, productPagination) {
             var defer = $q.defer();
             data = resetSearchInfo(data);
-            // 设置groupPage
-            data.groupPageNum = groupPagination.curr;
-            data.groupPageSize = groupPagination.size;
+            //// 设置groupPage
+            //data.groupPageNum = groupPagination.curr;
+            //data.groupPageSize = groupPagination.size;
             // 设置productPage
             data.productPageNum = productPagination.curr;
             data.productPageSize = productPagination.size;
@@ -56,9 +42,9 @@ define([
                 tempGroupSelect = new selectRowsFactory();
                 tempProductSelect = new selectRowsFactory();
                 // 获取group列表
-                _resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
+                //_resetGroupList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
                 // 获取product列表
-                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, data);
+                _resetProductList(res.data, res.data.commonProps, res.data.customProps, res.data.selSalesType, res.data.selBiDataList, data);
 
                 defer.resolve (res);
             });
@@ -67,17 +53,12 @@ define([
 
         function exportFile (data) {
             data = resetSearchInfo(data);
-            function _exportFileCallback (res) {
-                var obj = JSON.parse(res);
-                if (obj.code == '4001') {
-                    alert("查询参数不正确，请重试。");
-                } else if (obj.code == '4002') {
-                    alert("未设置下载文件名。");
-                } else if (obj.code == '4003') {
-                    alert("创建文件时出错。");
-                }
-            }
-            $.download.post(cActions.cms.search.$searchAdvanceService2.root + cActions.cms.search.$searchAdvanceService2.exportProducts, {params: JSON.stringify(data)}, _exportFileCallback);
+            var defer = $q.defer();
+
+            $searchAdvanceService2.exportProducts(data).then(function (res) {
+                defer.resolve (res);
+            });
+            return defer.promise;
         }
 
         /**
@@ -85,11 +66,11 @@ define([
          * @param data
          * @returns {*}
          */
-        function getGroupList(data, pagination, list, commonProps, customProps, selSalesTypes) {
+        function getGroupList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
 
             $searchAdvanceService2.getGroupList(resetGroupPagination(data, pagination)).then(function (res) {
-                _resetGroupList(res.data, commonProps, customProps, selSalesTypes);
+                _resetGroupList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -100,40 +81,10 @@ define([
          * @param data
          * @returns {*}
          */
-        function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes) {
+        function getProductList(data, pagination, list, commonProps, customProps, selSalesTypes, selBiDataList) {
             var defer = $q.defer();
             $searchAdvanceService2.getProductList(resetProductPagination(data, pagination)).then(function (res) {
-                _resetProductList(res.data, commonProps, customProps, selSalesTypes);
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
-
-        /**
-         * 添加自由标签
-         * @param data
-         * @returns {*}
-         */
-        function addFreeTag(tagPath, prodIdList, selAllFlg) {
-            var defer = $q.defer();
-            var data = {"tagPath":tagPath, "prodIdList":prodIdList, "isSelAll":selAllFlg};
-
-            $searchAdvanceService2.addFreeTag(data).then(function (res) {
-                defer.resolve (res);
-            });
-            return defer.promise;
-        }
-
-        /**
-         * 自定义搜索条件中，当选择的项目为下拉列表时，获取下拉列表的值
-         * @param fieldsId
-         * @returns {*}
-         */
-        function getCustSearchList(fieldsId, inputType) {
-            var defer = $q.defer();
-            var data = {"fieldsId":fieldsId, "inputType":inputType};
-
-            $searchAdvanceService2.getCustSearchList(data).then(function (res) {
+                _resetProductList(res.data, commonProps, customProps, selSalesTypes, selBiDataList, data);
                 defer.resolve (res);
             });
             return defer.promise;
@@ -148,11 +99,7 @@ define([
             var searchInfo = angular.copy (data);
             searchInfo.productStatus = _returnKey (searchInfo.productStatus);
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
-            if (searchInfo.hasErrorFlg) {
-                searchInfo.hasErrorFlg = 1;
-            } else {
-                searchInfo.hasErrorFlg = 0;
-            }
+            searchInfo.pRealStatus = _returnKey(searchInfo.pRealStatus);
             if (searchInfo.shopCatStatus) {
                 searchInfo.shopCatStatus = 1;
             } else {
@@ -162,6 +109,30 @@ define([
                 searchInfo.pCatStatus = 1;
             } else {
                 searchInfo.pCatStatus = 0;
+            }
+
+            // 过滤重复的排序条件，相同的以后一个为准
+            if (searchInfo.sortThreeName && searchInfo.sortThreeType) {
+                if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortTwoName) {
+                        searchInfo.sortTwoName = '';
+                        searchInfo.sortTwoType = '';
+                    }
+                }
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortThreeName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
+            }
+            if (searchInfo.sortTwoName && searchInfo.sortTwoType) {
+                if (searchInfo.sortOneName && searchInfo.sortOneType) {
+                    if (searchInfo.sortTwoName == searchInfo.sortOneName) {
+                        searchInfo.sortOneName = '';
+                        searchInfo.sortOneType = '';
+                    }
+                }
             }
 
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
@@ -208,66 +179,104 @@ define([
                 .value();
         }
 
+        // 把取回的数据作相应转换(转换到画面对应的项目)
+        function _resetProdInfo(prodInfo, commonProps, customProps, selSalesTypes, selBiDataList) {
+            var commArr = [];
+            _.forEach(commonProps, function (data) {
+                var itemVal = '';
+                if ("comment" == data.propId) {
+                    itemVal = prodInfo.common.comment;
+                } else {
+                    itemVal = prodInfo.common.fields[data.propId];
+                }
+                // 原始主商品的转换
+                if (data.propId == 'isMasterMain') {
+                    if (itemVal == 1) {
+                        itemVal = '是';
+                    } else if (itemVal == 0) {
+                        itemVal = '否';
+                    }
+                }
+                if (itemVal == undefined) {
+                    itemVal = "";
+                }
+                commArr.push({value: itemVal.toString()});
+            });
+            prodInfo.commArr = commArr;
+            var custArr = [];
+            _.forEach(customProps, function (data) {
+                var itemVal = prodInfo.feed.cnAtts[data.feed_prop_original];
+                var orgAttsitemVal= prodInfo.feed.orgAtts[data.feed_prop_original];
+                if (itemVal == undefined) {
+                    itemVal = "";
+                }
+                custArr.push({value: itemVal});
+                custArr.push({value: orgAttsitemVal});
+            });
+            prodInfo.custArr = custArr;
+
+            // 销量数据整理
+            var selSalesTyeArr = [];
+            _.forEach(selSalesTypes, function (data) {
+                var selValue = data.value;
+                var dotIdx = selValue.indexOf(".", 6);
+                var itemValObj = prodInfo.sales[selValue.substring(6, dotIdx)];
+                var itemVal = null;
+                if (itemValObj == undefined) {
+                    itemVal = "0";
+                } else {
+                    dotIdx = selValue.lastIndexOf(".");
+                    itemVal = itemValObj[selValue.substring(dotIdx + 1)];
+                    if (itemVal == undefined) {
+                        itemVal = "0";
+                    }
+                }
+                selSalesTyeArr.push({value: itemVal});
+            });
+            prodInfo.selSalesTyeArr = selSalesTyeArr;
+
+            // bi数据整理
+            var selBiDataArr = [];
+            _.forEach(selBiDataList, function (data) {
+                var selValue = data.value;
+                var dotIdx = selValue.indexOf(".", 6);
+                var itemValObj = prodInfo.bi[selValue.substring(3, dotIdx)]; // 取到sum一级
+                var itemVal = null;
+                if (itemValObj == undefined) {
+                    itemVal = "";
+                } else {
+                    dotIdx ++;
+                    var lastdotIdx = selValue.indexOf(".", dotIdx);
+                    itemValObj = itemValObj[selValue.substring(dotIdx, lastdotIdx)];    // bi分类
+                    if (itemValObj == undefined) {
+                        itemVal = "";
+                    } else {
+                        lastdotIdx = selValue.lastIndexOf(".");
+                        itemVal = itemValObj[selValue.substring(lastdotIdx + 1)];    // 各平台
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                    }
+                }
+                selBiDataArr.push({value: itemVal});
+            });
+            prodInfo.selBiDataArr = selBiDataArr;
+        }
+
         /**
          * 设置group list
          * @param data
          * @returns {*}
          * @private
          */
-        function _resetGroupList (data, commonProps, customProps, selSalesTypes, searchParam) {
+        function _resetGroupList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
             for (idx in data.groupList) {
                 var prodObj = data.groupList[idx];
                 prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
             }
             _.forEach(data.groupList, function (groupInfo, index) {
-
-                var commArr = [];
-                _.forEach(commonProps, function (data) {
-                    var itemVal = groupInfo.common.fields[data.propId];
-                    // 原始主商品的转换
-                    if (data.propId == 'isMasterMain') {
-                        if (itemVal == 1) {
-                            itemVal = '是';
-                        } else if (itemVal == 0) {
-                            itemVal = '否';
-                        }
-                    }
-                    if (itemVal == undefined) {
-                        itemVal = "";
-                    }
-                    commArr.push({value: itemVal.toString()});
-                });
-                groupInfo.commArr = commArr;
-                var custArr = [];
-                _.forEach(customProps, function (data) {
-                    var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
-                    var orgAttsitemVal= groupInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined) {
-                        itemVal = "";
-                    }
-                    custArr.push({value: itemVal});
-                    custArr.push({value: orgAttsitemVal});
-                });
-                groupInfo.custArr = custArr;
-                var selSalesTyeArr = [];
-                _.forEach(selSalesTypes, function (data) {
-                    var selValue = data.value;
-                    var dotIdx = selValue.indexOf(".", 6);
-                    var itemValObj = groupInfo.sales[selValue.substring(6, dotIdx)];
-                    var itemVal = null;
-                    if (itemValObj == undefined) {
-                        itemVal = "0";
-                    } else {
-                        dotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined) {
-                            itemVal = "0";
-                        }
-                    }
-                    selSalesTyeArr.push({value: itemVal});
-                });
-                groupInfo.selSalesTyeArr = selSalesTyeArr;
+                _resetProdInfo(groupInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
                 // 初始化数据选中需要的数组
                 tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
@@ -279,9 +288,6 @@ define([
                 groupInfo.groupBean.timeDetail = _setTimeDetail(groupInfo);
 
                 groupInfo.grpImgList = data.grpImgList[index];
-
-                groupInfo._grpProdChgInfo = data.grpProdChgInfoList[index];
-
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
 
@@ -294,60 +300,21 @@ define([
          * @returns {*}
          * @private
          */
-        function _resetProductList (data, commonProps, customProps, selSalesTypes, searchParam) {
+        function _resetProductList (data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo, index) {
-                var commArr = [];
-                _.forEach(commonProps, function (data) {
-                    var itemVal = productInfo.common.fields[data.propId];
-                    // 原始主商品的转换
-                    if (data.propId == 'isMasterMain') {
-                        if (itemVal == 1) {
-                            itemVal = '是';
-                        } else if (itemVal == 0) {
-                            itemVal = '否';
-                        }
-                    }
-                    if (itemVal == undefined || itemVal == null) {
-                        itemVal = "";
-                    }
-                    commArr.push({value: itemVal.toString()});
-                });
-                productInfo.commArr = commArr;
+                _resetProdInfo(productInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
-                var custArr = [];
-                _.forEach(customProps, function (data) {
-                    var itemVal = productInfo.feed.cnAtts[data.feed_prop_original];
-                    var orgAttsitemVal= productInfo.feed.orgAtts[data.feed_prop_original];
-                    if (itemVal == undefined || itemVal == null) {
-                        itemVal = "";
-                    }
-                    custArr.push({value: itemVal});
-                    custArr.push({value: orgAttsitemVal});
-                });
-                productInfo.custArr = custArr;
-
-                var selSalesTyeArr = [];
-                _.forEach(selSalesTypes, function (data) {
-                    var selValue = data.value;
-                    var dotIdx = selValue.indexOf(".", 6);
-                    var itemValObj = productInfo.sales[selValue.substring(6, dotIdx)];
-                    var itemVal = null;
-                    if (itemValObj == undefined || itemValObj == null) {
-                        itemVal = "0";
-                    } else {
-                        dotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(dotIdx + 1)];
-                        if (itemVal == undefined || itemVal == null) {
-                            itemVal = "0";
-                        }
-                    }
-                    selSalesTyeArr.push({value: itemVal});
-                });
-                productInfo.selSalesTyeArr = selSalesTyeArr;
-
-                var cartArr = [];
+                productInfo.carts = [];
                 if (productInfo.platforms) {
+                    var ptms = [];
+                    _.forEach(productInfo.platforms, function (data) {
+                        ptms.push(data);
+                    });
+                    productInfo.platforms = ptms.sort(function (a, b) {
+                        return a.cartId > b.cartId;
+                    });
+
                     _.forEach(productInfo.platforms, function (data) {
                         if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
                             return;
@@ -395,33 +362,35 @@ define([
                         }
                         cartItem.statusTxt = statusTxt;
                         cartItem.publishError = publishError;
-                        cartArr.push(cartItem);
-                    });
-                }
-                productInfo.carts = cartArr;
-                if (productInfo.carts) {
-                    if (productInfo.carts.length > 1) {
-                        productInfo.carts = productInfo.carts.sort(function (a, b) {
-                            return a.cartId > b.cartId;
-                        });
-                    }
-                    _.forEach(productInfo.carts, function (data) {
-                        var cartInfo = Carts.valueOf(data.cartId);
+
+                        // 设置产品跳转URL
+                        var cartInfo = Carts.valueOf(cartItem.cartId);
                         if (cartInfo == null || cartInfo == undefined) {
-                            data._purl = '';
-                            data._pname = '';
+                            cartItem._purl = '';
+                            cartItem._pname = '';
                         } else {
-                            if (data.numiid == null || data.numiid == '' || data.numiid == undefined) {
-                                data._purl = '';
+                            if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined || data.status != 'Approved') {
+                                cartItem._purl = '';
                             } else {
-                                if (data.cartId == 27) {
-                                    data._purl = cartInfo.pUrl + data.numiid + '.html';
+                                if (cartItem.cartId == 27) {
+                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid + '.html';
                                 } else {
-                                    data._purl = cartInfo.pUrl + data.numiid;
+                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid;
                                 }
                             }
-                            data._pname = cartInfo.name;
+                            cartItem._pname = cartInfo.name;
                         }
+                        var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus, data.status);
+                        if (stsCnVal) {
+                            cartItem._pTxt = cartItem._pname + ':' + stsCnVal;
+                        } else {
+                            cartItem._pTxt = cartItem._pname;
+                        }
+                        if (data.pIsMain == '1') {
+                            cartItem._pTxt += ' (M)';
+                        }
+
+                        productInfo.carts.push(cartItem);
                     });
                 }
 
@@ -434,16 +403,15 @@ define([
                 // 设置在各平台上的建议售价
                 productInfo.priceMsrp = _setPriceSale(productInfo.platforms, searchParam, 'pPriceMsrpSt', 'pPriceMsrpEd');
                 // 设置指导售价
-                productInfo.priceDetail = _setPriceDetail(productInfo.platforms, cartArr);
+                productInfo.priceRetail = _setPriceSale(productInfo.platforms, searchParam, 'pPriceRetailSt', 'pPriceRetailEd');
+                productInfo._retailPriceCol = _setRetailPriceCol(productInfo.platforms, searchParam);
                 // 设置在各平台上的最终售价
                 productInfo.priceSale = _setPriceSale(productInfo.platforms, searchParam, 'pPriceSaleSt', 'pPriceSaleEd');
 
                 // 设置time detail
                 productInfo.groupBean.timeDetail = _setTimeDetail(productInfo);
 
-                productInfo._prodChgInfo = data.prodChgInfoList[index];
                 productInfo._prodOrgChaName = data.prodOrgChaNameList[index];
-
             });
             data.productSelList = tempProductSelect.selectRowsInfo;
 
@@ -506,6 +474,9 @@ define([
          * @private
          */
         function _setGroupPriceSale(object, searchParam) {
+            object._grpPriceInfoList = object._grpPriceInfoList.sort(function (a, b) {
+                return a.cartId > b.cartId;
+            });
             return _setPriceSale(object._grpPriceInfoList, searchParam, 'priceSaleSt', 'priceSaleEd');
         }
 
@@ -519,26 +490,27 @@ define([
             if (object == null || object == undefined) {
                 return [];
             }
-            if (object) {
-                var fstLine = [];
-                var result = [];
-                var fstCode = 0;
-                if (searchParam && searchParam.cartId) {
-                    fstCode = searchParam.cartId;
+
+            var fstLine = [];
+            var result = [];
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            _.forEach(object, function (data) {
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    return;
                 }
-                _.forEach(object, function (data) {
-                    if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
-                        return;
-                    }
-                    var priceItem = '';
-                    var cartInfo = Carts.valueOf(data.cartId);
-                    if (cartInfo == null || cartInfo == undefined) {
-                        priceItem += data.cartId;
-                    } else {
-                        priceItem += cartInfo.name;
-                    }
-                    priceItem += ': ';
-                    // 合计sku价格的上下限
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限
+                if (data[stakey] != null && data[stakey] != undefined && data[endKey] != null && data[endKey] != undefined ) {
                     if (data[stakey] == data[endKey]) {
                         priceItem += $filter('number')(data[stakey], 2);
                     } else {
@@ -546,16 +518,102 @@ define([
                         priceItem += " ~ ";
                         priceItem += $filter('number')(data[endKey], 2);
                     }
-                    if (fstCode == data.cartId) {
-                        fstLine.push(priceItem);
-                    } else {
-                        result.push(priceItem);
+                }
+
+                // 当是中国指导价时，要有价格变化提示
+                if (stakey == 'pPriceRetailSt' && data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+                            var cssTxt = 'class="text-u-red font-bold"';
+                            if (upFlg == 0) {
+                                // 涨价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')</label>'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                priceItem += '<label ' + cssTxt + '>&nbsp;(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')</label>'
+                            }
+                            break;
+                        }
                     }
-                });
-                fstLine = fstLine.concat(result);
+                }
+
+                if (fstCode == data.cartId) {
+                    fstLine.push(priceItem);
+                } else {
+                    result.push(priceItem);
+                }
+            });
+            fstLine = fstLine.concat(result);
+            return fstLine;
+        }
+
+        function _setRetailPriceCol(object, searchParam) {
+            var fstLine = { 'pVal': '', 'pTxt': '', 'cssTxt': '' };
+            if (object == null || object == undefined) {
                 return fstLine;
             }
-            return [];
+
+            var fstCode = 0;
+            if (searchParam && searchParam.cartId) {
+                fstCode = searchParam.cartId;
+            }
+            for (idx in object) {
+                var data = object[idx];
+                if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
+                    continue;
+                }
+                if (fstCode != 0 && fstCode != data.cartId) {
+                    continue;
+                }
+
+                var priceItem = '';
+                var cartInfo = Carts.valueOf(data.cartId);
+                if (cartInfo == null || cartInfo == undefined) {
+                    priceItem += data.cartId;
+                } else {
+                    priceItem += cartInfo.name;
+                }
+                priceItem += ': ';
+                // 合计sku价格的上下限 'pPriceRetailSt', 'pPriceRetailEd'
+                if (data['pPriceRetailSt'] != null && data['pPriceRetailSt'] != undefined && data['pPriceRetailEd'] != null && data['pPriceRetailEd'] != undefined ) {
+                    if (data['pPriceRetailSt'] == data['pPriceRetailEd']) {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                    } else {
+                        priceItem += $filter('number')(data['pPriceRetailSt'], 2);
+                        priceItem += " ~ ";
+                        priceItem += $filter('number')(data['pPriceRetailEd'], 2);
+                    }
+                }
+
+                // 当是中国指导价时，要有价格变化提示
+                if (data.skus) {
+                    for (idx in data.skus) {
+                        if (data.skus[idx].priceChgFlg) {
+                            var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
+                            var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
+
+                            fstLine.cssTxt = 'text-u-red font-bold';
+                            if (upFlg == 0) {
+                                // 涨价
+                                fstLine.pTxt = '(↑' + data.skus[idx].priceChgFlg.substring(upFlg + 1) + ')'
+                            } else if (downFlg == 0) {
+                                // 降价
+                                fstLine.pTxt = '(↓' + data.skus[idx].priceChgFlg.substring(downFlg + 1) + ')'
+                            }
+                            break;
+                        }
+                    }
+                }
+                fstLine.pVal = priceItem;
+                if (fstCode == 0) {
+                    // 未选择平台
+                    break;
+                }
+            }
+
+            return fstLine;
         }
 
         /**
@@ -608,5 +666,6 @@ define([
             tempGroupSelect.clearSelectedList();
             tempProductSelect.clearSelectedList();
         }
+
     }
 });

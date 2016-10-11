@@ -1,17 +1,19 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,14 +30,14 @@ import java.util.Map;
 public class CmsFieldEditController extends CmsController {
 
     @Autowired
-    private CmsFieldEditService propChangeService;
+    private CmsFieldEditService fieldEditService;
 
     /**
      * 获取pop画面options.
      */
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_POP_OPTIONS)
     public AjaxResponse getPopOptions(){
-        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(getLang(), getUser().getSelChannelId());
+        List<CmsMtCommonPropDefModel> result = fieldEditService.getPopOptions(getLang(), getUser().getSelChannelId());
         return success(result);
     }
 
@@ -49,13 +51,23 @@ public class CmsFieldEditController extends CmsController {
         if (prop != null) {
             if ("approval".equals(prop)) {
                 // 商品审批
-                Map<String, Object> rs = propChangeService.setProductApproval(params, getUser(), cmsSession);
+                Map<String, Object> rs = fieldEditService.setProductApproval(params, getUser(), cmsSession);
                 return success(rs);
             } else if ("putonoff".equals(prop)) {
-                Map<String, Object> rs = propChangeService.setProductOnOff(params, getUser(), cmsSession);
+                // 商品上下架
+                Map<String, Object> rs = fieldEditService.setProductOnOff(params, getUser(), cmsSession);
                 return success(rs);
             } else if ("saleprice".equals(prop)) {
-                Map<String, Object> rs = propChangeService.setProductSalePrice(params, getUser(), cmsSession);
+                // 修改最终售价
+                Map<String, Object> rs = fieldEditService.setProductSalePrice(params, getUser(), cmsSession);
+                return success(rs);
+            } else if ("retailprice".equals(prop)) {
+                // 指导价变更批量确认
+                Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
+                return success(rs);
+            } else if ("refreshRetailPrice".equals(prop)) {
+                // 重新计算指导价
+                Map<String, Object> rs = fieldEditService.confirmRetailPrice(params, getUser(), cmsSession);
                 return success(rs);
             }
             return success(null);
@@ -68,7 +80,35 @@ public class CmsFieldEditController extends CmsController {
             cartIdVal = cartId;
         }
 
-        Map<String, Object> rs = propChangeService.setProductFields(params, getUser(), cartIdVal, cmsSession);
+        Map<String, Object> rs = fieldEditService.setProductFields(params, getUser(), cartIdVal, cmsSession);
         return success(rs);
     }
+
+    /**
+     * 修改最终售价时，下载未处理的商品code列表
+     */
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.DLD_PRODUCT_PROCESALE)
+    public ResponseEntity<byte[]> doExport(@RequestParam Map params) {
+        String data = null;
+        try {
+            data = fieldEditService.getCodeFile(getUser());
+        } catch (Exception e) {
+            $error("创建文件时出错", e);
+            throw new BusinessException("4001");
+        }
+        if (data == null) {
+            $warn("创建文件时出错,文件内容为空");
+            throw new BusinessException("4000");
+        }
+        byte[] byteData = {(byte)0xFF, (byte)0xFE};
+        try {
+            byteData = ArrayUtils.addAll(byteData, data.getBytes("utf-16le"));
+        } catch (UnsupportedEncodingException e) {
+            $error("转换编码时出错", e);
+            byteData = data.getBytes();
+        }
+        String fileName = getUser().getUserName() + "_" + DateTimeUtil.getLocalTime(getUserTimeZone()) + ".csv";
+        return genResponseEntityFromBytes(MediaType.valueOf("application/csv"), fileName, byteData);
+    }
+
 }

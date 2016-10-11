@@ -32,4 +32,10 @@ public interface SummerGuruFeedDao {
     void delete();
 
     List<CmsBtFeedInfoSummerGuruModel> selectSuperfeedModel(Map colums);
+
+    int fullCopyTemp();
+
+    int updateMd5();
+
+    int updateUpdateFlag();
 }

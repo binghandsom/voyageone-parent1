@@ -29,7 +29,16 @@ define([
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
 		this.checkCategory = checkCategory;
-
+		this.getChangeMastProductInfo = getChangeMastProductInfo;
+		this.setMastProduct = setMastProduct;
+		this.delisting = delisting;
+		this.delistinGroup = delistinGroup;
+		this.hsCodeChg = hsCodeChg;
+		this.copyProperty = copyProperty;
+		this.copyCommonProperty = copyCommonProperty;
+		this.getPlatformCategories = getPlatformCategories;
+		this.priceConfirm = priceConfirm;
+		this.updateSkuPrice = updateSkuPrice;
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -220,6 +229,8 @@ define([
 			$productDetailService.getProductPlatform(req)
 				.then (function (res) {
 					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
 				});
 
 			return defer.promise;
@@ -349,7 +360,163 @@ define([
 				});
 			return defer.promise;
 		}
-	}
 
+		/**
+		 * 获取主商品信息
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"} 平台id，产品code
+         * @returns {*}
+         */
+		function getChangeMastProductInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getChangeMastProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 设置主商品
+		 * @param req {cartId:27,productCode:"CRBT0003SP-"}  平台id，产品code
+         * @returns {*}
+         */
+		function setMastProduct(req){
+			var defer = $q.defer();
+			$productDetailService.setMastProduct(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 产品下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code,备注
+		 * @returns {*}
+		 */
+		function delisting(req){
+			var defer = $q.defer();
+			$productDetailService.delisting(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 全group下线
+		 * @param req {cartId:27,productCode:"CRBT0003SP-",comment:""}  平台id，产品code，备注
+		 * @returns {*}
+		 */
+		function delistinGroup(req){
+			var defer = $q.defer();
+			$productDetailService.delistinGroup(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 税号改变
+		 * @param req {prodId,hsCode}  产品id，新的税号code
+		 * @returns {*}
+		 */
+		function hsCodeChg(req){
+			var defer = $q.defer();
+			$productDetailService.hsCodeChg(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 复制主数据field到平台编辑页
+		 * @param req {prodId,cartId}  产品id，平台id
+		 */
+		function copyProperty(req){
+			var defer = $q.defer();
+			$productDetailService.copyProperty(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 复制主master数据field到子master
+		 * @param req {prodId}  产品id
+		 */
+		function copyCommonProperty(req){
+			var defer = $q.defer();
+			$productDetailService.copyCommonProperty(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 获取平台类目
+		 * @param req {cartId}  平台id
+		 */
+		function getPlatformCategories(req){
+			var defer = $q.defer();
+			$productDetailService.getPlatformCategories(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 价格确认
+		 * @param req{productCode,platform}
+		 */
+
+		function priceConfirm(req){
+			var defer = $q.defer();
+			$productDetailService.priceConfirm(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 *  sku价格刷新
+		 * @param req {cartId:平台Id,prodId:产品Id}
+         */
+		function updateSkuPrice(req){
+			var defer = $q.defer();
+
+			$productDetailService.updateSkuPrice(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+	}
 
 });

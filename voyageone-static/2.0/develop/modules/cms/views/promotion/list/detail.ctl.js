@@ -7,7 +7,7 @@ define([
     'underscore'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService,cActions) {
         $scope.promotionOld={};
         $scope.datePicker = [];
         $scope.vm = {
@@ -16,9 +16,9 @@ define([
             "searchKey": '',
             "promotion": {},
             "cartList":[],
-            "groupPageOption": {curr: 1, total: 0, fetch: searchGroup},
-            "codePageOption": {curr: 1, total: 0, fetch: searchCode},
-            "skuPageOption": {curr: 1, total: 0, fetch: searchSku},
+            "groupPageOption": {curr: 1, total: 0, size:10,fetch: searchGroup},
+            "codePageOption": {curr: 1, total: 0, size:10, fetch: searchCode},
+            "skuPageOption": {curr: 1, total: 0, size:10, fetch: searchSku},
             "groupList": [],
             "codeList": [],
             "skuList": [],
@@ -83,7 +83,7 @@ define([
         };
 
         $scope.delPromotionModel = function(group){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var data = [];
                     data.push(group);
@@ -96,7 +96,7 @@ define([
         };
 
         $scope.delPromotionCode = function(code){
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var parameter = [];
                     parameter.push(code);
@@ -111,7 +111,7 @@ define([
         $scope.delSelPromotion = function(){
             if($scope.vm.tabIndex == 0){
                 if($scope.vm.groupSelList.selList.length>0){
-                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
                             var parameter = [];
                             _.forEach($scope.vm.groupSelList.selList, function (object) {
@@ -128,7 +128,7 @@ define([
                 }
             } else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
-                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                         .then(function () {
                             var parameter = [];
                             _.forEach($scope.vm.codeSelList.selList, function (object) {
@@ -174,6 +174,20 @@ define([
         $scope.compare = function(data1,data2){
             return _.isEqual(data1, data2)
         };
+
+        $scope.openOtherDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+        $scope.openJuhuasuanDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallJuhuasuanExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+        $scope.openTmallDownload = function (promotion) {
+
+            $.download.post(cActions.cms.promotion.promotionDetailService.root + "/" + cActions.cms.promotion.promotionDetailService.tmallPromotionExport, {"promotionId": promotion.id,"promotionName":promotion.promotionName});
+        };
+
 
 
         //function selAllFlag(objectList,id){
@@ -240,6 +254,6 @@ define([
             })
         }
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions'];
     return detailController;
 });

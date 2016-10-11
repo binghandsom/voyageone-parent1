@@ -7,6 +7,9 @@
      * 抄自聚美后台 js
      */
     function sizeof(str) {
+        if (str == undefined || str == null) {
+            return 0;
+        }
         var regex = str.match(/[^\x00-\xff]/g);
         return (str.length + (!regex ? 0 : regex.length));
     }

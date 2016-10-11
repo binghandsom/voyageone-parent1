@@ -147,7 +147,7 @@ public class SingleCheckField extends OptionsField {
                 break;
             case INT:
                 if (valueStr.length() > 0) {
-                    result = new Integer(valueStr);
+                    result = new Double(valueStr).intValue();
                 }
                 break;
             case DOUBLE:

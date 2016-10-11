@@ -1,12 +1,13 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsMtCategoryTreeAllBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategoryTreeAllDao;
+import com.voyageone.service.enums.SkuSplit;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtChannelCategoryConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
@@ -72,6 +73,7 @@ public class CategoryTreeAllService extends BaseService {
         bean.setIsParent(model.getIsParent());
         bean.setParentCatId(model.getParentCatId());
         bean.setSingleSku(model.getSingleSku());
+        bean.setSkuSplit(SkuSplit.valueOf(model.getSkuSplit()));
 
         // 取得这个主类目对应的平台类目信息，Map<platformId，CmsMtCategoryTreeAllModel_Platform>
         List<CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformList = model.getPlatformCategory();
@@ -223,7 +225,7 @@ public class CategoryTreeAllService extends BaseService {
      * @return CmsMtCategoryTreeAllModel
      */
     public List<CmsMtCategoryTreeAllModel> getFstLvlMasterCategory() {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("{'catId':1,'catName':1,'catPath':1,'isParent':1}");
         queryObject.setSort("{'catName':1}");
         return cmsMtCategoryTreeAllDao.select(queryObject);
@@ -235,7 +237,7 @@ public class CategoryTreeAllService extends BaseService {
      * @return CmsMtCategoryTreeAllModel
      */
     public List<CmsMtCategoryTreeAllModel> getMasterCategory() {
-        return cmsMtCategoryTreeAllDao.select(new JomgoQuery());
+        return cmsMtCategoryTreeAllDao.select(new JongoQuery());
     }
 
     /**

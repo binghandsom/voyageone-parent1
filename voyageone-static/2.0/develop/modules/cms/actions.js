@@ -49,8 +49,8 @@ define(function () {
                     "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
-                    "getHomeSumData":"getHomeSumData",
-                    "getCmsConfig":session('getCmsConfig',[KEY.CHANNEL])
+                    "getHomeSumData": "getHomeSumData",
+                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
                 }
             },
             "search": {
@@ -61,6 +61,8 @@ define(function () {
                     "getGroupList": "getGroupList",
                     "getProductList": "getProductList",
                     "exportProducts": "exportProducts",
+                    "exportSearch": "exportSearch",
+                    "exportDownload": "exportDownload",
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
@@ -72,8 +74,8 @@ define(function () {
                     "search": "search",
                     "updateFeedStatus": "updateFeedStatus",
                     "doExport": "export",
-                    "exportSearch":"exportSearch",
-                    "download":"download"
+                    "exportSearch": "exportSearch",
+                    "download": "download"
                 }
             },
             "group": {
@@ -100,43 +102,36 @@ define(function () {
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
-                    "updateLock":"updateLock",
-                    "updateProductAtts":"updateProductAtts",
-                    "checkCategory":"checkCategory"
+                    "updateLock": "updateLock",
+                    "updateProductAtts": "updateProductAtts",
+                    "checkCategory": "checkCategory",
+                    "getChangeMastProductInfo": "getChangeMastProductInfo",
+                    "setMastProduct": "setMastProduct",
+                    "delisting": "delisting",
+                    "delistinGroup": "delistinGroup",
+                    "hsCodeChg": "hsCodeChg",
+                    "copyProperty": "copyProperty",
+                    "copyCommonProperty": "copyCommonProperty",
+                    priceConfirm:"priceConfirm",
+                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
+                    updateSkuPrice:"updateSkuPrice"
+                },
+                "productHistoryLogService": {
+                    "root": "/cms/product/history/",
+                    "getPutOnOffLogList": "getPutOnOffLogList"
                 }
             },
             "mapping": {
+                // 原功能已删除
+                // 但内部的 action 被其他功能调用, 所以暂时保留
+                // 具体的 action 指向其他根地址
                 "feedMappingService": {
-                    "root": "/cms/mapping/feed",
-                    "getTopCategories": "getTopCategories",
-                    "getFeedCategoryTree": "getFeedCategoryTree",
-                    "getMainCategories": "getMainCategories",
-                    "setMapping": "setFeedMapping",
-                    "extendsMapping": "extendsMapping",
-                    "getFieldMapping": "getFieldMapping",
-                    "getFeedAttrs": "getFeedAttributes",
-                    "saveFieldMapping": "saveFieldMapping",
-                    "directMatchOver": "directMatchOver",
-                    "getMainMapping": "getMainMapping",
-                    "getMappings": "getMappings",
-                    "getMappingInfo": "getMappingInfo"
-                },
-                "platformMappingService": {
-                    "root": "/cms/mapping/platform",
-                    "getMainCategory": "getMainDataFinalCategoryMap",
-                    "getOtherMappingPath": "getOtherMappingCategoryPath",
-                    "getPlatformCategories": "getPlatformCategories",
-                    "setPlatformMapping": "setPlatformMapping",
-                    "getPlatformCategory": "getPlatformCategory",
-                    "getPlatformCategorySchema": "getPlatformCategorySchema",
-                    "getMainCategorySchema": "getMainCategorySchema",
-                    "getDictList": "getDictList",
-                    "getPlatformMapping": "getPlatformMapping",
-                    "getMappingTypes": "getMappingType",
-                    "$saveMapping": "saveMapping",
-                    "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
-                    "getCarts": "getCarts",
-                    "getCommonSchema": "getCommonSchema"
+                    root: "/cms",
+                    getMainCategories: {
+                        root: "/cms/home/menu/",
+                        url: "getMainCategories",
+                        cache: CACHE.LOCAL
+                    }
                 },
                 "$dictionaryService": {
                     "root": "/cms/mapping/dictionary",
@@ -148,6 +143,16 @@ define(function () {
                     "setDict": "setDict",
                     "delDict": "delDict",
                     "addDict": "addDict"
+                },
+                'brandMappingService': {
+                    'root': '/cms/mapping/brand',
+                    'init': 'init',
+                    'searchBrands': 'searchBrands',
+                    'searchCustBrands': 'searchCustBrands',
+                    'searchMatchedBrands': 'searchMatchedBrands',
+                    'addNewBrandMapping': 'addOrUpdateBrandMapping',
+                    'getSynchronizedTime': 'getSynchronizedTime',
+                    'synchronizePlatformBrands': 'synchronizePlatformBrands'
                 }
             },
             "promotion": {
@@ -159,7 +164,13 @@ define(function () {
                     "insertPromotion": "insertPromotion",
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
-                    "exportPromotion": "exportPromotion"
+                    "exportPromotion": "exportPromotion",
+                    getPage: "getPage",
+                    getCount: "getCount",
+                    getEditModel: "getEditModel",
+                    saveEditModel: "saveEditModel",
+                    deleteByPromotionId: "deleteByPromotionId",
+                    setPromotionStatus: "setPromotionStatus"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -170,7 +181,9 @@ define(function () {
                     "teJiaBaoInit": "teJiaBaoInit",
                     "updatePromotionProduct": "updatePromotionProduct",
                     "delPromotionModel": "delPromotionModel",
-                    "delPromotionCode": "delPromotionCode"
+                    "delPromotionCode": "delPromotionCode",
+                    "tmallJuhuasuanExport": "tmallJuhuasuanExport",
+                    "tmallPromotionExport": "tmallPromotionExport",
                 }
             },
             "jmpromotion": {
@@ -217,8 +230,8 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
-                    updatePromotionProduct:"updatePromotionProduct",
-                    updatePromotionProductTag:"updatePromotionProductTag"
+                    updatePromotionProduct: "updatePromotionProduct",
+                    updatePromotionProductTag: "updatePromotionProductTag"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
@@ -364,19 +377,27 @@ define(function () {
                     "reUpload": "reUpload",
                     "rePublistPrice": "rePublishPrice",
                     "getHistory": "getHistory"
+                },
+                "$valueChannelService": {
+                    "root": "/cms/system/valueChannel/",
+                    "addHsCodes": "addHsCode"
                 }
             },
             "pop": {
                 "$addToPromotionService": {
                     "root": "/cms/pop/add_to_promotion",
                     "getPromotionTags": "getPromotionTags",
+
+
+
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
-                    "setProductFields": "setProductFields"
+                    "setProductFields": "setProductFields",
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -386,6 +407,14 @@ define(function () {
                     root: '/cms/price/log',
                     page: 'page',
                     export: 'export'
+                },
+                priceConfirmLogService: {
+                    root: '/cms/price/confirm',
+                    page: 'page'
+                },
+                statusHistoryService: {
+                    root: "/cms/product/statushistory",
+                    getPage: "getPage"
                 },
                 "$addChannelCategoryService": {
                     "root": "/cms/pop/add_to_channel_category",
@@ -418,7 +447,7 @@ define(function () {
                     "attributeService": {
                         "root": "/cms/channel/custom/prop",
                         "init": "get",
-                        "getCatTree": session("getCatTree"),
+                        "getCatTree": session("getCatTree", [KEY.CHANNEL]),
                         "save": "update",
                         "getCatList": "getCatList"
                     }
@@ -478,7 +507,8 @@ define(function () {
                     "init": "init",
                     "search": "search",
                     "save": "save",
-                    "delete": "delete"
+                    "delete": "delete",
+                    "getNoMatchSizeImageGroupList":"getNoMatchSizeImageGroupList"
                 },
                 "imageGroupDetailService": {
                     "root": "/cms/channel/image_group_detail",
@@ -497,7 +527,9 @@ define(function () {
                         "init": "sizeChartInit",
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
-                        "editSave": "sizeChartEditSave"
+                        "editSave": "sizeChartEditSave",
+                        "getNoMatchList":"getNoMatchList",
+                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {
@@ -518,6 +550,50 @@ define(function () {
                     "save": "saveHsCodeInfo",
                     "cancel": "cancelHsCodeInfo"
                 }
+            },
+            "rePriceService": {
+                "root": "/cms/tools/reprice/",
+                "getChannelList": {url: "getChannelList", cache: CACHE.LOCAL},
+                "getPlatformList": "getPlatformList",
+                "getCartList": "getCartList",
+                "getPlatformCategoryList": {url: "getPlatformCategoryList", cache: CACHE.LOCAL},
+                "setUpdateFlg": "setUpdateFlg"
+            },
+            "platformMappingService": {
+                root: "/cms/platform/mapping/",
+                page: "page",
+                get: "get",
+                save: "save",
+                delete: "delete",
+                getCommonSchema: {
+                    url: "getCommonSchema",
+                    cache: CACHE.LOCAL
+                },
+                getFeedCustomProps: {
+                    url: "getFeedCustomProps",
+                    cache: CACHE.SESSION,
+                    cacheWith: [KEY.CHANNEL]
+                },
+                // 原 platform mapping 的功能已删除
+                // 原 platformMappingService 的以下两个 action 被其他内容调用
+                // 所以暂时寄存在新的 platformMappingService 下
+                getPlatformCategories: {
+                    root: "/cms/product/detail/",
+                    url: "getPlatformCategories",
+                    cache: CACHE.LOCAL,
+                    cacheWith: [KEY.CHANNEL]
+                },
+                getCarts: {
+                    root: "/cms/home/menu/",
+                    url: "getCarts",
+                    cache: CACHE.LOCAL,
+                    cacheWith: [KEY.CHANNEL]
+                }
+            },
+            "blackBrandService":{
+                root:"/cms/channel/black_brand/",
+                list:"searchBlackBrand",
+                update:"updateBlackBrand"
             }
         }
     };

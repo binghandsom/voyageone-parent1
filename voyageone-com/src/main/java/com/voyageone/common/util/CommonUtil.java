@@ -64,7 +64,7 @@ public final class CommonUtil {
         builder.append(e.getMessage());
         builder.append("<p>堆栈信息</p>");
         for (StackTraceElement s : stack) {
-            builder.append("<p>").append(s.getClassName()).append(".").append(s.getMethodName()).append("</p>");
+            builder.append(s.getClassName()).append(".").append(s.getMethodName()).append(" (").append(s.getFileName()).append(":").append(s.getLineNumber()).append(")");
         }
 
         if (attMsg != null && !attMsg.isEmpty()) {
@@ -78,7 +78,7 @@ public final class CommonUtil {
         return builder.toString();
     }
 
-    public static String getExceptionSimpleContent(Exception e) {
+    public static String getExceptionSimpleContent(Throwable e) {
         String top = filterLocation(e, "com.voyageone");
 
         Throwable inner = getInner(e);

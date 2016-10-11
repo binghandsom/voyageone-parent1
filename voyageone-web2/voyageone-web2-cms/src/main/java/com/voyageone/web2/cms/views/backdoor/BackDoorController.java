@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.backdoor;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -13,9 +14,14 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
+import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.com.ComMtValueChannelDao;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -24,11 +30,16 @@ import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
+import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.com.ComMtValueChannelModel;
+import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +88,16 @@ public class BackDoorController extends CmsController {
     private ProductSkuService productSkuSerivice;
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
+    @Autowired
+    private CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
+    @Autowired
+    private ComMtValueChannelDao comMtValueChannelDao;
+    @Autowired
+    private CmsBtJmPromotionSkuDao cmsBtJmPromotionSkuDao;
+    @Autowired
+    private CmsBtJmSkuDao cmsBtJmSkuDao;
+    @Autowired
+    private CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
 
 
     /**
@@ -102,6 +123,17 @@ public class BackDoorController extends CmsController {
     }
 
     /**
+     * 将老的聚美数据导入都cms(/cms/backdoor/importJM/015)
+     *
+     * @param channelId 渠道Id
+     * @return
+     */
+    @RequestMapping(value = "importJMOne", method = RequestMethod.GET)
+    public Object importJmOne(@RequestParam("channelId") String channelId, @RequestParam("code") String code) {
+        return serviceJmBtDealImport.importJMOne(channelId,code);
+    }
+
+    /**
      * 创建996的测试数据(/cms/backdoor/createTestData)
      *
      * @return
@@ -111,7 +143,7 @@ public class BackDoorController extends CmsController {
 
         List<CmsBtFeedInfoModel> allFeedInfoList = new ArrayList<CmsBtFeedInfoModel>();
 
-        JomgoQuery selectQuery = new JomgoQuery();
+        JongoQuery selectQuery = new JongoQuery();
 //        selectQuery.setSkip(1);
 //        selectQuery.setLimit(000);
         allFeedInfoList.addAll(cmsBtFeedInfoDao.selectAll("015"));
@@ -180,7 +212,7 @@ public class BackDoorController extends CmsController {
 
         System.out.println("开始处理:" + oldProductInfo.size());
 
-        Map<String, CmsMtPlatformCategoryTreeModel> platformCategoryMap =  getPlatformMap(channelId, 23);
+        Map<String, CmsMtPlatformCategoryTreeModel> platformCategoryMap = getPlatformMap(channelId, 23);
 
         oldProductInfo.parallelStream().forEach(oldCmsBtProductModel -> {
             System.out.println("开始处理:" + oldCmsBtProductModel.getFields().getCode());
@@ -250,7 +282,7 @@ public class BackDoorController extends CmsController {
                     newField.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
                 }
                 newField.setHsCodeCross("");
-                if(feedInfo != null ) {
+                if (feedInfo != null) {
                     newField.setCodeDiff(feedInfo.getColor());
                     newField.setMaterialEn(feedInfo.getMaterial());
                 } else {
@@ -357,15 +389,15 @@ public class BackDoorController extends CmsController {
                         oldCmsBtProductModel.getSkus().forEach(sku -> {
                             BaseMongoMap<String, Object> newSku = new BaseMongoMap<String, Object>();
 
-                            if (priceMsrpSt[0].compareTo(0D) == 0 ||priceMsrpSt[0].compareTo(sku.getPriceMsrp()) >= 0)
+                            if (priceMsrpSt[0].compareTo(0D) == 0 || priceMsrpSt[0].compareTo(sku.getPriceMsrp()) >= 0)
                                 priceMsrpSt[0] = sku.getPriceMsrp();
                             if (priceMsrpEd[0].compareTo(sku.getPriceMsrp()) <= 0)
                                 priceMsrpEd[0] = sku.getPriceMsrp();
-                            if (priceRetailSt[0].compareTo(0D) == 0 ||priceRetailSt[0].compareTo(sku.getPriceRetail()) >= 0)
+                            if (priceRetailSt[0].compareTo(0D) == 0 || priceRetailSt[0].compareTo(sku.getPriceRetail()) >= 0)
                                 priceRetailSt[0] = sku.getPriceRetail();
                             if (priceRetailEd[0].compareTo(sku.getPriceRetail()) <= 0)
                                 priceRetailEd[0] = sku.getPriceRetail();
-                            if (priceSaleSt[0].compareTo(0D) == 0 ||priceSaleSt[0].compareTo(sku.getPriceSale()) >= 0)
+                            if (priceSaleSt[0].compareTo(0D) == 0 || priceSaleSt[0].compareTo(sku.getPriceSale()) >= 0)
                                 priceSaleSt[0] = sku.getPriceSale();
                             if (priceSaleEd[0].compareTo(sku.getPriceSale()) <= 0)
                                 priceSaleEd[0] = sku.getPriceSale();
@@ -526,7 +558,7 @@ public class BackDoorController extends CmsController {
 
                             Double breakThreshold = 0.00;
                             if (cmsChannelConfigBean != null) {
-                                breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D ;
+                                breakThreshold = Double.parseDouble(cmsChannelConfigBean.getConfigValue1()) / 100D;
                             }
 
                             String diffFlg = productSkuSerivice.getPriceDiffFlg(breakThreshold, sku.getPriceSale(), sku.getPriceRetail());
@@ -577,7 +609,7 @@ public class BackDoorController extends CmsController {
                 cmsBtProductModel.getFeed().setCnAtts(oldCmsBtProductModel.getFeed().getCnAtts());
                 cmsBtProductModel.getFeed().setCustomIds(oldCmsBtProductModel.getFeed().getCustomIds());
                 cmsBtProductModel.getFeed().setCustomIdsCn(oldCmsBtProductModel.getFeed().getCustomIdsCn());
-                if(feedInfo != null ) {
+                if (feedInfo != null) {
                     cmsBtProductModel.getFeed().setCatId(feedInfo.getCatId());
                     cmsBtProductModel.getFeed().setCatPath(feedInfo.getCategory());
                 } else {
@@ -605,7 +637,7 @@ public class BackDoorController extends CmsController {
             }
         });
 
-        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
+//        List<String> groupCheckMessageList = checkGroupTransformOn20160708(channelId, code);
 
         StringBuilder builder = new StringBuilder("<body>");
 
@@ -618,7 +650,7 @@ public class BackDoorController extends CmsController {
         builder.append("<hr>");
         builder.append("<h2>Group 信息列表</h2>");
         builder.append("<ul>");
-        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+//        groupCheckMessageList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
         builder.append("</ul>");
         builder.append("</body>");
 
@@ -644,9 +676,7 @@ public class BackDoorController extends CmsController {
                     platformInfo.setAttribute("pStatus", "");
                     platformInfo.setpAttributeStatus("0");
                     platformInfo.setpAttributeSetter("");
-                }
-
-                else {
+                } else {
 
                     platformInfo.setStatus(CmsConstants.ProductStatus.Approved);
 //                    platformInfo.setAttribute("pStatus", "");
@@ -740,7 +770,7 @@ public class BackDoorController extends CmsController {
         List<String> messageList = new ArrayList<>();
         List<String> successList = new ArrayList<>();
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"updFlg\": {$ne: 9}}");
         queryObject.setProjection("{code: 1}");
         List<CmsBtFeedInfoModel> feeds = feedInfoService.getList(channelId, queryObject);
@@ -749,7 +779,7 @@ public class BackDoorController extends CmsController {
             try {
                 List<CmsBtProductModel> productInfo = productService.getProductByOriginalCode(channelId, code);
                 CmsBtProductModel productInfo1 = productService.getProductByCode(channelId, code);
-                if(productInfo.size() == 0 && productInfo1 == null){
+                if (productInfo.size() == 0 && productInfo1 == null) {
                     // 更新 feedinfo表中的updFlg 重新出发 feed->mast
                     HashMap<String, Object> paraMap = new HashMap<>(1);
                     paraMap.put("code", code);
@@ -791,7 +821,7 @@ public class BackDoorController extends CmsController {
 
                 CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
 
-                JomgoQuery query = new JomgoQuery();
+                JongoQuery query = new JongoQuery();
                 query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
                 query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
                 CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
@@ -875,60 +905,63 @@ public class BackDoorController extends CmsController {
             if (groupModel.getProductCodes().size() == existedCodeList.size())
                 return;
 
-            String oldMainProductCode = groupModel.getMainProductCode();
+            System.out.println(existedCodeList.toArray());
+            groupModel.setProductCodes(existedCodeList);
 
-            if (existedCodeList.contains(oldMainProductCode)) {
-                // 如果存在, 说明还没有删除
-                // 那么维持老的数据即可
-                // 只需要扔掉那些删除掉得 code
-                groupModel.setProductCodes(existedCodeList);
-            } else {
-                // 如果 group 现在使用的 main product 不在过滤后的集合里
-                // 说明这个 code 已经被上一步删除了
-                // 那么
-                // 除了切换 group 的 main product code 外
-                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
-                String newMainProductCode = existedCodeList.get(0);
-                groupModel.setMainProductCode(newMainProductCode);
-                existedCodeList.forEach(existedCode -> {
-                    // 更新每一个 code
-                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
-                    // 不过 P0 只有 mainProductCode
-                    // 同时还要更新 common fields 里的 isMasterMain 属性
-                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
-                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
-                    boolean isMain = existedCode.equals(newMainProductCode);
-                    Map<String, Object> productSetParams = new HashMap<>(3);
-
-                    // 因为有可能并行 (parallelStream) 执行
-                    // 也就是有可能并发更新同一个商品
-                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
-                    // common 下的属性交给 P0 平台更新
-
-                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
-
-                    if (currentGroupProductPlatform == null) {
-                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
-                        return;
-                    }
-
-                    if (isMain) {
-                        if (groupCartId.equals(0))
-                            productSetParams.put("common.fields.isMasterMain", 1);
-                        else
-                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
-                    }
-
-                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
-
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("$set", productSetParams);
-
-                    Map<String, Object> productQueryParams = new HashMap<>();
-                    productQueryParams.put("_id", productModel.get_id());
-                    productService.updateProduct(channelId, productQueryParams, updateMap);
-                });
-            }
+//            String oldMainProductCode = groupModel.getMainProductCode();
+//
+//            if (existedCodeList.contains(oldMainProductCode)) {
+//                // 如果存在, 说明还没有删除
+//                // 那么维持老的数据即可
+//                // 只需要扔掉那些删除掉得 code
+//                groupModel.setProductCodes(existedCodeList);
+//            } else {
+//                // 如果 group 现在使用的 main product 不在过滤后的集合里
+//                // 说明这个 code 已经被上一步删除了
+//                // 那么
+//                // 除了切换 group 的 main product code 外
+//                // 还需要对每一个 group 下现存的 code 做 main 相关的属性切换
+//                String newMainProductCode = existedCodeList.get(0);
+//                groupModel.setMainProductCode(newMainProductCode);
+//                existedCodeList.forEach(existedCode -> {
+//                    // 更新每一个 code
+//                    // 更新他们平台属性下, 与当前 group 平台对应的 pIsMain 和 mainProductCode
+//                    // 不过 P0 只有 mainProductCode
+//                    // 同时还要更新 common fields 里的 isMasterMain 属性
+//                    // 当然 pIsMain 和 isMasterMain 只有在当前更新的 code 是 newMainProductCode 的时候才修改
+//                    CmsBtProductModel productModel = productService.getProductByCode(channelId, existedCode);
+//                    boolean isMain = existedCode.equals(newMainProductCode);
+//                    Map<String, Object> productSetParams = new HashMap<>(3);
+//
+//                    // 因为有可能并行 (parallelStream) 执行
+//                    // 也就是有可能并发更新同一个商品
+//                    // 所以更新平台信息时, 只更新当前 group 对应的平台属性
+//                    // common 下的属性交给 P0 平台更新
+//
+//                    CmsBtProductModel_Platform_Cart currentGroupProductPlatform = productModel.getPlatform(groupCartId);
+//
+//                    if (currentGroupProductPlatform == null) {
+//                        messageList.add(String.format("productModel.getPlatform(groupCartId) 返回 null: Product: %s, Group: %s", existedCode, groupModel.get_id()));
+//                        return;
+//                    }
+//
+//                    if (isMain) {
+//                        if (groupCartId.equals(0))
+//                            productSetParams.put("common.fields.isMasterMain", 1);
+//                        else
+//                            productSetParams.put("platforms.P" + groupCartId + ".pIsMain", 1);
+//                    }
+//
+//                    productSetParams.put("platforms.P" + groupCartId + ".mainProductCode", newMainProductCode);
+//
+//                    HashMap<String, Object> updateMap = new HashMap<>();
+//                    updateMap.put("$set", productSetParams);
+//
+//                    Map<String, Object> productQueryParams = new HashMap<>();
+//                    productQueryParams.put("_id", productModel.get_id());
+//                    productService.updateProduct(channelId, productQueryParams, updateMap);
+//                });
+//            }
 
             productGroupService.update(groupModel);
         });
@@ -940,7 +973,7 @@ public class BackDoorController extends CmsController {
      * 获取所有叶子类目的路径
      *
      * @param channelId 渠道
-     * @param cartId  平台 ID
+     * @param cartId    平台 ID
      * @return Map 键 -> CategoryId, 值 -> CategoryPath
      */
     private Map<String, CmsMtPlatformCategoryTreeModel> getPlatformMap(String channelId, Integer cartId) {
@@ -1018,26 +1051,237 @@ public class BackDoorController extends CmsController {
     /**
      * 测试getOmsProductsInfo方法
      *
-     * @param channelId           店铺Id
-     * @param cartId              平台Id
+     * @param channelId 店铺Id
+     * @param cartId    平台Id
      * @return List<ProductForOmsBean>对象
      */
     @RequestMapping(value = "updateProductPlatformIsSale", method = RequestMethod.GET)
     public Object updateProductPlatformIsSale(@RequestParam("channelId") String channelId
             , @RequestParam("code") String code
-            , @RequestParam("cartId") String cartId) {{
+            , @RequestParam("cartId") String cartId) {
+        {
 
-        List<CmsBtProductModel> productInfo = new ArrayList<>();
-        if (StringUtils.isEmpty(code))
-            productInfo = cmsBtProductDao.select("{\"platforms.P27.skus.isSale\": {$in: [\"true\", \"false\"]}}", channelId);
-        else
-            productInfo = cmsBtProductDao.select("{\"common.fields.code\": \"" + code + "\"}", channelId);
+            List<CmsBtProductModel> productInfo = new ArrayList<>();
+            if (StringUtils.isEmpty(code))
+                productInfo = cmsBtProductDao.select("{\"platforms.P27.skus.isSale\": {$in: [\"true\", \"false\"]}}", channelId);
+            else
+                productInfo = cmsBtProductDao.select("{\"common.fields.code\": \"" + code + "\"}", channelId);
 
 
-        productInfo.parallelStream().forEach(product -> {
+            productInfo.parallelStream().forEach(product -> {
+
+                product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(sku ->
+                        sku.setAttribute("isSale", "true".equals(sku.getStringAttribute("isSale")))
+                );
+
+                HashMap<String, Object> queryMap = new HashMap<>();
+                queryMap.put("prodId", product.getProdId());
+                List<BulkUpdateModel> bulkList = new ArrayList<>();
+                HashMap<String, Object> updateMap = new HashMap<>();
+//                platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+                updateMap.put("platforms.P" + cartId, product.getPlatform(Integer.valueOf(cartId)));
+                BulkUpdateModel model = new BulkUpdateModel();
+                model.setUpdateMap(updateMap);
+                model.setQueryMap(queryMap);
+                bulkList.add(model);
+                cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "updateProductPlatformIsSale", "$set");
+            });
+            return code;
+        }
+
+
+    }
+
+
+    /**
+     * 根据channelId和cartId,设置已经Approved商品所有的cart
+     *
+     * @param channelId
+     * @param flg
+     * @return
+     */
+    @RequestMapping(value = "updateProductJMHashId", method = RequestMethod.GET)
+    public Object updateProductJMHashId(@RequestParam("channelId") String channelId, @RequestParam("flg") String flg) {
+
+        List<String> codes = new ArrayList<>();
+
+        List<MapModel> promotionCodes = new ArrayList<>();
+        if ("1".equals(flg))
+            promotionCodes = cmsBtJmPromotionDaoExt.selectMaxJmHashId(channelId);
+        else if ("2".equals(flg))
+            promotionCodes = cmsBtJmPromotionDaoExt.selectJmProductHashId(channelId);
+
+
+            if ("1".equals(flg) || "2".equals(flg)) {
+                promotionCodes.forEach(promtionCode -> {
+                    String code = promtionCode.get("productCode").toString();
+                    String jmHashId = promtionCode.get("jmHashId").toString();
+
+                    JongoUpdate updateQuery = new JongoUpdate();
+                    updateQuery.setQuery("{\"common.fields.code\": #}");
+                    updateQuery.setQueryParameters(code);
+
+                    updateQuery.setUpdate("{$set:{\"platforms.P27.pNumIId\": #}}");
+                    updateQuery.setUpdateParameters(jmHashId);
+
+                    cmsBtProductDao.updateFirst(updateQuery, channelId);
+
+
+                    JongoUpdate updateGroupQuery = new JongoUpdate();
+                    updateGroupQuery.setQuery("{\"cartId\": 27, \"productCodes\": #}");
+                    updateGroupQuery.setQueryParameters(code);
+
+                    updateGroupQuery.setUpdate("{$set:{\"numIId\": #}}");
+                    updateGroupQuery.setUpdateParameters(jmHashId);
+
+                    cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
+                    codes.add(code + "=======" + jmHashId);
+                });
+            } else if ("3".equals(flg)) {
+
+                Map<String, String> queryMap = new HashMap<>();
+                queryMap.put("channelId", channelId);
+                List<CmsBtJmPromotionSkuModel> jmPromotionSkuList = cmsBtJmPromotionSkuDao.selectList(queryMap);
+                List<CmsBtJmSkuModel> jmSkuList = cmsBtJmSkuDao.selectList(queryMap);
+                queryMap.put("orgChannelId", channelId);
+                List<CmsBtPromotionSkusModel> promotionSkuList = cmsBtPromotionSkusDao.selectList(queryMap);
+
+                JongoQuery query = new JongoQuery();
+                query.setQuery("{}");
+                query.setProjection("{\"common.fields.code\": 1, \"common.skus\": 1}");
+                List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+                // 取得所有的sku和code对应关系
+                Map<String, String> allSkus = new HashMap<>();
+                products.parallelStream().forEach(CmsBtProductModel -> {
+                    CmsBtProductModel.getCommon().getSkus().forEach(skuInfo -> {
+                        if(!allSkus.containsKey(skuInfo.getSkuCode())) {
+                            allSkus.put(skuInfo.getSkuCode(), CmsBtProductModel.getCommon().getFields().getCode());
+                        }
+                    });
+                });
+
+                jmPromotionSkuList.forEach(CmsBtJmPromotionSkuModel -> {
+                    String newCode = allSkus.get(CmsBtJmPromotionSkuModel.getSkuCode());
+                    if(!CmsBtJmPromotionSkuModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtJmPromotionSkuModel===" + CmsBtJmPromotionSkuModel.getId() + "<" + CmsBtJmPromotionSkuModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtJmPromotionSkuModel.setProductCode(newCode);
+                            cmsBtJmPromotionSkuDao.update(CmsBtJmPromotionSkuModel);
+                        } else {
+                            codes.add("CmsBtJmPromotionSkuModel===" + CmsBtJmPromotionSkuModel.getId() + "<" + CmsBtJmPromotionSkuModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+
+                jmSkuList.forEach(CmsBtJmSkuModel -> {
+                    String newCode = allSkus.get(CmsBtJmSkuModel.getSkuCode());
+                    if(!CmsBtJmSkuModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtJmSkuModel===" + CmsBtJmSkuModel.getId() + "<" + CmsBtJmSkuModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtJmSkuModel.setProductCode(newCode);
+                            cmsBtJmSkuDao.update(CmsBtJmSkuModel);
+                        } else {
+                            codes.add("CmsBtJmSkuModel===" + CmsBtJmSkuModel.getId() + "<" + CmsBtJmSkuModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+
+                promotionSkuList.forEach(CmsBtPromotionSkusModel -> {
+                    String newCode = allSkus.get(CmsBtPromotionSkusModel.getProductSku());
+                    if(!CmsBtPromotionSkusModel.getProductCode().equals(newCode)) {
+                        if(!StringUtils.isEmpty(newCode)) {
+                            codes.add("CmsBtPromotionSkusModel===" + CmsBtPromotionSkusModel.getId() + "<" + CmsBtPromotionSkusModel.getProductCode() + "===" + newCode + ">");
+                            CmsBtPromotionSkusModel.setProductCode(newCode);
+                            cmsBtPromotionSkusDao.update(CmsBtPromotionSkusModel);
+                        } else {
+                            codes.add("CmsBtPromotionSkusModel===" + CmsBtPromotionSkusModel.getId() + "<" + CmsBtPromotionSkusModel.getProductCode() + "===newCode为空>");
+                        }
+                    }
+                });
+            }
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        codes.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+
+    @RequestMapping(value = "changeProductTypeToLow", method = RequestMethod.GET)
+    public Object changeProductTypeToLow(@RequestParam("channelId") String channelId) {
+        List<String> code = new ArrayList<>();
+
+        List<CmsBtProductModel> products = cmsBtProductDao.selectAll(channelId);
+
+        products.parallelStream().forEach(productInfo -> {
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+
+            cartList.forEach(channelBean -> {
+                String cartId = channelBean.getValue();
+
+                CmsBtProductModel_Platform_Cart platformInfo = productInfo.getPlatformNotNull(Integer.valueOf(cartId));
+
+                JongoQuery query = new JongoQuery();
+                query.setQuery("{\"mainProductCode\": #, \"cartId\": #}");
+                query.setParameters(platformInfo.getMainProductCode(), platformInfo.getCartId());
+                CmsBtProductGroupModel groupModel = productGroupService.getProductGroupByQuery(channelId, query);
+                if (groupModel == null) {
+                    code.add("group不存在:" + platformInfo.getMainProductCode() + "--" + platformInfo.getCartId());
+
+                }
+
+                if (!StringUtils.isEmpty(platformInfo.getpNumIId()) && groupModel != null && StringUtils.isEmpty(groupModel.getNumIId())) {
+
+                    groupModel.setNumIId(platformInfo.getpNumIId());
+                    groupModel.setPlatformPid(platformInfo.getpProductId());
+                    groupModel.setPlatformStatus(platformInfo.getpStatus());
+                    groupModel.setPublishTime(platformInfo.getpPublishTime());
+
+                    productGroupService.update(groupModel);
+                    code.add(groupModel.getGroupId().toString() + ":" + platformInfo.getpNumIId());
+                }
+
+            });
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+
+    }
+
+    /**
+     * 根据channelId和cartId,设置已经Approved商品所有的cart
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    @RequestMapping(value = "changeProductIsSale", method = RequestMethod.GET)
+    public Object changeProductIsSale(@RequestParam("channelId") String channelId, @RequestParam("cartId") String cartId) {
+
+        List<String> code = new ArrayList<>();
+
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"platforms.P27.status\": \"Approved\", \"platforms.P27.skus.isSale\": {$exists: false}}");
+        List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+        products.parallelStream().forEach(product -> {
 
             product.getPlatform(Integer.valueOf(cartId)).getSkus().forEach(sku ->
-                sku.setAttribute("isSale", "true".equals(sku.getStringAttribute("isSale")))
+                    sku.setAttribute("isSale", true)
             );
 
             HashMap<String, Object> queryMap = new HashMap<>();
@@ -1051,11 +1295,117 @@ public class BackDoorController extends CmsController {
             model.setQueryMap(queryMap);
             bulkList.add(model);
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, "updateProductPlatformIsSale", "$set");
+
+            code.add(product.getCommon().getFields().getCode());
         });
-        return code;
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>feed 信息列表</h2>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<ul>");
+        code.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
     }
 
+    /**
+     * 根据channelId重新设置
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "createBrandInComMtValueChannel", method = RequestMethod.GET)
+    public Object createBrandInComMtValueChannel(@RequestParam("channelId") String channelId) {
 
+        // 获取所有的产品数据
+        JongoQuery query = new JongoQuery();
+        query.setProjection("{\"common.fields.brand\": 1}");
+        List<CmsBtProductModel> products = cmsBtProductDao.select(query, channelId);
+
+        // 获取产品的所有brand
+        List<String> brandList = new ArrayList<>();
+        products.parallelStream().forEach(CmsBtProductModel -> {
+            if (!brandList.contains(CmsBtProductModel.getCommon().getFields().getBrand().toLowerCase()))
+                brandList.add(CmsBtProductModel.getCommon().getFields().getBrand().toLowerCase());
+        });
+
+        // 删除不存在的brand数据
+        Map<String, String> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("typeId", "41");
+        List<ComMtValueChannelModel> mtValueChannelList = comMtValueChannelDao.selectList(param);
+
+        List<String> deleteList = new ArrayList<>();
+        mtValueChannelList.forEach(ComMtValueChannelModel -> {
+            if (!brandList.contains(ComMtValueChannelModel.getValue())) {
+                ComMtValueChannelModel.setDisplayOrder(9999);
+                ComMtValueChannelModel.setModified(new Date());
+                comMtValueChannelDao.update(ComMtValueChannelModel);
+                deleteList.add(ComMtValueChannelModel.getValue() + "-" + ComMtValueChannelModel.getId());
+            }
+        });
+
+        // 在ComMtValueChannel中不存在的数据列表
+        List<String> notExistsBrandList = new ArrayList<>();
+        brandList.forEach( brand -> {
+            Map<String, String> param2 = new HashMap<>();
+            param2.put("channelId", channelId);
+            param2.put("typeId", "41");
+            param2.put("value", brand);
+            param2.put("langId", "en");
+            List<ComMtValueChannelModel> currentEnBrandList = comMtValueChannelDao.selectList(param2);
+            if (currentEnBrandList.size() == 0) {
+                ComMtValueChannelModel newEnBrand = new ComMtValueChannelModel();
+                newEnBrand.setChannelId(channelId);
+                newEnBrand.setTypeId(41);
+                newEnBrand.setLangId("en");
+                newEnBrand.setValue(brand);
+                newEnBrand.setName(brand);
+                newEnBrand.setAddName1(brand);
+                newEnBrand.setModifier("edward");
+                newEnBrand.setCreater("edward");
+                newEnBrand.setModified(new Date());
+                newEnBrand.setCreated(new Date());
+                newEnBrand.setDisplayOrder(0);
+                comMtValueChannelDao.insert(newEnBrand);
+
+                notExistsBrandList.add(brand + "-en");
+            }
+            param2.put("langId", "cn");
+            List<ComMtValueChannelModel> currentCnBrandList = comMtValueChannelDao.selectList(param2);
+            if (currentCnBrandList.size() == 0) {
+                ComMtValueChannelModel newEnBrand = new ComMtValueChannelModel();
+                newEnBrand.setChannelId(channelId);
+                newEnBrand.setTypeId(41);
+                newEnBrand.setLangId("cn");
+                newEnBrand.setValue(brand);
+                newEnBrand.setName(brand);
+                newEnBrand.setAddName1(brand);
+                newEnBrand.setModifier("edward");
+                newEnBrand.setCreater("edward");
+                newEnBrand.setModified(new Date());
+                newEnBrand.setCreated(new Date());
+                newEnBrand.setDisplayOrder(0);
+                comMtValueChannelDao.insert(newEnBrand);
+
+                notExistsBrandList.add(brand + "-cn");
+            }
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>删除brand 信息列表</h2>");
+        builder.append("<ul>");
+        deleteList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("<h2>需要插入的brand 信息列表</h2>");
+        builder.append("<ul>");
+        notExistsBrandList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
     }
-
 }

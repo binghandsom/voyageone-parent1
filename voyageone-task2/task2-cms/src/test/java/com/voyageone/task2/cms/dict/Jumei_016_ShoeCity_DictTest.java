@@ -153,7 +153,7 @@ public class Jumei_016_ShoeCity_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }

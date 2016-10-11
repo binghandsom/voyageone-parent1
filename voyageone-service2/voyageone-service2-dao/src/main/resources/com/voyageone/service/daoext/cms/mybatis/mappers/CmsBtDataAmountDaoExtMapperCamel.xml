@@ -10,4 +10,12 @@
         #{item}
      </foreach>
     </select>
+    <select id="selectBrandNoMatchCount" resultType="int">
+        SELECT COUNT(*) FROM synship.com_mt_value_channel AS a
+  LEFT JOIN  (
+           SELECT cms_brand  FROM  `cms_mt_brands_mapping` WHERE `channel_id`=#{channelId} AND cart_id=#{cartId}
+           ) AS b ON a.`value`=b.cms_brand
+ WHERE `type_id`=41 AND `channel_id`=#{channelId} AND  `lang_id`="cn"
+   AND b.cms_brand IS NULL
+    </select>
 </mapper>

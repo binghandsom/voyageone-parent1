@@ -6,36 +6,49 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope, promotionService, cartList, items, confirm, notify, $translate,$filter) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope, promotionService, cartList, items, confirm, notify, $translate, $filter) {
 
-        $scope.promotion = {};
         $scope.tejiabao = false;
         $scope.cartList = cartList;
         $scope.datePicker = [];
         $scope.isEdit = false;
+        $scope.editModel = {promotionModel: {}, tagList: []};
 
         $scope.initialize = function () {
             if (items) {
-                $scope.promotion = angular.copy(items);
-                $scope.isEdit = $scope.promotion.promotionStatus;
-                if ($scope.promotion.tejiabaoId != "0") {
-                    $scope.tejiabao = true;
-                }
+                promotionService.getEditModel(items.id).then(function (res) {
+                    loadData(res.data);
+                });
             } else {
-                $scope.promotion.tagList = [{"id": "", "channelId": "", "tagName": ""}];
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": ""}];
             }
         };
 
+        function loadData(data) {
+            var promotionModel = data.promotionModel;
+            if (promotionModel.prePeriodStart) promotionModel.prePeriodStart = new Date(promotionModel.prePeriodStart);
+            if (promotionModel.prePeriodEnd) promotionModel.prePeriodEnd = new Date(promotionModel.prePeriodEnd);
+            if (promotionModel.activityStart)  promotionModel.activityStart = new Date(promotionModel.activityStart);
+            if (promotionModel.activityEnd) promotionModel.activityEnd = new Date(promotionModel.activityEnd);
+            if (promotionModel.preSaleStart)  promotionModel.preSaleStart = new Date(promotionModel.preSaleStart);
+            if (promotionModel.preSaleEnd) promotionModel.preSaleEnd = new Date(promotionModel.preSaleEnd);
+            $scope.isEdit = !promotionModel.promotionStatus; //1:open  0:close
+            if (promotionModel.tejiabaoId != "0") {
+                $scope.tejiabao = true;
+            }
+            $scope.editModel = data;
+        }
+
         $scope.addTag = function () {
-            if ($scope.promotion.tagList) {
-                $scope.promotion.tagList.push({"id": "", "channelId": "", "tagName": ""});
+            if ($scope.editModel.tagList) {
+                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": ""});
             } else {
-                $scope.promotion.tagList = [{"id": "", "channelId": "", "tagName": ""}];
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": ""}];
             }
         };
 
         $scope.delTag = function (parent, node) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
                     var index;
                     index = _.indexOf(parent, node);
@@ -48,70 +61,74 @@ define([
         $scope.ok = function () {
 
             if (!$scope.tejiabao)
-                $scope.promotion.tejiabaoId = "0";
+                $scope.editModel.promotionModel.tejiabaoId = "0";
 
-            if (!$scope.promotionForm.$valid || !$scope.promotion.tagList)
+            if (!$scope.promotionForm.$valid || !$scope.editModel.tagList)
                 return;
 
-            if ($scope.promotion.tagList.find(function (tag) {
-                    return !tag.tagName;
-                })) {
-                notify.danger('Please give me a Tag !');
+            if ($scope.editModel.tagList.length == 0) {
+                notify.danger($translate.instant("TXT_ADD_TAG"));
                 return;
             }
 
-                $scope.promotion.prePeriodStart = dateToString($scope.promotion.prePeriodStart);
-                $scope.promotion.prePeriodEnd = dateToString($scope.promotion.prePeriodEnd);
-                $scope.promotion.activityStart = dateToString($scope.promotion.activityStart);
-                $scope.promotion.activityEnd = dateToString($scope.promotion.activityEnd);
-                $scope.promotion.preSaleStart = dateToString($scope.promotion.preSaleStart);
-                $scope.promotion.preSaleEnd = dateToString($scope.promotion.preSaleEnd);
-            if($scope.promotion.activityStart > $scope.promotion.activityEnd){
-                alert("活动时间检查：请输入结束时间>开始时间。")
+            var hasTag = _.every($scope.editModel.tagList,function(element){
+                return element.tagName;
+            });
+
+            if(!hasTag)
+                return;
+
+            var _editModel = angular.copy($scope.editModel);
+            _editModel.promotionModel.prePeriodStart = dateToString(_editModel.promotionModel.prePeriodStart);
+            _editModel.promotionModel.prePeriodEnd = dateToString(_editModel.promotionModel.prePeriodEnd);
+            _editModel.promotionModel.activityStart = dateToString(_editModel.promotionModel.activityStart);
+            _editModel.promotionModel.activityEnd = dateToString(_editModel.promotionModel.activityEnd);
+            _editModel.promotionModel.preSaleStart = dateToString(_editModel.promotionModel.preSaleStart);
+            _editModel.promotionModel.preSaleEnd = dateToString(_editModel.promotionModel.preSaleEnd);
+
+            if (_editModel.promotionModel.activityStart > _editModel.promotionModel.activityEnd) {
+                alert("活动时间检查：请输入结束时间>开始时间。");
                 return;
             }
 
-            if($scope.promotion.preSaleStart > $scope.promotion.preSaleEnd){
-                alert("预售时间检查：请输入结束时间>开始时间。")
+            if (_editModel.promotionModel.preSaleStart > _editModel.promotionModel.preSaleEnd) {
+                alert("预售时间检查：请输入结束时间>开始时间。");
                 return;
             }
 
-            if($scope.promotion.prePeriodStart > $scope.promotion.prePeriodEnd){
-                alert("预热时间检查：请输入结束时间>开始时间。")
+            if (_editModel.promotionModel.prePeriodStart > _editModel.promotionModel.prePeriodEnd) {
+                alert("预热时间检查：请输入结束时间>开始时间。");
                 return;
             }
 
-            if($scope.promotion.prePeriodStart > $scope.promotion.activityStart){
+            if (_editModel.promotionModel.prePeriodStart > _editModel.promotionModel.activityStart) {
                 alert("预热开始时间不能晚于活动开始时间");
                 return;
             }
-            if($scope.promotion.preSaleStart > $scope.promotion.activityStart){
+            if (_editModel.promotionModel.preSaleStart > _editModel.promotionModel.activityStart) {
                 alert("预售开始时间不能晚于活动开始时间");
                 return;
             }
-            if (!items) {
-                promotionService.insertPromotion($scope.promotion).then(function () {
-                    $scope.$close();
-                });
-            } else {
-                promotionService.updatePromotion($scope.promotion).then(function () {
 
-                    $scope.$close();
-                });
-            }
-        }
-        function dateToString(date){
-            if(date && date instanceof Date){
-                return $filter("date")(date,"yyyy-MM-dd");
-            }else{
-                if(date)    return date;
+            promotionService.saveEditModel(_editModel).then(function () {
+                $scope.$close();
+            });
+
+        };
+
+        function dateToString(date) {
+            if (date && date instanceof Date) {
+                return $filter("date")(date, "yyyy-MM-dd");
+            } else {
+                if (date)    return date;
                 return "";
             }
         }
-        function stringTodate(date){
-            if(date){
-               return new Date(date);
-            }else{
+
+        function stringTodate(date) {
+            if (date) {
+                return new Date(date);
+            } else {
                 return null;
             }
         }

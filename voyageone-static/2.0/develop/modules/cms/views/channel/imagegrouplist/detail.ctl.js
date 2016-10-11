@@ -7,141 +7,138 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupDetailController", (function () {
-        function ImageGroupDetailController($routeParams, imageGroupDetailService, confirm, alert, notify) {
+        function ImageGroupDetailController($routeParams, imageGroupDetailService, confirm, alert, notify, popups) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
             this.imageGroupId = $routeParams['imageGroupId'];
             this.platformList = [];
-            this.platform = "";
-            this.cartId = "";
             this.brandNameList = [];
-            this.brandName = [];
             this.productTypeList = [];
-            this.productType = [];
             this.sizeTypeList = [];
-            this.sizeType = [];
-
-            this.imageGroupName = "";
             this.imageTypeList = [];
-            this.imageType = "";
-            this.viewType = "";
-
             this.imageList = [];
 
             this.imageGroupDetailService = imageGroupDetailService;
+            this.popups = popups;
         }
 
-        ImageGroupDetailController.prototype = {
-            init: function () {
-                var main = this;
-                main.imageGroupDetailService.init({"imageGroupId":main.imageGroupId}).then(function (res) {
-                    main.platformList = res.data.platformList;
-                    main.brandNameList = res.data.brandNameList;
-                    main.productTypeList = res.data.productTypeList;
-                    main.sizeTypeList = res.data.sizeTypeList;
-                    main.platform = res.data.imageGroupInfo.cartId + "";
-                    main.cartId = res.data.imageGroupInfo.cartId + "";
-                    main.brandName = res.data.imageGroupInfo.brandName;
-                    main.productType = res.data.imageGroupInfo.productType;
-                    main.sizeType = res.data.imageGroupInfo.sizeType;
-                    main.imageGroupName = res.data.imageGroupInfo.imageGroupName;
-                    main.imageTypeList = res.data.imageTypeList;
-                    main.imageType = res.data.imageGroupInfo.imageType + "";
-                    main.viewType = res.data.imageGroupInfo.viewType + "";
-                    main.search();
-                })
-            },
-            search: function () {
-                var main = this;
-                main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
-                    if (res.data != null) {
-                        main.imageList = res.data;
-                    }
-                })
-            },
-            save: function () {
-                var main = this;
-                main.imageGroupDetailService.save({
-                    "imageGroupId":main.imageGroupId,
-                    "platform":main.platform,
-                    "brandName":main.brandName,
-                    "productType":main.productType,
-                    "sizeType":main.sizeType,
-                    "imageGroupName":main.imageGroupName,
-                    "imageType":main.imageType,
-                    "viewType":main.viewType
-                }).then(function (res) {
-                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    main.cartId = main.platform;
+        ImageGroupDetailController.prototype.init = function () {
+            var self = this,
+                data;
+
+            self.imageGroupDetailService.init({"imageGroupId": self.imageGroupId}).then(function (res) {
+                data = res.data;
+
+                self.platformList = data.platformList;
+                self.brandNameList = data.brandNameList;
+                self.productTypeList = data.productTypeList;
+                self.sizeTypeList = data.sizeTypeList;
+                self.imageTypeList = data.imageTypeList;
+
+                self.imageGroupInfo = data.imageGroupInfo;
+                self.platform = data.imageGroupInfo.cartId + "";
+                self.cartId = data.imageGroupInfo.cartId + "";
+                self.brandName = data.imageGroupInfo.brandName;
+                self.productType = data.imageGroupInfo.productType;
+                self.sizeType = data.imageGroupInfo.sizeType;
+                self.imageGroupName = data.imageGroupInfo.imageGroupName;
+
+                self.imageType = data.imageGroupInfo.imageType ? data.imageGroupInfo.imageType + "" : null;
+                self.viewType = data.imageGroupInfo.viewType ? data.imageGroupInfo.viewType + "" : null;
+
+                self.search();
+            })
+        };
+
+        ImageGroupDetailController.prototype.search = function () {
+            var self = this;
+            self.imageGroupDetailService.search({"imageGroupId": self.imageGroupId}).then(function (res) {
+                if (res.data != null) {
+                    self.imageList = res.data;
+                }
+            })
+        };
+
+        ImageGroupDetailController.prototype.openImgDetails = function () {
+            var self = this;
+
+            self.from = "detail";
+            self.popups.openImgGroupAdd(self).then(function () {
+                self.init();
+            });
+
+        };
+
+        ImageGroupDetailController.prototype.refresh = function (originUrl) {
+            var self = this;
+            self.confirm('TXT_MSG_DO_REFRESH_IMAGE').then(function () {
+                self.imageGroupDetailService.refresh({
+                    "imageGroupId": self.imageGroupId,
+                    "originUrl": originUrl
+                }).then(function () {
+                    self.notify.success('TXT_MSG_REFRESH_IMAGE_SUCCESS');
+                    self.search();
                 }, function (err) {
                     if (err.displayType == null) {
-                        main.alert('TXT_MSG_UPDATE_FAIL');
-                    }
-                });
-            },
-            refresh: function (originUrl) {
-                var main = this;
-                main.confirm('TXT_MSG_DO_REFRESH_IMAGE').result.then(function () {
-                    main.imageGroupDetailService.refresh({
-                        "imageGroupId" : main.imageGroupId,
-                        "originUrl" : originUrl
-                    }).then(function (res) {
-                        main.notify.success('TXT_MSG_REFRESH_IMAGE_SUCCESS');
-                        main.search();
-                    }, function (err) {
-                        if (err.displayType == null) {
-                            main.alert('TXT_MSG_REFRESH_IMAGE_FAIL');
-                        }
-                    })
-                })
-            },
-            refreshPage: function () {
-                var main = this;
-                main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
-                    if (res.data != null) {
-                        main.imageList = res.data;
+                        self.alert('TXT_MSG_REFRESH_IMAGE_FAIL');
                     }
                 })
-            },
-            delete: function (originUrl) {
-                var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
-                    main.imageGroupDetailService.delete({
-                        "imageGroupId" : main.imageGroupId,
-                        "originUrl" : originUrl
-                    }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
-                    }, function (err) {
-                        if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
-                        }
-                    })
+            })
+
+        };
+
+        ImageGroupDetailController.prototype.refreshPage = function () {
+            var self = this;
+            self.imageGroupDetailService.search({"imageGroupId": self.imageGroupId}).then(function (res) {
+                if (res.data != null) {
+                    self.imageList = res.data;
+                }
+            })
+
+        };
+
+        ImageGroupDetailController.prototype.delete = function (originUrl) {
+            var self = this;
+            self.confirm('TXT_MSG_DO_DELETE').then(function () {
+                self.imageGroupDetailService.delete({
+                    "imageGroupId": self.imageGroupId,
+                    "originUrl": originUrl
+                }).then(function () {
+                    self.notify.success('TXT_MSG_DELETE_SUCCESS');
+                    self.search();
+                }, function (err) {
+                    if (err.displayType == null) {
+                        self.alert('TXT_MSG_DELETE_FAIL');
+                    }
                 })
-            },
-            moveUp: function (originUrl) {
-                var main = this;
-                main.imageGroupDetailService.move({
-                    "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl,
-                    "direction" : "up"
-                }).then(function (res) {
-                    main.imageList = res.data;
-                    main.search();
-                })
-            },
-            moveDown: function (originUrl) {
-                var main = this;
-                main.imageGroupDetailService.move({
-                    "imageGroupId" : main.imageGroupId,
-                    "originUrl" : originUrl,
-                    "direction" : "down"
-                }).then(function (res) {
-                    main.imageList = res.data;
-                    main.search();
-                })
-            }
+            })
+        };
+
+        ImageGroupDetailController.prototype.moveUp = function (originUrl) {
+            var self = this;
+            self.imageGroupDetailService.move({
+                "imageGroupId": self.imageGroupId,
+                "originUrl": originUrl,
+                "direction": "up"
+            }).then(function (res) {
+                self.imageList = res.data;
+                self.search();
+            })
+
+        };
+
+        ImageGroupDetailController.prototype.moveDown = function (originUrl) {
+            var self = this;
+            self.imageGroupDetailService.move({
+                "imageGroupId": self.imageGroupId,
+                "originUrl": originUrl,
+                "direction": "down"
+            }).then(function (res) {
+                self.imageList = res.data;
+                self.search();
+            })
+
         };
 
         return ImageGroupDetailController;

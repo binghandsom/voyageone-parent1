@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 拦截管理器, 统一处理所有过滤操作
@@ -17,14 +19,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
-    @Autowired
-    private AuthorizationInterceptor authorizationInterceptor;
+    private final AuthorizationInterceptor authorizationInterceptor;
+
+    private final LoginInterceptor loginInterceptor;
+
+    private final ChannelInterceptor channelInterceptor;
 
     @Autowired
-    private LoginInterceptor loginInterceptor;
-
-    @Autowired
-    private ChannelInterceptor channelInterceptor;
+    public Interceptor(AuthorizationInterceptor authorizationInterceptor, LoginInterceptor loginInterceptor, ChannelInterceptor channelInterceptor) {
+        this.authorizationInterceptor = authorizationInterceptor;
+        this.loginInterceptor = loginInterceptor;
+        this.channelInterceptor = channelInterceptor;
+    }
 
     /**
      * Intercept the execution of a handler. Called after HandlerMapping determined
@@ -38,6 +44,14 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         $info(request.getServletPath() + " is start.");
+
+//        $debug(this.getRequestBody(request));
+
+        // vms系统没有channel选择画面所以channelInterceptor不需要
+        if (request.getServletPath().startsWith("/vms")) {
+            return loginInterceptor.preHandle(request)
+                    && authorizationInterceptor.preHandle(request);
+        }
 
         return loginInterceptor.preHandle(request)
             && channelInterceptor.preHandle(request)
@@ -71,5 +85,18 @@ public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 暂时 Do nothing
+    }
+
+    private String getRequestBody(HttpServletRequest request) {
+        if (null != request && request.getContentLength() > 0) {
+            byte[] requestBody = new byte[request.getContentLength()];
+            try {
+                request.getInputStream().read(requestBody, 0, request.getContentLength());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return new String(requestBody);
+        }
+        return "";
     }
 }

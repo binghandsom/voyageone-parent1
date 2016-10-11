@@ -25,7 +25,7 @@
         <constructor-arg name="databaseName" value="cms2"/>
     </bean>
 
-    <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJomgoTemplate">
+    <bean id="baseJomgoDao" class="com.voyageone.base.dao.mongodb.BaseJongoTemplate">
         <constructor-arg ref="mongoTemplate"/>
     </bean>
 

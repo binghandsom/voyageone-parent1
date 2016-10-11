@@ -80,12 +80,54 @@ public class SkuTemplateConstants {
     public final static int EXTENDSIZE_CUSTOM_SIZE_2 = 66;
     public final static int EXTENDSIZE_CUSTOM_SIZE_3 = 67;
     public final static int EXTENDSIZE_CUSTOM_SIZE_4 = 68;
+    public final static int EXTENDSIZE_TUNWEI = 73;
+    public final static int EXTENDSIZE_TUNWEI_RANGE = 74;
+    public final static int EXTENDSIZE_QUNCHANG = 75;
+    public final static int EXTENDSIZE_QUNCHANG_RANGE = 76;
+    public final static int EXTENDSIZE_QUNBAICHANG = 77;
+    public final static int EXTENDSIZE_QUNBAICHANG_RANGE = 78;
+    public final static int EXTENDSIZE_KUCHANG = 79;
+    public final static int EXTENDSIZE_KUCHANG_RANGE = 80;
+    public final static int EXTENDSIZE_TUIWEI = 81;
+    public final static int EXTENDSIZE_TUIWEI_RANGE = 82;
+    public final static int EXTENDSIZE_XIWEI = 83;
+    public final static int EXTENDSIZE_XIWEI_RANGE = 84;
+    public final static int EXTENDSIZE_XIAOJIAOWEI = 85;
+    public final static int EXTENDSIZE_XIAOJIAOWEI_RANGE = 86;
+    public final static int EXTENDSIZE_LASHENYAOWEI = 87;
+    public final static int EXTENDSIZE_LASHENYAOWEI_RANGE = 88;
+    public final static int EXTENDSIZE_ZUOWEI = 89;
+    public final static int EXTENDSIZE_ZUOWEI_RANGE = 90;
+    public final static int EXTENDSIZE_LASHENZUOWEI = 91;
+    public final static int EXTENDSIZE_LASHENZUOWEI_RANGE = 92;
+    public final static int EXTENDSIZE_JIAOKOU = 93;
+    public final static int EXTENDSIZE_JIAOKOU_RANGE = 94;
+    public final static int EXTENDSIZE_QIANLANG = 95;
+    public final static int EXTENDSIZE_QIANLANG_RANGE = 96;
+    public final static int EXTENDSIZE_HOULANG = 97;
+    public final static int EXTENDSIZE_HOULANG_RANGE = 98;
+    public final static int EXTENDSIZE_HENGDANG = 99;
+    public final static int EXTENDSIZE_HENGDANG_RANGE = 100;
+    public final static int EXTENDSIZE_JIAOCHANG = 101;
 
     // 既没有颜色也没有尺码
     public final static int SKU_MASTER = 69;
     public final static int EXTENDMASTER = 70;
     public final static int EXTENDMASTER_MASTER = 71;
     public final static int EXTENDMASTER_ALIASNAME = 72;
+
+    public final static int SKU_CSPUID = 102; // 产品规格
+    public final static int SKU_IMAGE = 103;
+
+    public final static int CSPU = 104; // 产品规格列表
+    public final static int CSPU_IMG = 105; // 产品规格主图
+    public final static int CSPU_ATTACH_IMG = 106; // 产品规格资质图
+    public final static int CSPU_NO_UPDATE = 107; // 产品规格属性里，不会去设值的属性
+
+    public final static int DARWINSKU_PACKAGE_TYPE = 108; // 套餐类型(天猫默认是"官方标配[6536025]",且必须要有"官方标配",先代码写死,不过这样就不支持多种套餐,即多个sku)，参照类目"影音电器>耳机/耳麦"
+
+    public final static int SKU_ID = 109; // SkuId
+    public final static int SKU_PRODUCTID = 110; // sku_scProductId 货品Id
 
     public final static int UNKOWN = 99999;
 }

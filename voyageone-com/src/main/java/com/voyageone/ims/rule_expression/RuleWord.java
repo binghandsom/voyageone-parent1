@@ -16,10 +16,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = DictWord.class, name = "DICT"),
         @JsonSubTypes.Type(value = CustomWord.class, name = "CUSTOM"),
         @JsonSubTypes.Type(value = MasterWord.class, name = "MASTER"),
+        @JsonSubTypes.Type(value = MasterHtmlWord.class, name = "MASTER_HTML"),
+        @JsonSubTypes.Type(value = MasterClrHtmlWord.class, name = "MASTER_CLR_HTML"),
         @JsonSubTypes.Type(value = ConditionWord.class, name = "CONDITION"),
         @JsonSubTypes.Type(value = FeedCnWord.class, name = "FEED_CN"),
         @JsonSubTypes.Type(value = FeedOrgWord.class, name = "FEED_ORG"),
         @JsonSubTypes.Type(value = SkuWord.class, name = "SKU"),
+        @JsonSubTypes.Type(value = CommonWord.class, name = "COMMON"),
         //TODO add other field
 })
 public abstract class RuleWord {

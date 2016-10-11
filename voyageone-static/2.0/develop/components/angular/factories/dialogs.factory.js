@@ -4,25 +4,13 @@
  * @Version: 2.0.0
  */
 angular.module("voyageone.angular.factories").factory("$dialogs", function ($uibModal, $filter, $templateCache) {
+
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    var template = '<div class="vo_modal">'
-                    + '<div class="modal-header">'
-                    + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">'
-                    + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>'
-                    + "</button>"
-                    + '<h5 class="modal-title" ng-bind-html="title"></h5>'
-                    + "</div>"
-                    + '<div class="modal-body wrapper-lg">'
-                    + '<div class="row">'
-                    + '<h5 class="text-center text-hs"><p class="text-left" ng-bind-html="content"></p></h5>'
-                    + "</div>"
-                    + "</div>"
-                    + '<div class="modal-footer">'
-                    + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>'
-                    + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>'
-                    + "</div>"
-                    + "</div>";
+
+    var template = '<div class="vo_modal vo-dialogs"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i>&nbsp;<span ng-bind-html="title"></span></h5></div><div class="modal-body"><div class="text-left" ng-bind-html="content"></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button><button class="btn btn-sm {{::isAlert?\'btn-default\':\'btn-vo\'}}" ng-click="ok()" translate="BTN_OK"></button></div></div>';
+
     $templateCache.put(templateName, template);
+
     function tran(translationId, values) {
         return $filter("translate")(translationId, values);
     }
@@ -51,13 +39,14 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
         };
         return modalInstance;
     };
+
 }).factory("alert", function ($dialogs) {
     return function (content, title) {
         return $dialogs({
             title: title || "TXT_ALERT",
             content: content,
             isAlert: true
-        });
+        }).result;
     };
 }).factory("confirm", function vConfirm($dialogs) {
     return function (content, title) {
@@ -65,6 +54,6 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
             title: title || "TXT_CONFIRM",
             content: content,
             isAlert: false
-        });
+        }).result;
     };
 });

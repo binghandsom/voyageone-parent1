@@ -122,11 +122,35 @@ define(function () {
             "templateUrl": "views/channel/taglist/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/taglist/index.ctl"
         },
+        "channel_brand_mapping_list": {
+            "hash": "/channel/brand_mapping_list",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
+        "channel_brand_mapping_param": {
+            "hash": "/channel/brand_mapping_list/:cartId",
+            "templateUrl": "views/channel/brandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/brandMapping/index.ctl",
+            "controller": "BrandMappingController as ctrl"
+        },
         "channel_cart_category_list": {
             "hash": "/channel/cart_category_list",
             "templateUrl": "views/channel/category/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/category/index.ctl",
             "controller": "categoryController as ctrl"
+        },
+        "channel_default_attribute_list": {
+            "hash": "/channel/default_attribute_list",
+            "templateUrl": "views/channel/defaultAttribute/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/index.controller",
+            "controller": "DefaultAttributeController as ctrl"
+        },
+        "channel_default_attribute_detail": {
+            "hash": "/channel/default_attribute_detail/:upEntity?",
+            "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
+            "controller": "attributeDetailController as ctrl"
         },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
@@ -196,6 +220,12 @@ define(function () {
             "templateUrl": "views/system/storeoperation/index.tpl.html",
             "controllerUrl": "modules/cms/views/system/storeoperation/index.ctl",
             "controller": "storeOperationController as store"
+        },
+        "tools_common_master_brand_mapping": {
+            "hash": "/tools/common/masterBrandMapping",
+            "templateUrl": "views/tools/common/masterBrandMapping.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping.ctl",
+            "controller": "MasterBrandMappingController as ctrl"
         },
         "tools_product_translation_setting": {
             "hash": "/tools/product/translation_setting",
@@ -279,6 +309,10 @@ define(function () {
             "hash": "/system/cache/index",
             "templateUrl": "views/system/cache/index.tpl.html"
         },
+        "system_mq_send": {
+            "hash": "/system/mq/index",
+            "templateUrl": "views/system/mq/index.tpl.html"
+        },
         "system_category_setting": {
             "hash": "/system/categorysetting/:type",
             "templateUrl": "views/system/categorysetting/maincatunion.tpl.html",
@@ -288,6 +322,11 @@ define(function () {
             "hash": "/system/categorysetting_catunion",
             "templateUrl": "views/system/categorysetting/catunion.tpl.html",
             "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
+        },
+        "system_value_channel": {
+            "hash": "/system/valuechannel",
+            "templateUrl": "views/system/valueChannel/index.tpl.html",
+            "controllerUrl": "modules/cms/views/system/valueChannel/index.ctl"
         },
         "jm_promotion_detail_list": {
             "hash": "/jm/promotion_detail_list/:parentId",
@@ -309,6 +348,18 @@ define(function () {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",
             "controllerUrl": "modules/cms/views/imagecreate/index.ctl"
+        },
+        "re-price": {
+            "hash": "/tools/re/price",
+            "templateUrl": "views/tools/reprice/re.price.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/reprice/re.price.controller",
+            "controller": "RePriceController as ctrl"
+        },
+        "black-brand": {
+            "hash": "/marketing/black-brand/:params?",
+            "templateUrl": "views/channel/black_brand/list.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
+            "controller": "BlackBrandListController as ctrl"
         }
     };
 });

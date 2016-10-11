@@ -1,22 +1,25 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *  Product Tag Service
@@ -33,28 +36,15 @@ public class ProductTagService extends BaseService {
     @Autowired
     private CmsBtTagDaoExt cmsBtTagDaoExt;
     @Autowired
-    private CmsBtTagDao cmsBtTagDao;
+    private ProductStatusHistoryService productStatusHistoryService;
 
     /**
      * 向产品添加tag，同时添加该tag的所有上级tag
      */
-    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String tagsKey, String modifier) {
+    public void addProdTag(String channelId, String tagPath, List<Long> prodIdList, String modifier) {
         if (tagPath == null || prodIdList == null || prodIdList.isEmpty()) {
             $warn("ProductTagService：addProdTag 缺少参数");
             throw new BusinessException("缺少参数!");
-        }
-
-        // 先删除同级的tag
-        Map<String, Object> params = new HashMap<>(1);
-        params.put("tagPath", tagPath);
-        CmsBtTagModel tagBean = cmsBtTagDao.selectOne(params);
-        if (tagBean != null) {
-            List<CmsBtTagModel> modelList = cmsBtTagDaoExt.selectListBySameLevel(channelId, tagBean.getParentTagId(), tagBean.getId());
-            if (!modelList.isEmpty()) {
-                List<String> pathList = new ArrayList<>(modelList.size());
-                modelList.forEach(model -> pathList.add(model.getTagPath()));
-                deleteTags(channelId, prodIdList, tagsKey, pathList, modifier);
-            }
         }
 
         // 更新条件
@@ -82,12 +72,58 @@ public class ProductTagService extends BaseService {
 
         HashMap<String, Object> updateMap = new HashMap<>();
         HashMap<String, Object> tagsMap = new HashMap<>();
-        tagsMap.put(tagsKey, eachMap);
+        tagsMap.put("tags", eachMap);
         updateMap.put("$addToSet", tagsMap);
 
         // 批量更新product表
         WriteResult result = cmsBtProductDao.update(channelId, queryMap, updateMap);
         $debug(String.format("ProductTagService：addProdTag 操作结果-> %s", result.toString()));
+    }
+
+    /**
+     * 设置产品free tag，同时添加该tag的所有上级tag
+     */
+    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, String modifier) {
+        if (prodCodeList == null || prodCodeList.isEmpty()) {
+            $warn("ProductTagService：setProdFreeTag 缺少参数");
+            throw new BusinessException("缺少参数!");
+        }
+
+        // 根据选择项目生成free tag列表
+        List<String> pathList = new ArrayList<>();
+        if (tagPathList != null) {
+            int arrSize = 0;
+            for (String tagPath : tagPathList) {
+                // 生成级联tag path列表
+                String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+                arrSize = pathArr.length;
+                for (int j = 0; j < arrSize; j ++) {
+                    StringBuilder curTagPath = new StringBuilder("-");
+                    for (int i = 0; i <= j ; i ++) {
+                        curTagPath.append(pathArr[i]);
+                        curTagPath.append("-");
+                    }
+                    pathList.add(curTagPath.toString());
+                }
+            }
+            // 过滤重复项目
+            pathList = pathList.stream().distinct().collect(Collectors.toList());
+        }
+
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setQuery("{'common.fields.code':{$in:#}}");
+        updObj.setQueryParameters(prodCodeList);
+        updObj.setUpdate("{$set:{'freeTags':#}}");
+        updObj.setUpdateParameters(pathList);
+
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
+        $debug(String.format("ProductTagService：setProdFreeTag 操作结果-> " + result.toString()));
+
+        List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
+        pathList = tagBeanList.stream().map(tagBean -> tagBean.getTagPathName()).collect(Collectors.toList());
+        String msg = "高级检索 批量设置自由标签 " + StringUtils.join(pathList, "; ");
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, EnumProductOperationType.BatchSetFreeTag, msg, modifier);
     }
 
     /**
@@ -119,7 +155,7 @@ public class ProductTagService extends BaseService {
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
             } else {
-                JomgoQuery queryObject = new JomgoQuery();
+                JongoQuery queryObject = new JongoQuery();
                 StringBuilder queryStr = new StringBuilder();
                 queryStr.append("{");
                 queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
@@ -145,7 +181,7 @@ public class ProductTagService extends BaseService {
                         tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                         pathList.add(tagBean.getTagPath());
                     } else {
-                        queryObject = new JomgoQuery();
+                        queryObject = new JongoQuery();
                         queryStr = new StringBuilder();
                         queryStr.append("{");
                         queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
@@ -181,7 +217,7 @@ public class ProductTagService extends BaseService {
                 tagBean = cmsBtTagDaoExt.selectCmsBtTagByTagId(tagBean.getParentTagId());
                 pathList.add(tagBean.getTagPath());
             } else {
-                JomgoQuery queryObject = new JomgoQuery();
+                JongoQuery queryObject = new JongoQuery();
                 StringBuilder queryStr = new StringBuilder();
                 queryStr.append("{");
                 queryStr.append(MongoUtils.splicingValue("prodId", prodIdList.toArray(), "$in"));
@@ -223,29 +259,4 @@ public class ProductTagService extends BaseService {
         $debug(String.format("ProductTagService：delete 操作结果-> %s", result.toString()));
     }
 
-    /**
-     * 批量删除商品的tag(只删除指定的tag path)，不删除关联的上级以及下级tag
-     */
-    public void deleteTags(String channelId, List<Long> prodIdList, String tagsKey, List<String> tagPathList, String modifier) {
-        if (tagPathList == null || tagPathList.isEmpty() || prodIdList == null || prodIdList.isEmpty()) {
-            $warn("ProductTagService：deleteTags 缺少参数");
-            throw new RuntimeException("缺少参数!");
-        }
-
-        // 更新条件
-        HashMap<String, Object> queryMap = new HashMap<>();
-        HashMap<String, Object> inMap = new HashMap<>();
-        inMap.put("$in", prodIdList);
-        queryMap.put("prodId", inMap);
-
-        // 更新操作
-        HashMap<String, Object> updateMap = new HashMap<>();
-        HashMap<String, Object> tagsMap = new HashMap<>();
-        tagsMap.put(tagsKey, tagPathList);
-        updateMap.put("$pullAll", tagsMap);
-
-        // 批量更新product表
-        WriteResult result = cmsBtProductDao.update(channelId, queryMap, updateMap);
-        $debug(String.format("ProductTagService：deleteTags 操作结果-> %s", result.toString()));
-    }
 }

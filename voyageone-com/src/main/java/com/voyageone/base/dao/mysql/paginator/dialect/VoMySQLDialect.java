@@ -7,6 +7,12 @@ import org.apache.ibatis.mapping.MappedStatement;
 
 import java.util.List;
 
+/**
+ * VoMySQLDialect
+ *
+ * @author chuanyu.liang
+ * @version 2.0.0, 5/5/16
+ */
 public class VoMySQLDialect extends MySQLDialect {
 
     public VoMySQLDialect(MappedStatement mappedStatement, Object parameterObject, PageBounds pageBounds) {

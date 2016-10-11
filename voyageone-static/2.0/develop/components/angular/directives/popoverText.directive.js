@@ -10,12 +10,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
     return {
         restrict: "AE",
         transclude: true,
-        template: '<small  popover-html="content" popover-placement="{{direct}}" >' +
-        '<div class="table_main">' +
-        '<ul>' +
-        '<li></li>' +
-        '</ul>' +
-        '</div></small>',
+        template: '<small popover-html="content" popover-placement="{{::direct}}"><div class="table_main"><ul><li></li></ul></div></small>',
         replace: true,
         scope: {
             content: "=content",
@@ -23,12 +18,15 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             size: "@size"
         },
         link: function (scope, element) {
+
+            var content = scope.content;
+            var size = scope.size;
             var li = $(element).find("li");
-            li.html(scope.content);
-            if (li.html().length >= scope.size)
-                li.html(li.html().substr(0, scope.size) + '...').css({cursor: 'pointer'});
+
+            if (content.length > scope.size)
+                li.html(content.substr(0, size) + '...').css({cursor: 'default'});
             else
-                li.html(li.html());
+                li.html(content);
         }
     };
 });

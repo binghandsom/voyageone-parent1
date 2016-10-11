@@ -8,6 +8,7 @@ import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
@@ -15,6 +16,7 @@ import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
@@ -46,7 +48,7 @@ import static java.lang.String.format;
 /**
  * Created by jonasvlag on 16/3/3.
  *
- * @version 2.0.0
+ * @version 2.6.0
  * @since 2.0.0
  */
 @Service
@@ -64,17 +66,26 @@ public class BeatJobService extends BaseTaskService {
         return lastErrorTarget;
     }
 
-    @Autowired
-    private CmsBeatInfoService beatInfoService;
+    private final CmsBeatInfoService beatInfoService;
+
+    private final TbItemService tbItemService;
+
+    private final TbSimpleItemService tbSimpleItemService;
+
+    private final ImageCategoryService imageCategoryService;
+
+    private final TbPictureService tbPictureService;
 
     @Autowired
-    private TbItemService tbItemService;
-
-    @Autowired
-    private ImageCategoryService imageCategoryService;
-
-    @Autowired
-    private TbPictureService tbPictureService;
+    public BeatJobService(CmsBeatInfoService beatInfoService, TbItemService tbItemService,
+                          TbSimpleItemService tbSimpleItemService, TbPictureService tbPictureService,
+                          ImageCategoryService imageCategoryService) {
+        this.beatInfoService = beatInfoService;
+        this.tbItemService = tbItemService;
+        this.tbSimpleItemService = tbSimpleItemService;
+        this.tbPictureService = tbPictureService;
+        this.imageCategoryService = imageCategoryService;
+    }
 
     @Override
     public SubSystem getSubSystem() {
@@ -287,22 +298,38 @@ public class BeatJobService extends BaseTaskService {
 
         private TbItemSchema tbItemSchema;
 
-        CmsMtImageCategoryModel getUpCategory() {
+        private CmsMtImageCategoryModel getUpCategory() {
             if (upCategory == null)
                 upCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
             return upCategory;
         }
 
-        CmsMtImageCategoryModel getDownCategory() {
+        private CmsMtImageCategoryModel getDownCategory() {
             if (downCategory == null)
                 downCategory = imageCategoryService.getCategory(shopBean, ImageCategoryType.Main);
             return downCategory;
         }
 
-        TbItemSchema getTbItemSchema() throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
-            if (tbItemSchema == null)
-                tbItemSchema = tbItemService.getUpdateSchema(shopBean, beatInfoBean.getNumIid());
+        private TbItemSchema getTbItemSchema() throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
+            if (tbItemSchema == null) {
+                if (isSimpleCart())
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopBean, beatInfoBean.getNumIid());
+                else
+                    tbItemSchema = tbItemService.getUpdateSchema(shopBean, beatInfoBean.getNumIid());
+            }
             return tbItemSchema;
+        }
+
+        /**
+         * 获取是否是同购店
+         * @return 是否是同购店
+         * @since 2.6.0
+         */
+        private boolean isSimpleCart() {
+
+            CartEnums.Cart cart = CartEnums.Cart.getValueByID(shopBean.getCart_id());
+
+            return CartEnums.Cart.isSimple(cart);
         }
 
         private Context(CmsBtBeatInfoBean beatInfoBean) {
@@ -334,7 +361,7 @@ public class BeatJobService extends BaseTaskService {
             try {
                 String imageUrl;
                 if (withPrice)
-                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#").format(promotionPrice));
+                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
                 else
                     imageUrl = templateUrl.replace("{key}", imageName);
 
@@ -342,6 +369,7 @@ public class BeatJobService extends BaseTaskService {
                 return url.openStream();
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
+                $debug("取图失败, 发生异常", e);
                 throw new BreakBeatJobException("取图失败, 发生异常", e);
             }
         }
@@ -382,12 +410,12 @@ public class BeatJobService extends BaseTaskService {
             throw new BreakBeatJobException(message);
         }
 
-        private Boolean update() throws IOException, ApiException, TopSchemaException, GetUpdateSchemaFailException {
+        Boolean update() throws IOException, ApiException, TopSchemaException, GetUpdateSchemaFailException {
 
             TbItemSchema itemSchema = getTbItemSchema();
 
             // 还原覆盖 Schema 的原值
-            getTbItemSchema().setFieldValue();
+            getTbItemSchema().setFieldValueWithDefault();
 
             // 创建结果 Map, 最终该 Map 将更新到 Schema 上
             Map<Integer, String> images = new HashMap<>();
@@ -410,7 +438,7 @@ public class BeatJobService extends BaseTaskService {
                         images.put(2, getTaobaoImageUrl(beatInfoBean.getPromotion_code().getImage_url_2()));
                     else {
                         // 如果不为空, 则还原和刷图有区别, 还原需要清空
-                        // 就是如果第二张图为空, 那么刷披露图, 就复制第一张图就可以了, 不需要再折腾了
+                        // 如果第二张图为空, 那么刷披露图, 就复制第一张图就可以了, 不需要再折腾了
                         // 如果是要还原, 那么这个商品本身是没有第二张图的, 也就是要清空。所以设置为空字符
                         images.put(2, beatInfoBean.getSynFlagEnum().equals(BeatFlag.REVERT) ? "" : images.get(1));
                     }
@@ -419,39 +447,48 @@ public class BeatJobService extends BaseTaskService {
             // 保存到 Schema
             itemSchema.setMainImage(images);
 
-            // 如果报错报异常, 由最外面接
-            TmallItemSchemaUpdateResponse updateResponse = tbItemService.updateFields(shopBean, itemSchema);
+            if (tbItemSchema.isSimple()) {
+                String result = tbSimpleItemService.updateSimpleItem(shopBean, itemSchema);
 
-            if (updateResponse == null) {
-                beatInfoBean.setMessage("更新商品信息时, 没获取到响应.");
+                if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
+                    beatInfoBean.setMessage(result);
+                    return false;
+                }
+
+                return true;
+            } else {
+                TmallItemSchemaUpdateResponse updateResponse = tbItemService.updateFields(shopBean, itemSchema);
+
+                if (updateResponse == null) {
+                    beatInfoBean.setMessage("更新商品信息时, 没获取到响应.");
+                    return false;
+                }
+
+                $info("调用 ItemSchemaUpdate -> [ %s ] [ %s ] [ %s ] [ %s ] [ %s ]", updateResponse.getUpdateItemResult(),
+                        updateResponse.getGmtModified(), updateResponse.getMsg(),
+                        updateResponse.getSubCode(), updateResponse.getSubMsg());
+
+                if (StringUtils.isEmpty(updateResponse.getSubCode())) {
+                    beatInfoBean.setMessage("success");
+                    return true;
+                }
+
+                $info("商品更新失败了。[ %s ] [ %s ] [ %s ]", beatInfoBean.getNumIid(), updateResponse.getSubCode(), updateResponse.getSubMsg());
+
+                // 指定忽略这些错误，让后续任务可以重新尝试
+                switch (updateResponse.getSubCode()) {
+                    case "isp.service-unavailable": // 服务不可用
+                        return null;
+                }
+
+                beatInfoBean.setMessage(format("修改淘宝商品时失败了。[ %s ] [ %s ]", updateResponse.getSubCode(), updateResponse.getSubMsg()));
                 return false;
             }
-
-            $info("调用 ItemSchemaUpdate -> [ %s ] [ %s ] [ %s ] [ %s ] [ %s ]", updateResponse.getUpdateItemResult(),
-                    updateResponse.getGmtModified(), updateResponse.getMsg(),
-                    updateResponse.getSubCode(), updateResponse.getSubMsg());
-
-            if (StringUtils.isEmpty(updateResponse.getSubCode())) {
-                beatInfoBean.setMessage("success");
-                return true;
-            }
-
-            $info("商品更新失败了。[ %s ] [ %s ] [ %s ]", beatInfoBean.getNumIid(), updateResponse.getSubCode(), updateResponse.getSubMsg());
-
-            // 指定忽略这些错误，让后续任务可以重新尝试
-            switch (updateResponse.getSubCode()) {
-                case "isp.service-unavailable": // 服务不可用
-                    return null;
-            }
-
-            beatInfoBean.setMessage(format("修改淘宝商品时失败了。[ %s ] [ %s ]", updateResponse.getSubCode(), updateResponse.getSubMsg()));
-            return false;
         }
 
         private String getTaobaoImageUrl(String image_url_key) throws IOException, ApiException {
 
             String templateUrl;
-            String imageName;
             boolean withPrice;
             CmsMtImageCategoryModel categoryModel;
 
@@ -481,7 +518,12 @@ public class BeatJobService extends BaseTaskService {
 
             CmsBtPromotionCodesBean code = beatInfoBean.getPromotion_code();
 
-            String imageName, image_url_key = code.getImage_url_3();
+            String image_url_key = code.getImage_url_3();
+
+            // 如果没有指定竖图
+            // 那么使用第一张图作为竖图
+            if (StringUtils.isEmpty(image_url_key))
+                image_url_key = code.getImage_url_1();
 
             switch (beatInfoBean.getSynFlagEnum()) {
                 case BEATING:

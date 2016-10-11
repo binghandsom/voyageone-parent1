@@ -2,13 +2,16 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.meta.CmsZiIndexModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -57,7 +60,7 @@ public class CmsZiIndexDao extends BaseMongoDao<CmsZiIndexModel> {
     }
 
     public CmsZiIndexModel getCollectionIndexesFromMeta(String collName) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{\"coll_name\": # }");
         // 用定义的名字去检索索引
         queryObject.setParameters(collName);

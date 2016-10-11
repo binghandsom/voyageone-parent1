@@ -5,7 +5,6 @@ import org.apache.commons.net.util.Base64;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,6 +13,8 @@ import java.util.regex.Pattern;
 public final class StringUtils {
 
     private static final Pattern special_symbol = Pattern.compile("[.]");
+
+    public static final String LineSeparator = "\r\n";
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -49,13 +50,7 @@ public final class StringUtils {
      * 空白Check
      */
     public static boolean isEmpty(String chkParam) {
-        boolean ret = false;
-
-        if (chkParam == null || "".equals(chkParam)) {
-            ret = true;
-        }
-
-        return ret;
+        return org.apache.commons.lang3.StringUtils.isEmpty(chkParam);
     }
 
     /**

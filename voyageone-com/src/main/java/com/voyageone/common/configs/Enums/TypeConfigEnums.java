@@ -165,6 +165,11 @@ public class TypeConfigEnums {
 		 * 赠品规则类型
 		 */
 		giftRuleType(35),
+		
+		/**
+		 * 品牌
+		 */
+		brand(41),
 
 		/**
 		 * 产品状态:cms2
@@ -174,7 +179,7 @@ public class TypeConfigEnums {
 		/**
 		 * 发布状态:cms2
 		 */
-		platFormStatus(45),
+		platformStatus(45),
 
 		/**
 		 * 标签:cms2
@@ -207,6 +212,11 @@ public class TypeConfigEnums {
 		procLockStatus(52),
 
 		/**
+		 * 平台状态:cms2
+		 */
+		skuCarts(53),
+
+		/**
 		 * 错误类别:cms2
 		 */
 		errorType(55),
@@ -217,14 +227,19 @@ public class TypeConfigEnums {
 		promotionStatus(56),
 
 		/**
+		 * 上下架操作指令
+		 */
+		platformActicve(65),
+
+		/**
 		 * 获取任务的优先顺序:cms2
 		 */
 		translateTask(66),
 
 		/**
-		 * 是否为默认主商品
+		 * 标签类型
 		 */
-		isMasterMain(80),
+		tagType(74),
 
 		/**
 		 * 主类目设置状态
@@ -234,7 +249,18 @@ public class TypeConfigEnums {
 		/**
 		 * 税号设置状态
 		 */
-		hsCodeStatus(77);
+		hsCodeStatus(77),
+
+		/**
+		 * 是否为默认主商品
+		 */
+		isMasterMain(80),
+
+		/**
+		 * 商品上下架操作结果
+		 */
+		putOnOffStatus(87);
+
 
     	private int id;
 

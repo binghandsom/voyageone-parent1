@@ -1,13 +1,16 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
@@ -20,18 +23,18 @@ import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.web2.cms.bean.CmsPromotionExportBean;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +46,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotionDetailService extends BaseAppService {
+public class CmsPromotionDetailService extends BaseViewService {
 
     @Autowired
     private TaskService taskService;
@@ -180,7 +183,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param, int cartId) {
         List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
@@ -214,7 +217,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<CmsBtPromotionCodesBean> getPromotionCode(Map<String, Object> param, int cartId) {
         List<CmsBtPromotionCodesBean> promList = promotionCodeService.getPromotionCodeList(param);
 
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setProjection("{'batchField':1,'common.fields.code':1,'_id':0}");
 
         if (!CollectionUtils.isEmpty(promList)) {
@@ -335,7 +338,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 if (row.getCell(CmsConstants.CellNum.channelIdCellNum) == null || StringUtil.isEmpty(row.getCell(CmsConstants.CellNum.channelIdCellNum).getStringCellValue())) {
                     break;
                 }
-                String groupName = ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum);
+                String groupName = ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum);
                 if (!StringUtil.isEmpty(groupName)) {
                     CmsBtPromotionGroupsBean model = hsModel.get(groupName);
                     if (model == null) {
@@ -370,12 +373,12 @@ public class CmsPromotionDetailService extends BaseAppService {
 //        } else {
 //            model.setNumIid(row.getCell(CmsConstants.CellNum.numberIdCellNum).getStringCellValue());
 //        }
-        model.setNumIid(ExcelUtils.getString(row,CmsConstants.CellNum.numberIdCellNum));
+        model.setNumIid(ExcelUtils.getString(row, CmsConstants.CellNum.numberIdCellNum));
 
         String modelId;
         if (row.getCell(CmsConstants.CellNum.groupIdCellNum) != null) {
             if (row.getCell(CmsConstants.CellNum.groupIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                modelId = ExcelUtils.getString(row,CmsConstants.CellNum.groupIdCellNum,"#");
+                modelId = ExcelUtils.getString(row, CmsConstants.CellNum.groupIdCellNum, "#");
             } else {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
@@ -392,16 +395,16 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         CmsBtPromotionCodesBean code = new CmsBtPromotionCodesBean();
 
-        code.setOrgChannelId(ExcelUtils.getString(row,CmsConstants.CellNum.channelIdCellNum));
+        code.setOrgChannelId(ExcelUtils.getString(row, CmsConstants.CellNum.channelIdCellNum));
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
-            String id =ExcelUtils.getString(row, CmsConstants.CellNum.productIdCellNum, "#");
-            if(!StringUtil.isEmpty(id)){
+            String id = ExcelUtils.getString(row, CmsConstants.CellNum.productIdCellNum, "#");
+            if (!StringUtil.isEmpty(id)) {
                 code.setProductId(Long.parseLong(id));
             }
 
         }
-        code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
+        code.setProductModel(ExcelUtils.getString(row, CmsConstants.CellNum.groupNameCellNum));
 
         code.setCatPath(ExcelUtils.getString(row, CmsConstants.CellNum.catPathCellNum));
 
@@ -425,7 +428,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         code.setProductName(ExcelUtils.getString(row, CmsConstants.CellNum.productNameCellNum));
 
-        code.setTag(ExcelUtils.getString(row,CmsConstants.CellNum.tagCellNum));
+        code.setTag(ExcelUtils.getString(row, CmsConstants.CellNum.tagCellNum));
 
         if (row.getCell(CmsConstants.CellNum.timeCellNum) != null) {
             code.setTime(row.getCell(CmsConstants.CellNum.timeCellNum).getStringCellValue());
@@ -584,5 +587,163 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     public void delPromotionCode(List<CmsBtPromotionCodesBean> promotionModes, String channelId, String operator) {
         promotionDetailService.delPromotionCode(promotionModes, channelId, operator);
+    }
+
+    public byte[] getTMallJuHuaSuanExport(Integer promotionId, String selChannelId) throws Exception {
+
+        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionId, selChannelId);
+
+        // 转成导出的格式
+        List<CmsPromotionExportBean> cmsPromotionExportBeans = getExportBean(groups);
+        return writeRecordToJuHuaSuan(cmsPromotionExportBeans);
+    }
+
+    public byte[] getTMallPromotionExport(Integer promotionId, String selChannelId) throws Exception {
+
+        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionId, selChannelId);
+        return writeRecordToTmall(groups);
+    }
+
+    private Map<String, List<CmsBtPromotionCodesBean>> getPromotionInfo(Integer promotionId, String selChannelId) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", selChannelId);
+        param.put("promotionId", promotionId);
+
+        Map<String, List<CmsBtPromotionCodesBean>> groups = new HashMap<>();
+        List<CmsBtPromotionCodesBean> codes = promotionCodeService.getPromotionCodeList(param);
+        // 把code按numiid进行分组
+        for (CmsBtPromotionCodesBean code : codes) {
+            if (StringUtil.isEmpty(code.getNumIid()) || "0".equalsIgnoreCase(code.getNumIid())) continue;
+            if (groups.containsKey(code.getNumIid())) {
+                groups.get(code.getNumIid()).add(code);
+            } else {
+                List<CmsBtPromotionCodesBean> temp = new ArrayList<>();
+                temp.add(code);
+                groups.put(code.getNumIid(), temp);
+            }
+        }
+        return groups;
+    }
+
+    private List<CmsPromotionExportBean> getExportBean(Map<String, List<CmsBtPromotionCodesBean>> groups) {
+        List<CmsPromotionExportBean> cmsPromotionExportBeans = new ArrayList<>();
+
+        groups.forEach((numiid, cmsBtPromotionCodesBeans) -> {
+            cmsPromotionExportBeans.add(calculatePriceQty(cmsBtPromotionCodesBeans));
+        });
+        return cmsPromotionExportBeans;
+    }
+
+    private CmsPromotionExportBean calculatePriceQty(List<CmsBtPromotionCodesBean> codes) {
+        Integer qty = 0;
+        Integer promotionPrice = 0;
+        Integer price = null;
+        for (CmsBtPromotionCodesBean code : codes) {
+            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(code.getOrgChannelId(), code.getProductCode());
+            if (cmsBtProductModel != null) {
+                if (cmsBtProductModel.getCommon().getFields().getQuantity() != null) {
+                    qty += cmsBtProductModel.getCommon().getFields().getQuantity();
+                }
+                price = cmsBtProductModel.getPlatform(23).getpPriceRetailEd().intValue();
+            }
+            if (code.getPromotionPrice() != null && promotionPrice < code.getPromotionPrice().intValue()) {
+                promotionPrice = code.getPromotionPrice().intValue();
+            }
+        }
+        CmsPromotionExportBean cmsPromotionExportBean = new CmsPromotionExportBean();
+        cmsPromotionExportBean.setQty(qty);
+        cmsPromotionExportBean.setPromotionPrice(promotionPrice);
+        cmsPromotionExportBean.setMsrpPrice(price);
+        cmsPromotionExportBean.setNumIid(codes.get(0).getNumIid());
+        return cmsPromotionExportBean;
+    }
+
+    private byte[] writeRecordToTmall(Map<String, List<CmsBtPromotionCodesBean>> codes) throws Exception {
+        String templatePath = Properties.readValue(CmsProperty.Props.CMS_PROMOTION_EXPORT_TMALL);
+
+
+        $info("准备生成 Item 文档 [ %s ]", codes.size());
+        $info("准备打开文档 [ %s ]", templatePath);
+
+        try (InputStream inputStream = new FileInputStream(templatePath);
+             Workbook book = WorkbookFactory.create(inputStream)) {
+            Sheet sheet = book.getSheetAt(1);
+            Row styleRow = FileUtils.row(sheet, 1);
+            CellStyle unlock = styleRow.getRowStyle();
+            int rowIndex = 1;
+            for (String key : codes.keySet()) {
+                Row row = FileUtils.row(sheet, rowIndex);
+
+                FileUtils.cell(row, 0, unlock).setCellValue(key);
+                FileUtils.cell(row, 1, unlock).setCellValue(codes.get(key).get(0).getMsrp());
+                FileUtils.cell(row, 2, unlock).setCellValue(codes.get(key).get(0).getPromotionPrice());
+                rowIndex++;
+            }
+
+            $info("文档写入完成");
+
+//            try (FileOutputStream outputFileStream = new FileOutputStream("d:/test.xlsx")) {
+//
+//                book.write(outputFileStream);
+//
+//                outputFileStream.flush();
+//                outputFileStream.close();
+//            }
+
+            // 返回值设定
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+                book.write(outputStream);
+
+                $info("已写入输出流");
+
+                return outputStream.toByteArray();
+            }
+        }
+    }
+
+    private byte[] writeRecordToJuHuaSuan(List<CmsPromotionExportBean> cmsPromotionExportBeans) throws Exception {
+        String templatePath = Properties.readValue(CmsProperty.Props.CMS_PROMOTION_EXPORT_JUHUASUAN);
+
+
+        $info("准备生成 Item 文档 [ %s ]", cmsPromotionExportBeans.size());
+        $info("准备打开文档 [ %s ]", templatePath);
+
+        try (InputStream inputStream = new FileInputStream(templatePath);
+             Workbook book = WorkbookFactory.create(inputStream)) {
+            Sheet sheet = book.getSheetAt(0);
+            Row styleRow = FileUtils.row(sheet, 2);
+            CellStyle unlock = styleRow.getRowStyle();
+            int rowIndex = 2;
+            for (CmsPromotionExportBean item : cmsPromotionExportBeans) {
+                Row row = FileUtils.row(sheet, rowIndex);
+
+                FileUtils.cell(row, 0, unlock).setCellValue(item.getNumIid());
+                FileUtils.cell(row, 1, unlock).setCellValue(item.getPromotionPrice());
+                FileUtils.cell(row, 2, unlock).setCellValue(item.getQty());
+                rowIndex++;
+            }
+
+            $info("文档写入完成");
+
+//            try (FileOutputStream outputFileStream = new FileOutputStream("d:/test.xlsx")) {
+//
+//                book.write(outputFileStream);
+//
+//                outputFileStream.flush();
+//                outputFileStream.close();
+//            }
+
+            // 返回值设定
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+                book.write(outputStream);
+
+                $info("已写入输出流");
+
+                return outputStream.toByteArray();
+            }
+        }
+
     }
 }

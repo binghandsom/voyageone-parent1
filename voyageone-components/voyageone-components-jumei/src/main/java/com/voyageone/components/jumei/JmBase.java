@@ -101,9 +101,15 @@ public class JmBase extends ComponentBase {
             parm_url.delete(0, 1);
         }
 
-        logger.info(String.format("[post_url:%s]: %s", post_url.toString(), parm_url.toString()));
-        String result = HttpUtils.post(post_url.toString(), parm_url.toString());
-        logger.info("result：" + result);
+        String result = "";
+        int retry = 3;
+        while ((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway")) && retry > 0) {
+            result = HttpUtils.post(post_url.toString(), parm_url.toString());
+            retry--;
+            //logger.info("result：" + result);
+        }
+
+
 //        result = " {\"error\":{\"code\":\"501\"}}";
 //
 //        if (result.contains("审核")) {
@@ -117,6 +123,12 @@ public class JmBase extends ComponentBase {
             String codes = "";
 
             Map<String, Object> map = JacksonUtil.jsonToMap(result);
+            // 20160913 result里有很多Unicode, 需要转成汉字 START
+            try {
+                result = JacksonUtil.bean2Json(map);
+            } catch (Exception e) {
+            }
+            // 20160913 result里有很多Unicode, 需要转成汉字 END
             if (map.containsKey("error")) {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
@@ -134,16 +146,16 @@ public class JmBase extends ComponentBase {
                     }
                 }
 
-                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") ||
-                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087"))) {
-                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") || code.contains("105106") ||
+                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087") || codes.contains("105106"))) {
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);
                 }
             } else if (map.containsKey("error_code")) {
                 String error_code = map.get("error_code").toString();
                 if ("500".equals(error_code) || "501".equals(error_code)) {
                     throw new ServerErrorException(String.format("调用聚美API错误[%s]：%s", post_url, result));
                 } else if (!("0".equals(error_code))) {
-                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                    throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);
                 }
             }
         } catch (BusinessException | ServerErrorException be) {
@@ -151,13 +163,11 @@ public class JmBase extends ComponentBase {
         } catch (Exception e) {
             //返回的字符串不是json map,可能是个数组, Do Nothing.
         }
-
-
         JMErrorResult res;
         try {
             res = JsonUtil.jsonToBean(result, JMErrorResult.class);
             if (res.getCode() != null) {
-                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result));
+                throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);//加参数 传值result 临时处理方案
             }
         } catch (JsonSyntaxException ignored) {
         }

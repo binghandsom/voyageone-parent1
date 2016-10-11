@@ -107,13 +107,9 @@
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
-        ,b.retail_price,a.market_price,b.msrp_usd,b.msrp_rmb,b.sale_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
+        ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        (SELECT MAX(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxDealPrice,
-        (SELECT min(`deal_price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minDealPrice,
-        (SELECT MAX(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as maxMarketPrice,
-        (SELECT min(`Market_Price`) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as minMarketPrice,
-        (SELECT AVG (discount) FROM `cms_bt_jm_promotion_sku` WHERE  `cms_bt_jm_promotion_product_id`=a.id) as discount
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount
         FROM `cms_bt_jm_promotion_product` AS a
         JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
@@ -160,22 +156,23 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <choose>
-                <when test="synchStatusList!=null and synchStatusList.size()!=0">
-                    and ( a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
-                                                   open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-                    <if test="errorStatus!=null">
-                        or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
-                    </if> )
-                </when>
-                <when test="errorStatus!=null">
-                    and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3)
-                </when>
-                <otherwise>
-                </otherwise>
-            </choose>
+            <if test="hasStatus!=null">
+                and ( 1!=1
+                <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                      or  a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                open="(" separator="," close=")">
+                      #{item}
+                     </foreach>
+                </if>
+                <if test="allErrorStatus!=null">
+                    or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
+                </if>
+                <if test="allStatus1!=null">
+                    or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                )
+            </if>
+
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -184,26 +181,26 @@
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
-                    and   b.msrp_rmb>=#{beginPrice}
+                    and   a.max_msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp_rmb&lt;=#{endPrice}
+                    and   a.min_msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    b.retail_price>=#{beginPrice}
+                    and    a.max_retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.retail_price&lt;=#{endPrice}
+                    and   a.min_retail_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  b.sale_price>=#{beginPrice}
+                    and a.max_sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  b.sale_price&lt;=#{endPrice}
+                    and  a.min_sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='dealPrice'">
@@ -326,8 +323,16 @@
         </where>
     </select>
 
+    <select id="selectFullMinusDateRepeat"  resultMap="ResultMap">
+        SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
+              WHERE b.promotion_type=1 AND a.synch_status=2 AND a.channel_id=#{channelId} and   a.product_code=#{productCode}
+                      AND  #{activityStart} &lt;=a.`activity_end`  and   #{activityEnd}>=a.`activity_start`
+                      AND a.cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}
+                       LIMIT 1
+    </select>
     <select id="selectDateRepeatByCode" resultMap="ResultMap">
-        SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`  and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
+        SELECT * FROM `cms_bt_jm_promotion_product` WHERE channel_id=#{channelId} and   product_code=#{productCode} and  #{activityStart} &lt;=`activity_end`
+         and   #{activityEnd}>=`activity_start` and cms_bt_jm_promotion_id!=#{cmsBtJmPromotionId}   limit 1
     </select>
 
     <select id="existsCode" resultType="Boolean">
@@ -347,7 +352,6 @@
 
     <update id="batchUpdateDealPrice">
         UPDATE cms_bt_jm_promotion_product  AS a
-        JOIN `cms_bt_jm_product` AS b  ON a.`product_code`=b.product_code AND a.`channel_id`=b.`channel_id`
         SET a.deal_Price=${dealPrice},a.discount=${dealPrice}/a.market_price,a.update_status=(CASE WHEN a.`synch_status`=2 THEN 1 ELSE  0  END)
         WHERE    a.id IN
         <foreach item="item" index="i" collection="listPromotionProductId"
@@ -357,12 +361,34 @@
     </update>
     <update id="updateAvgPriceByPromotionProductId">
         UPDATE cms_bt_jm_promotion_product  AS a
-        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount FROM `cms_bt_jm_promotion_sku`
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount
+        ,max(market_price) AS max_market_price,max(deal_price) AS max_deal_price,min(market_price) AS min_market_price,min(deal_price) AS min_deal_price FROM `cms_bt_jm_promotion_sku`
         WHERE  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId}) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
         SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
+        ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
         WHERE    a.id =#{cmsBtJmPromotionProductId}
     </update>
-
+    <update id="updateAvgPriceByListPromotionProductId">
+        UPDATE cms_bt_jm_promotion_product  AS a
+        JOIN (SELECT cms_bt_jm_promotion_product_id,AVG(market_price) AS market_price,AVG(deal_price) AS deal_price,AVG(`discount`)  AS discount
+        ,max(market_price) AS max_market_price,max(deal_price) AS max_deal_price,min(market_price) AS min_market_price,min(deal_price) AS min_deal_price FROM `cms_bt_jm_promotion_sku`
+        WHERE  cms_bt_jm_promotion_product_id in  <foreach item="item" index="i" collection="listPromotionProductId"
+                                                           open="(" separator="," close=")">
+                                                        #{item}
+                                                    </foreach>
+        group by cms_bt_jm_promotion_product_id
+        ) AS b  ON a.id=b.cms_bt_jm_promotion_product_id
+        SET a.deal_Price=b.deal_price,a.market_price=b.market_price,a.discount=b.discount
+        ,a.max_deal_Price=b.max_deal_price,a.max_market_price=b.max_market_price
+        ,a.min_deal_Price=b.min_deal_price,a.min_market_price=b.min_market_price
+        ,a.price_status=(case WHEN a.synch_status=2 then 1 else a.price_status end )
+        WHERE    a.id IN
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
     <update id="batchSynchPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
         WHERE    id in
@@ -370,9 +396,6 @@
                  open="(" separator="," close=")">
             #{item}
         </foreach>
-        <if test="isPreStart==true">
-          and   synch_status!=2
-        </if>
     </update>
     <update id="synchAllPrice">
         UPDATE cms_bt_jm_promotion_product set price_status=1,error_msg=''
@@ -424,7 +447,16 @@
     </select>
 
     <select id="selectJmHashIds" resultType="java.lang.String">
-        select  jm_hash_id   from cms_bt_jm_promotion_product where channel_id=#{channelId} and product_code=#{productCode} and  #{nowDate} &lt;=`activity_end` and jm_hash_id is not null order by `activity_start` ASC
+        select t1.jm_hash_id
+        from cms_bt_jm_promotion_product as t1
+             join cms_bt_jm_promotion as t2
+             on (t1.channel_id = t2.channel_id and t1.cms_bt_jm_promotion_id = t2.id and t2.status = '1')
+        where t1.channel_id=#{channelId}
+          and t1.product_code=#{productCode}
+          and #{nowDate} &lt;= t1.activity_end
+          and t1.jm_hash_id is not null
+          and t1.jm_hash_id != ''
+        order by t1.created DESC
     </select>
 
     <select id="selectOnSaleByCode" resultType="CmsBtJmPromotionProductModel">
@@ -439,5 +471,25 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
+    <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
+        SELECT * from  cms_bt_jm_promotion_product
+        WHERE synch_status!=2  and   id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <update id="updateSynch2ErrorMsg">
+        update cms_bt_jm_promotion_product
+        set  error_msg=#{errorMsg}
+        WHERE synch_status=2 and   id in
+        <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+
+
     <!--jm2 end-->
 </mapper>

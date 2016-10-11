@@ -44,6 +44,7 @@ public class ExcelImportUtil {
         String errorMsg;
         for (int i = columnRowIndex + 1; i <= LastRowNum; i++) {
             Row row = productSheet.getRow(i);//获取行
+            if(row == null) return;
             model = entityClass.newInstance();
             errorMsg = rowToModel(mapExcelColumn, listProductColumn, row, model, mapFiled);//行转model
             if (!StringUtils.isEmpty(errorMsg)) {//转换失败   保存错误行
@@ -73,7 +74,7 @@ public class ExcelImportUtil {
         for (ExcelColumn column : listEnumColumn) {
             if (mapExcelColumn.containsKey(column.getCamelColumnName())) {
                 if (!mapFiled.containsKey(column.getCamelColumnName())) {
-                    throw new Exception(model.getClass().getName() + "不存在字段" + column.getCamelColumnName());
+                    throw new Exception("文件导入格式不对"+ column.getCamelColumnName()+"列不存在,请检查");
                 }
                 Field field = mapFiled.get(column.getCamelColumnName());
                 String content = getString(row.getCell(mapExcelColumn.get(column.getCamelColumnName())));

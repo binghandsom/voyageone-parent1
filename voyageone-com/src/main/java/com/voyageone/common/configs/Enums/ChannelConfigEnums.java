@@ -455,22 +455,27 @@ public class ChannelConfigEnums {
          * Sneakerhead, 001
          */
         SN("001"),
+
         /**
          * PortAmerican, 002
          */
         PA("002"),
+
         /**
          * Essuntial, 003
          */
         GL("003"),
+
         /**
          * Juicy Couture, 004
          */
         JC("004"),
+
         /**
          * Spalding, 005
          */
         SP("005"),
+
         /**
          * BHFO, 006
          */
@@ -495,11 +500,6 @@ public class ChannelConfigEnums {
          * Jewelry, 010
          */
         JEWELRY("010"),
-
-        /**
-         * LOCONDO, 011
-         */
-        LOCONDO("011"),
 
         /**
          * BCBG, 012
@@ -546,7 +546,6 @@ public class ChannelConfigEnums {
          */
         EDCSKINCARE("020"),
 
-
         /**
          * BHFO_MINIMALL
          */
@@ -572,11 +571,64 @@ public class ChannelConfigEnums {
          */
         FragranceNet("025"),
 
-
         /**
          * LightHouse
          */
         LightHouse("026"),
+
+        /**
+         * Yogademocracy
+         */
+        Yogademocracy("027"),
+
+        /**
+         * ShoeMetro
+         */
+        ShoeMetro("028"),
+
+        /**
+         * Modotex
+         */
+        Modotex("029"),
+
+        /**
+         * Wella
+         */
+        Wella("030"),
+
+        /**
+         * Woodland
+         */
+        Woodland("031"),
+
+        /**
+         * TestChannel088
+         */
+        TestChannel088("088"),
+
+        /**
+         * TestChannel089
+         */
+        TestChannel089("089"),
+
+        /**
+         * TestChannel090
+         */
+        TestChannel090("090"),
+
+        /**
+         * TestChannel091
+         */
+        TestChannel091("091"),
+        /**
+         * TestChannel092
+         */
+        TestChannel092("092"),
+
+        /**
+         * TestChannel093
+         */
+        TestChannel093("093"),
 
         /**
          * US匠心界
@@ -588,14 +640,19 @@ public class ChannelConfigEnums {
          */
         USJGY("929"),
         /**
-         * VOYAGEONE
+         * TEST
          */
-        VOYAGEONE("997"),
+        TEST("996"),
 
         /**
-         * ThirdParty
+         * USJGT
          */
-        THIRD_PARTY("998");
+        USJGT("998"),
+
+        /**
+         * VOYAGEONE
+         */
+        VOYAGEONE("997");
 
         private String id;
 
@@ -631,7 +688,6 @@ public class ChannelConfigEnums {
                 case "008": return REAL_MADRID;
                 case "009": return SWISSWATCH;
                 case "010": return JEWELRY;
-                case "011": return LOCONDO;
                 case "012": return BCBG;
                 case "013": return SEARS;
                 case "014": return WMF;
@@ -647,10 +703,22 @@ public class ChannelConfigEnums {
                 case "024": return OverStock;
                 case "025": return FragranceNet;
                 case "026": return LightHouse;
+                case "027": return Yogademocracy;
+                case "028": return ShoeMetro;
+                case "029": return Modotex;
+                case "030": return Wella;
+                case "031": return Woodland;
+                case "088": return TestChannel088;
+                case "089": return TestChannel089;
+                case "090": return TestChannel090;
+                case "091": return TestChannel091;
+                case "092": return TestChannel092;
+                case "093": return TestChannel093;
                 case "928": return USJGJ;
                 case "929": return USJGY;
                 case "997": return VOYAGEONE;
-                case "998": return THIRD_PARTY;
+                case "996": return TEST;
+                case "998": return USJGT;
                 default: return null;
             }
         }

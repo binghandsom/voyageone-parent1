@@ -4,7 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Service
-class CmsPriceLogService extends BaseAppService {
+class CmsPriceLogService extends BaseViewService {
 
     @Autowired
     private CmsBtPriceLogService priceLogService;

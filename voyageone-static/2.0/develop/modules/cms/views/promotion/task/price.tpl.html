@@ -47,9 +47,17 @@
 						</div>
 						<div class="col-sm-12">
 							<div class="form-inline m-b-xs text-center" ng-controller = "popupCtrl">
-								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-vo" ng-click="searchStatus(null)"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 								<button class="btn btn-success" ng-click="updateAllStatus(1)"><i class="fa fa-refresh"></i> {{'TXT_STARTUP_ALL' | translate}}</button>
 								<button class="btn btn-danger"  ng-click="updateAllStatus(0)"><i class="fa fa-warning"></i> {{'TXT_STOP_ALL' | translate}}</button>
+								<button class="btn btn-danger"  ng-click="updateAllFailStatus()"><i class="fa fa-warning"></i> {{'TXT_FAIL_STARTUP_ALL' | translate}}</button>
+							</div><!-- /right-btn -->
+						</div>
+						<div class="col-sm-12">
+							<div class="form-inline m-b-xs text-right" >
+								<button class="btn btn-vo" ng-click="searchStatus(1)"><i class="fa fa-warning"></i> Pending{{vm.statusCnt.pendingCnt}}</button>
+								<button class="btn btn-danger"  ng-click="searchStatus(3)"><i class="fa fa-warning"></i> Fail{{vm.statusCnt.failCnt}}</button>
+								<button class="btn btn-danger"  ng-click="searchStatus(0)"><i class="fa fa-warning"></i> Stop{{vm.statusCnt.stopCnt}}</button>
 							</div><!-- /right-btn -->
 						</div>
 						</div>
@@ -77,7 +85,12 @@
 				<td>{{price.key}}</td>
 				<td><a ng-if="price.numIid" ng-href="{{'https://detail.tmall.hk/hk/item.htm?id='+price.numIid}}" target="_blank"  >{{price.numIid}}</a></td>
 				<td class="text-right">{{price.promotionPrice | number: 2}}</td>
-				<td><span ng-if="price.synFlg == 0" class="badge badge-stop">{{'TXT_STOP'| translate}}</span><span ng-if="price.synFlg == 1" class="badge badge-refresh">{{"TXT_PENDING" | translate}}</span><span ng-if="price.synFlg == 2" class="badge badge-success">{{"TXT_SUCCESS" | translate}}</span><span ng-if="price.synFlg == 3" class="badge badge-failure">{{"TXT_FAIL" |　translate}}</span></td>
+				<td>
+					<span ng-if="price.synFlg == 0" class="badge badge-stop" translate="TXT_STOP"></span>
+					<span ng-if="price.synFlg == 1" class="badge badge-refresh" translate="TXT_PENDING"></span>
+					<span ng-if="price.synFlg == 2" class="badge badge-success" translate="TXT_SUCCESS"></span>
+					<span ng-if="price.synFlg == 3" class="badge badge-failure" translate="TXT_FAIL"></span>
+				</td>
 				<td class="text-hs">{{price.errMsg}}</td>
 				<td class="text-right">
 					<button title="{{'TXT_STARTUP' | translate}}" class="btn btn-success btn-xs" ng-click="updateStatus(price,1)"><i class="fa fa-refresh"></i></button>

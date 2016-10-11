@@ -146,7 +146,7 @@ define([
 
             delItem: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_DELETE').then(function () {
                     main.taskStockIncrementDetailService.delItem({
                         "taskId": main.taskId,
                         "subTaskId": main.subTaskId,
@@ -165,7 +165,7 @@ define([
 
             executeStockIncrementSeparation: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_INCREASE').result.then(function () {
+                main.confirm('TXT_MSG_DO_INCREASE').then(function () {
                     main.taskStockIncrementDetailService.executeStockIncrementSeparation({
                         "taskId": main.taskId,
                         "subTaskId" : main.subTaskId,

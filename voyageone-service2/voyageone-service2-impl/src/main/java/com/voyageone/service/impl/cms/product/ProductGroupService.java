@@ -1,8 +1,8 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.base.dao.mongodb.JomgoUpdate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
@@ -45,7 +45,7 @@ public class ProductGroupService extends BaseService {
     /**
      * getList
      */
-    public List<CmsBtProductGroupModel> getList(String channelId, JomgoQuery queryObject) {
+    public List<CmsBtProductGroupModel> getList(String channelId, JongoQuery queryObject) {
         return cmsBtProductGroupDao.select(queryObject, channelId);
     }
 
@@ -71,7 +71,7 @@ public class ProductGroupService extends BaseService {
      * 根据channelId和groupId取得单个group数据
      */
     public CmsBtProductGroupModel getProductGroupByGroupId(String channelId, Long groupId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"groupId\": %d }", groupId));
         return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
     }
@@ -89,27 +89,37 @@ public class ProductGroupService extends BaseService {
     /**
      * 根据条件获取group数据
      * @param channelId String
-     * @param query JomgoQuery
+     * @param query JongoQuery
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JomgoQuery query) {
+    public CmsBtProductGroupModel getProductGroupByQuery(String channelId, JongoQuery query) {
         return cmsBtProductGroupDao.selectOneWithQuery(query, channelId);
     }
 
     /**
-     * 根据channelId和产品Code检索出productGroup数据.
+     * 根据channelId和产品Code,cartId检索出productGroup数据.
      */
     public CmsBtProductGroupModel selectProductGroupByCode(String channelId, String code, Integer cartId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"productCodes\": \"%s\", \"cartId\": %d}", code, cartId));
         return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
+     * 根据channelId和产品Code检索出productGroup数据列表.
+     */
+    public List<CmsBtProductGroupModel> selectProductGroupListByCode(String channelId, String code) {
+        // 先去看看是否有存在的了
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{\"productCodes\":\"" + code + "\"}");
+        return getList(channelId, queryObject);
     }
 
     /**
      * 根据channelId和产品Code检索出是否主商品.
      */
     public CmsBtProductGroupModel selectMainProductGroupByCode(String channelId, String code, Integer cartId) {
-        JomgoQuery query = new JomgoQuery();
+        JongoQuery query = new JongoQuery();
         query.setQuery(String.format("{\"mainProductCode\": \"%s\", \"cartId\": %d}", code, cartId));
         return getProductGroupByQuery(channelId, query);
     }
@@ -171,7 +181,7 @@ public class ProductGroupService extends BaseService {
         // jeff 2016/04 change start
         // List<String> codeList = new ArrayList<>(prodList.size());
         // prodList.forEach(cmsBtProductModel -> codeList.add(cmsBtProductModel.getFields().getCode()));
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         // String[] codeArr = new String[codeList.size()];
         // codeArr = codeList.toArray(codeArr);
         // queryObject.setQuery("{" + MongoUtils.splicingValue("productCodes", codeArr, "$in") + ",'cartId':" + cartId + "}");
@@ -189,9 +199,30 @@ public class ProductGroupService extends BaseService {
     /**
      * 上新成功时更新该model对应的所有和上新有关的状态信息
      * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param listSxCode 上新了的code
      * @return CmsBtProductGroupModel
      */
-    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode) {
+        return updateGroupsPlatformStatus(model, listSxCode, null);
+    }
+
+    /**
+     * 上新成功时更新该model对应的所有和上新有关的状态信息
+     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * @param listSxCode 上新了的code
+     * @param pCatInfoMap 平台类目信息
+     * @return CmsBtProductGroupModel
+     */
+    // modified by morse.lu 2016/08/08 start
+    // 一个group下可能有些code不上新，就不要回写了
+//    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model) {
+    public CmsBtProductGroupModel updateGroupsPlatformStatus(CmsBtProductGroupModel model, List<String> listSxCode, Map<String, String> pCatInfoMap) {
+        // modified by morse.lu 2016/08/08 end
+
+        if (model == null) {
+            $error("回写上新成功状态信息时失败! [GroupModel=null]");
+            return model;
+        }
 
         // 更新cms_bt_product_groups表
         this.update(model);
@@ -204,7 +235,16 @@ public class ProductGroupService extends BaseService {
 
             // 批量更新产品的平台状态.
             List<BulkUpdateModel> bulkList = new ArrayList<>();
-            for (String code : model.getProductCodes()) {
+            // modified by morse.lu 2016/08/08 start
+            // 一个group下可能有些code不上新，就不要回写了
+//            for (String code : model.getProductCodes()) {
+            if (ListUtils.isNull(listSxCode)) {
+                $error("回写上新成功状态信息时失败!上新对象产品Code列表为空 [listSxCode=null]");
+                return model;
+            }
+
+            for (String code : listSxCode) {
+                // modified by morse.lu 2016/08/08 end
                 // 设置批量更新条件
                 HashMap<String, Object> bulkQueryMap = new HashMap<>();
                 bulkQueryMap.put("common.fields.code", code);
@@ -214,7 +254,10 @@ public class ProductGroupService extends BaseService {
                 // 设置更新值
                 HashMap<String, Object> bulkUpdateMap = new HashMap<>();
                 if (model.getPlatformStatus() != null) {
+                    // cms系统中的上下架状态
                     bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pStatus", model.getPlatformStatus().name());
+                    // 平台上真实的上下架状态，会有另外一个batch每天从平台上拉一次最新的商品上下架状态，保存到这里
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pReallyStatus", model.getPlatformStatus().name());
                 }
                 // 设置第一次上新的时候需要更新的值
                 if (unPublishedProducts.contains(code)) {
@@ -228,6 +271,21 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
+
+                // 如果需要回写该平台的pCatId和pCatPath的时候
+                if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatId", pCatInfoMap.get("pCatId"));
+
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatPath")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatPath", pCatInfoMap.get("pCatPath"));
+
+                    if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId"))
+                            || !StringUtils.isEmpty(pCatInfoMap.get("pCatPath")))
+                        bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pCatStatus", "1");
+                }
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
@@ -249,11 +307,17 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
-     * 上新失败时更新该model对应的所有产品的pPublishError的值
-     * @param model (model中包含的productCodes,是这次平台上新处理的codes)
+     * 上新失败时更新该model对应的所有产品的pPublishError和pPublishMessage的值
+     * @param model CmsBtProductGroupModel model中包含的productCodes,是这次平台上新处理的codes
+     * @param errMsg String sxData中的上新错误消息
      * @return boolean 更新结果状态
      */
-    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model) {
+    public boolean updateUploadErrorStatus(CmsBtProductGroupModel model, String errMsg) {
+
+        if (model == null) {
+            $error("回写上新错误信息时失败! [GroupModel=null]");
+            return false;
+        }
 
         // 如果传入的groups包含code列表,则同时更新code的状态
         if (!model.getProductCodes().isEmpty()) {
@@ -270,6 +334,8 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishError：如果上新失败，设置固定值"Error"
                 // 这个方法是用于上新成功时的回写，上新失败时的回写用另外一个方法
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishError", "Error");
+                // 设置pPublishMessage(产品平台详情页显示用的错误信息)
+                bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", errMsg);
 
                 // 设定批量更新条件和值
                 if (!bulkUpdateMap.isEmpty()) {
@@ -297,7 +363,7 @@ public class ProductGroupService extends BaseService {
      */
     public List<String> getUnPublishedProducts(CmsBtProductGroupModel model) {
         // 获取未上新过的产品信息,用于判断是否需要更新publishTime
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
         queryObject.setParameters(model.getProductCodes());
 
@@ -381,11 +447,11 @@ public class ProductGroupService extends BaseService {
         return "成功处理group的总件数:" + allGroupList.size();
     }
 
-    public WriteResult updateFirst(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateFirst(JongoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateFirst(updObj, channelId);
     }
 
-    public WriteResult updateMulti(JomgoUpdate updObj, String channelId) {
+    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
         return cmsBtProductGroupDao.updateMulti(updObj, channelId);
     }
 

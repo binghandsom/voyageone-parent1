@@ -29,6 +29,8 @@ public class ExpressionParser extends VOAbsLoggable {
     private DictWordParser dictWordParser;
     private CustomWordParser customWordParser;
     private MasterWordParser masterWordParser;
+    private MasterHtmlWordParser masterHtmlWordParser;
+    private MasterClrHtmlWordParser masterClrHtmlWordParser;
     private FeedCnWordParser feedCnWordParser;
     private FeedOrgWordParser feedOrgWordParser;
     private SkuWordParser skuWordParser;
@@ -44,6 +46,8 @@ public class ExpressionParser extends VOAbsLoggable {
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
         this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
+        this.masterHtmlWordParser = new MasterHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
+        this.masterClrHtmlWordParser = new MasterClrHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());
         this.feedOrgWordParser = new FeedOrgWordParser(sxData.getMainProduct(), sxData.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
@@ -79,6 +83,12 @@ public class ExpressionParser extends VOAbsLoggable {
                         break;
                     case MASTER:
                         plainValue = masterWordParser.parse(ruleWord);
+                        break;
+                    case MASTER_HTML:
+                        plainValue = masterHtmlWordParser.parse(ruleWord);
+                        break;
+                    case MASTER_CLR_HTML:
+                        plainValue = masterClrHtmlWordParser.parse(ruleWord);
                         break;
                     case FEED_ORG:
                         plainValue = feedOrgWordParser.parse(ruleWord);
@@ -119,16 +129,20 @@ public class ExpressionParser extends VOAbsLoggable {
                     // added by morse.lu 2016/06/27 start
                     case COMMON:
                         // 从product表的common下去取
-                        commonWordParser.parse(ruleWord);
+                        plainValue = commonWordParser.parse(ruleWord);
                     // added by morse.lu 2016/06/27 end
                 }
 
-                if (plainValue != null) {
-                    resultStr.append(plainValue);
-                }
-                else {
-                    return null;
-                }
+                // modified by morse.lu 2016/09/18 start
+                // TODO：即使null也继续做下去,可能会有较大影响范围,有问题产生了,以后一点点修正别的地方的逻辑吧
+//                if (plainValue != null) {
+//                    resultStr.append(plainValue);
+//                }
+//                else {
+//                    return null;
+//                }
+                resultStr.append(StringUtils.null2Space2(plainValue));
+                // modified by morse.lu 2016/09/18 end
             }
         }
         else

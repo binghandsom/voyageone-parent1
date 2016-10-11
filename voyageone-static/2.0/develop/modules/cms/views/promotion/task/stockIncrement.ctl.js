@@ -44,7 +44,7 @@ define([
 
             delTask: function (subTaskId) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                main.confirm('TXT_MSG_DO_DELETE').then(function () {
                     main.taskStockIncrementService.delTask({
                         "taskId" : main.taskId,
                         "subTaskId": subTaskId

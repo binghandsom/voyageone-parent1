@@ -1,12 +1,10 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -16,27 +14,23 @@ import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean2;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author JiangJusheng
  * @version 2.0.0, 2016/04/06
  */
 @Service
-public class CmsFeedSearchService extends BaseAppService {
+public class CmsFeedSearchService extends BaseViewService {
 
     @Autowired
     private FeedInfoService feedInfoService;
@@ -94,13 +88,23 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     /**
+     * 获取当前页的product列表Cnt
+     * @param searchValue
+     * @param userInfo
+     * @return
+     */
+    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
+        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
+    }
+
+    /**
      * 获取当前页的FEED信息
      * @param searchValue
      * @param userInfo
      * @return
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        JomgoQuery queryObject = new JomgoQuery();
+        JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
         queryObject.setProjection(searchItems);
         queryObject.setSort(setSortValue(searchValue));
@@ -109,16 +113,6 @@ public class CmsFeedSearchService extends BaseAppService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
         return feedInfoService.getList(userInfo.getSelChannelId(), queryObject);
-    }
-
-    /**
-     * 获取当前页的product列表Cnt
-     * @param searchValue
-     * @param userInfo
-     * @return
-     */
-    public long getFeedCnt(Map<String, Object> searchValue, UserSessionBean userInfo) {
-        return feedInfoService.getCnt(userInfo.getSelChannelId(), searchValue);
     }
 
 
@@ -133,9 +127,9 @@ public class CmsFeedSearchService extends BaseAppService {
 
         Map<String,Object> paraStatusMap = new HashMap<>(1);
         if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }
         paraMap2.put("updFlg",paraStatusMap);
 
@@ -150,26 +144,32 @@ public class CmsFeedSearchService extends BaseAppService {
 
     public void updateFeedStatus(Map<String, Object> searchValue, Integer status, UserSessionBean userInfo) {
 
-        Integer searchStatus = null;
+        List<Integer> searchStatus = null;
         if(searchValue.get("status") != null){
-            searchStatus=Integer.parseInt(searchValue.get("status").toString());
+            searchStatus=(List<Integer>)searchValue.get("status");
         }else{
             if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }
         }
         if(status == CmsConstants.FeedUpdFlgStatus.Pending){
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
             }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能导入主数据的，请重新选择状态");
+            }
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.Succeed){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.Succeed)){
                 throw new BusinessException("导入成功是不能设为不导入的，请重新选择状态");
             }
-            if(searchStatus != null && searchStatus == CmsConstants.FeedUpdFlgStatus.FeedErr){
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能设为不导入的，请重新选择状态");
             }
         }
         String searchQuery = feedInfoService.getSearchQuery(searchValue);
@@ -218,12 +218,11 @@ public class CmsFeedSearchService extends BaseAppService {
     }
 
     public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
-        List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName);
-        if(cmsBtExportTaskModels == null || cmsBtExportTaskModels.stream().filter(item -> item.getStatus() == 0).collect(Collectors.toList()).size() == 0) {
+        if (cmsBtExportTaskService.checkExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName) == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
             sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
-        }else{
+        } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
         }
     }

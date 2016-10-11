@@ -9,16 +9,15 @@ package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CmsMtPlatformSpecialFieldDao {
-    List<CmsMtPlatformSpecialFieldModel> selectList(Map<String, Object> map);
+    List<CmsMtPlatformSpecialFieldModel> selectList(Object map);
 
-    CmsMtPlatformSpecialFieldModel selectOne(Map<String, Object> map);
+    CmsMtPlatformSpecialFieldModel selectOne(Object map);
 
-    int selectCount(Map<String, Object> map);
+    int selectCount(Object map);
 
     CmsMtPlatformSpecialFieldModel select(Integer id);
 

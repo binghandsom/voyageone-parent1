@@ -2,58 +2,82 @@
     <div class="panel-group">
         <div class="panel panel-default">
             <div class="panel-heading panel-detail-head">&nbsp;<i class="fa fa-sitemap"></i>&emsp;产品详情</div>
-                <div class="container-fluid m-t-sm m-l-xs m-r-xs">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <label class="col-sm-1"><strong>Lock:</strong></label>
-                            <div class="col-sm-1 text-left">
-                                <!----------on_off_switch---------->
-                                <div class="onoffswitch" id="productLock">
-                                    <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox"
-                                           id="switchIsTranslated"
-                                           ng-model="ctrl.product.lockStatus" ng-click="ctrl.lockProduct('productLock')">
-                                    <label class="onoffswitch-label" for="switchIsTranslated">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
-                                </div>
+            <div class="container-fluid m-t-sm m-l-xs m-r-xs">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <label class="col-sm-1"><strong>Lock:</strong></label>
+                        <div class="col-sm-1 text-left">
+                            <!----------on_off_switch---------->
+                            <div class="onoffswitch" id="productLock">
+                                <input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox"
+                                       id="switchIsTranslated"
+                                       ng-model="ctrl.product.lockStatus" ng-click="ctrl.lockProduct('productLock')">
+                                <label class="onoffswitch-label" for="switchIsTranslated">
+                                    <span class="onoffswitch-inner"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
                             </div>
-                            <div class="col-sm-8">
+                        </div>
+                        <div class="col-sm-8">
                                 <span class="text-warnings">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。
                                 </span>
-                            </div>
                         </div>
                     </div>
+                    <div class="col-sm-4 text-right">
+                        <a href="#/system/valuechannel">&emsp;</a>
+                    </div>
                 </div>
+            </div>
         </div>
     </div>
 
     <div>
         <uib-tabset class="tab-container vo_nav-tabs">
             <!---------------------------------------------------master 产品详情页面---------------------------------------------->
-            <uib-tab  active="ctrl.master">
+            <uib-tab active="ctrl.master">
                 <tab-heading>Master产品详情</tab-heading>
                 <master-schema product-info="ctrl.product"></master-schema>
             </uib-tab>
-
-            <!---------------------------------------------------feed 产品详情页面----------------------------------------------->
-            <uib-tab  active="ctrl.feed">
+            <!---------------------------------------------------feed 产品详情页面------------------------------------------------>
+            <uib-tab active="ctrl.feed">
                 <tab-heading>Feed详情</tab-heading>
                 <feed-schema product-info="ctrl.product"></feed-schema>
             </uib-tab>
 
-            <!---------------------------------------------------聚美 & 京东 & 天猫国际 产品详情页面------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
-                <tab-heading>{{platformType.name}}详情</tab-heading>
-                <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
+            <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter : {value:'!25'}"
+                     ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+
+                    <tab-heading>{{platformType.name}}详情</tab-heading>
+
+                    <!--聚美 & 京东 & 天猫国际-->
+                    <div ng-if="platformType.value > 20 && platformType.value < 30">
+                        <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
+                    </div>
+
+                    <!--官网同购-->
+                    <div ng-if="platformType.value >= 30 && platformType.value <= 31">
+                        <gw-schema product-info="ctrl.product" cart-info="platformType"></gw-schema>
+                    </div>
+
+                    <!--usjoi & 匠心界-->
+                    <div ng-if="platformType.value > 900">
+                        <jgj-schema product-info="ctrl.product" cart-info="platformType"></jgj-schema>
+                    </div>
+
             </uib-tab>
 
-            <!---------------------------------------------------产品详情页面------------------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter: ctrl.cartIdFilter2" ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+            <!---------------------------------------------------独立官网详情页面-------------------------------------------------->
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes | filter : {value:'25'}"
+                     ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+
                 <tab-heading>{{platformType.name}}详情</tab-heading>
-                <jgj-schema product-info="ctrl.product" cart-info="platformType"></jgj-schema>
+
+                <dl-schema product-info="ctrl.product" cart-info="platformType"></dl-schema>
+
             </uib-tab>
+
         </uib-tabset>
     </div>
 

@@ -1,0 +1,6 @@
+<ul class="dropdown-menu">
+    <li ng-repeat="leaf in tree"  ng-class="{'dropdown-submenu': leaf.children.length > 0}">
+        <a>{{leaf.catName}}</a>
+        <tree ng-if='leaf.children.length > 0' tree='leaf.children' result='result'></tree>
+    </li>
+</ul>

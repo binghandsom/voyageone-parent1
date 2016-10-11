@@ -6,6 +6,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,7 @@ public class CmsBtJmPromotionService {
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
+
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
     }
@@ -81,6 +84,10 @@ public class CmsBtJmPromotionService {
             List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
             info.setTagList(tagList);
         }
+        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(model.getPrePeriodStart());//北京时间转本地时区时间戳
+        long activityEndTime = DateTimeUtilBeijing.toLocalTime(model.getActivityEnd());//北京时间转本地时区时间戳
+        info.setIsBeginPre(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+        info.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
         return info;
     }
     @VOTransactional
@@ -138,7 +145,7 @@ public class CmsBtJmPromotionService {
         promotion.setPromotionName(model.getName());
         promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
         promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
-        promotion.setPromotionStatus(0);
+        promotion.setPromotionStatus(1);
         promotion.setTejiabaoId("");
         promotion.setIsAllPromotion(0);
         promotion.setActive(model.getActive());
@@ -239,9 +246,17 @@ public class CmsBtJmPromotionService {
         return daoExt.selectListByWhere(map);
     }
 
-    public List<MapModel> getJMActivePromotions(String channelId) {
+    public List<MapModel> getJMActivePromotions(int cartId, String channelId) {
         Preconditions.checkArgument(StringUtils.isNotBlank(channelId), "channelId不能为空!");
-        return daoExt.selectActivesOfChannel(channelId);
+        Map params = new HashMap<>();
+        params.put("cartId", cartId);
+//        if (Channels.isUsJoi(channelId)) {
+//            params.put("orgChannelId", channelId);
+//            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+//        } else {
+            params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+//        }
+        return daoExt.selectActivesOfChannel(params);
     }
 
 }

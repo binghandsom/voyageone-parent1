@@ -73,6 +73,9 @@
             <if test="key != null and key != ''">
                 and a.`key` = #{key,jdbcType=VARCHAR}
             </if>
+            <if test="synFlg != null">
+                and a.syn_flg = #{synFlg,jdbcType=INTEGER}
+            </if>
         ORDER BY a.syn_flg desc,a.key
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
@@ -95,6 +98,9 @@
         </if>
         <if test="key != null and key != ''">
             and a.`key` = #{key,jdbcType=VARCHAR}
+        </if>
+        <if test="synFlg != null">
+            and a.syn_flg = #{synFlg,jdbcType=INTEGER}
         </if>
     </select>
     <insert id="insert_cms_bt_promotion_task" parameterType="com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel">
@@ -180,6 +186,10 @@
             <if test="key != null and key != ''">
                 and `key` = #{key,jdbcType=VARCHAR}
             </if>
+            <if test="selSynFlg != null">
+                and syn_flg = #{selSynFlg,jdbcType=INTEGER}
+            </if>
+
         </where>
     </update>
 
@@ -199,8 +209,10 @@
               voyageone_cms2.cms_bt_promotion b
         where
             a.promotion_id = b.id
-            and b.promotion_status = 0
+            and b.promotion_status = 1
             and b.is_all_promotion = 0
+			and b.tejiabao_id != 0
+			and b.tejiabao_id != ''
             and task_type = 0
             and b.channel_id = #{channelId}
             and b.cart_id = #{cartId}

@@ -23,6 +23,6 @@ public class CmsDataAmountServiceTest {
     CmsDataAmountService cmsDataAmountService;
     @Test
     public void testOnStartup() throws Exception {
-        cmsDataAmountService.startup();
+        cmsDataAmountService.onStartup(new ArrayList<>());
     }
 }

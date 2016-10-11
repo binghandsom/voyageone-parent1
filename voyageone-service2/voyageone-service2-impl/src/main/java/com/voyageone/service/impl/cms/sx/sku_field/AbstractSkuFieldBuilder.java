@@ -8,16 +8,16 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtChannelSkuConfigDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformPropSkuDao;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
 
     protected abstract boolean init(List<Field> platformProps, int cartId);
 
-    public List<Field> buildSkuInfoField(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
+    public List<Field> buildSkuInfoField(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception {
         int cartId = expressionParser.getSxData().getCartId();
         if (getCartId() == -1) {
             // 未初期化
@@ -59,7 +59,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
         return buildSkuInfoFieldChild(platformProps, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
     }
 
-    public abstract List buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception;
+    public abstract List buildSkuInfoFieldChild(List platformProps, ExpressionParser expressionParser, CmsMtPlatformMappingDeprecatedModel cmsMtPlatformMappingModel, Map<String, Integer> skuInventoryMap, ShopBean shopBean, String user) throws Exception;
 
     public void setDao(CmsMtPlatformPropSkuDao cmsMtPlatformPropSkuDao, CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao) {
         this.cmsMtPlatformPropSkuDao = cmsMtPlatformPropSkuDao;
@@ -104,7 +104,7 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
                 try {
                     List<Map<String, Object>> listVal = (List<Map<String, Object>>) objSku;
                     Object objVal = null;
-                    if (StringUtils.isEmpty((String) listVal.get(0).get("sku_outerId"))) {
+                    if (ListUtils.isNull(listVal) || StringUtils.isEmpty((String) listVal.get(0).get("sku_outerId"))) {
                         // 画面没填的话，会有一条空的数据
                         return null;
                     }
@@ -138,6 +138,54 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
             }
         } else {
             return null;
+        }
+    }
+
+    /**
+     * 产品规格里的值
+     * 从各平台下面的fields下面去取cspuList属性
+     * 目前不支持复杂类型
+     */
+    protected final String getCspuValue(CmsBtProductModel cmsBtProductModel, String fieldId, String barcode) {
+        if (cmsBtProductModel.getPlatform(getCartId()).getFields() != null) {
+            Object objCspu = cmsBtProductModel.getPlatform(getCartId()).getFields().getAttribute("cspuList"); // 产品规格
+            if (objCspu != null) {
+                try {
+                    List<Map<String, Object>> listVal = (List<Map<String, Object>>) objCspu;
+                    Object objVal = null;
+                    if (StringUtils.isEmpty((String) listVal.get(0).get("barcode"))) {
+                        // 画面没填的话，会有一条空的数据
+                        throw new BusinessException("没有填写规格!");
+                    }
+                    boolean hasBarcode = false;
+                    for (Map<String, Object> mapSku : listVal) {
+                        if (barcode.equals(mapSku.get("barcode"))) {
+                            // 找到对应barcode
+                            objVal = mapSku.get(fieldId);
+                            hasBarcode = true;
+                            break;
+                        }
+                    }
+                    if (!hasBarcode) {
+                        // 没找到
+                        throw new BusinessException(String.format("没有找到指定规格!barcode=%s", barcode));
+                    }
+                    if (objVal == null) {
+                        return null;
+                    } else if (objVal instanceof String || objVal instanceof Number || objVal instanceof Boolean) {
+                        return String.valueOf(objVal);
+                    } else {
+                        $warn(String.format("cspu属性取得暂不支持复杂类型数据[fieldId:%s,barcode:%s]", fieldId, barcode));
+                        return null;
+                    }
+                } catch (ClassCastException ex) {
+                    throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
+                }
+            } else {
+                throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
+            }
+        } else {
+            throw new BusinessException(String.format("cspu属性取得失败[fieldId:%s,barcode:%s]", fieldId, barcode));
         }
     }
 

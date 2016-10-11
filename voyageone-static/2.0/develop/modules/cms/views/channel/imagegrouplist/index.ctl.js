@@ -7,10 +7,11 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupController", (function () {
-        function ImageGroupController( imageGroupService, confirm, alert, notify) {
+        function ImageGroupController(imageGroupService, confirm, alert, notify, popups) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
+            this.popups = popups;
             this.platformList = [];
             this.imageTypeList = [];
             this.imageType = "";
@@ -48,15 +49,15 @@ define([
             getImageGroupList: function () {
                 var main = this;
                 main.imageGroupService.search({
-                    "platformList" : main.platformList,
-                    "imageType" : main.imageType,
-                    "beginModified" : main.beginModified,
-                    "endModified" : main.endModified,
-                    "brandName" : main.brandName,
-                    "productType" : main.productType,
-                    "sizeType" : main.sizeType,
-                    "curr" : main.pageOption.curr,
-                    "size" : main.pageOption.size
+                    "platformList": main.platformList,
+                    "imageType": main.imageType,
+                    "beginModified": main.beginModified,
+                    "endModified": main.endModified,
+                    "brandName": main.brandName,
+                    "productType": main.productType,
+                    "sizeType": main.sizeType,
+                    "curr": main.pageOption.curr,
+                    "size": main.pageOption.size
                 }).then(function (res) {
                     main.imageGroupList = res.data.imageGroupList;
                     main.pageOption.total = res.data.total;
@@ -77,20 +78,22 @@ define([
                     platform.show = false;
                 });
             },
-            delete: function (imageGroupId) {
-                var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
-                    main.imageGroupService.delete({
-                        "imageGroupId" : imageGroupId
-                    }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
+            delete: function (entity) {
+                var self = this;
+
+                self.confirm('TXT_MSG_DO_DELETE').then(function () {
+                    self.imageGroupService.delete({
+                        imageGroupId: entity.imageGroupId
+                    }).then(function () {
+                        self.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        self.search();
                     }, function (err) {
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            self.alert('TXT_MSG_DELETE_FAIL');
                         }
                     })
-                })
+                });
+
             }
         };
 

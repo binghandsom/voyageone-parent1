@@ -10,6 +10,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
@@ -23,6 +24,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author james.li
@@ -82,6 +89,7 @@ public class GiltInsert extends BaseTaskService {
         private List<CmsBtFeedInfoModel> getModels(String category) throws Exception {
 
             Map colums = getColumns();
+            Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
@@ -97,15 +105,44 @@ public class GiltInsert extends BaseTaskService {
                     feeds.forEach(feedBean -> {
                         if (!StringUtil.isEmpty(feedBean.getCfg_val1())) {
                             List<String> values = new ArrayList<>();
-                            values.add((String) temp.get(feedBean.getCfg_val1()));
-                            attribute.put(feedBean.getCfg_val1(), values);
+                            if (temp.get(feedBean.getCfg_val1()) != null && !StringUtil.isEmpty(temp.get(feedBean.getCfg_val1()).toString())){
+                                values.add((String) temp.get(feedBean.getCfg_val1()));
+                                attribute.put(feedBean.getCfg_val1(), values);
+                            }
                         }
                     });
                 }
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
                 cmsBtFeedInfoModel.setAttribute(attribute);
-                modelBeans.add(cmsBtFeedInfoModel);
 
+                //设置重量
+                List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
+                for (CmsBtFeedInfoModel_Sku sku : skus) {
+                    String Weight = sku.getWeightOrg().trim();
+                    Pattern pattern = Pattern.compile("[^0-9.]");
+                    Matcher matcher = pattern.matcher(Weight);
+                    if (matcher.find()) {
+                        int index = Weight.indexOf(matcher.group());
+                        if (index != -1) {
+                            String weightOrg = Weight.substring(0, index);
+                            sku.setWeightOrg(weightOrg);
+                        }
+                    }
+                    sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+                }
+                cmsBtFeedInfoModel.setSkus(skus);
+                //设置重量结束
+
+                if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
+                    CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
+                    beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
+                    beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
+                    beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
+                    beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(),cmsBtFeedInfoModel.getAttribute()));
+                }else{
+                    modelBeans.add(cmsBtFeedInfoModel);
+                    codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);
+                }
             }
             return modelBeans;
         }
@@ -141,6 +178,14 @@ public class GiltInsert extends BaseTaskService {
             map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
             map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
             map.put("product_type", (Feeds.getVal1(channel, FeedEnums.Name.product_type)));
+
+            map.put("quantity", (Feeds.getVal1(channel, FeedEnums.Name.quantity)));
+            map.put("material", (Feeds.getVal1(channel, FeedEnums.Name.material)));
+            map.put("usage_en", (Feeds.getVal1(channel, FeedEnums.Name.usage_en)));
+            map.put("weight_org", (Feeds.getVal1(channel, FeedEnums.Name.weight_org)));
+            map.put("weight_org_unit", (Feeds.getVal1(channel, FeedEnums.Name.weight_org_unit)));
+            map.put("weight_calc", (Feeds.getVal1(channel, FeedEnums.Name.weight_calc)));
+
             return map;
         }
 
@@ -231,6 +276,25 @@ public class GiltInsert extends BaseTaskService {
                 giltFeedDao.insertFull(itemIds);
                 giltFeedDao.updateFeetStatus(itemIds);
             }
+        }
+
+        // 合并属性
+        public Map<String, List<String>> attributeMerge(Map<String, List<String>> attribute1, Map<String, List<String>> attribute2) {
+
+            for (String key : attribute1.keySet()) {
+                if (attribute2.containsKey(key)) {
+                    attribute2.put(key, Stream.concat(attribute1.get(key).stream(), attribute2.get(key).stream())
+                            .map(String::trim)
+                            .distinct()
+                            .collect(toList()));
+                } else {
+                    attribute2.put(key, attribute1.get(key));
+                }
+            }
+            for(String key: attribute2.keySet()){
+                attribute2.put(key, attribute2.get(key).stream().distinct().collect(Collectors.toList()));
+            }
+            return attribute2;
         }
     }
 }

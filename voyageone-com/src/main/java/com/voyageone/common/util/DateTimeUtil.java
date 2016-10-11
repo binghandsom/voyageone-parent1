@@ -181,6 +181,7 @@ public final class DateTimeUtil {
      * 缺省的日期时间显示格式：yyyy-MM-dd HH:mm:ss
      */
     public static final String DEFAULT_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_DATETIME_FORMAT_1 = "yyyy-MM-dd HH-mm-ss"; // 用在文件名中，不能带":"
 
     /**
      * 缺省时间显示格式：HH:mm:ss
@@ -245,6 +246,11 @@ public final class DateTimeUtil {
      * 缺省的日期时间显示格式：MMddyy
      */
     public static final String DATE_TIME_FORMAT_10 = "yyMMdd";
+    /**
+     * 缺省的日期时间显示格式：MMddyyyy
+     */
+    public static final String DATE_TIME_FORMAT_11 = "MM/dd/yyyy";
+
     /**
      * 私有构造方法，禁止对该类进行实例化
      */

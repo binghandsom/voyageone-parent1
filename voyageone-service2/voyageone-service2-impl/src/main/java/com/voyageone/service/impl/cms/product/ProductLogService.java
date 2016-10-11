@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.common.util.BeanUtil;
+import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductLogModel;
@@ -10,15 +11,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ProductLogService extends BaseService {
+
+    private final CmsBtProductLogDao cmsBtProductLogDao;
+
     @Autowired
-    private CmsBtProductLogDao cmsBtProductLogDao;
+    public ProductLogService(CmsBtProductLogDao cmsBtProductLogDao) {
+        this.cmsBtProductLogDao = cmsBtProductLogDao;
+    }
 
     /**
      * CmsBtProductModel变更接口留下日志
      */
     public void insertProductHistory(CmsBtProductModel product) {
-        CmsBtProductLogModel logModel = new CmsBtProductLogModel();
-        BeanUtil.copy(product, logModel);
+        CmsBtProductLogModel logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(product), CmsBtProductLogModel.class);
         logModel.set_id(null);
         cmsBtProductLogDao.insert(logModel);
     }

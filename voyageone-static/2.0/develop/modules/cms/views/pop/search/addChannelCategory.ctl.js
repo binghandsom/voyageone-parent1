@@ -89,13 +89,6 @@ define([
                 }
                 var cIds = [], cNames = [], fullCNames = [], fullCIds = [];
                 var map = flatCategories(self.channelCategoryList);
-                for (var key in self.orgDispMap) {
-                    if (self.orgDispMap[key]) {
-                        // 如果有半选状态，则提示
-                        self.alert("分类 [" + map[key].catPath + "] 处于未设置状态，请勾选或取消勾选后再保存。");
-                        return;;
-                    }
-                }
 
                 _.map(self.orgChkStsMap, function (value, key) {
                     return {categoryId: key, selected: value};
@@ -131,7 +124,16 @@ define([
                     sellerCats.push({cId:cid, cIds:cids, cName:fullCNames[index], cNames:cNames});
                 });
 
-                self.$uibModalInstance.close({sellerCats:sellerCats, cartId:self.cartId});
+                var returnObj = {sellerCats:sellerCats, cartId:self.cartId};
+                // 处于半选状态的分类ID
+                returnObj._orgDispList = _.map(self.orgDispMap, function (value, key) {
+                    if (value) {
+                        return key;
+                    }
+                }).filter(function (item) {
+                    return item != undefined && item != null && item != '';
+                });
+                self.$uibModalInstance.close(returnObj);
             },
 
             /**

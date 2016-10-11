@@ -118,6 +118,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setStringAttribute("pNumIId", pNumIId);
     }
 
+    //pPlatformMallId
+    public String getpPlatformMallId() {
+        return getStringAttribute("pPlatformMallId");
+    }
+    public void setpPlatformMallId(String pPlatformMallId) {
+        setStringAttribute("pPlatformMallId", pPlatformMallId);
+    }
+
     //pStatus
     public CmsConstants.PlatformStatus getpStatus() {
         String pStatus = getStringAttribute("pStatus");
@@ -235,6 +243,17 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public BaseMongoMap<String, Object> getFields() {
         return getAttribute(FIELDS);
     }
+    /**
+     * 返回非空BaseMongoMap对象
+     */
+    public BaseMongoMap getFieldsNotNull()  {
+        BaseMongoMap obj = getAttribute(FIELDS);
+        if (obj == null) {
+            return new BaseMongoMap();
+        }
+        return obj;
+    }
+
     public void setFields(BaseMongoMap<String, Object> fields) {
         setAttribute(FIELDS, fields);
     }
@@ -248,11 +267,24 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     }
 
     //sellerCats
-    public List<CmsBtProductModel_SellerCat> getSellerCats(){
+    public List<CmsBtProductModel_SellerCat> getSellerCats() {
         return getAttribute(SELLER_CATS);
     }
-    public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats){
-        setAttribute(SELLER_CATS,sellerCats);
+    public void setSellerCats(List<CmsBtProductModel_SellerCat> sellerCats) {
+        setAttribute(SELLER_CATS, sellerCats);
+    }
+    public List<Map<String, Object>> getSellerCatsByMap() {
+        return getAttribute(SELLER_CATS);
+    }
+    public void setSellerCatsByMap(List<Map<String, Object>> sellerCats) {
+        setAttribute(SELLER_CATS, sellerCats);
+    }
+
+    public String getpReallyStatus() {
+        return getStringAttribute("pReallyStatus");
+    }
+    public void setpReallyStatus(String pReallyStatus) {
+        setStringAttribute("pReallyStatus",pReallyStatus);
     }
 
     @Override
