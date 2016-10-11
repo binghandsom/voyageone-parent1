@@ -47,6 +47,7 @@ define(function () {
         "TXT_MAINTAIN_SETTING_ROLE": "权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_MAIN_CATEGORY": "主类目权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_MAIN_BRAND": "主品牌权限设置",
+        "TXT_MASTER_BRAND_SETTING":'主品牌设置',
         "TXT_MAINTAIN_SETTING_ROLE_TAX_NUMBER": "税号权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_CART": "平台店权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_CHANNEL": "集合店权限设置",
@@ -789,6 +790,8 @@ define(function () {
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
         "TXT_FEED_BRAND": "Feed品牌",
+        "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
+        "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_PLATFORM_BRAND": "平台品牌",
         "TXT_REGET_PLATFORM_BRANDS": "重新获取平台品牌",
@@ -817,7 +820,8 @@ define(function () {
         "TXT_BATCH_JOIN_BLACK_LIST": "批量加入黑名单",
         "TXT_BATCH_REMOVE_BLACK_LIST": "批量移除黑名单",
         "TXT_BLACK_LIST_BATCH_CONFIRM": "您确认要进行[{{content}}]操作吗？",
-
+        "TXT_MAIN_BRAND_MAPPING": "主品牌匹配",
+        "TXT_INCOMPLETE_REJECT": "待匹配（审核驳回）"
         /**sku价格设置popup*/
         "TXT_SKU_PRICE_SETTING": "SKU价格设置"
     };

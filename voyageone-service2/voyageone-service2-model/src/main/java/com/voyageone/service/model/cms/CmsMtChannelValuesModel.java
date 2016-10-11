@@ -24,6 +24,8 @@ public class CmsMtChannelValuesModel extends BaseModel {
 
     protected String value;
 
+    protected String value1;
+
     public String getChannelId() {
         return channelId;
     }
@@ -54,5 +56,13 @@ public class CmsMtChannelValuesModel extends BaseModel {
 
     public void setValue(String value) {
         this.value = value == null ? null : value.trim();
+    }
+
+    public String getValue1() {
+        return value1;
+    }
+
+    public void setValue1(String value1) {
+        this.value1 = value1 == null ? null : value1.trim();
     }
 }

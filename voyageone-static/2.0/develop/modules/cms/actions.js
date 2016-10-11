@@ -596,6 +596,11 @@ define(function () {
                 root:"/cms/channel/black_brand/",
                 list:"searchBlackBrand",
                 update:"updateBlackBrand"
+            },
+            "masterBrandService":{
+                root:"/cms/tools/common",
+                init:"initMasterBrandInfo",
+                search:"searchMasterBrandInfo"
             }
         }
     };
