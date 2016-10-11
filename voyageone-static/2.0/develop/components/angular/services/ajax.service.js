@@ -9,13 +9,21 @@ angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("aj
     };
 }]);
 
-function $Ajax($http, $q) {
+function $Ajax($http, $q, blockUI, $timeout) {
     this.$http = $http;
     this.$q = $q;
+    this.blockUI = blockUI;
+    this.$timeout = $timeout;
 }
 
-$Ajax.prototype.post = function (url, data) {
-    var defer = this.$q.defer();
+$Ajax.prototype.post = function (url, data, option) {
+    var defer = this.$q.defer(),
+        blockUI = this.blockUI,
+        $timeout = this.$timeout;
+
+    $timeout(function () {
+        blockUI.start();
+    }, 1000);
 
     if (data === undefined) {
         data = {};
@@ -23,6 +31,9 @@ $Ajax.prototype.post = function (url, data) {
 
     this.$http.post(url, data).then(function (response) {
         var res = response.data;
+
+        blockUI.stop();
+
         if (!res) {
             alert("相应结果不存在?????");
             defer.reject(null);
@@ -34,6 +45,8 @@ $Ajax.prototype.post = function (url, data) {
         }
         defer.resolve(res);
     }, function (response) {
+        blockUI.stop();
+
         defer.reject(null, response);
     });
 
@@ -46,10 +59,10 @@ function AjaxService($q, $ajax, messageService) {
     this.messageService = messageService;
 }
 
-AjaxService.prototype.post = function (url, data) {
+AjaxService.prototype.post = function (url, data, option) {
     var defer = this.$q.defer();
 
-    this.$ajax.post(url, data).then(function (res) {
+    this.$ajax.post(url, data, option).then(function (res) {
         // 成功
         defer.resolve(res);
         return res;
