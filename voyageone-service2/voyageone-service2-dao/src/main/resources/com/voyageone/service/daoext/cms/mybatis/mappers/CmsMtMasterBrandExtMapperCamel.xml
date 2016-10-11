@@ -29,7 +29,9 @@
         <if test="selectedBrand !=null and selectedBrand != ''">
             and (b.master_brand_en like '%${selectedBrand}%')
         </if>
-        limit #{offset}, #{size}
+        <if test="offset != null">
+            limit #{offset}, #{size}
+        </if>
     </select>
     <!-- 检索品牌品牌总数 -->
     <select id="searchBrandsCount" resultType="int">

@@ -22,6 +22,14 @@ public class CmsMasterBrandMappingService extends BaseService {
     @Autowired
     private CmsMtMasterBrandDaoExt cmsMtMasterBrandDaoExt;
 
+
+    public List<CmsMtMasterBrandModel> getMasterBrandListByChannelId(String channelId){
+        Map<String, Object> data = new HashMap<>();
+        //店铺渠道取得
+        data.put("channelId", channelId);
+        //返回数据类型
+        return cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
+    }
     /**
      * Master品牌匹配初始化
      *
