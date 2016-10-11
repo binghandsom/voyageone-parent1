@@ -136,7 +136,7 @@ public class AdminRoleService extends BaseService {
      * @param allChannel
      * @param allStore
      */
-
+    @VOTransactional
     public void updateRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
 
         checkParams(allChannel, allStore, appList, channelIds, storeIds);
@@ -219,6 +219,15 @@ public class AdminRoleService extends BaseService {
                 }
             }
         }
+
+        //修改Role
+        ComRoleModel role = comRoleDao.select(roleId);
+        role.setActive(model.getActive());
+        role.setRoleType(model.getRoleType());
+        role.setDescription(model.getDescription());
+        role.setModifier(model.getModifier());
+        role.setModified(new Date());
+        comRoleDao.update(role);
     }
 
     private void insertIgnoreConfig(Integer roleId, String configName, String configValue) {

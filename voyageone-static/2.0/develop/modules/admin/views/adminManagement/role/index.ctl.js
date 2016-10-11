@@ -253,6 +253,12 @@ define([
                         return '运营';
                         break;
                     case 6:
+                        return 'Vendor';
+                        break;
+                    case 7:
+                        return '翻译';
+                        break;
+                    case 99:
                         return '其他';
                         break;
                 }

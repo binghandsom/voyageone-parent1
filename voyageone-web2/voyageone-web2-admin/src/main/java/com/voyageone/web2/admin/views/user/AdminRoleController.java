@@ -118,7 +118,7 @@ public class AdminRoleController extends AdminController {
         ComRoleModel model = new ComRoleModel();
 
         BeanUtils.populate(model, requestMap);
-        model.setCreater(getUser().getUserName());
+        model.setModifier(getUser().getUserName());
 
         List<String> applications = (List<String>) requestMap.getOrDefault("applications", new ArrayList<>());
         List<String> channelIds = (List<String>) requestMap.getOrDefault("channelIds", new ArrayList<>());
