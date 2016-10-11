@@ -17,7 +17,7 @@ import java.util.Collections;
  * Created by dell on 2016/5/5.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class LuaRedisTest {
     @Autowired
     ImagePathCacheLua imagePathCache;

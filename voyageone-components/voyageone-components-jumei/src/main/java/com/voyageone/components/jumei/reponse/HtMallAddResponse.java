@@ -5,8 +5,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.UnicodeUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -77,8 +76,8 @@ public class HtMallAddResponse extends BaseJMResponse {
             if (map.containsKey("reason")) {
                 this.setReason(map.get("reason").toString());
             }
-            if (map.containsKey("response")) {
-                Map<String, Object> mapSesponse = (Map<String, Object>) map.get("response");
+            if (map.containsKey("response") && !StringUtils.isEmpty(StringUtils.toString(map.get("response")))) {
+                LinkedHashMap<String, Object> mapSesponse = (LinkedHashMap<String, Object>)map.get("response");
                 if (mapSesponse.containsKey("jumei_mall_id")) {
                     this.setJumeiMallId(mapSesponse.get("jumei_mall_id").toString());
                 }
@@ -86,12 +85,31 @@ public class HtMallAddResponse extends BaseJMResponse {
             if ("0".equals(this.error_code)) {
                 this.setSuccess(true);
             } else {
-                this.setErrorMsg(this.body);
+                this.setSuccess(false);
+                StringBuffer sbMsg = new StringBuffer(" 特卖商品绑定到商城[MALL](/v1/htProduct/dealToMall)时,发生错误[" + this.error_code + ":");
+                switch (this.error_code) {
+                    case "10002":
+                        sbMsg.append("client_id,client_key,sign 认证失败");
+                        break;
+                    case "120014":
+                        sbMsg.append("jumei_hash_id 参数错误");
+                        break;
+                    case "100001":
+                        sbMsg.append("skuInfo 参数错误");
+                        break;
+                    case "100002":
+                        sbMsg.append("mallInfo 参数错误");
+                        break;
+                    default:
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
+                }
+                sbMsg.append("] ");
+                this.setErrorMsg(sbMsg.toString() + this.body);
             }
         } catch (Exception ex) {
             logger.error("setBody ",ex);
             this.setSuccess(false);
-            this.setErrorMsg("返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
+            this.setErrorMsg("HtMallAddResponse 返回参数解析错误" + UnicodeUtil.decodeUnicode(this.body));
         }
     }
 

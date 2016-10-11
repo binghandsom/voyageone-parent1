@@ -3,9 +3,10 @@ package com.voyageone.web2.vms.views.feed;
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.vms.feed.FeedFileService;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_FEED_FILE_STATUS;
 
@@ -24,7 +26,7 @@ import static com.voyageone.web2.vms.VmsConstants.TYPE_ID.IMPORT_FEED_FILE_STATU
  * @version 1.0
  */
 @Service
-public class VmsFeedImportResultService extends BaseAppService {
+public class VmsFeedImportResultService extends BaseViewService {
 
     @Autowired
     private FeedFileService feedFileService;
@@ -37,10 +39,14 @@ public class VmsFeedImportResultService extends BaseAppService {
      */
     public Map<String, Object> init (Map<String, Object> param) {
 
-       Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
+
+        // 对客户只展示2,3,4三个状态
+        List<TypeBean> typeBeans = Types.getTypeList(IMPORT_FEED_FILE_STATUS, (String)param.get("lang")).stream()
+                .filter(typeBean -> "2".equals(typeBean.getValue()) || "3".equals(typeBean.getValue()) || "4".equals(typeBean.getValue())).collect(Collectors.toList());
 
         // 状态
-        result.put("statusList", Types.getTypeList(IMPORT_FEED_FILE_STATUS, (String)param.get("lang")));
+        result.put("statusList", typeBeans);
 
         return result;
     }
@@ -94,8 +100,17 @@ public class VmsFeedImportResultService extends BaseAppService {
     private void editFeedImportResultList(List<Map<String, Object>> feedImportResultList, String lang) {
 
         for (Map<String, Object> feedImportResult : feedImportResultList) {
+            // 对用户展示是状态 1=2，5=4
+            String status = (String)feedImportResult.get("status");
+            if ("1".equals(status)) {
+                status = "2";
+            }
+            if ("5".equals(status)) {
+                status = "4";
+            }
+
             // Status
-            feedImportResult.put("statusName", Types.getTypeName(IMPORT_FEED_FILE_STATUS, lang, (String)feedImportResult.get("status")));
+            feedImportResult.put("statusName", Types.getTypeName(IMPORT_FEED_FILE_STATUS, lang, status));
         }
     }
 }

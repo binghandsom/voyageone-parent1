@@ -163,6 +163,7 @@ define(function (require) {
             search: "search"
         }),
         feedInfoSearchService: new CommonDataService('/vms/feed/feed_info_search', {
+            init: "init",
             search: "search"
         }),
 
@@ -171,7 +172,9 @@ define(function (require) {
             search: "search",
             cancelOrder: "cancelOrder",
             cancelSku: "cancelSku",
-            downloadPickingList: "downloadPickingList"
+            downloadPickingList: "downloadPickingList",
+            reopenOrder: "reopen_order",
+            reopenSku: "reopen_sku"
         }),
 
         financialReportService: new CommonDataService('/vms/report/financial_report', {
@@ -192,7 +195,9 @@ define(function (require) {
         }),
         shipmentScanPopupService: new CommonDataService('/vms/popup/scan', {
             init: "init",
-            scanBarcode: "scanBarcode"
+            scanBarcode: "scan_barcode",
+            finishScanning: "finish_scanning",
+            revertScanning: "revert_scanning"
         }),
         shipmentInfoService: new CommonDataService('/vms/shipment/shipment_info', {
             init: "init",
@@ -202,7 +207,16 @@ define(function (require) {
             init: "init",
             scan: "scan",
             getInfo: "get_info",
-            ship: "ship"
+            ship: "ship",
+            printed: "printed"
+        }),
+        vendorSettingsService: new CommonDataService('/vms/settings/vendor_settings', {
+            init: "init",
+            save: "save"
+        }),
+        inventoryImportResultService: new CommonDataService('/vms/inventory/inventory_import_result', {
+            init: "init",
+            search: "search"
         })
     }
 });

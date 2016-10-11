@@ -6,11 +6,14 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -56,6 +59,10 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
 
     public abstract ChannelConfigEnums.Channel getChannel();
 
+    public int fullCopyTemp(){
+
+        return 0;
+    }
 
     /**
      * 根据类目获取该类目小的产品数据
@@ -73,15 +80,22 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
         init();
 
         zzWorkClear();
+        int cnt = 0;
+        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+            cnt = fullCopyTemp();
+        }else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
 
-        $info("产品信息插入开始");
-        int cnt = superFeedImport();
         $info("产品信息插入完成 共" + cnt + "条数据");
         if (cnt > 0) {
             transformer.new Context(channel, this).transform();
 
             postNewProduct();
 
+        }
+        if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
             backupFeedFile(channel.getId());
         }
     }

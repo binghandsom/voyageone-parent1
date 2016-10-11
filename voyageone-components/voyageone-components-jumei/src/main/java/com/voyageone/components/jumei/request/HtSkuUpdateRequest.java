@@ -3,12 +3,11 @@ package com.voyageone.components.jumei.request;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * HtSkuUpdateRequest
+ * HtSkuUpdateRequest 修改Sku信息
  *
  * @author peitao.sun, 2016/3/29
  * @version 2.0.0

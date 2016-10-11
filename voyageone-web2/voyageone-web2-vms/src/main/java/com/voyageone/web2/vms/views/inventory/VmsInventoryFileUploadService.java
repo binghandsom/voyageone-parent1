@@ -3,9 +3,9 @@ package com.voyageone.web2.vms.views.inventory;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.impl.vms.feed.FeedFileService;
-import com.voyageone.service.model.vms.VmsBtFeedFileModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.service.impl.vms.inventory.InventoryFileService;
+import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
 import com.voyageone.web2.vms.VmsConstants;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -24,11 +23,14 @@ import java.util.List;
  * @version 1.0
  */
 @Service
-public class VmsInventoryFileUploadService extends BaseAppService {
+public class VmsInventoryFileUploadService extends BaseViewService {
 
     private final static int FILE_LIMIT_SIZE = 52428800;
 
     private final static String CSV_TYPE = "csv";
+
+    @Autowired
+    private InventoryFileService inventoryFileService;
 
     /**
      * 保存上传的InventoryFile
@@ -45,13 +47,17 @@ public class VmsInventoryFileUploadService extends BaseAppService {
         // 上传文件流
         try (InputStream inputStream = file.getInputStream();) {
 
-            String fileName = "Inventory_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
+            String fileName = "Inventory&Price_" + channelId + DateTimeUtil.getNow("_yyyyMMdd_HHmmss") + ".csv";
 
             // 保存文件
-            // 取得Feed文件上传路径
-            String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
+            // 取得Inventory文件上传路径
+            String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.online.upload");
             inventoryFilePath +=  "/" + channelId + "/";
             FileUtils.copyInputStreamToFile(inputStream, new File(inventoryFilePath  + fileName));
+
+            // 往vms_bt_inventory_file表插入数据
+            inventoryFileService.insertInventoryFileInfo(channelId, file.getOriginalFilename(), fileName,
+                    VmsConstants.InventoryFileUploadType.ONLINE, VmsConstants.InventoryFileStatus.WAITING_IMPORT, userName);
 
         } catch (Exception ex) {
             $error(ex);
@@ -68,9 +74,18 @@ public class VmsInventoryFileUploadService extends BaseAppService {
      */
     private void doSaveInventoryFileCheck(String channelId, MultipartFile uploadFile) {
 
-        // 取得Inventory文件上传路径
-        String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.upload");
-        inventoryFilePath +=  "/" + channelId + "/";
+        // vms_bt_inventory_file表存在状态为1：等待上传或者2：上传中的数据那么不允许上传
+        List<VmsBtInventoryFileModel> waitingImportModels = inventoryFileService.getInventoryFileInfoByStatus(channelId, VmsConstants.InventoryFileStatus.WAITING_IMPORT);
+        List<VmsBtInventoryFileModel> importingModels = inventoryFileService.getInventoryFileInfoByStatus(channelId, VmsConstants.InventoryFileStatus.IMPORTING);
+        if (waitingImportModels.size() > 0 || importingModels.size() > 0) {
+            // Have Feed file is processing, please upload later.
+            throw new BusinessException("8000013", new Object[]{"inventory&price"});
+        }
+
+
+        // 取得Inventory文件Ftp的上传路径
+        String inventoryFilePath = Codes.getCodeName(VmsConstants.VMS_PROPERTY, "vms.inventory.ftp.upload");
+        inventoryFilePath +=  "/" + channelId + "/inventory/";
 
         // 目录下有文件存在的话不允许上传（FTP有上传的情况下）
         File root = new File(inventoryFilePath);
@@ -84,7 +99,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
                     if (fileName.lastIndexOf(".csv") > -1) {
                         if (".csv".equals(fileName.substring(fileName.length() - 4))) {
                             // Have inventory file is processing, please upload later.
-                            throw new BusinessException("8000013", new Object[]{"inventory"});
+                            throw new BusinessException("8000013", new Object[]{"inventory&price"});
                         }
                     }
                 }
@@ -94,7 +109,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
         // 文件大小判断
         if (uploadFile.getSize() >= FILE_LIMIT_SIZE) {
             // The size of inventory file exceeds the limit.
-            throw new BusinessException("8000014", new Object[]{"inventory"});
+            throw new BusinessException("8000014", new Object[]{"inventory&price"});
         }
 
         // 文件名
@@ -108,7 +123,7 @@ public class VmsInventoryFileUploadService extends BaseAppService {
         // 判断后缀是否合法（csv）
         if (suffix == null || !CSV_TYPE.toLowerCase().contains(suffix.toLowerCase())) {
             // Please upload a inventory file with csv format.
-            throw new BusinessException("8000015", new Object[]{"inventory"});
+            throw new BusinessException("8000015", new Object[]{"inventory&price"});
         }
     }
 }

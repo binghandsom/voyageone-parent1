@@ -544,15 +544,26 @@ public interface CmsUrlConstants {
             String UPDATE_FEED_ATTS = "updateProductAtts";
 
             String CHECK_CATEGORY = "checkCategory";
+
             String GetChangeMastProductInfo = "getChangeMastProductInfo";
+
             String SetMastProduct = "setMastProduct";
+
             String Delisting = "delisting";
+
             String DelistinGroup = "delistinGroup";
+
             String HsCodeChg = "hsCodeChg";
+
             String CopyProperty = "copyProperty";
+
             String CopyCommonProperty = "copyCommonProperty";
+
             String GET_PLATFORM_CATEGORIES = "getPlatformCategories";
+
             String PriceConfirm = "priceConfirm";
+
+            String UPDATE_SKUPRICE = "updateSkuPrice";
         }
 
         interface HISTORY {
@@ -704,6 +715,13 @@ public interface CmsUrlConstants {
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
         }
 
+        interface BLACK_BRAND {
+            String ROOT = "/cms/channel/black_brand";
+
+            String SEARCH_BLACK_BRAND = "searchBlackBrand";
+
+            String UPDATE_BLACK_BRAND = "updateBlackBrand";
+        }
     }
 
     interface ImageCreate {

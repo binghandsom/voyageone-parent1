@@ -9,7 +9,7 @@ import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.service.bean.vms.report.FinancialReportBean;
 import com.voyageone.service.impl.vms.report.FinancialReportService;
 import com.voyageone.service.model.vms.VmsBtFinancialReportModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.VmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @version 1.0
  */
 @Service
-public class VmsFinancialReportService extends BaseAppService {
+public class VmsFinancialReportService extends BaseViewService {
 
     @Autowired
     private FinancialReportService financialReportService;

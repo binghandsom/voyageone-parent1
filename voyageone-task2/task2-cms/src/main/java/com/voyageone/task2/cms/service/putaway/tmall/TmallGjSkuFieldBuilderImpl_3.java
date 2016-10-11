@@ -100,7 +100,7 @@ public class TmallGjSkuFieldBuilderImpl_3 extends AbstractSkuFieldBuilder {
                 continue;
             }
             if (isIgnore(field.getId())) {
-                logger.info("Ignore sku prop: " + field.getId());
+                logger.debug("Ignore sku prop: " + field.getId());
                 continue;
             }
             List<PlatformSkuInfoModel> tmallSkuInfos = platformSkuInfoDao.selectPlatformSkuInfo(field.getId(), cartId);

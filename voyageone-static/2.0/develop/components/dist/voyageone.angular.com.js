@@ -1411,8 +1411,6 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
         // 所以需要通过第三方存储来保存相互的关系
         DependentRule.fieldCache[(this.$fieldId = field.$name || field.id)] = field;
-
-        window.x = DependentRule;
     }
 
     DependentRule.fieldCache = {};
@@ -1542,7 +1540,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
         if (field.isDisplay == "0")
             return;
-        
+
         field.$name = 'Field' + random();
 
         rules = getRules(field, schema);

@@ -9,6 +9,7 @@ import com.voyageone.service.model.cms.CmsMtFeeShippingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -42,7 +43,9 @@ public class CmsMtFeeShippingService extends BaseService {
 
         Assert.hasText(shippingType).elseThrowDefaultWithTitle("shippingType");
 
-        Map<String, Object> queryMap = MapUtil.toMap("shippingType", shippingType);
+        Map<String, Object> queryMap = new HashMap<String, Object>() {{
+            put("shippingType", shippingType);
+        }};
 
         // 查询 shippingType 对应的发货配置
         // 是计件, 还是计重

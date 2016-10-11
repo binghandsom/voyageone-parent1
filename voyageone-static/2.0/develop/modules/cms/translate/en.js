@@ -104,7 +104,7 @@ define(function () {
         "TXT_PRODUCT_STATUS": "商品状态",
         "TXT_PLATFORM_STATUS": "商品平台状态",
         "TXT_FEED_STATUS": "Feed 状态",
-        "TXT_MSRP_PRICE": "官方售价",
+        "TXT_MSRP_PRICE": "建议售价",
         "TXT_CREATE_TIME": "创建时间",
         "TXT_PUBLISH_TIME": "发布时间",
         "TXT_INVENTORY": "库存",
@@ -371,11 +371,12 @@ define(function () {
         "TXT_IMPORT_ONLY_SKU_AND_INVENTORY": "只导入SKU和库存",
         "TXT_SEPARATE": "隔离",
         "TXT_SHARE": "共享",
+        "TXT_BANNER": "禁用",
         "TXT_SEPARATE_NEW_TASK": "新建隔离任务",
-        "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
+        "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成总数",
         "TXT_UN_TRANSLATION": "未分配总数",
         "TXT_DISTRIBUTE_UN_TRANSLATION": "已分配但未完成总数",
-        "TXT_TRANSLATED": "完成翻译总数",
+        "TXT_TRANSLATED": "完成总数",
         "TXT_DISTRIBUTION_RULE": "优先规则",
         "TXT_MAIN_PRODUCT": "主商品",
         "TXT_GET_TASK_COUNT": "获取任务数量",
@@ -510,6 +511,8 @@ define(function () {
         "TXT_IMAGE_TYPE": "图片类型",
         "TXT_IMAGE_GROUP_LIST": "图片管理",
         "TXT_RELATED_BRAND_NAME": "相关品牌",
+        "TXT_BRAND_CATEGORY":"品牌种类",
+        "TXT_BRAND_STATES":"品牌状态",
         "TXT_RELATED_PRODUCT_TYPE": "相关产品类型",
         "TXT_RELATED_SIZE_TYPE": "相关尺码",
         "TXT_IMAGE_GROUP_NAME": "图片组别名称",
@@ -534,6 +537,7 @@ define(function () {
         "TXT_FeedStatus_Error": "导入失败",
         "TXT_FeedStatus_NotImport": "不导入",
         "TXT_FeedStatus_DateError": "Feed数据异常错误",
+        "TXT_FeedStatus_BrandBlock": "品牌黑名单",
 
         "BTN_CREATE_TASK": "新建任务",
         "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
@@ -783,7 +787,9 @@ define(function () {
         "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
+        "TXT_PLATFORM_BRAND":"平台品牌",
         "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
         "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择",
 
@@ -797,6 +803,18 @@ define(function () {
         "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
-        "TXT_FLOATING_RATE": "价格波动"
+        "TXT_FLOATING_RATE": "价格波动",
+        "TXT_TASK_LIST": "任务一览",
+        "TXT_FLOATING_RATE": "价格波动",
+
+        /**黑名单*/
+        "TXT_BLACK_LIST_IN":"已加入黑名单",
+        "TXT_BLACK_LIST_OUT":"未加入黑名单",
+        "TXT_JOIN_BLACK_LIST":"加入黑名单",
+        "TXT_REMOVE_BLACK_LIST":"移除黑名单",
+        "TXT_BLACK_LIST_CONFIRM":"您确认要进行[{{content}}]操作吗？",
+        "TXT_BATCH_JOIN_BLACK_LIST":"批量加入黑名单",
+        "TXT_BATCH_REMOVE_BLACK_LIST":"批量移除黑名单",
+        "TXT_BLACK_LIST_BATCH_CONFIRM":"您确认要进行[{{content}}]操作吗？"
     };
 });

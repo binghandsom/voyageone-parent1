@@ -31,9 +31,28 @@ public class VmsConstants {
     }
 
     /**
+     * Inventory&Price文件导入状态
+     */
+    public final static class InventoryFileStatus {
+        public final static String WAITING_IMPORT = "1";
+        public final static String IMPORTING = "2";
+        public final static String IMPORT_COMPLETED = "3";
+        public final static String IMPORT_ERROR = "4";
+        public final static String IMPORT_SYSTEM_ERROR = "5";
+    }
+
+    /**
      * Feed文件上传类型
      */
     public final static class FeedFileUploadType {
+        public final static String ONLINE = "1";
+        public final static String FTP = "2";
+    }
+
+    /**
+     * Inventory&Price文件上传类型
+     */
+    public final static class InventoryFileUploadType {
         public final static String ONLINE = "1";
         public final static String FTP = "2";
     }
@@ -71,6 +90,9 @@ public class VmsConstants {
 
         // 货运状态（vms系统用）
         int SHIPMENT_STATUS = 85;
+
+        // 价格库存文件导入状态(vms系统用)
+        int IMPORT_PRC_INV_FILE_STATUS = 91;
 
     }
 
@@ -130,7 +152,14 @@ public class VmsConstants {
         String FEED_CSV_SPLIT_SYMBOL = "FEED_CSV_SPLIT_SYMBOL";
         // CSV文件编码
         String FEED_CSV_ENCODE = "FEED_CSV_ENCODE";
-
+        // 默认物流公司
+        String DEFAULT_DELIVERY_COMPANY = "DEFAULT_DELIVERY_COMPANY";
+        // 默认shipment命名格式
+        String DEFAULT_SHIPMENT_NAMING_CONVERTER = "DEFAULT_SHIPMENT_NAMING_CONVERTER";
+        // 客户定义的显示在order画面和拣货列表中的特定属性,多个用逗号分开
+        String ADDITIONAL_ATTRIBUTES = "ADDITIONAL_ATTRIBUTES";
+        // 客户Email地址
+        String EMAIL_ADDRESS = "EMAIL_ADDRESS";
     }
 
 }

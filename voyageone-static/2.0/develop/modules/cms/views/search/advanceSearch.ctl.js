@@ -26,7 +26,8 @@ define([
                 catgoryList: [],
                 cidValue: [],
                 promotionTagType: 1,
-                freeTagType: 1
+                freeTagType: 1,
+                brandSelType: 1
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -158,6 +159,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                brandSelType: 1,
                 shopCatStatus: null,
                 inventory: '',
                 salesStart: null,
@@ -952,10 +954,10 @@ define([
                     _.forEach(selList, function (object) {
                         productIds.push(object.code);
                     });
-                    var params = {'sellerCats': res.sellerCats, 'productIds': productIds, 'cartId': res.cartId};
-                    params.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(params).then(function (context) {
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    res.productIds = productIds;
+                    res.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $addChannelCategoryService.save(res).then(function (context) {
+                        notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
                     });
                 })
@@ -1097,6 +1099,54 @@ define([
                 });
             }
         }
+
+        // 重新计算价格（指导价）
+        $scope.refreshRetailPrice = function (cartObj) {
+            var cartIdVal = 0;
+            if (cartObj != undefined && cartObj != null) {
+                cartIdVal = cartObj.value;
+            }
+            _chkProductSel(parseInt(cartIdVal), __refreshRetailPrice);
+
+            function __refreshRetailPrice(cartId, _selProdList) {
+                var msg = "";
+                if (cartId == 0) {
+                    msg = "即将对选中的商品(全店铺)批量重新计算指导售价.";
+                } else {
+                    msg = "即将对选中的商品(" + cartObj.name + ")批量重新计算指导售价.";
+                }
+                if ($scope.vm.masterData.autoApprovePrice == '1') {
+                    msg += "<br>自动同步到最终售价.";
+                } else {
+                    msg += "<br>不同步到最终售价.";
+                }
+
+                confirm(msg).then(function () {
+                    var productIds = [];
+                    if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+                    var property = {'cartId': cartId, '_option': 'refreshRetailPrice', 'productIds': productIds};
+                    property.isSelAll = $scope.vm._selall ? 1 : 0;
+                    $fieldEditService.setProductFields(property).then(function (res) {
+                        if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
+                            alert($translate.instant('TXT_COMMIT_ERROR'));
+                            return;
+                        }
+                        if (res.data.ecd == 1) {
+                            // 未选择商品
+                            alert($translate.instant('未选择商品，请选择后再操作'));
+                            return;
+                        }
+                        $scope.search();
+                        notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                    });
+                });
+            }
+        }
+
     }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];

@@ -51,4 +51,18 @@ public class VmsScanPopupController extends BaseController {
         result.put("finished", vmsOrderInfoService.orderScanFinished(this.getUser(), scanInfoBean));
         return success(result);
     }
+
+    @RequestMapping(POPUP.SCAN.FINISH_SCANNING)
+    public AjaxResponse finishScanning(@RequestBody ScanInfoBean scanInfoBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.finishOrderScanning(this.getUser(), scanInfoBean));
+        return success(result);
+    }
+
+    @RequestMapping(POPUP.SCAN.REVERT_SCANNING)
+    public AjaxResponse revertScanning(@RequestBody ScanInfoBean scanInfoBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.revertScanning(this.getUser(), scanInfoBean));
+        return success(result);
+    }
 }

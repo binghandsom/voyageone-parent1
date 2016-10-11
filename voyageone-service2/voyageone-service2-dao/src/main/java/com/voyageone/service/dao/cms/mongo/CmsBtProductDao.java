@@ -8,7 +8,9 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -17,10 +19,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.OldCmsBtProductModel;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -281,5 +280,25 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             jongoQuery.setParameters(codes);
         }
         return mongoTemplate.find(jongoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
+    }
+
+    /**
+     * 根据类目id找出所有code(检索时带上排序条件)
+     */
+    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId) {
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}}, \"platforms.P%s.pStatus\":'%s'", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+        jongoQuery.setParameters(channelId, catId);
+        jongoQuery.setProjection("{\"common.fields.code\": 1}");
+        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":-1}", cartId)); // 暂定pPublishTime
+
+        List<CmsBtProductModel> products = select(jongoQuery, channelId);
+
+        List<String> codes = new ArrayList<>();
+        if (ListUtils.notNull(products)) {
+            products.forEach(p -> codes.add(p.getCommon().getFields().getCode()));
+        }
+
+        return codes;
     }
 }

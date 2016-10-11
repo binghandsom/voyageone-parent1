@@ -36,7 +36,7 @@ public class VmsShipmentInfoController extends BaseController {
     @RequestMapping(SHIPMENT.SHIPMENT_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> result = new HashMap<>();
-        result.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        result.put("channelConfig", vmsChannelConfigService.getChannelConfig(this.getUser()));
         result.put("shipmentStatusList", vmsShipmentService.getAllStatus());
         return success(result);
     }

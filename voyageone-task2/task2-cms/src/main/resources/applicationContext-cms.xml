@@ -24,6 +24,9 @@
         <!-- 天猫上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadTmJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 天猫官网同购上新 -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadTmTongGouJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
         <!-- 京东上新 -->
         <task:scheduled ref="CmsBuildPlatformProductUploadJdJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -130,7 +133,7 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 1 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 10 * * ?"/>
 
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/1 * * * ?"/>
@@ -147,8 +150,29 @@
         <!-- BCBG Feed 导入 cms2 (每三分钟的第40秒执行) -->
         <task:scheduled ref="Cms2BcbgAnalysisJob" method="run" cron="40 0/3 * * * *"/>
 
+        <!-- 单独向Target发送数据-->
+        <task:scheduled ref="TargetDailyService" method="run" cron="0 0 1,13 * * *"/>
+
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
+
+        <!-- 取所有平台tree和schema（每天早上5点一次） -->
+        <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
+
+        <!--&lt;!&ndash; 独立域名上新xml准备（每分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+
+        <!--&lt;!&ndash; 独立域名上新（每3分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>-->
+
+        <!--&lt;!&ndash; 独立域名类目-产品关系（每5分钟一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>-->
+
+         <!--&lt;!&ndash;独立域名图片上传（每2小时一次） &ndash;&gt;-->
+        <!--<task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>-->
+
+        <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
+        <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 0 3 * * ?"/>
 
     </task:scheduled-tasks>
 

@@ -18,7 +18,7 @@
                                     </div>
                                     <div class="col-sm-8">
                                         <select  multiple chosen class="form-control m-r-xs" ng-model="vm.searchInfo.category"
-                                                 ng-options="cat as cat for cat in vm.searchInfo.category"
+                                                 ng-options="cat as cat for cat in vm.searchInfo.category" ng-disabled="true"
                                                  width="'100%'">
                                         </select>
                                     </div>
@@ -106,27 +106,32 @@
                                     <label class="col-sm-3 control-label">{{'TXT_FEED_STATUS' | translate}}</label>
                                     <div class="col-sm-8">
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input  type="checkbox" ng-model="status[9]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_New' | translate}}
                                             </label>&emsp;
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input  type="checkbox" ng-model="status[0]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_WaitingForImport' | translate}}
                                             </label>
                                         </div>
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input  type="checkbox"  ng-model="status[1]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_FinishImport' | translate}}
                                             </label>
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input  type="checkbox" ng-model="status[2]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_Error' | translate}}
                                             </label>
                                         </div>
                                         <div class="row">
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input  type="checkbox"  ng-model="status[3]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_NotImport' | translate}}
                                             </label>&emsp;
-                                            <label class="checkbox-inline c-radio">
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input type="checkbox" ng-model="status[8]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_DateError' | translate}}
+                                            </label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="checkbox-inline c-checkbox">
+                                                <input  type="checkbox"  ng-model="status[7]"><span class="fa fa-check"></span> {{'TXT_FeedStatus_BrandBlock' | translate}}
                                             </label>
                                         </div>
                                     </div>

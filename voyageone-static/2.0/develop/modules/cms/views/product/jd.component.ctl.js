@@ -44,6 +44,7 @@ define([
                 scope.focusError = focusError;
                 scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
+                scope.refreshPrice = refreshPrice;
 
                 /**
                  * 获取京东页面初始化数据
@@ -69,21 +70,26 @@ define([
                         cartId: scope.cartInfo.value,
                         prodId: scope.productInfo.productId
                     }).then(function (resp) {
-                        scope.vm.mastData = resp.data.mastData;
-                        scope.vm.platform = resp.data.platform;
+                        var mastData,
+                            platform;
 
-                        if (scope.vm.platform) {
-                            scope.vm.status = scope.vm.platform.status == null ? scope.vm.status : scope.vm.platform.status;
-                            scope.vm.checkFlag.category = scope.vm.platform.pCatPath == null ? 0 : 1;
-                            scope.vm.platform.pStatus = scope.vm.platform.pStatus == null ? "WaitingPublish" : scope.vm.platform.pStatus;
-                            scope.vm.sellerCats = scope.vm.platform.sellerCats == null ? [] : scope.vm.platform.sellerCats;
-                            scope.vm.platform.pStatus = scope.vm.platform.pPublishMessage != null && scope.vm.platform.pPublishMessage != "" ? "Failed" : scope.vm.platform.pStatus;
+                        scope.vm.mastData = mastData = resp.data.mastData;
+                        scope.vm.platform = platform = resp.data.platform;
 
+                        if (platform) {
+                            scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
+                            scope.vm.checkFlag.category = platform.pCatPath == null ? 0 : 1;
+                            scope.vm.platform.pStatus = platform.pStatus == null ? "WaitingPublish" : platform.pStatus;
+                            scope.vm.sellerCats = platform.sellerCats == null ? [] : platform.sellerCats;
+                            scope.vm.platform.pStatus = platform.pPublishMessage != null && platform.pPublishMessage != "" ? "Failed" : platform.pStatus;
                         }
 
-                        _.each(scope.vm.mastData.skus, function (mSku) {
+                        _.each(mastData.skus, function (mSku) {
                             scope.vm.skuTemp[mSku.skuCode] = mSku;
                         });
+
+                        if (platform.schemaFields && platform.schemaFields.product)
+                            initBrand(platform.schemaFields.product, platform.pBrandId);
 
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
@@ -213,15 +219,18 @@ define([
                  */
                 function choseBrand(openPlatformMappingSetting) {
 
-                    var mainBrand = scope.productInfo.masterField.brand;
+                    var mainBrand = scope.productInfo.masterField.brand,
+                        platform = scope.vm.platform;
 
                     openPlatformMappingSetting({
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
                         masterName: mainBrand,
-                        pBrandId: scope.vm.platform.pBrandId
+                        pBrandId: platform.pBrandId ? platform.pBrandId : null
                     }).then(function (context) {
-                        scope.vm.platform.pBrandName = context.cmsBrand;
+                        scope.vm.platform.pBrandName = context.pBrand;
+                        if (platform.schemaFields && platform.schemaFields.product)
+                            initBrand(platform.schemaFields.product, context.brandId);
                     });
 
                 }
@@ -243,15 +252,10 @@ define([
                 }
 
                 /**
-                 * 更新操作
+                 * @description 更新操作
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
                 function saveProduct(mark) {
-
-                    if (mark == "temporary") {
-                        callSave("temporary");
-                        return;
-                    }
 
                     if (mark == "ready") {
                         if (!validSchema()) {
@@ -265,11 +269,6 @@ define([
                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                     }
 
-                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
-                        alert("请先确认是否在后台申请过相应品牌");
-                        return;
-                    }
-
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
@@ -281,7 +280,14 @@ define([
                             break;
                     }
 
-                    if ((scope.vm.status == "Ready" || scope.vm.status == "Approved") && !checkSkuSale()) {
+                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null && mark != "temporary") {
+                        var masterBrand = scope.productInfo.masterField.brand;
+                        scope.vm.status = scope.vm.preStatus;
+                        alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
+                        return;
+                    }
+
+                    if ((scope.vm.status == "Ready" || scope.vm.status == "Approved") && !checkSkuSale() && mark != "temporary") {
                         scope.vm.status = scope.vm.preStatus;
                         alert("请至少选择一个sku进行发布");
                         return;
@@ -293,13 +299,20 @@ define([
                     else
                         scope.vm.platform.pAttributeStatus = "0";
 
-                    scope.vm.platform.status = scope.vm.status;
+                    scope.vm.platform.status = mark == "temporary" ? "Pending" : scope.vm.status;
                     scope.vm.platform.sellerCats = scope.vm.sellerCats;
                     scope.vm.platform.cartId = +scope.cartInfo.value;
 
                     _.map(scope.vm.platform.skus, function (item) {
                         item.property = item.property == null ? "OTHER" : item.property;
                     });
+
+                    if (mark == "temporary") {
+                        //暂存状态都为 Pending
+                        scope.vm.status = "Pending";
+                        callSave("temporary");
+                        return;
+                    }
 
                     if (scope.vm.status == "Approved") {
 
@@ -383,16 +396,13 @@ define([
                 }
 
                 /**
-                 *
-                 *
-                 *
-                 *
                  * 右侧导航栏
-                 * @param index div的index
+                 * @param area div的index
                  * @param speed 导航速度 ms为单位
                  */
                 function pageAnchor(area, speed) {
                     var offsetTop = 0;
+
                     if (area != 'master') {
                         offsetTop = element.find("#" + area).offset().top;
                     }
@@ -431,6 +441,64 @@ define([
                         firstError.focus();
                         firstError.addClass("focus-error");
                     }
+                }
+
+                /**当shema的品牌为空时，设置平台共通的品牌*/
+                function initBrand(product, brandId) {
+
+                    if (!product)
+                        return;
+
+                    if (scope.cartInfo.value != 23)
+                        return;
+
+                    var brandField = searchField("品牌", product);
+
+                    if (!brandField)
+                        return;
+
+                    if (!brandField.value.value)
+                        brandField.value.value = brandId;
+                }
+
+                /**全schema中通过name递归查找field*/
+                function searchField(fieldName, schema) {
+
+                    var result = null;
+
+                    _.find(schema, function (field) {
+
+                        if (field.name === fieldName) {
+                            result = field;
+                            return true;
+                        }
+
+                        if (field.fields && field.fields.length) {
+                            result = searchField(fieldName, field.fields);
+                            if (result)
+                                return true;
+                        }
+
+                        return false;
+                    });
+
+                    return result;
+                }
+
+                /**sku价格刷新*/
+                function refreshPrice() {
+                    confirm("您是否确认要刷新sku价格").then(function () {
+                        productDetailService.updateSkuPrice({
+                            cartId: scope.cartInfo.value,
+                            prodId: scope.productInfo.productId,
+                            platform: scope.vm.platform
+                        }).then(function () {
+                            alert("TXT_MSG_UPDATE_SUCCESS");
+                        }, function (res) {
+                            alert(res.message);
+                        });
+                    });
+
                 }
 
             }

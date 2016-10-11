@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,4 +23,22 @@ public class GetPlatformCategoryTreesServiceTest {
         getPlatformCategoryTreesService.startup();
 
     }
+
+    @Test
+    public void testDoSetPlatformCategoryTm() throws Exception {
+
+        ShopBean shopProp = new ShopBean();
+        shopProp.setOrder_channel_id("010");
+        shopProp.setCart_id(String.valueOf(30));
+        shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopProp.setAppKey("9999");
+        shopProp.setAppSecret("9999");
+        shopProp.setSessionKey("99999");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shopProp.setPlatform_id("1");
+
+        getPlatformCategoryTreesService.doSetPlatformCategoryTm(shopProp);
+
+    }
+
 }

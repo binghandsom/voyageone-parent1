@@ -6,7 +6,7 @@ import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ import java.util.Map;
  * @version 2.0.0, 16/3/3
  */
 @Service
-public final class CmsFeedCategoriesService extends BaseAppService {
+public final class CmsFeedCategoriesService extends BaseViewService {
 
     @Autowired
     private FeedCategoryTreeService feedCategoryTreeService;

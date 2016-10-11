@@ -11,6 +11,8 @@ define(function (require) {
   require('/shared/ng/directives/message.directive.js');
   require('/shared/ng/directives/vpagination.directive.js');
   require('/shared/ng/directives/vvalidator.directive.js');
+  require('/shared/ng/directives/tree.directive.js');
+  require('/shared/ng/directives/leaf.directive.js');
   require('/shared/ng/factories/dialogs.factory.js');
   require('/shared/ng/factories/interceptor.factory.js');
   require('/shared/ng/factories/notify.factory.js');

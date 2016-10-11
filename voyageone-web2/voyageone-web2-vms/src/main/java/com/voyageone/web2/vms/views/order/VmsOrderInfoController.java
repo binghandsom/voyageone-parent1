@@ -1,8 +1,8 @@
 package com.voyageone.web2.vms.views.order;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfoBean;
 import com.voyageone.service.bean.vms.order.PlatformSubOrderInfoBean;
 import com.voyageone.service.bean.vms.order.SubOrderInfoBean;
@@ -46,7 +46,7 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.INIT)
     public AjaxResponse init() {
         Map<String, Object> initialInfo = new HashMap<>();
-        initialInfo.put("channelConfigs", vmsChannelConfigService.getChannelConfigs(this.getUser()));
+        initialInfo.put("channelConfig", vmsChannelConfigService.getChannelConfig(this.getUser()));
         initialInfo.put("orderStatusList", vmsOrderInfoService.getAllOrderStatusesList());
         initialInfo.put("shipmentStatusList", shipmentService.getAllStatus());
         initialInfo.put("currentShipment", shipmentService.getCurrentShipment(this.getUser()));
@@ -58,7 +58,8 @@ public class VmsOrderInfoController extends BaseController {
         Map<String, Object> orderInfo = new HashMap<>();
         Date date = new Date();
         orderInfo.put("orderInfo", vmsOrderInfoService.getOrderInfo(this.getUser(), orderSearchInfoBean));
-        $debug("this action takes totally " + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
+        $debug("this action: /vms/order/order_info/search takes totally "
+                + String.valueOf(new Date().getTime() - date.getTime()) + " milliseconds.");
         return success(orderInfo);
     }
 
@@ -80,9 +81,23 @@ public class VmsOrderInfoController extends BaseController {
     @RequestMapping(ORDER.ORDER_INFO.DOWNLOAD_PICKING_LIST)
     public ResponseEntity<byte[]> downloadPickingList(@RequestParam Map<String, Object> downloadParams) throws
             IOException {
-        DownloadInfoBean downloadInfoBean = new DownloadInfoBean();
-        downloadInfoBean.setOrderType(downloadParams.get("orderType").toString());
+        OrderSearchInfoBean orderSearchInfoBean = JacksonUtil.json2Bean(downloadParams.get("searchInfo").toString(),
+                OrderSearchInfoBean.class);
         return genResponseEntityFromBytes(PICKING_LIST + new Date().getTime() + XLSX,
-                vmsOrderInfoService.getExcelBytes(this.getUser(), downloadInfoBean));
+                vmsOrderInfoService.getExcelBytes(this.getUser(), orderSearchInfoBean));
+    }
+
+    @RequestMapping(ORDER.ORDER_INFO.REOPEN_ORDER)
+    public AjaxResponse reopenOrder(@RequestBody PlatformSubOrderInfoBean orderInfoBean) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.reopenOrder(this.getUser(), orderInfoBean));
+        return success(result);
+    }
+
+    @RequestMapping(ORDER.ORDER_INFO.REOPEN_SKU)
+    public AjaxResponse reopenSku(@RequestBody SubOrderInfoBean item) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("success", vmsOrderInfoService.reopenSku(this.getUser(), item));
+        return success(result);
     }
 }

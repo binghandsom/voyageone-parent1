@@ -53,6 +53,9 @@ define([
                     exportSearch();
                     if ($routeParams.type == "1" || $sessionStorage.feedSearch) {
                         $scope.vm.searchInfo = $sessionStorage.feedSearch;
+                         if($sessionStorage.feedSearch.status!=undefined) {
+                             $scope.status[$sessionStorage.feedSearch.status] = true;
+                         }
                         search();
                         if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                     }

@@ -8,13 +8,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtJmPromotionImportTaskServiceTest {
     @Autowired
     CmsBtJmPromotionImportTask3Service service;
 
     @Test
     public  void  test() throws Exception {
-        service.importFile(34,"/usr/web/contents/cms/jumei_sx/import");
+        service.importFile(35,"/usr/web/contents/cms/jumei_sx/import");
     }
 }

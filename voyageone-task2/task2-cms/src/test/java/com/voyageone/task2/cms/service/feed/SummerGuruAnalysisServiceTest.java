@@ -8,6 +8,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -24,6 +25,12 @@ public class SummerGuruAnalysisServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        summerGuruAnalysisService.onStartup(new ArrayList<TaskControlBean>());
+
+        List<TaskControlBean> parmas = new ArrayList<TaskControlBean>();
+        TaskControlBean parma = new TaskControlBean();
+        parma.setCfg_name("feed_full_copy_temp");
+        parma.setCfg_val1("1");
+        parmas.add(parma);
+        summerGuruAnalysisService.onStartup(parmas);
     }
 }

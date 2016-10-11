@@ -3,7 +3,7 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -22,7 +22,7 @@ import java.util.*;
  * @version 2.0.0
  */
 @Service
-public class MenuService extends BaseAppService {
+public class MenuService extends BaseViewService {
 
     @Autowired
     private UserRolePropertyDao userRolePropertyDao;
@@ -126,16 +126,16 @@ public class MenuService extends BaseAppService {
         Map<String, String> feedFileUpload = new HashMap<>();
         feedFileUpload.put("name", "Product Feed Upload");
         feedFileUpload.put("url", "#/feed/product_feed_upload");
+        feedMenuItems.add(feedFileUpload);
         // Feed->Feed Import Result
         Map<String, String> feedImportResult = new HashMap<>();
         feedImportResult.put("name", "Product Feed Import Status");
         feedImportResult.put("url", "#/feed/product_feed_import_status");
+        feedMenuItems.add(feedImportResult);
         // Feed->Feed Info Search
         Map<String, String> feedInfoSearch = new HashMap<>();
         feedInfoSearch.put("name", "Product Feed Search");
         feedInfoSearch.put("url", "#/feed/product_feed_search");
-        feedMenuItems.add(feedFileUpload);
-        feedMenuItems.add(feedImportResult);
         feedMenuItems.add(feedInfoSearch);
         feedMenu.put("items", feedMenuItems);
 
@@ -168,9 +168,14 @@ public class MenuService extends BaseAppService {
         List<Map<String, String>> inventoryMenuItems = new ArrayList<>();
         // Inventory->Inventory Upload
         Map<String, String> inventoryFileUpload = new HashMap<>();
-        inventoryFileUpload.put("name", "Inventory Feed Upload");
+        inventoryFileUpload.put("name", "Inventory&Price Feed Upload");
         inventoryFileUpload.put("url", "#/inventory/inventory_feed_upload");
         inventoryMenuItems.add(inventoryFileUpload);
+        // Inventory->Inventory Import Status
+        Map<String, String> inventoryImportStatus = new HashMap<>();
+        inventoryImportStatus.put("name", "Inventory&Price Feed Import Status");
+        inventoryImportStatus.put("url", "#/inventory/inventory_import_status");
+        inventoryMenuItems.add(inventoryImportStatus);
         inventoryMenu.put("items", inventoryMenuItems);
 
         // Shipment
@@ -184,12 +189,25 @@ public class MenuService extends BaseAppService {
         shipmentMenuItems.add(shipmentInfo);
         shipmentMenu.put("items", shipmentMenuItems);
 
+        // Settings
+        Map<String, Object> settingsMenu = new HashMap<>();
+        settingsMenu.put("name", "Settings");
+        List<Map<String, String>> settingsItems = new ArrayList<>();
+        // Settings->Vendor Settings
+        Map<String, String> vendorSettings = new HashMap<>();
+        vendorSettings.put("name", "Vendor Settings");
+        vendorSettings.put("url", "#/settings/vendor_settings");
+        settingsItems.add(vendorSettings);
+        settingsMenu.put("items", settingsItems);
+
+
         // TODO 在这里加Menu权限控制
         menuList.add(feedMenu);
         menuList.add(orderMenu);
         menuList.add(reportsMenu);
         menuList.add(inventoryMenu);
         menuList.add(shipmentMenu);
+        menuList.add(settingsMenu);
 
         return menuList;
     }

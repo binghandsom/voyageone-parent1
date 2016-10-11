@@ -368,16 +368,19 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
                         continue;
                     }
                     // added by morse.lu 2016/08/17 start
-                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
-                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
-                        if (complexValue != null) {
-                            Field oldField = complexValue.getValueField(fieldId);
-                            if (oldField != null) {
-                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
-                            }
-                        }
-                        continue;
-                    }
+                    // deleted by morse.lu 2016/10/08 start
+                    // 暂时不填，当作新的sku上传
+//                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
+//                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+//                        if (complexValue != null) {
+//                            Field oldField = complexValue.getValueField(fieldId);
+//                            if (oldField != null) {
+//                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+//                            }
+//                        }
+//                        continue;
+//                    }
+                    // deleted by morse.lu 2016/10/08 end
                     if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
                         ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
                         if (complexValue != null) {
@@ -529,7 +532,8 @@ public class TmallGjSkuFieldBuilderImpl6 extends AbstractSkuFieldBuilder {
             String sizeId = customSizeNameIdMap.get(skuSize);
             if (sizeId == null) {
                 $error("No customSize found for size:" + skuSize);
-                return null;
+//                return null;
+                throw new BusinessException(String.format("[%s]的尺码[%s]对应尺码扩展(脚长等属性)未设定!", skuExtend_sizeField.getName(), skuSize));
             }
             Map<String, String> customSizePropMap = allCustomSizePropMap.get(sizeId);
 

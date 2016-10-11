@@ -6,7 +6,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.bean.vms.order.*;
 import com.voyageone.service.bean.vms.shipment.ShipmentBean;
 import com.voyageone.service.impl.BaseService;
@@ -17,7 +16,6 @@ import com.voyageone.service.model.vms.VmsBtShipmentModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.vms.bean.SortParamBean;
 import com.voyageone.web2.vms.bean.VmsChannelSettingBean;
-import com.voyageone.web2.vms.bean.order.DownloadInfoBean;
 import com.voyageone.web2.vms.bean.order.OrderSearchInfoBean;
 import com.voyageone.web2.vms.bean.order.ScanInfoBean;
 import com.voyageone.web2.vms.views.common.VmsChannelConfigService;
@@ -91,10 +89,15 @@ public class VmsOrderInfoService extends BaseService {
      */
     public OrderInfoBean getOrderInfo(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean) {
         SortParamBean sortParamBean = new SortParamBean();
-        sortParamBean.setColumnName(CONSOLIDATION_ORDER_TIME);
-        sortParamBean.setDirection((null != orderSearchInfoBean.getStatus()
-                && orderSearchInfoBean.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
-                Order.Direction.ASC : Order.Direction.DESC));
+        if (null == orderSearchInfoBean.getSortParamBean()) {
+            sortParamBean.setColumnName(CONSOLIDATION_ORDER_TIME);
+            sortParamBean.setDirection((null != orderSearchInfoBean.getStatus()
+                    && orderSearchInfoBean.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN) ?
+                    Order.Direction.ASC : Order.Direction.DESC));
+        } else {
+            sortParamBean.setColumnName(orderSearchInfoBean.getSortParamBean().getColumnName());
+            sortParamBean.setDirection(orderSearchInfoBean.getSortParamBean().getDirection());
+        }
         OrderInfoBean orderInfoBean = new OrderInfoBean();
         orderInfoBean.setTotal(this.getTotalOrderNum(user, orderSearchInfoBean, sortParamBean));
         orderInfoBean.setOrderList(this.getOrders(user, orderSearchInfoBean, sortParamBean));
@@ -161,28 +164,33 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 生成下载Excel拣货单
      *
-     * @param user             当前用户
-     * @param downloadInfoBean 下载信息(排序信息)
+     * @param user                当前用户
+     * @param orderSearchInfoBean 搜索信息
      * @return 拣货单Excel
      * @throws IOException
      */
-    public byte[] getExcelBytes(UserSessionBean user, DownloadInfoBean downloadInfoBean) throws IOException {
+    public byte[] getExcelBytes(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean) throws IOException {
 
+        List<VmsBtOrderDetailModel> orderDetailList;
         // 搜索条件
-        Map<String, Object> selectParams = new HashMap<String, Object>() {{
-            put("channelId", user.getSelChannel().getId());
-            put("status", STATUS_VALUE.PRODUCT_STATUS.OPEN);
-        }};
+        Map<String, Object> selectParams = new HashMap<>();
+        selectParams.put("channelId", user.getSelChannelId());
+        selectParams.put("status", orderSearchInfoBean.getStatus());
+        selectParams.put("orderDateFrom", orderSearchInfoBean.getOrderDateFrom());
+        selectParams.put("orderDateTo", orderSearchInfoBean.getOrderDateTo());
 
-        $debug("Getting pickingList data...");
-        Map<String, Object> sortedSelectParams = MySqlPageHelper.build(selectParams)
-                .addSort(downloadInfoBean.getOrderType(), Order.Direction.ASC)
-                .toMap();
+        if (null != orderSearchInfoBean.getSortParamBean()) {
+            selectParams = MySqlPageHelper.build(selectParams)
+                    .addSort(orderSearchInfoBean.getSortParamBean().getColumnName(),
+                            orderSearchInfoBean.getSortParamBean().getDirection())
+                    .toMap();
+        } else {
+            selectParams = MySqlPageHelper.build(selectParams)
+                    .addSort("client_sku", Order.Direction.ASC)
+                    .toMap();
+        }
 
-        // 获取订单信息
-        List<VmsBtOrderDetailModel> orderDetailList =
-                orderDetailService.select(sortedSelectParams);
-        $debug("pickingList data: " + orderDetailList.size() + " in total.");
+        orderDetailList = orderDetailService.selectOrderList(selectParams);
 
         // 生成Excel
         $debug("Creating Excel...");
@@ -225,12 +233,6 @@ public class VmsOrderInfoService extends BaseService {
         int descriptionCellNumber = 1;
         int orderIdCellNumber = 2;
 
-        // 设置内容
-        if (PICKING_LIST_ORDER_TYPE.ORDER.equals(downloadInfoBean.getOrderType())) {
-            skuCellNumber = 2;
-            orderIdCellNumber = 0;
-        }
-
         Cell titleRowCell0 = titleRow.createCell(skuCellNumber);
         titleRowCell0.setCellValue("SKU");
         titleRowCell0.setCellStyle(titleRowCellStyle);
@@ -242,6 +244,15 @@ public class VmsOrderInfoService extends BaseService {
         Cell titleRowCell2 = titleRow.createCell(orderIdCellNumber);
         titleRowCell2.setCellValue("OrderID");
         titleRowCell2.setCellStyle(titleRowCellStyle);
+        // 动态属性
+        List<String> attributes = vmsChannelConfigService.getChannelConfig(user).getAdditionalAttributes();
+        if (attributes != null && attributes.size() > 0) {
+            for(int i = 1;i <= attributes.size();i++) {
+                Cell titleRowCellAttribute = titleRow.createCell(orderIdCellNumber + i);
+                titleRowCellAttribute.setCellValue(attributes.get(i - 1));
+                titleRowCellAttribute.setCellStyle(titleRowCellStyle);
+            }
+        }
 
         // 设置数据行
         for (int i = 0; i < orderDetailList.size(); i++) {
@@ -258,12 +269,31 @@ public class VmsOrderInfoService extends BaseService {
             Cell orderIdCell = dataRow.createCell(orderIdCellNumber);
             orderIdCell.setCellValue(vmsBtOrderDetailModel.getConsolidationOrderId());
             orderIdCell.setCellStyle(defaultRowCellStyle);
+
+            if (attributes != null && attributes.size() > 0) {
+                for(int j = 1;j <= attributes.size();j++) {
+                    Cell attributeCell = dataRow.createCell(orderIdCellNumber + j);
+                    if (j == 1) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute1() == null ? "" : vmsBtOrderDetailModel.getAttribute1());
+                    } else if (j == 2) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute2() == null ? "" : vmsBtOrderDetailModel.getAttribute2());
+                    } else if (j == 3) {
+                        attributeCell.setCellValue(vmsBtOrderDetailModel.getAttribute3() == null ? "" : vmsBtOrderDetailModel.getAttribute3());
+                    }
+                    attributeCell.setCellStyle(defaultRowCellStyle);
+                }
+            }
         }
 
         // 整理宽度
         sheet.autoSizeColumn(skuCellNumber);
         sheet.autoSizeColumn(descriptionCellNumber);
         sheet.autoSizeColumn(orderIdCellNumber);
+        if (attributes != null && attributes.size() > 0) {
+            for(int i = 1;i <= attributes.size();i++) {
+                sheet.autoSizeColumn(orderIdCellNumber + i);
+            }
+        }
 
         // 设定首行冻结
         sheet.createFreezePane(0, 1, 0, 1);
@@ -293,7 +323,7 @@ public class VmsOrderInfoService extends BaseService {
         /*
          * 根据渠道配置设置
          */
-        switch (vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType()) {
+        switch (vmsChannelConfigService.getChannelConfig(user).getVendorOperateType()) {
 
             // sku级的订单获取
             case STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU: {
@@ -319,7 +349,7 @@ public class VmsOrderInfoService extends BaseService {
             orderSearchParamsWithLimitAndSort) {
 
         // 读取用户配置
-        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
+        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfig(user);
 
         return orderDetailService.selectPlatformOrderIdList(orderSearchParamsWithLimitAndSort).parallelStream()
                 .map(consolidationOrderId -> {
@@ -361,7 +391,7 @@ public class VmsOrderInfoService extends BaseService {
      */
     private List<AbstractSubOrderInfoBean> getSkuOrderInfoBean(UserSessionBean user,
                                                                Map<String, Object> orderSearchParamsWithLimitAndSort) {
-        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfigs(user);
+        VmsChannelSettingBean channelConfigs = vmsChannelConfigService.getChannelConfig(user);
 
         List<VmsBtOrderDetailModel> vmsBtOrderDetailModelList = orderDetailService.selectOrderList
                 (orderSearchParamsWithLimitAndSort);
@@ -387,9 +417,9 @@ public class VmsOrderInfoService extends BaseService {
                                                           SortParamBean sortParamBean) {
         Map<String, Object> orderSearchParams;
         try {
-            orderSearchParams = MapUtil.toMap(orderSearchInfoBean);
-        } catch (IllegalAccessException e) {
-            throw new BusinessException("WRONG SEARCH PARAMETERS.", e);
+            orderSearchParams = BeanUtils.toMap(orderSearchInfoBean);
+        } catch (RuntimeException e) {
+            throw new BusinessException("8000037", e);
         }
 
         orderSearchParams.put("channelId", user.getSelChannel().getId());
@@ -413,12 +443,12 @@ public class VmsOrderInfoService extends BaseService {
      * @return 订单总数
      */
     private long getTotalOrderNum(UserSessionBean user, OrderSearchInfoBean orderSearchInfoBean, SortParamBean sortParamBean) {
-        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())) {
             // 平台订单
             Map<String, Object> orderSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfoBean, sortParamBean);
             return orderDetailService.getTotalOrderNum(orderSearchParamsWithLimitAndSort);
-        } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())) {
+        } else if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())) {
             // 大订单sku
             Map<String, Object> skuSearchParamsWithLimitAndSort =
                     organizeOrderSearchParams(user, orderSearchInfoBean, sortParamBean);
@@ -554,14 +584,67 @@ public class VmsOrderInfoService extends BaseService {
                         && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
                         && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
                 .count();
+        return scannedCount == currentOrderInfo.size();
+    }
 
-        // 全部扫描完毕 则更新状态为packaged
-        if (scannedCount == currentOrderInfo.size()) {
-            orderDetailService.updateOrderStatus(user.getSelChannelId(), orderId, STATUS_VALUE.PRODUCT_STATUS
-                    .PACKAGE, user.getUserName());
-            return true;
-        }
-        return false;
+    /**
+     * 确认打包订单
+     *
+     * @param user         当前用户
+     * @param scanInfoBean 扫描条件
+     * @return 更新条数
+     */
+    public int finishOrderScanning(UserSessionBean user, ScanInfoBean scanInfoBean) {
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String orderId = scanInfoBean.getConsolidationOrderId();
+
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
+        }};
+
+        // 检查当前订单是否全部扫描完毕
+        List<VmsBtOrderDetailModel> currentOrderInfo = orderDetailService.select(checkParams);
+        long scannedCount = currentOrderInfo.stream()
+                .filter(vmsBtOrderDetailModel -> null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
+                        && vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
+                .count();
+        if (scannedCount == currentOrderInfo.size())
+            return orderDetailService.updateOrderStatus(user.getSelChannelId(), scanInfoBean.getConsolidationOrderId()
+                    , STATUS_VALUE.PRODUCT_STATUS.PACKAGE, user.getUserName());
+        throw new BusinessException("8000038");
+    }
+
+    /**
+     * 取消扫描
+     *
+     * @param user         当前用户
+     * @param scanInfoBean 扫描信息
+     * @return 更新条数
+     */
+    public int revertScanning(UserSessionBean user, ScanInfoBean scanInfoBean) {
+        // TODO: 16-8-29 检查当前订单状态 vantis
+        ShipmentBean shipment = scanInfoBean.getShipment();
+        String orderId = scanInfoBean.getConsolidationOrderId();
+        // 检查订单状态
+        Map<String, Object> checkParams = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannelId());
+            put("consolidationOrderId", scanInfoBean.getConsolidationOrderId());
+        }};
+
+        // 检查当前订单是否全部扫描完毕
+        List<VmsBtOrderDetailModel> currentOrderInfo = orderDetailService.select(checkParams);
+        long scannedCount = currentOrderInfo.stream()
+                .filter(vmsBtOrderDetailModel -> null != vmsBtOrderDetailModel.getShipmentId()
+                        && vmsBtOrderDetailModel.getShipmentId().equals(shipment.getId())
+                        && !vmsBtOrderDetailModel.getStatus().equals(STATUS_VALUE.PRODUCT_STATUS.OPEN))
+                .count();
+        if (scannedCount == 0)
+            return orderDetailService.removeSkuOrderId(user.getSelChannelId(), orderId, user.getUserName());
+        // TODO: 16-8-29 取消订单内sku的扫描状态 vantis
+        throw new BusinessException("8000039");
     }
 
     /**
@@ -601,7 +684,7 @@ public class VmsOrderInfoService extends BaseService {
             put("shipmentId", shipment.getId());
         }};
 
-        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfigs(user)
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(vmsChannelConfigService.getChannelConfig(user)
                 .getVendorOperateType()))
             params = MySqlPageHelper.build(params)
                     .addSort("containerizing_time", Order.Direction.DESC)
@@ -632,10 +715,11 @@ public class VmsOrderInfoService extends BaseService {
         // 确认shipment状态
         VmsBtShipmentModel shipment = shipmentService.select(scanInfoBean.getShipment().getId());
         if (!user.getSelChannelId().equals(shipment.getChannelId())) throw new BusinessException("8000030");
-        if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
+        // SKU级别扫描的情况下，加上即使状态是shipped的shipment也能够继续扫描
+        // if (!STATUS_VALUE.SHIPMENT_STATUS.OPEN.equals(shipment.getStatus())) throw new BusinessException(("8000025"));
 
         return orderDetailService.scanInSku(user.getSelChannelId(), user.getUserName(),
-                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId());
+                scanInfoBean.getBarcode(), scanInfoBean.getShipment().getId(), shipment.getStatus());
     }
 
     /**
@@ -670,7 +754,7 @@ public class VmsOrderInfoService extends BaseService {
     /**
      * 统计已经扫描好的订单数
      *
-     * @param user 当前用户
+     * @param user       当前用户
      * @param shipmentId 当前shipment的ID
      * @return 统计订单数
      */
@@ -687,4 +771,64 @@ public class VmsOrderInfoService extends BaseService {
                 .distinct()
                 .count();
     }
+
+    /**
+     * 重新打开订单
+     *
+     * @param user 当前用户
+     * @param item 被取消订单
+     * @return 重新打开的条目数
+     */
+    public int reopenOrder(UserSessionBean user, PlatformSubOrderInfoBean item) {
+
+        // 检查订单状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("consolidationOrderId", item.getConsolidationOrderId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam)
+                .stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000009");
+
+        // 检测通过 进行状态变更
+        orderDetailService.clearOrderCancelInfo(user.getSelChannelId(), item.getConsolidationOrderId());
+        return orderDetailService.updateOrderStatus(user.getSelChannelId(), item.getConsolidationOrderId(), STATUS_VALUE
+                .PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
+    /**
+     * 重新打开sku
+     *
+     * @param user 当前用户
+     * @param item 需要取消的对象
+     * @return 重新打开的条数
+     */
+    public int reopenSku(UserSessionBean user, SubOrderInfoBean item) {
+
+        // 检查sku状态
+        Map<String, Object> checkParam = new HashMap<String, Object>() {{
+            put("channelId", user.getSelChannel().getId());
+            put("reservationId", item.getReservationId());
+        }};
+
+        List<VmsBtOrderDetailModel> invalidOrderModelList = orderDetailService.selectOrderList(checkParam).stream()
+                .filter(vmsBtOrderDetailModel -> !vmsBtOrderDetailModel.getStatus()
+                        .equals(STATUS_VALUE.PRODUCT_STATUS.CANCEL))
+                .collect(Collectors.toList());
+
+        if (null != invalidOrderModelList && invalidOrderModelList.size() > 0)
+            throw new BusinessException("8000027");
+
+        // 检测通过 进行状态变更
+        orderDetailService.clearSkuCancelInfo(user.getSelChannelId(), item.getReservationId());
+        return orderDetailService.updateReservationStatus(user.getSelChannelId(), item.getReservationId(),
+                STATUS_VALUE.PRODUCT_STATUS.OPEN, user.getUserName());
+    }
+
 }

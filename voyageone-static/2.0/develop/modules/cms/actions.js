@@ -113,7 +113,8 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     priceConfirm:"priceConfirm",
-                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
+                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
+                    updateSkuPrice:"updateSkuPrice"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -588,6 +589,11 @@ define(function () {
                     cache: CACHE.LOCAL,
                     cacheWith: [KEY.CHANNEL]
                 }
+            },
+            "blackBrandService":{
+                root:"/cms/channel/black_brand/",
+                list:"searchBlackBrand",
+                update:"updateBlackBrand"
             }
         }
     };

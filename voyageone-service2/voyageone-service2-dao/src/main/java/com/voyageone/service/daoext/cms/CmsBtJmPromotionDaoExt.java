@@ -23,5 +23,7 @@ public interface CmsBtJmPromotionDaoExt {
 
     List<MapModel> selectMaxJmHashId(String channelId);
 
+    List<MapModel> selectJmProductHashId(String channelId);
+
     int updateSumbrandById(int id);
 }

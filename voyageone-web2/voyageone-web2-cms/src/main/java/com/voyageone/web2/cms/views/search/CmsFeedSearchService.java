@@ -15,7 +15,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -24,14 +24,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author JiangJusheng
  * @version 2.0.0, 2016/04/06
  */
 @Service
-public class CmsFeedSearchService extends BaseAppService {
+public class CmsFeedSearchService extends BaseViewService {
 
     @Autowired
     private FeedInfoService feedInfoService;
@@ -128,9 +127,9 @@ public class CmsFeedSearchService extends BaseAppService {
 
         Map<String,Object> paraStatusMap = new HashMap<>(1);
         if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+            paraStatusMap.put("$nin", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
         }
         paraMap2.put("updFlg",paraStatusMap);
 
@@ -150,14 +149,17 @@ public class CmsFeedSearchService extends BaseAppService {
             searchStatus=(List<Integer>)searchValue.get("status");
         }else{
             if (status == CmsConstants.FeedUpdFlgStatus.Pending){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
-                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr)));
+                searchValue.put("ninStatus", new ArrayList<>(Arrays.asList(CmsConstants.FeedUpdFlgStatus.NotIMport,CmsConstants.FeedUpdFlgStatus.Succeed,CmsConstants.FeedUpdFlgStatus.FeedErr,CmsConstants.FeedUpdFlgStatus.FeedBlackList)));
             }
         }
         if(status == CmsConstants.FeedUpdFlgStatus.Pending){
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能导入主数据的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能导入主数据的，请重新选择状态");
             }
         }else if(status == CmsConstants.FeedUpdFlgStatus.NotIMport){
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.Succeed)){
@@ -165,6 +167,9 @@ public class CmsFeedSearchService extends BaseAppService {
             }
             if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedErr)){
                 throw new BusinessException("Feed数据异常错误的数据是不能设为不导入的，请重新选择状态");
+            }
+            if(searchStatus != null && searchStatus.contains(CmsConstants.FeedUpdFlgStatus.FeedBlackList)){
+                throw new BusinessException("Feed品牌黑免单的数据是不能设为不导入的，请重新选择状态");
             }
         }
         String searchQuery = feedInfoService.getSearchQuery(searchValue);

@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -110,8 +111,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
     }
 
     private void writeHead(Workbook book){
-        String productHeadEn[]={"productCode","brand","feedCategory","productNameEn","shortDesEn","longDesEn","model","quantity","materialEn","color","origin","productType","sizeType","buyURL","clientMSRP","clientRetailPrice","clientCost","Images"};
-        String productHeadCn[]={"商品编码","品牌","Feed类目","产品名称英语","简短描述英语","详情描述英语","款号","库存","材质英语","颜色/口味/香型等","产地","产品分类","适用人群","品牌方商品地址","海外官方价格","海外指导价格","海外成本价格","图片地址"};
+        String productHeadEn[]={"productCode","brand","feedCategory","productNameEn","shortDesEn","longDesEn","model","quantity","materialEn","color","origin","productType","sizeType","buyURL","clientMSRP","clientRetailPrice","clientCost","Images","Error Message"};
+        String productHeadCn[]={"商品编码","品牌","Feed类目","产品名称英语","简短描述英语","详情描述英语","款号","库存","材质英语","颜色/口味/香型等","产地","产品分类","适用人群","品牌方商品地址","海外官方价格","海外指导价格","海外成本价格","图片地址","异常消息"};
 
         Sheet sheet = book.createSheet("product");
         Row rowEn = sheet.createRow(0);
@@ -139,8 +140,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
             ExcelUtils.setCellValue(rowCn,i,productHeadCn[i],cellStyleCn);
         }
 
-        String skuHeadEn[]={"sku","barcode","clientSKU","brand","feedCategory","productNameEn","shortDesEn","code","model","quantity","materialEn","color","origin","productType","sizeType","buyURL","clientMSRP","clientRetailPrice","clientCost"};
-        String skuHeadCn[]={"sku","条形码","客户原始SKU","品牌","Feed类目","产品名称英语","简短描述英语","商品编码","款号","库存","材质英语","颜色/口味/香型等","产地","产品分类","适用人群","品牌方商品地址","海外官方价格","海外指导价格","海外成本价格"};
+        String skuHeadEn[]={"sku","barcode","clientSKU","brand","feedCategory","productNameEn","shortDesEn","code","model","quantity","materialEn","color","origin","productType","sizeType","buyURL","clientMSRP","clientRetailPrice","clientCost","Error Message"};
+        String skuHeadCn[]={"sku","条形码","客户原始SKU","品牌","Feed类目","产品名称英语","简短描述英语","商品编码","款号","库存","材质英语","颜色/口味/香型等","产地","产品分类","适用人群","品牌方商品地址","海外官方价格","海外指导价格","海外成本价格","异常消息"};
 
         sheet = book.createSheet("sku");
         rowEn = sheet.createRow(0);
@@ -187,7 +188,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
             ExcelUtils.setCellValue(row, cellIndex++, price.get("ClientNet"), unlock);
 
             String images = item.getImage().stream().collect(Collectors.joining("\n"));
-            ExcelUtils.setCellValue(row, cellIndex, images, unlock);
+            ExcelUtils.setCellValue(row, cellIndex++, images, unlock);
+            ExcelUtils.setCellValue(row, cellIndex, item.getUpdMessage(), unlock);
 
             rowIndex++;
         }
@@ -226,7 +228,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
                 ExcelUtils.setCellValue(row, cellIndex++, cmsBtFeedInfoModel.getClientProductURL(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getPriceClientMsrp(), unlock);
                 ExcelUtils.setCellValue(row, cellIndex++, item.getPriceClientRetail(), unlock);
-                ExcelUtils.setCellValue(row, cellIndex, item.getPriceNet(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex++, item.getPriceNet(), unlock);
+                ExcelUtils.setCellValue(row, cellIndex, item.getErrInfo(), unlock);
                 rowIndex++;
             }
         }

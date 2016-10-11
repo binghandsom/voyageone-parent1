@@ -5,13 +5,15 @@ import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * 对access_token进行检测
+ * 对access_token进行认证
  *
  * @author chuanyu.liang
  * @version 2.0.0, 16/8/14
@@ -19,21 +21,33 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 class AccessTokenInterceptor {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private OAuthService oAuthService;
 
     boolean preHandle(HttpServletRequest request) throws Exception {
 
-        // TODO 开发阶段跳过检查
-        if (true) return true;
+//        // TODO 开发阶段跳过检查
+//        if (true) return true;
+
+        OAuthAccessResourceRequest oauthRequest;
 
         //构建OAuth资源请求
-        OAuthAccessResourceRequest oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
+        try {
+            oauthRequest = new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
+        } catch (Exception ex) {
+            // 如果不存在/过期了，返回未验证错误，需重新验证
+            VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70099;
+            throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
+        }
+
         //获取Access Token
         String accessToken = oauthRequest.getAccessToken();
 
         //验证Access Token
         if (!oAuthService.checkAccessToken(accessToken)) {
+            logger.info("accessToken : " + accessToken + " not found.");
             // 如果不存在/过期了，返回未验证错误，需重新验证
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70099;
             throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());

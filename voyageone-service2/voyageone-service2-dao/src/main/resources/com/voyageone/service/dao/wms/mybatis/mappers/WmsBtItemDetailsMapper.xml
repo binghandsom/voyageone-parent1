@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <!-- 根据client_sku, 获取item details表的数据 -->
+    <select id="wms_bt_item_details_select_by_client_sku" parameterType="HashMap" resultType="com.voyageone.service.bean.wms.ItemDetailsBean">
+      select
+        order_channel_id,
+        sku,
+        product_id,
+        itemcode,
+        size,
+        barcode,
+        is_sale,
+        client_sku,
+        active
+      from  wms_bt_item_details
+      where order_channel_id = #{channelId}
+        and client_sku = #{clientSku};
+  </select>
+
+  <update id="wms_bt_item_details_updateIsSale">
+     UPDATE  `wms_bt_item_details`    SET `is_sale`=#{isSale}  where `client_sku`=#{clientSku} and `order_channel_id`=#{channelId}
+  </update>
+</mapper>

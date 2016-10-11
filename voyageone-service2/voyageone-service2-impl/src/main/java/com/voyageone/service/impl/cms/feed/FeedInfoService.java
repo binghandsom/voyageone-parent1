@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -42,6 +43,10 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
+    public WriteResult updateFeedInfoSkuPrice(String channelId, String sku, Double price){
+        return  cmsBtFeedInfoDao.updateFeedInfoSkuPrice(channelId, sku,price);
+    }
+
     /**
      * getListForVendor
      */
@@ -68,6 +73,13 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
 
+    public List<CmsBtFeedInfoModel> getProductListBySku(String channelId, String sku) {
+        return cmsBtFeedInfoDao.selectProductListBySku(channelId, sku);
+    }
+
+    public CmsBtFeedInfoModel getProductByClientSku(String channelId, String clientSku) {
+        return cmsBtFeedInfoDao.selectProductByClientSku(channelId, clientSku);
+    }
     /**
      * 更新feed的产品信息
      *
@@ -93,10 +105,13 @@ public class FeedInfoService extends BaseService {
     public String getSearchQueryForVendor(Map<String, Object> searchValue) {
         StringBuilder result = new StringBuilder();
 
-        // 获取code
+        // 获取code/sku
         String code = (String) searchValue.get("code");
         if (!StringUtils.isEmpty(code)) {
-            result.append("{").append(MongoUtils.splicingValue("code", code));
+            List<String> orSearch = new ArrayList<>();
+            orSearch.add(MongoUtils.splicingValue("code", code));
+            orSearch.add(MongoUtils.splicingValue("skus.clientSku", code));
+            result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append("},");
         }
 
@@ -108,14 +123,32 @@ public class FeedInfoService extends BaseService {
         }
 
         // 获取category
-        String category = (String) searchValue.get("category");
-        if (!StringUtils.isEmpty(category)) {
-            result.append("{").append(MongoUtils.splicingValue("category", category));
+        List<String> categorys = (List<String>) searchValue.get("searchCats");
+        List<String> searchCategory = new ArrayList<>();
+        for (String category : categorys) {
+            String[] categoryArray = category.split("/");
+            category = "";
+            for (String categoryItem : categoryArray) {
+                // 不等于空的情况下，去掉首尾空格，并替换半角横杠为全角横杠，重新组装一下
+                if (!StringUtils.isEmpty(categoryItem)) {
+                    category += categoryItem.trim().replaceAll("-", "－") + "-";
+                }
+            }
+            // 去掉最后一个分隔符[-]
+            if (!StringUtils.isEmpty(category)) {
+                category = category.substring(0, category.length() - 1);
+                searchCategory.add(MongoUtils.splicingValue("category", replaceRegexReservedChar(category), "$regex"));
+            }
+        }
+        if (searchCategory.size() == 1) {
+            result.append("{").append(searchCategory.get(0));
+            result.append("},");
+        } else if (searchCategory.size() > 1) {
+            result.append("{").append(MongoUtils.splicingValue("", searchCategory.toArray(), "$or"));
             result.append("},");
         }
 
         // 获取价格
-        // 获取查询的价格区间下限
         Double priceSta = null;
         Double priceEnd =  null;
        if(searchValue.get("priceStart") != null){
@@ -131,7 +164,7 @@ public class FeedInfoService extends BaseService {
         }
 
         if (priceSta != null || priceEnd != null) {
-            result.append("{\"skus.priceClientRetail\":{");
+            result.append("{\"skus\":{$elemMatch:{\"priceNet\":{");
             if (priceSta != null) {
                 result.append(MongoUtils.splicingValue("$gte", priceSta));
             }
@@ -141,7 +174,36 @@ public class FeedInfoService extends BaseService {
                 }
                 result.append(MongoUtils.splicingValue("$lte", priceEnd));
             }
-            result.append("}},");
+            result.append("}}}},");
+        }
+
+        // 获取库存
+        Integer qtySta = null;
+        Integer qtyEnd =  null;
+        if(searchValue.get("qtyStart") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyStart")))) {
+                qtySta = Integer.parseInt(String.valueOf(searchValue.get("qtyStart")));
+            }
+        }
+
+        if(searchValue.get("qtyEnd") != null){
+            if (StringUtils.isNumeric(String.valueOf(searchValue.get("qtyEnd")))) {
+                qtyEnd = Integer.parseInt(String.valueOf(searchValue.get("qtyEnd")));
+            }
+        }
+
+        if (qtySta != null || qtyEnd != null) {
+            result.append("{\"skus\":{$elemMatch:{\"qty\":{");
+            if (qtySta != null) {
+                result.append(MongoUtils.splicingValue("$gte", qtySta));
+            }
+            if (qtyEnd != null) {
+                if (qtySta != null) {
+                    result.append(",");
+                }
+                result.append(MongoUtils.splicingValue("$lte", qtyEnd));
+            }
+            result.append("}}}},");
         }
 
         if (!StringUtils.isEmpty(result.toString())) {

@@ -58,10 +58,10 @@ public class Jumei_009_SwissWatch_DictTest {
 
     @Test
     public void dictTest() {
-        SxData sxData = sxProductService.getSxProductDataByGroupId("015", 479584L);
+        SxData sxData = sxProductService.getSxProductDataByGroupId("009", 1140474L);
         sxData.setCartId(27);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-        ShopBean shopProp = Shops.getShop("015", 27);
+        ShopBean shopProp = Shops.getShop("009", 27);
 //        shopProp.setCart_id("27");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
@@ -249,7 +249,7 @@ public class Jumei_009_SwissWatch_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }
@@ -268,7 +268,7 @@ public class Jumei_009_SwissWatch_DictTest {
             RuleExpression useOriUrl = new RuleExpression();
             useOriUrl.addRuleWord(new TextWord("1"));
 
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 

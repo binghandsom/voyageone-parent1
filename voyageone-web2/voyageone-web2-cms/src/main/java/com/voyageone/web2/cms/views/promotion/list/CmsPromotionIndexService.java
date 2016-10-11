@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -17,7 +16,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ import java.util.Map;
  * @version 2.0.0, 15/12/11
  */
 @Service
-public class CmsPromotionIndexService extends BaseAppService {
+public class CmsPromotionIndexService extends BaseViewService {
 
     @Autowired
     private PromotionCodeService promotionCodeService;

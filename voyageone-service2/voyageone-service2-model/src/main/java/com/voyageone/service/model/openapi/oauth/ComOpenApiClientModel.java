@@ -29,6 +29,11 @@ public class ComOpenApiClientModel extends BaseModel {
     protected String clientSecret;
 
     /**
+     * client user channelId
+     */
+    protected String channelId;
+
+    /**
      * 删除标识:1,激活;0,禁用;2,锁定
      */
     protected Integer active;
@@ -55,6 +60,14 @@ public class ComOpenApiClientModel extends BaseModel {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public Integer getActive() {

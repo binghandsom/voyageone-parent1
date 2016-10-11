@@ -95,7 +95,7 @@ define([
                 "templateUrl": "views/pop/bulkUpdate/salePrice.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/salePrice.ctl",
                 "controller": 'popSalePriceCtl',
-                "size": 'md'
+                "size": '600'
             },
             "updateProductApproval": {
                 "templateUrl": "views/pop/bulkUpdate/updateProductApproval.tpl.html",
@@ -340,7 +340,8 @@ define([
                 "dealExtension": {
                     "templateUrl": "views/pop/jm/dealextension.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/dealextension.ctl",
-                    "controller": 'popDealExtensionCtl'
+                    "controller": 'popDealExtensionCtl',
+                    "size": 'md'
                 },
                 "priceModify": {
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",

@@ -4,6 +4,7 @@ require.config({
         'vo-libs': '../shared/components',
         'angular': '../assets/js/angular.js/1.5.6/angular',
         'jquery': '../assets/js/jquery/2.2.4/jquery',
+        'jquery-print': '../assets/js/jquery-print/1.4.1/jquery.print',
         'angularAMD': '../assets/js/angularAMD/custom/angularAMD.min',
         'underscore': '../assets/js/underscore.js/1.8.3/underscore',
         'filestyle': '../assets/js/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
@@ -22,6 +23,7 @@ require.config({
         'md5': '../assets/js/angular-md5/0.1.8/angular-md5',
         'chart': '../assets/js/chart/Chart',
         'angular-chart': '../assets/js/angular-chart/angular-chart',
+        'moment': '../assets/js/moment/2.14.1/moment',
         'vms': 'vms'
     },
     shim: {
@@ -38,6 +40,7 @@ require.config({
         'angular-file-upload': ['angular'],
         'angular': {exports: 'angular', deps: ['jquery']},
         'jquery': {exports: 'jQuery'},
+        'jquery-print': ['jquery'],
         'filestyle': ['jquery'],
         'angularAMD': ['angular'],
         'chosen': ['jquery'],
@@ -63,7 +66,8 @@ require.config({
             'vo-libs',
             'filestyle',
             'angular-chart',
-            'jquery'
+            'jquery',
+            'jquery-print'
         ]
     },
     deps: ['vms']

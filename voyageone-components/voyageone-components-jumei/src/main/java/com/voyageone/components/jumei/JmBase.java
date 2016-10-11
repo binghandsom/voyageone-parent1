@@ -106,7 +106,7 @@ public class JmBase extends ComponentBase {
         while ((StringUtils.isNullOrBlank2(result) || result.contains("502 Bad Gateway")) && retry > 0) {
             result = HttpUtils.post(post_url.toString(), parm_url.toString());
             retry--;
-            logger.info("result：" + result);
+            //logger.info("result：" + result);
         }
 
 
@@ -123,6 +123,12 @@ public class JmBase extends ComponentBase {
             String codes = "";
 
             Map<String, Object> map = JacksonUtil.jsonToMap(result);
+            // 20160913 result里有很多Unicode, 需要转成汉字 START
+            try {
+                result = JacksonUtil.bean2Json(map);
+            } catch (Exception e) {
+            }
+            // 20160913 result里有很多Unicode, 需要转成汉字 END
             if (map.containsKey("error")) {
                 Map<String, Object> errorMap = (Map<String, Object>) map.get("error");
                 if (errorMap.containsKey("code")) {
@@ -140,8 +146,8 @@ public class JmBase extends ComponentBase {
                     }
                 }
 
-                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") ||
-                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087"))) {
+                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") || code.contains("105106") ||
+                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087") || codes.contains("105106"))) {
                     throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);
                 }
             } else if (map.containsKey("error_code")) {

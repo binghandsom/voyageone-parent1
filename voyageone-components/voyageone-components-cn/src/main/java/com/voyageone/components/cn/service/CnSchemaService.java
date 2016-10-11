@@ -1,17 +1,19 @@
 package com.voyageone.components.cn.service;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.utils.XmlUtils;
-import com.voyageone.components.ComponentBase;
+import com.voyageone.components.cn.CnBase;
 import com.voyageone.components.cn.enums.CnConstants;
 import com.voyageone.components.cn.enums.CnUpdateType;
 import org.dom4j.Element;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ import java.util.List;
  * @version 2.5.0
  */
 @Service
-public class CnSchemaService extends ComponentBase {
+public class CnSchemaService extends CnBase {
     private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     /**
@@ -67,6 +69,20 @@ public class CnSchemaService extends ComponentBase {
     }
 
     /**
+     * 产品xml读取
+     */
+    public List<List<Field>> readProductXmlString(String xml) {
+        return readXmlToList(xml, CnConstants.ROOT_CONFIGURABLE, CnConstants.MULTIPROP_PRODUCT);
+    }
+
+    /**
+     * 商品xml读取
+     */
+    public List<List<Field>> readSkuXmlString(String xml) {
+        return readXmlToList(xml, CnConstants.ROOT_SIMPLE, CnConstants.MULTIPROP_PRODUCT);
+    }
+
+    /**
      * xml生成
      */
     private String writeXmlString(List<List<Field>> multiFields, CnUpdateType updateType, String rootName, String multiPropName) {
@@ -102,4 +118,38 @@ public class CnSchemaService extends ComponentBase {
         return sb.toString();
     }
 
+    /**
+     * 注意：生成的Field都是InputField，仅仅为了读取值，或者拼接Fields用
+     */
+    private List<List<Field>> readXmlToList(String xml, String rootName, String multiPropName) {
+        StringBuffer sb = new StringBuffer(xml);
+        if (xml.startsWith(XML_HEADER)) {
+            sb.replace(0, XML_HEADER.length(), "");
+        }
+
+        Element type = XmlUtils.getRootElementFromString(sb.toString()); // <root updateType="%d">
+        Element root = XmlUtils.getChildElement(type, rootName); // 例：<Categories>，<Configurable>，<Simple>
+        List<Element> allElements = XmlUtils.getChildElements(root, multiPropName); // 例：<Category>，<Product>
+
+        List<List<Field>> multiFields = new ArrayList<>();
+        for (Element allElement : allElements) {
+            List<Field> listField = new ArrayList<>();
+            multiFields.add(listField);
+
+            List<Element> eachElements = XmlUtils.getElements(allElement, null);
+            for (Element eachElement : eachElements) {
+                InputField field = (InputField) FieldTypeEnum.createField(FieldTypeEnum.INPUT);
+                listField.add(field);
+                field.setId(eachElement.getName());
+                field.setValue(XmlUtils.getElementValue(eachElement));
+            }
+        }
+
+        return multiFields;
+    }
+
+    public String postXml(String xml, ShopBean shopBean) throws Exception {
+        // TODO:  apiAction 未定
+        return post("/catalog_request_json.php", xml, shopBean);
+    }
 }

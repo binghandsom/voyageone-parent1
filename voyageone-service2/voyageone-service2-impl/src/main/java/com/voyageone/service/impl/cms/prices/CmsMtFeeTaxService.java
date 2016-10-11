@@ -1,13 +1,12 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.voyageone.common.asserts.Assert;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.service.dao.cms.CmsMtFeeTaxDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsMtFeeTaxModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,7 +36,10 @@ public class CmsMtFeeTaxService extends BaseService {
      */
     public Double getTaxRate(String hsCode, String shippingType) {
 
-        Map<String, Object> queryMap = MapUtil.toMap("hsCode", hsCode, "shippingType", shippingType);
+        Map<String, Object> queryMap = new HashMap<String, Object>() {{
+            put("hsCode", hsCode);
+            put("shippingType", shippingType);
+        }};
 
         CmsMtFeeTaxModel feeTaxModel = cmsMtFeeTaxDao.selectOne(queryMap);
 
@@ -49,5 +51,25 @@ public class CmsMtFeeTaxService extends BaseService {
         double consumptionTaxRate = feeTaxModel.getConsumptionTaxRate();
 
         return vaTaxRate + consumptionTaxRate;
+    }
+
+    /**
+     *获取默认税率
+     *
+     * @return 默认税率
+     */
+    public Double getDefaultTaxRate() {
+
+        Double defaultTaxRate;
+
+        defaultTaxRate = getTaxRate("","");
+
+        if(defaultTaxRate == null){
+            $warn("***   配置表中没有配置默认税率，系统设置税率为11.9   ***");
+            //默认税号设置为11.9   更新时间2016-09-27
+            defaultTaxRate = 11.9;
+        }
+
+        return defaultTaxRate;
     }
 }

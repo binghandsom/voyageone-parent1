@@ -114,10 +114,24 @@ public class VmsShipmentService {
         Map<String, Object> shipmentSearchParams = new HashMap<String, Object>() {{
             put("channelId", user.getSelChannel().getId());
             put("status", VmsConstants.STATUS_VALUE.SHIPMENT_STATUS.OPEN);
+            if (STATUS_VALUE.VENDOR_OPERATE_TYPE.SKU.equals(
+                    vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())) {
+                put("creater", user.getUserName());
+            }
         }};
         List<VmsBtShipmentModel> vmsBtShipmentModelList = shipmentService.select(shipmentSearchParams);
         if (null == vmsBtShipmentModelList || vmsBtShipmentModelList.size() == 0) return null;
-        return ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
+        ShipmentBean shipmentBean = ShipmentBean.getInstance(vmsBtShipmentModelList.get(0));
+        shipmentBean.setOrderTotal(orderDetailService.countOrderWithShipment(shipmentBean.getChannelId(),
+                shipmentBean.getId()));
+        shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
+                shipmentBean.getId()));
+        Date detailPrintTime = shipmentBean.getDetailPrintTime();
+        Date latestPrintedTime = orderDetailService.getLatestPrintedTime(user.getSelChannelId(),
+                shipmentBean.getId());
+        shipmentBean.setPrinted(null != detailPrintTime && null != latestPrintedTime
+                && latestPrintedTime.before(detailPrintTime));
+        return shipmentBean;
     }
 
     /**
@@ -129,9 +143,9 @@ public class VmsShipmentService {
      */
     public int create(UserSessionBean user, ShipmentBean shipmentBean) {
 
-        // 对于ORDER级别的channel 要确认是否已有活动的shipment
+        // 对于 ORDER 级别的channel 要确认是否已有活动的 shipment
         if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(
-                vmsChannelConfigService.getChannelConfigs(user).getVendorOperateType())
+                vmsChannelConfigService.getChannelConfig(user).getVendorOperateType())
                 && null != this.getCurrentShipment(user)) throw new BusinessException("8000022");
 
         VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel() {{
@@ -181,6 +195,11 @@ public class VmsShipmentService {
                             shipmentBean.getId()));
                     shipmentBean.setSkuTotal(orderDetailService.countSkuWithShipment(shipmentBean.getChannelId(),
                             shipmentBean.getId()));
+                    Date detailPrintTime = shipmentBean.getDetailPrintTime();
+                    Date latestPrintedTime = orderDetailService.getLatestPrintedTime(user.getSelChannelId(),
+                            shipmentBean.getId());
+                    shipmentBean.setPrinted(null != detailPrintTime && null != latestPrintedTime
+                            && latestPrintedTime.before(detailPrintTime));
                     return shipmentBean;
                 })
                 .collect(Collectors.toList()));
@@ -220,12 +239,13 @@ public class VmsShipmentService {
         if (this.shipmentIsEmpty(user, shipmentBean)) throw new BusinessException("8000032");
 
         // order级别的关闭
-        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfigs(user)
+        if (STATUS_VALUE.VENDOR_OPERATE_TYPE.ORDER.equals(vmsChannelConfigService.getChannelConfig(user)
                 .getVendorOperateType())) {
             shipmentBean.setChannelId(user.getSelChannelId());
 
             // 去除当前shipment中没有完整扫描的订单
-            int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(), shipmentBean.getId());
+            int canceledSkuCount = orderDetailService.removeSkuShipmentId(user.getSelChannelId(),
+                    shipmentBean.getId(), user.getUserName());
 
             // 更新shipment下的sku
             int succeedSkuCount = orderDetailService.updateOrderStatusWithShipmentId(user.getSelChannelId(), shipmentBean
@@ -282,7 +302,24 @@ public class VmsShipmentService {
     }
 
     /**
+     * 更新最后一次打印时间
+     *
+     * @param user         当前用户
+     * @param shipmentBean 当前shipment
+     * @return 更新结果
+     */
+    public int printed(UserSessionBean user, ShipmentBean shipmentBean) {
+        VmsBtShipmentModel vmsBtShipmentModel = new VmsBtShipmentModel();
+        vmsBtShipmentModel.setId(shipmentBean.getId());
+        vmsBtShipmentModel.setDetailPrintTime(new Date());
+        vmsBtShipmentModel.setModified(new Date());
+        vmsBtShipmentModel.setModifier(user.getUserName());
+        return shipmentService.update(vmsBtShipmentModel);
+    }
+
+    /**
      * 防止特殊字符对DB操作的影响
+     *
      * @param param 待修改内容
      * @return 修改好的内容=。=
      */

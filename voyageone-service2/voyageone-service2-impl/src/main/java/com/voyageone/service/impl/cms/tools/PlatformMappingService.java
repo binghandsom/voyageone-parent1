@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -16,13 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toMap;
+
 /**
  * 查询, 获取和编辑平台类目的属性匹配。根据匹配计算商品属性值
  * <p>
  * Created by jonas on 8/13/16.
  *
  * @author jonas
- * @version 2.4.0
+ * @version 2.5.2
  * @since 2.4.0
  */
 @Service
@@ -89,9 +92,11 @@ public class PlatformMappingService extends BaseService {
 
         CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
 
+        List<CustomPropBean> customPropBeanList = productService.getCustomProp(product);
+
         Map<String, Object> valueMap = new HashMap<>();
 
-        ValueMapFiller filler = new ValueMapFiller(product);
+        ValueMapFiller filler = new ValueMapFiller(product, customPropBeanList);
 
         if (commonFieldMapsModel != null)
             fillValueMap(valueMap, filler, commonFieldMapsModel);
@@ -129,17 +134,21 @@ public class PlatformMappingService extends BaseService {
 
     private class ValueMapFiller {
 
-        private BaseMongoMap<String, Object> cnAtts;
+        private final Map<String, String> translatedFeedAttrs;
 
-        private BaseMongoMap<String, Object> orgAtts;
+        private final BaseMongoMap<String, Object> cnAtts;
 
-        private CmsBtProductModel_Field master;
+        private final BaseMongoMap<String, Object> orgAtts;
 
-        ValueMapFiller(CmsBtProductModel product) {
+        private final CmsBtProductModel_Field master;
+
+        ValueMapFiller(CmsBtProductModel product, List<CustomPropBean> customPropBeanList) {
             CmsBtProductModel_Feed feed = product.getFeed();
             CmsBtProductModel_Common common = product.getCommon();
+            Map<String, String> translatedFeedAttrs = customPropBeanList.stream().collect(toMap(CustomPropBean::getFeedAttrEn, CustomPropBean::getFeedAttrValueCn));
             this.cnAtts = feed.getCnAtts();
             this.orgAtts = feed.getOrgAtts();
+            this.translatedFeedAttrs = translatedFeedAttrs;
             this.master = common.getFields();
         }
 
@@ -193,6 +202,8 @@ public class PlatformMappingService extends BaseService {
 
                         case EXPRESSION_TYPE_FEED_CN:
                             Object cnFeedValue = cnAtts.get(key);
+                            if (cnFeedValue == null)
+                                cnFeedValue = translatedFeedAttrs.get(key);
                             if (cnFeedValue != null)
                                 valueBuilder.append(String.valueOf(cnFeedValue));
                             break;

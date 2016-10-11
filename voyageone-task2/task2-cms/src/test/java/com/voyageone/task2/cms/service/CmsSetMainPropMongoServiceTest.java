@@ -12,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zhujiaye on 15/12/21.
@@ -38,10 +37,12 @@ public class CmsSetMainPropMongoServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
+        BigDecimal b = new BigDecimal(1 * 453.59237);
+        int a = b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("010");
+        taskControlBean.setCfg_val1("019");
         taskControlList.add(taskControlBean);
 
 
@@ -65,25 +66,25 @@ public class CmsSetMainPropMongoServiceTest {
 
 
     @Test
-    public void testOnStartup2() throws Exception {
+    public void testDoRun() throws Exception {
 
-        String orderChannelID = "010";
-
-        // 保存每个channel最终导入结果(成功失败件数信息)
-        Map<String, String> resultMap = new HashMap<>();
-        // 获取是否跳过mapping check
-        boolean bln_skip_mapping_check = true;
-        // 获取前一次的价格强制击穿时间
-        String priceBreakTime = "";
-        // 主逻辑
-        CmsSetMainPropMongoService.setMainProp mainProp = cmsSetMainPropMongoService.new setMainProp(orderChannelID, bln_skip_mapping_check, priceBreakTime);
-        mainProp.doRun(resultMap);
-
-        System.out.println("=================feed->master导入  最终结果=====================");
-        resultMap.entrySet().stream()
-                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
-                .forEach(p ->  System.out.println(p.getValue()));
-        System.out.println("=================feed->master导入  主线程结束====================");
+//        String orderChannelID = "019";
+//
+//        // 保存每个channel最终导入结果(成功失败件数信息)
+//        Map<String, String> resultMap = new ConcurrentHashMap<>();
+//        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+//        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
+//        // 获取是否跳过mapping check
+//        boolean bln_skip_mapping_check = true;
+//        // 主逻辑
+//        CmsSetMainPropMongoService.setMainProp mainProp = cmsSetMainPropMongoService.new setMainProp(orderChannelID, bln_skip_mapping_check);
+//        mainProp.doRun(resultMap, needReloadMap);
+//
+//        System.out.println("=================feed->master导入  最终结果=====================");
+//        resultMap.entrySet().stream()
+//                .sorted((a, b) -> a.getKey().compareTo(b.getKey()))
+//                .forEach(p ->  System.out.println(p.getValue()));
+//        System.out.println("=================feed->master导入  主线程结束====================");
     }
 
 

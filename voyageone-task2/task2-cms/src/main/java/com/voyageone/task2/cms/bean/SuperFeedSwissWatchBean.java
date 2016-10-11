@@ -14,8 +14,6 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     private String buyitnowprice;
 
-    private String retailprice;
-
     private String classification;
 
     private String md5;
@@ -714,6 +712,10 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     private String attribute170value;
 
+    private String msrp;
+
+    private String voyageOnePrice;
+
     public String getInventorynumber() {
         return inventorynumber;
     }
@@ -736,14 +738,6 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     public void setBuyitnowprice(String buyitnowprice) {
         this.buyitnowprice = buyitnowprice == null ? null : buyitnowprice.trim();
-    }
-
-    public String getRetailprice() {
-        return retailprice;
-    }
-
-    public void setRetailprice(String retailprice) {
-        this.retailprice = retailprice == null ? null : retailprice.trim();
     }
 
     public String getClassification() {
@@ -3540,5 +3534,21 @@ public class SuperFeedSwissWatchBean extends SuperFeedBean {
 
     public void setAttribute170value(String attribute170value) {
         this.attribute170value = attribute170value == null ? null : attribute170value.trim();
+    }
+
+    public String getMsrp() {
+        return msrp;
+    }
+
+    public void setMsrp(String msrp) {
+        this.msrp = msrp;
+    }
+
+    public String getVoyageOnePrice() {
+        return voyageOnePrice;
+    }
+
+    public void setVoyageOnePrice(String voyageOnePrice) {
+        this.voyageOnePrice = voyageOnePrice;
     }
 }

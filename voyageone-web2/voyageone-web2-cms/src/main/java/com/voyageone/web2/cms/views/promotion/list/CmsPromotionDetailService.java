@@ -23,7 +23,7 @@ import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsPromotionExportBean;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
@@ -46,7 +46,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotionDetailService extends BaseAppService {
+public class CmsPromotionDetailService extends BaseViewService {
 
     @Autowired
     private TaskService taskService;

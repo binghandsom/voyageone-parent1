@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class TargetAnalysisServiceTest {
     @Autowired
-    private TargetAnalysisService targetAnalysisService;
+    private NewTargetAnalysisService targetAnalysisService;
     @Test
     public void testOnStartup() throws Exception {
 
