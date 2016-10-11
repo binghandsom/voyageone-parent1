@@ -30,10 +30,6 @@
         <filter-name>CustomCoverterFilter</filter-name>
         <url-pattern>/cms/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>CustomCoverterFilter</filter-name>
-        <url-pattern>/admin/*</url-pattern>
-    </filter-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
