@@ -147,11 +147,6 @@ public class UserService extends BaseViewService {
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
     }
 
-//    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
-//        List<UserConfigBean> ret = userConfigDao.select(userId);
-//        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
-//    }
-
     public String getVendorUserLanguage (UserSessionBean user) {
         List<UserConfigBean> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
 
@@ -159,20 +154,6 @@ public class UserService extends BaseViewService {
     }
 
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
-
-//        List<PermissionBean> rolePermissions = userDao.selectRolePermissions(channelId, userSessionBean.getUserName());
-//
-//        List<PermissionBean> userPermissions = userDao.selectUserPermissions(channelId, userSessionBean.getUserName());
-//
-//        return Stream.concat(rolePermissions.stream(), userPermissions.stream())
-//                .filter(PermissionBean::isEnabled)
-//                .map(permissionBean -> String.format("/%s/%s/%s/%s",
-//                        permissionBean.getApplication(),
-//                        permissionBean.getModule(),
-//                        permissionBean.getController(),
-//                        permissionBean.getAction()))
-//                .distinct()
-//                .collect(toList());
         return  comUserService.getPermissionUrls(userSessionBean.getUserId(), channelId, "cms");
     }
 }
