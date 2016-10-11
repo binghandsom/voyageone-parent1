@@ -31,7 +31,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ?  self.sourceData.active ? "0" : "1":'';
+                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelAllList = [self.sourceData.sourceData];
                 } else {
@@ -60,7 +60,10 @@ define([
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 if (self.readOnly == true) {
-                    
+                    var data = _.filter(self.typeList, function (type) {
+                        return type.id == self.sourceData.typeId;
+                    });
+                    _.extend(self.sourceData, {typeName: data[0].name});
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }
