@@ -82,11 +82,13 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
      * @param channelId String 渠道ID
      */
     public void doUpload(String channelId, int cartId, ShopBean shopBean) {
-        List<List<Field>> result = new ArrayList<>();
-
         // 取得要更新的类目
         List<String> listCatIds = cnCategoryService.selectListWaitingUpload(channelId);
+        if (ListUtils.isNull(listCatIds)) {
+            return;
+        }
 
+        List<List<Field>> result = new ArrayList<>();
         for (String catId : listCatIds) {
             List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             if (ListUtils.isNull(codes)) {

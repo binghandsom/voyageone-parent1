@@ -92,7 +92,7 @@ public class HtProductUpdateResponse extends BaseJMResponse {
                         sbMsg.append("function_ids，产品功效ID错误");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

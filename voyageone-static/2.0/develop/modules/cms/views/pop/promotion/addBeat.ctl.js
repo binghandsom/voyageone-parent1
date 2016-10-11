@@ -32,33 +32,33 @@ define([
             },
 
             loadCode: function () {
-                var ttt = this;
-                var model = ttt.selected.num_iid;
-                ttt.taskBeatService.addCode(model).then(function (res) {
-                    ttt.codes = res.data;
+                var self = this;
+                var model = self.selected.num_iid;
+                self.taskBeatService.addCode(model).then(function (res) {
+                    self.codes = res.data;
                 });
             },
 
             ok: function () {
-                var ttt = this;
+                var self = this;
                 var param = {
-                    num_iid: ttt.selected.num_iid.numIid,
-                    code: ttt.selected.code.productCode,
-                    task_id: ttt.task_id
+                    num_iid: self.selected.num_iid.numIid,
+                    code: self.selected.code.productCode,
+                    task_id: self.task_id
                 };
-                ttt.taskBeatService.addCheck(param).then(function (res) {
+                self.taskBeatService.addCheck(param).then(function (res) {
                     var otherBeats = res.data;
                     if (otherBeats.length)
-                        return ttt.alert('TXT_MSG_CODE_IN_OTHER');
+                        return self.alert('TXT_MSG_CODE_IN_OTHER');
                     return true;
                 }).then(function (goon) {
                     if (!goon) return;
-                    ttt.taskBeatService.add(param).then(function (res) {
+                    self.taskBeatService.add(param).then(function (res) {
                         if (res.data !== null) {
-                            ttt.$uibModalInstance.close();
-                            ttt.parent.getData();
+                            self.$uibModalInstance.close();
+                            self.parent.getData();
                         } else {
-                            ttt.alert('TXT_MSG_UPDATE_FAIL');
+                            self.alert('TXT_MSG_UPDATE_FAIL');
                         }
                     });
                 });

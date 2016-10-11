@@ -49,7 +49,7 @@ define([
             }
         })
 
-        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider) {
+        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider, blockUIConfig) {
             // 加载所有的语言配置
             _.each(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
@@ -60,6 +60,8 @@ define([
             });
             // 默认设置所有的弹出模态框的背景不能关闭模态框
             $uibModalProvider.options.backdrop = 'static';
+            // 禁用自动显示
+            blockUIConfig.autoBlock = false;
         })
 
         .run(function ($vresources, $localStorage) {

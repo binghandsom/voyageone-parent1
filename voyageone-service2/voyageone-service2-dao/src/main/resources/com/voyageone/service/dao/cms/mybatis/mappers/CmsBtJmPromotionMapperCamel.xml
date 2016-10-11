@@ -543,7 +543,7 @@
                 #{isPromotionGiveCoupons,jdbcType=BIT},
             </if>
             <if test="signupDeadline != null" >
-                `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
+                #{signupDeadline,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>

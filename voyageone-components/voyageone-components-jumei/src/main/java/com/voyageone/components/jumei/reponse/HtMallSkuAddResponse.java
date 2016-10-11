@@ -113,7 +113,7 @@ public class HtMallSkuAddResponse extends BaseJMResponse {
                         sbMsg.append("spu下存在的sku的deal_price(团购价格)不能小于15元,请修改后再来追加");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

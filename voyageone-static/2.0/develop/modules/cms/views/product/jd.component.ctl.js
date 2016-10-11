@@ -269,11 +269,6 @@ define([
                         statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
                     }
 
-                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
-                        alert("请先确认是否在后台申请过相应品牌");
-                        return;
-                    }
-
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
@@ -283,6 +278,13 @@ define([
                         case "Ready":
                             scope.vm.status = "Approved";
                             break;
+                    }
+
+                    if (scope.vm.status == "Ready" && scope.vm.platform.pBrandName == null) {
+                        var masterBrand = scope.productInfo.masterField.brand;
+                        scope.vm.status = scope.vm.preStatus;
+                        alert("该商品的品牌【" + masterBrand + "】没有与平台品牌建立关联，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置");
+                        return;
                     }
 
                     if ((scope.vm.status == "Ready" || scope.vm.status == "Approved") && !checkSkuSale()) {
