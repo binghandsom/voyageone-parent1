@@ -360,6 +360,12 @@ define(function () {
             "templateUrl": "views/channel/black_brand/list.tpl.html",
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
+        },
+        "sku-move": {
+            "hash": "/product/sku_move",
+            "templateUrl": "views/product/skumove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/skumove.ctl",
+            "controller": "SkuMoveController as ctrl"
         }
     };
 });

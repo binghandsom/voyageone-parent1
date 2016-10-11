@@ -1,0 +1,66 @@
+<div class="product-shema-detail">
+    <div class="form-horizontal" name="productFieldForm" novalidate>
+        <div class="panel vo_panel tab_panel">
+            <div class="wrapper">
+                <div class="row m-b-md">
+                    <a href="#/product/sku_move" type="button" class="btn btn-info btn-pop">{{'TXT_MOVE_TO_NEW_CODE'|translate}}</a>
+                </div>
+                <div class="row">
+                    <table class="table table-hover-new table-hover table_main">
+                        <thead>
+                        <tr>
+                            <th class="text-left mfb-xt">
+                                <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                    <input type="checkbox" ng-click="selectAll(vm.productSelList)"
+                                           ng-checked="isAllSelected(vm.productSelList)">
+                                    <span class="fa fa-check" style="vertical-align: middle;"></span>
+                                </label>
+                            </th>
+                            <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
+                            <th class="text-left mfb-xx" translate="TXT_SKU_CODE"></th>
+                            <th class="text-left mfb-xx" translate="TXT_SKU_INVENTORY"></th>
+                            <th class="text-left mfb-xx" translate="TXT_SIZE"></th>
+                            <th class="text-center mfb-xx" translate="TXT_BARCODE"></th>
+                        </tr>
+                        </thead>
+                        <tbody ng-if="ctrl.hsCodeList.length == 0">
+                            <tr style="padding-left:0">
+                            <td colspan="7">
+                                <div if-no-rows="ctrl.hsCodeList.length"></div>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td class="control-label text-left form-inline">
+                                    <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                        <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
+                                               ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+                                </td>
+                                <td class="text-center v-middle">
+                                    <a ng-click=""><img class="thumb" image=""></a>
+                                </td>
+                                <td class="text-left v-middle">
+                                    123456-001
+                                </td>
+                                <td class="text-left v-middle">
+                                    11
+                                </td>
+                                <td class="text-left v-middle">
+                                    1
+                                </td>
+                                <td class="text-center v-middle">
+                                    716825514000
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
