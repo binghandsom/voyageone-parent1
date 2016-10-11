@@ -480,7 +480,7 @@ define(function () {
         "TXT_MSG_SHORT_DESCRIPTION": "短描述",
         "TXT_MSG_UNVALID_URL": "无效的地址.",
         "TXT_MSG_NO_UPLOAD": "请选择要提交的文件",
-        "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
+        "TXT_MSG_CODE_IN_OTHER": "你提交的商品，已经在其他任务中。请重新选择。",
         "TXT_MSG_REIMPORT_BEAT": "从新上传会覆盖原数据, 意味着之前的数据将被清空. 你确定要继续么?",
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
         "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "重置方式导入时,原数据会全部被删除.你确定要继续?",
@@ -806,7 +806,6 @@ define(function () {
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
         "TXT_TASK_LIST": "任务一览",
-        "TXT_FLOATING_RATE": "价格波动",
 
         /**黑名单*/
         "TXT_BLACK_LIST_IN": "已加入黑名单",
