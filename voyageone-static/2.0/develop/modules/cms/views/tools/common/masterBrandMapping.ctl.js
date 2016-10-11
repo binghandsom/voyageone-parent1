@@ -40,6 +40,21 @@ define([
                     self.masterBrandList = res.data.masterBrandList;
                     self.prodPageOption.total = res.data.masterBrandsCount;
                 });
+            },
+            displayFlg: function (item) {
+                var self = this;
+                switch (item) {
+                    case 0 :
+                        return 'Master品牌申请中';
+                    case 1 :
+                        return '已匹配';
+                    case 2:
+                        return '待匹配（审核驳回）';
+                    case 3 :
+                        return '未匹配';
+                    default :
+                        return '未匹配';
+                }
             }
         };
         return MasterBrandMappingController;

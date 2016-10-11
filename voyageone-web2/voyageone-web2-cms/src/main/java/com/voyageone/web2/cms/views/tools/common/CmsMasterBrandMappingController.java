@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.tools.common;
 
-import com.voyageone.service.impl.cms.tools.product.CmsHsCodeService;
 import com.voyageone.service.impl.cms.tools.product.common.CmsMasterBrandMappingService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -41,25 +40,5 @@ public class CmsMasterBrandMappingController extends CmsController {
         result.put("masterBrandList", cmsMasterBrandMappingService.searchMasterBrandList(channelId, param));
         //返回数据的类型
         return success(result);
-    }
-
-    /**
-     * 申请MasterBrand品牌
-     *
-     * @param param
-     * @return resultBean
-     */
-    public AjaxResponse doApply(@RequestBody Map param) {
-        return success(null);
-    }
-
-    /**
-     * MasterBrand匹配
-     *
-     * @param param
-     * @return resultBean
-     */
-    public AjaxResponse doMatching(@RequestBody Map param) {
-        return success(null);
     }
 }

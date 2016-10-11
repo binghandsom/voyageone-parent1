@@ -25,7 +25,7 @@
                 <div class="col-sm-7 m-t-sm">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" translate="TXT_MASTER_MAPPING_SUATUS"></label>
+                            <label class="col-sm-2 control-label" translate="TXT_MASTER_MAPPING_SUATUS"></label>
 
                             <div class="col-sm-8">
                                 <label class="checkbox-inline  c-checkbox">
@@ -51,11 +51,11 @@
                 <div class="col-sm-3 m-t-sm">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="col-sm-4 control-label" translate="TXT_MASTER_BRAND"></label>
+                            <label class="col-sm-4 control-label" translate="TXT_FEED_BRAND"></label>
 
                             <div class="col-sm-7">
                                 <input type="text" ng-model="ctrl.selectedBrand" class="form-control"
-                                       placeholder="模糊查询">
+                                       placeholder={{'TXT_FUZZY_SEARCH'|translate}}>
                             </div>
                         </div>
                     </div>
@@ -77,10 +77,10 @@
                         </thead>
                         <tbody ng-if="ctrl.masterBrandList.length > 0">
                         <tr ng-repeat="list in ctrl.masterBrandList">
-                            <td class="mfb-xxt text-left">{{list.feedBrand}}</td>
-                            <td class="mfb-xxt text-left">{{list.feedBrand}}</td>
+                            <td class="mfb-xxt text-left">{{list.key}}</td>
+                            <td class="mfb-xxt text-left">{{list.masterBrandEn}}</td>
                             <td class="mfb-xt3 text-center">
-                                <button class="btn btn-success btn-xs" ng-click="">{{list.masterFlag}}</button>
+                                <button class="btn btn-success btn-xs">{{ctrl.displayFlg(list.masterFlag)}}</button>
                             </td>
                             <td class="mfb-xxt text-center">{{list.comment}}</td>
                         </tr>
