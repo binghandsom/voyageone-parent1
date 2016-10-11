@@ -137,6 +137,17 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_COMMON_PRODUCT_SKU_INFO)
+    public AjaxResponse doGetMastProductSkuInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        return success(productPropsEditService.getMastProductSkuInfo(channelId, prodId, getLang()));
+
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
     public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
 
