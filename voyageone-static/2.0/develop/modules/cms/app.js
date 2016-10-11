@@ -413,6 +413,7 @@ define([
             menuService.getCategoryInfo().then(function (data) {
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
                 $scope.menuInfo.isminimall = data.isminimall;
+                $scope.menuInfo.only4jumei = data.only4jumei;
             });
         }
 
