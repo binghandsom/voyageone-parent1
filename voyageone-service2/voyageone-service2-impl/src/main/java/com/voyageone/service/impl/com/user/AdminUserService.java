@@ -181,8 +181,11 @@ public class AdminUserService extends BaseService {
             String[] roleIds = model.getRoleId().split(",");
             List<String> roleIdList = Arrays.asList(roleIds);
             for (String roleId : roleIds) {
-                ComUserRoleModel oldModel = relationList.stream().filter(w -> w.getRoleId() == Integer.valueOf(roleId)).findFirst().get();
-                oldList.add(oldModel);
+            	if(relationList.stream().filter(w -> w.getRoleId().equals(Integer.valueOf(roleId))).count() > 0)
+            	{
+	                ComUserRoleModel oldModel = relationList.stream().filter(w -> w.getRoleId().equals(Integer.valueOf(roleId))).findFirst().get();
+	                oldList.add(oldModel);
+            	}
             }
         }
 

@@ -77,7 +77,7 @@
 	</select>
 	
 	<select id="searchTaskByChannelId" resultMap="taskBeanMap">
-		select cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttcx.cfg_val1 as run_flg,
+		select distinct cmt.task_id, cmt.task_type, cmt.task_name, cmt.task_comment, cmt.task_freq, ttcx.cfg_val1 as run_flg,
 			cmt.created, cmt.creater, cmt.modified, cmt.modifier 
 		from com_mt_task cmt join tm_task_control ttc on ttc.task_id = cmt.task_name
 			left join tm_task_control ttcx on ttcx.task_id = ttc.task_id and ttcx.cfg_name = #{runCfgName}
