@@ -82,27 +82,27 @@ public class UserController extends BaseController {
     @RequestMapping(CoreUrlConstants.USER.VENDOR_LOGIN)
     public AjaxResponse vendorLogin(@RequestBody Map<String, Object> params) {
 
-        String username = (String) params.get("username");
-        String password = (String) params.get("password");
-        int timezone = (int) params.get("timezone");
-
-        // 验证在内部
-        // 登录成功返回, 否则通过 BusinessException 返回
-        UserSessionBean userSessionBean = userService.login(username, password, timezone);
-        // 保存用户
-        getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
-        // 保存用户的默认语言
-        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getVendorUserLanguage(userSessionBean));
-
-        // 取得user对应的channelId
-        List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
-
-        // 设置channel_id
-        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
-            userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
-        } else {
-            throw new BusinessException("Invalid  User.");
-        }
+//        String username = (String) params.get("username");
+//        String password = (String) params.get("password");
+//        int timezone = (int) params.get("timezone");
+//
+//        // 验证在内部
+//        // 登录成功返回, 否则通过 BusinessException 返回
+//        UserSessionBean userSessionBean = userService.login(username, password, timezone);
+//        // 保存用户
+//        getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
+//        // 保存用户的默认语言
+//        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getVendorUserLanguage(userSessionBean));
+//
+//        // 取得user对应的channelId
+//        List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
+//
+//        // 设置channel_id
+//        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
+//            userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
+//        } else {
+//            throw new BusinessException("Invalid  User.");
+//        }
 
         // 返回用户信息
         return success(true);

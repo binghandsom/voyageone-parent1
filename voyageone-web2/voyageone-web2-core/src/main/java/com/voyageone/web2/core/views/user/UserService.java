@@ -3,15 +3,12 @@ package com.voyageone.web2.core.views.user;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.dao.ComUserConfigDao;
-import com.voyageone.security.daoext.ComUserDaoExt;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
-import com.voyageone.service.bean.com.PermissionBean;
 import com.voyageone.service.bean.com.UserConfigBean;
 import com.voyageone.service.daoext.com.UserDao;
-import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -34,7 +30,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UserService extends BaseAppService {
+public class UserService extends BaseViewService {
     @Autowired
     private UserDao userDao;
 
@@ -45,7 +41,7 @@ public class UserService extends BaseAppService {
 //    @Autowired
 //    private UserConfigDao userConfigDao;
 //    public UserSessionBean login(String username, String password, int timezone) {
-//
+
 //        UserBean userBean = new UserBean();
 //        userBean.setUsername(username);
 //
@@ -151,10 +147,10 @@ public class UserService extends BaseAppService {
         return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
     }
 
-    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
-        List<UserConfigBean> ret = userConfigDao.select(userId);
-        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
-    }
+//    private Map<String , List<UserConfigBean>> getUserConfig(int userId) {
+//        List<UserConfigBean> ret = userConfigDao.select(userId);
+//        return ret.stream().collect(groupingBy(UserConfigBean::getCfg_name, toList()));
+//    }
 
     public String getVendorUserLanguage (UserSessionBean user) {
         List<UserConfigBean> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
