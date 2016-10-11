@@ -179,7 +179,7 @@ public class AdminRoleService extends BaseService {
             if(appList.stream().filter(w->w.equals(strOld)).count() == 0)
             {
                 //删除系统权限
-                Integer oldResId = Integer.valueOf(old.get("rest_id").toString());
+                Integer oldResId = Integer.valueOf(old.get("res_id").toString());
 
                 ComResRoleModel rrModel = new ComResRoleModel();
                 rrModel.setRoleId(roleId);
