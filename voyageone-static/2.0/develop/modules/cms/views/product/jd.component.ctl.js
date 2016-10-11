@@ -287,7 +287,7 @@ define([
                         return;
                     }
 
-                    if ((scope.vm.status == "Ready" || scope.vm.status == "Approved") && !checkSkuSale()) {
+                    if ((scope.vm.status == "Ready" || scope.vm.status == "Approved") && !checkSkuSale() && mark != "temporary") {
                         scope.vm.status = scope.vm.preStatus;
                         alert("请至少选择一个sku进行发布");
                         return;
