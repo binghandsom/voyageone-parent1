@@ -48,6 +48,7 @@ define(function () {
         "TXT_MAINTAIN_SETTING_ROLE": "权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_MAIN_CATEGORY": "主类目权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_MAIN_BRAND": "主品牌权限设置",
+        "TXT_MASTER_BRAND_SETTING":'主品牌设置',
         "TXT_MAINTAIN_SETTING_ROLE_TAX_NUMBER": "税号权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_CART": "平台店权限设置",
         "TXT_MAINTAIN_SETTING_ROLE_CHANNEL": "集合店权限设置",
