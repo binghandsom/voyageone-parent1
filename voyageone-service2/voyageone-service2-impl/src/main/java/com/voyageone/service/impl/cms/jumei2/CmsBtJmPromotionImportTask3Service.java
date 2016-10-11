@@ -517,6 +517,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 if (cmsBtProductModel_sku != null) {
                     skusModel.setMsrpUsd(new BigDecimal(cmsBtProductModel_sku.getClientMsrpPrice()));
                 }
+                skusModel.setPromotionPrice(new BigDecimal(skuImport.getDealPrice()));
                 saveInfo.skusModels.add(skusModel);
             }
         }
