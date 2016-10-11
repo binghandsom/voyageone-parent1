@@ -22,6 +22,7 @@ define([
                 {'id': 3, 'application': 'OMS', 'valid': false},
                 {'id': 4, 'application': 'WMS', 'valid': false}
             ];
+            this.showStore = false;
             this.saveInfo = {
                 roleName: this.sourceData !== 'add' ? this.sourceData.roleName : '',
                 roleType: this.sourceData !== 'add' ? this.sourceData.roleType + '' : '',
@@ -139,6 +140,7 @@ define([
                     _.forEach(self.applicationList, function (i) {
                         if (i.application.toLocaleLowerCase() == item) {
                             i.valid = true;
+                            if (i.application = 'WMS')self.showStore = true;
                         }
                     })
                 })
@@ -164,6 +166,17 @@ define([
                 }
                 switch (item.type) {
                     case'channel':
+                        // 从AllChannelList过滤出已经选择的channel，组成新的可以选择的list
+                        self.channelAllList = self.channelAllListCopy;
+                        _.forEach(self.channelList, function (item) {
+                            var index = -1;
+                            _.forEach(self.channelAllList, function (allItem, i) {
+                                if (allItem.orderChannelId == item.orderChannelId) {
+                                    index = i;
+                                }
+                            });
+                            if (index > -1) self.channelAllList.splice(index, 1);
+                        });
                         _.filter(self.channelAllList, function (data) {
                             if (data.name.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
                                 self.channelTempAllList.push(data)
@@ -234,6 +247,7 @@ define([
                             } else {
                                 self.channelList.push(self.data);
                                 self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
+                                self.selectedChannelId = '';
                                 var data = self.search({
                                     'type': 'store',
                                     'value': self.data.orderChannelId,
@@ -263,6 +277,7 @@ define([
                             } else {
                                 self.channelAllList.push(self.data);
                                 self.channelList.splice(self.channelList.indexOf(self.data), 1);
+                                self.selectedChannelId = '';
                                 break;
                             }
                         } else {
@@ -323,6 +338,7 @@ define([
                             } else {
                                 self.storeList.push(self.data);
                                 self.storeAllList.splice(self.storeAllList.indexOf(self.data), 1);
+                                self.selectedStoreId = '';
                                 break;
                             }
                         } else {
@@ -340,6 +356,7 @@ define([
                             }
                             self.storeAllList.push(self.data);
                             self.storeList.splice(self.storeList.indexOf(self.data), 1);
+                            self.selectedStoreId = '';
                             break;
                         } else {
                             self.alert('请在已选择仓库区 选择仓库后再点此按钮!');
@@ -366,6 +383,7 @@ define([
                     selApp.push(app.application.toLowerCase());
                 });
                 self.saveInfo.applications = selApp;
+
                 self.saveInfo.roleType = self.saveInfo.roleType - 0;
 
                 self.saveInfo.channelIds = [];
@@ -374,15 +392,20 @@ define([
                     _.forEach(self.channelList, function (item) {
                         self.saveInfo.channelIds.push(item.orderChannelId);
                     });
-                }else{
-                    self.saveInfo.channelIds.push('ALL');
                 }
                 if (self.saveInfo.allStore == '0') {
-                    _.forEach(self.storeList, function (item) {
-                        self.saveInfo.storeIds.push(item.storeId - 0);
-                    });
-                }else{
-                    self.saveInfo.storeIds.push('ALL');
+                    /**
+                     * 授权仓库只有在选择了WMS系统才显示
+                     * 未选择WMS系统时，清空授权仓库的信息
+                     */
+                    if (self.saveInfo.applications.indexOf('wms') < 0) {
+                        self.saveInfo.allStore = '0';
+                        self.saveInfo.storeIds = [];
+                    } else {
+                        _.forEach(self.storeList, function (item) {
+                            self.saveInfo.storeIds.push(item.storeId - 0);
+                        });
+                    }
                 }
 
                 if (self.append == true) {

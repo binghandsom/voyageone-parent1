@@ -137,7 +137,7 @@
                         <a class="btn" uib-tooltip="{{list.comment}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.comment}}</a>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>

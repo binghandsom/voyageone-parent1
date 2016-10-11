@@ -60,6 +60,7 @@ define([
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 if (self.readOnly == true) {
+                    
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }

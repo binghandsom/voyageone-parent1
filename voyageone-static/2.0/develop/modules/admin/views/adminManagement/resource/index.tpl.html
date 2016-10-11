@@ -80,7 +80,7 @@
                         <td class="text-center mfb-xt3" ng-bind="item.active!=null?item.active==1?'启用':'禁用':''"></td>
                         <td class="text-center mfb-xt3">{{item.description}}</td>
                         <td class="text-center mfb-xt3">{{item.modifier}}</td>
-                        <td class="text-center mfb-xt">{{item.modified}}</td>
+                        <td class="text-center mfb-xt">{{item.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>
                     <tr class="children" ng-if="item.children&&item.children.length>0">
                         <td colspan="10">

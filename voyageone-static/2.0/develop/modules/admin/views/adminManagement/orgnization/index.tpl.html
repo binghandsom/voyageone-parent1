@@ -88,7 +88,7 @@
                         <td class="text-left v-middle" ng-bind="list.active!=null?(list.active==1?'启用':'禁用'):''"></td>
                         <td class="text-center v-middle">{{list.weight}}</td>
                         <td class="text-center v-middle">{{list.modifier}}</td>
-                        <td class="text-center v-middle">{{list.modified}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>
                 </tbody>
             </table>

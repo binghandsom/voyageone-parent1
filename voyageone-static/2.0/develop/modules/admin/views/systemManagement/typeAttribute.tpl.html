@@ -124,7 +124,7 @@
                     <td class="text-left v-middle">{{list.addName2}}</td>
                     <td class="text-center v-middle">{{list.langId!=null ? list.langId=='en'?'英文':'中文':''}}</td>
                     <td class="text-center v-middle">{{list.active!=null ? list.active==true ? '启用':'禁用':''}}</td>
-                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.modifier}}</td>
                 </tr>
                 </tbody>

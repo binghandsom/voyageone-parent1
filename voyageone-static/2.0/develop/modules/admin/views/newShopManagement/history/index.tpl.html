@@ -84,7 +84,7 @@
                 <tr ng-repeat="list in ctrl.historyList">
                     <td class="text-left v-middle">{{list.channelId}}</td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
-                    <td class="text-center v-middle">{{list.modified}}</td>
+                    <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-center v-middle">{{list.modifier}}</td>
                     <td class="text-center v-middle">
                         <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;编辑</button>

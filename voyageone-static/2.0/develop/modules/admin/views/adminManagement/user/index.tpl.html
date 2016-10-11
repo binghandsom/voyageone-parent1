@@ -157,7 +157,7 @@
                         <td class="text-center v-middle" title="{{list.userAccount}}">{{list.userAccount}}</td>
                         <td class="text-left v-middle" title="{{list.userName}}">{{list.userName}}</td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-tooltip="{{list.email}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.email}}</a>
+                            <a class="btn" uib-popover="{{list.email}}" popover-trigger="mouseenter" popover-placement="bottom">{{list.email}} </a>
                         </td>
                         <td class="text-center v-middle">
                             <a class="btn" uib-tooltip="{{list.roleName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.roleName}}</a>
@@ -177,7 +177,7 @@
                         <td class="text-left v-middle">
                             <a class="btn" uib-tooltip="{{list.modifier}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.modifier}}</a>
                         </td>
-                        <td class="text-center v-middle">{{list.modified}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>
                 </tbody>
             </table>
