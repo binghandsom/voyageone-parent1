@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -50,6 +51,11 @@ public class CmsAdvSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", channelId, queryObject.toString()));
         }
+        $info("高级检索 skip:" + queryObject.getSkip());
+        $info("高级检索 limit:" + queryObject.getLimit());
+        $info("高级检索 query joson:" + JacksonUtil.bean2Json(queryObject));
+        $info("高级检索 query str:" + queryObject.toString());
+
         List<CmsBtProductModel> prodObjList = productService.getList(channelId, queryObject);
         if (prodObjList == null || prodObjList.isEmpty()) {
             $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
