@@ -841,6 +841,7 @@ define(function () {
         "TXT_TARGET_GROUP_INFO": "目标Group信息",
         "TXT_TARGET_CODE_INFO": "目标Code信息",
         "TXT_TARGET_SKU_INFO": "目标Sku信息",
-        "TXT_MOVE_CONFIRM": "确定移动"
+        "TXT_MOVE_CONFIRM": "确定移动",
+        "TXT_CODE": "Code"
     };
 });
