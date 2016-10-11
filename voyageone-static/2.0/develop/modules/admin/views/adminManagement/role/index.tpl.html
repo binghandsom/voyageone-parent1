@@ -136,13 +136,16 @@
                         </td>
                         <td class="text-center v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-tooltip="{{list.channelName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.channelName}}</a>
+                            <label ng-if="list.channelName.length > 14"><popover-text content="list.channelName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.channelName.length <= 14">{{list.channelName}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-tooltip="{{list.storeName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.storeName}}</a>
+                            <label ng-if="list.storeName.length > 14"><popover-text content="list.storeName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.storeName.length <= 14">{{list.storeName}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <a class="btn" uib-tooltip="{{list.application}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.application}}</a>
+                            <label ng-if="list.application.length > 14"><popover-text content="list.application" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.application.length <= 14">{{list.application}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>

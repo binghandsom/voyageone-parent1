@@ -65,7 +65,7 @@
 
                 <script id="table_tree.html" type="text/ng-template">
                     <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:false})">
-                        <td class="cell-input" style="padding: 4px;">
+                        <td class="cell-input" style="padding: 4px;height: 48px;">
                             <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
                         </td>
                         <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '18px':'0'}" style="word-break: break-all">
