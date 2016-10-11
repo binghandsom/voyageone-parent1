@@ -39,6 +39,7 @@ public class CnUploadImageService extends CnBase {
     private int retry = 0;
     private static int BUFFER_SIZE = 122880;
 
+    // ALIYUN_ENDPOINT, ALIYUN_ACCESS_KEYID, ALIYUN_ACCESS_KEYSECRET, ALIYUN_BUCKETNAME 参数值未定
     private static final String ALIYUN_ENDPOINT ="http://oss-cn-hangzhou.aliyuncs.com";
     private static final String ALIYUN_ACCESS_KEYID ="8N4YxX9U04zHrMJu" ;
     private static final String ALIYUN_ACCESS_KEYSECRET ="zSkOk82RetLpwCe9igqCm9bSW9tuPy";
@@ -71,6 +72,7 @@ public class CnUploadImageService extends CnBase {
     @Retryable
     public String uploadImage(byte[] bytes, String strOssFilePath) throws IOException {
 //        logger.info(String.format("retry:%d!", retry++));
+        // ALIYUN_ENDPOINT, ALIYUN_ACCESS_KEYID, ALIYUN_ACCESS_KEYSECRET, ALIYUN_BUCKETNAME 参数值未定
         try (ByteArrayInputStream in = new ByteArrayInputStream(bytes);){
             AliYunOSSClient client = new AliYunOSSClient(ALIYUN_ENDPOINT, ALIYUN_ACCESS_KEYID, ALIYUN_ACCESS_KEYSECRET);
             return client.putOSS(in, ALIYUN_BUCKETNAME, strOssFilePath);
