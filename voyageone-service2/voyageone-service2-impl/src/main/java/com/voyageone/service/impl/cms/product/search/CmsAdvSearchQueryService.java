@@ -29,6 +29,8 @@ public class CmsAdvSearchQueryService extends BaseService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    private static final int EXPORT_PAGE_SIZE = 4000;
+
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
             "common.skus.skuCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
@@ -51,6 +53,9 @@ public class CmsAdvSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("高级检索 获取当前查询的product列表 ChannelId=%s, %s", channelId, queryObject.toString()));
         }
+
+        queryObject.setSkip(0);
+        queryObject.setLimit(EXPORT_PAGE_SIZE);
         $info("高级检索 skip:" + queryObject.getSkip());
         $info("高级检索 limit:" + queryObject.getLimit());
         $info("高级检索 query joson:" + JacksonUtil.bean2Json(queryObject));
@@ -61,6 +66,21 @@ public class CmsAdvSearchQueryService extends BaseService {
             $warn("高级检索 getProductCodeList prodObjList为空 查询条件=：" + queryObject.toString());
             return new ArrayList<>(0);
         }
+        if (prodObjList.size() == EXPORT_PAGE_SIZE) {
+            int page = 1;
+            List<CmsBtProductModel> prodObjList2;
+            while (true) {
+                queryObject.setSkip(page * EXPORT_PAGE_SIZE);
+                queryObject.setLimit(EXPORT_PAGE_SIZE);
+                prodObjList2 = productService.getList(channelId, queryObject);
+                if (prodObjList2 == null || prodObjList2.isEmpty()) {
+                    break;
+                }
+                prodObjList.addAll(prodObjList2);
+                page++;
+            }
+        }
+
         List<String> codeList = prodObjList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
         return codeList;
     }
