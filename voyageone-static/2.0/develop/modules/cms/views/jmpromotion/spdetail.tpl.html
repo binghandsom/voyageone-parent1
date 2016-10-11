@@ -1,0 +1,84 @@
+<div class="wrapper-md">
+    <uib-accordion class="vo_accordion vo_attr">
+        <uib-accordion-group heading="聚美专场" is-open="true">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">聚美专场名称</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" readonly="readonly"
+                                       value="聚美61611111111111111111111聚美61611111111111111111111">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">预热时间</label>
+                            <div class="col-sm-7">
+                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">活动时间</label>
+                            <label class="control-label col-sm-1">从</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="form-control" readonly="readonly" value="2015.11.11">
+                            </div>
+                            <label class="control-label col-sm-1">到</label>
+                            <div class="col-sm-4">
+                                <input type="date" class="form-control" readonly="readonly" value="2015.11.11">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-accordion-group>
+    </uib-accordion>
+    <div class="row m-b-sm">
+        <div class="col-sm-8">
+            <div class="product-shema-detail">
+                <ul class="nav nav-pills">
+                    <li><span class="label on-sale">专场上传</span></li>
+                    <li><span class="label on-sale">活动信息</span></li>
+                    <li><span class="label on-sale">活动货架</span></li>
+                    <li><span class="label on-sale">活动图片</span></li>
+                    <li><span class="label on-sale">活动飘窗</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-4 text-right">
+            <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-default btn-pop" uib-dropdown-toggle style="width: 100px;">
+                    导出 <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu">
+                    <li role="menuitem"><a href="#">按上传模板</a></li>
+                    <li role="menuitem"><a href="#">按专场模板</a></li>
+                    <li role="menuitem"><a href="#">按商城模板</a></li>
+                    <li role="menuitem"><a href="#">下载专场图片包</a></li>
+                    <li role="menuitem"><a href="#">下载商品主图包</a></li>
+                </ul>
+            </div>
+            <button type="button" class="btn btn-default btn-pop" style="width: 150px;">
+                查看活动情况
+            </button>
+        </div>
+    </div>
+    <uib-tabset class="tab-container vo_nav-tabs">
+        <uib-tab heading="Products">custom directive</uib-tab>
+        <uib-tab heading="Detail">custom directive</uib-tab>
+        <uib-tab heading="Model">custom directive</uib-tab>
+        <uib-tab heading="Image">custom directive</uib-tab>
+        <uib-tab heading="Bay Window">custom directive</uib-tab>
+        <uib-tab heading="Import List">custom directive</uib-tab>
+        <uib-tab heading="Export List">custom directive</uib-tab>
+    </uib-tabset>
+</div>
+
