@@ -45,7 +45,7 @@ define([
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
             }
-            $feedSearchService.init()
+            $feedSearchService.init(" ")
                 .then(function (res) {
                     $scope.vm.masterData = res.data;
                 })
