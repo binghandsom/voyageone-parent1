@@ -81,9 +81,9 @@
 							<button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" style="margin-left:20px" ng-click="openJmPromotionDetail({search:search},search)">
 								新建聚美专场
 							</button>
-							<button  type="button" class="btn btn-pop btn-default m-b-xs m-t-xs" ng-click="openMrbStock('lg',vm.groupSelList)">
-								{{'TXT_SEPARATE_NEW_TASK'|translate}}
-							</button>
+							<!--<button  type="button" class="btn btn-pop btn-default m-b-xs m-t-xs" ng-click="openMrbStock('lg',vm.groupSelList)">-->
+								<!--{{'TXT_SEPARATE_NEW_TASK'|translate}}-->
+							<!--</button>-->
 						</div>
 					</div>
 				</div>
@@ -102,11 +102,14 @@
 					<th class="text-center">频道页入口图</th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
 					<th class="text-left" translate="TXT_STATUS"></th>
-					<th class="text-left" translate="TXT_PLATFORM_TYPE"></th>
+					<th class="text-left">主品牌名称</th>
 					<th class="text-left" translate="TXT_PROMOTION_TIME"></th>
 					<th class="text-left" translate="TXT_PREHEATING_TIME"></th>
 					<th class="text-left" translate="TXT_PRE_SALE_TIME"></th>
-					<th class="text-center">操作</th>
+					<th class="text-center">活动标记</th>
+					<th class="text-center">活动标题</th>
+					<th class="text-center">有库存商品数</th>
+					<th class="text-center" translate="TXT_ACTION"></th>
 					<th class="text-center" translate="TXT_ACTION"></th>
 				</tr>
 				</thead>
@@ -124,10 +127,13 @@
 						<a href="#/jm/promotion_detail_list/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
 						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==1" class="label label-success-new m-r-lg"><a ng-click="setClosePromotionStatus(promotion)"> Open </a></span><span ng-show="promotion.promotionStatus==0" class="label label-yellow-new m-r-lg"><a ng-click="setOpenPromotionStatus(promotion)"> Close </a> </span></td>
-					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'? promotion.cartName:'US Joi'}}</td>
+					<td class="text-left">品牌</td>
 					<td class="text-left">{{promotion.activityStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.activityEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.preSaleStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.preSaleEnd | date:'yyyy-MM-dd'}}</td>
+					<td class="text-center">APP：ppt_jordan_shoes_20161009_app<br>PC : ppt_jordan_shoes_20161009_pc</td>
+					<td class="text-left">耐克运动鞋专场</td>
+					<td class="text-center">23</td>
 					<td class="text-center">
 						<div ng-if="promotion.cartId != 27" class="btn-group" uib-dropdown>
 							<button type="button" class="btn btn-default" uib-dropdown-toggle>
