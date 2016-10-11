@@ -27,8 +27,9 @@ define([
             var pageParameter = getPageParameter();
             $scope.dataPageOption.setPageIndex(1);//查询第一页
             //获取页数量
-            promotionService.getCount(pageParameter).then(function (res) {
-                $scope.dataPageOption.total = res.data;
+            jmPromotionService.getJmPromCount(pageParameter).then(function (res) {
+                $scope.dataPageOption.total = res.data.count;
+                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
         };
 

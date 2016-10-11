@@ -23,6 +23,7 @@ import java.util.Map;
  */
 @Service
 public class CmsBtJmPromotion3Service {
+
     private static final Logger log = LoggerFactory.getLogger(CmsBtJmPromotion3Service.class);
     @Autowired
     CmsBtJmPromotionDao dao;
@@ -34,6 +35,7 @@ public class CmsBtJmPromotion3Service {
     CmsBtTagDao daoCmsBtTag;
     @Autowired
     CmsBtPromotionDao daoCmsBtPromotion;
+
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());

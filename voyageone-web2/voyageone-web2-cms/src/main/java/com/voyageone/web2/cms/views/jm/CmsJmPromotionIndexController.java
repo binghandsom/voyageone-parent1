@@ -1,9 +1,11 @@
 package com.voyageone.web2.cms.views.jm;
+import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
+import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -12,6 +14,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @RestController
@@ -77,6 +80,15 @@ public class CmsJmPromotionIndexController extends CmsController {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(service.getJmPromotionList(params));
+    }
+
+    //获取数量
+    @RequestMapping("getJmPromCount")
+    public AjaxResponse getCount(@RequestBody Map params) {
+        params.put("channelId", getUser().getSelChannelId());
+        Map<String, Object> map = service3.init();
+        map.put("count", service.getJmPromotionCount(params));
+        return success(map);
     }
 
     @Autowired

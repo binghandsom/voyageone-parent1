@@ -12,6 +12,7 @@ import java.util.Map;
 public interface CmsBtJmPromotionDaoExt {
 
     List<MapModel> getJmPromotionList(Map<String, Object> map);
+    long getJmPromotionCount(Map<String, Object> map);
 
     List<MapModel> selectListByWhere(Map<String, Object> map);
 

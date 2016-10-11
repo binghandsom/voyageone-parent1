@@ -194,6 +194,7 @@ define(function () {
                     "init": "init",
                     "get": "get",
                     "getJmPromList": "getJmPromList",
+                    "getJmPromCount": "getJmPromCount",
                     "getListByWhere": "getListByWhere",
                     "getEditModel": "getEditModel",
                     "saveModel": "saveModel",
