@@ -176,16 +176,16 @@ define([
                     var num = item.split(",")[1];
                     switch (type) {
                         case '0':
-                            return '不做保留' + '' + num;
+                            return '不做保留' + '/' + num;
                             break;
                         case '1':
-                            return '按加减保留' + '' + num;
+                            return '按加减保留' + '/' + num;
                             break;
                         case '2':
-                            return '按百分比保留' + '' + num;
+                            return '按百分比保留' + '/' + num;
                             break;
                         case '3':
-                            return '按销售计算（默认百分比）' + '' + num;
+                            return '按销售计算（默认百分比）' + '/' + num;
                             break;
                     }
                 }

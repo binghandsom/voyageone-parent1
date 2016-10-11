@@ -374,15 +374,11 @@ define([
                     _.forEach(self.channelList, function (item) {
                         self.saveInfo.channelIds.push(item.orderChannelId);
                     });
-                }else{
-                    self.saveInfo.channelIds.push('ALL');
                 }
                 if (self.saveInfo.allStore == '0') {
                     _.forEach(self.storeList, function (item) {
                         self.saveInfo.storeIds.push(item.storeId - 0);
                     });
-                }else{
-                    self.saveInfo.storeIds.push('ALL');
                 }
 
                 if (self.append == true) {
