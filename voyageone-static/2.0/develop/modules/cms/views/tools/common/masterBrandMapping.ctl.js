@@ -2,11 +2,13 @@
  * Created by sofia on 7/21/2016.
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('MasterBrandMappingController', (function () {
-        function MasterBrandMappingController(masterBrandService) {
+        function MasterBrandMappingController(masterBrandService,popups) {
             this.masterBrandService = masterBrandService;
+            this.popups = popups;
             this.prodPageOption = {curr: 1, size: 10, fetch: this.search.bind(this)};
             this.selectedBrand = '';
             this.statusList = [0, 2, 3];
@@ -42,7 +44,6 @@ define([
                 });
             },
             displayFlg: function (item) {
-                var self = this;
                 switch (item) {
                     case 0 :
                         return 'Master品牌申请中';
@@ -54,6 +55,12 @@ define([
                         return '未匹配';
                     default :
                         return '未匹配';
+                }
+            },
+            ngClick: function(list){
+                var self = this;
+                if(list.masterFlag==null || list.masterFlag==1){
+                    self.popups.openFeedToMasterBrand()
                 }
             }
         };

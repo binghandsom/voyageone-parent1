@@ -80,7 +80,9 @@
                             <td class="mfb-xxt text-left">{{list.key}}</td>
                             <td class="mfb-xxt text-left">{{list.masterBrandEn}}</td>
                             <td class="mfb-xt3 text-center">
-                                <button class="btn btn-success btn-xs">{{ctrl.displayFlg(list.masterFlag)}}</button>
+                                <button class="btn btn-success btn-xs" ng-click="ctrl.ngClick(list)">
+                                    {{ctrl.displayFlg(list.masterFlag)}}
+                                </button>
                             </td>
                             <td class="mfb-xxt text-center">{{list.comment}}</td>
                         </tr>
