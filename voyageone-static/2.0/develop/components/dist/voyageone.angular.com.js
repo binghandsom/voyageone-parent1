@@ -3252,11 +3252,27 @@ function $Ajax($http, $q, blockUI, $timeout) {
 $Ajax.prototype.post = function (url, data, option) {
     var defer = this.$q.defer(),
         blockUI = this.blockUI,
-        $timeout = this.$timeout;
+        $timeout = this.$timeout,
+        cancelBlock = null;
 
-    $timeout(function () {
-        blockUI.start();
-    }, 1000);
+    option = option || {
+            autoBlock: true,
+            blockDelay: 1000
+        };
+
+    var autoBlock = option.autoBlock,
+        blockDelay = option.blockDelay;
+
+    if (autoBlock) {
+        cancelBlock = (function (blockPromise) {
+            return function () {
+                $timeout.cancel(blockPromise);
+                blockUI.stop();
+            };
+        })($timeout(function () {
+            blockUI.start();
+        }, blockDelay));
+    }
 
     if (data === undefined) {
         data = {};
@@ -3265,7 +3281,7 @@ $Ajax.prototype.post = function (url, data, option) {
     this.$http.post(url, data).then(function (response) {
         var res = response.data;
 
-        blockUI.stop();
+        if (cancelBlock) cancelBlock();
 
         if (!res) {
             alert("相应结果不存在?????");
@@ -3278,7 +3294,7 @@ $Ajax.prototype.post = function (url, data, option) {
         }
         defer.resolve(res);
     }, function (response) {
-        blockUI.stop();
+        if (cancelBlock) cancelBlock();
 
         defer.reject(null, response);
     });
