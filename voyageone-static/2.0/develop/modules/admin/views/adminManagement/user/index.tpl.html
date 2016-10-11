@@ -143,9 +143,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="13" style="padding: 0px"></td>
-                    </tr>
                     <tr ng-repeat="list in ctrl.adminList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -154,28 +151,40 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle" title="{{list.userAccount}}">{{list.userAccount}}</td>
-                        <td class="text-left v-middle" title="{{list.userName}}">{{list.userName}}</td>
+                        <td class="text-center v-middle" style="height: 80px;">
+                            <label ng-if="list.userAccount.length > 14"><popover-text content="list.userAccount" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.userAccount.length <= 14">{{list.userAccount}}</label>
+                        </td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-popover="{{list.email}}" popover-trigger="mouseenter" popover-placement="bottom">{{list.email}} </a>
+                            <label ng-if="list.userName.length > 14"><popover-text content="list.userName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.userName.length <= 14">{{list.userName}}</label>
+                        </td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.email.length > 14"><popover-text content="list.email" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.email.length <= 14">{{list.email}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <a class="btn" uib-tooltip="{{list.roleName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.roleName}}</a>
+                            <label ng-if="list.roleName.length > 20"><popover-text content="list.roleName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.roleName.length <= 20">{{list.roleName}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getName(list.orgId)}}</td>
                         <td class="text-center v-middle">
-                            <a class="btn" uib-tooltip="{{list.channelName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.channelName}}</a>
+                            <label ng-if="list.channelName.length > 24"><popover-text content="list.channelName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.channelName.length <= 24">{{list.channelName}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-tooltip="{{list.storeName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.storeName}}</a>
+                            <label ng-if="list.storeName.length > 24"><popover-text content="list.storeName" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.storeName.length <= 24">{{list.storeName}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <a class="btn" uib-tooltip="{{list.application}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.application}}</a>
+                            <label ng-if="list.application.length > 8"><popover-text content="list.application" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.application.length <= 8">{{list.application}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-center v-middle">{{list.company}}</td>
                         <td class="text-left v-middle">
-                            <a class="btn" uib-tooltip="{{list.modifier}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.modifier}}</a>
+                            <label ng-if="list.modifier.length > 8"><popover-text content="list.modifier" direct="left" size="50"></popover-text></label>
+                            <label ng-if="list.modifier.length <= 8">{{list.modifier}}</label>
                         </td>
                         <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>
