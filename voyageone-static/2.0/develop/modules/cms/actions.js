@@ -58,6 +58,7 @@ define(function () {
                     "root": "/cms/search/advanceSearch/",
                     "init": "init",
                     "search": "search",
+                    "searchAutoComplete":"searchAutoComplete",
                     "getGroupList": "getGroupList",
                     "getProductList": "getProductList",
                     "exportProducts": "exportProducts",

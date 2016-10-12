@@ -1,24 +1,31 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>voyageone-components</artifactId>
         <groupId>com.voyageone</groupId>
+        <artifactId>voyageone-components</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>voyageone-components-ftp</artifactId>
-    <version>${voyageone.components.ftp.version}</version>
+    <artifactId>voyageone-components-solr</artifactId>
+    <version>${voyageone.components.solr.version}</version>
     <packaging>jar</packaging>
-    <name>VoyageOne Components Ftp Sftp</name>
+    <name>VoyageOne Components Solr</name>
     <dependencies>
         <dependency>
             <groupId>com.voyageone</groupId>
             <artifactId>voyageone-components-base</artifactId>
             <version>${voyageone.components.base.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-solr</artifactId>
+        </dependency>
+
     </dependencies>
     <build>
-        <finalName>voyageone-components-ftp</finalName>
+        <finalName>voyageone-components-solr</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -31,3 +38,4 @@
         </plugins>
     </build>
 </project>
+

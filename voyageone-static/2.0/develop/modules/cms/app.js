@@ -293,7 +293,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -306,6 +306,7 @@ define([
         $scope.selectLanguage = selectLanguage;
         $scope.goSearchPage = goSearchPage;
         $scope.logout = logout;
+        $scope.loadSearchAutoCompletes = loadSearchAutoCompletes;
 
         function initialize() {
             menuService.getMenuHeaderInfo().then(function (data) {
@@ -324,6 +325,12 @@ define([
         function selectChannel() {
             menuService.clearChannel().then(function () {
                 $window.location = cCommonRoutes.channel.url;
+            });
+        }
+
+        function loadSearchAutoCompletes(query) {
+            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp)  {
+                return resp.data;
             });
         }
 
