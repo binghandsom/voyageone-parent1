@@ -113,6 +113,7 @@ define(function () {
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
+        "TXT_MASTER_BRAND": "MASTER品牌",
         "TXT_COLOR": "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
