@@ -101,6 +101,7 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
+                    "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",

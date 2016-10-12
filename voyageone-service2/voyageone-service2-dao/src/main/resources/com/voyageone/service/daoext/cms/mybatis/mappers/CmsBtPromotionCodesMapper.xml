@@ -173,7 +173,7 @@
         </where>
 
     </select>
-    <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultMap="HashMap" parameterType="HashMap">
+    <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultType="HashMap" parameterType="HashMap">
         SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1
         INNER JOIN voyageone_cms2.cms_bt_promotion t2 on  t1.promotion_id = t2.id
         WHERE t2.channel_id = #{channelId,jdbcType=VARCHAR}
