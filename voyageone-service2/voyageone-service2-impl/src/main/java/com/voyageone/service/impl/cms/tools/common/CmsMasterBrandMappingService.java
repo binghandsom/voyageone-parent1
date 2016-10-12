@@ -10,10 +10,7 @@ import com.voyageone.service.model.cms.CmsMtMasterBrandModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -31,6 +28,7 @@ public class CmsMasterBrandMappingService extends BaseService {
         Map<String, Object> data = new HashMap<>();
         //店铺渠道取得
         data.put("channelId", channelId);
+        data.put("statusList", Arrays.asList(1));
         List<CmsMtMasterBrandModel> result = cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
         if(result != null && result.size()>0){
             result = result.stream().filter(cmsMtMasterBrandModel -> !StringUtil.isEmpty(cmsMtMasterBrandModel.getMasterBrandEn()) && cmsMtMasterBrandModel.getMasterFlag() == 1).collect(Collectors.toList());
