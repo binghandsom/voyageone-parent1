@@ -398,7 +398,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
                             jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
                         } catch (Exception e) {
-                            $debug("通过聚美商品ID取得商品信息异常结束！[pProductId:%s]", jmCart.getpProductId());
+                            $info("新增失败发现平台上已经有该商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
+                                    productCode, jmCart.getpProductId(), e.getMessage());
                         }
                     }
                     // 如果用pProductId没查到商品信息的话，用名称再去查一下
@@ -407,9 +408,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
                             jmGetProductInfoRes = jumeiProductService.getProductByName(shop, bean.getName() );
                         } catch (Exception e) {
-                            String msg = String.format("通过聚美商品名称取得商品信息异常结束！请确认聚美后台该商品的名称与CMS系统" +
-                                    "中的长标题是否一致，如果不一致将CMS聚美优品详情中长标题改成跟聚美后台一样的名称之后再重试。[ProductCode:%s] " +
-                                    "[Name:%s] [Msg:%s]", productCode, bean.getName(), e.getMessage());
+                            String msg = String.format("新增失败发现平台上已经有该商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
+                                    "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
+                                    productCode, jmCart.getpProductId(), bean.getName(), e.getMessage());
                             $error(msg);
                             throw new BusinessException(msg);
                         }
@@ -504,7 +505,37 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             //更新产品
             else {
                 //先去聚美查一下product
-                JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+//                JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+                JmGetProductInfoRes jmGetProductInfoRes = null;
+                // 首先用pProductId去查询聚美平台商品信息
+                if (jmCart != null && !StringUtils.isEmpty(jmCart.getpProductId())) {
+                    try {
+                        // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
+                        jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+                    } catch (Exception e) {
+                        $info("更新商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
+                                productCode, jmCart.getpProductId(), e.getMessage());
+                    }
+                }
+                // 如果用pProductId没查到商品信息的话，用名称再去查一下
+                if (jmGetProductInfoRes == null) {
+                    String productName = "";
+                    try {
+                        // 查询用名称
+                        productName = jmCart.getFields().getStringAttribute("productNameCn") + " " +
+                                special_symbol.matcher(productCode).replaceAll("-");
+                        // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
+                        if (!StringUtils.isEmpty(productName))
+                            jmGetProductInfoRes = jumeiProductService.getProductByName(shop, productName);
+                    } catch (Exception e) {
+                        String msg = String.format("更新商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
+                                        "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
+                                productCode, jmCart.getpProductId(), productName, e.getMessage());
+                        $error(msg);
+                        throw new BusinessException(msg);
+                    }
+                }
+
                 List<JmGetProductInfo_Spus> remoteSpus = null;
                 if(jmGetProductInfoRes != null)
                 {
