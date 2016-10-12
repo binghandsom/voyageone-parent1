@@ -11,7 +11,7 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group" ng-if="vm.masterData.isminimall == 1">
-                                    <label class="col-sm-3 control-label">供应商</label>
+                                    <label class="col-sm-3 control-label" >{{'TXT_CHANNEL_WITH_COLON' | translate}}</label>
                                     <div class="col-sm-8 form-inline" style="padding-left:0px">
                                         <div class="col-sm-5">
                                             <select class="form-control" style="margin-left:4px;width:150px" ng-model="vm.orgChaId" ng-change="init(vm.orgChaId)"
@@ -346,6 +346,7 @@
                                         </label>
                                     </th>
                                     <th class="text-center mfb-x" translate="TXT_IMAGE"></th>
+                                    <th class="text-left mfb-x"  ng-if="vm.masterData.isminimall == 1" translate="TXT_CHANNEL_WITH_COLON"></th>
                                     <th class="text-left mfb-x" translate="TXT_CATEGORY"></th>
                                     <th class="text-center mfb-x" translate="TXT_PRODUCT_CODE"></th>
                                     <th class="text-left mfb-x" translate="TXT_NAME"></th>
@@ -385,6 +386,7 @@
                                     <td class="text-center mfb-x" ng-controller="popupCtrl">
                                         <a ng-if="feedInfo.hasImgFlg > 0"><img class="thumb-md m-b-xs" ng-src="{{feedInfo.image[0]}}" ng-click="openFeedImagedetail($index)"></a>
                                     </td>
+                                    <td class="text-left mfb-x"  ng-if="vm.masterData.isminimall == 1" style="overflow: hidden;">{{vm.selChannelName}}</td>
                                     <td class="text-left mfb-x" style="overflow: hidden;">{{feedInfo.category}}</td>
                                     <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length > 0" ng-controller="popupCtrl"><a ng-click="openFeedCodeDetail($index)">{{feedInfo.code}}</a></td>
                                     <td class="text-center mfb-x" style="overflow: hidden;" ng-if="feedInfo.attsList.length == 0">{{feedInfo.code}}</td>

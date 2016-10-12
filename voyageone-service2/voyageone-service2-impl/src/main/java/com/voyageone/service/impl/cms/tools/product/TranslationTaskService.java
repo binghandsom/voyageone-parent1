@@ -150,9 +150,7 @@ public class TranslationTaskService extends BaseService {
             queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");
             queryObj.addParameters(translateTimeStr);
 
-
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-
                 List<String> codeList = Arrays.asList(keyWord.split("\n"));
                 if (codeList.size() == 1) {
                     queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]}");
@@ -170,6 +168,8 @@ public class TranslationTaskService extends BaseService {
                     } else {
                         queryObj.setSort("{'common.fields.quantity' : -1}");
                     }
+                } else if ("priority".equalsIgnoreCase(priority)) {
+                    queryObj.setSort("{'common.fields.translateStatus':-1,'common.fields.priorTranslateDate':1}");
                 }
             }
 
@@ -274,11 +274,11 @@ public class TranslationTaskService extends BaseService {
             rsMap.put("common.fields.origin", cnFields.getOrigin());
             rsMap.put("common.fields.translator", userName);
             rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-
-            if (status.equals("1")) {
-                rsMap.put("common.fields.translateStatus", '1');
-            } else if (product.getCommon().getFields().getTranslateStatus() == null) {
-                rsMap.put("common.fields.translateStatus", '0');
+            // 设置翻译状态
+            rsMap.put("common.fields.translateStatus", status);
+            if ("2".equals(product.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
+                // 如果原来的翻译状态是'优先翻译'，则清空'优先翻译日期'
+                rsMap.put("common.fields.priorTranslateDate", "");
             }
 
             rsMap.put("modifier", userName);
@@ -425,7 +425,6 @@ public class TranslationTaskService extends BaseService {
             if (img3 != null && !img3.isEmpty()) {
                 commonFields.setImages3(img3);
             }
-
 
             List<CmsBtProductModel_Field_Image> img4 = fields.getImages1();
             if (img4 != null && !img4.isEmpty()) {
