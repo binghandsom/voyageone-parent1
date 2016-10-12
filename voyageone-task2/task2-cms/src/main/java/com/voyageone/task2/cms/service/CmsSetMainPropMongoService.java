@@ -1002,8 +1002,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     return;
                 }
                 // add by desmond 2016/09/07 end
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 if (blnProductExist) {
                     // 修改商品数据
@@ -1049,7 +1047,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
                     // 更新价格相关项目
+                    Long s = DateTimeUtil.getNowTimeStampLong();
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+                    $info("价格计算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
 
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
@@ -1059,7 +1059,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                    s = DateTimeUtil.getNowTimeStampLong();
                     int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName(), "feed->master导入");
+                    $info("updateProductFeedToMaster算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
                     if (updCnt == 0) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1094,6 +1096,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -3325,9 +3329,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
-                Long s = DateTimeUtil.getNowTimeStampLong();
                 priceService.setPrice(cmsProduct, false);
-                $info("价格计算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
                 String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
