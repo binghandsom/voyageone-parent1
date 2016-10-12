@@ -101,54 +101,62 @@
         WHERE a.id=#{id}
     </update>
 
-    <select id="getJmPromotionList"  resultType="com.voyageone.service.model.util.MapModel">
-        select jmprom.*, prom.id as promId  from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
+    <select id="getJmPromotionList" resultType="com.voyageone.service.model.util.MapModel">
+        select jmprom.*, prom.id as promId from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
         on prom.promotion_id = jmprom.id
+        <if test="codeListStr != null">
+            INNER JOIN cms_bt_jm_promotion_sku as jmpromsku
+            on jmpromsku.cms_bt_jm_promotion_id = jmprom.id and jmpromsku.channel_id = #{channelId}
+        </if>
         <where>
             prom.active = 1 and jmprom.active = 1
-            <if test="id != null">
-                AND jmprom.id =  #{id}
+            <if test="jmpromId != null">
+                AND jmprom.id = #{jmpromId}
             </if>
-            <if test="channelId!=null">
-                and jmprom.channel_id=#{channelId}
+            and jmprom.channel_id = #{channelId}
+            <if test="jmpromName != null">
+                and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
-            <if test="name != null">
-                and jmprom.name like CONCAT(#{name},'%')
+            <if test="jmBrandId != null">
+                and jmprom.cms_bt_jm_master_brand_Id = #{jmBrandId}
             </if>
-            <if test="cmsBtJmMasterBrandId!=null">
-                and jmprom.cms_bt_jm_master_brand_Id = #{cmsBtJmMasterBrandId}
+            <if test="compareType != null and prodSum != null">
+                and jmprom.prod_sum #{compareType} #{prodSum}
             </if>
-            <if test="beginCreated!=null">
-                jmprom.Created>=#{beginCreated}
+            <if test="prePeriodStart == null and prePeriodEnd != null">
+                and jmprom.pre_period_start &lt;= #{prePeriodEnd}
             </if>
-            <if test="endCreated!=null">
-                jmprom.Created&lt;=#{endCreated}
-            </if>
-            <if test="state1!=null||state2!=null||state3!=null">
-                and (
-                <if test="state1!=null">-- 未开始
-                    jmprom.activity_start>now()
+            <if test="prePeriodStart != null">
+                <if test="prePeriodEnd == null">
+                    and #{prePeriodStart} &lt;= jmprom.pre_period_start
                 </if>
-                <if test="state1 != null and state2!=null"> -- 进行中
-                    or (jmprom.activity_start &lt; now() and jmprom.activity_end >now())
+                <if test="prePeriodEnd != null">
+                    and (#{prePeriodStart} &lt;= jmprom.pre_period_start and jmprom.pre_period_start &lt;= #{prePeriodEnd})
                 </if>
-                <if test="state1 == null and state2!=null"> -- 进行中
-                    (jmprom.activity_start &lt; now() and jmprom.activity_end >now())
+            </if>
+            <if test="mainCata != null">
+                and jmprom.mainCata = #{mainCata}
+            </if>
+            <if test="activityStart ==null and activityEnd != null">
+                and jmprom.activity_end &lt;= #{activityEnd}
+            </if>
+            <if test="activityStart != null">
+                <if test="activityEnd == null">
+                    and #{activityStart} &lt;= jmprom.activity_start
                 </if>
-                <if test="(state1 != null || state2!=null) and state3!=null"> -- 完成
-                    or ( jmprom.activity_end  &lt;now())
+                <if test="activityEnd != null">
+                    and ( #{activityStart} &lt;= jmprom.activity_start and jmprom.activity_end &lt;= #{activityEnd} )
                 </if>
-                <if test="state1 == null and state2==null and state3!=null"> -- 完成
-                    ( jmprom.activity_end  &lt;now())
-                </if>
-                )
+            </if>
+            <if test="codeListStr != null">
+                and ( jmpromsku.product_code in (#{codeListStr}) or jmpromsku.sku_code in (#{codeListStr}) or jmpromsku.product_model in (#{codeListStr}) )
             </if>
         </where>
         order by id desc
     </select>
 
     <select id="getJmPromotionCount" resultType="long">
-        select count(jmprom.id)  from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
+        select count(jmprom.id) from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
         on prom.promotion_id = jmprom.id
         <where>
             prom.active = 1 and jmprom.active = 1

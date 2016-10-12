@@ -24,10 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2016/3/18.
@@ -293,9 +291,26 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.selectActivesOfChannel(params);
     }
 
+    // 查询聚美活动一览
     public List<MapModel> getJmPromotionList(Map params) {
+        // 过滤参数
+        Map sqlParams = (Map) params.get("parameters");
+        sqlParams.put("channelId", params.get("channelId"));
+        sqlParams.put("jmpromId", StringUtils.trimToNull((String) sqlParams.get("jmpromId")));
+        sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
+        sqlParams.put("jmBrandId", StringUtils.trimToNull((String) sqlParams.get("jmBrandId")));
+        sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
+        sqlParams.put("prodSum", StringUtils.trimToNull((String) sqlParams.get("prodSum")));
+        sqlParams.put("mainCata", StringUtils.trimToNull((String) sqlParams.get("mainCata")));
+        String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
+        if (codeListStr != null) {
+            List<String> codeList = Arrays.asList(codeListStr.split("\n"));
+            codeList = codeList.stream().map(code -> StringUtils.trimToNull(code)).filter(code -> code != null).collect(Collectors.toList());
+            String codeStr = "'" + StringUtils.join(codeList, "','") + "'";
+            sqlParams.put("codeListStr", codeStr);
+        }
 
-        return daoExt.getJmPromotionList(params);
+        return daoExt.getJmPromotionList(sqlParams);
     }
 
     public long getJmPromotionCount(Map params) {

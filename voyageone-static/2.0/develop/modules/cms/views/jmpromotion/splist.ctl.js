@@ -11,8 +11,8 @@ define([
         $scope.datePicker = [];
         $scope.currentChannelId = cookieService.channel();
         $scope.initialize = function () {
-            promotionService.init().then(function (res) {
-                $scope.vm.platformTypeList = res.data.platformTypeList;
+            jmPromotionService.init().then(function (res) {
+                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
                 $scope.search();
             });
         };
@@ -29,7 +29,6 @@ define([
             //获取页数量
             jmPromotionService.getJmPromCount(pageParameter).then(function (res) {
                 $scope.dataPageOption.total = res.data.count;
-                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
         };
 

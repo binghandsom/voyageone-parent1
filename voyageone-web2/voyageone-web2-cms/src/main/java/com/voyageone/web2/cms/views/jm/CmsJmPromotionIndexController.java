@@ -78,9 +78,7 @@ public class CmsJmPromotionIndexController extends CmsController {
     @RequestMapping("getJmPromCount")
     public AjaxResponse getCount(@RequestBody Map params) {
         params.put("channelId", getUser().getSelChannelId());
-        Map<String, Object> map = service3.init();
-        map.put("count", service.getJmPromotionCount(params));
-        return success(map);
+        return success(service.getJmPromotionCount(params));
     }
 
     @Autowired
