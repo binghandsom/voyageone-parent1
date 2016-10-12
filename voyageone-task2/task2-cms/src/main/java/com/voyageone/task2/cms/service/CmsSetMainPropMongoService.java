@@ -1001,6 +1001,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     return;
                 }
                 // add by desmond 2016/09/07 end
+                // 生成productGroup数据
+                doSetGroup(feed);
 
                 if (blnProductExist) {
                     // 修改商品数据
@@ -1144,8 +1146,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
