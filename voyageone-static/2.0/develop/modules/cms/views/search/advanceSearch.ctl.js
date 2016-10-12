@@ -27,6 +27,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                supplierType: 1,
                 brandSelType: 1
             },
             _selall: false,
@@ -159,6 +160,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                supplierType: 1,
                 brandSelType: 1,
                 shopCatStatus: null,
                 inventory: '',

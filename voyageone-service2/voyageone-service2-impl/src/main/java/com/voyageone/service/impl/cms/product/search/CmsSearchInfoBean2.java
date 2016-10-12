@@ -40,6 +40,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String[] codeList;
     private String fuzzyStr;
     // MINI MALL 店铺时查询原始CHANNEL
+    private int supplierType = 0;
     private List<String> supplierList = null;
 
     // ** 平台搜索条件 **
@@ -525,4 +526,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         return JsonUtil.getJsonString(this);
     }
 
+    public int getSupplierType() {
+        return supplierType;
+    }
+
+    public void setSupplierType(int supplierType) {
+        this.supplierType = supplierType;
+    }
 }
