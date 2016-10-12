@@ -25,6 +25,7 @@ define([
 		this.updateProductPlatform = updateProductPlatform;
 		this.updateProductFeed = updateProductFeed;
 		this.getCommonProductInfo = getCommonProductInfo;
+		this.getCommonProductSkuInfo = getCommonProductSkuInfo;
 		this.updateCommonProductInfo = updateCommonProductInfo;
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
@@ -289,6 +290,23 @@ define([
 		function getCommonProductInfo(req){
 			var defer = $q.defer();
 			$productDetailService.getCommonProductInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 获取产品Sku属性
+		 * @param { prodId:"",cartId:""} 产品id，平台id
+		 * @returns
+		 */
+		function getCommonProductSkuInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getCommonProductSkuInfo(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){
