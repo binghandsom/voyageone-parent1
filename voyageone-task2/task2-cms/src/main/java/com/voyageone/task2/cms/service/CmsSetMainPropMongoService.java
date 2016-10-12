@@ -1047,9 +1047,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
                     // 更新价格相关项目
-                    Long s = DateTimeUtil.getNowTimeStampLong();
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-                    $info("价格计算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
 
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);

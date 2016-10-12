@@ -1032,17 +1032,11 @@ public class ProductService extends BaseService {
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
         bulkList.add(model);
-        Long s = DateTimeUtil.getNowTimeStampLong();
         BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-        $info("updateProduct算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
 
-        s = DateTimeUtil.getNowTimeStampLong();
         insertProductHistory(channelId, cmsProduct.getProdId());
-        $info("insertProductHistory算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
         // 记录价格变更履历
-        s = DateTimeUtil.getNowTimeStampLong();
         addPriceUpdateHistory(cmsProduct, modifier, comment);
-        $info("记录价格变更履历算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
 
         return result.getModifiedCount();
     }
