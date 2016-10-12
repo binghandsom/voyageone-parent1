@@ -76,15 +76,16 @@
                         </tr>
                         </thead>
                         <tbody ng-if="ctrl.masterBrandList.length > 0">
-                        <tr ng-repeat="list in ctrl.masterBrandList">
-                            <td class="mfb-xxt text-left">{{list.key}}</td>
-                            <td class="mfb-xxt text-left">{{list.masterBrandEn}}</td>
+                        <tr ng-repeat="item in ctrl.masterBrandList">
+                            <td class="mfb-xxt text-left">{{item.key}}</td>
+                            <td class="mfb-xxt text-left">{{item.masterBrandEn}}</td>
                             <td class="mfb-xt3 text-center">
-                                <button class="btn btn-success btn-xs" ng-click="ctrl.ngClick(list)">
-                                    {{ctrl.displayFlg(list.masterFlag)}}
+                                <button class="btn btn-success btn-xs" ng-click="ctrl.popBrandMatching(item)" ng-if="item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null">
+                                    {{ctrl.displayFlg(item.masterFlag)}}
                                 </button>
+                                <span ng-if="!(item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null)">{{ctrl.displayFlg(item.masterFlag)}}</span>
                             </td>
-                            <td class="mfb-xxt text-center">{{list.comment}}</td>
+                            <td class="mfb-xxt text-center">{{item.comment}}</td>
                         </tr>
                         </tbody>
                     </table>

@@ -409,7 +409,13 @@ define([
             "brandAudit": {
                 "templateUrl": "views/pop/system/brandaudit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/brandaudit.ctl",
-                "controller": 'brandAuditCtl',
+                "controller": 'brandAuditCtl as ctrl',
+                "size":"lg"
+            },
+            "brandMatching": {
+                "templateUrl": "views/pop/system/brandmatching.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/brandmatching.ctl",
+                "controller": 'brandMatchingCtl as ctrl',
                 "size":"lg"
             }
         },
@@ -1208,8 +1214,14 @@ define([
          */
         $scope.openBrandAudit = function openBrandAudit(context){
             return openModal(popActions.system.brandAudit,context);
-        }
+        };
 
+        /**
+         * master 品牌匹配
+         */
+        $scope.openBrandMatching = function openBrandMatching(context){
+            return openModal(popActions.system.brandMatching,context)
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 
