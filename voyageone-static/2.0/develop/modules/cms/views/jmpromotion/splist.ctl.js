@@ -10,6 +10,8 @@ define([
         $scope.searchInfo = {};
         $scope.datePicker = [];
         $scope.currentChannelId = cookieService.channel();
+        $scope.dataPageOption = {curr: 1, total: 0, size: 10, fetch: goPage.bind(this)};
+
         $scope.initialize = function () {
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
@@ -21,14 +23,12 @@ define([
             $scope.searchInfo = {};
         };
 
-        $scope.dataPageOption = {curr: 1, total: 0, size: 10, fetch: goPage.bind(this)};
-
         $scope.search = function () {
             var pageParameter = getPageParameter();
             $scope.dataPageOption.setPageIndex(1);//查询第一页
             //获取页数量
             jmPromotionService.getJmPromCount(pageParameter).then(function (res) {
-                $scope.dataPageOption.total = res.data.count;
+                $scope.dataPageOption.total = res.data;
             });
         };
 
@@ -45,7 +45,6 @@ define([
                     item.activityEnd = _formatToStr(item.activityEnd);
                     item.signupDeadline = _formatToStr(item.signupDeadline);
                 });
-                $scope.dataPageOption.total = $scope.vm.promotionList.length;
             })
         }
 

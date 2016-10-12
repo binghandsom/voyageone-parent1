@@ -298,13 +298,7 @@ public class CmsBtJmPromotionService extends BaseService {
         sqlParams.put("channelId", params.get("channelId"));
         sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
         sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
-        Object jmBrandIdObj = sqlParams.get("jmBrandId");
-        if (jmBrandIdObj != null && jmBrandIdObj instanceof String && ((String) jmBrandIdObj).length() == 0) {
-            sqlParams.put("jmBrandId", null);
-        }
-
         sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
-        sqlParams.put("prodSum", StringUtils.trimToNull((String) sqlParams.get("prodSum")));
         sqlParams.put("mainCata", StringUtils.trimToNull((String) sqlParams.get("mainCata")));
         String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
         if (codeListStr != null) {
@@ -314,6 +308,10 @@ public class CmsBtJmPromotionService extends BaseService {
             sqlParams.put("codeListStr", codeStr);
         }
 
+        int pageIndex = (Integer) params.get("pageIndex");
+        int pageRowCount = (Integer) params.get("pageRowCount");
+        sqlParams.put("offset", (pageIndex - 1) * pageRowCount);
+        sqlParams.put("size", pageRowCount);
         return daoExt.getJmPromotionList(sqlParams);
     }
 
