@@ -407,14 +407,14 @@ define([
                 "controller": 'popChannelListCtl'
             },
             "brandAudit": {
-                "templateUrl": "views/pop/system/brandaudit.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/brandaudit.ctl",
+                "templateUrl": "views/pop/systemsetting/brandaudit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/systemsetting/brandaudit.ctl",
                 "controller": 'brandAuditCtl as ctrl',
                 "size":"lg"
             },
             "brandMatching": {
-                "templateUrl": "views/pop/system/brandmatching.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/system/brandmatching.ctl",
+                "templateUrl": "views/pop/systemsetting/brandmatching.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/systemsetting/brandmatching.ctl",
                 "controller": 'brandMatchingCtl as ctrl',
                 "size":"lg"
             }
