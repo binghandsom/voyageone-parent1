@@ -133,7 +133,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
     // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 100;
+    private final static int FEED_IMPORT_MAX_500 = 500;
 
     @Override
     public SubSystem getSubSystem() {
