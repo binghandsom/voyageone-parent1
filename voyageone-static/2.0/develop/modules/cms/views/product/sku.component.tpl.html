@@ -9,13 +9,7 @@
                     <table class="table table-hover-new table-hover table_main">
                         <thead>
                         <tr>
-                            <th class="text-left mfb-xt">
-                                <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-                                    <input type="checkbox" ng-click="selectAll(vm.productSelList)"
-                                           ng-checked="isAllSelected(vm.productSelList)">
-                                    <span class="fa fa-check" style="vertical-align: middle;"></span>
-                                </label>
-                            </th>
+                            <th class="text-left mfb-xx" translate="BTN_SELECT"></th>
                             <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
                             <th class="text-left mfb-xx" translate="TXT_SKU_CODE"></th>
                             <th class="text-left mfb-xx" translate="TXT_SKU_INVENTORY"></th>
@@ -31,29 +25,29 @@
                         </tr>
                         </tbody>
                         <tbody>
-                            <tr>
+                            <tr ng-repeat="skuInfo in skuList">
                                 <td class="control-label text-left form-inline">
                                     <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                        <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
+                                        <input ng-model="skuSelList.selFlag[skuInfo.skuCode]" type="checkbox"
                                                ng-controller="selectRowsCtrl"
-                                               ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+                                               ng-click="selectOne(skuInfo.skuCode, skuSelList)">
                                         <span class="fa fa-check"></span>
                                     </label>
                                 </td>
                                 <td class="text-center v-middle">
-                                    <a ng-click=""><img class="thumb" image=""></a>
+                                    <a ng-click=""><img class="thumb" src="{{skuInfo.imageUrl}}"></a>
                                 </td>
                                 <td class="text-left v-middle">
-                                    123456-001
+                                    {{skuInfo.skuCode}}
                                 </td>
                                 <td class="text-left v-middle">
-                                    11
+                                    {{skuInfo.qty}}
                                 </td>
                                 <td class="text-left v-middle">
-                                    1
+                                    {{skuInfo.size}}
                                 </td>
                                 <td class="text-center v-middle">
-                                    716825514000
+                                    {{skuInfo.barcode}}
                                 </td>
                             </tr>
                         </tbody>

@@ -668,7 +668,7 @@ public class CmsProductDetailService extends BaseViewService {
             skuInfo.put("imageUrl", imageUrl);
             skuList.add(skuInfo);
         }
-
+        result.put("skuList", skuList);
         return result;
     }
 
