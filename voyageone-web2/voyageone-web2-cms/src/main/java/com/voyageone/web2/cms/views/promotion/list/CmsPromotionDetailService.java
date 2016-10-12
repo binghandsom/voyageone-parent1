@@ -480,7 +480,7 @@ public class CmsPromotionDetailService extends BaseViewService {
 
     private Double getNumericCellValue(Cell cell) {
         if (cell == null) {
-            return null;
+            return 0.0;
         }
         if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC || cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
             return cell.getNumericCellValue();
