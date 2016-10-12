@@ -23,20 +23,20 @@ import java.util.stream.Collectors;
  */
 public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
+    private static final Integer pageSize = 200;
+
     protected abstract List<CmsFeedLiveSkuModel> getSkuList() throws Exception;
 
     protected abstract ChannelConfigEnums.Channel getChannel();
 
     @Autowired
-    CmsFeedLiveSkuDaoExt cmsFeedLiveSkuDaoExt;
+    private CmsFeedLiveSkuDaoExt cmsFeedLiveSkuDaoExt;
 
     @Autowired
-    FeedInfoService feedInfoService;
+    private FeedInfoService feedInfoService;
 
     @Autowired
-    FeedSaleService feedSaleService;
-
-    private final Integer pageSize = 200;
+    private FeedSaleService feedSaleService;
 
     private static Set<String> notSale;
 
