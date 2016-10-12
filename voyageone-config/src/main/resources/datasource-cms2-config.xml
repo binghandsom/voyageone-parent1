@@ -16,10 +16,10 @@
         <property name="user" value="app_my_dev"/>
         <property name="password" value="s28Bw_1IL1bz"/>
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
-        <property name="initialPoolSize" value="5"></property>
+        <property name="initialPoolSize" value="1"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
         <property name="maxPoolSize" value="30"></property>
-        <property name="minPoolSize" value="5"></property>
+        <property name="minPoolSize" value="1"></property>
         <property name="testConnectionOnCheckout" value="true"></property>
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
         <property name="testConnectionOnCheckin" value="true"></property>
@@ -76,10 +76,10 @@
         <property name="user" value="app_my_dev"/>
         <property name="password" value="s28Bw_1IL1bz"/>
         <!--初始化时获取连接的数目，取值应在minPoolSize与maxPoolSize之间。Default: 3 -->
-        <property name="initialPoolSize" value="5"></property>
+        <property name="initialPoolSize" value="1"></property>
         <!--连接池中保留的最大连接数。Default: 15 -->
         <property name="maxPoolSize" value="30"></property>
-        <property name="minPoolSize" value="5"></property>
+        <property name="minPoolSize" value="1"></property>
         <property name="testConnectionOnCheckout" value="true"></property>
         <!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
         <property name="testConnectionOnCheckin" value="true"></property>
