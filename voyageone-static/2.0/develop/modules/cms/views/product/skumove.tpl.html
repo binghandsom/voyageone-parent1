@@ -88,7 +88,7 @@
                             <table class="table table-hover-new table-hover table_main m-t-sm">
                                 <thead>
                                 <tr>
-                                    <th class="text-left mfb-xx">
+                                    <th class="text-left mfb-xxt" style="padding: 4px 0 0 8px;">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)">
@@ -96,8 +96,8 @@
                                         </label>
                                     </th>
                                     <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
-                                    <th class="text-left mfb-xxxs" translate="TXT_PRODUCT_CODE"></th>
-                                    <th class="text-left mfb-xx" translate="TXT_PRODUCT_NAME"></th>
+                                    <th class="text-left mfb-xx" translate="TXT_PRODUCT_CODE"></th>
+                                    <th class="text-left mfb-xxxs" translate="TXT_PRODUCT_NAME"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -114,10 +114,10 @@
                                         <a ng-click=""><img class="thumb" image=""></a>
                                     </td>
                                     <td class="text-left v-middle">
-                                        Jewelry.com 镀925银紫水晶大气魅力女款手镯 欧美时尚饰品
+                                        51A0HC13E1-00LCNB0
                                     </td>
                                     <td class="text-left v-middle">
-                                        523210817760
+                                        Jewelry.com 镀925银紫水晶大气魅力女款手镯 欧美时尚饰品
                                     </td>
                                 </tr>
                                 </tbody>
@@ -141,48 +141,43 @@
                     <table class="table table-hover-new table-hover table_main table_compare">
                         <thead>
                             <tr>
-                                <th class="text-center table_compare_before" colspan="6" translate="TXT_MOVED_BEFORE"></th>
-                                <th class="text-center table_compare_after" colspan="6" translate="TXT_MOVED_AFTER"></th>
+                                <th class="text-center table_compare_before" colspan="4" translate="TXT_MOVED_BEFORE"></th>
+                                <th class="text-center table_compare_after" colspan="4" translate="TXT_MOVED_AFTER"></th>
                             </tr>
                             <tr>
-                                <th class="text-center table_compare_before" colspan="3" translate="TXT_SOURCE_INFO"></th>
-                                <th class="text-center table_compare_before" colspan="3" translate="TXT_TARGET_INFO"></th>
-                                <th class="text-center table_compare_after" colspan="3" translate="TXT_SOURCE_INFO"></th>
-                                <th class="text-center table_compare_after" colspan="3" translate="TXT_TARGET_INFO"></th>
+                                <th class="text-center table_compare_before" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                                <th class="text-center table_compare_before" colspan="2" translate="TXT_TARGET_INFO"></th>
+                                <th class="text-center table_compare_after" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                                <th class="text-center table_compare_after" colspan="2" translate="TXT_TARGET_INFO"></th>
                             </tr>
                             <tr>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_SOURCE_GROUP_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_before" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_TARGET_GROUP_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_before" translate="TXT_TARGET_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_SOURCE_GROUP_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_after" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_TARGET_GROUP_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
                                 <th class="text-center mfb-xxt table_compare_after" translate="TXT_TARGET_SKU_INFO"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                            <td class="text-left v-middle">Jewelry.com 14K金浮雕棋盘风女士手镯精美时尚饰品</td>
                             <td class="text-left v-middle"><span>51A0HC13E1-00LCNB0</span> 51A0HC13E1-00LCNB1</td>
                             <td class="text-left v-middle">Sku00001<br><span>Sku00002</span></td>
                             <td class="text-left v-middle">(无)</td>
                             <td class="text-left v-middle">(无)</td>
-                            <td class="text-left v-middle">(无)</td>
 
-                            <td class="text-left v-middle">Jewelry.com 14K金浮雕棋盘风女士手镯精美时尚饰品</td>
                             <td class="text-left v-middle"><span>51A0HC13E1-00LCNB0</span><br>51A0HC13E1-00LCNB1</td>
                             <td class="text-left v-middle">Sku00001</td>
-                            <td class="text-left v-middle"><span>（新Group）</span></td>
                             <td class="text-left v-middle"><span>Sku00002</span></td>
                             <td class="text-left v-middle"><span>Sku00002</span><br><span>Sku00003</span></td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div class="form-group text-center">
+                    <button class="btn btn-vo" ng-click="" >&nbsp;{{'TXT_MOVE_CONFIRM'|translate}}</button>
                 </div>
             </div>
         </div>
