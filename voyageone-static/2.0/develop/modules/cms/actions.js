@@ -603,7 +603,7 @@ define(function () {
                 search:"getMasterBrandInfo"
             },
             //主品牌管理页面
-            "masterBrandServiceApplication":{
+            "masterBrandServiceApplicationService":{
                 root:"/cms/maintain/common",
                 search:"getMasterBrandInfo",
                 reviewed:"reviewedMasterBrandInfo",
