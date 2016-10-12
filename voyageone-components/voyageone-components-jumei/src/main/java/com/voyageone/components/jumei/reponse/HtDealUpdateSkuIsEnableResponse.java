@@ -105,7 +105,7 @@ public class HtDealUpdateSkuIsEnableResponse extends BaseJMResponse {
                         sbMsg.append("is_enable参数和数据库中参数一致，没有发生改变");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.getRequestUrl() + " " + this.body);

@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.ctc.wstx.util.DataUtil;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -132,7 +133,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
     // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 500;
+    private final static int FEED_IMPORT_MAX_500 = 100;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1046,7 +1047,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                    requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
                     // 更新价格相关项目
+                    Long s = DateTimeUtil.getNowTimeStampLong();
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
+                    $info("价格计算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
 
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
@@ -1091,6 +1094,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -1144,8 +1149,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log

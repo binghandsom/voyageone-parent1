@@ -120,7 +120,7 @@
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
                                 <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false || !vm.platform.pBrandName"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
+                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
                             </div>
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
                                 <button class="btn btn-vo" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
