@@ -67,7 +67,7 @@ public class TargetDailyService extends BaseTaskService {
         soldOutList = getInventoryProduct("sold_out");
         violationOffShelfList = getInventoryProduct("violation_off_shelf");
 
-        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"for shelved");
+        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"off-shelved");
         targetDailyBeans.addAll(getProductInfo(soldOutList, "sold out"));
         targetDailyBeans.addAll(getProductInfo(violationOffShelfList, "violation off shelf"));
 
