@@ -17,4 +17,6 @@ public interface ComUserDaoExt {
 
 
     List<ComRoleModel> selectRolesByUserId(Integer userId);
+
+    List<String> selectAppsByUser(Integer userId);
 }

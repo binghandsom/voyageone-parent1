@@ -91,11 +91,23 @@ public class ComUserService {
             }
         }
 
-        //如果user的密码不是自己设的，则强制要求修改密码
+
+
+
         ComUserModel userModel = new ComUserModel();
         userModel.setUserAccount(account);
         userModel =comUserDao.selectOne(userModel);
 
+        //如果用户没有该系统的权限，则拒绝登录
+        List<String> apps = getAppsByUser(userModel.getId());
+
+        if(!apps.contains(app))
+        {
+            throw new BusinessException("A007", "access denied: " + app , null);
+        }
+
+
+        //如果user的密码不是自己设的，则强制要求修改密码
         if(!userModel.getModifier().equals(account))
         {
             throw new BusinessException("A006", "need change password.", null);
@@ -114,6 +126,7 @@ public class ComUserService {
     }
 
 
+
     /**
      * CMS的channel页面ViewModle
      *
@@ -123,6 +136,17 @@ public class ComUserService {
     public List<ComChannelPermissionBean> getPermissionCompany(Integer  userId) {
         List<ComChannelPermissionBean>  list =  comUserDaoExt.selectPermissionChannel(userId);
         return  list;
+    }
+
+
+    /**
+     * 查找授权系统
+     * @param userId
+     * @return
+     */
+    public List<String> getAppsByUser(Integer  userId)
+    {
+        return comUserDaoExt.selectAppsByUser(userId);
     }
 
 
