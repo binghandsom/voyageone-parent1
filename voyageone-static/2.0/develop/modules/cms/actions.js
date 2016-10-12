@@ -608,7 +608,7 @@ define(function () {
                 search:"getMasterBrandInfo",
                 reviewed:"reviewedMasterBrandInfo",
                 edit:"editMasterBrandInfo",
-                mapping:"mappingMasterBrandInfoToPlatform"
+                mappingSearch:"mappingMasterBrandInfoToPlatform"
             }
         }
     };
