@@ -409,13 +409,13 @@ define([
             "brandAudit": {
                 "templateUrl": "views/pop/system/brandaudit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/brandaudit.ctl",
-                "controller": 'brandAuditCtl',
+                "controller": 'brandAuditCtl as ctrl',
                 "size":"lg"
             },
             "brandMatching": {
                 "templateUrl": "views/pop/system/brandmatching.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/brandmatching.ctl",
-                "controller": 'brandMatching',
+                "controller": 'brandMatchingCtl as ctrl',
                 "size":"lg"
             }
         },
