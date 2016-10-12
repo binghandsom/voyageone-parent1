@@ -88,23 +88,24 @@ public class CmsChannelTagService extends BaseViewService {
                     // 用于标识是否半选（即不是所有商品都设置了该标签）
                     Map<String, Boolean> orgDispMap = new HashMap<>();
 
-                    for (CmsBtProductModel prodObj : prodList) {
-                        List<String> tags = prodObj.getFreeTags();
-                        if (tags == null || tags.isEmpty()) {
-                            continue;
-                        }
-                        // 先过滤一遍父节点
-                        for (int i = 0; i < tags.size(); i ++) {
-                            String tagPath = tags.get(i);
-                            for (String tagPath2 : tags) {
-                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
-                                    tags.set(i, null);
-                                }
-                            }
-                        }
-                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
-                        prodObj.setFreeTags(tags);
-                    }
+                    // TODO 此段先注释掉，即勾选子节点的话，再显示弹出画面时父节点也显示被勾选
+//                    for (CmsBtProductModel prodObj : prodList) {
+//                        List<String> tags = prodObj.getFreeTags();
+//                        if (tags == null || tags.isEmpty()) {
+//                            continue;
+//                        }
+//                        // 先过滤一遍父节点
+//                        for (int i = 0; i < tags.size(); i ++) {
+//                            String tagPath = tags.get(i);
+//                            for (String tagPath2 : tags) {
+//                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
+//                                    tags.set(i, null);
+//                                }
+//                            }
+//                        }
+//                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
+//                        prodObj.setFreeTags(tags);
+//                    }
 
                     for (CmsBtTagBean tagBean : tagsList) {
                         // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)

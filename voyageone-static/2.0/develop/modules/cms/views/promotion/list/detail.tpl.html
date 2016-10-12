@@ -235,7 +235,7 @@
                                     </div>
                                 </td>
                                 <td class="mfb-xxt text-left">{{group.tag}}</td>
-                                <td class="mfb-xxt text-right">{{group.msrp | number: 2}}</td>
+                                <td class="mfb-xxt text-right">{{getMinMaxPrice(group.minMsrpRmb,group.maxMsrpRmb)}}</td>
                                 <td class="mfb-xxt text-right">{{group.salePriceMin != group.salePriceMax ? (group.salePriceMin | number: 2) +' ~ '+ (group.salePriceMax | number: 2) : (group.salePriceMin  | number: 2)}}</td>
                                 <td class="mfb-xxt text-right">{{group.promotionPriceMin != group.promotionPriceMax ? (group.promotionPriceMin | number: 2) +' ~ '+ (group.promotionPriceMax | number: 2) : (group.promotionPriceMax | number: 2)}}</td>
                                 <td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
@@ -319,16 +319,17 @@
                                 </select>
                                 </td>
                                 <td class="mfb-xxt text-center">{{code.inventory}}</td>
-                                <td class="mfb-xxt text-right">{{code.retailPrice | number : 2}}</td>
-                                <td class="mfb-xxt text-right">{{code.salePrice | number : 2}}</td>
+                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minRetailPrice,code.maxRetailPrice)}}</td>
+                                <td class="mfb-xxt text-right">{{getMinMaxPrice(code.minSalePrice,code.maxSalePrice)}}</td>
                                 <td class="mfb-xxt text-right">
-                                    <span class="text-right text-l-t">{{code.msrp | number: 2}}</span>
-                                    <p class="">
-                                        <input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
-                                    </p>
-                                    <p class="text-u-red">
-                                        （<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}})
-                                        {{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>
+                                    {{getMinMaxPrice(code.minPromotionPrice,code.maxPromotionPrice)}}
+                                    <!--<span class="text-right text-l-t">{{code.msrp | number: 2}}</span>-->
+                                    <!--<p class="">-->
+                                        <!--<input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">-->
+                                    <!--</p>-->
+                                    <!--<p class="text-u-red">-->
+                                        <!--（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}})-->
+                                        <!--{{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>-->
                                 </td>
                                 <td class="mfb-xxx text-left">
                                     <div class="table_main">

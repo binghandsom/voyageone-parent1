@@ -155,7 +155,7 @@ public class CnCategoryService extends BaseService {
                 isSuccess = true;
             }
         } catch (Exception e) {
-            $error("推送类目xml时发生异常!");
+            $error("推送类目xml时发生异常!" + e.getMessage());
         }
 
         return isSuccess;

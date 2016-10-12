@@ -246,6 +246,11 @@ public class TypeChannels {
                     continue;
                 }
 
+                // 如果是LIKING的cartID,不再作为返回平台渠道
+                if (Carts.getCart(cartId) != null && "3".equals(Carts.getCart(cartId).getCart_type())) {
+                    continue;
+                }
+
                 // 如果add_name1里为空, 说明这家店没有好好配置过, 所以不返回记录, 只有配置好了之后才能正常使用
                 String add_name1 = typeChannelBean.getAdd_name1();
                 if (!StringUtils.isEmpty(add_name1)) {

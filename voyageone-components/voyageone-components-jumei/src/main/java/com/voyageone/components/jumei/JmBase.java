@@ -146,8 +146,8 @@ public class JmBase extends ComponentBase {
                     }
                 }
 
-                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") ||
-                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087"))) {
+                if (!("0".equals(code) || code.contains("109902") || code.contains("103087") || code.contains("105106") ||
+                        "0".equals(codes) || codes.contains("109902") || codes.contains("103087") || codes.contains("105106"))) {
                     throw new BusinessException(String.format("调用聚美API错误[%s]：%s", post_url, result), result);
                 }
             } else if (map.containsKey("error_code")) {
