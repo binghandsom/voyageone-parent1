@@ -26,8 +26,8 @@ define([
              * 检索查询
              */
             search: function (init) {
-                var self = this;
-                var data = this.prodPageOption;
+                var self = this,
+                    data = this.prodPageOption;
                 if (!init) {
                     self.statusList = [];
                 }
