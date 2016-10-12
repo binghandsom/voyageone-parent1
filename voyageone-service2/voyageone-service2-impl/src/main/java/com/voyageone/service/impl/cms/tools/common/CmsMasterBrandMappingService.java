@@ -123,9 +123,9 @@ public class CmsMasterBrandMappingService extends BaseService {
         //主品牌匹配状态
         List<Integer> statusList = (List<Integer>) param.get("statusList");
         //Master品牌
-        String selectedBrand = (String) param.get("selectedBrand");
+        String feedBrand = (String) param.get("feedBrand");
         //检索的品牌
-        data.put("selectedBrand", selectedBrand);
+        data.put("feedBrand", feedBrand);
         //未匹配的品牌
         if (statusList.contains(noMatchBrand)) {
             data.put("statusListFlag", noMatchBrand);

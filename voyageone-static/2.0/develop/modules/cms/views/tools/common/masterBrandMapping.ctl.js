@@ -15,7 +15,7 @@ define([
             this.masterBrandService = masterBrandService;
             this.popups = popups;
             this.prodPageOption = {curr: 1, size: 10, fetch: this.search.bind(this)};
-            this.selectedBrand = '';
+            this.feedBrand = '';
             this.statusList = [0, 2, 3];
         }
 
@@ -38,7 +38,7 @@ define([
                 }
             });
 
-            _.extend(data, {"statusList": self.statusList, "selectedBrand": self.selectedBrand});
+            _.extend(data, {"statusList": self.statusList, "feedBrand": self.feedBrand});
 
             self.masterBrandService.search(data).then(function (res) {
                 self.masterBrandList = res.data.masterBrandList;

@@ -33,10 +33,10 @@ public class CmsMasterBrandMappingController extends CmsController {
         Map<String, Object> result = new HashMap<>();
         //店铺渠道取得
         String channelId = this.getUser().getSelChannelId();
-        // 检索Master品牌匹配的数量
-        result.put("masterBrandsCount", cmsMasterBrandMappingService.searchMasterBrandCount(channelId, param));
         // 检索Master品牌匹配的数据
         result.put("masterBrandList", cmsMasterBrandMappingService.searchMasterBrandInfo(channelId, param));
+        // 检索Master品牌匹配的数量
+        result.put("masterBrandsCount", cmsMasterBrandMappingService.searchMasterBrandCount(channelId, param));
         //返回数据的类型
         return success(result);
     }
