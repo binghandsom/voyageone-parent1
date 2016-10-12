@@ -20,13 +20,14 @@ define([
                 {'id': 1, 'application': 'Admin', 'valid': false},
                 {'id': 2, 'application': 'CMS', 'valid': false},
                 {'id': 3, 'application': 'OMS', 'valid': false},
-                {'id': 4, 'application': 'WMS', 'valid': false}
+                {'id': 4, 'application': 'WMS', 'valid': false},
+                {'id': 5, 'application': 'VMS', 'valid': false}
             ];
             this.saveInfo = {
                 roleName: this.sourceData !== 'add' ? this.sourceData.roleName : '',
                 roleType: this.sourceData !== 'add' ? this.sourceData.roleType + '' : '',
                 description: this.sourceData !== 'add' ? this.sourceData.description : '',
-                active: this.sourceData !== 'add' ? this.sourceData.active : '',
+                active: this.sourceData !== 'add' ? this.sourceData.active : '1',
                 allChannel: this.sourceData !== 'add' ? (this.sourceData.channelId != null ? this.sourceData.channelId.indexOf('ALL') > -1 ? '1' : '0' : '') : '',
                 allStore: this.sourceData !== 'add' ? (this.sourceData.storeId != null ? this.sourceData.storeId.indexOf('ALL') > -1 ? '1' : '0' : '') : '',
                 applications: this.sourceData !== 'add' ? this.sourceData.application : [],

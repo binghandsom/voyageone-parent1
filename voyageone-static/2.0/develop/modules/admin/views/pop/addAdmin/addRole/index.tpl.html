@@ -14,8 +14,26 @@
                             <input class="form-control" ng-model="ctrl.saveInfo.roleName" ng-disabled="ctrl.popType=='修改角色'"/>
                         </div>
                     </div>
+                    <div class="row form-group"><!-- 角色类型 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ROLE_TYPE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.saveInfo.roleType" name="roleType" required>
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="{{roleType.id}}" ng-repeat="roleType in ctrl.roleTypeList">&nbsp;{{roleType.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.roleType"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="form-horizontal">
                     <div class="row form-group"><!-- 状态 -->
-                        <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                        <label class="col-sm-2 control-label">{{'TXT_STATUS' | translate}}</label>
                         <div class="col-sm-8">
                             <label class="checkbox-inline c-radio">
                                 <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active" required><span class="fa fa-check"></span> 启用
@@ -25,29 +43,11 @@
                             </label>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div class="col-sm-8 col-sm-offset-3">
-                            <vo-message target="addForm.active"></vo-message>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-5">
-                <div class="form-horizontal">
-                    <div class="row form-group"><!-- 角色类型 -->
-                        <label class="col-sm-2 control-label">{{'TXT_ROLE_TYPE' | translate}}</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" ng-model="ctrl.saveInfo.roleType">
-                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                <option value="{{roleType.id}}" ng-repeat="roleType in ctrl.roleTypeList">&nbsp;{{roleType.name}}</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="row form-group"><!-- 授权系统 -->
-                        <label class="col-sm-2 control-label">{{'TXT_ROLE_SYSTEM' | translate}}</label>{{ctrl.applicationList[4].valid}}
+                        <label class="col-sm-2 control-label">{{'TXT_ROLE_SYSTEM' | translate}}</label>
                         <div class="col-sm-10">
-                            <label class="checkbox-inline c-checkbox" ng-repeat="app in ctrl.applicationList">
-                                <input type="checkbox" ng-value="app.application" style="margin: 0"
+                            <label class="checkbox-inline c-checkbox" ng-repeat="app in ctrl.applicationList" style="margin-left: 7px;">
+                                <input type="checkbox" ng-value="app.application" style="margin: 0;"
                                        ng-model="app.valid"><span class="fa fa-check"></span> {{app.application}}
                             </label>
                             <span class="text-warnings">(必填)</span>
