@@ -307,7 +307,7 @@ public class HtProductAddResponse extends BaseJMResponse {
                         sbMsg.append("不是聚美的地区(area_code)货币类型");
                         break;
                     default:
-                        sbMsg.append(map.get("reason").toString());
+                        sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                 }
                 sbMsg.append("] ");
                 this.setErrorMsg(sbMsg.toString() + this.body);

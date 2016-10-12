@@ -422,7 +422,7 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
         err_data_maill = err_data_maill + err_data;
         // 存在异常数据
         if (err_data.length() > 0) {
-            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
             err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
@@ -445,7 +445,7 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
         err_data_maill = err_data_maill + err_data;
         // 存在异常数据
         if (err_data.length() > 0) {
-            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
             err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
@@ -468,7 +468,7 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
         err_data_maill = err_data_maill + err_data;
         // 存在异常数据
         if (err_data.length() > 0) {
-            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
             err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
@@ -491,7 +491,7 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
         err_data_maill = err_data_maill + err_data;
         // 存在异常数据
         if (err_data.length() > 0) {
-            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
             err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";

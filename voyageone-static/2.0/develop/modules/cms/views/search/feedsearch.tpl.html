@@ -10,6 +10,17 @@
                         <!-----------------------------------------第一列------------------------------------------->
                         <div class="col-sm-4">
                             <div class="form-horizontal">
+                                <div class="form-group" ng-if="vm.masterData.isminimall == 1">
+                                    <label class="col-sm-3 control-label">供应商</label>
+                                    <div class="col-sm-8 form-inline" style="padding-left:0px">
+                                        <div class="col-sm-5">
+                                            <select class="form-control" style="margin-left:4px;width:150px" ng-model="vm.orgChaId" ng-change="init(vm.orgChaId)"
+                                                    ng-options="orgChaInfo.order_channel_id as orgChaInfo.full_name for orgChaInfo in vm.masterData.channelList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row form-group" ng-controller="popupCtrl">
                                     <div class="col-sm-3 text-right">
                                         <button class="btn btn-pop btn-default ng-binding" ng-click="openFeedCategoryMapping(popCategoryMul)">
@@ -255,7 +266,7 @@
                         <div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
                             <div class="form-horizontal form-inline">
                                 <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-                                <button class="btn btn-vo" ng-click="search(1,true)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                <button ng-disabled="vm.masterData.isminimall == 1 && !vm.orgChaId" class="btn btn-vo" ng-click="search(1,true)"><i class="fa fa-search"></i>&nbsp;搜索</button>
                                 <span class="text-warnings">
                                     <i class="icon fa fa-bell-o"></i>&nbsp;Feed商品检索一览 , 检索对象为品牌方提供的所有商品
                                 </span>

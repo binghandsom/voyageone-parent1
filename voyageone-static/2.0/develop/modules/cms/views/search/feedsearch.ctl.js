@@ -45,7 +45,7 @@ define([
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
             }
-            $feedSearchService.init()
+            $feedSearchService.init(" ")
                 .then(function (res) {
                     $scope.vm.masterData = res.data;
                 })
@@ -92,6 +92,15 @@ define([
             this.openCodeDetail({'attsList': feedObj.attsList});
         };
 
+        $scope.init = function (selChannel){
+            if(selChannel){
+                $feedSearchService.init(selChannel)
+                    .then(function (res) {
+                        $scope.vm.masterData = res.data;
+                    })
+            }
+        }
+
         /**
          * 检索
          */
@@ -111,7 +120,7 @@ define([
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
-
+            $scope.vm.searchInfo.orgChaId =  $scope.vm.orgChaId;
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
 
                 $scope.vm.currTab.group = true;
@@ -187,8 +196,6 @@ define([
                     'selList': selList,
                     'isAll': $scope.vm.searchInfo.isAll,
                     'status': mark,
-
-
                     "searchInfo": $scope.beforSearchInfo
                 }).then(function () {
                     if (tempFeedSelect != null) {
@@ -207,8 +214,10 @@ define([
         function doExport() {
             var data;
             if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0) {
-                data = {"parameter": JSON.stringify($scope.vm.feedSelList.selList)}
+                var searchInfo = {"codeList":$scope.vm.feedSelList.selList,"orgChaId":$scope.vm.orgChaId};
+                data = {"parameter": JSON.stringify(searchInfo)}
             } else {
+                $scope.vm.searchInfo.orgChaId = $scope.vm.orgChaId;
                 data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
             }
             $feedSearchService.doExport(data).then(function (data) {

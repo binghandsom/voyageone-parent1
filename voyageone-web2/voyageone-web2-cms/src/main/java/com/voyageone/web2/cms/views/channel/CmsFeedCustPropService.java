@@ -214,9 +214,9 @@ public class CmsFeedCustPropService extends BaseViewService {
         return feedBeanList.stream().map(this::buildFeedCategoryBean).collect(Collectors.toList());
     }
 
-    public List<CmsMtFeedCategoryTreeModel> getCategoryList (UserSessionBean userInfo) {
+    public List<CmsMtFeedCategoryTreeModel> getCategoryList (String  channelId) {
         //HashMap dataMap = new HashMap(1);
-        List<CmsMtFeedCategoryTreeModel> topTree = feedCategoryTreeService.getFeedAllCategoryList(userInfo.getSelChannelId());
+        List<CmsMtFeedCategoryTreeModel> topTree = feedCategoryTreeService.getFeedAllCategoryList(channelId);
         List<CmsMtFeedCategoryTreeModel> rsltList = new ArrayList<>();
         CmsMtFeedCategoryTreeModel comMdl = new CmsMtFeedCategoryTreeModel();
         comMdl.setCatPath("共通属性");

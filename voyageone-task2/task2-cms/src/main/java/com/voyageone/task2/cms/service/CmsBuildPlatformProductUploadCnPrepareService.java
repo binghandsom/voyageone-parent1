@@ -671,24 +671,20 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseTaskServi
             List<String> imageKey = new ArrayList<>();
             List<String> imageNames = new ArrayList<>();
             for (int index = 0; index < imageCnt; index++) {
-                // modified by morse.lu 2016/09/26 start
                 // UrlKey-1,UrlKey-2
-//                String imageName = imageList.get(index).getName();
-//                if (index == 0) {
-//                    strImageNames = imageName;
-//                } else {
-//                    strImageNames = strImageNames + "," + imageName;
-//                }
-                imageKey.add(strUrlKey + "-" + Integer.toString(index));
+                imageKey.add(strUrlKey + "-" + Integer.toString(index + 1));
                 imageNames.add(imageList.get(index).getName());
-                // modified by morse.lu 2016/09/26 end
             }
 
-            // 更新cms_bt_sx_cn_images表，之后上传图片的job会抽出status=0的数据进行上传图片
-            cnImageService.updateImageInfo(sxData.getChannelId(), sxData.getCartId(), product.getCommon().getFields().getCode(), strUrlKey, imageNames, getTaskNameForUpdate());
+            // deleted by morse.lu 2016/10/11 start
+            // 暂时不传图片
+//            // 更新cms_bt_sx_cn_images表，之后上传图片的job会抽出status=0的数据进行上传图片
+//            cnImageService.updateImageInfo(sxData.getChannelId(), sxData.getCartId(), product.getCommon().getFields().getCode(), strUrlKey, imageNames, getTaskNameForUpdate());
+            // deleted by morse.lu 2016/10/11 end
 
 //            ((InputField) field).setValue(strImageNames);
-            ((InputField) field).setValue(imageKey.stream().collect(Collectors.joining(",")));
+//            ((InputField) field).setValue(imageKey.stream().collect(Collectors.joining(",")));
+            ((InputField) field).setValue(imageNames.stream().collect(Collectors.joining(",")));
         }
         {
             // CreatedAt 上市日期

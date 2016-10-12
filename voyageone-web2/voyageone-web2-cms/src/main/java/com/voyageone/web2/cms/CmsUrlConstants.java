@@ -164,7 +164,11 @@ public interface CmsUrlConstants {
             interface DETAIL {
 
                 String ROOT = "/cms/promotion/detail";
+
                 String GetPromotionSkuList="getPromotionSkuList";
+
+                String SaveSkuPromotionPrices="saveSkuPromotionPrices";
+
                 String GET_PROMOTION_GROUP = "getPromotionGroup";
 
                 String GET_PROMOTION_CODE = "getPromotionCode";

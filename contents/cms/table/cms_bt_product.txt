@@ -193,6 +193,7 @@
 * feed    ->品牌方数据
   * catId     ->第三方类目Id
   * catPath   ->第三方类目名称
+  * brand     ->2016.10.21 feed的品牌 edward
   * orgAtts
   * cnAtts
   * customIds

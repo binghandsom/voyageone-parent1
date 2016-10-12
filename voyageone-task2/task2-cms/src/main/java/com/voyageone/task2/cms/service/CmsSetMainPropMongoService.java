@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.ctc.wstx.util.DataUtil;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -1091,6 +1092,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -1144,8 +1147,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
@@ -1343,40 +1344,26 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                }
 //            }
             if (newFlg || StringUtils.isEmpty(productCommonField.getBrand()) || "1".equals(feed.getIsFeedReImport())) {
-                // 插入的品牌名称为feed中的品牌名称的小写值
-                String feedBrandLowerCase = feed.getBrand().toLowerCase().trim();
-                if (mapBrandMapping.containsKey(feedBrandLowerCase)) {
-                    productCommonField.setBrand(mapBrandMapping.get(feedBrandLowerCase));
-                } else {
-                    // add by desmond 2016/07/18 start
-                    // 碰到没有品牌Mapping的商品时，自动向Synship.com_mt_value_channel表中增加品牌Mapping数据
-                    // 设为feed品牌名的小写值(统一都用小写品牌名，画面展示也用小写品牌)
-                    productCommonField.setBrand(feedBrandLowerCase);
-                    // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中(41:品牌mapping信息)
-//                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
-                    if (!StringUtils.isEmpty(feedBrandLowerCase)) {
-                        comMtValueChannelService.insertComMtValueChannelMapping(41, this.channel.getOrder_channel_id(),
-                                feedBrandLowerCase, feedBrandLowerCase, getTaskName());
-                        // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
-                        mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
-                    }
-                    // add by desmond 2016/07/18 end
-
-                    // update desmond 2016/07/04 start
-//                    String strAddUpdate = newFlg ? "新增" : "更新";
-//                    String errMsg = "feed->master导入:" + strAddUpdate +"出错:" + feed.getChannelId() + ":" + feed.getCode() + ":feed->main的品牌mapping没做 (feed brand:" + feed.getBrand() + ")";
-//                    $error(errMsg);
-//                    throw new BusinessException(errMsg);
-
-//                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-                    // 记下log, 跳过当前记录
-                    //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-//                    $warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-//                    return null;
-                    // update desmond 2016/07/04 end
-                }
+//                // 插入的品牌名称为feed中的品牌名称的小写值
+//                String feedBrandLowerCase = feed.getBrand().toLowerCase().trim();
+//                if (mapBrandMapping.containsKey(feedBrandLowerCase)) {
+//                    productCommonField.setBrand(mapBrandMapping.get(feedBrandLowerCase));
+//                } else {
+//                    // add by desmond 2016/07/18 start
+//                    // 碰到没有品牌Mapping的商品时，自动向Synship.com_mt_value_channel表中增加品牌Mapping数据
+//                    // 设为feed品牌名的小写值(统一都用小写品牌名，画面展示也用小写品牌)
+//                    productCommonField.setBrand(feedBrandLowerCase);
+//                    // 将该feed品牌小写值mapping信息插入或更新到Synship.com_mt_value_channel表中(41:品牌mapping信息)
+////                    insertBrandMappingInfo(this.channel.getOrder_channel_id(), feed, feedBrandLowerCase);
+//                    if (!StringUtils.isEmpty(feedBrandLowerCase)) {
+//                        comMtValueChannelService.insertComMtValueChannelMapping(41, this.channel.getOrder_channel_id(),
+//                                feedBrandLowerCase, feedBrandLowerCase, getTaskName());
+//                        // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
+//                        mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
+//                    }
+//                    // add by desmond 2016/07/18 end
+//                }
+                //// TODO: 2016/10/10 james 通过feed品牌找到主数据品牌的接口取得对应的主数据的品牌 
             }
 
 
@@ -1960,7 +1947,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // 商品状态
-                platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                // cartID是928的场合 状态直接是approved james.li
+                if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                }else{
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                }
                 // 平台属性状态(新增时)
                 platform.setpAttributeStatus("0");    // add desmond 2016/07/05
 
@@ -2097,6 +2089,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.getFeed().setCustomIdsCn(mainFeedOrgAttsKeyCnList); // 自定义字段列表(中文)
             product.getFeed().setCatId(feed.getCatId());
             product.getFeed().setCatPath(feed.getCategory());
+            product.getFeed().setBrand(feed.getBrand());
 
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
@@ -2449,7 +2442,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // 商品状态
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    // cartID是928的场合 状态直接是approved james.li
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }else{
+                        platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    }
                     // 平台属性状态(更新时，新增PXX平台属性时)
                     platform.setpAttributeStatus("0");   // add desmond 2016/07/05
                     platforms.put("P" + typeChannelBean.getValue(), platform);
@@ -2475,6 +2473,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // add desmond 2016/07/07 end
+
+                    // cartID是928的场合 状态直接是approved james.li
+                    CmsBtProductModel_Platform_Cart platform = platforms.get("P" + typeChannelBean.getValue());
+                    //
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }
                 }
             }
 

@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.list;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
+import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -56,13 +57,16 @@ public class CmsPromotionDetailController extends CmsController {
         Object data= promotionSkuService.getListByWhere(params);
         return success(data);
     }
+    @RequestMapping(PROMOTION.LIST.DETAIL.SaveSkuPromotionPrices)
+    public AjaxResponse saveSkuPromotionPrices(@RequestBody List<SaveSkuPromotionPricesParameter> parameter) {
+        promotionSkuService.saveSkuPromotionPrices(parameter);
+        return success(null);
+    }
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map<String, Object> params) {
         int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
-
-
         int cnt = cmsPromotionDetailService.getPromotionCodeListCnt(params);
         List<CmsBtPromotionCodesBean> resultBean = cmsPromotionDetailService.getPromotionCode(params, cartId);
         Map<String,Object> result = new HashMap<>();

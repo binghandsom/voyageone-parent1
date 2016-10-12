@@ -480,7 +480,7 @@ define(function () {
         "TXT_MSG_SHORT_DESCRIPTION": "短描述",
         "TXT_MSG_UNVALID_URL": "无效的地址.",
         "TXT_MSG_NO_UPLOAD": "请选择要提交的文件",
-        "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
+        "TXT_MSG_CODE_IN_OTHER": "你提交的商品，已经在其他任务中。请重新选择。",
         "TXT_MSG_REIMPORT_BEAT": "从新上传会覆盖原数据, 意味着之前的数据将被清空. 你确定要继续么?",
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
         "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "重置方式导入时,原数据会全部被删除.你确定要继续?",
@@ -511,8 +511,8 @@ define(function () {
         "TXT_IMAGE_TYPE": "图片类型",
         "TXT_IMAGE_GROUP_LIST": "图片管理",
         "TXT_RELATED_BRAND_NAME": "相关品牌",
-        "TXT_BRAND_CATEGORY":"品牌种类",
-        "TXT_BRAND_STATES":"品牌状态",
+        "TXT_BRAND_CATEGORY": "品牌种类",
+        "TXT_BRAND_STATES": "品牌状态",
         "TXT_RELATED_PRODUCT_TYPE": "相关产品类型",
         "TXT_RELATED_SIZE_TYPE": "相关尺码",
         "TXT_IMAGE_GROUP_NAME": "图片组别名称",
@@ -662,7 +662,7 @@ define(function () {
         "TXT_GROUP_NAME_FEED_CAT_WITH_COLON": "商品名称/Feed类目/主类目",
         "TXT_HS_CODE_SETTED_SEARCH": "个人设置税号成果搜索",
         "TXT_CARRY_ON_THE_CURRENT_SETTING": "请继续完善税号设置",
-        "TXT_TRANSLATION_INPUT_TIP":"get不到啦，请至少给我产品Code或任务数量",
+        "TXT_TRANSLATION_INPUT_TIP": "get不到啦，请至少给我产品Code或任务数量",
 
         /**高级检索*/
         "TXT_ADVANCE_SEARCH_NEW": "高级搜索",
@@ -701,6 +701,7 @@ define(function () {
         "TXT_FINAL_SALE_PRICE_SETTING": "中国最终售价设置",
         "TXT_BASE_PRICE": "Base price",
         "TXT_FINAL_SALE_PRICE": "中国最终售价",
+        "TXT_PROMOTION_SALE_PRICE": "活动价",
         "TXT_CHINA_PROMOTION_PRICE": "中国促销价",
         "TXT_CHINA_RETAIL_PRICE": "中国指导价",
         "TXT_CHINA_MSRP_PRICE": "中国建议零售价",
@@ -787,34 +788,37 @@ define(function () {
         "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
         "TXT_CART_NAME": "平台渠道名称",
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
-        "TXT_FEED_BRAND":"Feed品牌",
+        "TXT_FEED_BRAND": "Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
-        "TXT_PLATFORM_BRAND":"平台品牌",
-        "TXT_REGET_PLATFORM_BRANDS":"重新获取平台品牌",
-        "TXT_COMPLETE_THE_PLATEFORM_BRAND":"平台品牌未选择",
+        "TXT_PLATFORM_BRAND": "平台品牌",
+        "TXT_REGET_PLATFORM_BRANDS": "重新获取平台品牌",
+        "TXT_COMPLETE_THE_PLATEFORM_BRAND": "平台品牌未选择",
 
         /**店铺管理-平台默认属性设置一览*/
         "TXT_DEFAULT_MAPPING_LIST": "平台默认属性设置一览",
         "TXT_DEFAULT_MAPPING": "平台默认属性设置",
         "TXT_DEFAULT_PLATEFORM_MAPPING": "平台类目属性匹配",
-        "TXT_DEFAULT_SETTING":"新建默认设置",
-        "TXT_UPDATER":"更新人",
+        "TXT_DEFAULT_SETTING": "新建默认设置",
+        "TXT_UPDATER": "更新人",
 
         "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
         "TXT_TASK_LIST": "任务一览",
-        "TXT_FLOATING_RATE": "价格波动",
 
         /**黑名单*/
-        "TXT_BLACK_LIST_IN":"已加入黑名单",
-        "TXT_BLACK_LIST_OUT":"未加入黑名单",
-        "TXT_JOIN_BLACK_LIST":"加入黑名单",
-        "TXT_REMOVE_BLACK_LIST":"移除黑名单",
-        "TXT_BLACK_LIST_CONFIRM":"您确认要进行[{{content}}]操作吗？",
-        "TXT_BATCH_JOIN_BLACK_LIST":"批量加入黑名单",
-        "TXT_BATCH_REMOVE_BLACK_LIST":"批量移除黑名单",
-        "TXT_BLACK_LIST_BATCH_CONFIRM":"您确认要进行[{{content}}]操作吗？"
+        "TXT_BLACK_LIST_IN": "已加入黑名单",
+        "TXT_BLACK_LIST_OUT": "未加入黑名单",
+        "TXT_JOIN_BLACK_LIST": "加入黑名单",
+        "TXT_REMOVE_BLACK_LIST": "移除黑名单",
+        "TXT_BLACK_LIST_CONFIRM": "您确认要进行[{{content}}]操作吗？",
+        "TXT_BATCH_JOIN_BLACK_LIST": "批量加入黑名单",
+        "TXT_BATCH_REMOVE_BLACK_LIST": "批量移除黑名单",
+        "TXT_BLACK_LIST_BATCH_CONFIRM": "您确认要进行[{{content}}]操作吗？",
+
+        /**sku价格设置popup*/
+        "TXT_SKU_PRICE_SETTING": "SKU价格设置"
+
     };
 });
