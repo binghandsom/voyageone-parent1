@@ -362,9 +362,9 @@ define(function () {
             "controller": "BlackBrandListController as ctrl"
         },
         "master-brand-setting": {
-            "hash": "/system/mainbrand/",
-            "templateUrl": "views/system/mainbrand/index.tpl.html",
-            "controllerUrl": "modules/cms/views/system/mainbrand/index.ctl",
+            "hash": "/systemsetting/common/mainbrand/",
+            "templateUrl": "views/systemsetting/common/mainbrand/index.tpl.html",
+            "controllerUrl": "modules/cms/views/systemsetting/common/mainbrand/index.ctl",
             "controller": "mainBrandController as ctrl"
         }
     };
