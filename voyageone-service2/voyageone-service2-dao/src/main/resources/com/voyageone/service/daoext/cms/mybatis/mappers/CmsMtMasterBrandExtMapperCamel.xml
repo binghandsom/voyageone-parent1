@@ -27,8 +27,8 @@
                 or b.master_flag is NULL)
             </if>
         </if>
-        <if test="selectedBrand !=null and selectedBrand != ''">
-            and (a.key like '%${selectedBrand}%')
+        <if test="feedBrand !=null and feedBrand != ''">
+            and (a.key like '%${feedBrand}%')
         </if>
         <if test="offset != null">
             limit #{offset}, #{size}
