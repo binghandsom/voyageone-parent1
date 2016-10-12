@@ -23,7 +23,7 @@ import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService {
 
     @Autowired
     private CnSchemaService cnSchemaService;

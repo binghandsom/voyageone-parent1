@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.components.sears.bean.PaginationBean;
 import com.voyageone.components.sears.bean.ProductResponse;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.feed.SearsFeedDao;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.groupingBy;
  * Created by Jonas on 10/10/15.
  */
 @Service
-public class SearsAnalysisService extends BaseTaskService {
+public class SearsAnalysisService extends BaseCronTaskService {
 
     @Autowired
     private SearsFeedDao searsSuperFeedDao;

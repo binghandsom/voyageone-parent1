@@ -1,37 +1,18 @@
 package com.voyageone.task2.cms.service.putaway;
 
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
-import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.bean.ProductPublishBean;
 import com.voyageone.task2.cms.bean.SxProductBean;
-import com.voyageone.task2.cms.bean.UpJobParamBean;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.dao.CmsBusinessLogDao;
 import com.voyageone.task2.cms.dao.ProductPublishDao;
-import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
-import com.voyageone.task2.cms.model.CmsBusinessLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -43,7 +24,7 @@ import java.util.*;
  * Created by Leo on 2015/5/27.
  */
 @Repository
-public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
+public class UploadProductService extends BaseCronTaskService implements WorkloadCompleteIntf {
     private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100000;
     @Autowired
     private ProductService productService;

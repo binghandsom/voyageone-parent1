@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.ImageBean;
 import com.voyageone.task2.cms.bean.ItemBean;
@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toMap;
  * Bcbg 远程调用共通基础
  * Created by Jonas on 10/20/15.
  */
-abstract class SearsWsdlBase extends BaseTaskService {
+abstract class SearsWsdlBase extends BaseCronTaskService {
 
     @Autowired
     protected SuperFeedDao superFeedDao;

@@ -31,7 +31,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService {
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;

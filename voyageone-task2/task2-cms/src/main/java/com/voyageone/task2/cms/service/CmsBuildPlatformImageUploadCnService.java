@@ -7,7 +7,7 @@ import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
+public class CmsBuildPlatformImageUploadCnService extends BaseCronTaskService {
 
     @Autowired
     private BusinessLogService businessLogService;

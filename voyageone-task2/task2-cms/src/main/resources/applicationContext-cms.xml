@@ -15,6 +15,9 @@
         <task:scheduled ref="CmsBulkUploadImageToS7Job" method="run" cron="0 0/2 * * * ?"/>
 
         <!-- cms2 batch add    -->
+        <!-- 从Cms系统导入产品数据到收索服务器 （每天早上4：30点一次） -->
+        <task:scheduled ref="CmsProductTotalImportToSearchJob" method="run" cron="0 30 20 * * ?"/>
+
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 

@@ -34,7 +34,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UploadToUSJoiService extends BaseTaskService {
+public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     ProductGroupService productGroupService;

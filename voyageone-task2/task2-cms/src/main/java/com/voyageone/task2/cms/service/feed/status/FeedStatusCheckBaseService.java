@@ -2,32 +2,27 @@ package com.voyageone.task2.cms.service.feed.status;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsFeedLiveSkuDaoExt;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedSaleService;
 import com.voyageone.service.model.cms.CmsFeedLiveSkuKey;
 import com.voyageone.service.model.cms.CmsFeedLiveSkuModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author james.li on 2016/9/22.
  * @version 2.0.0
  */
-public abstract class FeedStatusCheckBaseService extends BaseTaskService {
+public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
 
     protected abstract List<CmsFeedLiveSkuModel> getSkuList() throws Exception;
 

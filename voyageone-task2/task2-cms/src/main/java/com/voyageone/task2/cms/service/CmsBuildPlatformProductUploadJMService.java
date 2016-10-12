@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  * @version 2.1.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService {
 
     public static final int LIMIT = 100;
     public static final int WORK_LOAD_FAIL = 2;

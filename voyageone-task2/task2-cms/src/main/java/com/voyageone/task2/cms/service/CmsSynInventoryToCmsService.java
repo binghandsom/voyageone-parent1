@@ -9,10 +9,8 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
  *
  */
 @Service
-public class CmsSynInventoryToCmsService extends BaseTaskService {
+public class CmsSynInventoryToCmsService extends BaseCronTaskService {
 
     @Autowired
     private InventoryDao inventoryDao;

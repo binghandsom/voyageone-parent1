@@ -3,16 +3,14 @@ package com.voyageone.task2.vms.service;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Codes;
-import com.voyageone.common.configs.VmsChannelConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.vms.VmsBtFinancialReportDao;
 import com.voyageone.service.daoext.vms.VmsBtOrderDetailDaoExt;
 import com.voyageone.service.model.vms.VmsBtFinancialReportModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -24,8 +22,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -40,7 +36,7 @@ import java.util.*;
  * @version 1.0
  */
 @Service
-public class VmsMakeFinancialReportService extends BaseTaskService {
+public class VmsMakeFinancialReportService extends BaseCronTaskService {
 
     @Autowired
     private VmsBtFinancialReportDao vmsBtFinancialReportDao;

@@ -4,7 +4,7 @@ package com.voyageone.task2.vms.service;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.service.dao.vms.VmsBtOrderDetailDao;
 import com.voyageone.service.model.vms.VmsBtOrderDetailModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.*;
 
 
 @Service
-public class VmsOrderDetailDataImportService extends BaseTaskService {
+public class VmsOrderDetailDataImportService extends BaseCronTaskService {
 
     @Autowired
     private VmsBtOrderDetailDao vmsBtOrderDetailDao;
