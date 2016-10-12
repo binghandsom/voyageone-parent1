@@ -322,4 +322,3 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.getJmPromotionCount(params);
     }
 }
-

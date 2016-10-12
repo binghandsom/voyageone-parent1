@@ -10,9 +10,9 @@ define([
         $scope.vm = {"jmMasterBrandList":[]};
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
-        $scope.initialize  = function () {
 
-            if(context.id){
+        $scope.initialize  = function () {
+            if (context.id) {
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     $scope.vm.isBeginPre=res.data.isBeginPre;       //预热是否开始
                     $scope.vm.isEnd= res.data.isEnd;                //活动是否结束
@@ -23,9 +23,11 @@ define([
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
                     $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
                 });
-            }else{
+            } else {
                 $scope.editModel.model.status=0;
-                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
+                $scope.editModel.tagList = [];
+                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "移动端专场首推单品", active:1});
+                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "", active:1});
             }
 
             jmPromotionService.init().then(function (res) {

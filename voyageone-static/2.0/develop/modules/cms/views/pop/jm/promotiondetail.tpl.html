@@ -6,7 +6,12 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="promotionForm">
-
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" translate="平台名称"></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" value="聚美国际" maxlength="25" readonly>
+                </div>
+            </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-8">
@@ -14,7 +19,6 @@
                     <input type="hidden"  ng-model="model.id" >
                 </div>
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.promotionName"></vo-message>
@@ -22,33 +26,45 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
+                <label class="col-sm-3 control-label vo_reqfield">活动场景</label>
                 <div class="col-sm-8">
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="0" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 日常专场
+                    <label class="checkbox-inline c-checkbox">
+                        <input type="checkbox" name="promotionType" value="1" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
+                        <span class="fa fa-check"></span> 专场特卖
                     </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="1" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 导购团
+                    <label class="checkbox-inline c-checkbox">
+                        <input type="checkbox" name="promotionType" value="2" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
+                        <span class="fa fa-check"></span> 商城铺货
                     </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="2" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 大促
-                    </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="3" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 长期场馆
-                    </label>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.promotionType"></vo-message>
                 </div>
             </div>
 
             <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
+                <div class="col-sm-8" >
+                    <select class="form-control m-r-xs" ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId" width="'100%'">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        <option value="1">日常专场</option>
+                        <option value="2">资源位日常专场</option>
+                        <option value="3">大促专场</option>
+                        <option value="4">资源位大促专场</option>
+                        <option value="6">导购团专场</option>
+                        <option value="7">首焦专场</option>
+                        <option value="8">商城导购</option>
+                        <option value="9">商城伪店铺</option>
+                        <option value="10">商城主推</option>
+                        <option value="11">其他平台促销活动</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionType"></vo-message>
+                    <vo-message target="promotionForm.cmsBtJmMasterBrandId"></vo-message>
                 </div>
             </div>
 
@@ -68,11 +84,61 @@
             </div>
 
             <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield">准备期截止时间</label>
+                <div class="col-sm-9">
+                    <div class="row form-inline">
+                        <div class="col-sm-5 input-group">
+                            <input type="date" class="form-control" uib-datepicker-popup
+                                   ng-model="editModel.model.signupDeadline"
+                                   max-date="editModel.model.prePeriodStart"
+                                   date-model-format="yyyy-MM-dd"
+                                   is-open="datePicker4" close-text="Close" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
+                </div>
+            </div>
+
+            <!--  预热时间不能大于活动时间   -->
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield">预热时间</label>
+                <div class="col-sm-9">
+                    <div class="row form-inline">
+                        <div class="col-sm-5 input-group">
+                            <input type="datetime-local" class="form-control"
+                                    datepicker-popup ng-readonly="vm.isBegin"
+                                    ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
+                                    max-date="editModel.model.activityStart"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss"
+                                    is-open="datePicker3" ng-required="true" close-text="Close"
+                                    ng-disabled="vm.isBeginPre"
+                                    date-disabled="disabled(date, mode)"/>
+                            <span class="input-group-btn" >
+                                <button type="button" class="btn btn-default"  ng-disabled="vm.isBegin" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动时间</label>
                 <div class="col-sm-9">
                     <div class="row form-inline">
                         <div class="col-sm-5 input-group">
-                            <input  type="datetime-local" class="form-control"
+                            <input type="datetime-local" class="form-control"
                                     ng-readonly="vm.isBegin||editModel.model.status!=0"
                                     datepicker-popup
                                     ng-model="editModel.model.activityStart" name="activityStart" required
@@ -102,101 +168,11 @@
                             </span>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.activityStart && promotionForm.activityEnd" class="vo-message-success"></vo-message>
-                </div>
-            </div>
-
-            <!--  预热时间不能大于活动时间   -->
-            <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">预热开始时间</label>
-                <div class="col-sm-9">
-                    <div class="row form-inline">
-                        <div class="col-sm-5 input-group">
-                            <input  type="datetime-local" class="form-control"
-                                    datepicker-popup ng-readonly="vm.isBegin"
-                                    ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
-                                    max-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
-                                    is-open="datePicker3" ng-required="true" close-text="Close"
-                                    ng-disabled="vm.isBeginPre"
-                                    date-disabled="disabled(date, mode)"/>
-                            <span class="input-group-btn" >
-                                <button type="button" class="btn btn-default"  ng-disabled="vm.isBegin" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row form-group">
-                <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
-                </div>
-            </div>
-
-            <div class="row form-group">
-                <label class="col-sm-3 control-label">准备期截止时间</label>
-                <div class="col-sm-9">
-                    <div class="row form-inline">
-                        <div class="col-sm-5 input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup
-                                   ng-model="editModel.model.signupDeadline"
-                                   max-date="editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-dd"
-                                   is-open="datePicker4" close-text="Close" />
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">专场优惠</label>
-                <div class="col-sm-8">
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionDown" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;直降
-                        </label>
-                    </div>
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionFullMinus" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;满减
-                        </label>
-                    </div>
-                    <div class="row m-l-md">
-                        <div class="col-md-6">
-                            <div class="col-md-1 m-t-xs"><strong class="text-base">满</strong></div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" ng-model="editModel.model.promotionFullAmount" ng-disabled="!editModel.model.isPromotionFullMinus || vm.isBeginPre" scale="15,2">
-                            </div>
-                            <div class="col-md-1 m-t-xs"><strong class="text-base">减</strong></div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" ng-model="editModel.model.promotionMinusAmount" ng-disabled="!editModel.model.isPromotionFullMinus || vm.isBeginPre" scale="15,2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-4">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionGiveCoupons" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;优惠券（聚美承担）
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row form-group">
-                <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionYh"></vo-message>
                 </div>
             </div>
 
@@ -225,12 +201,6 @@
                 </div>
             </div>
 
-            <div class="row form-group">
-                <label class="col-sm-3 control-label">专场涉及品类</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control"  ng-model="editModel.model.category">
-                </div>
-            </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label">专场涉及品牌</label>
                 <div class="col-sm-8">
