@@ -12,7 +12,6 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -23,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import static com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM.*;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -87,7 +87,7 @@ public class CmsBtPriceLogService extends BaseService {
             String channelId = newLog.getChannelId();
             int cartId = newLog.getCartId();
             BaseMongoMap<String, Object> skuModel = getSinglePlatformSku(newLog.getSku(), cartId, channelId);
-            Double confirmPrice = skuModel.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
+            Double confirmPrice = skuModel.getDoubleAttribute(confPriceRetail.name());
             // 检查价格，是否需要记录未确认
             if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
                 priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), skuModel, newLog.getCreater());
@@ -160,9 +160,9 @@ public class CmsBtPriceLogService extends BaseService {
                                 newLog.setClientMsrpPrice(tryGetPrice(skuCommonModel.getClientMsrpPrice()));
                                 newLog.setClientNetPrice(tryGetPrice(skuCommonModel.getClientNetPrice()));
                                 newLog.setClientRetailPrice(tryGetPrice(skuCommonModel.getClientRetailPrice()));
-                                newLog.setMsrpPrice(skuModel.getDoubleAttribute("priceMsrp"));
-                                newLog.setRetailPrice(skuModel.getDoubleAttribute("priceRetail"));
-                                newLog.setSalePrice(skuModel.getDoubleAttribute("priceSale"));
+                                newLog.setMsrpPrice(skuModel.getDoubleAttribute(priceMsrp.name()));
+                                newLog.setRetailPrice(skuModel.getDoubleAttribute(priceRetail.name()));
+                                newLog.setSalePrice(skuModel.getDoubleAttribute(priceSale.name()));
 
                                 skuModel.put("newLog", newLog);
 
@@ -191,7 +191,7 @@ public class CmsBtPriceLogService extends BaseService {
                                 sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
                                         JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
 
-                                Double confirmPrice = skuModel.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
+                                Double confirmPrice = skuModel.getDoubleAttribute(confPriceRetail.name());
 
                                 if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
                                     priceConfirmLogService.addUnConfirmed(channelId, boxedCartId, newLog.getCode(), skuModel, newLog.getCreater());
@@ -297,7 +297,7 @@ public class CmsBtPriceLogService extends BaseService {
         // 向Mq发送消息同步sku,code,group价格范围
         sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
 
-        Double confirmPrice = cartSku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.confPriceRetail.name());
+        Double confirmPrice = cartSku.getDoubleAttribute(confPriceRetail.name());
 
         if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
             priceConfirmLogService.addUnConfirmed(channelId, cartId, newLog.getCode(), cartSku, newLog.getCreater());
