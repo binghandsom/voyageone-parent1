@@ -46,10 +46,11 @@ public class PromotionCodeService extends BaseService {
     /**
      * 判断是否存在现在时点，指定Code正处于没有结束的活动中。
      */
-    public String getExistCodeInActivePromotion(String channelId, String productCode) {
+    public String getExistCodeInActivePromotion(String channelId, String productCode, Integer cartId) {
         Map<String, Object> param = new HashMap<>();
         param.put("channelId", channelId);
         param.put("productCode", productCode);
+        param.put("cartId", cartId);
         param.put("now", DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
         return cmsBtPromotionCodesDaoExt.selectCodeInActivePromotionName(param);
     }

@@ -530,4 +530,11 @@ public class ProductGroupService extends BaseService {
         groupModel.setPriceMsrpSt(priceMsrpSt);
         groupModel.setPriceMsrpEd(priceMsrpEd);
     }
+
+    /**
+     * 删除group
+     */
+    public void deleteGroup (CmsBtProductGroupModel groupModel) {
+        cmsBtProductGroupDao.delete(groupModel);
+    }
 }

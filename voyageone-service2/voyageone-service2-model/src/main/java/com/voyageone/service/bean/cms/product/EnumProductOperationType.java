@@ -14,7 +14,9 @@ public enum EnumProductOperationType {
     WebEdit(7, "页面编辑"),                     // 产品编辑页
     BatchConfirmRetailPrice(8, "指导价变更批量确认"),                     // 高级检索 指导价变更批量确认
     DelistinGroup(9, "Group下线"),
-    BatchRefreshRetailPrice(10, "重新计算价格");                     // 高级检索 重新计算指导售价
+    BatchRefreshRetailPrice(10, "重新计算价格"),                     // 高级检索 重新计算指导售价
+    MoveCode(11, "移动Code"),                     // 移动Code
+    MoveSku(11, "移动Sku");                     // 移动Sku
 
     private int id;
     private String name;

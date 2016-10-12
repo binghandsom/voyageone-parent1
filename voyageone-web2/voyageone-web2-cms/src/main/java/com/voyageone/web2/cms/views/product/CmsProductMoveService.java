@@ -1,25 +1,21 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 移动Code和移动Sku
@@ -50,6 +47,56 @@ public class CmsProductMoveService extends BaseViewService {
     @Autowired
     private MongoSequenceService mongoSequenceService;
 
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
+
+    /**
+     * 移动Code-初始化前Check
+     */
+    public void moveCodeInitCheck(Map<String, Object> params, String channelId, String lang) {
+        // 移动的Code
+        String productCode = (String) params.get("productCode");
+        // 相关的平台id
+        Integer cartId = (Integer) params.get("cartId");
+        // 相关的平台名称
+        String cartName = (String) params.get("cartName");
+
+        // 取得Group信息
+        CmsBtProductGroupModel sourceGroupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
+
+        // 取得移动的Code的Product信息
+        CmsBtProductModel productModel = productService.getProductByCode(channelId, productCode);
+
+        // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
+        if (cartId == null
+                || sourceGroupModel == null
+                || productModel == null
+                || !sourceGroupModel.getProductCodes().contains(productCode)) {
+            throw new BusinessException("移动的数据不整合，请重新刷新画面");
+        }
+
+        // check业务上的移动条件是否满足
+        // CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
+        if (!checkIsMainProduct(sourceGroupModel, productCode)) {
+            throw new BusinessException("移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作");
+        }
+
+        // Check这个Code是不是Approved的状态，如果是的话，提示先下线。
+        if (!checkCodeStatus(productModel, cartId)) {
+            throw new BusinessException("移动Code的状态是Approved，请先下线后再进行移动Code操作");
+        }
+
+        // Check这个Code是否存在于没有结束的活动中。
+        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode, cartId);
+        if (!StringUtil.isEmpty(promotionNames)) {
+            throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
+        }
+
+        // Check这个Code是否是锁定的状态。
+        if (!checkCodeLocked(productModel)) {
+            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
+        }
+    }
 
     /**
      * 移动Code-初始化
@@ -58,7 +105,9 @@ public class CmsProductMoveService extends BaseViewService {
 
         Map<String, Object> returnMap = new HashMap<>();
 
+        // 移动的Code
         String productCode = (String) params.get("productCode");
+        // 相关的平台id
         Integer cartId = (Integer) params.get("cartId");
 
         // 取得Group信息
@@ -248,7 +297,7 @@ public class CmsProductMoveService extends BaseViewService {
      * 移动Code-从一个Group到另外一个Group
      */
     @VOTransactional
-    public void moveCode(Map<String, Object> params, String channelId, String lang) {
+    public void moveCode(Map<String, Object> params, String channelId, String modifier, String lang) {
         // 取得移动需要的信息
         // 目标Group类型 "new" or "select"
         String destGroupType = (String) params.get("destGroupType");
@@ -281,11 +330,12 @@ public class CmsProductMoveService extends BaseViewService {
         CmsBtProductModel productModel = productService.getProductByCode(channelId, productCode);
 
         // check移动信息是否匹配（源Group下是否包含移动的Code，源Group和目标Group是否存在）
-        if (sourceGroupModel == null
+        if (cartId == null
+                || sourceGroupModel == null
                 || productModel == null
                 || !sourceGroupModel.getProductCodes().contains(productCode)
                 || ("select".equals(destGroupType) && destGroupModel == null)) {
-            throw new BusinessException("数据不整合，移动Code失败");
+            throw new BusinessException("移动的数据不整合，移动Code失败");
         }
 
         // check业务上的移动条件是否满足
@@ -300,7 +350,7 @@ public class CmsProductMoveService extends BaseViewService {
         }
 
         // Check这个Code是否存在于没有结束的活动中。
-        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode);
+        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode, cartId);
         if (!StringUtil.isEmpty(promotionNames)) {
             throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
         }
@@ -323,12 +373,25 @@ public class CmsProductMoveService extends BaseViewService {
             productGroupService.update(destGroupModel);
         } else {
             // 目的Group如果是一个新的Group，那么建立一个新的Group（Group的mainProductCode=移动的Code，productCodes中就一个元素：移动的Code）
-            createNewGroup(channelId, cartId, productCode);
+            destGroupModel = createNewGroup(channelId, cartId, productCode);
+            productGroupService.insert(destGroupModel);
         }
 
-        // 处理源目标Group
+        // 处理源Group
+        // 移动Code如果是源Group的最后一个Code，那么删除源Group信息
+        if (sourceGroupModel.getProductCodes().size() == 1) {
+            productGroupService.deleteGroup(sourceGroupModel);
+        } else {
+            // 移动Code如果不是源Group的最后一个Code，那么把这个Code从源Group信息中移除，然后重算源group价格区间。
+            sourceGroupModel.setProductCodes(sourceGroupModel.getProductCodes().stream().filter(code->!code.equals(productCode)).collect(Collectors.toList()));
+            productGroupService.calculatePriceRange(sourceGroupModel);
+            productGroupService.update(sourceGroupModel);
+        }
 
-
+        // 插入商品操作履历
+        productStatusHistoryService.insert(channelId, productCode,
+                productModel.getPlatform(cartId).getStatus(), cartId, EnumProductOperationType.MoveCode,
+                "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + destGroupModel.getGroupId(), modifier);
     }
 
     /**

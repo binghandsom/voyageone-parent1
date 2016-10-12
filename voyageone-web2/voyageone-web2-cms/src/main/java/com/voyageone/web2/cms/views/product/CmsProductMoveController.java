@@ -32,6 +32,12 @@ public class CmsProductMoveController extends CmsController {
         this.cmsProductMoveService = cmsProductMoveService;
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_CODE_INIT_CHECK)
+    public AjaxResponse moveCodeInitCheck(@RequestBody Map<String, Object> param) {
+        cmsProductMoveService.moveCodeInitCheck(param, getUser().getSelChannelId(), getLang());
+        return success(null);
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_CODE_INIT)
     public AjaxResponse moveCodeInit(@RequestBody Map<String, Object> param) {
         return success(cmsProductMoveService.moveCodeInit(param, getUser().getSelChannelId()));
@@ -49,7 +55,7 @@ public class CmsProductMoveController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_CODE)
     public AjaxResponse moveCode(@RequestBody Map<String, Object> param) {
-        cmsProductMoveService.moveCode(param, getUser().getSelChannelId(), getLang());
+        cmsProductMoveService.moveCode(param, getUser().getSelChannelId(), getUser().getUserName(), getLang());
         return success(null);
     }
 }

@@ -567,6 +567,8 @@ public interface CmsUrlConstants {
 
             String UPDATE_SKUPRICE = "updateSkuPrice";
 
+            String MOVE_CODE_INIT_CHECK = "moveCodeInitCheck";
+
             String MOVE_CODE_INIT = "moveCodeInit";
 
             String MOVE_CODE_SEARCH = "moveCodeSearch";
@@ -575,7 +577,9 @@ public interface CmsUrlConstants {
 
             String MOVE_CODE = "moveCode";
 
-            String MOVE_SKU_INIT = "moveCodeInit";
+            String MOVE_SKU_INIT_CHECK = "moveSkuInitCheck";
+
+            String MOVE_SKU_INIT = "moveSkuInit";
 
             String MOVE_SKU_PREVIEW = "moveSkuPreview";
 
