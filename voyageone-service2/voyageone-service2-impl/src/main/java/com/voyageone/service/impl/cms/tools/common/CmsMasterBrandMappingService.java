@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.tools.product.common;
+package com.voyageone.service.impl.cms.tools.common;
 
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
 import com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt;
