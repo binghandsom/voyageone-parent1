@@ -24,6 +24,7 @@ public class CmsMasterBrandMappingService extends BaseService {
     @Autowired
     private CmsMtMasterBrandDaoExt cmsMtMasterBrandDaoExt;
 
+    private static int noMatchBrand = 3;
 
     public List<CmsMtMasterBrandModel> getMasterBrandListByChannelId(String channelId){
         Map<String, Object> data = new HashMap<>();
@@ -36,6 +37,8 @@ public class CmsMasterBrandMappingService extends BaseService {
         //返回数据类型
         return result;
     }
+
+
     /**
      * Master品牌匹配初始化
      *
@@ -55,10 +58,13 @@ public class CmsMasterBrandMappingService extends BaseService {
         List<Integer> statusList = (List<Integer>) param.get("statusList");
         //Master品牌
         String selectedBrand = (String) param.get("selectedBrand");
+        //检索的品牌
         data.put("selectedBrand", selectedBrand);
-        if (statusList.contains(3)) {
-            data.put("statusListFlag", "3");
+        //未匹配的品牌
+        if (statusList.contains(noMatchBrand)) {
+            data.put("statusListFlag", noMatchBrand);
         }
+        //匹配状态
         data.put("statusList", statusList);
         //店铺渠道取得
         data.put("channelId", channelId);
@@ -69,19 +75,22 @@ public class CmsMasterBrandMappingService extends BaseService {
     /**
      * @param channelId
      * @param param
-     * @return
+     * @return searchMasterBrandCount
      */
     public int searchMasterBrandCount(String channelId, Map param) {
         Map<String, Object> data = new HashMap<>();
         //主品牌匹配状态
         List<Integer> statusList = (List<Integer>) param.get("statusList");
-        data.put("statusList", statusList);
-        //Master品牌
+        //检索的品牌
         String selectedBrand = (String) param.get("selectedBrand");
+        //未匹配的品牌
         data.put("selectedBrand", selectedBrand);
-        if (statusList.contains(3)) {
-            data.put("statusListFlag", "3");
+        //未匹配的品牌
+        if (statusList.contains(noMatchBrand)) {
+            data.put("statusListFlag", noMatchBrand);
         }
+        //匹配状态
+        data.put("statusList", statusList);
         //店铺渠道取得
         data.put("channelId", channelId);
         //返回数据类型

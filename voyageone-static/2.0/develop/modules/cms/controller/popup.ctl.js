@@ -405,6 +405,12 @@ define([
                 "templateUrl": "views/pop/system/channelList.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
                 "controller": 'popChannelListCtl'
+            },
+            "brandAudit": {
+                "templateUrl": "views/pop/system/brandaudit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/system/brandaudit.ctl",
+                "controller": 'brandAuditCtl',
+                "size":"lg"
             }
         },
         "store": {
@@ -1195,7 +1201,15 @@ define([
         /**上新价格确认*/
         $scope.openApproveConfirm = function openApproveConfirm(context){
             return openModal(popActions.product.approveConfirm,context);
+        };
+
+        /**
+         * 品牌审核弹出框
+         */
+        $scope.openBrandAudit = function openBrandAudit(context){
+            return openModal(popActions.system.brandAudit,context);
         }
+
 
     }).factory('popups', function ($controller, $rootScope) {
 

@@ -789,7 +789,7 @@ define(function () {
         /**店铺管理-平台品牌设置一览*/
         "TXT_BRAND_MAPPING_LIST": "平台品牌设置一览",
         "TXT_CART_NAME": "平台渠道名称",
-        "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配状态",
+        "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配情况",
         "TXT_FEED_BRAND": "Feed品牌",
         "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
         "TXT_MASTER_BRAND": "Master品牌",
