@@ -92,9 +92,11 @@
                                 <td class="mfb-xt3 text-center">
                                     <button class="btn btn-success btn-xs" ng-click="ctrl.popBrandMatching(item)"
                                             ng-if="item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null">
-                                        {{ctrl.displayFlg(item.masterFlag)}}
+                                        {{item.masterFlag == null ? ctrl.mappingValue[3]:ctrl.mappingValue[item.masterFlag]}}
                                     </button>
-                                    <span ng-if="!(item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null)">{{ctrl.displayFlg(item.masterFlag)}}</span>
+                                    <span ng-if="!(item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null)">
+                                        {{item.masterFlag == null ? ctrl.mappingValue[3]:ctrl.mappingValue[item.masterFlag]}}
+                                    </span>
                                 </td>
                                 <td class="mfb-xxt text-center">{{item.comment}}</td>
                             </tr>

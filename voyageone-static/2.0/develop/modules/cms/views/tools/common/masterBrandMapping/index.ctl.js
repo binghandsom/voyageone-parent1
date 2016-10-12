@@ -17,6 +17,12 @@ define([
             this.prodPageOption = {curr: 1, size: 10, fetch: this.search.bind(this)};
             this.feedBrand = '';
             this.statusList = [0, 2, 3];
+            this.mappingValue = {
+                0: "Master品牌申请中",
+                1: "已匹配",
+                2: "待匹配 (审核驳回) ",
+                3: "未匹配"
+            }
         }
 
         MasterBrandMappingController.prototype.init = function () {
@@ -52,26 +58,10 @@ define([
 
             if (item.masterFlag == null || item.masterFlag == 1) {
                 console.log("待确认");
-            }else if(item.masterFlag == 2){
-                popups.openBrandMatching({}).then(function(){
+            } else if (item.masterFlag == 2) {
+                popups.openBrandMatching({}).then(function () {
 
                 });
-            }
-        };
-
-        MasterBrandMappingController.prototype.displayFlg = function (item) {
-
-            switch (item) {
-                case 0 :
-                    return 'Master品牌申请中';
-                case 1 :
-                    return '已匹配';
-                case 2:
-                    return '待匹配（审核驳回）';
-                case 3 :
-                    return '未匹配';
-                default :
-                    return '未匹配';
             }
         };
 
