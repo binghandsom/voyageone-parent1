@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.tools.common;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
 import com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtMasterBrandDaoExt;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by gjl on 2016/10/9.
@@ -28,8 +30,12 @@ public class CmsMasterBrandMappingService extends BaseService {
         Map<String, Object> data = new HashMap<>();
         //店铺渠道取得
         data.put("channelId", channelId);
+        List<CmsMtMasterBrandModel> result = cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
+        if(result != null && result.size()>0){
+            result = result.stream().filter(cmsMtMasterBrandModel -> !StringUtil.isEmpty(cmsMtMasterBrandModel.getMasterBrandEn())).collect(Collectors.toList());
+        }
         //返回数据类型
-        return cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
+        return result;
     }
 
 
