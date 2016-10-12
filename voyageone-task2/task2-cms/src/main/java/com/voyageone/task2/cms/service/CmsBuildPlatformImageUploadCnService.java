@@ -36,6 +36,7 @@ public class CmsBuildPlatformImageUploadCnService extends BaseCronTaskService {
 
     private static final int PUBLISH_IMAGE_COUNT_ONCE_HANDLE = 10000;
 
+    // url,文件夹名 都未定
     private static final String[][] CN_URLS = new String[][]{
             {"201", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product="},
             {"202", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160906_x1200_1200x?$1200x1200_exportpng$&$product=="},

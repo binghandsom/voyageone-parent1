@@ -43,15 +43,15 @@
                     <h3 class="panel-title"><i class="fa fa-tasks"></i>&nbsp;&nbsp;{{'TXT_TRANSLATION_TASK_GET' | translate}}</h3>
                 </div>
                 <div class="panel-body panel-body-flex-center">
-                    <div class="form-horizontal">
-                        <div class="form-group">
+                    <div class="form-horizontal" style="padding-top:9px">
+                        <div class="form-group" >
                             <label for="assignInfo-priority" class="control-label col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
                             <div class="col-md-6">
                                 <select id="assignInfo-priority" class="form-control" ng-model="ctrl.assignInfo.priority" ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
                                     <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4" ng-if="ctrl.assignInfo.priority=='quantity'">
                                 <label class="checkbox-inline c-radio">
                                     <input name="sortOne" type="radio" value="asc" ng-model="ctrl.assignInfo.sort"
                                            ng-disabled="!ctrl.assignInfo.priority" ng-checked="ctrl.assignInfo.priority"><span class="fa fa-check"></span>{{'TXT_SORT_ASC' | translate}}

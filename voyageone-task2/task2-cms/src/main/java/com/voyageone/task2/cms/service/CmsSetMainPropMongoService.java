@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.ctc.wstx.util.DataUtil;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -1091,6 +1092,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -1144,8 +1147,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log

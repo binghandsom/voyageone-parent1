@@ -51,7 +51,12 @@ define([
             });
             $scope.search();
         };
+        $scope.getMinMaxPrice = function (minPrice,maxPrice) {
+            if (maxPrice== minPrice)
+                return maxPrice.toFixed(2);
 
+            return minPrice.toFixed(2) + "~" +maxPrice.toFixed(2);
+        };
         $scope.search = function () {
 
             // 重新初始化选中标签
