@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.ctc.wstx.util.DataUtil;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -132,7 +133,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
     // 每个channel的feed->master导入默认最大件数
-    private final static int FEED_IMPORT_MAX_500 = 500;
+    private final static int FEED_IMPORT_MAX_500 = 100;
 
     @Override
     public SubSystem getSubSystem() {
@@ -3324,7 +3325,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 设置platform.PXX.skus里面的价格
             try {
+                Long s = DateTimeUtil.getNowTimeStampLong();
                 priceService.setPrice(cmsProduct, false);
+                $info("价格计算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
             } catch (IllegalPriceConfigException ie) {
                 // 渠道级别价格计算配置错误, 停止后面的feed->master导入，避免报几百条一样的错误信息
                 String errMsg = String.format("feed->master导入:共通配置异常终止:发现渠道级别的价格计算配置错误，后面的feed导入不做了，" +
