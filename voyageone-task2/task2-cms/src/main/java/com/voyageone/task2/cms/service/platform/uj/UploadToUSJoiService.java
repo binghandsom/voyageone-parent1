@@ -219,12 +219,30 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
         // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
-        final List<Integer> cartIds;
-        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
-        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
-            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-        } else {
-            cartIds = new ArrayList<>();
+        final List<Integer> cartIds = new ArrayList<>();
+//        final List<Integer> cartIds;
+//        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
+//        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
+//            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+//        } else {
+//            cartIds = new ArrayList<>();
+//        }
+        // 从synship.com_mt_value_channel表中取得USJOI店铺channel对应的可售卖的cartId列表（如928对应28,29,27等）
+        List<TypeChannelBean> approveCartList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "A", "en"); // 取得可售卖平台数据
+        if (ListUtils.notNull(approveCartList)) {
+            // 取得配置表中可售卖的非空cartId列表
+            approveCartList.forEach(p -> {
+                if(!StringUtils.isEmpty(p.getValue()))
+                    cartIds.add(NumberUtils.toInt(p.getValue()));
+            });
+        }
+        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(approveCartList)) {
+            String errMsg = usjoiChannelId + " " + channelBean.getFull_name() + " com_mt_value_channel表中没有usJoiChannel(" +
+                    usjoiChannelId + ")对应的可售卖平台(53 A en)mapping信息,不能生成Product.PXX分平台信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
+            $info(errMsg);
+            // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
+            resultMap.put(usjoiChannelId, errMsg);
+            return;
         }
 
         // 该usjoichannel每次子店->USJOI主店导入最大件数(最大2000件,默认为500件)
@@ -359,7 +377,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                     productModel.setSales(new CmsBtProductModel_Sales());
                     productModel.setTags(new ArrayList<>());
                     // 插入或者更新cms_bt_product_group_c928中的productGroup信息
-                    creatGroup(productModel, usJoiChannelId, usjoiTypeChannelBeanList);
+                    doSetGroup(productModel, usJoiChannelId, usjoiTypeChannelBeanList);
 
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
 
@@ -416,7 +434,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                 } else {
                     // 如果已经存在（如老的数据已经有了），更新
                     // 插入或者更新cms_bt_product_group_c928中的productGroup信息
-                    creatGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
+                    doSetGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
                     // 更新common的一部分属性
                     CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
                     if (prCommonFields != null && productModel.getCommon().getFields() != null) {
@@ -752,7 +770,7 @@ public class UploadToUSJoiService extends BaseTaskService {
      * @param usjoiTypeChannelBeanList USJOI店展示用平台cartId（如:0,28或0,29等）
      * @return NumID是否都是空 1：是 2：否
      */
-    private boolean creatGroup(CmsBtProductModel cmsBtProductModel, String usJoiChannel, List<TypeChannelBean> usjoiTypeChannelBeanList) {
+    private boolean doSetGroup(CmsBtProductModel cmsBtProductModel, String usJoiChannel, List<TypeChannelBean> usjoiTypeChannelBeanList) {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
         boolean result = true;
@@ -762,13 +780,16 @@ public class UploadToUSJoiService extends BaseTaskService {
                 cmsBtProductModel.getCommon().getFields().getCode());
 
         // 循环一下
-        for (TypeChannelBean shop : usjoiTypeChannelBeanList) {
+        for (TypeChannelBean displayPlatform : usjoiTypeChannelBeanList) {
+            // 当前显示用cartId
+            String currentCartId = displayPlatform.getValue();
             // 检查一下该产品code是否已经在这个platform存在, 如果已经存在, 那么就不需要增加code到group了
             boolean blnFound = false;
             for (CmsBtProductGroupModel group : existGroups) {
-                if (group.getCartId() == Integer.parseInt(shop.getValue())) {
+                // 如果当前平台(如：27聚美)已经追加过group的时候，blnFound=true，这个code在该平台(如:27聚美)就不用新增/更新group信息了
+                if (group.getCartId() == Integer.parseInt(currentCartId)) {
                     blnFound = true;
-                    // NumId有值
+                    // NumId有值的时候，返回false
                     if (!StringUtils.isEmpty(group.getNumIId())) {
                         result = false;
                     }
@@ -776,18 +797,20 @@ public class UploadToUSJoiService extends BaseTaskService {
                 }
             }
             if (blnFound) {
-                // 该产品code已经加到该平台(如28)对应的group中了，直接跳过该平台group的新增更新
+                // 该产品code已经加到该平台(如28)对应的group中了，直接跳过该平台group的新增/更新
                 continue;
             }
 
+            // 当前code对应的该cartId平台的group不存在时，新增新的group或者追加code到group的ProductCodes中
+            // 聚美和独立官网的时候，是一个Code对应一个Group，所以直接新增group, 其他的平台都是几个Code对应一个Group
             // group对象
             CmsBtProductGroupModel group = null;
             // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
-            // 目前的USJOI没有聚美平台，只有京东国际平台
-            if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
-                    && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
-                // 取得product.model对应的group信息
-                group = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), shop.getValue());
+            // 目前的USJOI有京东国际平台, 也有聚美平台(27)
+            if (!CartEnums.Cart.JM.getId().equals(currentCartId)
+                    && !CartEnums.Cart.CN.getId().equals(currentCartId)) {
+                // 官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
+                group = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), currentCartId);
             }
 
             // group id
@@ -798,7 +821,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                 // 创建一个platform
                 group = new CmsBtProductGroupModel();
                 // cart id
-                group.setCartId(Integer.parseInt(shop.getValue()));
+                group.setCartId(Integer.parseInt(currentCartId));
                 // 获取唯一编号
                 group.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
 
@@ -825,7 +848,7 @@ public class UploadToUSJoiService extends BaseTaskService {
                 // platform active:上新的动作: 默认所有店铺是放到:仓库中
                 group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
                 // 取得USJOI店铺共通设置(取得该渠道的PlatformActive初始值)(928,28)(929,29)
-                if (CmsConstants.PlatformActive.ToOnSale.name().equalsIgnoreCase(getPlatformActive(usJoiChannel, NumberUtils.toInt(shop.getValue())).name())) {
+                if (CmsConstants.PlatformActive.ToOnSale.name().equalsIgnoreCase(getPlatformActive(usJoiChannel, NumberUtils.toInt(currentCartId)).name())) {
                     // 设置USJOI店铺共通设置中platformActive初始值为ToOnSale,则设为ToOnSale
                     group.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
                 }
