@@ -1059,9 +1059,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-                    s = DateTimeUtil.getNowTimeStampLong();
                     int updCnt = productService.updateProductFeedToMaster(channelId, cmsProduct, getTaskName(), "feed->master导入");
-                    $info("updateProductFeedToMaster算耗时" + (DateTimeUtil.getNowTimeStampLong()-s));
                     if (updCnt == 0) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
