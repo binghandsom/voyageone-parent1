@@ -29,7 +29,7 @@ public class CmsMasterBrandMappingController extends CmsController {
      * @param param
      * @return resultBean
      */
-    @RequestMapping(value = CmsUrlConstants.TOOLS.COMMON.INIT_MASTER_BRAND_INFO)
+    @RequestMapping(value = CmsUrlConstants.TOOLS.COMMON.SEARCH_MASTER_BRAND_INFO)
     public AjaxResponse doSearch(@RequestBody Map param) {
         Map<String, Object> result = new HashMap<>();
         //店铺渠道取得

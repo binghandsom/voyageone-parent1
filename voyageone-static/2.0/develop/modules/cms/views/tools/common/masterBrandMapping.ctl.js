@@ -38,7 +38,7 @@ define([
                 });
                 _.extend(data, {"statusList": self.statusList});
                 _.extend(data, {"selectedBrand": self.selectedBrand});
-                self.masterBrandService.init(data).then(function (res) {
+                self.masterBrandService.search(data).then(function (res) {
                     self.masterBrandList = res.data.masterBrandList;
                     self.prodPageOption.total = res.data.masterBrandsCount;
                 });
