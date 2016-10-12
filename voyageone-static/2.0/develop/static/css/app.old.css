@@ -6637,25 +6637,14 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 .table_fixed {
     table-layout: fixed;
 }
-
-.table_fixed > tbody > tr > td {
-    white-space: nowrap;
-    /*word-break: break-all;*/
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /*height: 60px;*/
-}
-.table_fixed > tbody > tr > td div.x-tooltip {
-    width: 100%;
+.table_fixed > tbody > tr > td{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-.table_fixed > tbody > tr > td div.tooltip.in {
-    white-space: normal;
+    /*height: 50px;*/
 }
 
-.table_fixed > .wrap {
+.table_fixed > tbody > tr > td .wrap{
     white-space: normal;
 }
 .table_main{

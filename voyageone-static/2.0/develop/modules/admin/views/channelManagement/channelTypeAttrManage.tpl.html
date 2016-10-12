@@ -126,16 +126,13 @@
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.typeName}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.name.length > 35"><popover-text content="list.name" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.name.length <= 35">{{list.name}}</label>
+                        <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.value.length > 35"><popover-text content="list.value" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.value.length <= 35">{{list.value}}</label>
+                        <popover-text content="list.value" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.addName1.length > 35"><popover-text content="list.addName1" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.addName1.length <= 35">{{list.addName1}}</label>
+                        <popover-text content="list.addName1" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">{{list.addName2}}</td>
                     <td class="text-left v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>

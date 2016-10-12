@@ -120,19 +120,14 @@
                         </label>
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
-                    <td class="text-left v-middle">
-                        <label ng-if="list.smsType.length > 35"><popover-text content="list.smsType" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.smsType.length <= 35">{{list.smsType}}</label>
-                    </td>
+                    <td class="text-left v-middle">{{list.smsType}}</td>
                     <td class="text-left v-middle">{{list.smsCode1}}</td>
                     <td class="text-left v-middle">{{list.smsCode2}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.content.length > 35"><popover-text content="list.content" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.content.length <= 35">{{list.content}}</label>
+                        <popover-text content="list.content" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.describe.length > 35"><popover-text content="list.describe" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.describe.length <= 35">{{list.codescribedescribetent}}</label>
+                        <popover-text content="list.describe" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">{{list.delFlg!=null?list.delFlg=='1'?'删除':'未删除':''}}</td>
                     <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
