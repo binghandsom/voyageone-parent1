@@ -1,5 +1,8 @@
 package com.voyageone.web2.cms.views.maintain.common.brandAdministration;
 
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +31,17 @@ public class CmsMasterBrandApplicationController extends CmsController {
      */
     @RequestMapping(value =CmsUrlConstants.MAINTAIN_SETTING.COMMON.BRAND_ADMINISTRATION.MASTER_BRAND_APPLICATION_SEARCH)
     public AjaxResponse getMasterBrandInfo(@RequestBody Map param) {
-        return null;
+        Map<String, Object> result = new HashMap<>();
+        //店铺渠道取得
+        String channelId = this.getUser().getSelChannelId();
+        //相关channel
+        result.put("channelList",TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, "cn"));
+        // 检索品牌映射关系的数量
+        result.put("masterBrandsCount", cmsMasterBrandMappingService.searchMasterBrandApplicationCount(channelId, param));
+        // 检索品牌映射关系的数据
+        result.put("masterBrandList", cmsMasterBrandMappingService.searchMasterBrandApplicationInfo(channelId, param));
+
+        return (AjaxResponse) result;
     }
     /**
      *Master品牌待审核一览(审核操作)

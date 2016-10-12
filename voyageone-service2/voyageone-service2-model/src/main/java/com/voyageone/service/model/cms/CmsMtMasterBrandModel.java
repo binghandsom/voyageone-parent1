@@ -13,7 +13,6 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 
  */
 public class CmsMtMasterBrandModel extends BaseModel {
-
     protected String channelId;
 
     protected String feedBrand;
@@ -38,6 +37,10 @@ public class CmsMtMasterBrandModel extends BaseModel {
     protected String platformBrandId;
 
     protected String comment;
+
+    protected String cartName;
+
+    protected String platformBrandName;
 
     public String getChannelId() {
         return channelId;
@@ -125,5 +128,21 @@ public class CmsMtMasterBrandModel extends BaseModel {
 
     public void setComment(String comment) {
         this.comment = comment == null ? null : comment.trim();
+    }
+
+    public String getCartName() {
+        return cartName;
+    }
+
+    public void setCartName(String cartName) {
+        this.cartName = cartName == null ? null : cartName.trim();
+    }
+
+    public String getPlatformBrandName() {
+        return platformBrandName;
+    }
+
+    public void setPlatformBrandName(String platformBrandName) {
+        this.platformBrandName = platformBrandName == null ? null : platformBrandName.trim();
     }
 }
