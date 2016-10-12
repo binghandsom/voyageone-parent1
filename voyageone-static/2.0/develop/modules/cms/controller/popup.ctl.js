@@ -409,7 +409,8 @@ define([
             "brandAudit": {
                 "templateUrl": "views/pop/system/brandaudit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/brandaudit.ctl",
-                "controller": 'brandAuditCtl'
+                "controller": 'brandAuditCtl',
+                "size":"lg"
             }
         },
         "store": {
