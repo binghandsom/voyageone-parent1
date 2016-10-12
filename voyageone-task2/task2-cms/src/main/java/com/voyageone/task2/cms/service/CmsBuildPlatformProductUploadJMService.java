@@ -73,6 +73,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 //    private static final String DUPLICATE_PRODUCT_NAME = "109902";
     // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
+    // 不需要下面这个"105106"错误判断取得hashId逻辑，有些就是要分成2个商品，只能手动修改，先把老的product1更新一下去掉SKU(其实是把该SKU的商家编码前面都加上了ERROR_)，再上出错的product2就不会报商家编码已存在的错误了
     // 商品自带条码（UPC_CODE）存在相同 值或UPC_CODE在聚美已存在
     private static final String DUPLICATE_SPU_BARCODE = "105106";
     // 在聚美已存在的商家编码(businessman_num)
@@ -381,7 +382,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 else if(jmApiErrorNoHashId ||
 //                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
                         htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
-                        htProductAddResponse.getError_code().contains(DUPLICATE_SPU_BARCODE) ||
+//                        htProductAddResponse.getError_code().contains(DUPLICATE_SPU_BARCODE) ||  // 不需要这个逻辑，有些就是要分成2个商品，只能手动修改，先把老的product1更新一下去掉SKU(其实是把该SKU的商家编码前面都加上了ERROR_)，再上出错的product2就不会报商家编码已存在的错误了
                         htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
                 {
                     // 上新成功但没取到jmHashId等值得时候，不需要重新上新
