@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.tools.common;
 
-import com.voyageone.service.impl.cms.tools.product.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.tools.product.common;
+package com.voyageone.service.impl.cms.tools.common;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
