@@ -86,10 +86,10 @@
                             <span class="fa fa-check"></span>
                         </label>
                     </th>
-                    <th class="text-left mfb-xt" translate="TXT_CODE_ID"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CODE_ID"></th>
                     <th class="text-left mfb-xt" translate="TXT_CODE"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CODE_NAME"></th>
-                    <th class="text-left mfb-xxt">{{'TXT_CODE_NAME'|translate}}1</th>
+                    <th class="text-left mfb-xt">{{'TXT_CODE_NAME'|translate}}1</th>
                     <th class="text-left mfb-xxt" translate="TXT_CODE_DESC"></th>
                     <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
                     <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
@@ -97,7 +97,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="ctrl.systemList.length==0">
                     <td if-no-rows="ctrl.systemList.length||ctrl.systemList" colspan="9" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.systemList">
@@ -110,9 +110,15 @@
                     </td>
                     <td class="text-left v-middle">{{list.id}}</td>
                     <td class="text-left v-middle">{{list.code}}</td>
-                    <td class="text-left v-middle">{{list.name}}</td>
+                    <td class="text-left v-middle">
+                        <label ng-if="list.name.length > 30"><popover-text content="list.name" direct="left" size="30"></popover-text></label>
+                        <label ng-if="list.name.length <= 30">{{list.name}}</label>
+                    </td>
                     <td class="text-left v-middle">{{list.name1}}</td>
-                    <td class="text-left v-middle">{{list.des}}</td>
+                    <td class="text-left v-middle">
+                        <label ng-if="list.des.length > 30"><popover-text content="list.des" direct="left" size="30"></popover-text></label>
+                        <label ng-if="list.des.length <= 30">{{list.des}}</label>
+                    </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.modifier}}</td>

@@ -96,7 +96,7 @@
                         <td class="text-left v-middle">{{list.taskName}}</td>
                         <td class="text-left v-middle">{{list.taskComment}}</td>
                         <td class="text-left v-middle">{{list.taskFreq}}</td>
-                        <td class="text-center v-middle">{{list.modified}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">
                             <button class="btn btn-success" ng-if="list.runFlg=='0'"

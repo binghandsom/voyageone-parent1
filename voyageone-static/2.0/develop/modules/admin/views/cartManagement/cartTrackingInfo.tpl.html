@@ -85,7 +85,7 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartTrackingSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-            <table class="table table-hover-new table-hover table_main">
+            <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
                     <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
@@ -108,7 +108,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="ctrl.cartList.length==0">
                     <td if-no-rows="ctrl.cartList.length||ctrl.cartList" colspan="11" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.cartList">
