@@ -223,8 +223,8 @@ define(function () {
         },
         "tools_common_master_brand_mapping": {
             "hash": "/tools/common/masterBrandMapping",
-            "templateUrl": "views/tools/common/masterBrandMapping.tpl.html",
-            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping.ctl",
+            "templateUrl": "views/tools/common/masterBrandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping/index.ctl",
             "controller": "MasterBrandMappingController as ctrl"
         },
         "tools_product_translation_setting": {
