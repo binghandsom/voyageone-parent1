@@ -59,7 +59,7 @@
                         <label class="radio-inline c-radio">
                             <input type="radio" name="type" value="1" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
                         </label>
-                        <label class="radio-inline c-radio">
+                        <label class="radio-inline c-radio" style="margin-left: 2px;">
                             <input type="radio" name="type" value="2" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
                         </label>
                     </div>
@@ -70,7 +70,7 @@
                     <div class="col-sm-2">
                         <div class="form-group">
                             <hr>
-                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_GROUP_SEARCH'|translate}}</span>
+                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CODE_SEARCH'|translate}}</span>
                         </div>
                         <div class="form-group m-t-lg">
                             <button class="btn btn-success col-sm-12" ng-click="ctrl.ifShow({type:'buildView',value:true})"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
@@ -80,7 +80,7 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">{{'TXT_CODE' | translate}}</label>
                             <div class="col-sm-4">
-                                <input class="form-control" ng-model="">
+                                <input class="form-control">
                             </div>
                             <button class="btn btn-vo" ng-click="ctrl.search()" title="Search"><i class="fa fa-search"></i></button>
                         </div>
@@ -95,11 +95,9 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>{{'BTN_SELECT'|translate}}
                                         </label>
                                     </th>
-                                    <th class="text-center mfb-xx" translate="TXT_PRIMARY_PRODUCT"></th>
-                                    <th class="text-left mfb-xxxs" translate="TXT_GROUP_NAME_WITH_COLON"></th>
-                                    <th class="text-left mfb-xx" translate="TXT_NUM_IID"></th>
-                                    <th class="text-left mfb-xxs" translate="TXT_MODEL"></th>
-                                    <th class="text-center mfb-xx" translate="TXT_SALE_STATUS"></th>
+                                    <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
+                                    <th class="text-left mfb-xxxs" translate="TXT_PRODUCT_CODE"></th>
+                                    <th class="text-left mfb-xx" translate="TXT_PRODUCT_NAME"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -120,12 +118,6 @@
                                     </td>
                                     <td class="text-left v-middle">
                                         523210817760
-                                    </td>
-                                    <td class="text-left v-middle">
-                                        51A0HC13E1-00LCNB0
-                                    </td>
-                                    <td class="text-center v-middle">
-                                        onSale
                                     </td>
                                 </tr>
                                 </tbody>
