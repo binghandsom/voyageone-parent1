@@ -296,9 +296,13 @@ public class CmsBtJmPromotionService extends BaseService {
         // 过滤参数
         Map sqlParams = (Map) params.get("parameters");
         sqlParams.put("channelId", params.get("channelId"));
-        sqlParams.put("jmpromId", StringUtils.trimToNull((String) sqlParams.get("jmpromId")));
+        sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
         sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
-        sqlParams.put("jmBrandId", StringUtils.trimToNull((String) sqlParams.get("jmBrandId")));
+        Object jmBrandIdObj = sqlParams.get("jmBrandId");
+        if (jmBrandIdObj != null && jmBrandIdObj instanceof String && ((String) jmBrandIdObj).length() == 0) {
+            sqlParams.put("jmBrandId", null);
+        }
+
         sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
         sqlParams.put("prodSum", StringUtils.trimToNull((String) sqlParams.get("prodSum")));
         sqlParams.put("mainCata", StringUtils.trimToNull((String) sqlParams.get("mainCata")));

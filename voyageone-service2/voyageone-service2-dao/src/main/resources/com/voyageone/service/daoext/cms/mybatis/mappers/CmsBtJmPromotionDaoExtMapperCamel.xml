@@ -110,10 +110,10 @@
         </if>
         <where>
             prom.active = 1 and jmprom.active = 1
-            <if test="jmpromId != null">
-                AND jmprom.id = #{jmpromId}
-            </if>
             and jmprom.channel_id = #{channelId}
+            <if test="jmActId != null">
+                AND ( jmprom.activity_pc_id = #{jmActId} or jmprom.activity_app_id = #{jmActId} )
+            </if>
             <if test="jmpromName != null">
                 and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
