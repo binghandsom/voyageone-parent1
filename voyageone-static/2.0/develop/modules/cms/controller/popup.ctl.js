@@ -475,6 +475,11 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
+            },
+            "skuMoveConfirm":{
+                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
+                "controller": 'SkuMoveConfirmController as ctrl'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -1182,6 +1187,10 @@ define([
         /**上新价格确认*/
         $scope.openApproveConfirm = function openApproveConfirm(context){
             return openModal(popActions.product.approveConfirm,context);
+        }
+        /**移动SKU确认*/
+        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context){
+            return openModal(popActions.product.skuMoveConfirm,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
