@@ -61,7 +61,7 @@ public class ComUserService {
      * @param account
      * @param password
      */
-    public void login(String account, String password)
+    public void login(String account, String password, String app)
     {
         Subject user = SecurityUtils.getSubject();
 
@@ -102,7 +102,7 @@ public class ComUserService {
         }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         ComLoginLogModel model = new ComLoginLogModel();
-        model.setApplication("admin");
+        model.setApplication(app);
         model.setCreater(account);
         String clientIP = request.getHeader("x-forwarded-for");
         if (StringUtils.isEmpty(clientIP)) {

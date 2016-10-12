@@ -29,7 +29,8 @@ define(['components/dist/voyageone.angular.com'], function () {
             $ajax.post('/core/access/user/login', {
                 username: $scope.username,
                 password: $scope.password,
-                timezone: -(new Date().getTimezoneOffset() / 60)
+                timezone: -(new Date().getTimezoneOffset() / 60),
+                application: 'admin'
             }).then(function () {
                 $localStorage.user = {
                     name: $scope.username

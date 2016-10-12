@@ -50,6 +50,8 @@ public class UserController extends BaseController {
         String password = (String) params.get("password");
         int timezone = (int) params.get("timezone");
 
+        String app = (String) params.getOrDefault("application", "cms");
+
 //        // 验证在内部
 //        // 登录成功返回, 否则通过 BusinessException 返回
 //        UserSessionBean userSessionBean = userService.login(username, password, timezone);
@@ -59,7 +61,7 @@ public class UserController extends BaseController {
 //        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
 
-        comUserService.login(username, password);
+        comUserService.login(username, password, app);
 
         Session session = SecurityUtils.getSubject().getSession();
         ComUserModel userModel = (ComUserModel)session.getAttribute("comUserModel");
@@ -105,7 +107,7 @@ public class UserController extends BaseController {
 //        }
 
 
-        comUserService.login(username, password);
+        comUserService.login(username, password, "vms");
 
         Session session = SecurityUtils.getSubject().getSession();
         ComUserModel userModel = (ComUserModel)session.getAttribute("comUserModel");
