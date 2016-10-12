@@ -143,6 +143,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr ng-if="ctrl.adminList.length==0">
+                    <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="13" style="padding: 0px"></td>
+                </tr>
                     <tr ng-repeat="list in ctrl.adminList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -152,39 +155,39 @@
                             </label>
                         </td>
                         <td class="text-center v-middle" style="height: 80px;">
-                            <label ng-if="list.userAccount.length > 14"><popover-text content="list.userAccount" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.userAccount.length <= 14">{{list.userAccount}}</label>
+                            <label ng-if="list.userAccount.length > 30"><popover-text content="list.userAccount" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.userAccount.length <= 30">{{list.userAccount}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.userName.length > 14"><popover-text content="list.userName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.userName.length <= 14">{{list.userName}}</label>
+                            <label ng-if="list.userName.length > 30"><popover-text content="list.userName" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.userName.length <= 30">{{list.userName}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.email.length > 14"><popover-text content="list.email" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.email.length <= 14">{{list.email}}</label>
+                            <label ng-if="list.email.length > 30"><popover-text content="list.email" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.email.length <= 30">{{list.email}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <label ng-if="list.roleName.length > 20"><popover-text content="list.roleName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.roleName.length <= 20">{{list.roleName}}</label>
+                            <label ng-if="list.roleName.length > 30"><popover-text content="list.roleName" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.roleName.length <= 30">{{list.roleName}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getName(list.orgId)}}</td>
                         <td class="text-center v-middle">
-                            <label ng-if="list.channelName.length > 24"><popover-text content="list.channelName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.channelName.length <= 24">{{list.channelName}}</label>
+                            <label ng-if="list.channelName.length > 30"><popover-text content="list.channelName" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.channelName.length <= 30">{{list.channelName}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.storeName.length > 24"><popover-text content="list.storeName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.storeName.length <= 24">{{list.storeName}}</label>
+                            <label ng-if="list.storeName.length > 30"><popover-text content="list.storeName" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.storeName.length <= 30">{{list.storeName}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <label ng-if="list.application.length > 8"><popover-text content="list.application" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.application.length <= 8">{{list.application}}</label>
+                            <label ng-if="list.application.length > 30"><popover-text content="list.application" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.application.length <= 30">{{list.application}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-center v-middle">{{list.company}}</td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.modifier.length > 8"><popover-text content="list.modifier" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.modifier.length <= 8">{{list.modifier}}</label>
+                            <label ng-if="list.modifier.length > 30"><popover-text content="list.modifier" direct="left" size="30"></popover-text></label>
+                            <label ng-if="list.modifier.length <= 30">{{list.modifier}}</label>
                         </td>
                         <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>

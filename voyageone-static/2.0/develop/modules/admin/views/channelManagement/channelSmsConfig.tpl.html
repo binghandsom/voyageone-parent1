@@ -99,16 +99,16 @@
                     <th class="text-left mfb-xt" translate="TXT_CHANNEL_SMS_TYPE"></th>
                     <th class="text-left mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}1</th>
                     <th class="text-left mfb-xt">{{'TXT_CHANNEL_SMS_CODE'|translate}}2</th>
-                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_CONTENT"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL_SMS_DESC"></th>
+                    <th class="text-left mfb-xxx" translate="TXT_CHANNEL_SMS_CONTENT"></th>
+                    <th class="text-left mfb-xt" translate="TXT_CHANNEL_SMS_DESC"></th>
                     <th class="text-left mfb-xt" translate="TXT_CHANNEL_SNS_DEL_TARGET"></th>
                     <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="ctrl.channelList.length==0">
                     <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="11" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.channelList">
@@ -121,12 +121,19 @@
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.smsType}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.smsType}}</a>
+                        <label ng-if="list.smsType.length > 35"><popover-text content="list.smsType" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.smsType.length <= 35">{{list.smsType}}</label>
                     </td>
                     <td class="text-left v-middle">{{list.smsCode1}}</td>
                     <td class="text-left v-middle">{{list.smsCode2}}</td>
-                    <td class="text-left v-middle" style="white-space: normal">{{list.content}}</td>
-                    <td class="text-left v-middle">{{list.describe}}</td>
+                    <td class="text-left v-middle">
+                        <label ng-if="list.content.length > 35"><popover-text content="list.content" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.content.length <= 35">{{list.content}}</label>
+                    </td>
+                    <td class="text-left v-middle">
+                        <label ng-if="list.describe.length > 35"><popover-text content="list.describe" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.describe.length <= 35">{{list.codescribedescribetent}}</label>
+                    </td>
                     <td class="text-left v-middle">{{list.delFlg!=null?list.delFlg=='1'?'删除':'未删除':''}}</td>
                     <td class="text-center v-middle">{{list.active!=null?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>

@@ -112,6 +112,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr ng-if="ctrl.channelList.length==0">
+                    <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="11" style="padding: 0px"></td>
+                </tr>
                 <tr ng-repeat="list in ctrl.channelList">
                     <td class="text-left v-middle">
                         <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -123,16 +126,16 @@
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.typeName}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.name.length > 30"><popover-text content="list.name" direct="left" size="50"></popover-text></label>
-                        <label ng-if="list.name.length <= 30">{{list.name}}</label>
+                        <label ng-if="list.name.length > 35"><popover-text content="list.name" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.name.length <= 35">{{list.name}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.value.length > 30"><popover-text content="list.value" direct="left" size="50"></popover-text></label>
-                        <label ng-if="list.value.length <= 30">{{list.value}}</label>
+                        <label ng-if="list.value.length > 35"><popover-text content="list.value" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.value.length <= 35">{{list.value}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.addName1.length > 30"><popover-text content="list.addName1" direct="left" size="50"></popover-text></label>
-                        <label ng-if="list.addName1.length <= 30">{{list.addName1}}</label>
+                        <label ng-if="list.addName1.length > 35"><popover-text content="list.addName1" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.addName1.length <= 35">{{list.addName1}}</label>
                     </td>
                     <td class="text-left v-middle">{{list.addName2}}</td>
                     <td class="text-left v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>

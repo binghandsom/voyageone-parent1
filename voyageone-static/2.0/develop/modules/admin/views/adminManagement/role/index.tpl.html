@@ -126,6 +126,9 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr ng-if="ctrl.adminRoleList.length==0">
+                    <td if-no-rows="ctrl.adminRoleList.length||ctrl.adminRoleList" colspan="10" style="padding: 0px"></td>
+                </tr>
                     <tr ng-repeat="list in ctrl.adminRoleList">
                         <td class="text-left v-middle">
                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -136,16 +139,16 @@
                         </td>
                         <td class="text-center v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.channelName.length > 14"><popover-text content="list.channelName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.channelName.length <= 14">{{list.channelName}}</label>
+                            <label ng-if="list.channelName.length > 35"><popover-text content="list.channelName" direct="left" size="35"></popover-text></label>
+                            <label ng-if="list.channelName.length <= 35">{{list.channelName}}</label>
                         </td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.storeName.length > 14"><popover-text content="list.storeName" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.storeName.length <= 14">{{list.storeName}}</label>
+                            <label ng-if="list.storeName.length > 35"><popover-text content="list.storeName" direct="left" size="35"></popover-text></label>
+                            <label ng-if="list.storeName.length <= 35">{{list.storeName}}</label>
                         </td>
                         <td class="text-center v-middle">
-                            <label ng-if="list.application.length > 14"><popover-text content="list.application" direct="left" size="50"></popover-text></label>
-                            <label ng-if="list.application.length <= 14">{{list.application}}</label>
+                            <label ng-if="list.application.length > 35"><popover-text content="list.application" direct="left" size="35"></popover-text></label>
+                            <label ng-if="list.application.length <= 35">{{list.application}}</label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>

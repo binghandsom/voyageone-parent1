@@ -53,9 +53,9 @@
                         <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
                         <th class="text-left mfb-xxt" translate="TXT_URL"></th>
                         <th class="text-center mfb-xt3" translate="TXT_SYSTEM"></th>
-                        <th class="text-center mfb-xt" translate="TXT_TYPE"></th>
+                        <th class="text-center mfb-xt3" translate="TXT_TYPE"></th>
                         <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
-                        <th class="text-center mfb-xt3" translate="TXT_INSTRUCTION"></th>
+                        <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
                         <th class="text-center mfb-xt3" translate="TXT_UPDATER"></th>
                         <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                     </tr>
@@ -76,9 +76,9 @@
                         <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resKey}}</td>
                         <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resUrl}}</td>
                         <td class="text-center mfb-xt3" style="word-break: break-all">{{item.application}}</td>
-                        <td class="text-center mfb-xt" style="word-break: break-all">{{ctrl.getResType(item.resType)}}</td>
+                        <td class="text-center mfb-xt3" style="word-break: break-all">{{ctrl.getResType(item.resType)}}</td>
                         <td class="text-center mfb-xt3" ng-bind="item.active!=null?item.active==1?'启用':'禁用':''"></td>
-                        <td class="text-center mfb-xt3">{{item.description}}</td>
+                        <td class="text-center mfb-xt">{{item.description}}</td>
                         <td class="text-center mfb-xt3">{{item.modifier}}</td>
                         <td class="text-center mfb-xt">{{item.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>

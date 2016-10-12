@@ -100,7 +100,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="ctrl.channelList.length==0">
                     <td if-no-rows="ctrl.channelList.length||ctrl.channelList" colspan="13" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.channelList">
@@ -113,28 +113,36 @@
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propName}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propName}}</a>
+                        <label ng-if="list.propName.length > 35"><popover-text content="list.propName" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propName.length <= 35">{{list.propName}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal1}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal1}}</a>
+                        <label ng-if="list.propVal1.length > 35"><popover-text content="list.propVal1" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal1.length <= 35">{{list.propVal1}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal2}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal2}}</a>
+                        <label ng-if="list.propVal2.length > 35"><popover-text content="list.propVal2" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal2.length <= 35">{{list.propVal2}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal3}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal3}}</a>
+                        <label ng-if="list.propVal3.length > 35"><popover-text content="list.propVal3" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal3.length <= 35">{{list.propVal3}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal4}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal4}}</a>
+                        <label ng-if="list.propVal4.length > 35"><popover-text content="list.propVal4" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal4.length <= 35">{{list.propVal4}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal5}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal5}}</a>
+                        <label ng-if="list.propVal5.length > 35"><popover-text content="list.propVal5" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal5.length <= 35">{{list.propVal5}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.propVal6}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.propVal6}}</a>
+                        <label ng-if="list.propVal6.length > 35"><popover-text content="list.propVal6" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.propVal6.length <= 35">{{list.propVal6}}</label>
                     </td>
                     <td class="text-left v-middle">
-                        <a class="btn" uib-tooltip="{{list.comment}}" tooltip-trigger="mouseenter" tooltip-placement="bottom">{{list.comment}}</a>
+                        <label ng-if="list.comment.length > 35"><popover-text content="list.comment" direct="left" size="35"></popover-text></label>
+                        <label ng-if="list.comment.length <= 35">{{list.comment}}</label>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>

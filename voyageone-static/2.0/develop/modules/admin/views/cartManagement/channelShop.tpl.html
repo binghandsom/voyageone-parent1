@@ -81,7 +81,7 @@
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.cartShopSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
                 </div>
             </div>
-            <table class="table table-hover-new table-hover table_main">
+            <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
                     <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
@@ -96,13 +96,13 @@
                     <th class="text-left mfb-xxt" translate="TXT_SHOP_NAME"></th>
                     <th class="text-left mfb-xxt" translate="TXT_APP_URL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
-                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                    <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
+                <tr ng-if="ctrl.cartList.length==0">
                     <td if-no-rows="ctrl.cartList.length||ctrl.cartList" colspan="9" style="padding: 0px"></td>
                 </tr>
                 <tr ng-repeat="list in ctrl.cartList">
