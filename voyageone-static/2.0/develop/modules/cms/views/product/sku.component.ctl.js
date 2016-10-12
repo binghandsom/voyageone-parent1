@@ -12,9 +12,8 @@ define([
             scope: {productInfo: "=productInfo"},
             link: function (scope, element) {
                 scope.skuList = [];
-                scope.skuSelList = { selList: []};
                 initialize();
-                // scope.initial = initial;
+                scope.moveSku = moveSku;
 
                 /**
                  * Sku属性初始化
@@ -24,6 +23,20 @@ define([
                         prodId: scope.productInfo.productId
                     }).then(function (resp) {
                         scope.skuList = resp.data.skuList;
+                    });
+                }
+
+                /**
+                 * 移动Sku到其他Code
+                 * */
+                function moveSku() {
+                    confirm("您确定要移动选择的Sku到新的Code吗？").then(function () {
+                        var moveSkuInfo = {
+                            skuList: scope.skuList,
+                            prodId : scope.productInfo.productId
+                        };
+                        window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
+                        window.open("#/product/sku_move","_blank");
                     });
                 }
 

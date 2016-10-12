@@ -3,8 +3,8 @@
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
                 <div class="row m-b-md">
-                    <a href="#/product/sku_move" type="button" target="_blank" class="btn btn-info btn-pop">{{'TXT_MOVE_TO_NEW_CODE'|translate}}</a>
-                </div>
+                    <a href="javascript:void(0)" type="button" ng-click="moveSku()"  target="_blank" class="btn btn-info btn-pop">{{'TXT_MOVE_TO_NEW_CODE'|translate}}</a>
+            </div>
                 <div class="row">
                     <table class="table table-hover-new table-hover table_main">
                         <thead>
@@ -28,9 +28,7 @@
                             <tr ng-repeat="skuInfo in skuList">
                                 <td class="control-label text-left form-inline">
                                     <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                        <input ng-model="skuSelList.selFlag[skuInfo.skuCode]" type="checkbox"
-                                               ng-controller="selectRowsCtrl"
-                                               ng-click="selectOne(skuInfo.skuCode, skuSelList)">
+                                        <input ng-model="skuInfo.isChecked" type="checkbox">
                                         <span class="fa fa-check"></span>
                                     </label>
                                 </td>
