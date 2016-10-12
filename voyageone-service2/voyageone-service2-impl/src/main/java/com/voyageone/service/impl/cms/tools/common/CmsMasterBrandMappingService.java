@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.tools.common;
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.CmsBtBrandMappingBean;
+import com.voyageone.service.bean.cms.CmsMtMasterBrandBean;
 import com.voyageone.service.daoext.cms.CmsBtBrandMappingDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtMasterBrandDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -32,10 +33,19 @@ public class CmsMasterBrandMappingService extends BaseService {
         data.put("channelId", channelId);
         List<CmsMtMasterBrandModel> result = cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
         if(result != null && result.size()>0){
-            result = result.stream().filter(cmsMtMasterBrandModel -> !StringUtil.isEmpty(cmsMtMasterBrandModel.getMasterBrandEn())).collect(Collectors.toList());
+            result = result.stream().filter(cmsMtMasterBrandModel -> !StringUtil.isEmpty(cmsMtMasterBrandModel.getMasterBrandEn()) && cmsMtMasterBrandModel.getMasterFlag() == 1).collect(Collectors.toList());
         }
         //返回数据类型
         return result;
+    }
+
+    public List<String> getFeedBrandByMasterBrand(String channelId, List<String> masterBrand){
+        List<CmsMtMasterBrandModel> cmsMtMasterBrandModels = getMasterBrandListByChannelId(channelId);
+        List<String> feedBrand = cmsMtMasterBrandModels.stream()
+                .filter(cmsMtMasterBrandModel -> masterBrand.contains(cmsMtMasterBrandModel.getMasterBrandEn()))
+                .map(cmsMtMasterBrandModel -> ((CmsMtMasterBrandBean)cmsMtMasterBrandModel).getValue())
+                .collect(Collectors.toList());
+        return feedBrand;
     }
 
 
