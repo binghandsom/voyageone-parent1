@@ -597,10 +597,18 @@ define(function () {
                 list:"searchBlackBrand",
                 update:"updateBlackBrand"
             },
+            //主品牌匹配页面
             "masterBrandService":{
                 root:"/cms/tools/common",
-                init:"initMasterBrandInfo",
-                search:"searchMasterBrandInfo"
+                search:"getMasterBrandInfo"
+            },
+            //主品牌管理页面
+            "masterBrandServiceApplicationService":{
+                root:"/cms/maintain/common",
+                search:"getMasterBrandInfo",
+                reviewed:"reviewedMasterBrandInfo",
+                edit:"editMasterBrandInfo",
+                mappingSearch:"mappingMasterBrandInfoToPlatform"
             }
         }
     };
