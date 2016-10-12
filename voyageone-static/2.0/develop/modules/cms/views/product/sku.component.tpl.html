@@ -6,25 +6,26 @@
                     <a href="#/product/sku_move" type="button" target="_blank" class="btn btn-info btn-pop">{{'TXT_MOVE_TO_NEW_CODE'|translate}}</a>
                 </div>
                 <div class="row">
-                    <table class="table table-hover-new table-hover table_main">
-                        <thead>
-                        <tr>
-                            <th class="text-left mfb-xx" translate="BTN_SELECT"></th>
-                            <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
-                            <th class="text-left mfb-xx" translate="TXT_SKU_CODE"></th>
-                            <th class="text-left mfb-xx" translate="TXT_SKU_INVENTORY"></th>
-                            <th class="text-left mfb-xx" translate="TXT_SIZE"></th>
-                            <th class="text-center mfb-xx" translate="TXT_BARCODE"></th>
-                        </tr>
-                        </thead>
-                        <tbody ng-if="ctrl.hsCodeList.length == 0">
+                    <div class="col-sm-9 col-sm-offset-1">
+                        <table class="table table-hover-new table-hover table_main">
+                            <thead>
+                            <tr>
+                                <th class="text-left mfb-xx" translate="BTN_SELECT"></th>
+                                <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SKU_CODE"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SKU_INVENTORY"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SIZE"></th>
+                                <th class="text-center mfb-xx" translate="TXT_BARCODE"></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="ctrl.hsCodeList.length == 0">
                             <tr style="padding-left:0">
-                            <td colspan="7">
-                                <div if-no-rows="ctrl.hsCodeList.length"></div>
-                            </td>
-                        </tr>
-                        </tbody>
-                        <tbody>
+                                <td colspan="7">
+                                    <div if-no-rows="ctrl.hsCodeList.length"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tbody>
                             <tr ng-repeat="skuInfo in skuList">
                                 <td class="control-label text-left form-inline">
                                     <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -50,8 +51,9 @@
                                     {{skuInfo.barcode}}
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
