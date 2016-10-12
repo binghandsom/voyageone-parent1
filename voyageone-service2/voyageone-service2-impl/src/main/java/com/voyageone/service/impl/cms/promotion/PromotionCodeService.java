@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -38,6 +40,18 @@ public class PromotionCodeService extends BaseService {
 
     public List<Map<String, Object>> getPromotionCodesByPromotionIds(List<String> promotionIdList) {
         return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
+    }
+
+
+    /**
+     * 判断是否存在现在时点，指定Code正处于没有结束的活动中。
+     */
+    public String getExistCodeInActivePromotion(String channelId, String productCode) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("channelId", channelId);
+        param.put("productCode", productCode);
+        param.put("now", DateTimeUtil.format(DateTimeUtilBeijing.getCurrentBeiJingDate(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        return cmsBtPromotionCodesDaoExt.selectCodeInActivePromotionName(param);
     }
 
 }

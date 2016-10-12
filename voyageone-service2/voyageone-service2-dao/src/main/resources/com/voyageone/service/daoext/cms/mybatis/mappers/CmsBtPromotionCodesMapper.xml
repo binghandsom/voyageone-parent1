@@ -173,6 +173,13 @@
         </where>
 
     </select>
+    <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultMap="HashMap" parameterType="HashMap">
+        SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1
+        INNER JOIN voyageone_cms2.cms_bt_promotion t2 on  t1.promotion_id = t2.id
+        WHERE t2.channel_id = #{channelId,jdbcType=VARCHAR}
+        AND t1.product_code = #{productCode,jdbcType=VARCHAR}
+        AND t2.activity_end >= #{now,jdbcType=VARCHAR}
+    </select>
     <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
         insert into voyageone_cms2.cms_bt_promotion_codes
         <trim prefix="(" suffix=")" suffixOverrides=",">

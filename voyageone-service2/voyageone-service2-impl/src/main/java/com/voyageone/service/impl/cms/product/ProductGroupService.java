@@ -15,6 +15,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class ProductGroupService extends BaseService {
 
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * getList
@@ -457,5 +461,73 @@ public class ProductGroupService extends BaseService {
 
     public long countByQuery(final String strQuery, String channelId) {
         return cmsBtProductGroupDao.countByQuery(strQuery, channelId);
+    }
+
+    /**
+     * 计算group的价格区间
+     */
+    public void calculatePriceRange (CmsBtProductGroupModel groupModel) {
+        Integer cartId = groupModel.getCartId();
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        for (String code : groupModel.getProductCodes()) {
+            CmsBtProductModel productModel = productService.getProductByCode(groupModel.getChannelId(), code);
+            if (productModel != null) {
+                for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+                    // 找到对应的平台信息
+                    if (cartId == platform.getValue().getCartId()) {
+                        for (Map<String, Object> sku : platform.getValue().getSkus()) {
+                            Object objSkuPriceSale = sku.get("priceSale");
+                            Double skuPriceSale = null;
+                            if (objSkuPriceSale != null) {
+                                skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
+                            }
+                            if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
+                                priceSaleSt = skuPriceSale;
+                            }
+                            if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleSt)) {
+                                priceSaleEd = skuPriceSale;
+                            }
+
+                            Object objSkuPriceRetail = sku.get("priceRetail");
+                            Double skuPriceRetail = null;
+                            if (objSkuPriceRetail != null) {
+                                skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
+                            }
+                            if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                                priceSaleSt = skuPriceSale;
+                            }
+                            if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailSt)) {
+                                priceRetailEd = skuPriceRetail;
+                            }
+
+                            Object objSkuPriceMsrp = sku.get("priceMsrp");
+                            Double skuPriceMsrp = null;
+                            if (objSkuPriceMsrp != null) {
+                                skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
+                            }
+                            if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                                priceSaleSt = skuPriceSale;
+                            }
+                            if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpSt)) {
+                                priceMsrpEd = skuPriceMsrp;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        groupModel.setPriceSaleSt(priceSaleSt);
+        groupModel.setPriceSaleEd(priceSaleEd);
+        groupModel.setPriceRetailSt(priceRetailSt);
+        groupModel.setPriceRetailEd(priceRetailEd);
+        groupModel.setPriceMsrpSt(priceMsrpSt);
+        groupModel.setPriceMsrpEd(priceMsrpEd);
     }
 }

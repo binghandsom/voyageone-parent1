@@ -2,15 +2,22 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformActiveLogDao;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +43,13 @@ public class CmsProductMoveService extends BaseViewService {
 
     @Autowired
     private ProductGroupService productGroupService;
+
+    @Autowired
+    private PromotionCodeService promotionCodeService;
+
+    @Autowired
+    private MongoSequenceService mongoSequenceService;
+
 
     /**
      * 移动Code-初始化
@@ -233,6 +247,7 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * 移动Code-从一个Group到另外一个Group
      */
+    @VOTransactional
     public void moveCode(Map<String, Object> params, String channelId, String lang) {
         // 取得移动需要的信息
         // 目标Group类型 "new" or "select"
@@ -243,8 +258,10 @@ public class CmsProductMoveService extends BaseViewService {
         Long sourceGroupId = (Long) params.get("sourceGroupId");
         // 移动目标GroupId
         Long destGroupId = (Long) params.get("destGroupId");
-        // 相关的平台
+        // 相关的平台id
         Integer cartId = (Integer) params.get("cartId");
+        // 相关的平台名称
+        String cartName = (String) params.get("cartName");
 
         // 如果没有选择移动目的Group，出错
         if (StringUtils.isEmpty(destGroupType) || ("select".equals(destGroupType) && destGroupId == null)) {
@@ -253,45 +270,153 @@ public class CmsProductMoveService extends BaseViewService {
 
         // 取得源Group信息
         CmsBtProductGroupModel sourceGroupModel = productGroupService.getProductGroupByGroupId(channelId, sourceGroupId);
+
         // 取得目标Group信息
         CmsBtProductGroupModel destGroupModel = null;
         if ("select".equals(destGroupType)) {
             destGroupModel = productGroupService.getProductGroupByGroupId(channelId, destGroupId);
         }
 
+        // 取得移动的Code的Product信息
+        CmsBtProductModel productModel = productService.getProductByCode(channelId, productCode);
+
         // check移动信息是否匹配（源Group下是否包含移动的Code，源Group和目标Group是否存在）
-
-
+        if (sourceGroupModel == null
+                || productModel == null
+                || !sourceGroupModel.getProductCodes().contains(productCode)
+                || ("select".equals(destGroupType) && destGroupModel == null)) {
+            throw new BusinessException("数据不整合，移动Code失败");
+        }
 
         // check业务上的移动条件是否满足
+        // CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
+        if (!checkIsMainProduct(sourceGroupModel, productCode)) {
+            throw new BusinessException("移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作");
+        }
+
+        // Check这个Code是不是Approved的状态，如果是的话，提示先下线。
+        if (!checkCodeStatus(productModel, cartId)) {
+            throw new BusinessException("移动Code的状态是Approved，请先下线后再进行移动Code操作");
+        }
+
+        // Check这个Code是否存在于没有结束的活动中。
+        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode);
+        if (!StringUtil.isEmpty(promotionNames)) {
+            throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
+        }
+
+
+        // Check这个Code是否是锁定的状态。
+        if (!checkCodeLocked(productModel)) {
+            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
+        }
+
+        // ************这里开始正式移动*************
+        // 处理目标Group
+        // 目的Group如果不是一个新的Group，那么目的Group中加入这个Code（Group的productCodes中加入移动的Code），然后重算目的group价格区间。
+        if ("select".equals(destGroupType)) {
+            // 目的Group中加入这个Code
+            destGroupModel.getProductCodes().add(productCode);
+            // 重算目的group价格区间
+            productGroupService.calculatePriceRange(destGroupModel);
+            // 更新目标Group
+            productGroupService.update(destGroupModel);
+        } else {
+            // 目的Group如果是一个新的Group，那么建立一个新的Group（Group的mainProductCode=移动的Code，productCodes中就一个元素：移动的Code）
+            createNewGroup(channelId, cartId, productCode);
+        }
+
+        // 处理源目标Group
+
 
     }
 
     /**
      * CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
      */
-    public boolean checkIsMainProduct(CmsBtProductGroupModel groupModel, String productCode, Integer cartId) {
+    public boolean checkIsMainProduct(CmsBtProductGroupModel groupModel, String productCode) {
+        // Group中包含多了Code，并且这个Code是主商品
+        if (groupModel.getProductCodes().size() > 1 && productCode.equals(groupModel.getMainProductCode())) {
+            return false;
+        }
         return true;
     }
 
     /**
      * Check这个Code是不是Approved的状态，如果是的话，提示先下线。
      */
-    public boolean checkCodeStatus(CmsBtProductModel productModel, String productCode, Integer cartId) {
+    public boolean checkCodeStatus(CmsBtProductModel productModel, Integer cartId) {
+
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+            // 找到对应的平台信息，看看状态是不是Approved
+            if (cartId == platform.getValue().getCartId()) {
+                if (CmsConstants.ProductStatus.Approved.name().equals(platform.getValue().getStatus())) {
+                    return false;
+                }
+                break;
+            }
+
+        }
         return true;
     }
 
     /**
-     * Check这个Code是否存在于没有结束的活动中。
+     * Check这个Code是否是锁定的状态。
      */
-    public boolean checkCodeInActivePromotion(CmsBtProductModel productModel, String productCode, Integer cartId) {
+    public boolean checkCodeLocked(CmsBtProductModel productModel) {
+        if ("1".equals(productModel.getLock())) {
+            return false;
+        }
         return true;
     }
 
     /**
-     * Check这个Code是否存在于没有结束的活动中。
+     * 新建一个新的Group。
      */
-    public boolean checkCodeLocked(CmsBtProductModel productModel, String productCode, Integer cartId) {
-        return true;
+    public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
+
+        CmsBtProductGroupModel group = new CmsBtProductGroupModel();
+
+        // 渠道id
+        group.setChannelId(channelId);
+
+        // cart id
+        group.setCartId(cartId);
+
+        // 获取唯一编号
+        group.setGroupId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+
+        // 主商品Code
+        group.setMainProductCode(productCode);
+
+        // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
+        group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
+                , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
+                , String.valueOf(group.getCartId()));
+        if (cmsChannelConfigBean != null && !com.voyageone.common.util.StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
+                group.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
+            } else {
+                // platform active:上新的动作: 暂时默认是放到:仓库中
+                group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+            }
+        } else {
+            // platform active:上新的动作: 暂时默认是放到:仓库中
+            group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+        }
+
+        // ProductCodes
+        List<String> codes = new ArrayList<>();
+        codes.add(productCode);
+        group.setProductCodes(codes);
+        group.setCreater(getClass().getName());
+        group.setModifier(getClass().getName());
+
+        // 计算group价格区间
+        productGroupService.calculatePriceRange(group);
+
+        return group;
     }
 }
