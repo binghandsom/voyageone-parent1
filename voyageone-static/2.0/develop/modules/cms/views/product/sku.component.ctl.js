@@ -33,7 +33,7 @@ define([
                     confirm("您确定要移动选择的Sku到新的Code吗？").then(function () {
                         var moveSkuInfo = {
                             skuList: scope.skuList,
-                            sourceCode : scope.masterField.code
+                            sourceCode : scope.productInfo.masterField.code
                         };
                         window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
                         window.open("#/product/sku_move","_blank");
