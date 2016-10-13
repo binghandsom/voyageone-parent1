@@ -59,7 +59,7 @@ define([
             if (item.masterFlag == null || item.masterFlag == 1) {
                 console.log("待确认");
             } else if (item.masterFlag == 2) {
-                popups.openBrandMatching({}).then(function () {
+                popups.openMasterBrandMapDetail({}).then(function () {
 
                 });
             }
