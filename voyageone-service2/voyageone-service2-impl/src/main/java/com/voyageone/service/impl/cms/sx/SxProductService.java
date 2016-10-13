@@ -58,7 +58,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -251,11 +250,16 @@ public class SxProductService extends BaseService {
      * @param modifier 更新者
      */
     public int updateSxWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
-        CmsBtSxWorkloadModel upModel = new CmsBtSxWorkloadModel();
-        BeanUtils.copyProperties(sxWorkloadModel, upModel);
-        upModel.setPublishStatus(publishStatus);
-        upModel.setModifier(modifier);
-        return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+//        CmsBtSxWorkloadModel upModel = new CmsBtSxWorkloadModel();
+//        BeanUtils.copyProperties(sxWorkloadModel, upModel);
+//        upModel.setPublishStatus(publishStatus);
+//        upModel.setModifier(modifier);
+//        return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+
+        if (sxWorkloadModel == null) return 0;
+        sxWorkloadModel.setPublishStatus(publishStatus);
+        sxWorkloadModel.setModifier(modifier);
+        return sxWorkloadDao.updatePublishStatus(sxWorkloadModel);
     }
 
     /**
