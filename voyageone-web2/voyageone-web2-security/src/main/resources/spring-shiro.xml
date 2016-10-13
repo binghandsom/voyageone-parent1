@@ -81,7 +81,7 @@
 	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
-				/ = anon
+				/* = anon
 				/core/** = anon
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
