@@ -5,11 +5,16 @@
 
 define([
     'admin',
-    'underscore',
-    'modules/admin/enums/MappingTypes'
-], function (admin, _, MappingTypes) {
+    'underscore'
+], function (admin, _) {
 
     admin.constant('popActions', {
+        "modifyPass": {
+            "templateUrl": "views/pop/modifyPass/modifyPass.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/modifyPass/modifyPass.ctl",
+            "controller": 'ModifyPassController as ctrl',
+            "size": 'lg'
+        },
         "config": {
             "templateUrl": "views/pop/config/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/config/index.ctl",
@@ -188,34 +193,34 @@ define([
         /**
          * 打开用户/权限页面--用户管理页面的查看权限页面
          */
-        $scope.openUserAuthority  = function openUserAuthority (context) {
+        $scope.openUserAuthority = function openUserAuthority(context) {
             return openModal(popActions.userAuthority, context);
         };
 
         /**
          * 打开用户/权限页面--组织管理页面的新增页面
          */
-        $scope.openOrg= function openOrg(context) {
+        $scope.openOrg = function openOrg(context) {
             return openModal(popActions.addOrg, context);
         };
 
         /**
          * 打开用户/权限页面--组织管理页面的新增页面
          */
-        $scope.openRole= function openRole(context) {
+        $scope.openRole = function openRole(context) {
             return openModal(popActions.addRole, context);
         };
         /**
          * 打开用户/权限页面--角色管理页面的权限编辑页面
          */
-        $scope.openRoleEdit= function openRoleEdit(context) {
+        $scope.openRoleEdit = function openRoleEdit(context) {
             return openModal(popActions.addRoleEdit, context);
         };
 
         /**
          * 打开用户/权限页面--菜单资源管理页面的新增页面
          */
-        $scope.openRes= function openRes(context) {
+        $scope.openRes = function openRes(context) {
             return openModal(popActions.addRes, context);
         };
         /**
