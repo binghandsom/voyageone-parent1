@@ -361,11 +361,11 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
         },
-        "master-brand-setting": {
-            "hash": "/systemsetting/common/mainbrand/",
-            "templateUrl": "views/systemsetting/common/mainbrand/index.tpl.html",
-            "controllerUrl": "modules/cms/views/systemsetting/common/mainbrand/index.ctl",
-            "controller": "mainBrandController as ctrl"
+        "maintain_common_master_brand_application": {
+            "hash": "/maintain/common/masterBrandApplication/",
+            "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
+            "controllerUrl": "modules/cms/views/maintain/common/masterBrandApplication/index.ctl",
+            "controller": "masterBrandApplicationController as ctrl"
         }
     };
 });

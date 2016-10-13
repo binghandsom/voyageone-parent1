@@ -6,17 +6,18 @@
 
 define([
     'cms',
-    '../../../../controller/popup.ctl.js'
+    'modules/cms/controller/popup.ctl'
 ],function(cms){
 
-    cms.controller('mainBrandController',(function(){
+    cms.controller('masterBrandApplicationController',(function(masterBrandApplicationService, popups){
 
         function MainBrandController(popups){
             this.popups = popups;
         }
 
         MainBrandController.prototype.init = function(){
-
+            var self = this;
+            this.masterBrandApplicationService   = masterBrandApplicationService;
         };
 
         MainBrandController.prototype.popBrandAudit = function(){
