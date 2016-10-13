@@ -5,11 +5,12 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('AddUserController', (function () {
-        function AddUserController(context, alert, adminRoleService, adminOrgService, adminUserService, $uibModalInstance) {
+        function AddUserController(context, alert, adminRoleService, channelService, adminOrgService, adminUserService, $uibModalInstance) {
             this.sourceData = context ? context : {};
             this.append = context == 'add' ? true : false;
             this.alert = alert;
             this.adminRoleService = adminRoleService;
+            this.channelService = channelService;
             this.adminOrgService = adminOrgService;
             this.adminUserService = adminUserService;
 
@@ -23,7 +24,8 @@ define([
                 orgId: this.sourceData.orgId,
                 email: this.sourceData.email,
                 active: this.sourceData.active,
-                description: this.sourceData.description
+                description: this.sourceData.description,
+                company: this.sourceData.company
             };
             this.leftSelectedFlg = false;
             this.rightSelectedFlg = false;
@@ -39,6 +41,10 @@ define([
                 }
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
+                });
+
+                self.channelService.getAllCompany().then(function (res) {
+                    self.companyList = res.data;
                 });
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.allList = res.data;
