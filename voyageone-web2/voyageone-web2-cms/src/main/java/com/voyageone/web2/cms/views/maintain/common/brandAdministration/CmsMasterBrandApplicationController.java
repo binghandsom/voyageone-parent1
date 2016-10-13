@@ -37,10 +37,10 @@ public class CmsMasterBrandApplicationController extends CmsController {
         //店铺渠道取得
         String channelId = this.getUser().getSelChannelId();
         //相关channel
-        result.put("channelList",TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, "cn"));
+        result.put("channelList",TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53_O, channelId, "cn"));
         result.put("cartList","");
         //返回数据的类型
-        return (AjaxResponse) result;
+        return success(result);
     }
 
     /**
@@ -60,7 +60,7 @@ public class CmsMasterBrandApplicationController extends CmsController {
         // 检索品牌映射关系的数据
         result.put("masterBrandList", cmsMasterBrandMappingService.searchMasterBrandApplicationInfo(channelId, param));
         //返回数据的类型
-        return (AjaxResponse) result;
+        return success(result);
     }
     /**
      *Master品牌待审核一览(审核操作)
