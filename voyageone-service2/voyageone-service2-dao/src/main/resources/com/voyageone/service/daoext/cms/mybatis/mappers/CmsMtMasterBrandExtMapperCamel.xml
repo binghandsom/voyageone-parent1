@@ -9,7 +9,7 @@
         select a.key,a.value,b.*
         from voyageone_cms2.cms_mt_channel_values a left join voyageone_cms2.cms_mt_master_brand b on a.value1 = b.id
         where a.channel_id = #{channelId}
-          and a.type = 0
+        and a.type = 0
         <if test="statusListFlag == null">
             <if test="statusList != null and statusList.size() > 0">
                 and b.master_flag in
@@ -29,6 +29,18 @@
         </if>
         <if test="feedBrand !=null and feedBrand != ''">
             and (a.key like '%${feedBrand}%')
+        </if>
+        <if test="masterBrandCn !=null and masterBrandCn != ''">
+            and (b.masterBrandCn like '%${masterBrandCn}%')
+        </if>
+        <if test="masterBrandEn !=null and masterBrandEn != ''">
+            and (b.masterBrandEn like '%${masterBrandEn}%')
+        </if>
+        <if test="masterChannelId != null and masterChannelId != ''">
+            and b.channelId = #{masterChannelId}
+        </if>
+        <if test="cartId !=null and cartId != ''">
+            and (b.cartId like '%${cartId}%')
         </if>
         <if test="offset != null">
             limit #{offset}, #{size}
@@ -56,6 +68,18 @@
                 </foreach>
                 or b.master_flag is NULL)
             </if>
+        </if>
+        <if test="masterBrandCn !=null and masterBrandCn != ''">
+            and (b.masterBrandCn like '%${masterBrandCn}%')
+        </if>
+        <if test="masterBrandEn !=null and masterBrandEn != ''">
+            and (b.masterBrandEn like '%${masterBrandEn}%')
+        </if>
+        <if test="masterChannelId != null and masterChannelId != ''">
+            and b.channelId = #{masterChannelId}
+        </if>
+        <if test="cartId !=null and cartId != ''">
+            and (b.cartId like '%${cartId}%')
         </if>
         <if test="feedBrand !=null and feedBrand != ''">
             and (a.key like '%${feedBrand}%')

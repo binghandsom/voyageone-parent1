@@ -40,7 +40,7 @@ public class CmsMasterBrandApplicationController extends CmsController {
         result.put("masterBrandsCount", cmsMasterBrandMappingService.searchMasterBrandApplicationCount(channelId, param));
         // 检索品牌映射关系的数据
         result.put("masterBrandList", cmsMasterBrandMappingService.searchMasterBrandApplicationInfo(channelId, param));
-
+        //返回数据的类型
         return (AjaxResponse) result;
     }
     /**

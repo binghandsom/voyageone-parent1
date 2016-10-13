@@ -6,7 +6,7 @@
 
 define([
     'cms',
-    'modules/cms/controller/popup.ctl'
+    '../../../../controller/popup.ctl.js'
 ],function(cms){
 
     cms.controller('mainBrandController',(function(){
