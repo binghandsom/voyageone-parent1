@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Item;
-import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -10,10 +9,9 @@ import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.*;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales_Sku;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -28,14 +26,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2016/9/25.
  * @version 2.0.0
  */
 @Service
-public class TargetDailyService extends BaseTaskService {
+public class TargetDailyService extends BaseCronTaskService {
 
     @Autowired
     TbSaleService tbSaleService;
@@ -67,7 +64,7 @@ public class TargetDailyService extends BaseTaskService {
         soldOutList = getInventoryProduct("sold_out");
         violationOffShelfList = getInventoryProduct("violation_off_shelf");
 
-        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"for shelved");
+        List<TargetDailyBean> targetDailyBeans = getProductInfo(forShelvedList,"off-shelved");
         targetDailyBeans.addAll(getProductInfo(soldOutList, "sold out"));
         targetDailyBeans.addAll(getProductInfo(violationOffShelfList, "violation off shelf"));
 

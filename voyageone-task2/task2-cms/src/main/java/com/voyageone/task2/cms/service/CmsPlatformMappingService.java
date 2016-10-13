@@ -27,7 +27,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingForInsertModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * 主数据->平台的mapping做成
  */
 @Service
-public class CmsPlatformMappingService extends BaseTaskService {
+public class CmsPlatformMappingService extends BaseCronTaskService {
     private final static String JOB_NAME = "platformMappingTask";
     // CmsMtCommonProp数据
     private static List<CmsMtCommonPropModel> commonProp;

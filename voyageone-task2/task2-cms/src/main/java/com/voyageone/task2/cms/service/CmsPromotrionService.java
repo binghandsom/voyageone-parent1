@@ -7,7 +7,7 @@ import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.PromotionDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotrionService extends BaseTaskService {
+public class CmsPromotrionService extends BaseCronTaskService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;

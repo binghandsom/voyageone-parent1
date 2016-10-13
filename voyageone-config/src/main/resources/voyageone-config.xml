@@ -16,6 +16,7 @@
     <import resource="classpath*:sdk-client-config.xml"/>
     <import resource="classpath*:mq-config.xml"/>
     <import resource="classpath*:redis-config.xml"/>
+    <import resource="classpath*:solr-config.xml"/>
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->

@@ -19,7 +19,7 @@ import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsGetPlatformStatusService extends BaseTaskService {
+public class CmsGetPlatformStatusService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;

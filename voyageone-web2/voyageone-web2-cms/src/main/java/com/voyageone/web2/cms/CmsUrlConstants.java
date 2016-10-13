@@ -317,6 +317,7 @@ public interface CmsUrlConstants {
 
             String INIT = "init";
             String SEARCH = "search";
+            String SEARCH_AUTO_COMPLETE_SOLR = "searchAutoComplete";
 
             String GET_GROUP_LIST = "getGroupList";
             String GET_PRODUCT_LIST = "getProductList";

@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  * @version 2.1.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService {
 
     public static final int LIMIT = 100;
     public static final int WORK_LOAD_FAIL = 2;
@@ -73,6 +73,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 //    private static final String DUPLICATE_PRODUCT_NAME = "109902";
     // 产品名称(name)在聚美已存在
     private static final String DUPLICATE_PRODUCT_DRAFT_NAME = "103087";
+    // 不需要下面这个"105106"错误判断取得hashId逻辑，有些就是要分成2个商品，只能手动修改，先把老的product1更新一下去掉SKU(其实是把该SKU的商家编码前面都加上了ERROR_)，再上出错的product2就不会报商家编码已存在的错误了
     // 商品自带条码（UPC_CODE）存在相同 值或UPC_CODE在聚美已存在
     private static final String DUPLICATE_SPU_BARCODE = "105106";
     // 在聚美已存在的商家编码(businessman_num)
@@ -381,7 +382,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 else if(jmApiErrorNoHashId ||
 //                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
                         htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
-                        htProductAddResponse.getError_code().contains(DUPLICATE_SPU_BARCODE) ||
+//                        htProductAddResponse.getError_code().contains(DUPLICATE_SPU_BARCODE) ||  // 不需要这个逻辑，有些就是要分成2个商品，只能手动修改，先把老的product1更新一下去掉SKU(其实是把该SKU的商家编码前面都加上了ERROR_)，再上出错的product2就不会报商家编码已存在的错误了
                         htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
                 {
                     // 上新成功但没取到jmHashId等值得时候，不需要重新上新
@@ -397,7 +398,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
                             jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
                         } catch (Exception e) {
-                            $debug("通过聚美商品ID取得商品信息异常结束！[pProductId:%s]", jmCart.getpProductId());
+                            $info("新增失败发现平台上已经有该商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
+                                    productCode, jmCart.getpProductId(), e.getMessage());
                         }
                     }
                     // 如果用pProductId没查到商品信息的话，用名称再去查一下
@@ -406,9 +408,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
                             jmGetProductInfoRes = jumeiProductService.getProductByName(shop, bean.getName() );
                         } catch (Exception e) {
-                            String msg = String.format("通过聚美商品名称取得商品信息异常结束！请确认聚美后台该商品的名称与CMS系统" +
-                                    "中的长标题是否一致，如果不一致将CMS聚美优品详情中长标题改成跟聚美后台一样的名称之后再重试。[ProductCode:%s] " +
-                                    "[Name:%s] [Msg:%s]", productCode, bean.getName(), e.getMessage());
+                            String msg = String.format("新增失败发现平台上已经有该商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
+                                    "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
+                                    productCode, jmCart.getpProductId(), bean.getName(), e.getMessage());
                             $error(msg);
                             throw new BusinessException(msg);
                         }
@@ -503,7 +505,37 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             //更新产品
             else {
                 //先去聚美查一下product
-                JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+//                JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+                JmGetProductInfoRes jmGetProductInfoRes = null;
+                // 首先用pProductId去查询聚美平台商品信息
+                if (jmCart != null && !StringUtils.isEmpty(jmCart.getpProductId())) {
+                    try {
+                        // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
+                        jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+                    } catch (Exception e) {
+                        $info("更新商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
+                                productCode, jmCart.getpProductId(), e.getMessage());
+                    }
+                }
+                // 如果用pProductId没查到商品信息的话，用名称再去查一下
+                if (jmGetProductInfoRes == null) {
+                    String productName = "";
+                    try {
+                        // 查询用名称
+                        productName = jmCart.getFields().getStringAttribute("productNameCn") + " " +
+                                special_symbol.matcher(productCode).replaceAll("-");
+                        // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
+                        if (!StringUtils.isEmpty(productName))
+                            jmGetProductInfoRes = jumeiProductService.getProductByName(shop, productName);
+                    } catch (Exception e) {
+                        String msg = String.format("更新商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
+                                        "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
+                                productCode, jmCart.getpProductId(), productName, e.getMessage());
+                        $error(msg);
+                        throw new BusinessException(msg);
+                    }
+                }
+
                 List<JmGetProductInfo_Spus> remoteSpus = null;
                 if(jmGetProductInfoRes != null)
                 {

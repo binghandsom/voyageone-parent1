@@ -9,7 +9,6 @@ import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.daoext.cms.CmsZzFeedOverstockPriceDaoExt;
-import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsZzFeedOverstockPriceModel;
@@ -18,9 +17,8 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Common;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.bean.SuperFeedTargetBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +37,7 @@ import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.Over
  * @version 2.0.0
  */
 @Service
-public class OverStockPriceAnalysisService extends BaseTaskService {
+public class OverStockPriceAnalysisService extends BaseCronTaskService {
 
     @Autowired
     private CmsZzFeedOverstockPriceDaoExt cmsZzFeedOverstockPriceDaoExt;

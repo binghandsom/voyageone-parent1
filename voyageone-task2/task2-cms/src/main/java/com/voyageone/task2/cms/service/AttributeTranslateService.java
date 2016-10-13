@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.AttributeDao;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
  * Created by jacky on 2015/10/15.
  */
 @Service
-public class AttributeTranslateService extends BaseTaskService {
+public class AttributeTranslateService extends BaseCronTaskService {
     // 百度翻译设置
     private static final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
 

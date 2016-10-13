@@ -1,20 +1,28 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +48,10 @@ public class CmsJmPromotionService extends BaseService {
     CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service;
     @Autowired
     private CmsAdvanceSearchService advanceSearchService;
+    @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     /**
      * 新增产品列表到聚美的产品项目中
@@ -67,16 +79,23 @@ public class CmsJmPromotionService extends BaseService {
             rsMap.put("ecd", 2);
             return rsMap;
         }
-        List<CmsBtProductModel> products = new ArrayList<>();
 
         // 检查之前有没有上新到聚美上面
         List<String> errCodes = new ArrayList<>();
         List<String> productCodes = new ArrayList<>();
-        orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
+        for (CmsBtProductModel prodObj :orginProducts) {
+            String pCd = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+            if (pCd == null) {
+                $error("addJMPromotion 所选商品数据错误 " + prodObj.toString());
+                continue;
+            }
+            productCodes.add(pCd);
+        }
+
+        List<CmsBtProductModel> products = new ArrayList<>();
         List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
-        if(cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size())
-        {
-            for(CmsBtProductModel orginProduct :orginProducts){
+        if (cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size()) {
+            for (CmsBtProductModel orginProduct : orginProducts) {
                 if (orginProduct.getCommon() == null || orginProduct.getCommon().getFields() == null || orginProduct.getCommon().getFields().getCode() == null) {
                     $warn("addJMPromotion 商品数据不完整 " + orginProduct.toString());
                     continue;
@@ -92,19 +111,27 @@ public class CmsJmPromotionService extends BaseService {
                         }
                     }
                 }
-                if(!flg){
+                if (!flg) {
                     errCodes.add(orginProduct.getCommon().getFields().getCode());
                 }
             }
-        }else{
+            if (products.size() == 0) {
+                $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
+                rsMap.put("ecd", 3);
+                rsMap.put("errlist", errCodes);
+                return rsMap;
+            }
+            productCodes = new ArrayList<>();
+            for (CmsBtProductModel prodObj : products) {
+                String pCd = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+                if (pCd == null) {
+                    $error("addJMPromotion 商品数据错误 " + prodObj.toString());
+                    continue;
+                }
+                productCodes.add(pCd);
+            }
+        } else {
             products = orginProducts;
-        }
-
-        if (products.size() == 0) {
-            $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
-            rsMap.put("ecd", 3);
-            rsMap.put("errlist", errCodes);
-            return rsMap;
         }
 
         List<ProductImportBean > listProductImport = new ArrayList<>();
@@ -123,6 +150,68 @@ public class CmsJmPromotionService extends BaseService {
             if (!product.getTags().contains(tagId))
                 bulkList.add(buildBulkUpdateTag(product, tagId, creater));
         });
+
+        // 批量更新product表
+        if (bulkList.size() > 0) {
+            BulkWriteResult rs = productDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", true);
+            $debug("addJMPromotion 批量更新结果 " + rs.toString());
+        }
+
+        // 更新商品的翻译状态
+        // 先找出所选商品的主商品code
+        JongoQuery qryObj = new JongoQuery();
+        qryObj.setQuery("{'productCodes':{$in:#},'cartId':0}");
+        qryObj.setParameters(productCodes);
+        qryObj.setProjection("{'mainProductCode':1,'_id':0}");
+        List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qryObj);
+        if (grpList == null || grpList.isEmpty()) {
+            $error("addJMPromotion 没有找到主商品");
+            rsMap.put("ecd", 4);
+            return rsMap;
+        }
+        List<String> mnCodeList = grpList.stream().map(grpObj -> grpObj.getMainProductCode()).filter(mnCode -> mnCode != null && mnCode.length() > 0).collect(Collectors.toList());
+        if (mnCodeList.isEmpty()) {
+            $error("addJMPromotion 主商品code为空");
+            rsMap.put("ecd", 4);
+            return rsMap;
+        }
+
+        // 记录商品修改历史
+        qryObj = new JongoQuery();
+        qryObj.setQuery("{'platforms.P0.mainProductCode':{$in:#},'common.fields.translateStatus':{$in:[null,'','0']}}");
+        qryObj.setParameters(mnCodeList);
+        qryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        List<CmsBtProductModel> prodList4His = productDao.select(qryObj, channelId);
+        if (prodList4His != null && prodList4His.size() > 0) {
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'platforms.P0.mainProductCode':{$in:#},'common.fields.translateStatus':{$in:[null,'','0']}}");
+            updObj.setQueryParameters(mnCodeList);
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
+            if (StringUtils.isEmpty(promotion.getSignupDeadline())) {
+                updObj.setUpdateParameters("");
+            } else {
+                if (promotion.getSignupDeadline().length() >= 10) {
+                    updObj.setUpdateParameters(promotion.getSignupDeadline().substring(0, 10));
+                } else {
+                    updObj.setUpdateParameters(promotion.getSignupDeadline());
+                }
+            }
+
+            WriteResult rs = productDao.updateMulti(updObj, channelId);
+            $debug("addJMPromotion 翻译状态批量更新结果 " + rs.toString());
+
+            productCodes = new ArrayList<>();
+            for (CmsBtProductModel prodObj : prodList4His) {
+                String pCd = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+                if (pCd == null) {
+                    $error("addJMPromotion 商品数据错误 " + prodObj.toString());
+                    continue;
+                }
+                productCodes.add(pCd);
+            }
+            productStatusHistoryService.insertList(channelId, productCodes, -1, EnumProductOperationType.BatchUpdate, "高级检索 加入聚美活动：翻译状态--优先翻译", creater);
+        }
+
         List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
         List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
         // 插入jm的promotion信息
@@ -134,11 +223,6 @@ public class CmsJmPromotionService extends BaseService {
             return rsMap;
         }
 
-        // 批量更新product表
-        if (bulkList.size() > 0) {
-            BulkWriteResult rs = productDao.bulkUpdateWithMap(channelId, bulkList, null, "$set", true);
-            $debug("addJMPromotion 批量更新结果 " + rs.toString());
-        }
         rsMap.put("ecd", 0);
         rsMap.put("cnt", products.size());
         rsMap.put("errlist", errCodes);

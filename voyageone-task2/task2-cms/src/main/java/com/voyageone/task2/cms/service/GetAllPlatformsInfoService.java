@@ -11,7 +11,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -27,7 +27,7 @@ import java.util.*;
  * @version 2.6.0
  */
 @Service
-public class GetAllPlatformsInfoService extends BaseTaskService {
+public class GetAllPlatformsInfoService extends BaseCronTaskService {
 
     private final static String JOB_NAME = "CmsGetAllPlatformsInfoJob";
 

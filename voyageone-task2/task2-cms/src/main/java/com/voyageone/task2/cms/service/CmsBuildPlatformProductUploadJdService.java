@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService {
 
     // 京东平台的操作类型(在售)
     private final static String OptioinType_onsale = "onsale";

@@ -3,12 +3,9 @@ package com.voyageone.task2.cms.service.feed;
 import com.csvreader.CsvReader;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
 import com.voyageone.task2.cms.dao.feed.ShoeCityDao;
@@ -31,7 +28,7 @@ import java.util.regex.Pattern;
  * @since 2.0.0
  */
 @Service
-public class SEAnalysisService extends BaseTaskService {
+public class SEAnalysisService extends BaseCronTaskService {
 
     private final static Pattern ALL_ZERO = Pattern.compile("^0+$");
 
