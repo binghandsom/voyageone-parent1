@@ -117,7 +117,7 @@
                         <div class="col-sm-7">
                             <div class="col-sm-3 input-group">
                                 <input type="datetime-local" class="form-control"
-                                       datepicker-popup ng-readonly="vm.isBegin"
+                                       uib-datepicker-popup ng-readonly="vm.isBegin"
                                        ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
                                        min-date="vm.currentTime"
                                        max-date="editModel.model.activityStart"
@@ -144,7 +144,7 @@
                             <div class="col-sm-4 input-group">
                                 <input type="datetime-local" class="form-control"
                                        ng-readonly="vm.isBegin||editModel.model.status!=0"
-                                       datepicker-popup
+                                       uib-datepicker-popup
                                        ng-model="editModel.model.activityStart" name="activityStart" required
                                        max-date="editModel.model.activityEnd"
                                        min-date="vm.currentTime"
@@ -162,7 +162,7 @@
                             <div class="col-sm-4 input-group" style="margin-left:20px">
                                 <input type="datetime-local" class="form-control"
                                        ng-readonly="vm.isBegin||editModel.model.status!=0"
-                                       datepicker-popup
+                                       uib-datepicker-popup
                                        ng-model="editModel.model.activityEnd" name="activityEnd" required
                                        min-date="editModel.model.activityStart"
                                        date-model-format="yyyy-MM-dd HH:mm:ss"
