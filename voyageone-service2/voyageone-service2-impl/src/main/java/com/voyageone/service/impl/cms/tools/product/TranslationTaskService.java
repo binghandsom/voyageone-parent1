@@ -20,6 +20,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -140,15 +141,8 @@ public class TranslationTaskService extends BaseService {
         CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
 
         if (product == null) {
-            //没有过期任务，按优先级参数分配
+            //没有过期任务，按分发规则分配
             JongoQuery queryObj = new JongoQuery();
-
-            //不能有2个or
-            queryObj.addQuery("{'lock':'0'}");
-            queryObj.addQuery("{'common.fields.isMasterMain':1}");
-            queryObj.addQuery("{'common.fields.translateStatus': {'$ne' : '1' }}");
-            queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");
-            queryObj.addParameters(translateTimeStr);
 
             if (!StringUtils.isNullOrBlank2(keyWord)) {
                 List<String> codeList = Arrays.asList(keyWord.split("\n"));
@@ -163,25 +157,46 @@ public class TranslationTaskService extends BaseService {
 
             if (!StringUtils.isNullOrBlank2(priority)) {
                 if ("quantity".equalsIgnoreCase(priority)) {
+                    // 按库存
+                    queryObj.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
                     if ("asc".equalsIgnoreCase(sort)) {
                         queryObj.setSort("{'common.fields.quantity' : 1}");
                     } else {
                         queryObj.setSort("{'common.fields.quantity' : -1}");
                     }
+                    product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
                 } else if ("priority".equalsIgnoreCase(priority)) {
-                    queryObj.setSort("{'common.fields.translateStatus':-1,'common.fields.priorTranslateDate':1}");
+                    // 优先级参数
+                    JongoQuery queryObjOrg = new JongoQuery();
+                    BeanUtils.copyProperties(queryObj, queryObjOrg);
+                    // 先查询优先翻译并且有优先翻译日期的
+                    queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$nin:[null,'']}}");
+                    queryObjOrg.setSort("{'common.fields.priorTranslateDate':1}");
+                    product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                    if (product == null) {
+                        // 再查询优先翻译并且没有优先翻译日期的
+                        BeanUtils.copyProperties(queryObj, queryObjOrg);
+                        queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$in:[null,'']}}");
+                        product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                        if (product == null) {
+                            // 再查询未翻译的
+                            BeanUtils.copyProperties(queryObj, queryObjOrg);
+                            queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
+                            product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                        }
+                    }
                 }
+            } else {
+                // 无分发规则
+                queryObj.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
+                product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
             }
-
-            product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
         }
 
         if (product == null) {
             throw new BusinessException("当前没有待领取的翻译任务！");
-        }
-
-        //修改任务状态
-        else {
+        } else {
+            // 有任务，修改任务状态
             Map<String, Object> rsMap = new HashMap<>();
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
@@ -194,11 +209,9 @@ public class TranslationTaskService extends BaseService {
             updateMap.put("$set", rsMap);
 
             cmsBtProductDao.update(channelId, queryMap, updateMap);
-
             return fillTranslationTaskBean(product);
         }
     }
-
 
     /**
      * 取当前任务
