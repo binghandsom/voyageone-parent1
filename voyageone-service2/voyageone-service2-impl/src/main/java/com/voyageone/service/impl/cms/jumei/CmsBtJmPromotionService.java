@@ -298,17 +298,7 @@ public class CmsBtJmPromotionService extends BaseService {
         // 过滤参数
         Map sqlParams = (Map) params.get("parameters");
         sqlParams.put("channelId", params.get("channelId"));
-        sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
-        sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
-        sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
-        sqlParams.put("mainCata", StringUtils.trimToNull((String) sqlParams.get("mainCata")));
-        String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
-        if (codeListStr != null) {
-            List<String> codeList = Arrays.asList(codeListStr.split("\n"));
-            codeList = codeList.stream().map(code -> StringUtils.trimToNull(code)).filter(code -> code != null).collect(Collectors.toList());
-            String codeStr = "'" + StringUtils.join(codeList, "','") + "'";
-            sqlParams.put("codeListStr", codeStr);
-        }
+        convertParams(sqlParams);
 
         int pageIndex = (Integer) params.get("pageIndex");
         int pageRowCount = (Integer) params.get("pageRowCount");
@@ -321,6 +311,13 @@ public class CmsBtJmPromotionService extends BaseService {
         // 过滤参数
         Map sqlParams = (Map) params.get("parameters");
         sqlParams.put("channelId", params.get("channelId"));
+        convertParams(sqlParams);
+
+        return daoExt.getJmPromotionCount(sqlParams);
+    }
+
+    private void convertParams(Map sqlParams) {
+        // 过滤参数
         sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
         sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
         sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
@@ -332,7 +329,5 @@ public class CmsBtJmPromotionService extends BaseService {
             String codeStr = "'" + StringUtils.join(codeList, "','") + "'";
             sqlParams.put("codeListStr", codeStr);
         }
-
-        return daoExt.getJmPromotionCount(sqlParams);
     }
 }
