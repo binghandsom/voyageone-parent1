@@ -599,12 +599,12 @@ define(function () {
             },
             //主品牌匹配页面
             "masterBrandService":{
-                root:"/cms/tools/common",
+                root:"/cms/tools/common/",
                 search:"getMasterBrandInfo"
             },
             //主品牌管理页面
             "masterBrandApplicationService":{
-                root:"/cms/maintain/common",
+                root:"/cms/maintain/common/",
                 search:"getMasterBrandInfo",
                 reviewed:"reviewedMasterBrandInfo",
                 edit:"editMasterBrandInfo",

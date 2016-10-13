@@ -9,17 +9,46 @@ define([
     'modules/cms/controller/popup.ctl'
 ],function(cms){
 
-    cms.controller('masterBrandApplicationController',(function(masterBrandApplicationService, popups){
+    cms.controller('masterBrandApplicationController',(function(){
 
-        function masterBrandApplicationController(popups){
+        function masterBrandApplicationController(masterBrandApplicationService,popups){
             this.popups = popups;
-            this.masterBrandApplicationService   = masterBrandApplicationService;
+            this.masterBrandApplicationService = masterBrandApplicationService;
+            this.searchInfo = {
+                statusList :[],
+                masterBrandCn:'',
+                masterBrandEn:'',
+                channelId:'',
+                feedBrand:'',
+                cartBrandName:''
+            }
         }
 
         masterBrandApplicationController.prototype.init = function(){
             var self = this;
 
+            self.search();
+
         };
+
+        masterBrandApplicationController.prototype.search = function(){
+            var self = this,
+
+                masterBrandApplicationService = self.masterBrandApplicationService;
+
+            masterBrandApplicationService.search({
+                statusList :['0'],
+                masterBrandEn:'',
+                masterBrandCn:'',
+                channelId:'',
+                feedBrand:'',
+                cartBrandName:''
+            }).then(function(res){
+                console.log("res",res);
+            });
+
+        };
+
 
         masterBrandApplicationController.prototype.popMasterBrandCheck = function(){
             var self = this,
@@ -39,6 +68,7 @@ define([
             });
 
         };
+
 
         return masterBrandApplicationController;
 
