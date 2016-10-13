@@ -15,7 +15,7 @@ public class CmsProductTotalImportToSearchServiceTest {
 
     @Test
     public void testImportDataToSearchFromMongo() {
-        String channelId = "001";
+        String channelId = "010";
         cmsProductTotalImportToSearchService.importDataToSearchFromMongo(channelId);
     }
 
