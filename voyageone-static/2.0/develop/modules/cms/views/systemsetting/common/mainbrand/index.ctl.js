@@ -28,6 +28,16 @@ define([
             });
         };
 
+        MainBrandController.prototype.popBrandEdit = function(){
+            var self = this,
+                popups = self.popups;
+
+            popups.openMbrandEdit({}).then(function(context){
+
+            });
+
+        };
+
         return MainBrandController;
 
     })());

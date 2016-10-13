@@ -405,7 +405,9 @@ define([
                 "templateUrl": "views/pop/system/channelList.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
                 "controller": 'popChannelListCtl'
-            },
+            }
+        },
+        "systemSetting":{
             "brandAudit": {
                 "templateUrl": "views/pop/systemsetting/brandaudit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/systemsetting/brandaudit.ctl",
@@ -417,6 +419,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/systemsetting/brandmatching.ctl",
                 "controller": 'brandMatchingCtl as ctrl',
                 "size":"lg"
+            },
+            "mBrandEdit":{
+                "templateUrl": "views/pop/systemsetting/mbrandedit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/systemsetting/mbrandedit.ctl",
+                "controller": 'mBrandEditCtl as ctrl'
             }
         },
         "store": {
@@ -1213,14 +1220,21 @@ define([
          * 品牌审核弹出框
          */
         $scope.openBrandAudit = function openBrandAudit(context){
-            return openModal(popActions.system.brandAudit,context);
+            return openModal(popActions.systemSetting.brandAudit,context);
         };
 
         /**
          * master 品牌匹配
          */
         $scope.openBrandMatching = function openBrandMatching(context){
-            return openModal(popActions.system.brandMatching,context)
+            return openModal(popActions.systemSetting.brandMatching,context)
+        };
+
+        /**
+         * 主品牌编辑
+         */
+        $scope.openMbrandEdit = function openMbrandEdit(context){
+            return openModal(popActions.systemSetting.mBrandEdit,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
