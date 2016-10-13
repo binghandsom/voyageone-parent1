@@ -123,19 +123,18 @@ public class TranslationTaskService extends BaseService {
 
         //先查是否有任务未完成
         String queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s', " +
                 "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
 
         long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
-
         if (cnt > 0) {
             throw new BusinessException("当前任务还未完成，不能领取新的任务！");
         }
 
         //再查是否有过期任务，优先分配过期任务
         queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s'}", userName);
 
         CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
@@ -143,6 +142,8 @@ public class TranslationTaskService extends BaseService {
         if (product == null) {
             //没有过期任务，按分发规则分配
             JongoQuery queryObj = new JongoQuery();
+            queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");
+            queryObj.addParameters(translateTimeStr);
 
             if (!StringUtils.isNullOrBlank2(keyWord)) {
                 List<String> codeList = Arrays.asList(keyWord.split("\n"));
@@ -169,6 +170,7 @@ public class TranslationTaskService extends BaseService {
                     // 优先级参数
                     JongoQuery queryObjOrg = new JongoQuery();
                     BeanUtils.copyProperties(queryObj, queryObjOrg);
+
                     // 先查询优先翻译并且有优先翻译日期的
                     queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$nin:[null,'']}}");
                     queryObjOrg.setSort("{'common.fields.priorTranslateDate':1}");
@@ -202,7 +204,10 @@ public class TranslationTaskService extends BaseService {
             queryMap.put("prodId", product.getProdId());
             rsMap.put("common.fields.translator", userName);
             rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-            rsMap.put("common.fields.translateStatus", '0');
+            if (!"2".equals(product.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
+                rsMap.put("common.fields.translateStatus", '0');
+            }
+
             rsMap.put("modifier", userName);
             rsMap.put("modified", DateTimeUtil.getNow());
             Map<String, Object> updateMap = new HashMap<>();

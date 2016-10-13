@@ -42,8 +42,14 @@ define([
          */
         function goDetail() {
             var vm = $scope.vm,
+                args,
                 url = !vm.currentImage ? vm.picInfo.mainPic : vm.currentImage;
-            window.open(url);
+
+            args = url.split("/");
+
+            if(args.length == 0)
+                return;
+            window.open("http://s7d5.scene7.com/is/image/sneakerhead/✓?fmt=png&scl=1".replace("✓",args[args.length-1]));
         }
 
     });
