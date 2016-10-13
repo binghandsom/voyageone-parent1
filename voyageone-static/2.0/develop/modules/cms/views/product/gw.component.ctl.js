@@ -124,11 +124,6 @@ define([
                  */
                 function categoryMapping(popupNewCategory) {
 
-                    if (scope.vm.status == 'Approved') {
-                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-                        return;
-                    }
-
                     productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
                             return $q(function (resolve, reject) {

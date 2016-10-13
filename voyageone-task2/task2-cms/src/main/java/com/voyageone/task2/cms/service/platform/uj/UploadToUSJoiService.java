@@ -415,6 +415,8 @@ public class UploadToUSJoiService extends BaseTaskService {
                     targetProductList.add(productModel);
                 } else {
                     // 如果已经存在（如老的数据已经有了），更新
+                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
+                    creatGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
                     // 更新common的一部分属性
                     CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
                     if (prCommonFields != null && productModel.getCommon().getFields() != null) {
@@ -506,9 +508,28 @@ public class UploadToUSJoiService extends BaseTaskService {
                             newPlatform.setpBrandId(null);
                             newPlatform.setpBrandName(null);
                             newPlatform.setCartId(cartId);
+
+                            // 设定是否主商品
+                            CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
+                                    finalProductModel1.getCommon().getFields().getCode(), cartId);
+                            if (group == null) {
+                                newPlatform.setpIsMain(0);
+                            } else {
+                                newPlatform.setpIsMain(1);
+                            }
+
                             pr.getPlatforms().put("P" + StringUtils.toString(cartId), newPlatform);
 //                            productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform, getTaskName());
                         } else {
+                            // 设定是否主商品
+                            CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
+                                    finalProductModel1.getCommon().getFields().getCode(), cartId);
+                            if (group == null) {
+                                platformCart.setpIsMain(0);
+                            } else {
+                                platformCart.setpIsMain(1);
+                            }
+
                             if (platformCart.getSkus() == null) {
                                 platformCart.setSkus(newPlatform.getSkus());
                             } else {
@@ -583,8 +604,6 @@ public class UploadToUSJoiService extends BaseTaskService {
 //                        bulkList.add(model);
 //                        cmsBtProductDao.bulkUpdateWithMap(usJoiChannelId, bulkList, null, "$set");
                     }
-                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
-                    creatGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
 
                     // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
                     pr = doSetPrice(pr);
