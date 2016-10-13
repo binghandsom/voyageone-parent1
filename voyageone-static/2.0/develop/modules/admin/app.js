@@ -4,12 +4,13 @@ define([
     'underscore',
     'modules/admin/routes',
     'modules/admin/actions',
-    // 'modules/admin/controller/popup.ctl',
     'modules/admin/translate/en',
-    'modules/admin/translate/zh'
+    'modules/admin/translate/zh',
+    'modules/admin/controller/popup.ctl'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.admin', [
+        'com.voyageone.popups',
         'ngRoute',
         'ngAnimate',
         'ngCookies',
@@ -147,15 +148,13 @@ define([
         }
     }
 
-    function headerCtrl($q, ajaxService, cookieService, $scope, $ajax, cActions, $localStorage, $rootScope, $window, $location, cRoutes, cCommonRoutes) {
+    function headerCtrl($q, ajaxService, cookieService, $scope, $ajax, $localStorage, $window, cCommonRoutes) {
         var vm = this;
         vm.languageList = {};
         vm.userInfo = {};
         vm.searchValue = "";
         $scope.initialize = initialize;
         $scope.logout = logout;
-        $scope.modifyPassword = modifyPassword;
-        $scope.resetPassword = resetPassword;
         function initialize() {
             vm.userInfo = $localStorage.user || {};
         }
@@ -169,20 +168,6 @@ define([
                     cookieService.removeAll();
                     $window.location = cCommonRoutes.login.url;
                 });
-        }
-
-        /**
-         * modifyPassword.
-         */
-        function modifyPassword() {
-            $window.location = cCommonRoutes.resetPass.url;
-        }
-
-        /**
-         * resetPassword.
-         */
-        function resetPassword() {
-            $window.location = cCommonRoutes.resetPass.url;
         }
     }
 

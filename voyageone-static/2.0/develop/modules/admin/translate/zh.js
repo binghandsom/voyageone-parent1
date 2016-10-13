@@ -226,6 +226,7 @@ define(function () {
         "TXT_ALERT": "温馨提示",
         "TXT_WARNING": "警告",
         "TXT_COMPLETE_INFO": "请完善当前页面的输入内容",
+        "TXT_REQUIRED": "(必填)",
 
         /**输入验证消息*/
         "INVALID_EMAIL": "请输入正确的E-Mail地址",

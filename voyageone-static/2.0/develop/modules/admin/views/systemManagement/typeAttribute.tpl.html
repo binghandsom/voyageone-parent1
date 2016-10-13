@@ -81,7 +81,7 @@
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit('edit')" ng-disabled="ctrl.sysTypeAttrSelList.selList.length <= 0||ctrl.sysTypeAttrSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.sysTypeAttrSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.sysTypeAttrSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>
             </div>
             <table class="table table-hover-new table-hover table_main table_fixed">

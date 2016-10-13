@@ -6643,7 +6643,6 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
     text-overflow: ellipsis;
     /*height: 50px;*/
 }
-
 .table_fixed > tbody > tr > td .wrap{
     white-space: normal;
 }
@@ -6658,6 +6657,9 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 }
 .table_main li{
     list-style-type: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .table_main span{
     color:#7c7c7c;
