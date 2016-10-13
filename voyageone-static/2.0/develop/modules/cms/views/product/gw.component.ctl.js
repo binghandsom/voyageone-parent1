@@ -240,8 +240,8 @@ define([
                             productCode : scope.vm.mastData.productCode
                         };
                         window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
-                        // TODO
-                        // window.open("#/product/detail/5924","_blank");
+              
+                        window.open("#/product/code_move","_blank");
                     });
                 }
 
