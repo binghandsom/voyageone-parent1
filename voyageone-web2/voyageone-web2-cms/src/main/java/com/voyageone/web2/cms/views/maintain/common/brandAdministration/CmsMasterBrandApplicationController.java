@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.maintain.common.brandAdministration;
 
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
@@ -37,7 +38,7 @@ public class CmsMasterBrandApplicationController extends CmsController {
         //店铺渠道取得
         String channelId = this.getUser().getSelChannelId();
         //相关channel
-        result.put("channelList",TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53_O, channelId, "cn"));
+        result.put("channelList", Channels.getChannelList());
         result.put("cartList","");
         //返回数据的类型
         return success(result);
