@@ -27,15 +27,34 @@ public class CmsMasterBrandApplicationController extends CmsController {
     private CmsMasterBrandMappingService cmsMasterBrandMappingService;
 
     /**
-     *Master品牌待审核一览,已有Master品牌一览(初始化及检索画面)
+     *
+     * @param param
+     * @return
      */
-    @RequestMapping(value =CmsUrlConstants.MAINTAIN_SETTING.COMMON.BRAND_ADMINISTRATION.MASTER_BRAND_APPLICATION_SEARCH)
-    public AjaxResponse getMasterBrandInfo(@RequestBody Map param) {
+    @RequestMapping(value =CmsUrlConstants.MAINTAIN_SETTING.COMMON.BRAND_ADMINISTRATION.MASTER_BRAND_APPLICATION_INIT)
+    public AjaxResponse initMasterBrandInfo(@RequestBody Map param) {
         Map<String, Object> result = new HashMap<>();
         //店铺渠道取得
         String channelId = this.getUser().getSelChannelId();
         //相关channel
         result.put("channelList",TypeChannels.getTypeChannelBeansByTypeValueLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, "cn"));
+        result.put("cartList","");
+        //返回数据的类型
+        return (AjaxResponse) result;
+    }
+
+    /**
+     * Master品牌待审核一览,已有Master品牌一览(初始化及检索画面)
+     * @param param
+     * @return result
+     */
+
+
+    @RequestMapping(value =CmsUrlConstants.MAINTAIN_SETTING.COMMON.BRAND_ADMINISTRATION.MASTER_BRAND_APPLICATION_SEARCH)
+    public AjaxResponse getMasterBrandInfo(@RequestBody Map param) {
+        Map<String, Object> result = new HashMap<>();
+        //店铺渠道取得
+        String channelId = this.getUser().getSelChannelId();
         // 检索品牌映射关系的数量
         result.put("masterBrandsCount", cmsMasterBrandMappingService.searchMasterBrandApplicationCount(channelId, param));
         // 检索品牌映射关系的数据

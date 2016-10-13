@@ -605,6 +605,7 @@ define(function () {
             //主品牌管理页面
             "masterBrandApplicationService":{
                 root:"/cms/maintain/common/",
+                init:"initMasterBrandInfo",
                 search:"getMasterBrandInfo",
                 reviewed:"reviewedMasterBrandInfo",
                 edit:"editMasterBrandInfo",

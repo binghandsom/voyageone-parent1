@@ -30,9 +30,6 @@
         <if test="feedBrand !=null and feedBrand != ''">
             and (a.key like '%${feedBrand}%')
         </if>
-        <if test="masterBrandCn !=null and masterBrandCn != ''">
-            and (b.masterBrandCn like '%${masterBrandCn}%')
-        </if>
         <if test="masterBrandEn !=null and masterBrandEn != ''">
             and (b.masterBrandEn like '%${masterBrandEn}%')
         </if>
@@ -68,9 +65,6 @@
                 </foreach>
                 or b.master_flag is NULL)
             </if>
-        </if>
-        <if test="masterBrandCn !=null and masterBrandCn != ''">
-            and (b.masterBrandCn like '%${masterBrandCn}%')
         </if>
         <if test="masterBrandEn !=null and masterBrandEn != ''">
             and (b.masterBrandEn like '%${masterBrandEn}%')

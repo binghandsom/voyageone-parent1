@@ -781,6 +781,7 @@ public interface CmsUrlConstants {
         interface COMMON {
             interface BRAND_ADMINISTRATION{
                 String ROOT="/cms/maintain/common/";
+                String MASTER_BRAND_APPLICATION_INIT="initMasterBrandInfo";
                 String MASTER_BRAND_APPLICATION_SEARCH="getMasterBrandInfo";
                 String MASTER_BRAND_APPLICATION_REVIEWED="reviewedMasterBrandInfo";
                 String MASTER_BRAND_APPLICATION_EDIT="editMasterBrandInfo";

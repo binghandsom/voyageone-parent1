@@ -165,16 +165,14 @@ public class CmsMasterBrandMappingService extends BaseService {
     private Map<String, Object> masterBrandApplicationCommonInfo(Map param) {
 
         Map<String, Object> data = new HashMap<>();
-        String masterBrandCn = (String) param.get("masterBrandCn");
-        data.put("masterBrandCn", masterBrandCn);
         String masterBrandEn = (String) param.get("masterBrandEn");
         data.put("masterBrandEn", masterBrandEn);
         String masterChannelId = (String) param.get("channelId");
         data.put("masterChannelId", masterChannelId);
         String feedBrand = (String) param.get("feedBrand");
         data.put("feedBrand", feedBrand);
-        String cartId = (String) param.get("cartId");
-        data.put("cartId", cartId);
+        String cartBrandName = (String) param.get("cartBrandName");
+        data.put("cartBrandName", cartBrandName);
         //返回数据类型
         return data;
     }
