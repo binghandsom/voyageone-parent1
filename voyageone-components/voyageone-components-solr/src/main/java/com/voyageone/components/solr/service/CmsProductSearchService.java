@@ -1,5 +1,6 @@
 package com.voyageone.components.solr.service;
 
+import com.voyageone.common.spring.SpringContext;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
@@ -31,14 +32,15 @@ import java.util.stream.Collectors;
 @Service
 public class CmsProductSearchService extends ComponentBase {
 
-    @Autowired
-    private SolrTemplate cmsProductSolrTemplate;
+    private SolrTemplate getSolrTemplate() {
+        return SpringContext.getBean(SolrTemplate.class);
+    }
 
     /**
      * saveBean
      */
     public String saveBean(SolrUpdateBean bean) {
-        UpdateResponse response = cmsProductSolrTemplate.saveBean(bean);
+        UpdateResponse response = getSolrTemplate().saveBean(bean);
         return response.toString();
     }
 
@@ -46,7 +48,7 @@ public class CmsProductSearchService extends ComponentBase {
      * saveBeans
      */
     public String saveBeans(List<SolrUpdateBean> beans) {
-        UpdateResponse response = cmsProductSolrTemplate.saveBeans(beans);
+        UpdateResponse response = getSolrTemplate().saveBeans(beans);
         return response.toString();
     }
 
@@ -54,7 +56,7 @@ public class CmsProductSearchService extends ComponentBase {
      * saveBean
      */
     public String deleteById(String id) {
-        UpdateResponse response = cmsProductSolrTemplate.deleteById(id);
+        UpdateResponse response = getSolrTemplate().deleteById(id);
         return response.toString();
     }
 
@@ -62,7 +64,7 @@ public class CmsProductSearchService extends ComponentBase {
      * saveBeans
      */
     public String deleteByIds(List<String> ids) {
-        UpdateResponse response = cmsProductSolrTemplate.deleteById(ids);
+        UpdateResponse response = getSolrTemplate().deleteById(ids);
         return response.toString();
     }
 
@@ -70,7 +72,7 @@ public class CmsProductSearchService extends ComponentBase {
      * commit
      */
     public void commit() {
-        cmsProductSolrTemplate.commit();
+        getSolrTemplate().commit();
     }
 
 
@@ -154,15 +156,15 @@ public class CmsProductSearchService extends ComponentBase {
 
 
     private <T> Cursor<T> queryForCursor(Query query, final Class<T> clazz) {
-        return cmsProductSolrTemplate.queryForCursor(query, clazz);
+        return getSolrTemplate().queryForCursor(query, clazz);
     }
 
     public <T> Page<T> queryForPage(Query query, final Class<T> clazz) {
-        return cmsProductSolrTemplate.queryForPage(query, clazz);
+        return getSolrTemplate().queryForPage(query, clazz);
     }
 
     public <T> SolrResultPage<T> queryForSolrResultPage(Query query, final Class<T> clazz) {
         //noinspection unchecked
-        return (SolrResultPage)cmsProductSolrTemplate.queryForPage(query, clazz);
+        return (SolrResultPage)getSolrTemplate().queryForPage(query, clazz);
     }
 }
