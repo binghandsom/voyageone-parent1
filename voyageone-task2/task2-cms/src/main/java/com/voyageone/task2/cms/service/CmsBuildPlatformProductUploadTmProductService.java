@@ -723,9 +723,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      */
     private boolean judgeCspuNeedUpdate(SxData sxData) {
         boolean needUpdate = false;
-        if (sxData.isUpdateProductFlg()) {
-            needUpdate = true;
-        } else {
+        // deleted by morse.lu 2016/10/13 start
+        // 达尔文产品不去判断"产品是否允许更新表"，只判断"规格是否允许更新表"
+//        if (sxData.isUpdateProductFlg()) {
+//            needUpdate = true;
+//        } else {
+        // deleted by morse.lu 2016/10/13 end
             Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
             for (SxDarwinSkuProps skuProps : mapDarwinSkuProps.values()) {
                 if (skuProps.isAllowUpdate() || StringUtils.isEmpty(skuProps.getCspuId())) {
@@ -734,7 +737,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                     break;
                 }
             }
-        }
+//        }
 
         return needUpdate;
     }
