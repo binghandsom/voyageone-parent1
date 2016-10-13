@@ -58,4 +58,10 @@ public class CmsProductMoveController extends CmsController {
         cmsProductMoveService.moveCode(param, getUser().getSelChannelId(), getUser().getUserName(), getLang());
         return success(null);
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_SKU_INIT_CHECK)
+    public AjaxResponse moveSkuInitCheck(@RequestBody Map<String, Object> param) {
+        cmsProductMoveService.moveSkuInitCheck(param, getUser().getSelChannelId(), getLang());
+        return success(null);
+    }
 }

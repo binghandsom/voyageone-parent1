@@ -41,9 +41,8 @@ public class PromotionCodeService extends BaseService {
     public List<Map<String, Object>> getPromotionCodesByPromotionIds(List<String> promotionIdList) {
         return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
     }
-
-
     /**
+     *
      * 判断是否存在现在时点，指定Code正处于没有结束的活动中。
      */
     public String getExistCodeInActivePromotion(String channelId, String productCode, Integer cartId) {

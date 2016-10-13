@@ -50,6 +50,10 @@ public class CmsProductMoveService extends BaseViewService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
 
+    /**********************************************************/
+    /****************移动Code到Group***************************/
+    /**********************************************************/
+
     /**
      * 移动Code-初始化前Check
      */
@@ -339,6 +343,16 @@ public class CmsProductMoveService extends BaseViewService {
         }
 
         // check业务上的移动条件是否满足
+        // Check这个Code是否是锁定的状态。
+        if (!checkCodeLocked(productModel)) {
+            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
+        }
+
+        // Check这个Code的源Group下是否只有一个Code，并且目的Group是新建的，那么不可以移动。
+        if ("new".equals(destGroupType) && sourceGroupModel.getProductCodes().size() == 1) {
+            throw new BusinessException("不能移动Code到新Group,因为源Group下是否只有一个Code");
+        }
+
         // CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
         if (!checkIsMainProduct(sourceGroupModel, productCode)) {
             throw new BusinessException("移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作");
@@ -355,11 +369,6 @@ public class CmsProductMoveService extends BaseViewService {
             throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
         }
 
-
-        // Check这个Code是否是锁定的状态。
-        if (!checkCodeLocked(productModel)) {
-            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
-        }
 
         // ************这里开始正式移动*************
         // 处理目标Group
@@ -394,10 +403,82 @@ public class CmsProductMoveService extends BaseViewService {
                 "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + destGroupModel.getGroupId(), modifier);
     }
 
+
+    /**********************************************************/
+    /****************移动Sku到Code*****************************/
+    /**********************************************************/
+    /**
+     * 移动Sku-初始化前Check
+     */
+    public void moveSkuInitCheck(Map<String, Object> params, String channelId, String lang) {
+        // 移动的Sku列表
+        List<Map<String, Object>> skuList = (List) params.get("skuList");
+        // 源Code
+        String sourceCode = (String) params.get("sourceCode");
+
+        // 取得源Code的Product信息
+        CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
+
+        // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
+        if (skuList == null || sourceProductModel == null) {
+            throw new BusinessException("移动的数据不整合，请重新刷新画面");
+        }
+
+        // check这个Code下Sku是否一个都没有被选择
+        if (!checkNoSelectSku(skuList)) {
+            throw new BusinessException("请选择要移动的Sku");
+        }
+
+        //  check是否选择了这个Code下的所有Sku
+        if (!checkSelectAllSkus(skuList)) {
+            throw new BusinessException("不能移动Code下的所有Sku");
+        }
+
+        // Check这个Code是否存在于没有结束的活动中。
+        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, sourceCode, null);
+        if (!StringUtil.isEmpty(promotionNames)) {
+            throw new BusinessException("处理Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Sku操作");
+        }
+
+        // Check这个Code是否是锁定的状态。
+        if (!checkCodeLocked(sourceProductModel)) {
+            throw new BusinessException("处理Code正处于锁定的状态，请先解锁后再进行移动Sku操作");
+        }
+    }
+
+
+    /**
+     * Check是否选择了这个Code下的所有Sku
+     */
+    private boolean checkSelectAllSkus(List<Map<String, Object>> skuList) {
+        for (Map<String, Object> sku : skuList) {
+            Boolean isChecked = (Boolean) sku.get("isChecked");
+            if (isChecked == null || !isChecked) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check这个Code下Sku是否一个都没有被选择
+     */
+    private boolean checkNoSelectSku(List<Map<String, Object>> skuList) {
+        for (Map<String, Object> sku : skuList) {
+            Boolean isChecked = (Boolean) sku.get("isChecked");
+            if (isChecked != null && isChecked) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
     /**
      * CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
      */
-    public boolean checkIsMainProduct(CmsBtProductGroupModel groupModel, String productCode) {
+    private boolean checkIsMainProduct(CmsBtProductGroupModel groupModel, String productCode) {
         // Group中包含多了Code，并且这个Code是主商品
         if (groupModel.getProductCodes().size() > 1 && productCode.equals(groupModel.getMainProductCode())) {
             return false;
@@ -408,7 +489,7 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * Check这个Code是不是Approved的状态，如果是的话，提示先下线。
      */
-    public boolean checkCodeStatus(CmsBtProductModel productModel, Integer cartId) {
+    private boolean checkCodeStatus(CmsBtProductModel productModel, Integer cartId) {
 
         for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
             // 找到对应的平台信息，看看状态是不是Approved
@@ -426,7 +507,7 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * Check这个Code是否是锁定的状态。
      */
-    public boolean checkCodeLocked(CmsBtProductModel productModel) {
+    private boolean checkCodeLocked(CmsBtProductModel productModel) {
         if ("1".equals(productModel.getLock())) {
             return false;
         }
@@ -436,7 +517,7 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * 新建一个新的Group。
      */
-    public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
+    private CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
 
         CmsBtProductGroupModel group = new CmsBtProductGroupModel();
 
