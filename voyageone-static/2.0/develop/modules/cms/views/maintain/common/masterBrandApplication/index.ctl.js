@@ -21,20 +21,20 @@ define([
 
         };
 
-        masterBrandApplicationController.prototype.popBrandAudit = function(){
+        masterBrandApplicationController.prototype.popMasterBrandCheck = function(){
             var self = this,
                 popups = self.popups;
 
-            popups.openBrandAudit({}).then(function(context){
+            popups.openMasterBrandCheck({}).then(function(context){
 
             });
         };
 
-        masterBrandApplicationController.prototype.popBrandEdit = function(){
+        masterBrandApplicationController.prototype.popMasterBrandEdit = function(){
             var self = this,
                 popups = self.popups;
 
-            popups.openMbrandEdit({}).then(function(context){
+            popups.openMasterBrandEdit({}).then(function(context){
 
             });
 
