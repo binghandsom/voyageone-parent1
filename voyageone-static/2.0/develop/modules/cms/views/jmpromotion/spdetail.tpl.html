@@ -29,11 +29,11 @@
                             <label class="control-label col-sm-2">活动时间</label>
                             <label class="control-label col-sm-1">从</label>
                             <div class="col-sm-4">
-                                <input type="date" class="form-control" readonly="readonly" value="2015.11.11">
+                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
                             </div>
                             <label class="control-label col-sm-1">到</label>
                             <div class="col-sm-4">
-                                <input type="date" class="form-control" readonly="readonly" value="2015.11.11">
+                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,9 @@
     </div>
     <uib-tabset class="tab-container vo_nav-tabs">
         <uib-tab heading="Products">custom directive</uib-tab>
-        <uib-tab heading="Detail">custom directive</uib-tab>
+        <uib-tab heading="Detail">
+            <sp-edit></sp-edit>
+        </uib-tab>
         <uib-tab heading="Models">custom directive</uib-tab>
         <uib-tab heading="Images">custom directive</uib-tab>
         <uib-tab heading="Bay Windows">custom directive</uib-tab>
