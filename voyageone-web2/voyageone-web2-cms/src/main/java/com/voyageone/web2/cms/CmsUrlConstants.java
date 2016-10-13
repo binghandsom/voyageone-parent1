@@ -581,6 +581,8 @@ public interface CmsUrlConstants {
 
             String MOVE_SKU_INIT = "moveSkuInit";
 
+            String MOVE_SKU_SEARCH = "moveSkuSearch";
+
             String MOVE_SKU_PREVIEW = "moveSkuPreview";
 
             String MOVE_SKU = "moveSku";

@@ -15,6 +15,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseViewService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,8 +143,13 @@ public class CmsProductMoveService extends BaseViewService {
 
         List<Map<String, Object>> groupList = new ArrayList<>();
 
+        // 检索的Code
         String searchCode = (String) params.get("searchCode");
+        // 相关的平台id
         Integer cartId = (Integer) params.get("cartId");
+        // 移动源GroupId
+        Long sourceGroupId = (Long) params.get("sourceGroupId");
+
         // Code如果不输入，那么没有检索结果
         if (StringUtils.isEmpty(searchCode)) {
             return groupList;
@@ -161,6 +167,10 @@ public class CmsProductMoveService extends BaseViewService {
             }
             groupList.add(groupInfo);
         }
+
+        // 去除自己那条
+        groupList = groupList.stream().filter(group->((CmsBtProductGroupModel)group.get("groupInfo")).getGroupId() != sourceGroupId).collect(Collectors.toList());
+
         return groupList;
     }
 
@@ -239,10 +249,10 @@ public class CmsProductMoveService extends BaseViewService {
         previewInfo.put("destCodeInfoBefore", destCodeListBefore);
 
         // 移动后-源Group信息
-        previewInfo.put("destGroupInfoAfter", sourceGroupName);
+        previewInfo.put("sourceGroupInfoAfter", sourceGroupName);
         // 如果移动前-源Code个数为1，那么相当于移动后删除这个Group，那么就要加上删除线
         if (sourceCodeListBefore.size() == 1) {
-            previewInfo.put("destGroupInfoAfterDeleted", true);
+            previewInfo.put("sourceGroupInfoAfterDeleted", true);
         }
 
         // 移动后-源Code信息
@@ -264,6 +274,7 @@ public class CmsProductMoveService extends BaseViewService {
                 }
             }
         }
+        previewInfo.put("sourceCodeInfoAfter", sourceCodeListAfter);
 
         // 移动后-目标Group信息
         if ("new".equals(destGroupType)) {
@@ -419,7 +430,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 取得源Code的Product信息
         CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
 
-        // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
+        // check移动信息是否匹配（是否存在选择的Sku列表，源Code是否存在）
         if (skuList == null || sourceProductModel == null) {
             throw new BusinessException("移动的数据不整合，请重新刷新画面");
         }
@@ -445,6 +456,129 @@ public class CmsProductMoveService extends BaseViewService {
             throw new BusinessException("处理Code正处于锁定的状态，请先解锁后再进行移动Sku操作");
         }
     }
+
+    /**
+     * 移动Sku-根据Code检索产品信息
+     */
+    public List<CmsBtProductModel> moveSkuSearch(Map<String, Object> params, String channelId, String lang) {
+
+        List<CmsBtProductModel> codeList = new ArrayList<>();
+
+        // 检索的Code
+        String searchCode = (String) params.get("searchCode");
+
+        // Code如果不输入，那么没有检索结果
+        if (StringUtils.isEmpty(searchCode)) {
+            return codeList;
+        }
+
+        // 根据输入的Code检索出对应的Product信息
+        CmsBtProductModel productModel = productService.getProductByCode(channelId, searchCode);
+        if (productModel != null) {
+            codeList.add(productModel);
+        }
+
+        // 去除自己那条
+        codeList = codeList.stream().filter(codeModel->!codeModel.getCommon().getFields().getCode().equals(searchCode)).collect(Collectors.toList());
+
+        return codeList;
+    }
+
+    /**
+     * 移动Sku-根据移动Sku的源Code/目标Code取得移动前/移动后的Preview
+     */
+    public Map<String, Object> moveSkuPreview(Map<String, Object> params, String channelId, String lang) {
+        Map<String, Object> previewInfo = new HashMap<>();
+
+        // 取得移动需要的信息
+        // 目标Group类型 "new" or "old" or "select"
+        String destGroupType = (String) params.get("destGroupType");
+        // 移动的Sku列表
+        List<String> skuList = (List) params.get("skuList");
+        // 源Code
+        String sourceCode = (String) params.get("sourceCode");
+        // 参照Code
+        String refCode = (String) params.get("refCode");
+
+        // 如果没有选择移动方式，出错
+        if (StringUtils.isEmpty(destGroupType)) {
+            throw new BusinessException("请选择移动方式");
+        }
+
+        // 参照Code没有选择
+        if ("select".equals(destGroupType) && StringUtils.isEmpty(refCode)) {
+            throw new BusinessException("请选择编辑Group时参照的Code");
+        }
+
+
+        // 取得源Code的Product信息
+        CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
+
+        // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
+        if (skuList == null || sourceProductModel == null) {
+            throw new BusinessException("移动的数据不整合");
+        }
+
+        // 移动前-源Code信息
+        previewInfo.put("sourceCodeInfoBefore", sourceCode);
+
+        // 移动前-源Sku信息
+        List<Map<String, Object>> sourceSkuListBefore = new ArrayList<>();
+        for (CmsBtProductModel_Sku sku : sourceProductModel.getCommon().getSkus()) {
+            Map<String, Object> sourceSkuInfoMapBefore = new HashMap<>();
+            sourceSkuInfoMapBefore.put("sku", sku.getSkuCode());
+            // 如果这个Code是当前移动的Code,那么就高亮显示
+            if (skuList.equals(sku.getSkuCode())) {
+                sourceSkuInfoMapBefore.put("current", true);
+            }
+            sourceSkuListBefore.add(sourceSkuInfoMapBefore);
+        }
+        previewInfo.put("sourceSkuInfoBefore", sourceSkuListBefore);
+
+        // 移动前-目标Code信息
+        previewInfo.put("destCodeInfoBefore", "");
+
+        // 移动前-目标Sku信息
+        List<Map<String, Object>> destSkuListBefore = new ArrayList<>();
+        previewInfo.put("destSkuInfoBefore", destSkuListBefore);
+
+        // 移动后-源Code信息
+        previewInfo.put("sourceCodeInfoAfter", sourceCode);
+
+        // 移动后-源Code信息
+        List<Map<String, Object>> sourceSkuListAfter = new ArrayList<>();
+        for (CmsBtProductModel_Sku sku : sourceProductModel.getCommon().getSkus()) {
+            // 去除当前移动的Sku
+            if (!skuList.equals(sku.getSkuCode())) {
+                Map<String, Object> sourceSkuInfoMapAfter = new HashMap<>();
+                sourceSkuInfoMapAfter.put("sku", sku.getSkuCode());
+                sourceSkuListAfter.add(sourceSkuInfoMapAfter);
+            }
+        }
+        previewInfo.put("sourceSkuInfoAfter", sourceSkuListAfter);
+
+        // 移动后-目标Code信息
+        previewInfo.put("destCodeInfoAfter", skuList.get(0));
+
+        // 移动后-目标Sku信息
+        List<Map<String, Object>> destSkuListAfter = new ArrayList<>();
+        // 加入移动的Sku，并且高亮显示
+        for (String sku : skuList) {
+            Map<String, Object> destSkuInfoMapAfter = new HashMap<>();
+            destSkuInfoMapAfter.put("sku", sku);
+            destSkuInfoMapAfter.put("current", true);
+            destSkuListAfter.add(destSkuInfoMapAfter);
+        }
+        previewInfo.put("destSkuInfoAfter", destSkuListAfter);
+
+        return previewInfo;
+    }
+
+
+
+
+
+
 
 
     /**
