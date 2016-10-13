@@ -18,9 +18,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 取所有平台tree和schema
@@ -63,6 +61,7 @@ public class GetAllPlatformsInfoService extends BaseTaskService {
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        Set<Integer> jdCarts = new HashSet<>();
         List<TaskControlBean> listTaskControlBeen = TaskControlUtils.getVal1s(taskControlList, TaskControlEnums.Name.order_channel_id);
         for (TaskControlBean taskControlBean : listTaskControlBeen) {
             // cfg_val1 放 channelId，cfg_val2 放 cartId(逗号分隔)
@@ -91,10 +90,23 @@ public class GetAllPlatformsInfoService extends BaseTaskService {
                         || CartEnums.Cart.JGJ.getValue() == cartId
                         || CartEnums.Cart.JGY.getValue() == cartId) {
                     // 京东
-                    doJdPlatformCategory(channelId, cartId, shopBean);
+                    // modified by morse.lu 2016/09/14 start
+                    // 京东按平台取，不按channel取
+//                    doJdPlatformCategory(channelId, cartId, shopBean);
+                    jdCarts.add(cartId);
+                    // 京东tree取得
+                    doJdPlatformCategoryTree(shopBean);
+                    // modified by morse.lu 2016/09/14 end
                 }
             }
         }
+
+        // added by morse.lu 2016/09/14 start
+        // 京东按平台取，不按channel取
+        for (Integer cartId : jdCarts) {
+            doJdPlatformCategory(cartId);
+        }
+        // added by morse.lu 2016/09/14 end
     }
 
     /**
@@ -141,39 +153,79 @@ public class GetAllPlatformsInfoService extends BaseTaskService {
     }
 
     /**
-     * 京东类目取得
+     * 京东类目树取得
      */
-    private void doJdPlatformCategory(String channelId, int cartId, ShopBean shopBean) {
+    protected void doJdPlatformCategoryTree(ShopBean shopBean) {
         try {
             // 京东tree取得
             jdTreeService.doSetPlatformCategoryJd(shopBean);
+        } catch (Exception ex) {
+            $error("京东tree取得失败!" + ex.getMessage());
+        }
+    }
+
+    /**
+     * 京东类目取得
+     */
+    // modified by morse.lu 2016/09/14 start
+    // 京东按平台取，不按channel取
+//    private void doJdPlatformCategory(String channelId, int cartId, ShopBean shopBean) {
+    protected void doJdPlatformCategory(int cartId) {
+        // modified by morse.lu 2016/09/14 end
+        try {
+            // deleted by morse.lu 2016/09/14 start
+            // 京东按平台取，不按channel取
+//            // 京东tree取得
+//            jdTreeService.doSetPlatformCategoryJd(shopBean);
+            // deleted by morse.lu 2016/09/14 end
 
             // 京东schema取得
             // 取得类目属性叶子数据并去掉重复叶子类目
             List<CmsMtPlatformCategoryTreeModel> allCategoryTreeLeaves = platformCategoryService.getCmsMtPlatformCategoryTreeModelLeafList(cartId);
 
-            // 京东共通类目
-            // 删除
-            cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, "1");
-            // add
-            jdSchemaService.doSetPlatformJdSchemaCommon(shopBean, cartId);
+//            // 京东共通类目
+//            // 删除
+//            cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, "1");
+//            // add
+//            jdSchemaService.doSetPlatformJdSchemaCommon(shopBean, cartId);
 
             int idxCategory = 0;
             for (CmsMtPlatformCategoryTreeModel platformCategoriesModel : allCategoryTreeLeaves) {
                 idxCategory++;
+                // added by morse.lu 2016/10/11 start
+                ShopBean shopBean = Shops.getShop(platformCategoriesModel.getChannelId(), platformCategoriesModel.getCartId());
+                // added by morse.lu 2016/10/11 end
                 try {
-                    // 删除数据库现有数据(单类目)
-                    cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, platformCategoriesModel.getCatId());
-                    // add一下
-                    jdSchemaService.doSetPlatformPropJdSub(shopBean, platformCategoriesModel);
-                    $info(String.format("获取京东类目schema -> 完成度:[%s], channel:[%s], cart:[%s], catId:[%s]", idxCategory + "/" + allCategoryTreeLeaves.size(), channelId, cartId, platformCategoriesModel.getCatId()));
+                    doJdPlatformCategorySub(cartId, platformCategoriesModel, shopBean);
+
+                    $info(String.format("获取京东类目schema -> 完成度:[%s], cart:[%s], catId:[%s]", idxCategory + "/" + allCategoryTreeLeaves.size(), cartId, platformCategoriesModel.getCatId()));
                 } catch (Exception ex) {
                     $error(String.format("京东类目取得失败!category:[%s] + ", platformCategoriesModel.getCatId()));
                 }
             }
         } catch (Exception ex) {
-            $error(String.format("京东类目取得失败, channel:[%s]!" + ex.getMessage(), channelId));
+            $error(String.format("京东类目取得失败, cart:[%s]!" + ex.getMessage(), cartId));
         }
     }
 
+    /**
+     * 京东共通类目
+     */
+    protected void doJdPlatformCategoryCommon(ShopBean shopBean, int cartId) {
+        // 京东共通类目
+        // 删除
+        cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, "1");
+        // add
+        jdSchemaService.doSetPlatformJdSchemaCommon(shopBean, cartId);
+    }
+
+    /**
+     * 京东单个类目
+     */
+    protected void doJdPlatformCategorySub(int cartId, CmsMtPlatformCategoryTreeModel platformCategoriesModel, ShopBean shopBean) {
+        // 删除数据库现有数据(单类目)
+        cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, platformCategoriesModel.getCatId());
+        // add一下
+        jdSchemaService.doSetPlatformPropJdSub(shopBean, platformCategoriesModel);
+    }
 }
