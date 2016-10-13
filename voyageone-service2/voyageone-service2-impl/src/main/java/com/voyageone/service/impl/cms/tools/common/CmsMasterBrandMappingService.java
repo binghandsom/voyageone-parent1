@@ -24,24 +24,24 @@ public class CmsMasterBrandMappingService extends BaseService {
 
     private static int noMatchBrand = 3;
 
-    public List<CmsMtMasterBrandModel> getMasterBrandListByChannelId(String channelId){
+    public List<CmsMtMasterBrandModel> getMasterBrandListByChannelId(String channelId) {
         Map<String, Object> data = new HashMap<>();
         //店铺渠道取得
         data.put("channelId", channelId);
         data.put("statusList", Arrays.asList(1));
         List<CmsMtMasterBrandModel> result = cmsMtMasterBrandDaoExt.searchBrandsByPage(data);
-        if(result != null && result.size()>0){
+        if (result != null && result.size() > 0) {
             result = result.stream().filter(cmsMtMasterBrandModel -> !StringUtil.isEmpty(cmsMtMasterBrandModel.getMasterBrandEn()) && cmsMtMasterBrandModel.getMasterFlag() == 1).collect(Collectors.toList());
         }
         //返回数据类型
         return result;
     }
 
-    public List<String> getFeedBrandByMasterBrand(String channelId, List<String> masterBrand){
+    public List<String> getFeedBrandByMasterBrand(String channelId, List<String> masterBrand) {
         List<CmsMtMasterBrandModel> cmsMtMasterBrandModels = getMasterBrandListByChannelId(channelId);
         List<String> feedBrand = cmsMtMasterBrandModels.stream()
                 .filter(cmsMtMasterBrandModel -> masterBrand.contains(cmsMtMasterBrandModel.getMasterBrandEn()))
-                .map(cmsMtMasterBrandModel -> ((CmsMtMasterBrandBean)cmsMtMasterBrandModel).getValue())
+                .map(cmsMtMasterBrandModel -> ((CmsMtMasterBrandBean) cmsMtMasterBrandModel).getValue())
                 .collect(Collectors.toList());
         return feedBrand;
     }
