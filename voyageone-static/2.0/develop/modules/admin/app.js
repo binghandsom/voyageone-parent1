@@ -4,6 +4,7 @@ define([
     'underscore',
     'modules/admin/routes',
     'modules/admin/actions',
+    // 'modules/admin/controller/popup.ctl',
     'modules/admin/translate/en',
     'modules/admin/translate/zh'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
@@ -39,9 +40,6 @@ define([
         .constant('cCommonRoutes', {
             "login": {
                 "url": "/adminLogin.html"
-            },
-            "resetPass": {
-                "url": "/adminResetPass.html"
             },
             "application": {
                 "modules": "/modules/",
@@ -149,14 +147,14 @@ define([
         }
     }
 
-    function headerCtrl($q, ajaxService, cookieService, $scope, cActions, $localStorage, $rootScope, $window, $location, cRoutes, cCommonRoutes) {
+    function headerCtrl($q, ajaxService, cookieService, $scope, $ajax, cActions, $localStorage, $rootScope, $window, $location, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.languageList = {};
         vm.userInfo = {};
         vm.searchValue = "";
         $scope.initialize = initialize;
         $scope.logout = logout;
-        $scope.changePassword = changePassword;
+        $scope.modifyPassword = modifyPassword;
         $scope.resetPassword = resetPassword;
         function initialize() {
             vm.userInfo = $localStorage.user || {};
@@ -166,20 +164,17 @@ define([
          * logout.
          */
         function logout() {
-            // $window.location = cCommonRoutes.login.url;
-            var defer = $q.defer();
-            ajaxService.post(cActions.core.access.user.logout)
+            $ajax.post('/core/access/user/logout')
                 .then(function () {
                     cookieService.removeAll();
-                    defer.resolve();
+                    $window.location = cCommonRoutes.login.url;
                 });
-            return defer.promise;
         }
 
         /**
-         * changePassword.
+         * modifyPassword.
          */
-        function changePassword() {
+        function modifyPassword() {
             $window.location = cCommonRoutes.resetPass.url;
         }
 
