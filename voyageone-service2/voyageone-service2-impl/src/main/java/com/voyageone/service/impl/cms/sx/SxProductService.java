@@ -49,6 +49,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
+import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl7;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
@@ -58,7 +59,6 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -251,11 +251,16 @@ public class SxProductService extends BaseService {
      * @param modifier 更新者
      */
     public int updateSxWorkload(CmsBtSxWorkloadModel sxWorkloadModel, int publishStatus, String modifier) {
-        CmsBtSxWorkloadModel upModel = new CmsBtSxWorkloadModel();
-        BeanUtils.copyProperties(sxWorkloadModel, upModel);
-        upModel.setPublishStatus(publishStatus);
-        upModel.setModifier(modifier);
-        return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+//        CmsBtSxWorkloadModel upModel = new CmsBtSxWorkloadModel();
+//        BeanUtils.copyProperties(sxWorkloadModel, upModel);
+//        upModel.setPublishStatus(publishStatus);
+//        upModel.setModifier(modifier);
+//        return sxWorkloadDao.updateSxWorkloadModelWithModifier(upModel);
+
+        if (sxWorkloadModel == null) return 0;
+        sxWorkloadModel.setPublishStatus(publishStatus);
+        sxWorkloadModel.setModifier(modifier);
+        return sxWorkloadDao.updatePublishStatus(sxWorkloadModel);
     }
 
     /**
@@ -1900,6 +1905,34 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
+                case DARWIN_SKU: {
+                    int cartId = sxData.getCartId();
+
+                    sxData.setHasSku(true);
+
+                    String errorLog = "平台类目id是:" + sxData.getMainProduct().getPlatform(cartId).getpCatId() + ". groupId:" + sxData.getGroupId();
+
+                    AbstractSkuFieldBuilder skuFieldService = new TmallGjSkuFieldBuilderImpl7();
+                    skuFieldService.setDao(cmsMtPlatformPropSkuDao, cmsMtChannelSkuConfigDao);
+
+                    List<Field> allSkuFields = new ArrayList<>();
+                    recursiveGetFields(processFields, allSkuFields);
+
+                    skuFieldService.setCodeImageTemplate(resolveDict("属性图片模板",expressionParser,shopBean, user, null));
+
+                    try {
+                        List<Field> skuInfoFields = skuFieldService.buildSkuInfoField(allSkuFields, expressionParser, cmsMtPlatformMappingModel, skuInventoryMap, shopBean, user);
+                        skuInfoFields.forEach(field -> retMap.put(field.getId(), field));
+                    } catch (BusinessException e) {
+                        sxData.setErrorMessage(e.getMessage());
+                        throw new BusinessException(e.getMessage());
+                    } catch (Exception e) {
+                        $warn(e.getMessage());
+                        sxData.setErrorMessage("Can't build darwin_sku Field." + errorLog);
+                        throw new BusinessException("Can't build darwin_sku Field." + errorLog);
+                    }
+                    break;
+                }
                 case PRICE_SECTION:
                 {
                     if (processFields == null || processFields.size() != 1) {
@@ -2273,8 +2306,8 @@ public class SxProductService extends BaseService {
                         throw new BusinessException(e.getMessage());
                     } catch (Exception e) {
                         $warn(e.getMessage());
-                        sxData.setErrorMessage("Can't build SkuInfoField." + errorLog);
-                        throw new BusinessException("Can't build SkuInfoField." + errorLog);
+                        sxData.setErrorMessage("Can't build cspu Field." + errorLog);
+                        throw new BusinessException("Can't build cspu Field." + errorLog);
                     }
                     break;
                 }
