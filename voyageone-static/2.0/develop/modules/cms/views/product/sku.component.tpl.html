@@ -1,12 +1,20 @@
 <div class="product-shema-detail">
     <div class="form-horizontal" name="productFieldForm" novalidate>
-        <div class="panel vo_panel tab_panel">
-            <div class="wrapper">
-                <div class="row m-b-md">
-                    <a href="javascript:void(0)" type="button" ng-click="moveSku()"  target="_blank" class="btn btn-info btn-pop">{{'TXT_MOVE_TO_NEW_CODE'|translate}}</a>
-            </div>
+        <div class="container-fluid" id="sku">
+            <div class="panel panel-default">
+                <div class="panel-heading ng-scope">
                 <div class="row">
-                    <div class="col-sm-9 col-sm-offset-1">
+                    <div class="col-sm-5">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-info" ng-click="moveSku()"  target="_blank">
+                                <i class="fa fa-refresh"></i>&nbsp;{{'TXT_MOVE_TO_NEW_CODE'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
                         <table class="table table-hover-new table-hover table_main">
                             <thead>
                             <tr>
