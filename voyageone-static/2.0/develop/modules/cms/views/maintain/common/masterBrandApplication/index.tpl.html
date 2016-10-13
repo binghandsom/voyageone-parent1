@@ -7,20 +7,20 @@
     <div>
         <uib-tabset class="tab-container vo_nav-tabs">
             <!------------------------------------------master品牌待审核一览--------------------------------------->
-            <uib-tab>
+            <uib-tab  select="ctrl.searchInfo.status = 0 ; ctrl.search()">
                 <tab-heading>Master品牌待审核一览</tab-heading>
                 <div class="container wrapper-md">
                     <div class="row">
                         <div class="col-sm-6">
                             <label class="control-label col-md-4 text-right">Master品牌英文全称 &nbsp;&nbsp;</label>
                             <div class="col-md-5">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.masterBrandEn">
                             </div>
                         </div>
                         <div class="col-sm-5 text-left">
                             <label class="control-label col-md-3">相关channel&nbsp;&nbsp;</label>
                             <div class="col-md-5">
-                                <select class="form-control">
+                                <select class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.channelId">
                                     <option value="1">1</option>
                                 </select>
                             </div>
@@ -31,13 +31,13 @@
                         <div class="col-md-6">
                             <label class="control-label col-md-4 text-right">相关Feed品牌搜索 &nbsp;&nbsp;</label>
                             <div class="col-md-5">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.feedBrand">
                             </div>
                         </div>
                         <div class="col-md-5 text-left">
                             <label class="control-label col-md-3">相关平台品牌搜索&nbsp;&nbsp;</label>
                             <div class="col-md-5">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.cartBrandName">
                             </div>
                         </div>
                     </div>
@@ -45,9 +45,8 @@
                         <div class="col-sm-12 text-center">
                             <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}
                             </button>
-                            <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()"
-                                    ng-disabled="ctrl.searchInfo.brandType == 2 && !ctrl.checkCarts()"><i
-                                    class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                            <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()">
+                                <i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
                             </button>
                         </div>
                     </div>
@@ -67,12 +66,12 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="mfb-xxx text-center">shoezoo</td>
-                                <td class="mfb-xxx text-left">nike</td>
-                                <td class="mfb-xxx text-left">nike</td>
-                                <td class="mfb-xxx text-left">天猫</td>
-                                <td class="mfb-xxx text-left">NIKE</td>
+                            <tr ng-repeat="brand in ctrl.dataList">
+                                <td class="mfb-xxx text-center">{{brand.channelId}}</td>
+                                <td class="mfb-xxx text-left">{{brand.feedBrand}}</td>
+                                <td class="mfb-xxx text-left">{{brand.masterBrandEn}}</td>
+                                <td class="mfb-xxx text-left">{{brand.cartName}}</td>
+                                <td class="mfb-xxx text-left">{{brand.platformBrandName}}</td>
                                 <td class="mfb-xxx text-center">
                                     <button class="btn btn-success" ng-click="ctrl.popMasterBrandCheck()">审核</button>
                                 </td>
@@ -81,14 +80,14 @@
                         </table>
 
                         <div class="col-sm-12 m-t-lg m-b-lg">
-                            <!--<vpagination config="ctrl.paging"></vpagination>-->
+                            <vpagination config="ctrl.waitCheckOption"></vpagination>
                         </div>
 
                     </div>
                 </div>
             </uib-tab>
             <!----------------------------------------已有Master品牌一览----------------------------------------->
-            <uib-tab>
+            <uib-tab select="ctrl.searchInfo.status = 1;ctrl.search()">
                 <tab-heading>已有Master品牌一览</tab-heading>
                 <div class="container wrapper-md">
                     <div class="row">
@@ -116,19 +115,19 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="mfb-xxx text-center">nike</td>
-                                <td class="mfb-xxx text-left">耐克</td>
+                            <tr  ng-repeat="brand in ctrl.dataList">
+                                <td class="mfb-xxx text-center">{{brand.channelId}}</td>
+                                <td class="mfb-xxx text-left">{{brand.masterBrandEn}}</td>
                                 <td class="mfb-xxx text-left"></td>
-                                <td class="mfb-xxx text-center">2016-10-08 11:14:00</td>
-                                <td class="mfb-xxx text-center">2016-10-08 11:14:00</td>
+                                <td class="mfb-xxx text-center">{{brand.modified}}</td>
+                                <td class="mfb-xxx text-center">{{brand.created}}</td>
                                 <td class="mfb-xxx text-center"><button class="btn btn-success" ng-click="ctrl.popMasterBrandEdit()"><i class="fa fa-pencil"></i></button></td>
                             </tr>
                             </tbody>
                         </table>
 
                         <div class="col-sm-12 m-t-lg m-b-lg">
-                            <!--<vpagination config="ctrl.paging"></vpagination>-->
+                            <vpagination config="ctrl.alreadyCheckOption"></vpagination>
                         </div>
 
                     </div>

@@ -7,63 +7,77 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl'
-],function(cms){
+], function (cms) {
 
-    cms.controller('masterBrandApplicationController',(function(){
+    cms.controller('masterBrandApplicationController', (function () {
 
-        function masterBrandApplicationController(masterBrandApplicationService,popups){
+        function masterBrandApplicationController(masterBrandApplicationService, popups) {
             this.popups = popups;
             this.masterBrandApplicationService = masterBrandApplicationService;
             this.searchInfo = {
-                statusList :[],
-                masterBrandCn:'',
-                masterBrandEn:'',
-                channelId:'',
-                feedBrand:'',
-                cartBrandName:''
-            }
+                status: 0,
+                waitUpEntity: {
+                    statusList: [0],
+                    masterBrandEn: '',
+                    channelId: '',
+                    feedBrand: '',
+                    cartBrandName: ''
+                },
+                alreadyUpEntity: {
+                    statusList: [1],
+                    masterBrandEn: ''
+                }
+            };
+            this.waitCheckOption = {curr: 1, size: 10, fetch: this.search.bind(this)};
+            this.alreadyCheckOption = {curr: 1, size: 10, fetch: this.search.bind(this)};
         }
 
-        masterBrandApplicationController.prototype.init = function(){
-            var self = this;
-
-            self.search();
-
-        };
-
-        masterBrandApplicationController.prototype.search = function(){
+        masterBrandApplicationController.prototype.init = function () {
             var self = this,
-
                 masterBrandApplicationService = self.masterBrandApplicationService;
 
-            masterBrandApplicationService.search({
-                statusList :['0'],
-                masterBrandEn:'',
-                masterBrandCn:'',
-                channelId:'',
-                feedBrand:'',
-                cartBrandName:''
-            }).then(function(res){
-                console.log("res",res);
-            });
+            /*            masterBrandApplicationService.init().then(function(res){
+             console.log("res",res);
+             });*/
 
         };
 
+        masterBrandApplicationController.prototype.search = function () {
+            var self = this,
+                searchInfo = self.searchInfo,
+                upEntity,
+                masterBrandApplicationService = self.masterBrandApplicationService;
 
-        masterBrandApplicationController.prototype.popMasterBrandCheck = function(){
+            if (searchInfo.status == 0)
+                upEntity = _.extend(self.waitCheckOption, searchInfo.waitUpEntity);
+            else
+                upEntity = _.extend(self.alreadyCheckOption, searchInfo.alreadyUpEntity);
+
+            masterBrandApplicationService.search(upEntity).then(function (res) {
+                if (searchInfo.status == 0)
+                    self.waitCheckOption.total = res.data.masterBrandsCount;
+                else
+                    self.alreadyCheckOption.total = res.data.masterBrandsCount;
+
+                self.dataList = res.data.masterBrandList;
+            });
+        };
+
+
+        masterBrandApplicationController.prototype.popMasterBrandCheck = function () {
             var self = this,
                 popups = self.popups;
 
-            popups.openMasterBrandCheck({}).then(function(context){
+            popups.openMasterBrandCheck({}).then(function (context) {
 
             });
         };
 
-        masterBrandApplicationController.prototype.popMasterBrandEdit = function(){
+        masterBrandApplicationController.prototype.popMasterBrandEdit = function () {
             var self = this,
                 popups = self.popups;
 
-            popups.openMasterBrandEdit({}).then(function(context){
+            popups.openMasterBrandEdit({}).then(function (context) {
 
             });
 
