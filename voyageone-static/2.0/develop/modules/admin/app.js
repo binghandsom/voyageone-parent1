@@ -166,7 +166,14 @@ define([
          * logout.
          */
         function logout() {
-            $window.location = cCommonRoutes.login.url;
+            // $window.location = cCommonRoutes.login.url;
+            var defer = $q.defer();
+            ajaxService.post(cActions.core.access.user.logout)
+                .then(function () {
+                    cookieService.removeAll();
+                    defer.resolve();
+                });
+            return defer.promise;
         }
 
         /**

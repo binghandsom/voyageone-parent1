@@ -111,13 +111,11 @@
                     <td class="text-left v-middle">{{list.id}}</td>
                     <td class="text-left v-middle">{{list.code}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.name.length > 30"><popover-text content="list.name" direct="left" size="30"></popover-text></label>
-                        <label ng-if="list.name.length <= 30">{{list.name}}</label>
+                        <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">{{list.name1}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.des.length > 30"><popover-text content="list.des" direct="left" size="30"></popover-text></label>
-                        <label ng-if="list.des.length <= 30">{{list.des}}</label>
+                        <popover-text content="list.des" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>

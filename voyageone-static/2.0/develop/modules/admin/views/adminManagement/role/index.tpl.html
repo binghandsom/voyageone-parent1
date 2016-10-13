@@ -139,17 +139,12 @@
                         </td>
                         <td class="text-center v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.channelName.length > 35"><popover-text content="list.channelName" direct="left" size="35"></popover-text></label>
-                            <label ng-if="list.channelName.length <= 35">{{list.channelName}}</label>
+                            <popover-text content="list.channelName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
                         <td class="text-left v-middle">
-                            <label ng-if="list.storeName.length > 35"><popover-text content="list.storeName" direct="left" size="35"></popover-text></label>
-                            <label ng-if="list.storeName.length <= 35">{{list.storeName}}</label>
+                            <popover-text content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
-                        <td class="text-center v-middle">
-                            <label ng-if="list.application.length > 35"><popover-text content="list.application" direct="left" size="35"></popover-text></label>
-                            <label ng-if="list.application.length <= 35">{{list.application}}</label>
-                        </td>
+                        <td class="text-center v-middle">{{list.application}}</td>
                         <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>
                         <td class="text-center v-middle">{{list.description}}</td>

@@ -113,36 +113,28 @@
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propName.length > 35"><popover-text content="list.propName" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propName.length <= 35">{{list.propName}}</label>
+                        <popover-text content="list.propName" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal1.length > 35"><popover-text content="list.propVal1" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal1.length <= 35">{{list.propVal1}}</label>
+                        <popover-text content="list.propVal1" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal2.length > 35"><popover-text content="list.propVal2" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal2.length <= 35">{{list.propVal2}}</label>
+                        <popover-text content="list.propVal2" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal3.length > 35"><popover-text content="list.propVal3" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal3.length <= 35">{{list.propVal3}}</label>
+                        <popover-text content="list.propVal3" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal4.length > 35"><popover-text content="list.propVal4" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal4.length <= 35">{{list.propVal4}}</label>
+                        <popover-text content="list.propVal4" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal5.length > 35"><popover-text content="list.propVal5" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal5.length <= 35">{{list.propVal5}}</label>
+                        <popover-text content="list.propVal5" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.propVal6.length > 35"><popover-text content="list.propVal6" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.propVal6.length <= 35">{{list.propVal6}}</label>
+                        <popover-text content="list.propVal6" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-left v-middle">
-                        <label ng-if="list.comment.length > 35"><popover-text content="list.comment" direct="left" size="35"></popover-text></label>
-                        <label ng-if="list.comment.length <= 35">{{list.comment}}</label>
+                        <popover-text content="list.comment" direct="top" popover-trigger="mouseenter"></popover-text>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>

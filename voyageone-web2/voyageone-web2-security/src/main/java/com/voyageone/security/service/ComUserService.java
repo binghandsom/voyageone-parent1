@@ -78,17 +78,7 @@ public class ComUserService {
 
         } catch (AuthenticationException e) {
             token.clear();
-            //尝试用老密码登录
-            ComUserModel userModel = new ComUserModel();
-            userModel.setUserAccount(account);
-            userModel =comUserDao.selectOne(userModel);
-            if(userModel == null) {
-                throw new BusinessException("A005", "authentication failed.", e);
-            }
-            String cryptoPassword = new Md5Hash(password, account + MD5_FIX_SALT, MD5_HASHITERATIONS).toHex();
-            if (!userModel.getPassword().equals(cryptoPassword)) {
-                throw new BusinessException("A005", "authentication failed.", e);
-            }
+            throw new BusinessException("A005", "authentication failed.", e);
         }
 
 

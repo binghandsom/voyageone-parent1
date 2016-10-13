@@ -69,7 +69,7 @@
 		<property name="filters">
 			<util:map>
 				<entry key="perms" value-ref="permission"/>
-				<!--<entry key="authc" value-ref="authc"/>-->
+				<entry key="authc" value-ref="authc"/>
 			</util:map>
 		</property>
 	</bean>
@@ -81,6 +81,7 @@
 	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
 		<property name="filterChainDefinitions">
 			<value>
+				/ = anon
 				/core/** = anon
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
