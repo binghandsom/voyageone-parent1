@@ -8,25 +8,20 @@
     </div>
     <div class="modal-body wrapper">
         <div class="container-fluid">
-            <div class="row" ng-if="!ctrl.equal">
-                <div class="col-md-10">
-                    <div class="col-md-1">
-                        <label>
-                            <input type="checkbox" ng-model="ctrl.flag">
-                        </label>
+            <div class="row">
+                <div class="col-md-8 col-sm-offset-2">
+                    <div class="form-group">
+                        <strong class="text-u-red"> 本次操作不可恢复，确认是否进行移动Sku操作？</strong>
                     </div>
-                    <div class="col-md-8">
-                        <strong class="text-u-red">已确认当前的中国指导价【确认请打钩】</strong>
+                    <div class="form-group">
+                        <input class="form-control" placeholder="请输入Move">
                     </div>
                 </div>
-            </div>
-            <div class="row" ng-if="ctrl.equal">
-                <h4>您确定Approve这个商品吗？<br>选择Yes将会在相应销售平台进行发布。选择No，处理将会停止</h4>
             </div>
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL'|translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.confirm()"><i class="fa fa-save"></i> {{'TXT_CONFIRM'|translate}}</button>
+        <button class="btn btn-default" ng-click="$dismiss()">{{'BTN_CANCEL'|translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.confirm()"> 移动</button>
     </div>
 </div>

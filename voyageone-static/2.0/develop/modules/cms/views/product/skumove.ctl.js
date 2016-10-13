@@ -6,9 +6,10 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('SkuMoveController', (function () {
-        function SkuMoveController() {
+        function SkuMoveController(popups) {
             this.show = false;
-            self.showView = false;
+            this.popups = popups;
+            this.showView = false;
         }
 
         SkuMoveController.prototype = {
@@ -29,6 +30,10 @@ define([
                         self.showView = true;
                 }
 
+            },
+            move: function () {
+                var self = this;
+                self.popups.openSKUMoveConfirm();
             }
 
         };
