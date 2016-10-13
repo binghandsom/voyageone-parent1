@@ -91,7 +91,7 @@ public class AdminResController extends AdminController {
 
 
     @RequestMapping(AdminUrlConstants.User.Res.GET_MENU)
-    public AjaxResponse getMenu(@RequestBody Map requestBean)  {
+    public AjaxResponse getMenu()  {
 
         String username = getUser().getUserName();
 
