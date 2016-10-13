@@ -39,8 +39,8 @@
         <if test="masterChannelId != null and masterChannelId != ''">
             and b.channelId = #{masterChannelId}
         </if>
-        <if test="cartId !=null and cartId != ''">
-            and (b.cartId like '%${cartId}%')
+        <if test="cartBrandName !=null and cartBrandName != ''">
+            and (b.platform_brand_name like '%${cartBrandName}%')
         </if>
         <if test="offset != null">
             limit #{offset}, #{size}
@@ -78,8 +78,8 @@
         <if test="masterChannelId != null and masterChannelId != ''">
             and b.channelId = #{masterChannelId}
         </if>
-        <if test="cartId !=null and cartId != ''">
-            and (b.cartId like '%${cartId}%')
+        <if test="cartBrandName !=null and cartBrandName != ''">
+            and (b.platform_brand_name like '%${cartBrandName}%')
         </if>
         <if test="feedBrand !=null and feedBrand != ''">
             and (a.key like '%${feedBrand}%')
