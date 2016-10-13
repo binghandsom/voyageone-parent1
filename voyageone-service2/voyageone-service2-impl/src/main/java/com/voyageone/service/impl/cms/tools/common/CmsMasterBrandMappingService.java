@@ -46,6 +46,15 @@ public class CmsMasterBrandMappingService extends BaseService {
         return feedBrand;
     }
 
+    public String getMasterBrandByFeedBrand(String channelId, String feedBrand){
+        List<CmsMtMasterBrandModel> cmsMtMasterBrandModels = getMasterBrandListByChannelId(channelId);
+        String masterBrand = cmsMtMasterBrandModels.stream()
+                .filter(cmsMtMasterBrandModel -> feedBrand.equalsIgnoreCase(((CmsMtMasterBrandBean)cmsMtMasterBrandModel).getValue()))
+                .map(cmsMtMasterBrandModel -> cmsMtMasterBrandModel.getMasterBrandEn())
+                .findFirst().orElse("");
+        return masterBrand;
+    }
+
 
     /**
      * 检索Master品牌匹配的数据
