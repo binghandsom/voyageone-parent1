@@ -141,15 +141,15 @@
             <if test="mainCata != null">
                 and jmprom.mainCata = #{mainCata}
             </if>
-            <if test="activityStart ==null and activityEnd != null">
-                and jmprom.activity_end &lt;= #{activityEnd}
+            <if test="activityStart == null and activityEnd != null">
+                and jmprom.activity_start &lt;= #{activityEnd}
             </if>
             <if test="activityStart != null">
                 <if test="activityEnd == null">
-                    and #{activityStart} &lt;= jmprom.activity_start
+                    and #{activityStart} &lt;= jmprom.activity_end
                 </if>
                 <if test="activityEnd != null">
-                    and ( #{activityStart} &lt;= jmprom.activity_start and jmprom.activity_end &lt;= #{activityEnd} )
+                    and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
                 </if>
             </if>
             <if test="codeListStr != null">
@@ -200,15 +200,15 @@
             <if test="mainCata != null">
                 and jmprom.mainCata = #{mainCata}
             </if>
-            <if test="activityStart ==null and activityEnd != null">
-                and jmprom.activity_end &lt;= #{activityEnd}
+            <if test="activityStart == null and activityEnd != null">
+                and jmprom.activity_start &lt;= #{activityEnd}
             </if>
             <if test="activityStart != null">
                 <if test="activityEnd == null">
-                    and #{activityStart} &lt;= jmprom.activity_start
+                    and #{activityStart} &lt;= jmprom.activity_end
                 </if>
                 <if test="activityEnd != null">
-                    and ( #{activityStart} &lt;= jmprom.activity_start and jmprom.activity_end &lt;= #{activityEnd} )
+                    and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
                 </if>
             </if>
             <if test="codeListStr != null">

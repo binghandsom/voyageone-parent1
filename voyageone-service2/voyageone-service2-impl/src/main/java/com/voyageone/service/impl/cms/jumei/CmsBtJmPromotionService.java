@@ -117,20 +117,21 @@ public class CmsBtJmPromotionService extends BaseService {
             parameter.getModel().setSignupDeadline(DateTimeUtil.parseStr(parameter.getModel().getSignupDeadline(), "yyyy-MM-dd HH:mm:ss"));
         }
 
-        if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {//更新
+        // 设置品牌名
+        CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.select(parameter.getModel().getCmsBtJmMasterBrandId());
+        if (jmMasterBrand != null) {
+            parameter.getModel().setBrand(jmMasterBrand.getName());
+        }
+
+        if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {
+            // 更新
             parameter.getModel().setModifier(userName);
             updateModel(parameter);
             saveCmsBtPromotion(parameter.getModel());
-        } else {//新增
+        } else {
+            // 新增
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
-            // 设置品牌名
-            Map<String, Object> map = new HashMap<>();
-            map.put("jmMasterBrandId", parameter.getModel().getCmsBtJmMasterBrandId());
-            CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.selectOne(map);
-            if (jmMasterBrand != null) {
-                parameter.getModel().setBrand(jmMasterBrand.getName());
-            }
 
             Map<String,Object> param = new HashMap<>();
             param.put("channelId",parameter.getModel().getChannelId());
@@ -150,6 +151,7 @@ public class CmsBtJmPromotionService extends BaseService {
                 }
                 saveCmsBtPromotion(parameter.getModel());
             } else {
+                // 活动名已存在
                 throw new BusinessException("4000093");
             }
         }
@@ -316,6 +318,20 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     public long getJmPromotionCount(Map params) {
+        // 过滤参数
+        Map sqlParams = (Map) params.get("parameters");
+        sqlParams.put("channelId", params.get("channelId"));
+        sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
+        sqlParams.put("jmpromName", StringUtils.trimToNull((String) sqlParams.get("jmpromName")));
+        sqlParams.put("compareType", StringUtils.trimToNull((String) sqlParams.get("compareType")));
+        sqlParams.put("mainCata", StringUtils.trimToNull((String) sqlParams.get("mainCata")));
+        String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
+        if (codeListStr != null) {
+            List<String> codeList = Arrays.asList(codeListStr.split("\n"));
+            codeList = codeList.stream().map(code -> StringUtils.trimToNull(code)).filter(code -> code != null).collect(Collectors.toList());
+            String codeStr = "'" + StringUtils.join(codeList, "','") + "'";
+            sqlParams.put("codeListStr", codeStr);
+        }
 
         return daoExt.getJmPromotionCount(params);
     }

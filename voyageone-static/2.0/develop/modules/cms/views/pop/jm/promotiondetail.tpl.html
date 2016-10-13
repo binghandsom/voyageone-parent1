@@ -29,25 +29,25 @@
                 <label class="col-sm-3 control-label vo_reqfield">活动场景</label>
                 <div class="col-sm-8">
                     <label class="checkbox-inline c-checkbox">
-                        <input type="checkbox" name="promotionType" value="1" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
+                        <input type="checkbox" name="promotionScene_1" value="1" ng-model="editModel.model.promotionScene_1" ng-required="!editModel.model.promotionScene_1&&!editModel.model.promotionScene_2" ng-disabled="vm.isBeginPre">
                         <span class="fa fa-check"></span> 专场特卖
                     </label>
                     <label class="checkbox-inline c-checkbox">
-                        <input type="checkbox" name="promotionType" value="2" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
+                        <input type="checkbox" name="promotionScene_2" value="2" ng-model="editModel.model.promotionScene_2" ng-required="!editModel.model.promotionScene_1&&!editModel.model.promotionScene_2" ng-disabled="vm.isBeginPre">
                         <span class="fa fa-check"></span> 商城铺货
                     </label>
                 </div>
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionType"></vo-message>
+                    <vo-message target="promotionForm.promotionScene_1 && promotionForm.promotionScene_2"></vo-message>
                 </div>
             </div>
 
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
                 <div class="col-sm-8" >
-                    <select class="form-control m-r-xs" ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId" width="'100%'">
+                    <select class="form-control m-r-xs" ng-model="editModel.model.promotionType" required name="promotionType" width="'100%'">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         <option value="1">日常专场</option>
                         <option value="2">资源位日常专场</option>
@@ -64,7 +64,7 @@
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                    <vo-message target="promotionForm.promotionType"></vo-message>
                 </div>
             </div>
 
@@ -90,6 +90,7 @@
                         <div class="col-sm-5 input-group">
                             <input type="date" class="form-control" uib-datepicker-popup
                                    ng-model="editModel.model.signupDeadline"
+                                   min-date="vm.currentTime"
                                    max-date="editModel.model.prePeriodStart"
                                    date-model-format="yyyy-MM-dd"
                                    is-open="datePicker4" close-text="Close" />
@@ -102,7 +103,7 @@
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
+                    <vo-message target="promotionForm.signupDeadline" class="vo-message-success"></vo-message>
                 </div>
             </div>
 
@@ -115,6 +116,7 @@
                             <input type="datetime-local" class="form-control"
                                     datepicker-popup ng-readonly="vm.isBegin"
                                     ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
+                                   min-date = "vm.currentTime"
                                     max-date="editModel.model.activityStart"
                                     date-model-format="yyyy-MM-dd HH:mm:ss"
                                     is-open="datePicker3" ng-required="true" close-text="Close"

@@ -90,6 +90,7 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer promotionType;
 
+    protected String promotionScene;
     /**
      * 是否直降
      */
@@ -297,5 +298,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setSignupDeadline(String signupDeadline) {
         this.signupDeadline = signupDeadline;
+    }
+
+    public String getPromotionScene() {
+        return promotionScene;
+    }
+
+    public void setPromotionScene(String promotionScene) {
+        this.promotionScene = promotionScene;
     }
 }
