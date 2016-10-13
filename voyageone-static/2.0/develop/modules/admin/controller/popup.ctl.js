@@ -4,16 +4,15 @@
  */
 
 define([
-    'admin',
     'underscore'
-], function (admin, _) {
+], function ( _) {
 
-    admin.constant('popActions', {
+    angular.module('com.voyageone.popups',[]).constant('popActions', {
         "modifyPass": {
             "templateUrl": "views/pop/modifyPass/modifyPass.tpl.html",
             "controllerUrl": "modules/admin/views/pop/modifyPass/modifyPass.ctl",
             "controller": 'ModifyPassController as ctrl',
-            "size": 'lg'
+            "size": 'md'
         },
         "config": {
             "templateUrl": "views/pop/config/index.tpl.html",
@@ -170,7 +169,12 @@ define([
             });
             return defer.promise;
         }
-
+        /**
+         * 打开新建权限配置页面
+         */
+        $scope.openModifyPass= function openModifyPass(context) {
+            return openModal(popActions.modifyPass, context);
+        };
         /**
          * 打开新建权限配置页面
          */
