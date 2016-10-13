@@ -997,8 +997,13 @@ public class SxProductService extends BaseService {
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
-        Map<String, String> sizeMap = getSizeMap(channelId, sxData.getMainProduct().getCommon().getFields().getBrand(),
-                sxData.getMainProduct().getCommon().getFields().getProductType(), sxData.getMainProduct().getCommon().getFields().getSizeType());
+        Map<String, String> sizeMap = getSizeMap(
+//                channelId,
+                sxData.getMainProduct().getOrgChannelId(),
+                sxData.getMainProduct().getCommon().getFields().getBrand(),
+                sxData.getMainProduct().getCommon().getFields().getProductType(),
+                sxData.getMainProduct().getCommon().getFields().getSizeType()
+        );
 
         // 20160805 这段有问题, 不要了 tom START
 //        // 将skuList转成map用于sizeNick的方便检索， 将来sizeNike放到common里的话， 这段就不要了 START

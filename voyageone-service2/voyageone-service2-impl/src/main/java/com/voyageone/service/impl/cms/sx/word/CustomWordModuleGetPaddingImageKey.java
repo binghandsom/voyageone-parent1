@@ -31,7 +31,8 @@ public class CustomWordModuleGetPaddingImageKey extends CustomWordModule {
 
     @Override
     public String parse(CustomWord customWord, ExpressionParser expressionParser, SxProductService sxProductService, SxData sxData, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        String channelId = sxData.getChannelId();
+//        String channelId = sxData.getChannelId();
+        String channelId = sxData.getMainProduct().getOrgChannelId();
         int cartId = sxData.getCartId();
 
         //user param
