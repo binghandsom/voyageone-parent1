@@ -366,6 +366,12 @@ define(function () {
             "templateUrl": "views/product/skumove.tpl.html",
             "controllerUrl": "modules/cms/views/product/skumove.ctl",
             "controller": "SkuMoveController as ctrl"
+        },
+        "code-move": {
+            "hash": "/product/code_move",
+            "templateUrl": "views/product/codemove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/codemove.ctl",
+            "controller": "CodeMoveController as ctrl"
         }
     };
 });

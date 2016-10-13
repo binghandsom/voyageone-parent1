@@ -1,18 +1,18 @@
 /**
- * Created by sofia on 2016/10/10.
+ * Created by sofia on 2016/10/13.
  */
 define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    cms.controller('SkuMoveController', (function () {
-        function SkuMoveController(popups) {
+    cms.controller('CodeMoveController', (function () {
+        function CodeMoveController(popups) {
             this.show = false;
             this.popups = popups;
             this.showView = false;
         }
 
-        SkuMoveController.prototype = {
+        CodeMoveController.prototype = {
             init: function () {
                 var self = this;
             },
@@ -24,7 +24,7 @@ define([
                 var self = this;
                 switch (item.type) {
                     case 'selectGroup':
-                        item.value == 2 ? self.show = true : self.show = false;
+                        item.value == 1 ? self.show = true : self.show = false;
                         break;
                     case 'buildView':
                         self.showView = true;
@@ -37,6 +37,6 @@ define([
             }
 
         };
-        return SkuMoveController;
+        return CodeMoveController;
     })())
 });

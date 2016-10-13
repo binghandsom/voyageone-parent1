@@ -7,8 +7,9 @@ define([
 
     cms.controller("SkuMoveConfirmController", (function () {
 
-        function SkuMoveConfirm(context,$uibModalInstance) {
-
+        function SkuMoveConfirm(context) {
+            this.context = context;
+            this.moveType = this.context == 'Sku' ? 'Sku' : 'Code';
         }
 
         SkuMoveConfirm.prototype.init = function () {
