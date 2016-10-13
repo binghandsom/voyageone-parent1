@@ -5,7 +5,8 @@ define([
     'admin'
 ], function (admin) {
     admin.controller('ModifyPassController', (function () {
-        function ModifyPassController(adminUserService, alert, $uibModalInstance) {
+        function ModifyPassController(context, adminUserService, alert, $uibModalInstance) {
+            this.context = context;
             this.adminUserService = adminUserService;
             this.alert = alert;
             this.$uibModalInstance = $uibModalInstance;
@@ -14,6 +15,10 @@ define([
         }
 
         ModifyPassController.prototype = {
+            init: function () {
+                var self = this;
+                self.userAccount = self.context;
+            },
             submit: function () {
                 var self = this;
                 if (self.newPass == self.newPassAgain) {
