@@ -78,8 +78,8 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, String channelId) {
-        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, channelId);
+    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, ShopBean shopBean) {
+        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, shopBean);
     }
 
     /**
@@ -89,7 +89,7 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, String channelId) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, ShopBean shopBean) {
         for (CnCategoryBean bean : listBean) {
             if (isDelete) {
                 bean.setIsPublished("0");
@@ -100,7 +100,7 @@ public class CnCategoryService extends BaseService {
             }
         }
 
-        return uploadCnCategory(listBean, channelId);
+        return uploadCnCategory(listBean, shopBean);
     }
 
     /**
@@ -109,9 +109,8 @@ public class CnCategoryService extends BaseService {
      * @param listBean
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, String channelId) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
         boolean isSuccess = false;
-        ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
 
         List<List<Field>> listCatField = new ArrayList<>();
         for (CnCategoryBean bean : listBean) {

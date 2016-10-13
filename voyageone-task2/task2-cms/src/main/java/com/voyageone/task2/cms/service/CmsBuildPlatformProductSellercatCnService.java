@@ -66,9 +66,16 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-                ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
-                // 主处理
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                {
+//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+//                    // 主处理
+//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    // 主处理
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                }
             }
         }
 

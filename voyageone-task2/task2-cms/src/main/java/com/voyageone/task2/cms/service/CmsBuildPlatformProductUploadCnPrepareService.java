@@ -106,7 +106,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
                 // 独立域名商品信息新增或更新
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+//                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+                doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()));
             }
         }
 
@@ -443,6 +444,12 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
         for (CmsBtProductModel product : sxData.getProductList()) {
             // 循环group下所有code
+            // 取得尺码转换表
+            Map<String, String> sizeMap = sxProductService.getSizeMap(product.getChannelId(),
+                                                                        sxData.getMainProduct().getCommon().getFields().getBrand(),
+                                                                        sxData.getMainProduct().getCommon().getFields().getProductType(),
+                                                                        sxData.getMainProduct().getCommon().getFields().getSizeType());
+
             for (BaseMongoMap<String, Object> sku : product.getPlatform(sxData.getCartId()).getSkus()) {
                 List<Field> fieldList;
                 try {
@@ -457,7 +464,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 }
 
                 String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, skuInventoryMap.get(skuCode));
+                constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, sizeMap, skuInventoryMap.get(skuCode));
                 listSku.add(fieldList);
             }
         }
@@ -465,7 +472,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         return listSku;
     }
 
-    private void constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Integer qty) throws Exception {
+    private void constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Map<String, String> sizeMap, Integer qty) throws Exception {
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
             fieldsMap.put(field.getId(), field);

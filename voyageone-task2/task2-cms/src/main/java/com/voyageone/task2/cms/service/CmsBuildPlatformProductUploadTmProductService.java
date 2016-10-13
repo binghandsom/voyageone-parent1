@@ -673,6 +673,10 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 //                    throw new BusinessException("这是新增的达尔文产品,所有规格都要填!");
 //                } else {
                     platformProductId = addTmallProduct(expressionParser, cmsMtPlatformCategorySchemaModel, null, shopBean, modifier);
+                    if (StringUtils.isEmpty(platformProductId)) {
+                        // schema没取到
+                        throw new BusinessException("上新达尔文产品失败,可能是产品schema没有取到!");
+                    }
 //                }
              } else {
                 // 对于找到的pid进行更新
