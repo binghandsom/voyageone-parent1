@@ -168,6 +168,7 @@ public class UserController extends BaseController {
         if (session != null) {
             session.invalidate();
         }
+        SecurityUtils.getSubject().logout();
 
         // 只要不报异常就是ok
         return success(true);
