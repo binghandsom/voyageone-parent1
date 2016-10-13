@@ -20,10 +20,6 @@
                             <vo-message target="addForm.account"></vo-message>
                         </div>
                     </div>
-                    <div class="row form-group" ng-if="ctrl.popType != '修改用户'"><!-- 密码 -->
-                        <label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>
-                        <label class="col-sm-8 control-label text-left">默认密码1234567890</label>
-                    </div>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -38,14 +34,6 @@
                     <div class="row form-group">
                         <div class="col-sm-8 col-sm-offset-3">
                             <vo-message target="addForm.userName"></vo-message>
-                        </div>
-                    </div>
-                    <div class="row form-group"><!-- 组织 -->
-                        <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
-                        <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
-                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -64,9 +52,34 @@
                             <vo-message target="addForm.email"></vo-message>
                         </div>
                     </div>
-                    <div class="row form-group"><!-- 状态 -->
-                        <label class="col-sm-4 control-label">{{'TXT_STATUS' | translate}}</label>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="row form-group">
+                    <div class="col-sm-3" ng-if="ctrl.popType != '修改用户'"><!-- 密码 -->
+                        <label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>
+                        <label class="col-sm-8 control-label text-left">默认密码1234567890</label>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 组织 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                         <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 公司 -->
+                        <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.company">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <option value="{{company.id}}" ng-repeat="company in ctrl.companyList" ng-bind="company.company"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 状态 -->
+                        <label class="control-label" ng-class="ctrl.popType == '修改用户'?'col-sm-3':'col-sm-2'">{{'TXT_STATUS' | translate}}</label>
+                        <div ng-class="ctrl.popType == '修改用户'?'col-sm-8':'col-sm-10'">
                             <label class="checkbox-inline c-radio">
                                 <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> 启用
                             </label>
@@ -79,13 +92,11 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12">
                 <div class="row form-group">
                     <label class="col-sm-1 control-label">{{'TXT_ROLE' | translate}}：</label>
                     <div class="col-sm-10">
                         <div class="col-sm-5">
-                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span class="text-warnings">(必填)</span>
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span class="text-warnings">{{'TXT_REQUIRED'|translate}}</span>
                             <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
@@ -97,7 +108,7 @@
                             </div>
                         </div>
                         <div class="col-sm-2">
-                            <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                            <label class="col-sm-5 text-center control-label vo_a_ce" >{{'TXT_ACTION'|translate}}</label>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.move('allInclude')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-double-left"></i></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-left"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-right"></i></button></div>

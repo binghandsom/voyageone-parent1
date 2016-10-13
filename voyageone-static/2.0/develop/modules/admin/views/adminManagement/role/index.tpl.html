@@ -114,13 +114,13 @@
                             <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                         </label>
                     </th>
-                    <th class="text-center mfb-xt" translate="TXT_ROLE_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_ROLE_NAME"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CHANNEL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
-                    <th class="text-center mfb-xt" translate="TXT_SYSTEM"></th>
-                    <th class="text-center mfb-xt" translate="TXT_ROLE_TYPE"></th>
+                    <th class="text-left mfb-xt" translate="TXT_SYSTEM"></th>
+                    <th class="text-left mfb-xt" translate="TXT_ROLE_TYPE"></th>
                     <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
-                    <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
+                    <th class="text-left mfb-xt" translate="TXT_INSTRUCTION"></th>
                     <th class="text-left mfb-xt3" translate="TXT_UPDATER"></th>
                     <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
                 </tr>
@@ -137,17 +137,17 @@
                                 <span class="fa fa-check"></span>
                             </label>
                         </td>
-                        <td class="text-center v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
+                        <td class="text-left v-middle" title="{{list.roleName}}">{{list.roleName}}</td>
                         <td class="text-left v-middle">
                             <popover-text content="list.channelName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
                         <td class="text-left v-middle">
                             <popover-text content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
-                        <td class="text-center v-middle">{{list.application}}</td>
-                        <td class="text-center v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
+                        <td class="text-left v-middle">{{list.application}}</td>
+                        <td class="text-left v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>
-                        <td class="text-center v-middle">{{list.description}}</td>
+                        <td class="text-left v-middle">{{list.description}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                     </tr>
