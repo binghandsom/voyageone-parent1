@@ -201,12 +201,15 @@ define([
         }
     }
 
-    function asideCtrl($scope) {
-
+    function asideCtrl($scope, cActions, $ajax) {
+        var vm = this;
         $scope.initialize = initialize;
 
         function initialize() {
-
+            $ajax.post('/admin/user/res/getMenu')
+                .then(function (response) {
+                    vm.menuList = response.data;
+                })
         }
     }
 
