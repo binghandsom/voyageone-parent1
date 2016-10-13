@@ -333,6 +333,6 @@ public class CmsBtJmPromotionService extends BaseService {
             sqlParams.put("codeListStr", codeStr);
         }
 
-        return daoExt.getJmPromotionCount(params);
+        return daoExt.getJmPromotionCount(sqlParams);
     }
 }
