@@ -407,6 +407,25 @@ define([
                 "controller": 'popChannelListCtl'
             }
         },
+        "maintain":{
+            "masterBrandCheck": {
+                "templateUrl": "views/pop/maintain/masterBrandCheck.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandCheck.ctl",
+                "controller": 'masterBrandCheckCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandMapDetail": {
+                "templateUrl": "views/pop/maintain/masterBrandMapDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandMapDetail.ctl",
+                "controller": 'masterBrandMapDetailCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandEdit":{
+                "templateUrl": "views/pop/maintain/masterBrandEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandEdit.ctl",
+                "controller": 'masterBrandEditCtl as ctrl'
+            }
+        },
         "store": {
             "listing": {
                 "sizechart": {
@@ -1195,6 +1214,27 @@ define([
         /**上新价格确认*/
         $scope.openApproveConfirm = function openApproveConfirm(context){
             return openModal(popActions.product.approveConfirm,context);
+        };
+
+        /**
+         * 品牌审核弹出框
+         */
+        $scope.openMasterBrandCheck = function openMasterBrandCheck(context){
+            return openModal(popActions.maintain.masterBrandCheck,context);
+        };
+
+        /**
+         * master 品牌匹配
+         */
+        $scope.openMasterBrandMapDetail = function openMasterBrandMapDetail(context){
+            return openModal(popActions.maintain.masterBrandMapDetail,context)
+        };
+
+        /**
+         * 主品牌编辑
+         */
+        $scope.openMasterBrandEdit = function openMasterBrandEdit(context){
+            return openModal(popActions.maintain.masterBrandEdit,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

@@ -1,0 +1,288 @@
+<div class="vo_modal switch-main" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 品牌审核</h5>
+    </div>
+
+    <div class="modal-body wrapper">
+
+        <div class="container" style="width: auto">
+            <div class="row">
+                <!----------------------------------------------left div----------------------------------------------->
+                <div class="col-md-5">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">供应商</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">相关Feed品牌</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">品牌英文全称</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">品牌中文名称</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">品牌昵称</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">品牌logo</label>
+                            <div class="col-md-7">
+                                <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-rounded" width="100" height="100">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">相关品类</label>
+                            <div class="col-md-7">
+                                <label>
+                                    <input name="state" type="checkbox" >&nbsp;鞋
+                                </label>&emsp;
+                                <label>
+                                    <input name="state" type="checkbox" value="1">&nbsp;服饰
+                                </label>&emsp;
+                                <label>
+                                    <input name="state" type="checkbox" value="0">&nbsp;箱包
+                                </label>
+                                <label>
+                                    <input name="state" type="checkbox" value="0">&nbsp;护肤品
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">优先上新平台</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">相关平台品牌</label>
+                            <div class="col-md-7">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">相关平台品牌检索</label>
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <input type="text" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-success"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 wrapper-xs">
+                                        <ul class="list-unstyled table-bordered scrollable scroll-y" style="max-height: 280px;">
+                                            <li class="btn-block">
+                                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                            </li>
+                                            <li class="btn-block">
+                                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                            </li>
+                                            <li class="btn-block">
+                                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                            </li>
+                                            <li class="btn-block">
+                                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                            </li>
+                                            <li class="btn-block">
+                                                <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-------------------------------------right div------------------------------------->
+                <div class="col-md-7">
+                    <uib-tabset class="tab-container vo_nav-tabs">
+                        <!------------------------------------------------平台品牌搜索一览---------------------------------------------->
+                        <uib-tab>
+                            <tab-heading>平台品牌搜索一览</tab-heading>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">相关平台品牌检索</label>
+                                    <div class="col-md-7">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn btn-success"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 wrapper-xs">
+                                                <ul class="list-unstyled table-bordered scrollable scroll-y" style="max-height: 280px;">
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <thead>
+                                    <tr>
+                                        <th class="mfb-xxx text-center">平台</th>
+                                        <th class="mfb-xxx text-left">平台品牌</th>
+                                        <th class="mfb-xxx text-left">Master品牌英文全称</th>
+                                        <th class="mfb-xxx text-left">Master品牌中文全称</th>
+                                        <th class="mfb-xxx text-center">logo</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="mfb-xxx text-center">京东</td>
+                                        <td class="mfb-xxx text-left">Nike</td>
+                                        <td class="mfb-xxx text-left">nike</td>
+                                        <td class="mfb-xxx text-left">耐克</td>
+                                        <td class="mfb-xxx text-center">
+                                            <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-rounded" width="50" height="50">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </uib-tab>
+                        <!------------------------------------------------Master品牌搜索一览--------------------------------------------->
+                        <uib-tab>
+                            <tab-heading>Master品牌搜索一览</tab-heading>
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Master品牌搜索一览</label>
+                                    <div class="col-md-7">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <input type="text" class="form-control">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button class="btn btn-success"><i class="fa fa-search"></i></button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 wrapper-xs">
+                                                <ul class="list-unstyled table-bordered scrollable scroll-y" style="max-height: 280px;">
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                    <li class="btn-block">
+                                                        <a href="javascript:void(0)" ng-click="ctrl.selectedPlatformBrand(list)">aaaaaa</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <thead>
+                                    <tr>
+                                        <th class="mfb-xxx text-center">平台</th>
+                                        <th class="mfb-xxx text-left">平台品牌</th>
+                                        <th class="mfb-xxx text-left">Master品牌英文全称</th>
+                                        <th class="mfb-xxx text-left">Master品牌中文全称</th>
+                                        <th class="mfb-xxx text-center">logo</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="mfb-xxx text-center">京东</td>
+                                        <td class="mfb-xxx text-left">Nike</td>
+                                        <td class="mfb-xxx text-left">nike</td>
+                                        <td class="mfb-xxx text-left">耐克</td>
+                                        <td class="mfb-xxx text-center">
+                                            <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-rounded" width="50" height="50">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </uib-tab>
+                        <p class="text-warnings"><i class="fa fa-bell-o"></i>&nbsp;&nbsp;请灵活运用此处搜索功能，仅供对master品牌审核参考</p>
+                    </uib-tabset>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-1">备注</label>
+                        <div class="col-md-10">
+                            <textarea class="form-control" name="" id="" cols="30" rows="10"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-10">
+                            <div class="text-warnings">
+                                <i class="fa fa-bell-o"></i>&nbsp;&nbsp;驳回理由请添加到备注中。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-warning" ng-click="" ><i class="fa fa-reply"></i> 驳回</button>
+        <button class="btn btn-success" ng-click="" ><i class="fa fa-send"></i> 审核通过</button>
+    </div>
+</div>

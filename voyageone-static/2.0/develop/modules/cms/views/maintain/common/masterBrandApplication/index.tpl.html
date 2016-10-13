@@ -1,0 +1,215 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading panel-detail-head">&nbsp;<i class="fa fa-gears"></i>&emsp;主品牌设置</div>
+        </div>
+    </div>
+    <div>
+        <uib-tabset class="tab-container vo_nav-tabs">
+            <!------------------------------------------master品牌待审核一览--------------------------------------->
+            <uib-tab  select="ctrl.searchInfo.status = 0 ; ctrl.search()">
+                <tab-heading>Master品牌待审核一览</tab-heading>
+                <div class="container wrapper-md">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4 text-right">Master品牌英文全称 &nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.masterBrandEn">
+                            </div>
+                        </div>
+                        <div class="col-sm-5 text-left">
+                            <label class="control-label col-md-3">相关channel&nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <select class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.channelId">
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-md-6">
+                            <label class="control-label col-md-4 text-right">相关Feed品牌搜索 &nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.feedBrand">
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-left">
+                            <label class="control-label col-md-3">相关平台品牌搜索&nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" ng-model="ctrl.searchInfo.waitUpEntity.cartBrandName">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-md">
+                        <div class="col-sm-12 text-center">
+                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}
+                            </button>
+                            <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()">
+                                <i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xxx text-center">相关channel</th>
+                                <th class="mfb-xxx text-left">相关Feed品牌</th>
+                                <th class="mfb-xxx text-left">Master品牌英文全称</th>
+                                <th class="mfb-xxx text-left">相关平台</th>
+                                <th class="mfb-xxx text-left">相关平台品牌</th>
+                                <th class="mfb-xxx text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="brand in ctrl.dataList">
+                                <td class="mfb-xxx text-center">{{brand.channelId}}</td>
+                                <td class="mfb-xxx text-left">{{brand.feedBrand}}</td>
+                                <td class="mfb-xxx text-left">{{brand.masterBrandEn}}</td>
+                                <td class="mfb-xxx text-left">{{brand.cartName}}</td>
+                                <td class="mfb-xxx text-left">{{brand.platformBrandName}}</td>
+                                <td class="mfb-xxx text-center">
+                                    <button class="btn btn-success" ng-click="ctrl.popMasterBrandCheck()">审核</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <vpagination config="ctrl.waitCheckOption"></vpagination>
+                        </div>
+
+                    </div>
+                </div>
+            </uib-tab>
+            <!----------------------------------------已有Master品牌一览----------------------------------------->
+            <uib-tab select="ctrl.searchInfo.status = 1;ctrl.search()">
+                <tab-heading>已有Master品牌一览</tab-heading>
+                <div class="container wrapper-md">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4 text-right">Master品牌英文全称 &nbsp;&nbsp;</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control">
+                            </div>
+                            <button class="btn btn-success"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xxx text-center">Master品牌英文全称</th>
+                                <th class="mfb-xxx text-left">Master品牌中文全称</th>
+                                <th class="mfb-xxx text-left">Master品牌Logo</th>
+                                <th class="mfb-xxx text-center">更新时间</th>
+                                <th class="mfb-xxx text-center">创建时间</th>
+                                <th class="mfb-xxx text-center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr  ng-repeat="brand in ctrl.dataList">
+                                <td class="mfb-xxx text-center">{{brand.channelId}}</td>
+                                <td class="mfb-xxx text-left">{{brand.masterBrandEn}}</td>
+                                <td class="mfb-xxx text-left"></td>
+                                <td class="mfb-xxx text-center">{{brand.modified}}</td>
+                                <td class="mfb-xxx text-center">{{brand.created}}</td>
+                                <td class="mfb-xxx text-center"><button class="btn btn-success" ng-click="ctrl.popMasterBrandEdit()"><i class="fa fa-pencil"></i></button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <vpagination config="ctrl.alreadyCheckOption"></vpagination>
+                        </div>
+
+                    </div>
+                </div>
+            </uib-tab>
+            <!----------------------------------------平台-Master品牌匹配关系一览---------------------------------------->
+            <uib-tab>
+                <tab-heading>平台-Master品牌匹配关系一览</tab-heading>
+                <div class="container wrapper-md">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label class="control-label col-md-4 text-right">平台选择 &nbsp;&nbsp;</label>
+                            <div class="col-md-8">
+                                <label>
+                                    <input name="state" type="radio" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_TRANSLATION_SEARCH_SELECT_ALL'|translate}}
+                                </label>&emsp;
+                                <label>
+                                    <input name="state" type="radio" value="1" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_IN'|translate}}
+                                </label>&emsp;
+                                <label>
+                                    <input name="state" type="radio" value="0" ng-model="ctrl.searchInfo.status">&nbsp;{{'TXT_BLACK_LIST_OUT'|translate}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-sm">
+                        <div class="col-md-6">
+                            <label class="control-label col-md-4 text-right">平台品牌 &nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-5 text-left">
+                            <label class="control-label col-md-3">Master品牌&nbsp;&nbsp;</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row m-t-md">
+                        <div class="col-sm-12 text-center">
+                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'|translate}}
+                            </button>
+                            <button class="btn btn-vo" ng-click="ctrl.paging.curr = 1;ctrl.search()"
+                                    ng-disabled="ctrl.searchInfo.brandType == 2 && !ctrl.checkCarts()"><i
+                                    class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+
+                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xxx text-center">平台</th>
+                                <th class="mfb-xxx text-left">平台品牌ID</th>
+                                <th class="mfb-xxx text-left">平台品牌</th>
+                                <th class="mfb-xxx text-left">Master品牌</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="col-sm-12 m-t-lg m-b-lg">
+                            <!--<vpagination config="ctrl.paging"></vpagination>-->
+                        </div>
+
+                    </div>
+                </div>
+            </uib-tab>
+
+
+        </uib-tabset>
+    </div>
+
+</div>
