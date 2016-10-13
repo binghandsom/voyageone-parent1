@@ -20,8 +20,8 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.active">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="0">禁用</option>
-                                            <option value="1">启用</option>
+                                            <option value="0">{{'BTN_INACTIVE'|translate}}</option>
+                                            <option value="1">{{'BTN_ACTIVE'|translate}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -100,7 +100,7 @@
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>
             </div>
 

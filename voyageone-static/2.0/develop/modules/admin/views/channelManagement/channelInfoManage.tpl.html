@@ -48,8 +48,8 @@
                                     <div class="col-sm-8">
                                         <select class="form-control" ng-model="ctrl.searchInfo.active">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="1">&nbsp;启用</option>
-                                            <option value="0">&nbsp;禁用</option>
+                                            <option value="1">&nbsp;{{'BTN_ACTIVE'|translate}}</option>
+                                            <option value="0">&nbsp;{{'BTN_INACTIVE'|translate}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -74,7 +74,7 @@
                     <button class="btn btn-default" ng-click="ctrl.config('Channel')" ng-disabled="ctrl.channelSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
                     <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.channelSelList.selList.length <= 0||ctrl.channelSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;禁用</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.channelSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>
             </div>
             <table class="table table-hover-new table-hover table_main table_fixed">
