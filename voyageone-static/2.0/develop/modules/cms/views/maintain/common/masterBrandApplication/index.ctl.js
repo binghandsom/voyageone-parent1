@@ -13,11 +13,12 @@ define([
 
         function masterBrandApplicationController(popups){
             this.popups = popups;
+            this.masterBrandApplicationService   = masterBrandApplicationService;
         }
 
         masterBrandApplicationController.prototype.init = function(){
             var self = this;
-            this.masterBrandApplicationService   = masterBrandApplicationService;
+
         };
 
         masterBrandApplicationController.prototype.popBrandAudit = function(){
