@@ -8101,12 +8101,20 @@ a.btn-main:hover {
 .table_compare > thead > tr > th.table_compare_before {
     background-color: #919191;
     color: #fff;
+    border: 1px solid #ccc
 }
+
 .table_compare > thead > tr > th.table_compare_after {
     background-color: #45a7fa;
     color: #fff;
+    border: 1px solid #ccc
 }
-.table_compare > tbody > tr >td span{
+
+.table_compare > tbody > tr > td {
+    border: 1px solid #ccc
+}
+
+.table_compare > tbody > tr > td span {
     color: blue;
     font-weight: bold;
 }

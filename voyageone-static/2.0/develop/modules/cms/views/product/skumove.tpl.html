@@ -46,22 +46,28 @@
         <div class="box-body container-fluid  product-shema-detail">
             <div class="col-sm-12"><!-- 请选择移动方式 -->
                 <div class="form-group m-t-sm">
-                    <div class="col-sm-2">
-                        <hr>
-                        <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CHOOSE_THE_MOVE_TYPE'|translate}}</span>
+                    <div class="col-sm-2 m-b-xs">
+                        <div class="form-group">
+                            <hr>
+                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_CHOOSE_THE_MOVE_TYPE'|translate}}</span>
+                        </div>
+                        <div class="form-group" ng-if="!ctrl.show">
+                            <button class="btn btn-success col-sm-12" ng-click="ctrl.ifShow({type:'buildView',value:true})"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <div class="">
-                        <label class="radio-inline c-radio">
-                            <input type="radio" name="type" value="0" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_NEW_GROUP'|translate}}
-                        </label>
-                        <label class="radio-inline c-radio">
-                            <input type="radio" name="type" value="1" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
-                        </label>
-                        <label class="radio-inline c-radio" style="margin-left: 2px;">
-                            <input type="radio" name="type" value="2" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
-                        </label>
+                    <div class="col-sm-10">
+                        <div class="form-group"></div>
+                        <div class="m-t-lg">
+                            <label class="radio-inline c-radio">
+                                <input type="radio" name="type" value="0" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_NEW_GROUP'|translate}}
+                            </label>
+                            <label class="radio-inline c-radio">
+                                <input type="radio" name="type" value="1" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
+                            </label>
+                            <label class="radio-inline c-radio" style="margin-left: 2px;">
+                                <input type="radio" name="type" value="2" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -88,7 +94,7 @@
                             <table class="table table-hover-new table-hover table_main m-t-sm">
                                 <thead>
                                 <tr>
-                                    <th class="text-left mfb-xxt" style="padding: 4px 0 0 8px;">
+                                    <th class="text-left mfb-xt" style="padding: 4px 0 0 8px;">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)">
@@ -111,7 +117,7 @@
                                         </label>
                                     </td>
                                     <td class="text-center v-middle">
-                                        <a ng-click=""><img class="thumb" image=""></a>
+                                        <a ng-click=""><img class="thumb-md" image=""></a>
                                     </td>
                                     <td class="text-left v-middle">
                                         51A0HC13E1-00LCNB0
@@ -151,14 +157,14 @@
                                 <th class="text-center table_compare_after" colspan="2" translate="TXT_TARGET_INFO"></th>
                             </tr>
                             <tr>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_before" translate="TXT_TARGET_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
-                                <th class="text-center mfb-xxt table_compare_after" translate="TXT_TARGET_SKU_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_SKU_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_SKU_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_SKU_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
+                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_SKU_INFO"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -177,7 +183,7 @@
                     </table>
                 </div>
                 <div class="form-group text-center">
-                    <button class="btn btn-vo" ng-click="" >&nbsp;{{'TXT_MOVE_CONFIRM'|translate}}</button>
+                    <button class="btn btn-vo" ng-click="ctrl.move()" >&nbsp;{{'TXT_MOVE_CONFIRM'|translate}}</button>
                 </div>
             </div>
         </div>
