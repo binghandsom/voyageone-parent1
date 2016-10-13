@@ -11,16 +11,16 @@ define([
 
     cms.controller('masterBrandApplicationController',(function(masterBrandApplicationService, popups){
 
-        function MainBrandController(popups){
+        function masterBrandApplicationController(popups){
             this.popups = popups;
         }
 
-        MainBrandController.prototype.init = function(){
+        masterBrandApplicationController.prototype.init = function(){
             var self = this;
             this.masterBrandApplicationService   = masterBrandApplicationService;
         };
 
-        MainBrandController.prototype.popBrandAudit = function(){
+        masterBrandApplicationController.prototype.popBrandAudit = function(){
             var self = this,
                 popups = self.popups;
 
@@ -29,7 +29,7 @@ define([
             });
         };
 
-        MainBrandController.prototype.popBrandEdit = function(){
+        masterBrandApplicationController.prototype.popBrandEdit = function(){
             var self = this,
                 popups = self.popups;
 
@@ -39,7 +39,7 @@ define([
 
         };
 
-        return MainBrandController;
+        return masterBrandApplicationController;
 
     })());
 
