@@ -58,6 +58,20 @@ public class StoreController extends AdminController {
 		return success(result);
 	}
 	
+	@SuppressWarnings("serial")
+	@RequestMapping(AdminUrlConstants.Store.Self.GET_STORE_BY_CHANNEL_IDS)
+	public AjaxResponse getStoreByChannelIds(@RequestBody List<String> channelIds) {
+		List<WmsMtStoreBean> stores = storeService.getStoreByChannelIds(channelIds);
+		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+		stores.stream().forEach(item -> result.add(new HashMap<String, Object>() {{
+			put("storeId", item.getStoreId());
+			put("storeName", item.getStoreName());
+			put("channelId", item.getOrderChannelId());
+			put("channelName", item.getChannelName());
+		}}));
+		return success(result);
+	}
+	
 	@RequestMapping(AdminUrlConstants.Store.Self.SEARCH_STORE_BY_PAGE)
 	public AjaxResponse searchStoreByPage(@RequestBody StoreFormBean form) {
 		// 验证参数
