@@ -155,7 +155,9 @@
                         </td>
                         <td class="text-left v-middle">{{list.userAccount}}</td>
                         <td class="text-left v-middle">{{list.userName}}</td>
-                        <td class="text-left v-middle wrap">{{list.email}}</td>
+                        <td class="text-left v-middle wrap">
+                            <popover-text content="list.email" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </td>
                         <td class="text-left v-middle">{{list.roleName}}</td>
                         <td class="text-left v-middle">{{ctrl.getName(list.orgId)}}</td>
                         <td class="text-left v-middle">
@@ -164,7 +166,9 @@
                         <td class="text-left v-middle">
                             <popover-text content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
-                        <td class="text-left v-middle wrap">{{list.application}}</td>
+                        <td class="text-left v-middle wrap">
+                            <popover-text content="list.application" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-left v-middle">{{list.company}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
