@@ -1,18 +1,21 @@
 package com.voyageone.web2.cms.views.jm;
 
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.CmsBtJmProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -22,9 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,31 +34,44 @@ import java.util.Map;
         method = RequestMethod.POST
 )
 public class CmsJmPromotionDetailController extends CmsController {
-    @Autowired
-    private CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
-    @Autowired
-    private CmsBtJmProductService cmsBtJmProductService;
-    @Autowired
-    private CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
-    @Autowired
-    private CmsBtJmSkuService cmsBtJmSkuService;
-    @Autowired
-    private CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
-    @Autowired
-    private CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
-    @Autowired
-    private MqSender sender;
+    private final CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
+    private final CmsBtJmProductService cmsBtJmProductService;
+    private final CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
+    private final CmsBtJmSkuService cmsBtJmSkuService;
+    private final CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
+    private final CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
+    private final MqSender sender;
 
     //begin 2
-    @Autowired
-    CmsBtJmPromotionProduct3Service service3;
-    @Autowired
-    CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
+    private final CmsBtJmPromotionProduct3Service service3;
+    private final CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
     //end 2
+
+    @Autowired
+    public CmsJmPromotionDetailController(CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct,
+                                          CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku,
+                                          CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService,
+                                          CmsBtJmPromotionProductService cmsBtJmPromotionProductService,
+                                          CmsBtJmPromotionProduct3Service service3,
+                                          CmsBtJmProductService cmsBtJmProductService,
+                                          CmsBtJmMasterBrandService cmsBtJmMasterBrandService,
+                                          CmsBtJmSkuService cmsBtJmSkuService, MqSender sender) {
+        this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
+        this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
+        this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
+        this.cmsBtJmPromotionProductService = cmsBtJmPromotionProductService;
+        this.service3 = service3;
+        this.cmsBtJmProductService = cmsBtJmProductService;
+        this.cmsBtJmMasterBrandService = cmsBtJmMasterBrandService;
+        this.cmsBtJmSkuService = cmsBtJmSkuService;
+        this.sender = sender;
+    }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
-     public AjaxResponse init(@RequestBody InitParameter parameter) {
-         return success(service3.init(parameter, getUser().getSelChannelId(), getLang()));
-     }
+    public AjaxResponse init(@RequestBody InitParameter parameter) {
+        return success(service3.init(parameter, getUser().getSelChannelId(), getLang()));
+    }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.GET_PROMOTION_PRODUCT_INFO_LIST_BY_WHERE)
     public AjaxResponse getPromotionProductInfoListByWhere(@RequestBody Map params) {
         return success(serviceCmsBtJmPromotionProduct.getPageByWhere(params));
@@ -78,13 +92,12 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-
-     //全量延期
+    //全量延期
     ///cms/jmpromotion/detail/updateDealEndTimeAll
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateDealEndTimeAll)
     //延迟Deal结束时间  全量
     public AjaxResponse updateDealEndTimeAll(@RequestBody ParameterUpdateDealEndTimeAll parameter) {
-         //聚美专场结束时间都以59秒结尾。
+        //聚美专场结束时间都以59秒结尾。
         parameter.getDealEndTime().setSeconds(59);//聚美专场结束时间都以59秒结尾。
         CallResult result = service3.updateDealEndTimeAll(parameter);
         if (result.isResult()) {
@@ -95,7 +108,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-
     /**
      * 更新产品信息
      *
@@ -105,7 +117,6 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse updateProductDetail(@RequestBody CmsBtJmProductModel productInfo) {
         return success(cmsBtJmProductService.update(productInfo));
     }
-
 
     //所有未上新商品上新
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.JmNewUpdateAll)
@@ -158,12 +169,11 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(cmsBtJmPromotionSkuService.delete(request.getId()));
     }
 
-
     //jm2 begin 批量变更价格
     //批量更新价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateDealPrice)
     public AjaxResponse batchUpdateDealPrice(@RequestBody BatchUpdatePriceParameterBean parameter) {
-      CallResult result=  service3.batchUpdateDealPrice(parameter);
+        CallResult result = service3.batchUpdateDealPrice(parameter);
         return success(result);
     }
 
@@ -199,6 +209,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     //全量删除
     //全量再售
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.CopyDealAll)
@@ -220,12 +231,12 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(result);
     }
 
-     //全量删除
+    //全量删除
     //删除全部product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.DeleteAllProduct)
     public AjaxResponse deleteAllProduct(@RequestBody int promotionId) {
         CallResult result = new CallResult();
-        result= service3.deleteAllProduct(promotionId);
+        result = service3.deleteAllProduct(promotionId);
         return success(result);
     }
 
@@ -241,21 +252,23 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = new CallResult();
         return success(result);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProduct)
     public AjaxResponse updatePromotionProduct(@RequestBody UpdatePromotionProductParameter parameter) {
-        service3.updatePromotionProduct(parameter,getUser().getUserName());
+        service3.updatePromotionProduct(parameter, getUser().getUserName());
         return success(null);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
-    public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter){
-        service3.updatePromotionProductTag(parameter,getUser().getUserName());
+    public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
+        service3.updatePromotionProductTag(parameter, getUser().getUserName());
         return success(null);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
-    public  AjaxResponse    selectChangeCountByPromotionId(@RequestBody long cmsBtJmPromotionProductId)
-    {
-        int count=service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    public AjaxResponse selectChangeCountByPromotionId(@RequestBody long cmsBtJmPromotionProductId) {
+        int count = service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
         return success(count);
     }
-        //jm2 end
+    //jm2 end
 }

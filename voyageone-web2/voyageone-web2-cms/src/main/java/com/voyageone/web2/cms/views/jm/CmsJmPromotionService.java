@@ -13,6 +13,7 @@ import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsJmPromotionService extends BaseService {
+public class CmsJmPromotionService extends BaseViewService {
 
     @Resource
     CmsBtProductDao productDao;  //用于获取mongo中的产品信息
