@@ -144,7 +144,10 @@
                         <td class="text-left v-middle">
                             <popover-text content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
-                        <td class="text-left v-middle">{{list.application}}</td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.application.length<8">{{list.application}}</label>
+                            <popover-text ng-if="list.application.length>8" content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </td>
                         <td class="text-left v-middle">{{ctrl.getRoleType(list.roleType)}}</td>
                         <td class="text-center v-middle" ng-bind="list.active!=null?(list.active== 1 ?'启用':'禁用'):''"></td>
                         <td class="text-left v-middle">{{list.description}}</td>

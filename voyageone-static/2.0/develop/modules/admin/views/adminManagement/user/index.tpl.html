@@ -176,8 +176,8 @@
                             <label ng-if="list.storeName.length > 10"><popover-text content="list.storeName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
                         </td>
                         <td class="text-left v-middle wrap">
-                            <label ng-if="list.application.length <= 10">{{list.application}}</label>
-                            <label ng-if="list.application.length > 10"><popover-text content="list.application" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                            <label ng-if="list.application.length <= 8">{{list.application}}</label>
+                            <label ng-if="list.application.length > 8"><popover-text content="list.application" direct="top" popover-trigger="mouseenter" size="10"></popover-text></label>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-left v-middle">{{list.company}}</td>
