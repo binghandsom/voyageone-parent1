@@ -49,7 +49,8 @@ define([
 
             if(args.length == 0)
                 return;
-            window.open("http://s7d5.scene7.com/is/image/sneakerhead/✓?fmt=png&scl=1".replace("✓",args[args.length-1]));
+
+            window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓",args[args.length-1]));
         }
 
     });
