@@ -20,6 +20,8 @@ public class CmsBtJmPromotionSaveBean {
     private boolean isEnd;
     // 是否有扩展信息
     private boolean hasExt;
+    // 操作类型 1:提交/保存 0:暂存
+    private int saveType;
 
     public CmsBtJmPromotionModel getModel() {
         return model;
@@ -67,5 +69,13 @@ public class CmsBtJmPromotionSaveBean {
 
     public void setHasExt(boolean hasExt) {
         this.hasExt = hasExt;
+    }
+
+    public int getSaveType() {
+        return saveType;
+    }
+
+    public void setSaveType(int saveType) {
+        this.saveType = saveType;
     }
 }
