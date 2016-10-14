@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.jumei;
 
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
 public class CmsBtJmPromotionSaveBean {
 
     private CmsBtJmPromotionModel model;
-    private Map<String, Object> extModel;
+    private CmsBtJmPromotionSpecialExtensionModel extModel;
     private List<CmsBtTagModel> tagList;
     //活动预热是否开始
     private boolean isBeginPre;
@@ -55,11 +56,11 @@ public class CmsBtJmPromotionSaveBean {
         isEnd = end;
     }
 
-    public Map<String, Object> getExtModel() {
+    public CmsBtJmPromotionSpecialExtensionModel getExtModel() {
         return extModel;
     }
 
-    public void setExtModel(Map<String, Object> extModel) {
+    public void setExtModel(CmsBtJmPromotionSpecialExtensionModel extModel) {
         this.extModel = extModel;
     }
 

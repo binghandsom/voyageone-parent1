@@ -11,11 +11,9 @@ import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtJmMasterBrandModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ public class CmsBtJmPromotionService extends BaseService {
     @Autowired
     CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
     @Autowired
-    private CmsBtJmPromotionSpecialExtensionDao jmPromotionSpecialExtensionDao;
+    private CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao;
 
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
@@ -95,8 +93,8 @@ public class CmsBtJmPromotionService extends BaseService {
         // 取得扩展信息
         if (info.isHasExt()) {
             // 活动详情编辑
-            Map extModel = info.getExtModel();
-            if (extModel != null && extModel.get("id") != null) {
+            CmsBtJmPromotionSpecialExtensionModel extModel = info.getExtModel();
+            if (extModel != null && extModel.getId() != null) {
                 info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(extModel));
             }
         }
@@ -139,8 +137,8 @@ public class CmsBtJmPromotionService extends BaseService {
             saveCmsBtPromotion(parameter.getModel());
             if (parameter.isHasExt()) {
                 // 活动详情编辑
-                Map extModel = parameter.getExtModel();
-                if (extModel != null && extModel.get("id") != null) {
+                CmsBtJmPromotionSpecialExtensionModel extModel = parameter.getExtModel();
+                if (extModel != null && extModel.getId() != null) {
                     // 保存
                     jmPromotionSpecialExtensionDao.update(extModel);
                 } else {
