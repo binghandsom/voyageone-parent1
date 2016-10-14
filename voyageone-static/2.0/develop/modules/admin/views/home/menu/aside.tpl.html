@@ -20,7 +20,7 @@
                             <i class="fa fa-fw fa-angle-right text"></i>
                             <i class="fa fa-fw fa-angle-down text-active"></i>
                         </span>
-                        <i class="fa fa-cogs icon text-vo"></i>
+                        <i ng-class="list.icon!=null?'fa {{list.icon}} icon text-vo':'fa fa-navicon icon text-vo'"></i>
                         <span class="">{{list.resName}}</span>
                     </a>
                     <ul class="nav nav-sub dk" ng-if="list.children.length>0">
@@ -32,7 +32,7 @@
                         <!-- 二级目录 -->
                         <li ng-repeat="childList in list.children" class="m-l-sm" ui-sref-active="active">
                             <a ng-href="{{childList.resUrl}}">
-                                <i class="fa fa-minus icon text-vo"></i>
+                                <i ng-class="childList.icon!=null?'fa {{childList.icon}} icon text-vo':'fa fa-minus icon text-vo'"></i>
                                 <span>{{childList.resName}}</span>
                             </a>
                         </li>
