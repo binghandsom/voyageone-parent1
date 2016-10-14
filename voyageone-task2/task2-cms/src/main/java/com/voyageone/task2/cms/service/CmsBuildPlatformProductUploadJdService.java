@@ -877,8 +877,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         jdProductBean.setInputStrs(jdProductAttrMap.get(Input_Strs));
         // 是否输入验证码 true:是;false:否  (非必须)
         jdProductBean.setHasCheckCode("false");
-        // 广告词内容最大支持45个字符(非必须)
-//        jdProductBean.setAdContent(mainProduct.getXXX());                  // 不使用
+        // 商品标语(广告词)内容最大支持45个字符(非必须)
+        jdProductBean.setAdContent(jdCommonInfoMap.get("productAdContent"));
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
 //        jdProductBean.setListTime(mainProduct.getXXX());                   // 不使用
         // 品牌id
