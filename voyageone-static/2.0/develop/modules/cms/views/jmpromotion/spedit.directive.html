@@ -206,8 +206,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">专场涉及品牌</label>
                     <div class="col-sm-5">
-                        <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.brand"
-                                  disabled></textarea>
+                        <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.brand" disabled></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -255,15 +254,22 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Product Type</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="editModel.extModel.productType" >
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">展示平台</label>
                     <div class="col-sm-5">
-                        <label><input type="checkbox"> PC</label>
-                        <span>&nbsp;&nbsp;</span>
-                        <label><input type="checkbox"> APP</label>
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="displayPlatform_1" style="margin: 0" value="1" ng-model="editModel.extModel.displayPlatform_1" ng-required="!editModel.model.displayPlatform_1&&!editModel.model.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="1" ng-model="editModel.extModel.displayPlatform_2" ng-required="!editModel.model.displayPlatform_1&&!editModel.model.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="promotionForm.displayPlatform_1 && promotionForm.displayPlatform_2"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
