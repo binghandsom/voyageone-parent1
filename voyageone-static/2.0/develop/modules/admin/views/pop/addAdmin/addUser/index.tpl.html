@@ -71,7 +71,7 @@
                     <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 公司 -->
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.company">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.companyId">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                 <option value="{{company.id}}" ng-repeat="company in ctrl.companyList" ng-bind="company.company"></option>
                             </select>

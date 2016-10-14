@@ -154,20 +154,27 @@
                             </label>
                         </td>
                         <td class="text-left v-middle">{{list.userAccount}}</td>
-                        <td class="text-left v-middle">{{list.userName}}</td>
+                        <td class="text-left v-middle">
+                            <span ng-if="list.userName.length <= 50">{{list.userName}}</span>
+                            <span ng-if="list.userName.length > 50"><popover-text content="list.userName" direct="top" popover-trigger="mouseenter" size="50"></popover-text></span>
+                        </td>
                         <td class="text-left v-middle wrap">
-                            <popover-text content="list.email" direct="top" popover-trigger="mouseenter"></popover-text>
+                            <span ng-if="list.email.length <= 50">{{list.email}}</span>
+                            <span ng-if="list.email.length > 50"><popover-text content="list.email" direct="top" popover-trigger="mouseenter" size="50"></popover-text></span>
                         </td>
                         <td class="text-left v-middle">{{list.roleName}}</td>
                         <td class="text-left v-middle">{{ctrl.getName(list.orgId)}}</td>
                         <td class="text-left v-middle">
-                            <popover-text content="list.channelName" direct="top" popover-trigger="mouseenter"></popover-text>
+                            <span ng-if="list.channelName.length <= 50">{{list.channelName}}</span>
+                            <span ng-if="list.channelName.length > 50"><popover-text content="list.channelName" direct="top" popover-trigger="mouseenter" size="50"></popover-text></span>
                         </td>
                         <td class="text-left v-middle">
-                            <popover-text content="list.storeName" direct="top" popover-trigger="mouseenter"></popover-text>
+                            <span ng-if="list.storeName.length <= 50">{{list.storeName}}</span>
+                            <span ng-if="list.storeName.length > 50"><popover-text content="list.storeName" direct="top" popover-trigger="mouseenter" size="50"></popover-text></span>
                         </td>
                         <td class="text-left v-middle wrap">
-                            <popover-text content="list.application" direct="top" popover-trigger="mouseenter"></popover-text>
+                            <span ng-if="list.application.length <= 50">{{list.application}}</span>
+                            <span ng-if="list.application.length > 50"><popover-text content="list.application" direct="top" popover-trigger="mouseenter" size="50"></popover-text></span>
                         </td>
                         <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
                         <td class="text-left v-middle">{{list.company}}</td>

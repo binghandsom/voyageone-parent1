@@ -25,7 +25,7 @@ define([
                 email: this.sourceData.email,
                 active: this.sourceData.active,
                 description: this.sourceData.description,
-                company: this.sourceData.company
+                companyId: this.sourceData.companyId + ''
             };
             this.leftSelectedFlg = false;
             this.rightSelectedFlg = false;
@@ -182,6 +182,7 @@ define([
                     tempRoleName.push(item.roleName);
                     _.extend(self.saveInfo, {'roleId': tempRoleList.join(','), 'roleName': tempRoleName.join(',')});
                 });
+                self.saveInfo.companyId = self.saveInfo.companyId ? self.saveInfo.companyId - 0 : '';
                 _.extend(self.sourceData, self.saveInfo);
                 if (self.append == true) {
                     self.adminUserService.addUser(self.saveInfo).then(function (res) {
