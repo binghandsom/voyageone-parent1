@@ -166,7 +166,7 @@ define([
                     _.forEach(self.channelList, function (channel) {
                         self.channelIds.push(channel.orderChannelId);
                     });
-                    self.storeService.getStoreByChannelIds(self.channelIds.toLocaleString()).then(function (res) {
+                    self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
                         self.storeAllListCopy = res.data;
                     });
                     // self.storeService.getAllStore(null).then(function (res) {
