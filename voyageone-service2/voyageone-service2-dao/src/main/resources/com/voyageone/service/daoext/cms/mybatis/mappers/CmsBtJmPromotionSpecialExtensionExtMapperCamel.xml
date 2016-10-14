@@ -112,7 +112,7 @@
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultType="Map" parameterType="java.lang.Integer">
+    <select id="selectOne" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel" parameterType="java.lang.Integer">
         select
         *
         from cms_bt_jm_promotion_special_extension

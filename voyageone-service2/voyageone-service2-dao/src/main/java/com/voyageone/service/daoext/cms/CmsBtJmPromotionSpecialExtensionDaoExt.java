@@ -23,11 +23,11 @@ public interface CmsBtJmPromotionSpecialExtensionDaoExt {
      * @param jmPromotionId 聚美活动ID
      * @return
      */
-    Map<String, Object> selectOne(Integer jmPromotionId);
+    CmsBtJmPromotionSpecialExtensionModel selectOne(Integer jmPromotionId);
 
-    int insert(Map<String, Object> record);
+    int insert(CmsBtJmPromotionSpecialExtensionModel record);
 
-    int update(Map<String, Object> record);
+    int update(CmsBtJmPromotionSpecialExtensionModel record);
 
     int delete(Integer id);
 }
