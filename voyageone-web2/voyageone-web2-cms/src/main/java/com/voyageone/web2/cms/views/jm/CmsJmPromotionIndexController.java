@@ -17,10 +17,17 @@ import java.util.Map;
 @RequestMapping( value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ROOT, method = RequestMethod.POST )
 public class CmsJmPromotionIndexController extends CmsController {
 
+    private final CmsBtJmPromotionService service;
+    private final CmsBtJmPromotion3Service service3;
+    private final JmBtDealImportService serviceJmBtDealImport;
+
     @Autowired
-    private CmsBtJmPromotionService service;
-    @Autowired
-    private CmsBtJmPromotion3Service service3;
+    public CmsJmPromotionIndexController(JmBtDealImportService serviceJmBtDealImport, CmsBtJmPromotionService service,
+                                         CmsBtJmPromotion3Service service3) {
+        this.serviceJmBtDealImport = serviceJmBtDealImport;
+        this.service = service;
+        this.service3 = service3;
+    }
 
     @RequestMapping(CmsUrlConstants.PROMOTION.LIST.INDEX.INIT)
     public AjaxResponse init() {
@@ -28,7 +35,7 @@ public class CmsJmPromotionIndexController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET_LIST_BY_WHERE)
-    public AjaxResponse getListByWhere(@RequestBody Map params) {
+    public AjaxResponse getListByWhere(@RequestBody Map<String, Object> params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(service.getListByWhere(params));
@@ -88,7 +95,7 @@ public class CmsJmPromotionIndexController extends CmsController {
      * 聚美专场新增，不使用原有的"CmsPromotionIndexController.getPage (/cms/promotion/index/getPage)"
      */
     @RequestMapping("getJmPromList")
-    public AjaxResponse getJmPromotionList(@RequestBody Map params) {
+    public AjaxResponse getJmPromotionList(@RequestBody Map<String, Object> params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(service.getJmPromotionList(params));
@@ -96,13 +103,10 @@ public class CmsJmPromotionIndexController extends CmsController {
 
     //获取数量
     @RequestMapping("getJmPromCount")
-    public AjaxResponse getCount(@RequestBody Map params) {
+    public AjaxResponse getCount(@RequestBody Map<String, Object> params) {
         params.put("channelId", getUser().getSelChannelId());
         return success(service.getJmPromotionCount(params));
     }
-
-    @Autowired
-    JmBtDealImportService serviceJmBtDealImport;
 
     //"/cms/jmpromotion/index/importJM"
     @RequestMapping(value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ImportJM, method = RequestMethod.GET)
