@@ -225,10 +225,13 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
             return false;
         }
 
-        if (sku_cspuIdField == null) {
-            $warn(this.getClass().getName() + " requires sku cspuId!");
-            return false;
-        }
+        // deleted by morse.lu 2016/10/13 start
+        // 可能没有规格，有部分类目，因为一个产品只有一个规格，所以商品不需要填规格，schema也没有规格属性
+//        if (sku_cspuIdField == null) {
+//            $warn(this.getClass().getName() + " requires sku cspuId!");
+//            return false;
+//        }
+        // deleted by morse.lu 2016/10/13 end
 
         return true;
     }
@@ -336,7 +339,7 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                     if (sku_sizeField != null && fieldId.equals(sku_sizeField.getId())) {
                         continue;
                     }
-                    if (fieldId.equals(sku_cspuIdField.getId())) {
+                    if (sku_cspuIdField != null && fieldId.equals(sku_cspuIdField.getId())) {
                         skuFieldValue.setSingleCheckFieldValue(fieldId, new Value(expressionParser.getSxData().getDarwinSkuProps(cmsSkuProp.getSkuCode(), false).getCspuId()));
                         continue;
                     }

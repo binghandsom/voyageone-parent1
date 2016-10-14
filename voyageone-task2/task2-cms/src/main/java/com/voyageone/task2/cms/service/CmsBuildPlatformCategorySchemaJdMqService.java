@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.category.AttValue;
 import com.jd.open.api.sdk.response.category.CategoryAttributeSearchResponse;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -48,6 +49,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
+    @Autowired
+    private GetAllPlatformsInfoService getAllPlatformsInfoService;
+
     // 京东类目属性的属性类型(3:可变属性)
     private final static String Attribute_Type_3 = "3";
 
@@ -62,7 +66,97 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
-        setJdCategoryAttrInfo(taskControlList);
+        // modified by morse.lu 2016/10/11 start
+        // 根据参数不同，做法不同
+//        setJdCategoryAttrInfo(taskControlList);
+        if (messageMap == null || messageMap.isEmpty()) {
+            // 无参数
+            int[] carts = {CartEnums.Cart.JD.getValue(), CartEnums.Cart.JG.getValue(), CartEnums.Cart.JGJ.getValue(), CartEnums.Cart.JGY.getValue()};
+            for (Integer cartId : carts) {
+                getAllPlatformsInfoService.doJdPlatformCategory(cartId);
+            }
+        } else {
+            // 有参数
+            // 执行方式
+            String runType;
+            if (messageMap.containsKey("runType")) {
+                runType = String.valueOf(messageMap.get("runType"));
+            } else {
+                $error("天猫平台类目schema信息取得(MQ): 输入参数不存在: runType");
+                return;
+            }
+
+            // 其他参数
+            String channelId = null;
+            if (messageMap.containsKey("channelId")) {
+                channelId = String.valueOf(messageMap.get("channelId"));
+            }
+            String cartId = null;
+            if (messageMap.containsKey("cartId")) {
+                cartId = String.valueOf(messageMap.get("cartId"));
+            }
+            String categoryId = null;
+            if (messageMap.containsKey("categoryId")) {
+                categoryId = String.valueOf(messageMap.get("categoryId"));
+            }
+            String categoryPath = null;
+            if (messageMap.containsKey("categoryPath")) {
+                categoryPath = String.valueOf(messageMap.get("categoryPath"));
+            }
+
+            switch (runType) {
+                case "1":
+                    if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId)) {
+                        // 出错了
+                        $error("京东平台类目schema信息取得(MQ): 输入参数错误: 需要字符串形式的channelId和cartId");
+                        return;
+                    } else {
+//                        ShopBean shopBean = Shops.getShop(channelId, cartId);
+                        getAllPlatformsInfoService.doJdPlatformCategory(Integer.valueOf(cartId));
+                    }
+                    break;
+                case "2":
+                    if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId) || (StringUtils.isEmpty(categoryId) && StringUtils.isEmpty(categoryPath))) {
+                        // 出错了
+                        $error("京东平台类目schema信息取得(MQ): 输入参数错误: 需要字符串形式的channelId和cartId和categoryId和categoryPath");
+                        return;
+                    } else {
+                        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+                        if ("1".equals(categoryId) || "京东共通".equals(categoryPath)) {
+                            getAllPlatformsInfoService.doJdPlatformCategoryCommon(shopBean, Integer.valueOf(cartId));
+                        } else {
+                            CmsMtPlatformCategorySchemaModel schemaModel;
+                            if (!StringUtils.isEmpty(categoryId)) {
+                                schemaModel = platformCategoryService.getPlatformCatSchema(categoryId, Integer.valueOf(cartId));
+                            } else {
+                                schemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, Integer.valueOf(cartId));
+                            }
+
+                            if (schemaModel == null) {
+                                $error("环境里没有此类目,新增加的话,参数categoryId和categoryPath必须都输入!不是的话,请检查参数是否正确!");
+                                return;
+                            }
+
+                            CmsMtPlatformCategoryTreeModel platformCategoriesModel = new CmsMtPlatformCategoryTreeModel();
+                            platformCategoriesModel.setChannelId(channelId);
+                            platformCategoriesModel.setCartId(Integer.valueOf(cartId));
+                            platformCategoriesModel.setCatId(schemaModel.getCatId());
+                            platformCategoriesModel.setCatPath(schemaModel.getCatFullPath());
+
+                            getAllPlatformsInfoService.doJdPlatformCategorySub(Integer.valueOf(cartId), platformCategoriesModel, shopBean);
+                        }
+                    }
+                    break;
+                default:
+                    $error("京东平台类目schema信息取得(MQ): 输入参数错误: runType: 执行方式 (\"1\": 指定channel和cart, \"2\": 指定channel和cart和category和categoryPath): 当前输入值为" + runType);
+                    return;
+            }
+
+        }
+
+        $info("京东平台类目schema信息取得(MQ) success!");
+        // modified by morse.lu 2016/10/11 end
     }
 
     /**
@@ -253,6 +347,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
         // 商品标题（最大45位字符）
         addInputField(productFieldsList, "productTitle", "商品名称", "", true, "45", "");
+
+        // 商品标语（最大45位字符）
+        addInputField(productFieldsList, "productAdContent", "商品标语", "", false, "45", "");
 
         // 长(单位:mm) (必须，最大长度5位, 默认值为50mm)
         addInputField(productFieldsList, "productLengthMm", "长", "50", true, "5", "单位:mm");
