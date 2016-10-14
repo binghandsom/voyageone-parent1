@@ -179,7 +179,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
-    public AjaxResponse batchSynchPrice(@RequestBody BatchSynchPriceParameter parameter) {
+    public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) {
         service3.batchSynchPrice(parameter);
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("id", parameter.getPromotionId());
@@ -189,7 +189,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SynchAllPrice)
-    public AjaxResponse synchAllPrice(@RequestBody int promotionId) {
+    public AjaxResponse syncAllPrice(@RequestBody int promotionId) {
         CallResult result = service3.synchAllPrice(promotionId);
         if (result.isResult()) {
             Map<String, Object> map = new HashMap<String, Object>();
