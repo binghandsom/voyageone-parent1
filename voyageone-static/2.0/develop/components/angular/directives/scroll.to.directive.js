@@ -5,7 +5,7 @@
  * @example: <some-element scroll-to="#cssSelector">something</>
  * @example: <some-element scroll-to="#cssSelector, 200">something</>
  * @example: <some-element scroll-to="300, 200">something</>
- * @example: <some-element scroll-to="#cssSelector, 200, 35">something</>
+ * @example: <some-element scroll-to="#cssSelector, 200, -35">something</>
  * @example: <a href="javascript:void(0)" go-top="200">xxx</a>
  * @user:    tony-piao, jonas
  * @version: 0.2.8
@@ -36,7 +36,7 @@ angular.module("voyageone.angular.directives")
                     } else {
                         option0 = 0;
                     }
-                    $("body").animate({scrollTop: option0 - option[2]}, option[1]);
+                    $("body").animate({scrollTop: option0 + option[2]}, option[1]);
                     return false;
                 });
             }
