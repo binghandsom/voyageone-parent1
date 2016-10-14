@@ -115,12 +115,13 @@ public class CmsJmPromotionService extends BaseService {
                     errCodes.add(orginProduct.getCommon().getFields().getCode());
                 }
             }
-            if (products.size() == 0) {
-                $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
-                rsMap.put("ecd", 3);
-                rsMap.put("errlist", errCodes);
-                return rsMap;
-            }
+            // 取消hashId校验
+//            if (products.size() == 0) {
+//                $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
+//                rsMap.put("ecd", 3);
+//                rsMap.put("errlist", errCodes);
+//                return rsMap;
+//            }
             productCodes = new ArrayList<>();
             for (CmsBtProductModel prodObj : products) {
                 String pCd = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
