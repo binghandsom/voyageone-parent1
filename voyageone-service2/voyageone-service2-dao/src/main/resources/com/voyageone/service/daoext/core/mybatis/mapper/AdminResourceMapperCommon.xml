@@ -63,6 +63,7 @@
             GROUP BY re.id, u.user_account
             )t
             WHERE user_account =  #{userAccount} AND application = #{application} AND res_type &lt; 2
+        ORDER BY weight
     </select>
 
     <select id="selectAllPermConfig" resultType="java.util.Map">
