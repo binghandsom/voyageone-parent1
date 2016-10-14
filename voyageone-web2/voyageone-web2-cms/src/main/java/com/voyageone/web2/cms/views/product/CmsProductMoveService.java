@@ -627,7 +627,7 @@ public class CmsProductMoveService extends BaseViewService {
 
         for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
             // 找到对应的平台信息，看看状态是不是Approved
-            if (cartId == platform.getValue().getCartId()) {
+            if (cartId.equals(platform.getValue().getCartId())) {
                 if (CmsConstants.ProductStatus.Approved.name().equals(platform.getValue().getStatus())) {
                     return false;
                 }

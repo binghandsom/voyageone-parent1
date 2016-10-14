@@ -181,7 +181,9 @@
             AND t2.cart_id = #{cartId,jdbcType=INTEGER}
         </if>
         AND t1.product_code = #{productCode,jdbcType=VARCHAR}
-        AND t2.activity_end >= #{now,jdbcType=VARCHAR}
+        AND IF(LENGTH(t2.activity_end) = 10,CONCAT(t2.activity_end," 23:59:59"),t2.activity_end) >= #{now,jdbcType=VARCHAR}
+        AND t2.active = 1
+        AND t2.is_all_promotion = 0
     </select>
     <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
         insert into voyageone_cms2.cms_bt_promotion_codes

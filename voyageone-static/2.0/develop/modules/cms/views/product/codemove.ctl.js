@@ -3,14 +3,17 @@
  */
 define([
     'cms',
+    'modules/cms/service/product.detail.service',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    cms.controller('CodeMoveController', (function (productDetailService, notify, confirm, alert) {
-        function CodeMoveController(popups) {
+    cms.controller('CodeMoveController', (function () {
+        function CodeMoveController(productDetailService, notify, confirm, alert, popups) {
             this.cartId;
             this.cartName;
             this.prodId;
             this.productCode;
+            this.sourceGroupId;
+            this.sourceGroupName;
 
             this.show = false;
             this.popups = popups;
@@ -31,10 +34,12 @@ define([
                     self.cartName = moveCodeInfo.cartName;
                     self.productCode = moveCodeInfo.productCode;
                 }
-                productDetailService.moveCodeInit({
-                    prodId: scope.productInfo.productId
+                self.productDetailService.moveCodeInit({
+                    productCode: self.productCode,
+                    cartId: self.cartId
                 }).then(function (resp) {
-                    scope.skuList = resp.data.skuList;
+                    self.sourceGroupId = resp.data.sourceGroupId;
+                    self.sourceGroupName = resp.data.sourceGroupName;
                 });
             },
             search: function () {
@@ -58,6 +63,8 @@ define([
             }
 
         };
+
+        // CodeMoveController.$inject = ['productDetailService', 'notify','confirm', 'alert'];
         return CodeMoveController;
     })())
 });
