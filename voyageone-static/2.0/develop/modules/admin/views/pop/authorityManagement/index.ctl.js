@@ -24,11 +24,11 @@ define([
                     self.orgList = res.data;
                 });
             },
-            search:function(value){
-            	var self = this;
+            search: function (value) {
+                var self = this;
                 self.adminUserService.getAuthByUser({
                     'userAccount': self.sourceData[0].userAccount,
-                    'application': value
+                    'application': value != null ? value : ''
                 }).then(function (res) {
                     self.authList = res.data;
                 })
