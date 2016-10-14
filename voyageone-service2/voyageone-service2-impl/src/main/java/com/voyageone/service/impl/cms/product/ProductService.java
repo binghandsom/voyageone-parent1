@@ -1010,6 +1010,8 @@ public class ProductService extends BaseService {
                 updateMap.put("feed.catPath", feed.getCatPath());
             }
 
+            updateMap.put("feed.brand", feed.getBrand());
+
             if (feed.getOrgAtts() != null && !feed.getOrgAtts().isEmpty()) {
                 BasicDBObject orgAttsObj = feed.getOrgAtts().toUpdateBasicDBObject("feed.orgAtts.");
                 updateMap.putAll(orgAttsObj);

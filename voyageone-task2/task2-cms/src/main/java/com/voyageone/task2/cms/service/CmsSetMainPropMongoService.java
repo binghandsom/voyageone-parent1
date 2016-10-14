@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.ctc.wstx.util.DataUtil;
 import com.google.common.base.Joiner;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -44,6 +43,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
@@ -132,6 +132,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
+    @Autowired
+    CmsMasterBrandMappingService cmsMasterBrandMappingService;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -292,11 +294,14 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
         // --------------------------------------------------------------------------------------------
 
+        Map<String,String> mastBrand = null;
+
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
 //        public setMainProp(String orderChannelId, boolean skip_mapping_check, String priceBreakTime) {
         public setMainProp(String orderChannelId, boolean skip_mapping_check) {
             this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
+            this.mastBrand = new HashMap<>();
 //            this.priceBreakTime = priceBreakTime;
         }
 
@@ -445,7 +450,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
         private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
             // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
-            String resultInfo = channelId + " " + channel.getFull_name() + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
                     "所有的feed都不做导入了，请修改好后重新导入]";
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
             resultMap.put(channelId, resultInfo);
@@ -604,7 +609,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             //            $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
 //                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
 
-            String resultInfo = channelId + " " + channel.getFull_name() + " " + strProcName + ":结果 [总件数:" + feedList.size()
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " " + strProcName + ":结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]";
 //            $info(resultInfo);
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
@@ -1363,7 +1368,13 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                    }
 //                    // add by desmond 2016/07/18 end
 //                }
-                //// TODO: 2016/10/10 james 通过feed品牌找到主数据品牌的接口取得对应的主数据的品牌 
+                // 根据feed品牌取得mast对应的品牌
+                String masterBrand = this.mastBrand.get(feed.getBrand());
+                if(StringUtil.isEmpty(masterBrand)){
+                    masterBrand = cmsMasterBrandMappingService.getMasterBrandByFeedBrand(this.channel.getOrder_channel_id(),feed.getBrand());
+                }
+                productCommonField.setBrand(masterBrand);
+                this.mastBrand.put(feed.getBrand(),masterBrand);
             }
 
 
@@ -2636,6 +2647,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // TODO 因为这2个字段是新加的，原来存在的数据的这2个字段需要导入，等全部导过一遍之后，这2句话再移到条件内
             product.getFeed().setCatId(feed.getCatId());
             product.getFeed().setCatPath(feed.getCategory());
+            product.getFeed().setBrand(feed.getBrand());
 
 
             return product;

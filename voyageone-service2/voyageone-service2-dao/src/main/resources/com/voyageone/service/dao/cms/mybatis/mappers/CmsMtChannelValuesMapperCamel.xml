@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtChannelValuesDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtChannelValuesModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `type`, `key`, `value`, `created`, `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `type`, `key`, `value`, `created`, `creater`, `modified`, `modifier` ,`value1`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -43,6 +43,9 @@
             <if test="modifier != null" >
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="value1 != null" >
+                `value1` = #{value1,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -81,6 +84,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="value1 != null" >
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -114,6 +120,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="value1 != null" >
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -144,6 +153,9 @@
             <if test="modifier != null" >
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
+            <if test="value1 != null" >
+                and `value1` = #{value1,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -172,6 +184,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 `modifier`,
+            </if>
+            <if test="value1 != null" >
+                `value1`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -207,6 +222,9 @@
             </if>
             <if test="modifier == null and creater != null" >
                 #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="value1 != null" >
+                #{value1,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>

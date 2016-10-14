@@ -223,8 +223,8 @@ define(function () {
         },
         "tools_common_master_brand_mapping": {
             "hash": "/tools/common/masterBrandMapping",
-            "templateUrl": "views/tools/common/masterBrandMapping.tpl.html",
-            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping.ctl",
+            "templateUrl": "views/tools/common/masterBrandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping/index.ctl",
             "controller": "MasterBrandMappingController as ctrl"
         },
         "tools_product_translation_setting": {
@@ -360,6 +360,12 @@ define(function () {
             "templateUrl": "views/channel/black_brand/list.tpl.html",
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
+        },
+        "maintain_common_master_brand_application": {
+            "hash": "/maintain/common/masterBrandApplication/",
+            "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
+            "controllerUrl": "modules/cms/views/maintain/common/masterBrandApplication/index.ctl",
+            "controller": "masterBrandApplicationController as ctrl"
         }
     };
 });

@@ -208,7 +208,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         // 获取当前usjoi channel, 有多少个platform
         List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "D", "en"); // 取得展示用数据
         if (ListUtils.isNull(usjoiTypeChannelBeanList)) {
-            String errMsg = usjoiChannelId + " " + channelBean.getFull_name() + " com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
+            String errMsg = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) + " com_mt_value_channel表中没有usJoiChannel(" + usjoiChannelId + ")对应的展示用(53 D en)mapping" +
                     "信息,不能插入usJoiGroup信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
             $info(errMsg);
             // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
@@ -237,7 +237,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             });
         }
         if (ListUtils.isNull(approveCartList) || ListUtils.isNull(approveCartList)) {
-            String errMsg = usjoiChannelId + " " + channelBean.getFull_name() + " com_mt_value_channel表中没有usJoiChannel(" +
+            String errMsg = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) + " com_mt_value_channel表中没有usJoiChannel(" +
                     usjoiChannelId + ")对应的可售卖平台(53 A en)mapping信息,不能生成Product.PXX分平台信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
             $info(errMsg);
             // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
@@ -306,7 +306,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             }
         }
 
-        String resultInfo = usjoiChannelId + " " + channelBean.getFull_name() +
+        String resultInfo = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) +
                 " USJOI主店从子店（可能为多个子店）中导入产品结果 [总件数:" + cmsBtSxWorkloadModels.size()
                 + " 成功:" + successCnt + " 失败:" + errCnt + "]";
         // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
@@ -754,11 +754,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
      * @param channelId channel id
      * @param modelCode 品牌方给的model
      * @param cartId    cart id
+     * @param orgChannelId 子店channelId
      * @return group id
      */
-    private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
+    private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId, String orgChannelId) {
         // 先去看看是否有存在的了
-        CmsBtProductGroupModel groupObj = productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
+        CmsBtProductGroupModel groupObj = productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId, orgChannelId);
         return groupObj;
     }
 
@@ -809,8 +810,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 目前的USJOI有京东国际平台, 也有聚美平台(27)
             if (!CartEnums.Cart.JM.getId().equals(currentCartId)
                     && !CartEnums.Cart.CN.getId().equals(currentCartId)) {
-                // 官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
-                group = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), currentCartId);
+                // 聚美和官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
+                // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
+                // 例如:A店铺的Product1(model="model0001")已经生成了group信息，然后B店铺的Product2(model="model0001")就会查出来Product1对应的group,会把B店铺的Product2加到A店铺的Product1对应的group中去
+                group = getGroupIdByFeedModel(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(),
+                        currentCartId, cmsBtProductModel.getOrgChannelId());
             }
 
             // group id
