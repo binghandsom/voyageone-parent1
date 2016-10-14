@@ -16,11 +16,18 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionSpecialExtensionDaoExt {
 
-        CmsBtJmPromotionSpecialExtensionModel selectOne(Object map);
 
-        int insert(CmsBtJmPromotionSpecialExtensionModel record);
+    /**
+     * 查询聚美活动扩展信息
+     *
+     * @param jmPromotionId 聚美活动ID
+     * @return
+     */
+    Map<String, Object> selectOne(Integer jmPromotionId);
 
-        int update(CmsBtJmPromotionSpecialExtensionModel record);
+    int insert(Map<String, Object> record);
 
-        int delete(Integer id);
+    int update(Map<String, Object> record);
+
+    int delete(Integer id);
 }

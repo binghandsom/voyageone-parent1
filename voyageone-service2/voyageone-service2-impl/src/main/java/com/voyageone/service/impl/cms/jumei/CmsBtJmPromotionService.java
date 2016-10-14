@@ -144,9 +144,9 @@ public class CmsBtJmPromotionService extends BaseService {
                 } else {
                     // 新建扩展信息
                     if (extModel == null) {
-                        extModel = new HashMap<>();
+                        extModel = new CmsBtJmPromotionSpecialExtensionModel();
                     }
-                    extModel.put("created", userName);
+                    extModel.setCreater(userName);
                     jmPromotionSpecialExtensionDao.insert(extModel);
                 }
             }
