@@ -5,11 +5,16 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
+import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
@@ -22,7 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * 聚美活动新增商品
@@ -34,15 +40,23 @@ class CmsJmPromotionService extends BaseViewService {
     private final CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
     private final CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service;
     private final CmsAdvanceSearchService advanceSearchService;
+    private final TagService tagService;
+    private final CmsBtJmPromotionService jmPromotionService;
+    private final CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
 
     @Autowired
     public CmsJmPromotionService(CmsBtProductDao productDao, CmsAdvanceSearchService advanceSearchService,
                                  CmsBtJmProductDaoExt cmsBtJmProductDaoExt,
-                                 CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service) {
+                                 CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service,
+                                 TagService tagService, CmsBtJmPromotionService jmPromotionService,
+                                 CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
         this.productDao = productDao;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtJmProductDaoExt = cmsBtJmProductDaoExt;
         this.cmsBtJmPromotionImportTask3Service = cmsBtJmPromotionImportTask3Service;
+        this.tagService = tagService;
+        this.jmPromotionService = jmPromotionService;
+        this.tagJmModuleExtensionDao = tagJmModuleExtensionDao;
     }
 
     /**
@@ -147,6 +161,26 @@ class CmsJmPromotionService extends BaseViewService {
         return rsMap;
     }
 
+    /**
+     * 获取活动聚美模块数据
+     */
+    List<HashMap<String, Object>> getPromotionTagModules(int jmPromotionId) {
+
+        CmsBtJmPromotionModel jmPromotionModel = jmPromotionService.select(jmPromotionId);
+
+        List<CmsBtTagModel> tagModelList = tagService.getListByParentTagId(jmPromotionModel.getRefTagId());
+
+        return tagModelList.stream().map(tagModel -> {
+
+            CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagJmModuleExtensionDao.select(tagModel.getId());
+
+            return new HashMap<String, Object>(){{
+                put("tag", tagModel);
+                put("module", jmModuleExtensionModel);
+            }};
+        }).collect(toList());
+    }
+
     private ProductImportBean buildProductFrom(CmsBtProductModel model, CmsBtJmPromotionModel promotion) {
         CmsBtProductModel_Field fields = model.getCommon().getFields();
         ProductImportBean bean = new ProductImportBean();
@@ -197,7 +231,7 @@ class CmsJmPromotionService extends BaseViewService {
             bean.setDealPrice(finalPrice);
             bean.setDiscount(discount);
             return bean;
-        }).collect(Collectors.toList());
+        }).collect(toList());
     }
 
     /**

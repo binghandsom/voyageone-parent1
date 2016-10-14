@@ -47,6 +47,8 @@ public class CmsJmPromotionDetailController extends CmsController {
     private final CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku;
     //end 2
 
+    private final CmsJmPromotionService jmPromotionService;
+
     @Autowired
     public CmsJmPromotionDetailController(CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct,
                                           CmsBtJmPromotionSku3Service service3CmsBtJmPromotionSku,
@@ -55,7 +57,8 @@ public class CmsJmPromotionDetailController extends CmsController {
                                           CmsBtJmPromotionProduct3Service service3,
                                           CmsBtJmProductService cmsBtJmProductService,
                                           CmsBtJmMasterBrandService cmsBtJmMasterBrandService,
-                                          CmsBtJmSkuService cmsBtJmSkuService, MqSender sender) {
+                                          CmsBtJmSkuService cmsBtJmSkuService, MqSender sender,
+                                          CmsJmPromotionService jmPromotionService) {
         this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
         this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
         this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
@@ -65,6 +68,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         this.cmsBtJmMasterBrandService = cmsBtJmMasterBrandService;
         this.cmsBtJmSkuService = cmsBtJmSkuService;
         this.sender = sender;
+        this.jmPromotionService = jmPromotionService;
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
@@ -271,4 +275,9 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(count);
     }
     //jm2 end
+
+    @RequestMapping("getPromotionTagModules")
+    public AjaxResponse getPromotionTagModules(@RequestBody int jmPromotionId) {
+        return success(jmPromotionService.getPromotionTagModules(jmPromotionId));
+    }
 }

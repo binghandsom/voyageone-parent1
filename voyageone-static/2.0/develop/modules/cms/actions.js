@@ -236,7 +236,8 @@ define(function () {
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
                     updatePromotionProduct: "updatePromotionProduct",
-                    updatePromotionProductTag: "updatePromotionProductTag"
+                    updatePromotionProductTag: "updatePromotionProductTag",
+                    getPromotionTagModules: 'getPromotionTagModules'
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
