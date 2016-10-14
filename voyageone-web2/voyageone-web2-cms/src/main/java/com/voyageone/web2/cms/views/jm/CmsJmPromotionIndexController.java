@@ -4,6 +4,7 @@ import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -38,7 +39,11 @@ public class CmsJmPromotionIndexController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetEditModel)
     public AjaxResponse getEditModel(@RequestBody int id) {
-        return success(service.getEditModel(id));
+        CmsBtJmPromotionSaveBean parameter = new CmsBtJmPromotionSaveBean();
+        CmsBtJmPromotionModel model = new CmsBtJmPromotionModel();
+        model.setId(id);
+        parameter.setModel(model);
+        return success(service.getEditModel(parameter));
     }
 
     /**

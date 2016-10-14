@@ -197,7 +197,7 @@ define(function () {
                     "getJmPromCount": "getJmPromCount",
                     "getListByWhere": "getListByWhere",
                     "getEditModel": "getEditModel",
-                    "GetEditModelExt": "GetEditModelExt",
+                    "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId"

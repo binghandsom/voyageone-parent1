@@ -14,7 +14,8 @@ define([
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
-            jmPromotionService.GetEditModelExt($routeParams.jmpromId).then(function (res) {
+            var params = {model:{id: $routeParams.jmpromId}};
+            jmPromotionService.getEditModelExt(params).then(function (res) {
                 $scope.vm.isBeginPre = res.data.isBeginPre;       //预热是否开始
                 $scope.vm.isEnd = res.data.isEnd;                //活动是否结束
                 $scope.editModel.model = res.data.model;
