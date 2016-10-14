@@ -112,20 +112,12 @@
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel" parameterType="Map">
+    <select id="selectOne" resultType="Map" parameterType="java.lang.Integer">
         select
         *
         from cms_bt_jm_promotion_special_extension
         <where >
-            <if test="id != null" >
-                `id` = #{id,jdbcType=INTEGER}
-            </if>
-            <if test="promotionId != null" >
-                and `promotion_id` = #{promotionId,jdbcType=INTEGER}
-            </if>
-            <if test="jmPromotionId != null" >
-                and `jmpromotion_id` = #{jmPromotionId,jdbcType=INTEGER}
-            </if>
+            `jmpromotion_id` = #{jmPromotionId,jdbcType=INTEGER}
         </where>
     </select>
 
