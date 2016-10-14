@@ -16,6 +16,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +69,10 @@ public class CmsBtJmPromotionService extends BaseService {
 
     public int insert(CmsBtJmPromotionModel entity) {
         return dao.insert(entity);
+    }
+
+    public CmsBtJmPromotionSpecialExtensionModel getJmPromotionSpecial(Integer jmPromotionId){
+        return jmPromotionSpecialExtensionDao.selectOne(jmPromotionId);
     }
 
     public CmsBtJmPromotionSaveBean getEditModel(CmsBtJmPromotionSaveBean info) {
