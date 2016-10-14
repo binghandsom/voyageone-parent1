@@ -33,11 +33,26 @@ public class CmsJmPromotionIndexController extends CmsController {
         return success(service.getListByWhere(params));
     }
 
+    /**
+     * 编辑聚美专场活动时，取得活动信息
+     */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetEditModel)
     public AjaxResponse getEditModel(@RequestBody int id) {
         return success(service.getEditModel(id));
     }
 
+    /**
+     * 暂存和保存活动详细信息时，取得活动信息(包含扩展信息)
+     */
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetEditModelExt)
+    public AjaxResponse getEditModelExt(@RequestBody CmsBtJmPromotionSaveBean parameter) {
+        return success(service.getEditModel(parameter));
+    }
+
+    /**
+     * 保存活动信息
+     * 包括新建和编辑聚美专场活动, 暂存和保存活动详细信息
+     */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.SaveModel)
     public AjaxResponse saveModel(@RequestBody CmsBtJmPromotionSaveBean parameter) {
         String channelId = getUser().getSelChannelId();

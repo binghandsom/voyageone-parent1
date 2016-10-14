@@ -8,10 +8,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
-import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -45,6 +42,8 @@ public class CmsBtJmPromotionService extends BaseService {
     CmsBtPromotionDao daoCmsBtPromotion;
     @Autowired
     CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
+    @Autowired
+    private CmsBtJmPromotionSpecialExtensionDao jmPromotionSpecialExtensionDao;
 
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
@@ -73,8 +72,8 @@ public class CmsBtJmPromotionService extends BaseService {
         return dao.insert(entity);
     }
 
-    public CmsBtJmPromotionSaveBean getEditModel(int id) {
-        CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
+    public CmsBtJmPromotionSaveBean getEditModel(CmsBtJmPromotionSaveBean info) {
+        int id = info.getModel().getId();
         CmsBtJmPromotionModel model = dao.select(id);
         if (model == null) {
             $warn("getEditModel 查询结果为空 id=" + id);
@@ -92,6 +91,16 @@ public class CmsBtJmPromotionService extends BaseService {
         long activityEndTime = DateTimeUtilBeijing.toLocalTime(model.getActivityEnd());//北京时间转本地时区时间戳
         info.setIsBeginPre(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         info.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
+
+        // 取得扩展信息
+        if (info.isHasExt()) {
+            // 活动详情编辑
+            Map extModel = info.getExtModel();
+            if (extModel != null && extModel.get("id") != null) {
+                info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(extModel));
+            }
+        }
+
         return info;
     }
 
@@ -128,6 +137,17 @@ public class CmsBtJmPromotionService extends BaseService {
             parameter.getModel().setModifier(userName);
             updateModel(parameter);
             saveCmsBtPromotion(parameter.getModel());
+            if (parameter.isHasExt()) {
+                // 活动详情编辑
+                Map extModel = parameter.getExtModel();
+                if (extModel != null && extModel.get("id") != null) {
+                    // 保存
+                    jmPromotionSpecialExtensionDao.update(extModel);
+                } else {
+                    // 新建扩展信息
+                    jmPromotionSpecialExtensionDao.insert(extModel);
+                }
+            }
         } else {
             // 新增
             parameter.getModel().setModifier(userName);
