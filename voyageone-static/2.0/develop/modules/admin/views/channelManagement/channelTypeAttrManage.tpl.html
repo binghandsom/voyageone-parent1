@@ -126,13 +126,22 @@
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.typeName}}</td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.name.length <= 10">{{list.name}}</label>
+                        <label ng-if="list.name.length > 10">
+                            <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.value" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.value.length <= 10">{{list.value}}</label>
+                        <label ng-if="list.value.length > 10">
+                            <popover-text content="list.value" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.addName1" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.addName1.length <= 10">{{list.addName1}}</label>
+                        <label ng-if="list.addName1.length > 10">
+                            <popover-text content="list.addName1" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">{{list.addName2}}</td>
                     <td class="text-left v-middle">{{list.langId?list.langId=='en'?'英文':'中文':''}}</td>

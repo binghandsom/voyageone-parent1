@@ -118,10 +118,17 @@
                         </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.typeName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.typeName.length <= 10">{{list.typeName}}</label>
+                        <label ng-if="list.typeName.length > 10">
+                            <popover-text content="list.typeName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text></td>
+                        <label ng-if="list.name.length <= 10">{{list.name}}</label>
+                        <label ng-if="list.name.length > 10">
+                            <popover-text content="list.name" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
+                    </td>
                     <td class="text-left v-middle">
                         <label ng-if="list.value.length<12">{{list.value}}</label>
                         <popover-text ng-if="list.value.length>12" content="list.name" direct="top" popover-trigger="mouseenter"></popover-text></td>

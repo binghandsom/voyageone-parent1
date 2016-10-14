@@ -113,28 +113,52 @@
                     </td>
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propName.length <= 10">{{list.propName}}</label>
+                        <label ng-if="list.propName.length > 10">
+                            <popover-text content="list.propName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal1" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal1.length <= 10">{{list.propVal1}}</label>
+                        <label ng-if="list.propVal1.length > 10">
+                            <popover-text content="list.propVal1" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal2" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal2.length <= 10">{{list.propVal2}}</label>
+                        <label ng-if="list.propVal2.length > 10">
+                            <popover-text content="list.propVal2" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal3" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal3.length <= 10">{{list.propVal3}}</label>
+                        <label ng-if="list.propVal3.length > 10">
+                            <popover-text content="list.propVal3" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal4" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal4.length <= 10">{{list.propVal4}}</label>
+                        <label ng-if="list.propVal4.length > 10">
+                            <popover-text content="list.propVal4" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal5" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal5.length <= 10">{{list.propVal5}}</label>
+                        <label ng-if="list.propVal5.length > 10">
+                            <popover-text content="list.propVal5" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.propVal6" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.propVal6.length <= 10">{{list.propVal6}}</label>
+                        <label ng-if="list.propVal6.length > 10">
+                            <popover-text content="list.propVal6" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.comment" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.comment.length <= 10">{{list.comment}}</label>
+                        <label ng-if="list.comment.length > 10">
+                            <popover-text content="list.comment" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-center v-middle">{{list.active?list.active==true ? '启用':'禁用':''}}</td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
