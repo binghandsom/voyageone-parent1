@@ -56,6 +56,11 @@ public class CmsBtTagJmModuleExtensionModel extends BaseModel {
      */
     protected Boolean noStockToLast;
 
+    /**
+     * 是否为头图模块
+     */
+    protected Boolean header;
+
     public Integer getTagId() {
         return tagId;
     }
@@ -126,5 +131,13 @@ public class CmsBtTagJmModuleExtensionModel extends BaseModel {
 
     public void setNoStockToLast(Boolean noStockToLast) {
         this.noStockToLast = noStockToLast;
+    }
+
+    public Boolean getHeader() {
+        return header;
+    }
+
+    public void setHeader(Boolean header) {
+        this.header = header;
     }
 }

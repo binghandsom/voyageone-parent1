@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel" />
     <sql id="Base_Column_List" >
         `tag_id`, `module_title`, `hide_flag`, `display_start_time`, `display_end_time`, 
-        `shelf_type`, `image_type`, `products_sort_by`, `no_stock_to_last`
+        `shelf_type`, `image_type`, `products_sort_by`, `no_stock_to_last`, `header`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -40,6 +40,9 @@
             </if>
             <if test="noStockToLast != null" >
                 `no_stock_to_last` = #{noStockToLast,jdbcType=BIT},
+            </if>
+            <if test="header != null" >
+                `header` = #{header,jdbcType=BIT},
             </if>
         </set>
         where `tag_id` = #{tagId,jdbcType=INTEGER}
@@ -79,6 +82,9 @@
             <if test="noStockToLast != null" >
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
             </if>
+            <if test="header != null" >
+                and `header` = #{header,jdbcType=BIT}
+            </if>
         </where>
         limit 1
     </select>
@@ -112,6 +118,9 @@
             <if test="noStockToLast != null" >
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
             </if>
+            <if test="header != null" >
+                and `header` = #{header,jdbcType=BIT}
+            </if>
         </where>
     </select>
 
@@ -141,6 +150,9 @@
             </if>
             <if test="noStockToLast != null" >
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
+            </if>
+            <if test="header != null" >
+                and `header` = #{header,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -172,6 +184,9 @@
             <if test="noStockToLast != null" >
                 `no_stock_to_last`,
             </if>
+            <if test="header != null" >
+                `header`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="moduleTitle != null" >
@@ -197,6 +212,9 @@
             </if>
             <if test="noStockToLast != null" >
                 #{noStockToLast,jdbcType=BIT},
+            </if>
+            <if test="header != null" >
+                #{header,jdbcType=BIT},
             </if>
         </trim>
     </insert>
