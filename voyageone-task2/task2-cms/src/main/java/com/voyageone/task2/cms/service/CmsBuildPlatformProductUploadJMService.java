@@ -689,13 +689,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 }
                                 else
                                 {
-                                    //如果MySQL库中没有这条SPU,则新增一条
+                                    // 如果MySQL库中没有这条SKU,则新增一条
                                     CmsBtJmSkuModel mySku = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     mySku.setJmSpuNo(oldSku.getSpu_no());
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
                                     mySku.setModified(new Date());
-                                    cmsBtJmSkuDao.insert(mySku);
+                                    // 这里不追加的话，后面还以为这个sku还是不存在，再insert就会出错
+                                    skuList.add(mySku);
                                 }
                             }
                             //更新Spu失败
@@ -740,6 +741,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                         mySku.setModifier(getTaskName());
                                         mySku.setModified(new Date());
                                         cmsBtJmSkuDao.update(mySku);
+                                    } else
+                                    {
+                                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                        cmsBtJmSkuModel.setJmSpuNo(oldSku.getSpu_no());
+                                        cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+
+                                        skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                     }
                                 }
                                 // 更新商品时,向Deal中增加Sku失败
