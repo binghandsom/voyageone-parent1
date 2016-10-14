@@ -14,7 +14,13 @@ import java.util.Map;
 @Repository
 public interface CmsBtJmPromotionSpecialExtensionDao {
 
-    Map<String, Object> selectOne(Object map);
+    /**
+     * 查询聚美活动扩展信息
+     *
+     * @param jmPromotionId 聚美活动ID
+     * @return
+     */
+    Map<String, Object> selectOne(Integer jmPromotionId);
 
     int insert(Map<String, Object> record);
 
