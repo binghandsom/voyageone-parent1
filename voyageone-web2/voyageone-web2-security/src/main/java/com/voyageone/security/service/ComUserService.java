@@ -61,7 +61,7 @@ public class ComUserService {
      * @param account
      * @param password
      */
-    public void login(String account, String password, String app)
+    public ComUserModel login(String account, String password, String app)
     {
         Subject user = SecurityUtils.getSubject();
 
@@ -81,9 +81,6 @@ public class ComUserService {
             throw new BusinessException("A005", "authentication failed.", e);
         }
 
-
-
-
         ComUserModel userModel = new ComUserModel();
         userModel.setUserAccount(account);
         userModel =comUserDao.selectOne(userModel);
@@ -98,10 +95,10 @@ public class ComUserService {
 
 
         //如果user的密码不是自己设的，则强制要求修改密码
-        if(!userModel.getModifier().equals(account))
-        {
-            throw new BusinessException("A006", "need change password.", null);
-        }
+//        if(!userModel.getModifier().equals(account))
+//        {
+//            throw new BusinessException("A006", "need change password.", null);
+//        }
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication(app);
@@ -113,6 +110,8 @@ public class ComUserService {
         model.setIp(clientIP);
 
         comLoginLogDao.insert(model);
+
+        return userModel;
     }
 
 
