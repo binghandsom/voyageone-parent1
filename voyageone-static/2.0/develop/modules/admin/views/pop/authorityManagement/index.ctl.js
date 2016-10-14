@@ -26,9 +26,10 @@ define([
             },
             search: function (value) {
                 var self = this;
+                if (value == null) return;
                 self.adminUserService.getAuthByUser({
                     'userAccount': self.sourceData[0].userAccount,
-                    'application': value != null ? value : ''
+                    'application': value
                 }).then(function (res) {
                     self.authList = res.data;
                 })
