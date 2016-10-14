@@ -3,18 +3,18 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionSpecialExtensionDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel" />
     <sql id="Base_Column_List" >
-        `id`, `promotion_id`, `jmpromotion_id`, `promotion_product_type`, `display_platform`, 
-        `main_channel`, `session_type`, `session_category`, `pre_display_channel`, `enter_guide`, 
-        `main_title`, `subtitle`, `marketing_title`, `marketing_copywriter`, `promotional_copy`, 
-        `sync_mobile`, `show_hidden_deal`, `show_sold_out_deal`, `show_mobile`, `app_page_id`, 
-        `pc_page_id`, `share_title`, `share_content`, `is_promotion_full_minus`, `promotion_full_amount`, 
-        `promotion_minus_amount`, `is_promotion_eachfull_minus`, `promotion_eachfull_amount`, 
-        `promotion_eachminus_amount`, `jm_coupons`, `jm_coupons_money`, `vo_coupons`, `vo_coupons_money`, 
+        `id`, `promotion_id`, `jmpromotion_id`, `promotion_product_type`, `display_platform`,
+        `main_channel`, `session_type`, `session_category`, `pre_display_channel`, `enter_guide`,
+        `main_title`, `subtitle`, `marketing_title`, `marketing_copywriter`, `promotional_copy`,
+        `sync_mobile`, `show_hidden_deal`, `show_sold_out_deal`, `show_mobile`, `app_page_id`,
+        `pc_page_id`, `share_title`, `share_content`, `is_promotion_full_minus`, `promotion_full_amount`,
+        `promotion_minus_amount`, `is_promotion_eachfull_minus`, `promotion_eachfull_amount`,
+        `promotion_eachminus_amount`, `jm_coupons`, `jm_coupons_money`, `vo_coupons`, `vo_coupons_money`,
         `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from cms_bt_jm_promotion_special_extension
         where `id` = #{id,jdbcType=INTEGER}
@@ -261,7 +261,7 @@
     </select>
 
     <select id="selectList" resultMap="BaseResultMap" >
-        select 
+        select
         <include refid="Base_Column_List" />
         from cms_bt_jm_promotion_special_extension
         <where >

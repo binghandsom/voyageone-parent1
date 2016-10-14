@@ -143,6 +143,10 @@ public class CmsBtJmPromotionService extends BaseService {
                     jmPromotionSpecialExtensionDao.update(extModel);
                 } else {
                     // 新建扩展信息
+                    if (extModel == null) {
+                        extModel = new HashMap<>();
+                    }
+                    extModel.put("created", userName);
                     jmPromotionSpecialExtensionDao.insert(extModel);
                 }
             }
