@@ -1,78 +1,100 @@
 define([
     'cms',
-    'underscore',
     'modules/cms/controller/popup.ctl'
-], function (cms, _) {
+], function (cms) {
 
-    function SpEditDirectiveController($scope, $routeParams, jmPromotionService, alert, confirm, $translate, $filter) {
+    function SpEditDirectiveController($routeParams, jmPromotionService, alert, confirm, $translate, $filter) {
+        this.$routeParams = $routeParams;
+        this.jmPromotionService = jmPromotionService;
+        this.alert = alert;
+        this.confirm = confirm;
+        this.$translate = $translate;
+        this.$filter = $filter;
+        this.vm = {"jmMasterBrandList": []};
+        this.editModel = {model: {}};
+        this.datePicker = [];
+    }
 
-        $scope.vm = {"jmMasterBrandList":[]};
-        $scope.editModel = {model:{}};
-        $scope.datePicker = [];
+    SpEditDirectiveController.prototype.init = function () {
+        var self = this,
+            vm = self.vm,
+            routeParams = self.$routeParams,
+            editModel = self.editModel,
+            jmPromotionService = self.jmPromotionService;
 
-        $scope.initialize = function () {
-            jmPromotionService.init().then(function (res) {
-                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
-            });
-            var params = {model:{id: $routeParams.jmpromId}};
-            jmPromotionService.getEditModelExt(params).then(function (res) {
-                $scope.vm.isBeginPre = res.data.isBeginPre;       //预热是否开始
-                $scope.vm.isEnd = res.data.isEnd;                //活动是否结束
-                $scope.editModel.model = res.data.model;
-                $scope.editModel.tagList = res.data.tagList;
-                $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
-                $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
-                $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
-                $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
-                $scope.editModel.model.signupDeadline = formatToDate($scope.editModel.model.signupDeadline);
-                if ($scope.editModel.model.promotionType) {
-                    $scope.editModel.model.promotionType = $scope.editModel.model.promotionType.toString();
-                }
-                // 转换活动场景的值
-                if ($scope.editModel.model.promotionScene) {
-                    var sceneArr = $scope.editModel.model.promotionScene.split(",");
-                    for (idx in sceneArr) {
-                        $scope.editModel.model['promotionScene_' + sceneArr[idx]] = true;
-                    }
-                }
-            });
-        };
+        jmPromotionService.init().then(function (res) {
+            vm.jmMasterBrandList = res.data.jmMasterBrandList;
+        });
 
-        $scope.addTag = function () {
-            if ($scope.editModel.tagList) {
-                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "",active:1});
-            } else {
-                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
+        jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}}).then(function (res) {
+            vm.isBeginPre = res.data.isBeginPre;      //预热是否开始
+            vm.isEnd = res.data.isEnd;                //活动是否结束
+            editModel.model = res.data.model;
+            editModel.tagList = res.data.tagList;
+            editModel.model.activityStart = formatToDate(editModel.model.activityStart);
+            editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
+            editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
+            editModel.model.prePeriodEnd = formatToDate(editModel.model.prePeriodEnd);
+            editModel.model.signupDeadline = formatToDate(editModel.model.signupDeadline);
+
+            if (editModel.model.promotionType) {
+                editModel.model.promotionType = editModel.model.promotionType.toString();
             }
-        };
 
-        $scope.getTagList = getTagList;
-        function getTagList(){
-            var tagList = _.filter( $scope.editModel.tagList, function(tag){ return tag.active==1; });
-            return tagList || [];
+            // 转换活动场景的值
+            if (editModel.model.promotionScene) {
+                var sceneArr = editModel.model.promotionScene.split(",");
+                for (var attr in sceneArr) {
+                    editModel.model['promotionScene_' + sceneArr[attr]] = true;
+                }
+            }
+        });
+
+    };
+
+    SpEditDirectiveController.prototype.addTag = function () {
+        var self = this,
+            editModel = self.editModel;
+
+        if (editModel.tagList) {
+            editModel.tagList.push({"id": "", "channelId": "", "tagName": "", active: 1});
+        } else {
+            editModel.tagList = [{"id": "", "channelId": "", "tagName": "", active: 1}];
         }
+    };
 
-        $scope.delTag = function (tag) {
-            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
-                .then(function () {
-                    tag.active=0;
-                });
-        };
+    SpEditDirectiveController.prototype.getTagList = function () {
+        var self = this,
+            editModel = self.editModel;
 
-        /**
-         *
-         * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
-         * @returns {Date}
-         */
-        function formatToDate(date){
-            return new Date(date) ;//$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
-        }
+        return _.filter( editModel.tagList, function(tag){ return tag.active==1; }) || [];
+    };
+
+    SpEditDirectiveController.prototype.delTag = function () {
+        var self = this,
+            confirm = self.confirm,
+            translate = self.$translate;
+
+        confirm(translate.instant('TXT_MSG_DELETE_ITEM'))
+            .then(function () {
+                tag.active=0;
+            });
+    };
+
+    /**
+     * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
+     * @returns {Date}
+     */
+    function formatToDate(date) {
+        //$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+        return new Date(date);
     }
 
     cms.directive('spEdit', [function spEditDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$scope', '$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', SpEditDirectiveController],
+            controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', SpEditDirectiveController],
+            controllerAs: 'ctrl',
             templateUrl: '/modules/cms/views/jmpromotion/spedit.directive.html'
         }
     }]);

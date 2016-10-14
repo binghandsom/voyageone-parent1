@@ -1,5 +1,5 @@
-<section ng-init="initialize()" style="position: relative">
-    <form role="form" class="form-horizontal" name="promotionForm" novalidate>
+<section ng-init="ctrl.init()" style="position: relative">
+    <form role="form" class="form-horizontal" name="ctrl.promotionForm" novalidate>
         <div id="jm-sp-edit-base" class="panel panel-vo">
             <div class="panel-heading">
                 <h4 class="panel-title">活动基本信息</h4>
@@ -15,13 +15,13 @@
                     <label class="col-sm-2 control-label s-required">活动名称</label>
                     <div class="col-sm-5">
                         <input type="text" class="form-control" required name="promotionName"
-                               ng-model="editModel.model.name" maxlength="25">
-                        <input type="hidden" ng-model="model.id">
+                               ng-model="ctrl.editModel.model.name" maxlength="25">
+                        <input type="hidden" ng-model="ctrl.model.id">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.promotionName"></vo-message>
+                        <vo-message target="ctrl.promotionForm.promotionName"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -29,16 +29,16 @@
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1"
-                                   ng-model="editModel.model.promotionScene_1"
-                                   ng-required="!editModel.model.promotionScene_1&&!editModel.model.promotionScene_2"
-                                   ng-disabled="vm.isBeginPre">
+                                   ng-model="ctrl.editModel.model.promotionScene_1"
+                                   ng-required="!ctrl.editModel.model.promotionScene_1 && !ctrl.editModel.model.promotionScene_2"
+                                   ng-disabled="ctrl.vm.isBeginPre">
                             <span class="fa fa-check"></span> 专场特卖
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="promotionScene_2" style="margin: 0" value="2"
-                                   ng-model="editModel.model.promotionScene_2"
-                                   ng-required="!editModel.model.promotionScene_1&&!editModel.model.promotionScene_2"
-                                   ng-disabled="vm.isBeginPre">
+                                   ng-model="ctrl.editModel.model.promotionScene_2"
+                                   ng-required="!ctrl.editModel.model.promotionScene_1 && !ctrl.editModel.model.promotionScene_2"
+                                   ng-disabled="ctrl.vm.isBeginPre">
                             <span class="fa fa-check"></span> 商城铺货
                         </label>
                     </div>
@@ -46,13 +46,13 @@
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
                         <vo-message
-                                target="promotionForm.promotionScene_1 && promotionForm.promotionScene_2"></vo-message>
+                                target="ctrl.promotionForm.promotionScene_1 && ctrl.promotionForm.promotionScene_2"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">活动类型</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="editModel.model.promotionType" required
+                        <select class="form-control" ng-model="ctrl.editModel.model.promotionType" required
                                 name="promotionType" width="'100%'">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             <option value="1">日常专场</option>
@@ -70,22 +70,22 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.promotionType"></vo-message>
+                        <vo-message target="ctrl.promotionForm.promotionType"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场主品牌</label>
                     <div class="col-sm-5">
-                        <select chosen ng-model="editModel.model.cmsBtJmMasterBrandId" required
+                        <select chosen ng-model="ctrl.editModel.model.cmsBtJmMasterBrandId" required
                                 name="cmsBtJmMasterBrandId"
-                                ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList" width="'100%'">
+                                ng-options="brand.id as brand.name for brand in ctrl.vm.jmMasterBrandList" width="'100%'">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                        <vo-message target="ctrl.promotionForm.cmsBtJmMasterBrandId"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -93,9 +93,9 @@
                     <div class="col-sm-7">
                         <div class="col-sm-3 input-group">
                             <input type="date" class="form-control" uib-datepicker-popup
-                                   ng-model="editModel.model.signupDeadline" name="signupDeadline" required
-                                   min-date="vm.currentTime"
-                                   max-date="editModel.model.prePeriodStart"
+                                   ng-model="ctrl.editModel.model.signupDeadline" name="signupDeadline" required
+                                   min-date="ctrl.vm.currentTime"
+                                   max-date="ctrl.editModel.model.prePeriodStart"
                                    date-model-format="yyyy-MM-dd"
                                    is-open="datePicker4" close-text="Close"/>
                         <span class="input-group-btn">
@@ -107,7 +107,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.signupDeadline" class="vo-message-success"></vo-message>
+                        <vo-message target="ctrl.promotionForm.signupDeadline" class="vo-message-success"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -121,10 +121,10 @@
                                    max-date="editModel.model.activityStart"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker3" ng-required="true" close-text="Close"
-                                   ng-disabled="vm.isBeginPre"
+                                   ng-disabled="ctrl.vm.isBeginPre"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-disabled="vm.isBegin"
+                            <button type="button" class="btn btn-default" ng-disabled="ctrl.vm.isBegin"
                                     ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i>
                             </button>
                         </span>
@@ -133,7 +133,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
+                        <vo-message target="ctrl.promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -148,10 +148,10 @@
                                    min-date="vm.currentTime"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker1" ng-required="true" close-text="Close"
-                                   ng-disabled="vm.isBeginPre"
+                                   ng-disabled="ctrl.vm.isBeginPre"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
-                            <button type="button" ng-disabled="vm.isBegin||editModel.model.status!=0"
+                            <button type="button" ng-disabled="ctrl.vm.isBegin || ctrl.editModel.model.status!=0"
                                     class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -165,10 +165,10 @@
                                    min-date="editModel.model.activityStart"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker2" ng-required="true" close-text="Close"
-                                   ng-disabled="vm.isBeginPre"
+                                   ng-disabled="ctrl.vm.isBeginPre"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
-                            <button type="button" ng-disabled="vm.isBegin ||editModel.model.status!=0"
+                            <button type="button" ng-disabled="ctrl.vm.isBegin || ctrl.editModel.model.status!=0"
                                     class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -177,7 +177,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.activityStart && promotionForm.activityEnd"
+                        <vo-message target="ctrl.promotionForm.activityStart && ctrl.promotionForm.activityEnd"
                                     class="vo-message-success"></vo-message>
                     </div>
                 </div>
@@ -185,34 +185,34 @@
                     <label class="col-sm-2 control-label vo_reqfield" translate="TXT_PROMOTION_PC_ID"></label>
                     <div class="col-sm-2">
                         <input required="" name="promotionPcId" type="number" class="form-control" maxlength="10"
-                               ng-model="editModel.model.activityPcId" scale="10,0">
+                               ng-model="ctrl.editModel.model.activityPcId" scale="10,0">
                     </div>
 
                     <label class="col-sm-1 control-label vo_reqfield" translate="TXT_PROMOTION_APP_ID"></label>
                     <div class="col-sm-2">
                         <input required="" name="promotionAppId" type="number" class="form-control" maxlength="10"
-                               ng-model="editModel.model.activityAppId" scale="10,0">
+                               ng-model="ctrl.editModel.model.activityAppId" scale="10,0">
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-2"></div>
                     <div class="col-sm-3">
-                        <vo-message target="promotionForm.promotionPcId" class="vo-message-success"></vo-message>
+                        <vo-message target="ctrl.promotionForm.promotionPcId" class="vo-message-success"></vo-message>
                     </div>
                     <div class="col-sm-2">
-                        <vo-message target="promotionForm.promotionAppId" class="vo-message-success"></vo-message>
+                        <vo-message target="ctrl.promotionForm.promotionAppId" class="vo-message-success"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">专场涉及品牌</label>
                     <div class="col-sm-5">
-                        <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.brand" disabled></textarea>
+                        <textarea class="form-control no-resize" rows="3" ng-model="ctrl.editModel.model.brand" disabled></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">活动备注</label>
                     <div class="col-sm-5">
-                        <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.comment"></textarea>
+                        <textarea class="form-control no-resize" rows="3" ng-model="ctrl.editModel.model.comment"></textarea>
                     </div>
                 </div>
                 <div class="col-sm-7 table-responsive m-l-md m-r-md m-b-md" style="margin-left:80px">
@@ -226,13 +226,13 @@
                         <tbody>
                         <tr ng-repeat="tag in getTagList()">
                             <td class="mfb-xxxsm">
-                                <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
+                                <input class="form-control" ng-model="ctrl.tag.tagName" name="tagName{{$index}}"
                                        ng-required="true" maxlength="20" required>
-                                <vo-message target="promotionForm['tagName' + $index]"></vo-message>
+                                <vo-message target="ctrl.promotionForm['tagName' + $index]"></vo-message>
                             </td>
                             <td class="mfb-xxs text-center">
                                 <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
-                                        ng-disabled="tag.id != ''" ng-click="delTag(tag)"><i class="fa fa-trash-o"></i>
+                                        ng-disabled="tag.id != ''" ng-click="ctrl.delTag(tag)"><i class="fa fa-trash-o"></i>
                                 </button>
                             </td>
                         </tr>
@@ -240,7 +240,7 @@
                     </table>
                     <div class="form-group">
                         <button ng-disabled="isEdit" class="btn btn-sm btn-success btn-addon pull-right"
-                                style="margin-right:5px" ng-click="addTag()"><i class="fa fa-plus"></i>追加
+                                style="margin-right:5px" ng-click="ctrl.addTag()"><i class="fa fa-plus"></i>追加
                         </button>
                     </div>
                 </div>
@@ -254,94 +254,107 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Product Type</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="editModel.extModel.productType" >
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.productType" >
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">展示平台</label>
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="displayPlatform_1" style="margin: 0" value="1" ng-model="editModel.extModel.displayPlatform_1" ng-required="!editModel.model.displayPlatform_1&&!editModel.model.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
+                            <input type="checkbox" name="displayPlatform_1" style="margin: 0" value="1"
+                                   ng-model="ctrl.editModel.extModel.displayPlatform_1"
+                                   ng-required="!ctrl.editModel.model.displayPlatform_1 && !ctrl.editModel.model.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="1" ng-model="editModel.extModel.displayPlatform_2" ng-required="!editModel.model.displayPlatform_1&&!editModel.model.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
+                            <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="1"
+                                   ng-model="ctrl.editModel.extModel.displayPlatform_2"
+                                   ng-required="!ctrl.editModel.model.displayPlatform_1 && !ctrl.editModel.model.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="promotionForm.displayPlatform_1 && promotionForm.displayPlatform_2"></vo-message>
+                        <vo-message target="ctrl.promotionForm.displayPlatform_1 && ctrl.promotionForm.displayPlatform_2"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
-                        <select class="form-control"></select>
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.main_channel">
+                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
+                            <option value="food">食品（food【vtm】）</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场类型</label>
                     <div class="col-sm-5">
-                        <select class="form-control"></select>
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.session_type">
+                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
+                            <option value="food">食品（food【vtm】）</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">关联品类</label>
                     <div class="col-sm-5">
-                        <select class="form-control"></select>
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.session_category">
+                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
+                            <option value="food">食品（food【vtm】）</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">预展示频道</label>
                     <div class="col-sm-5">
                         <div class="row">
-                            <label class="col-sm-3"><input type="checkbox"> 极速免税店</label>
-                            <label class="col-sm-3"><input type="checkbox"> 母婴</label>
-                            <label class="col-sm-3"><input type="checkbox"> 服装</label>
-                            <label class="col-sm-3"><input type="checkbox"> 鞋包</label>
-                            <label class="col-sm-3"><input type="checkbox"> 美国馆</label>
-                            <label class="col-sm-3"><input type="checkbox"> 澳洲馆</label>
-                            <label class="col-sm-3"><input type="checkbox"> 轻奢</label>
-                            <label class="col-sm-3"><input type="checkbox"> 美妆品牌团</label>
-                            <label class="col-sm-3"><input type="checkbox"> 韩国馆</label>
-                            <label class="col-sm-3"><input type="checkbox"> 日本馆</label>
-                            <label class="col-sm-3"><input type="checkbox"> 食品</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 极速免税店</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 母婴</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 服装</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 鞋包</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 美国馆</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 澳洲馆</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 轻奢</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 美妆品牌团</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 韩国馆</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 日本馆</label>
+                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrl.editModel.extModel.pre_display_channel"> 食品</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页主标题/专场标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.main_title">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页副标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.subtitle">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.enter_guide">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketing_title">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketing_copywriter">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">促销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.promotional_copy">
                     </div>
                 </div>
                 <div class="form-group">
@@ -350,13 +363,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">PC</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.pc_page_id">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">APP</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.app_page_id">
                             </div>
                         </div>
                     </div>
@@ -364,28 +377,28 @@
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox"> 同步移动专场
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.sync_mobile"> 同步移动专场
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox"> 货架显示隐藏deal
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_hidden_deal"> 货架显示隐藏deal
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox"> 显示0库存deal
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_sold_out_deal"> 显示0库存deal
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox"> 移动端显示
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_mobile"> 移动端显示
                         </label>
                     </div>
                 </div>
@@ -395,13 +408,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享标题</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.share_title">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享内容</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.share_content">
                             </div>
                         </div>
                     </div>
@@ -419,39 +432,39 @@
                     <label class="col-sm-2 control-label">Promotion Gift</label>
                     <div class="col-sm-5">
                         <div class="form-group">
-                            <label class="col-sm-2"><input type="checkbox"> 满减</label>
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.is_promotion_full_minus"> 满减</label>
                             <div class="col-sm-1 text-right">
                                 满
                             </div>
                             <div class="col-sm-4 form-inline">
-                                <input type="text"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.promotion_full_amount"> 元
                             </div>
                             <div class="col-sm-4 form-inline">
-                                减 <input type="text"> 元
+                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotion_minus_amount"> 元
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2"><input type="checkbox"> 满减</label>
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.is_promotion_full_minus"> 满减</label>
                             <div class="col-sm-1 text-right">
                                 每满
                             </div>
                             <div class="col-sm-4 form-inline">
-                                <input type="text"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.promotion_eachfull_amount"> 元
                             </div>
                             <div class="col-sm-4 form-inline">
-                                减 <input type="text"> 元
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3"><input type="checkbox"> 优惠券（聚美承担）</label>
-                            <div class="col-sm-4 form-inline">
-                                <input type="text"> 元
+                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotion_eachminus_amount"> 元
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3"><input type="checkbox"> 优惠券（VO承担）</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.jm_coupons"> 优惠券（聚美承担）</label>
                             <div class="col-sm-4 form-inline">
-                                <input type="text"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.jm_coupons_money"> 元
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.vo_coupons"> 优惠券（VO承担）</label>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrl.editModel.extModel.vo_coupons_money"> 元
                             </div>
                         </div>
                     </div>
