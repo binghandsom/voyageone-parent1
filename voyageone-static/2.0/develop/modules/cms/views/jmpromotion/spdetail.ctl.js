@@ -1,10 +1,17 @@
-define(['./spedit.directive', './sp.data.service'], function () {
+define(['cms', './spedit.directive', './sp.data.service'], function (cms) {
 
     function SpDetailPageController(spDataService) {
         this.spDataService = spDataService;
     }
 
+    SpDetailPageController.prototype.loadPromotion = function () {
+        var self = this,
+            spDataService = self.spDataService;
 
+        spDataService.getPromotion().then(function (promotion) {
+            self.promotion = promotion;
+        });
+    };
 
-    return SpDetailPageController;
+    cms.controller('SpDetailPageController', SpDetailPageController);
 });

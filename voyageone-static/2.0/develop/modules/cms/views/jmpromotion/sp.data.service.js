@@ -1,8 +1,8 @@
 define(['cms'], function (cms) {
 
     function SpDataService(jmPromotionService, $routeParams) {
-        this.promotionId = $routeParams['promId'];
-        this.jmPromotionId = $routeParams['jmpromId'];
+        this.promotionId = parseInt($routeParams['promId']);
+        this.jmPromotionId = parseInt($routeParams['jmpromId']);
         this.jmPromotionService = jmPromotionService;
     }
 
@@ -10,9 +10,7 @@ define(['cms'], function (cms) {
         var self = this,
             jmPromotionService = self.jmPromotionService;
 
-        return jmPromotionService.getSomeData({
-
-        }).then(function (resp) {
+        return jmPromotionService.get(self.jmPromotionId).then(function (resp) {
             return resp.data;
         });
     };

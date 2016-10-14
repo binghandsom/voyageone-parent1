@@ -43,3 +43,7 @@ small,
 .modal-600 {
     width: 600px;
 }
+
+.form-control-static {
+    padding-top: 4px;
+}
