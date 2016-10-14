@@ -62,7 +62,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 移动的Code
         String productCode = (String) params.get("productCode");
         // 相关的平台id
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 相关的平台名称
         String cartName = (String) params.get("cartName");
 
@@ -113,7 +113,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 移动的Code
         String productCode = (String) params.get("productCode");
         // 相关的平台id
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
 
         // 取得Group信息
         CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
@@ -146,7 +146,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 检索的Code
         String searchCode = (String) params.get("searchCode");
         // 相关的平台id
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 移动源GroupId
         Long sourceGroupId = (Long) params.get("sourceGroupId");
 
@@ -323,7 +323,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 移动目标GroupId
         Long destGroupId = (Long) params.get("destGroupId");
         // 相关的平台id
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 相关的平台名称
         String cartName = (String) params.get("cartName");
 
