@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping( value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ROOT, method = RequestMethod.POST )
+@RequestMapping(value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ROOT, method = RequestMethod.POST)
 public class CmsJmPromotionIndexController extends CmsController {
-
     private final CmsBtJmPromotionService service;
     private final CmsBtJmPromotion3Service service3;
     private final JmBtDealImportService serviceJmBtDealImport;
