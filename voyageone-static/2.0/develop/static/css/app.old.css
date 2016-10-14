@@ -7467,4 +7467,5 @@ ul[uib-datepicker-popup-wrap] button { border: 0; }
     padding: 9px 14px;
     max-height: 330px;
     overflow: auto;
+    word-break: break-all;
 }

@@ -154,7 +154,9 @@
                             </label>
                         </td>
                         <td class="text-left v-middle">{{list.userAccount}}</td>
-                        <td class="text-left v-middle">{{list.userName}}</td>
+                        <td class="text-left v-middle">
+                            <popover-text content="list.userName" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </td>
                         <td class="text-left v-middle wrap">
                             <popover-text content="list.email" direct="top" popover-trigger="mouseenter"></popover-text>
                         </td>
