@@ -34,8 +34,28 @@ define([
                         $scope.editModel.model['promotionScene_' + sceneArr[idx]] = true;
                     }
                 }
-
             });
+        };
+
+        $scope.addTag = function () {
+            if ($scope.editModel.tagList) {
+                $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "",active:1});
+            } else {
+                $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
+            }
+        };
+
+        $scope.getTagList = getTagList;
+        function getTagList(){
+            var tagList = _.filter( $scope.editModel.tagList, function(tag){ return tag.active==1; });
+            return tagList || [];
+        }
+
+        $scope.delTag = function (tag) {
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
+                .then(function () {
+                    tag.active=0;
+                });
         };
 
         /**
