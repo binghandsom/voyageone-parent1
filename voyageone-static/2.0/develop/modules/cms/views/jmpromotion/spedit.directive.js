@@ -81,6 +81,15 @@ define([
             });
     };
 
+    SpEditDirectiveController.prototype.save = function(){
+        var self = this,
+            jmPromotionService = self.jmPromotionService;
+
+        jmPromotionService.saveModel().then(function(res){
+
+        });
+    };
+
     /**
      * @param date 字符串格式为yyyy-MM-dd ss:ss:ss
      * @returns {Date}
