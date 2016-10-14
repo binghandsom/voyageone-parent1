@@ -116,7 +116,9 @@
                     <td class="text-left v-middle">{{list.channelName}}</td>
                     <td class="text-left v-middle">{{list.cartName}}</td>
                     <td class="text-left v-middle">{{list.shopName}}</td>
-                    <td class="text-left v-middle">{{list.appUrl}}</td>
+                    <td class="text-left v-middle">
+                        <popover-text content="list.appUrl" direct="top" popover-trigger="mouseenter"></popover-text>
+                    </td>
                     <td class="text-left v-middle">{{list.comment}}</td>
                     <td class="text-center v-middle" ng-bind="list.active!=null?list.active==true ? '启用':'禁用':''"></td>
                     <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
