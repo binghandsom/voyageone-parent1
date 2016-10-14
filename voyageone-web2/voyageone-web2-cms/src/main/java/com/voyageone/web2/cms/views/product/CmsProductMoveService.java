@@ -139,20 +139,22 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * 移动Code-根据Code检索Group信息
      */
-    public List<Map<String, Object>> moveCodeSearch(Map<String, Object> params, String channelId, String lang) {
+    public Map<String, Object> moveCodeSearch(Map<String, Object> params, String channelId, String lang) {
 
+        Map<String, Object> returnMap = new HashMap<>();
+        // 查询的Group列表
         List<Map<String, Object>> groupList = new ArrayList<>();
-
         // 检索的Code
         String searchCode = (String) params.get("searchCode");
         // 相关的平台id
         Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 移动源GroupId
-        Long sourceGroupId = (Long) params.get("sourceGroupId");
+        Long sourceGroupId = params.get("sourceGroupId") != null ? new Long(String.valueOf(params.get("sourceGroupId"))) : null;
 
         // Code如果不输入，那么没有检索结果
         if (StringUtils.isEmpty(searchCode)) {
-            return groupList;
+            returnMap.put("groupList", groupList);
+            return returnMap;
         }
 
         // 根据输入的Code和对应的CarId检索出对应的Group
@@ -169,9 +171,10 @@ public class CmsProductMoveService extends BaseViewService {
         }
 
         // 去除自己那条
-        groupList = groupList.stream().filter(group->((CmsBtProductGroupModel)group.get("groupInfo")).getGroupId() != sourceGroupId).collect(Collectors.toList());
+        groupList = groupList.stream().filter(group->(!sourceGroupId.equals(((CmsBtProductGroupModel)group.get("groupInfo")).getGroupId()))).collect(Collectors.toList());
 
-        return groupList;
+        returnMap.put("groupList", groupList);
+        return returnMap;
     }
 
     /**
@@ -186,9 +189,9 @@ public class CmsProductMoveService extends BaseViewService {
         // 移动的Code
         String productCode = (String) params.get("productCode");
         // 移动源GroupId
-        Long sourceGroupId = (Long) params.get("sourceGroupId");
+        Long sourceGroupId = params.get("sourceGroupId") != null ? new Long(String.valueOf(params.get("sourceGroupId"))) : null;
         // 移动目标GroupId
-        Long destGroupId = (Long) params.get("destGroupId");
+        Long destGroupId = params.get("destGroupId") != null ? new Long(String.valueOf(params.get("destGroupId"))) : null;
         // 移动源Group的主商品的名称
         String sourceGroupName = (String) params.get("sourceGroupName");
         // 移动目标Group的主商品的名称
@@ -260,7 +263,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 如果移动前-源Code个数为1，那么相当于移动后删除这个Group-Code，那么就要加上删除线
         if (sourceCodeListBefore.size() == 1) {
             Map<String, Object> sourceCodeInfoMapAfter = new HashMap<>();
-            sourceCodeInfoMapAfter.put("code", (String) destCodeListBefore.get(0).get("code"));
+            sourceCodeInfoMapAfter.put("code", (String) sourceCodeListBefore.get(0).get("code"));
             sourceCodeInfoMapAfter.put("current", true);
             sourceCodeInfoMapAfter.put("deleted", true);
             sourceCodeListAfter.add(sourceCodeInfoMapAfter);
@@ -287,7 +290,11 @@ public class CmsProductMoveService extends BaseViewService {
         List<Map<String, Object>> destCodeListAfter = new ArrayList<>();
         // 如果选择"移动到新的Group"，那么移动前-目标Code信息是没有的
         if ("new".equals(destGroupType)) {
-
+            // 加入移动的Code，并且高亮显示
+            Map<String, Object> destCodeInfoMapAfter = new HashMap<>();
+            destCodeInfoMapAfter.put("code", productCode);
+            destCodeInfoMapAfter.put("current", true);
+            destCodeListAfter.add(destCodeInfoMapAfter);
         } else {
             if (destGroupModel != null) {
                 // 加入原来目标Group下的Code
@@ -295,8 +302,7 @@ public class CmsProductMoveService extends BaseViewService {
                     Map<String, Object> destCodeInfoMapAfter = new HashMap<>();
                     destCodeInfoMapAfter.put("code", code);
                     destCodeListAfter.add(destCodeInfoMapAfter);
-                }
-                // 再加入移动的Code，并且高亮显示
+                }                // 再加入移动的Code，并且高亮显示
                 Map<String, Object> destCodeInfoMapAfter = new HashMap<>();
                 destCodeInfoMapAfter.put("code", productCode);
                 destCodeInfoMapAfter.put("current", true);
@@ -319,9 +325,9 @@ public class CmsProductMoveService extends BaseViewService {
         // 移动的Code
         String productCode = (String) params.get("productCode");
         // 移动源GroupId
-        Long sourceGroupId = (Long) params.get("sourceGroupId");
+        Long sourceGroupId = params.get("sourceGroupId") != null ? new Long(String.valueOf(params.get("sourceGroupId"))) : null;
         // 移动目标GroupId
-        Long destGroupId = (Long) params.get("destGroupId");
+        Long destGroupId = params.get("destGroupId") != null ? new Long(String.valueOf(params.get("destGroupId"))) : null;
         // 相关的平台id
         Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 相关的平台名称
