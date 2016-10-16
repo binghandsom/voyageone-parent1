@@ -21,38 +21,38 @@ gulp.task('copy-beta', function () {
 
     // 对图片, 样式, 媒体文件
     // 全数复制
-    gulp.src('./src/assets/{css,img,media}/**')
-        .pipe(gulp.dest('./dest/beta/assets'));
+    gulp.src('./develop/static/{css,img}/**')
+        .pipe(gulp.dest('./develop/static/'));
 
     // 对 js 部分, 只复制压缩后的
     // 和其附带的 css 文件
-    gulp.src('./src/assets/js/**/*.{min.js,css}')
+/*    gulp.src('./src/assets/js/!**!/!*.{min.js,css}')
         .pipe(gulp.dest('./dest/beta/assets/js/'));
 
     // 对应用下的文件进行原样拷贝
     gulp.src([
-        './src/app/!(css|translate)/**/*.{js,html}',
-        './src/app/*.{css,html}'
+        './src/app/!(css|translate)/!**!/!*.{js,html}',
+        './src/app/!*.{css,html}'
     ])
         .pipe(replace(/\/require.js"/, '/require.min.js"')) // 对页面的引用进行 min 替换
         .pipe(gulp.dest('./dest/beta/app/'));
 
     // 对登录页进行复制
-    gulp.src('./src/*.{js,css,html}')
+    gulp.src('./src/!*.{js,css,html}')
         .pipe(replaceRequirePathMain(['./src/'])) // 对登陆的配置进行 min 替换
         .pipe(replace(/\/require.js"/, '/require.min.js"')) // 对页面的引用进行 min 替换
         .pipe(replace(/shared\/components\.ng/, 'shared/components')) // 因为 components 都合并了, 所以这里要替换掉
-        .pipe(gulp.dest('./dest/beta/'));
+        .pipe(gulp.dest('./dest/beta/'));*/
 });
 
 // 对 js 代码进行打包
-gulp.task('pkg-beta', ['build.vms.module'], function () {
+/*gulp.task('pkg-beta', ['build.vms.module'], function () {
 
     // 对 shared 代码进行打包
     gulp.src([
         './src/shared/ng/modules.js',
-        './src/shared/ng/*/*.js',
-        './src/shared/js/!**/!*.js'
+        './src/shared/ng/!*!/!*.js',
+        './src/shared/js/!**!/!*.js'
     ])
         .pipe(debug())
         // 追加依赖注入语法
@@ -77,13 +77,6 @@ gulp.task('pkg-beta', ['build.vms.module'], function () {
         .pipe(replace(/'vo-libs':\s?\['jquery'\],/, '\'vo-libs\': [\'jquery\', \'angular\'],')) // 同上, 需要追加 require 配置里的依赖
         .pipe(uglify())
         .pipe(gulp.dest('./dest/beta/app/'));
-});
+});*/
 
-gulp.task('build.vms.module', function(cb){
-    rjs.optimize(rjsBuildConfig, function(buildResponse){
-        console.log('buildResponse', buildResponse);
-        cb();
-    }, cb);
-});
-
-gulp.task('beta', ['copy-beta','pkg-beta']);
+gulp.task('beta', ['copy-beta']);
