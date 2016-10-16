@@ -104,7 +104,7 @@ define([
             restrict: 'E',
             controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', SpEditDirectiveController],
             controllerAs: 'ctrl',
-            templateUrl: '/modules/cms/views/jmpromotion/spedit.directive.html'
+            templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }
     }]);
 });
