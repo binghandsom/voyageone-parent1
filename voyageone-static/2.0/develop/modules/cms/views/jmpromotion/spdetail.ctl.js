@@ -1,4 +1,9 @@
-define(['cms', './sp.edit.directive', './sp.shelf.directive', './sp.data.service'], function (cms) {
+define(['cms',
+    './sp.edit.directive',
+    './sp.shelf.directive',
+    './sp.images.directive',
+    './sp.data.service'
+], function (cms) {
 
     function SpDetailPageController(spDataService) {
         this.spDataService = spDataService;
