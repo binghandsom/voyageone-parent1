@@ -13,8 +13,8 @@ var gulp = require('gulp'),
     replaceRequirePathMain = require('./require-min');
 
 var definePrefix = 'define(function(){\n',
-    defineSuffix = '});',
-    rjsBuildConfig = require('../build');
+    defineSuffix = '});';
+   // rjsBuildConfig = require('../build');
 
 // 拷贝所有的静态资源到发布目录
 gulp.task('copy-beta', function () {
