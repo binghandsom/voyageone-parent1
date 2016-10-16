@@ -313,7 +313,7 @@ define([
             "promotion": {
                 "imageSuit": {
                     "templateUrl": "views/pop/jm/promotion/image.suit.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.suit.tpl.ctl",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.suit.ctl",
                     "controller": 'imageSuitCtl as ctrl',
                     "size": 'lg'
                 }
