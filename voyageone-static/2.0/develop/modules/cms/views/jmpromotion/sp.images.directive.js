@@ -3,9 +3,8 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpImagesDirectiveController($routeParams, jmPromotionService, popups) {
-        this.$routeParams = $routeParams;
-        this.jmPromotionService = jmPromotionService;
+    function SpImagesDirectiveController(spDataService, popups) {
+        this.spDataService = spDataService;
         this.popups = popups;
     }
 
@@ -13,11 +12,11 @@ define([
 
     };
 
-    SpImagesDirectiveController.prototype.popImageSuit = function(){
+    SpImagesDirectiveController.prototype.popImageSuit = function () {
         var self = this,
             popups = self.popups;
 
-        popups.openImageSuit({}).then(function(){
+        popups.openImageSuit({}).then(function () {
 
         });
     };
@@ -26,7 +25,7 @@ define([
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$routeParams', 'jmPromotionService', 'popups', SpImagesDirectiveController],
+            controller: ['spDataService', 'popups', SpImagesDirectiveController],
             controllerAs: 'ctrl',
             templateUrl: '/modules/cms/views/jmpromotion/sp.images.directive.html'
         }
