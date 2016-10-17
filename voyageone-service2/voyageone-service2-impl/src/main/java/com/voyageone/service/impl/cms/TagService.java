@@ -106,7 +106,7 @@ public class TagService extends BaseService {
         return new ArrayList<>(0);
     }
 
-    public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
+    public List<CmsBtTagModel> getListByChannelIdAndParentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
         return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
     }
 

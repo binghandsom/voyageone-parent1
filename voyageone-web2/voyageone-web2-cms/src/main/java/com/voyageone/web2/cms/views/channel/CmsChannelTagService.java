@@ -254,7 +254,7 @@ public class CmsChannelTagService extends BaseViewService {
             throw new BusinessException("7000074");
         }
         //tag中如果同一级中添加一个名字一样的，提示不能添加
-        List<CmsBtTagModel> categoryList = tagService.getListByChannelIdAndparentTagIdAndTypeValue(channelId, parentTagId, tagTypeValue);
+        List<CmsBtTagModel> categoryList = tagService.getListByChannelIdAndParentTagIdAndTypeValue(channelId, parentTagId, tagTypeValue);
         //标签名称小于50字节
         for (CmsBtTagModel aCategoryList : categoryList) {
             if (aCategoryList.getTagPathName().equals(tagPathNameValue)) {
