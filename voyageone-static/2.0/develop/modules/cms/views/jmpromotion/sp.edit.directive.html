@@ -216,33 +216,35 @@
                         <textarea class="form-control no-resize" rows="3" ng-model="ctrlEdit.editModel.model.comment"></textarea>
                     </div>
                 </div>
-                <div class="col-sm-7 table-responsive m-l-md m-r-md m-b-md" style="margin-left:80px">
-                    <table class="table table-hover-new table-hover">
-                        <thead>
-                        <tr class="control-label">
-                            <th>TAG</th>
-                            <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="tag in ctrlEdit.getTagList()">
-                            <td class="mfb-xxxsm">
-                                <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
-                                       ng-required="true" maxlength="20" required>
-                                <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
-                            </td>
-                            <td class="mfb-xxs text-center">
-                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
-                                        ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
-                                ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
-                        </button>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <table class="table table-hover-new table-hover">
+                            <thead>
+                            <tr class="control-label">
+                                <th>TAG</th>
+                                <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="tag in ctrlEdit.getTagList()">
+                                <td class="mfb-xxxsm">
+                                    <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
+                                           ng-required="true" maxlength="20" required>
+                                    <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
+                                </td>
+                                <td class="mfb-xxs text-center">
+                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
+                                            ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
+                                    ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
