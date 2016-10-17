@@ -142,7 +142,7 @@ public class CmsJmPromotionExportService extends BaseViewService {
             if(cmsBtJmPromotionProductModels != null && cmsBtJmPromotionProductModels.size()>0){
                 List<List<CmsBtJmPromotionProductModel>> products = CommonUtil.splitList(cmsBtJmPromotionProductModels,100);
                 for(int i=0;i<products.size();i++){
-                    if(cmsBtTagJmModuleExtensionModel.getFeatured() == 1){
+                    if(cmsBtTagJmModuleExtensionModel.getFeatured()){
                         writeRecordToFeaturedHashId(book,products.get(i));
                     }else{
                         if(i == 0){
