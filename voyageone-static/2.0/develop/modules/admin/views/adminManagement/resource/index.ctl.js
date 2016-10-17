@@ -76,8 +76,10 @@ define([
                 editCallback(selectedList);
                 function editCallback() {
                     if (type == 'add') {
-                        self.popups.openRes('add').then(function () {
-                            self.search(1);
+                        self.popups.openRes('add').then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }
                         });
                     } else {
                         if (selectedList.length < 1) {
@@ -88,11 +90,7 @@ define([
                             var data = _.filter(self.flatResList, function (Info) {
                                 return Info.id == self.selectedList[0].id
                             });
-
-                            return self.popups.openRes(data[0]).then(function () {
-                                self.search(1);
-                            });
-
+                            return self.popups.openRes(data[0]);
                         }
                     }
                 }
