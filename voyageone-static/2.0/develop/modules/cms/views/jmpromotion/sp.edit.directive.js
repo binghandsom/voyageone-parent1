@@ -81,11 +81,27 @@ define([
             });
     };
 
-    SpEditDirectiveController.prototype.save = function(){
+    SpEditDirectiveController.prototype.save = function(saveType) {
         var self = this,
             jmPromotionService = self.jmPromotionService;
+        var param = {};
+        param.tagList= _.filter( self.editModel.tagList, function(tag){ return tag.tagName != "";});
+        param.model = angular.copy(self.editModel.model);
+        param.extModel = angular.copy(self.editModel.extModel);
 
-        jmPromotionService.saveModel().then(function(res){
+        if (param.extModel.displayPlatform_1) {
+            param.extModel.displayPlatform = "1";
+        }
+
+        param.model.activityStart = formatToStr(param.model.activityStart, self.$filter);
+        param.model.activityEnd = formatToStr(param.model.activityEnd, self.$filter);
+        param.model.prePeriodStart = formatToStr(param.model.prePeriodStart, self.$filter);
+        param.model.prePeriodEnd = param.model.activityEnd;
+        param.model.signupDeadline = formatToStr(param.model.signupDeadline, self.$filter);
+
+        param.hasExt = true;
+        param.saveType = saveType;
+        jmPromotionService.saveModel(param).then(function(res){
 
         });
     };
@@ -97,6 +113,10 @@ define([
     function formatToDate(date) {
         //$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
         return new Date(date);
+    }
+
+    function formatToStr(date,filter){
+        return filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
     }
 
     cms.directive('spEdit', [function spEditDirectiveFactory() {

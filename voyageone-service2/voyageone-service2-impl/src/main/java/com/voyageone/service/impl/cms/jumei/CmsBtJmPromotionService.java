@@ -100,7 +100,7 @@ public class CmsBtJmPromotionService extends BaseService {
             // 活动详情编辑
             CmsBtJmPromotionSpecialExtensionModel extModel = info.getExtModel();
             if (extModel != null && extModel.getId() != null) {
-                info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(extModel.getJmpromotionId()));
+                info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(id));
             }
         }
 

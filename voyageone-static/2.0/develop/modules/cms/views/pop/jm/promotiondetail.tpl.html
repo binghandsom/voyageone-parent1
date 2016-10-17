@@ -88,11 +88,11 @@
                 <div class="col-sm-9">
                     <div class="row form-inline">
                         <div class="col-sm-5 input-group">
-                            <input type="date" class="form-control" uib-datepicker-popup
+                            <input type="datetime-local" class="form-control" uib-datepicker-popup
                                    ng-model="editModel.model.signupDeadline" name="signupDeadline" required
                                    min-date="vm.currentTime"
                                    max-date="editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-dd"
+                                   date-model-format="yyyy-MM-ddTHH:mm:ss" step="1"
                                    is-open="datePicker4" close-text="Close" />
                             <span class="input-group-btn">
                                 <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -118,7 +118,7 @@
                                     ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
                                     min-date="vm.currentTime"
                                     max-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
+                                    date-model-format="yyyy-MM-ddTHH:mm:ss" step="1"
                                     is-open="datePicker3" ng-required="true" close-text="Close"
                                     ng-disabled="vm.isBeginPre"
                                     date-disabled="disabled(date, mode)"/>

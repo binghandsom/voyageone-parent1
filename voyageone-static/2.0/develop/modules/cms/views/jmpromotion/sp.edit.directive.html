@@ -92,11 +92,11 @@
                     <label class="col-sm-2 control-label s-required">准备期截止时间</label>
                     <div class="col-sm-7">
                         <div class="col-sm-3 input-group">
-                            <input type="date" class="form-control" uib-datepicker-popup
+                            <input type="datetime-local" class="form-control" uib-datepicker-popup
                                    ng-model="ctrl.editModel.model.signupDeadline" name="signupDeadline" required
                                    min-date="ctrl.vm.currentTime"
                                    max-date="ctrl.editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-dd"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker4" close-text="Close"/>
                         <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i
@@ -279,7 +279,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrl.editModel.extModel.main_channel">
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.mainChannel">
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
@@ -288,7 +288,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场类型</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrl.editModel.extModel.session_type">
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.sessionType">
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
@@ -297,7 +297,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">关联品类</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrl.editModel.extModel.session_category">
+                        <select class="form-control" ng-model="ctrl.editModel.extModel.sessionCategory">
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
@@ -324,7 +324,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页主标题/专场标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.main_title">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.mainTitle">
                     </div>
                 </div>
                 <div class="form-group">
@@ -336,25 +336,25 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.enter_guide">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.enterGuide">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketing_title">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketingTitle">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketing_copywriter">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.marketingCopywriter">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">促销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.promotional_copy">
+                        <input type="text" class="form-control" ng-model="ctrl.editModel.extModel.promotionalCopy">
                     </div>
                 </div>
                 <div class="form-group">
@@ -363,13 +363,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">PC</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.pc_page_id">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.pcPageId">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">APP</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.app_page_id">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.appPageId">
                             </div>
                         </div>
                     </div>
@@ -377,28 +377,28 @@
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox" ng-model="ctrl.editModel.extModel.sync_mobile"> 同步移动专场
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.syncMobile"> 同步移动专场
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_hidden_deal"> 货架显示隐藏deal
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.showHiddenDeal"> 货架显示隐藏deal
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_sold_out_deal"> 显示0库存deal
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.showSoldOutDeal"> 显示0库存deal
                         </label>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="col-sm-5 col-sm-offset-2">
                         <label>
-                            <input type="checkbox" ng-model="ctrl.editModel.extModel.show_mobile"> 移动端显示
+                            <input type="checkbox" ng-model="ctrl.editModel.extModel.showMobile"> 移动端显示
                         </label>
                     </div>
                 </div>
@@ -408,13 +408,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享标题</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.share_title">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.shareTitle">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享内容</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.share_content">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrl.editModel.extModel.shareContent">
                             </div>
                         </div>
                     </div>
@@ -432,39 +432,39 @@
                     <label class="col-sm-2 control-label">Promotion Gift</label>
                     <div class="col-sm-5">
                         <div class="form-group">
-                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.is_promotion_full_minus"> 满减</label>
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.isPromotionFullMinus"> 满减</label>
                             <div class="col-sm-1 text-right">
                                 满
                             </div>
                             <div class="col-sm-4 form-inline">
-                                <input type="text" ng-model="ctrl.editModel.extModel.promotion_full_amount"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.promotionFullAmount"> 元
                             </div>
                             <div class="col-sm-4 form-inline">
-                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotion_minus_amount"> 元
+                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotionMinusAmount"> 元
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.is_promotion_full_minus"> 满减</label>
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrl.editModel.extModel.isPromotionFullMinus"> 满减</label>
                             <div class="col-sm-1 text-right">
                                 每满
                             </div>
                             <div class="col-sm-4 form-inline">
-                                <input type="text" ng-model="ctrl.editModel.extModel.promotion_eachfull_amount"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.promotionEachfullAmount"> 元
                             </div>
                             <div class="col-sm-4 form-inline">
-                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotion_eachminus_amount"> 元
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.jm_coupons"> 优惠券（聚美承担）</label>
-                            <div class="col-sm-4 form-inline">
-                                <input type="text" ng-model="ctrl.editModel.extModel.jm_coupons_money"> 元
+                                减 <input type="text" ng-model="ctrl.editModel.extModel.promotionEachminusAmount"> 元
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.vo_coupons"> 优惠券（VO承担）</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.jmCoupons"> 优惠券（聚美承担）</label>
                             <div class="col-sm-4 form-inline">
-                                <input type="text" ng-model="ctrl.editModel.extModel.vo_coupons_money"> 元
+                                <input type="text" ng-model="ctrl.editModel.extModel.jmCouponsMoney"> 元
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrl.editModel.extModel.voCoupons"> 优惠券（VO承担）</label>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrl.editModel.extModel.voCouponsMoney"> 元
                             </div>
                         </div>
                     </div>
@@ -486,10 +486,10 @@
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.save()">Save</button>
+                <button type="button" class="btn btn-success" ng-click="ctrl.save(0)">Save</button>
             </li>
             <li>
-                <button type="button" class="btn btn-primary" ng-click="ctrl.save()">Submit</button>
+                <button type="button" class="btn btn-primary" ng-click="ctrl.save(1)">Submit</button>
             </li>
         </ul>
     </sticky>
