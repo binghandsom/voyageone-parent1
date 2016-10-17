@@ -445,7 +445,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         for (CmsBtProductModel product : sxData.getProductList()) {
             // 循环group下所有code
             // 取得尺码转换表
-            Map<String, String> sizeMap = sxProductService.getSizeMap(product.getChannelId(),
+            Map<String, String> sizeMap = sxProductService.getSizeMap(product.getOrgChannelId(),
                                                                         sxData.getMainProduct().getCommon().getFields().getBrand(),
                                                                         sxData.getMainProduct().getCommon().getFields().getProductType(),
                                                                         sxData.getMainProduct().getCommon().getFields().getSizeType());
@@ -515,7 +515,13 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "Size";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
+            String adjSize = sizeMap.get(size);
+            if (StringUtils.isEmpty(adjSize)) {
+                throw new BusinessException("未设定尺码转换!");
+            }
+
+            ((InputField) field).setValue(adjSize);
         }
         {
             // ShowSize 显示尺码
