@@ -177,7 +177,7 @@ public class TaobaoScItemService extends BaseService {
             // 上记以外的场合
             String outerId = ((InputField)mapFields.get("outer_id")).getDefaultValue();
             String scProductId = ((InputField)mapFields.get("item_sc_product_id")).getDefaultValue();
-			String qty = ((InputField)mapFields.get("")).getDefaultValue();
+			String qty = ((InputField)mapFields.get("quantity")).getDefaultValue();
 
             doSetScItemSku(shopBean, numIId, outerId, null, scProductId, title, qty);
         }
