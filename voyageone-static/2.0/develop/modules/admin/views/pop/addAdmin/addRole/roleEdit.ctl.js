@@ -53,6 +53,9 @@ define([
                 self.selectedList = [];
                 self.init(app);
             },
+            cancel: function () {
+                this.$uibModalInstance.dismiss();
+            },
             save: function () {
                 var self = this, saveInfo = {};
                 _.extend(saveInfo, {applications: [], roleIds: self.sourceData.roleIds, resIds: [], hasAllAuth: false});
