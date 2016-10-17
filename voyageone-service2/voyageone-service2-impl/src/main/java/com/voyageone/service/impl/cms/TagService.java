@@ -238,7 +238,6 @@ public class TagService extends BaseService {
         } else {
             //对tagPath进行二次组装
             cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + cmsBtTagModel.getId() + "-");
-
         }
         //更新数据cms_bt_tag
         cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
