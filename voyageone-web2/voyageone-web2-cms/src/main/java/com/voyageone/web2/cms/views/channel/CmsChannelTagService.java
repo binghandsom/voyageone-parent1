@@ -289,7 +289,7 @@ public class CmsChannelTagService extends BaseViewService {
             cmsBtTagModel.setModifier(String.valueOf(tagSelectObject.get("modifier")));
         }
         // save to db
-        tagService.insertCmsBtTagAndUpdateTagePath(cmsBtTagModel, firstTag);
+        tagService.insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, firstTag);
 
         //记住插入的记录处理之后再返回画面
         Map<String, Object> tagTypeSelectValue = new HashMap<>();

@@ -23,11 +23,14 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TagService extends BaseService {
+    private final CmsBtTagDaoExt cmsBtTagDaoExt;
+    private final CmsBtTagDao cmsBtTagDao;
 
     @Autowired
-    private CmsBtTagDaoExt cmsBtTagDaoExt;
-    @Autowired
-    private CmsBtTagDao cmsBtTagDao;
+    public TagService(CmsBtTagDaoExt cmsBtTagDaoExt, CmsBtTagDao cmsBtTagDao) {
+        this.cmsBtTagDaoExt = cmsBtTagDaoExt;
+        this.cmsBtTagDao = cmsBtTagDao;
+    }
 
     /**
      * Tag追加
@@ -224,7 +227,7 @@ public class TagService extends BaseService {
     }
 
     @VOTransactional
-    public void insertCmsBtTagAndUpdateTagePath(CmsBtTagModel cmsBtTagModel, boolean firstTag) {
+    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, boolean firstTag) {
         //将取得的数据插入到数据库
         cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
 
