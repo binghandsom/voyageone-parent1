@@ -95,22 +95,21 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openOrg('add').then(function () {
-                        self.search(1);
+                    self.popups.openOrg('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.adminOrgSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.orgDataList, function (Info) {
-                            if (Info.id == self.adminOrgSelList.selList[0].id) {
-                                self.popups.openOrg(Info).then(function () {
+                    _.forEach(self.orgDataList, function (Info) {
+                        if (Info.id == self.adminOrgSelList.selList[0].id) {
+                            self.popups.openOrg(Info).then(function (res) {
+                                if (res.res == 'success') {
                                     self.search(1);
-                                });
-                            }
-                        })
-                    }
+                                }
+                            });
+                        }
+                    })
                 }
             },
             delete: function () {

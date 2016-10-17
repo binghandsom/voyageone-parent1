@@ -130,8 +130,10 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openRole('add').then(function () {
-                        self.search(1);
+                    self.popups.openRole('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
                     var Info = _.filter(self.adminRoleList, function (role) {
@@ -139,30 +141,11 @@ define([
                     });
                     if (type == 'copy') {
                         _.extend(Info[0], {isCopyRole: true});
-                        self.popups.openRole(Info[0]).then(function () {
-                            self.search(1);
-                        });
+                        self.popups.openRole(Info[0]);
                     } else if (type == 'edit') {
                         Info[0].isCopyRole == true ? Info[0].isCopyRole = false : Info[0].isCopyRole = false;
-                        self.popups.openRole(Info[0]).then(function () {
-                            self.search(1);
-                        });
+                        self.popups.openRole(Info[0]);
                     }
-                }
-            },
-            vieAuthority: function () {
-                var self = this;
-                if (self.adminUserSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
-                } else {
-                    _.forEach(self.adminRoleList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openUserAuthority(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    });
                 }
             },
             delete: function () {
@@ -172,7 +155,7 @@ define([
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.adminRoleService.deleteRole(delList).then(function (res) {
+                        self.adminRoleService.deleteRole(delList).then(function () {
                             self.search();
                         })
                     }
