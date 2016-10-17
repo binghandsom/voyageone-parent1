@@ -422,7 +422,7 @@ define([
 
                 if (self.append == true||self.sourceData.isCopyRole == true) {
                     if (self.sourceData.isCopyRole == true) {
-                        _.extend(self.saveInfo, {action: 'copy'});
+                        _.extend(self.saveInfo, {action: 'copy',id: self.sourceData.id});
                     }
                     self.adminRoleService.addRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
