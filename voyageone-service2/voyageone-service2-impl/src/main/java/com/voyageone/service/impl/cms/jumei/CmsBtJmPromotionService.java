@@ -42,7 +42,9 @@ public class CmsBtJmPromotionService extends BaseService {
     @Autowired
     CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
     @Autowired
-    private CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao;
+    private CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
+    @Autowired
+    private CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
 
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
@@ -72,7 +74,7 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     public CmsBtJmPromotionSpecialExtensionModel getJmPromotionSpecial(Integer jmPromotionId){
-        return jmPromotionSpecialExtensionDao.selectOne(jmPromotionId);
+        return jmPromotionExtensionDaoExt.selectOne(jmPromotionId);
     }
 
     /**
@@ -101,7 +103,7 @@ public class CmsBtJmPromotionService extends BaseService {
         // 取得扩展信息
         if (hasExtInfo) {
             // 活动详情编辑
-            info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(jmPromotionId));
+            info.setExtModel(jmPromotionExtensionDaoExt.selectOne(jmPromotionId));
         }
 
         return info;
@@ -140,16 +142,17 @@ public class CmsBtJmPromotionService extends BaseService {
             if (parameter.isHasExt()) {
                 // 活动详情编辑
                 CmsBtJmPromotionSpecialExtensionModel extModel = parameter.getExtModel();
-                if (extModel != null && extModel.getId() != null) {
+                // 从cms_bt_jm_promotion_special_extension表判断扩展信息是否存在
+                Map<String, Object> extParam = new HashMap<>();
+                extParam.put("jmpromotionId", parameter.getModel().getId());
+                if (jmPromotionExtensionDao.selectCount(extParam) == 1) {
                     // 保存
-                    jmPromotionSpecialExtensionDao.update(extModel);
+                    extModel.setModifier(userName);
+                    jmPromotionExtensionDaoExt.update(extModel);
                 } else {
                     // 新建扩展信息
-                    if (extModel == null) {
-                        extModel = new CmsBtJmPromotionSpecialExtensionModel();
-                    }
                     extModel.setCreater(userName);
-                    jmPromotionSpecialExtensionDao.insert(extModel);
+                    jmPromotionExtensionDaoExt.insert(extModel);
                 }
             }
         } else {

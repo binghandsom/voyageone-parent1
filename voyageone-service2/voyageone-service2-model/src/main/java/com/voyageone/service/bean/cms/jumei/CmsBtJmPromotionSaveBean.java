@@ -15,7 +15,7 @@ public class CmsBtJmPromotionSaveBean {
     private CmsBtJmPromotionSpecialExtensionModel extModel;
     private List<CmsBtTagModel> tagList;
 
-    // 是否有扩展信息
+    // 是否要处理扩展信息
     private boolean hasExt;
     // 操作类型 1:提交/保存 0:暂存
     private int saveType;

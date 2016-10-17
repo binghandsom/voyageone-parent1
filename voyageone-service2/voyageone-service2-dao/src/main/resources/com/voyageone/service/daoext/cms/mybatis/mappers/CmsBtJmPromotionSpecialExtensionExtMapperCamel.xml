@@ -12,13 +12,13 @@
                 `display_platform` = #{displayPlatform,jdbcType=VARCHAR},
             </if>
             <if test="mainChannel != null" >
-                `main_channel` = #{mainChannel,jdbcType=INTEGER},
+                `main_channel` = #{mainChannel,jdbcType=VARCHAR},
             </if>
             <if test="sessionType != null" >
                 `session_type` = #{sessionType,jdbcType=VARCHAR},
             </if>
             <if test="sessionCategory != null" >
-                `session_category` = #{sessionCategory,jdbcType=INTEGER},
+                `session_category` = #{sessionCategory,jdbcType=VARCHAR},
             </if>
             <if test="preDisplayChannel != null" >
                 `pre_display_channel` = #{preDisplayChannel,jdbcType=VARCHAR},
@@ -230,13 +230,13 @@
                 #{displayPlatform,jdbcType=VARCHAR},
             </if>
             <if test="mainChannel != null" >
-                #{mainChannel,jdbcType=INTEGER},
+                #{mainChannel,jdbcType=VARCHAR},
             </if>
             <if test="sessionType != null" >
                 #{sessionType,jdbcType=VARCHAR},
             </if>
             <if test="sessionCategory != null" >
-                #{sessionCategory,jdbcType=INTEGER},
+                #{sessionCategory,jdbcType=VARCHAR},
             </if>
             <if test="preDisplayChannel != null" >
                 #{preDisplayChannel,jdbcType=VARCHAR},
