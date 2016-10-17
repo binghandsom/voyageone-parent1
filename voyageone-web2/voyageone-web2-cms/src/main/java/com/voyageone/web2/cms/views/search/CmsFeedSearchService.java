@@ -77,7 +77,7 @@ public class CmsFeedSearchService extends BaseViewService {
         // 获取brand list
         masterData.put("brandList", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.BRAND));
 
-        masterData.put("masterBrandList",cmsMasterBrandMappingService.getMasterBrandListByChannelId(channelId));
+//        masterData.put("masterBrandList",cmsMasterBrandMappingService.getMasterBrandListByChannelId(channelId));
         // 获取category list
         List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(channelId);
         if (!feedCatList.isEmpty()) {
