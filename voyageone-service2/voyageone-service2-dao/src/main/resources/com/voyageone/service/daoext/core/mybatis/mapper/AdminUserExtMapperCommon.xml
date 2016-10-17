@@ -7,33 +7,33 @@
     <sql id="selectUserFilter">
     	<where>
             <if test="id != null" >
-                and id = #{id}
+                and u.id = #{id}
             </if>
 
             <if test="userAccount != null and userAccount != ''" >
                 and (
-                user_account like concat('%', #{userAccount}, '%') or user_name like concat('%', #{userAccount}, '%')
+                u.user_account like concat('%', #{userAccount}, '%') or user_name like concat('%', #{userAccount}, '%')
                 )
             </if>
 
             <if test="active != null" >
-                and active = #{active}
+                and u.active = #{active}
             </if>
 
             <if test="orgId != null" >
-                and org_id = #{orgId}
+                and u.org_id = #{orgId}
             </if>
 
             <if test="roleId != null and roleId != ''" >
-                and concat(',', role_id, ',')  like concat('%,', #{roleId}, ',%')
+                and concat(',', r.id, ',')  like concat('%,', #{roleId}, ',%')
             </if>
 
             <if test="channelId != null and channelId != ''" >
-                and concat(',', channel_id, ',')  like concat('%,', #{channelId}, ',%') or concat(',', channel_id, ',')  like '%,ALL,%'
+                and concat(',', rc_channel.cfg_val1, ',')  like concat('%,', #{channelId}, ',%') or concat(',',  rc_channel.cfg_val1, ',')  like '%,ALL,%'
             </if>
 
             <if test="storeId != null and storeId != ''" >
-                and concat(',', store_id, ',')  like concat('%,', #{storeId}, ',%') or concat(',', store_id, ',')  like '%,ALL,%'
+                and concat(',',  rc_store.cfg_val1, ',')  like concat('%,', #{storeId}, ',%') or concat(',',  rc_store.cfg_val1, ',')  like '%,ALL,%'
             </if>
 
             <if test="application != null and application != ''" >
@@ -41,7 +41,7 @@
             </if>
 
             <if test="companyId != null" >
-                and company_id = #{companyId}
+                and u.company_id = #{companyId}
             </if>
 
         </where>
@@ -50,43 +50,41 @@
 
 	
 	<select id="selectUserByPage" resultMap="comUserMap">
+        SELECT u.*,o.org_name, co.company, GROUP_CONCAT( DISTINCT r.id) as role_id, GROUP_CONCAT( DISTINCT r.role_name) as role_name,
+        GROUP_CONCAT( DISTINCT application) as application ,  GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id,  GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
 
+        FROM com_user u
+        LEFT JOIN (SELECT id, org_name FROM com_organization WHERE active =1) o ON u.org_id = o.id
+        LEFT JOIN (SELECT id, company FROM synship.ct_company WHERE active =1) co ON co.id = u.company_id
+        LEFT JOIN com_user_role ur ON ur.user_id = u.id
+        LEFT JOIN com_role r ON r.id = ur.role_id AND r.active = 1
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND  ch.active = 1 WHERE rc.cfg_name = 'channel_id') rc_channel ON  rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND  st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON  rc_store.role_id =r.id
         <include refid="selectUserFilter"/>
+        GROUP BY u.id
 	</select>
 	
 	<select id="selectUserCount" resultType="Integer">
-        SELECT count(0) from
+        SELECT COUNT(0) FROM
         (
-        SELECT u.*, GROUP_CONCAT( DISTINCT t3.id) as role_id , GROUP_CONCAT( DISTINCT t3.role_name) as role_name, o.org_name, GROUP_CONCAT( DISTINCT channel_id) as channel_id, store_id, application  , co.company FROM com_user u
-        LEFT JOIN com_user_role ur ON ur.user_id = u.id
+        SELECT u.id,o.org_name, co.company, GROUP_CONCAT( DISTINCT r.id) as role_id, GROUP_CONCAT( DISTINCT r.role_name) as role_name,
+        GROUP_CONCAT( DISTINCT application) as application , GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id, GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        FROM com_user u
         LEFT JOIN (SELECT id, org_name FROM com_organization WHERE active =1) o ON u.org_id = o.id
         LEFT JOIN (SELECT id, company FROM synship.ct_company WHERE active =1) co ON co.id = u.company_id
-        LEFT JOIN
-        (SELECT * FROM
-        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT ap.application) as application  from com_role cr LEFT JOIN
-        (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
-        FROM
-        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
-        from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
-        where
-        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id or rc.cfg_val1='ALL'))
-        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
-        and r.id = rc.role_id
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        GROUP BY r.id, rc.cfg_name) t
-        GROUP BY t.id) t1
-        ON cr.id = t1.id
-        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
-        GROUP BY cr.id) t2
-        WHERE t2.active =1 ) t3
-        ON t3.id = ur.role_id
-        GROUP By u.id
-        )t4
-		 <include refid="selectUserFilter"/>
+        LEFT JOIN com_user_role ur ON ur.user_id = u.id
+        LEFT JOIN com_role r ON r.id = ur.role_id AND r.active = 1
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND ch.active = 1 WHERE rc.cfg_name = 'channel_id')
+        rc_channel ON rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON
+        rc_store.role_id =r.id
+        <include refid="selectUserFilter"/>
+        GROUP BY u.id
+        ) t
 	</select>
 
 
