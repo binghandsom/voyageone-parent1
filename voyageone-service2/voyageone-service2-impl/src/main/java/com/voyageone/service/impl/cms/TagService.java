@@ -66,6 +66,10 @@ public class TagService extends BaseService {
         return tag.getId();
     }
 
+    public void addJmModule(CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel) {
+        tagJmModuleExtensionDao.insert(tagJmModuleExtensionModel);
+    }
+
     /**
      * 通过原始（核心）tag 获取聚美模块的扩展配置数据模型
      *
@@ -140,6 +144,10 @@ public class TagService extends BaseService {
     @VOTransactional
     public int updateTagModel(CmsBtTagModel cmsBtTagModel) {
         return cmsBtTagDao.update(cmsBtTagModel);
+    }
+
+    public void updateTagModel(CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel) {
+        tagJmModuleExtensionDao.update(tagJmModuleExtensionModel);
     }
 
     @VOTransactional

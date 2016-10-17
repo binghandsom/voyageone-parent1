@@ -227,7 +227,10 @@ public class CmsBtJmPromotionService extends BaseService {
 
         int result = dao.update(promotionModel);
 
+        setHasFeaturedModule(parameter);
+
         parameter.getTagList().forEach(cmsBtTagModel -> {
+
             cmsBtTagModel.setModifier(promotionModel.getModifier());
 
             if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
@@ -235,6 +238,8 @@ public class CmsBtJmPromotionService extends BaseService {
             } else {
                 addChildTag(cmsBtTagModel, promotionModel);
             }
+
+            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
         });
         return result;
     }
@@ -246,9 +251,52 @@ public class CmsBtJmPromotionService extends BaseService {
         }
         int refTagId = createPromotionTopTag(model);
         model.setRefTagId(refTagId);
+
+        setHasFeaturedModule(parameter);
+
         // 子TAG追加
-        parameter.getTagList().forEach(cmsBtTagModel -> addChildTag(cmsBtTagModel, model));
+        parameter.getTagList().forEach(cmsBtTagModel -> {
+            addChildTag(cmsBtTagModel, model);
+
+            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
+        });
+
         return dao.insert(model);
+    }
+
+    private void ifNoFeaturedModuleThenUseThis(CmsBtJmPromotionSaveBean parameter, CmsBtTagModel tagModel) {
+        if (parameter.isHasFeaturedModule())
+            return;
+        parameter.setHasFeaturedModule(true);
+
+        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = tagService.getJmModule(tagModel);
+
+        if (tagJmModuleExtensionModel != null) {
+            tagJmModuleExtensionModel.setFeatured(true);
+            tagService.updateTagModel(tagJmModuleExtensionModel);
+            return;
+        }
+
+        tagJmModuleExtensionModel = new CmsBtTagJmModuleExtensionModel();
+        tagJmModuleExtensionModel.setTagId(tagModel.getId());
+        tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
+        tagJmModuleExtensionModel.setFeatured(true); // 创建默认主推配置
+
+        // 其他属性使用默认
+        tagJmModuleExtensionModel.setHideFlag(0);
+        tagJmModuleExtensionModel.setDisplayStartTime(null);
+        tagJmModuleExtensionModel.setDisplayEndTime(null);
+        tagJmModuleExtensionModel.setShelfType(1);
+        tagJmModuleExtensionModel.setImageType(1);
+        tagJmModuleExtensionModel.setProductsSortBy(1);
+        tagJmModuleExtensionModel.setNoStockToLast(false);
+
+        tagService.addJmModule(tagJmModuleExtensionModel);
+    }
+
+    private void setHasFeaturedModule(CmsBtJmPromotionSaveBean parameter) {
+        boolean hasFeaturedModule = tagService.hasFeaturedJmModuleByTopTagId(parameter.getModel().getRefTagId());
+        parameter.setHasFeaturedModule(hasFeaturedModule);
     }
 
     private void addChildTag(CmsBtTagModel tagModel, CmsBtJmPromotionModel promotionModel) {
