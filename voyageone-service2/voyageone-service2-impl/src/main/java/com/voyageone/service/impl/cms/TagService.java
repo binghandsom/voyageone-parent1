@@ -68,11 +68,24 @@ public class TagService extends BaseService {
 
     /**
      * 通过原始（核心）tag 获取聚美模块的扩展配置数据模型
+     *
      * @param tagModel 原始 tag
      * @return CmsBtTagJmModuleExtensionModel
      */
     public CmsBtTagJmModuleExtensionModel getJmModule(CmsBtTagModel tagModel) {
         return tagJmModuleExtensionDao.select(tagModel.getId());
+    }
+
+    /**
+     * 是否有主推模块
+     */
+    public boolean hasFeaturedJmModuleByTopTagId(int promotionTopTagId) {
+        return getListByParentTagId(promotionTopTagId)
+                .stream()
+                .anyMatch(tagModel -> {
+                    CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = getJmModule(tagModel);
+                    return tagJmModuleExtensionModel != null && tagJmModuleExtensionModel.getFeatured();
+                });
     }
 
     /**
