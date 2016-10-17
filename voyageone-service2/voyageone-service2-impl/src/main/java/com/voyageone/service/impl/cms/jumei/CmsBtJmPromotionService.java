@@ -6,45 +6,53 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
-import com.voyageone.service.dao.cms.*;
-import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Created by dell on 2016/3/18.
+ * Created by "some one" on 2016/3/18.
+ *
+ * @version 2.8.0
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
+    private final CmsBtJmPromotionDao dao;
+    private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
+    private final CmsBtJmPromotionDaoExt daoExt;
+    private final CmsBtTagDao daoCmsBtTag;
+    private final CmsBtPromotionDao daoCmsBtPromotion;
+    private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao;
 
     @Autowired
-    CmsBtJmPromotionDao dao;
-    @Autowired
-    CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
-    @Autowired
-    CmsBtJmPromotionDaoExt daoExt;
-    @Autowired
-    CmsBtTagDao daoCmsBtTag;
-    @Autowired
-    CmsBtPromotionDao daoCmsBtPromotion;
-    @Autowired
-    CmsBtJmProductDaoExt cmsBtJmProductDaoExt;
-    @Autowired
-    private CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
-    @Autowired
-    private CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
+    public CmsBtJmPromotionService(CmsBtTagDao daoCmsBtTag,
+                                   CmsBtPromotionDao daoCmsBtPromotion,
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao,
+                                   CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
+                                   CmsBtJmPromotionDaoExt daoExt) {
+        this.daoCmsBtTag = daoCmsBtTag;
+        this.daoCmsBtPromotion = daoCmsBtPromotion;
+        this.jmPromotionSpecialExtensionDao = jmPromotionSpecialExtensionDao;
+        this.dao = dao;
+        this.daoCmsBtJmMasterBrand = daoCmsBtJmMasterBrand;
+        this.daoExt = daoExt;
+    }
 
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
@@ -58,12 +66,12 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     @VOTransactional
-   public void delete(int id) {
-       CmsBtJmPromotionModel model = dao.select(id);
-       model.setActive(0);
-       dao.update(model);
-       saveCmsBtPromotion(model);
-   }
+    public void delete(int id) {
+        CmsBtJmPromotionModel model = dao.select(id);
+        model.setActive(0);
+        dao.update(model);
+        saveCmsBtPromotion(model);
+    }
 
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
@@ -81,7 +89,7 @@ public class CmsBtJmPromotionService extends BaseService {
      * 取得聚美活动信息
      *
      * @param jmPromotionId 聚美活动ID (对照表cms_bt_jm_promotion.id)
-     * @param hasExtInfo 是否取得专场信息和促销信息
+     * @param hasExtInfo    是否取得专场信息和促销信息
      * @return CmsBtJmPromotionSaveBean
      */
     public CmsBtJmPromotionSaveBean getEditModel(int jmPromotionId, boolean hasExtInfo) {
@@ -92,8 +100,8 @@ public class CmsBtJmPromotionService extends BaseService {
             return info;
         }
         info.setModel(model);
-        if (model.getRefTagId()!=null&&model.getRefTagId() != 0) {
-            Map<String, Object> map = new HashMap<String, Object>();
+        if (model.getRefTagId() != null && model.getRefTagId() != 0) {
+            Map<String, Object> map = new HashMap<>();
             map.put("parentTagId", model.getRefTagId());
             map.put("active", 1);
             List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
@@ -115,10 +123,10 @@ public class CmsBtJmPromotionService extends BaseService {
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
-        if (parameter.getModel().getActivityAppId()==null) {
+        if (parameter.getModel().getActivityAppId() == null) {
             parameter.getModel().setActivityAppId(0L);
         }
-        if (parameter.getModel().getActivityPcId()==null) {
+        if (parameter.getModel().getActivityPcId() == null) {
             parameter.getModel().setActivityPcId(0L);
         }
         if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getBrand())) {
@@ -160,9 +168,9 @@ public class CmsBtJmPromotionService extends BaseService {
             parameter.getModel().setModifier(userName);
             parameter.getModel().setCreater(userName);
 
-            Map<String,Object> param = new HashMap<>();
-            param.put("channelId",parameter.getModel().getChannelId());
-            param.put("name",parameter.getModel().getName());
+            Map<String, Object> param = new HashMap<>();
+            param.put("channelId", parameter.getModel().getChannelId());
+            param.put("name", parameter.getModel().getName());
             List<MapModel> model = getListByWhere(param);
             if (model == null || model.size() == 0) {
                 insertModel(parameter);
@@ -185,7 +193,7 @@ public class CmsBtJmPromotionService extends BaseService {
         return 1;
     }
 
-    public void saveCmsBtPromotion(CmsBtJmPromotionModel model) {
+    private void saveCmsBtPromotion(CmsBtJmPromotionModel model) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", model.getId());
         map.put("cartId", CartEnums.Cart.JM.getValue());
@@ -215,6 +223,7 @@ public class CmsBtJmPromotionService extends BaseService {
             daoCmsBtPromotion.update(promotion);
         }
     }
+
     /*更新
     * */
     private int updateModel(CmsBtJmPromotionSaveBean parameter) {
@@ -245,13 +254,13 @@ public class CmsBtJmPromotionService extends BaseService {
         });
         return result;
     }
+
     /**
      * 新增
      */
     private int insertModel(CmsBtJmPromotionSaveBean parameter) {
         CmsBtJmPromotionModel model = parameter.getModel();
-        if(StringUtil.isEmpty(model.getCategory()))
-        {
+        if (StringUtil.isEmpty(model.getCategory())) {
             model.setCategory("");
         }
         int refTagId = addTag(model);
@@ -315,7 +324,7 @@ public class CmsBtJmPromotionService extends BaseService {
 //            params.put("orgChannelId", channelId);
 //            params.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
 //        } else {
-            params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
+        params.put("channelId", channelId); // TODO 在本店铺查询minimall店铺的活动时，再议，还没考虑好怎么做
 //        }
         return daoExt.selectActivesOfChannel(params);
     }
