@@ -348,6 +348,9 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
         // 商品标题（最大45位字符）
         addInputField(productFieldsList, "productTitle", "商品名称", "", true, "45", "");
 
+        // 商品标语（最大45位字符）
+        addInputField(productFieldsList, "productAdContent", "商品标语", "", false, "45", "");
+
         // 长(单位:mm) (必须，最大长度5位, 默认值为50mm)
         addInputField(productFieldsList, "productLengthMm", "长", "50", true, "5", "单位:mm");
 
