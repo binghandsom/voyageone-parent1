@@ -277,10 +277,7 @@ define([
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
                         _.extend(cfgInfo, {'configType': self.searchInfo.configType});
-                        self.popups.openCreateEdit(cfgInfo).then(function () {
-                            self.search(1);
-                        });
-                        return;
+                        self.popups.openCreateEdit(cfgInfo);
                     }
                 });
             },

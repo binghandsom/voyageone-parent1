@@ -269,7 +269,7 @@ define([
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') {
                                 self.search();
-                            } else {
+                            } else if (res.isReadOnly == true) {
                                 var list = self.sourceData.sourceData.channelConfig;
                                 list.push(res);
                                 self.search(1);
@@ -293,7 +293,7 @@ define([
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') {
                                 self.search();
-                            } else {
+                            } else if (res.isReadOnly == true) {
                                 var list = self.storeCfgList;
                                 list.push(res);
                                 _forEachAdd(self.sourceData.sourceData, 'storeConfig', res);
@@ -317,7 +317,7 @@ define([
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') {
                                 self.search()
-                            } else {
+                            } else if (res.isReadOnly == true) {
                                 res.taskId = res.taskName;
                                 var list = self.taskCfgList;
                                 list.push(res);
@@ -346,7 +346,7 @@ define([
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') {
                                 self.search();
-                            } else {
+                            } else if (res.isReadOnly == true) {
                                 var list = self.cartCfgList;
                                 list.push(res);
                                 _forEachAdd(self.sourceData.sourceData, 'cartShopConfig', res);

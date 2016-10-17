@@ -6,7 +6,8 @@ define([
 ], function (admin) {
     admin.controller('CreateEditController', (function () {
         function CreateEditController(context, $uibModalInstance, channelService, storeService, taskService, cartShopService, portConfigService) {
-            this.sourceData = context;
+            this.sourceData = angular.copy(context);
+            this.context = context;
             this.$uibModalInstance = $uibModalInstance;
             this.channelService = channelService;
             this.storeService = storeService;
@@ -41,52 +42,56 @@ define([
                 }
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
-                var self = this;
+                var self = this, result = {};
                 _.extend(self.sourceData, {
                     'configType': self.configType,
                     'orderChannelId': self.sourceData.orderChannelId
                 });
-                var result = {};
+                _.extend(self.context, self.sourceData);
                 switch (self.configType) {
                     case 'Channel':
                         if (self.sourceData.isReadOnly == true) {
+                            _.extend(self.sourceData, {isReadOnly: true});
                             self.$uibModalInstance.close(self.sourceData);
                             return;
                         }
                         if (self.append == true) {
                             self.channelService.addChannelConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.channelService.updateChannelConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         }
                         break;
                     case 'Store':
                         if (self.sourceData.isReadOnly == true) {
+                            _.extend(self.sourceData, {isReadOnly: true});
                             self.$uibModalInstance.close(self.sourceData);
                             return;
                         }
                         if (self.append == true) {
                             self.storeService.addStoreConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.storeService.updateStoreConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         }
                         break;
                     case 'Task':
                         if (self.sourceData.isReadOnly == true) {
+                            _.extend(self.sourceData, {isReadOnly: true});
                             self.$uibModalInstance.close(self.sourceData);
                             return;
                         } else {
@@ -100,17 +105,18 @@ define([
                         break;
                     case 'Shop':
                         if (self.sourceData.isReadOnly == true) {
+                            _.extend(self.sourceData, {isReadOnly: true});
                             self.$uibModalInstance.close(self.sourceData);
                             return;
                         }
                         if (self.append == true) {
                             self.cartShopService.addCartShopConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.cartShopService.updateCartShopConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         }
@@ -118,12 +124,12 @@ define([
                     case 'Port':
                         if (self.append == true) {
                             self.portConfigService.addPortConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.portConfigService.updatePortConfig(self.sourceData).then(function (res) {
-                                _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                                _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         }

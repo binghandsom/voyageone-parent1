@@ -6,8 +6,9 @@ define([
 ], function (admin) {
     admin.controller('AddCodeController', (function () {
         function AddCodeController(context, channelService, popups, typeService, typeAttrService, codeService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' ? true : false;
+            this.context = context;
             this.popups = popups;
             this.channelService = channelService;
             this.typeService = typeService;
@@ -41,20 +42,22 @@ define([
                 })
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.codeService.addCode(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.codeService.updateCode(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 }
