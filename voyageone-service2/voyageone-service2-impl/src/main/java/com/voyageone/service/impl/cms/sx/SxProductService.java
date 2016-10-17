@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -913,7 +914,9 @@ public class SxProductService extends BaseService {
                     List<String> notFoundSkuCodes = new ArrayList<>();
                     if (productPlatformSku != null) {
                         productPlatformSku.forEach(sku -> {
-                            if (Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                            // 聚美以外的平台需要看PXX.skus.isSale是否等于true(该sku是否在当前平台销售),聚美不用过滤掉isSale=false的sku(聚美上新的时候false时会把它更新成隐藏)
+                            if ((!CartEnums.Cart.JM.getId().equals(cartId.toString()) && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())))
+                                    || CartEnums.Cart.JM.getId().equals(cartId.toString())) {
                                 // modified by morse.lu 2016/06/15 start
 //                            skus.add(sku);
                                 // 外面skus的共通属性 + 从各个平台下面的skus(platform.skus)那里取得的属性
@@ -1003,8 +1006,8 @@ public class SxProductService extends BaseService {
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
         Map<String, String> sizeMap = getSizeMap(
-//                channelId,
-                sxData.getMainProduct().getOrgChannelId(),
+                channelId,
+//                sxData.getMainProduct().getOrgChannelId(),
                 sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(),
                 sxData.getMainProduct().getCommon().getFields().getSizeType()

@@ -478,13 +478,13 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             fieldsMap.put(field.getId(), field);
         }
 
-        {
-            // OrgChannelId 原始channel id
-            String field_id = "OrgChannelId";
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(product.getOrgChannelId());
-        }
+//        {
+//            // OrgChannelId 原始channel id
+//            String field_id = "OrgChannelId";
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(product.getOrgChannelId());
+//        }
         {
             // ProductCode code
             String field_id = "ProductCode";
@@ -515,7 +515,13 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "Size";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+            String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
+            String adjSize = sizeMap.get(size);
+            if (StringUtils.isEmpty(adjSize)) {
+                throw new BusinessException("未设定尺码转换!");
+            }
+
+            ((InputField) field).setValue(adjSize);
         }
         {
             // ShowSize 显示尺码
@@ -619,14 +625,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 throw new BusinessException("PlatformActive must be ToOnSale or ToInStock, but now it is " + platformActive);
             }
         }
-        {
-            // OrgChannelId 原始channel id
-            String field_id = "OrgChannelId";
-            listSp.add(field_id);
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(product.getOrgChannelId());
-        }
+//        {
+//            // OrgChannelId 原始channel id
+//            String field_id = "OrgChannelId";
+//            listSp.add(field_id);
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(product.getOrgChannelId());
+//        }
         {
             // UrlKey orgChannelId + "-" + cms product id
             String field_id = "UrlKey";

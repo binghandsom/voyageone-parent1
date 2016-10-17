@@ -80,7 +80,7 @@
             <if test="promotionId != null">
                 a.promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="channelId != null and channelId != '' and channelId != '997'">
+            <if test="channelId != null and channelId != '' and channelId != '928'">
                 and a.org_channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null">
@@ -114,7 +114,7 @@
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="channelId != null and channelId != '' and channelId != '997'">
+            <if test="channelId != null and channelId != '' and channelId != '928'">
                 and org_channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null and modelId != ''">
@@ -182,7 +182,7 @@
             <if test="promotionId != null">
                 a.promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '997'">
+            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '928'">
                 and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
             </if>
         </where>

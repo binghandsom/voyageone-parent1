@@ -52,8 +52,8 @@ public class CustomWordModuleGetCommonImages extends CustomWordModule {
         String parseResult = "";
 
         List<String> urls = sxProductService.getImageUrls(
-//                                    sxData.getChannelId(),
-                                    sxData.getMainProduct().getOrgChannelId(),
+                                    sxData.getChannelId(),
+//                                    sxData.getMainProduct().getOrgChannelId(),
                                     sxData.getCartId(),
                                     Integer.valueOf(imageType),
                                     Integer.valueOf(viewType),
