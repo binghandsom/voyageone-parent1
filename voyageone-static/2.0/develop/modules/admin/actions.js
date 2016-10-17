@@ -60,7 +60,8 @@ define(function () {
                     "removeAuth": "removeAuth",
                     "getAuthByRoles": "getAuthByRoles",
                     "getAllRole": "getAllRole",
-                    "getAllRoleType": "getAllRoleType"
+                    "getAllRoleType": "getAllRoleType",
+                    "copyRole": "copyRole"
                 },
                 "adminOrgService": {
                     "root": "/admin/user/org",

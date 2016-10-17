@@ -163,6 +163,7 @@ define(function () {
         "TXT_SORT_PRE": "排序权重",
         "TXT_ROLE_MANAGEMENT": "角色管理",
         "TXT_ROLE_NAME": "角色名",
+        "TXT_NEW_ROLE_COPY": "复制的角色名",
         "TXT_ROLE_TYPE": "角色类型",
         "TXT_ROLE_SYSTEM": "授权系统",
         "TXT_ROLE_CHANNEL": "授权渠道",

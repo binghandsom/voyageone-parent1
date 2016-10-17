@@ -57,6 +57,12 @@ define([
             "controller": 'RoleEditController as ctrl',
             "size": 'lg'
         },
+        "copyRole": {
+            "templateUrl": "views/pop/addAdmin/addRole/copy_role.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addAdmin/addRole/copy_role.ctl",
+            "controller": 'RoleCopyController as ctrl',
+            "size": 'md'
+        },
         "addRes": {
             "templateUrl": "views/pop/addAdmin/addRes/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/addAdmin/addRes/index.ctl",
@@ -219,6 +225,12 @@ define([
          */
         $scope.openRoleEdit = function openRoleEdit(context) {
             return openModal(popActions.addRoleEdit, context);
+        };
+        /**
+         * 打开用户/权限页面--角色管理页面的复制角色页面
+         */
+        $scope.openRoleCopy = function openRoleCopy(context) {
+            return openModal(popActions.copyRole, context);
         };
 
         /**
