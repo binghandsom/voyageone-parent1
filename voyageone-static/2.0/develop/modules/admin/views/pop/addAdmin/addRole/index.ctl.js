@@ -47,6 +47,10 @@ define([
                     self.sourceData = {};
                     self.sourceData.active = '1';
                 }
+                if (self.sourceData.isCopyRole == true) {
+                    self.popType = '拷贝角色';
+                    self.sourceData.active = '1';
+                }
                 self.adminOrgService.getAllOrg().then(function (res) {
                     self.orgList = res.data;
                 });
@@ -437,6 +441,9 @@ define([
                     })
                 } else {
                     _.extend(self.saveInfo, {id: self.sourceData.id});
+                    if (self.sourceData.isCopyRole == true) {
+                        _.extend(self.saveInfo, {action: 'copy'});
+                    }
                     self.adminRoleService.updateRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);

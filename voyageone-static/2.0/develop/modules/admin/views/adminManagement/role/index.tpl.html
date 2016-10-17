@@ -99,7 +99,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit('edit')" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
                     <button class="btn btn-default" ng-click="ctrl.edit('copy')" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-copy"></i>&nbsp;复制</button>
                     <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>

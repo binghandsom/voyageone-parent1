@@ -138,12 +138,12 @@ define([
                         return role.id == self.adminUserSelList.selList[0].id
                     });
                     if (type == 'copy') {
-                        var InfoData = {roleId: Info[0].id, roleName: Info[0].roleName};
-                        self.popups.openRoleCopy(InfoData).then(function () {
+                        _.extend(Info[0], {isCopyRole: true});
+                        self.popups.openRole(Info[0]).then(function () {
                             self.search(1);
-                        })
-                    } else {
-                        self.popups.openRole(Info).then(function () {
+                        });
+                    } else if (type == 'edit') {
+                        self.popups.openRole(Info[0]).then(function () {
                             self.search(1);
                         });
                     }
