@@ -1,5 +1,6 @@
 package com.voyageone.web2.admin.views.user;
 
+import com.google.common.base.Preconditions;
 import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
@@ -12,6 +13,7 @@ import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -263,6 +265,19 @@ public class AdminRoleController extends AdminController {
         result.put("res", res);
         result.put("perms", perms);
         return success(result);
+    }
+    
+    @RequestMapping(AdminUrlConstants.User.Role.COPY_ROLE)
+    public AjaxResponse copyRole(@RequestBody Map<String, Object> params) {
+    	Integer roleId = (Integer) params.get("roleId");
+    	String copyRoleName = (String) params.get("copyRoleName");
+    	
+    	Preconditions.checkNotNull(roleId);
+    	Preconditions.checkArgument(StringUtils.isNoneBlank(copyRoleName));
+    	
+    	adminRoleService.copyRoleAuth(roleId, copyRoleName);
+    	
+    	return success(true);
     }
 
 }

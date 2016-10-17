@@ -38,12 +38,12 @@ define([
             init: function () {
                 var self = this;
                 self.storeService.getAllStore(null).then(function (res) {
-                	 self.tempList = res.data;
-                     self.storeList = [];
-                     _.forEach(self.tempList, function (item) {
-                         var data = '(' + item.channelId + ')' + item.storeName;
-                         self.storeList.push({'storeId': item.storeId, 'storeName': data});
-                     })
+                    self.tempList = res.data;
+                    self.storeList = [];
+                    _.forEach(self.tempList, function (item) {
+                        var data = '(' + item.channelId + ')' + item.storeName;
+                        self.storeList.push({'storeId': item.storeId, 'storeName': data});
+                    })
                 });
                 self.adminRoleService.getAllRoleType().then(function (res) {
                     self.roleTypeList = res.data;
@@ -134,13 +134,19 @@ define([
                         self.search(1);
                     });
                 } else {
-                    _.forEach(self.adminRoleList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openRole(Info).then(function () {
-                                self.search(1);
-                            });
-                        }
-                    })
+                    var Info = _.filter(self.adminRoleList, function (role) {
+                        return role.id == self.adminUserSelList.selList[0].id
+                    });
+                    if (type == 'copy') {
+                        var InfoData = {roleId: Info[0].id, roleName: Info[0].roleName};
+                        self.popups.openRoleCopy(InfoData).then(function () {
+                            self.search(1);
+                        })
+                    } else {
+                        self.popups.openRole(Info).then(function () {
+                            self.search(1);
+                        });
+                    }
                 }
             },
             vieAuthority: function () {

@@ -580,4 +580,37 @@ public class AdminRoleService extends BaseService {
         }
         return children;
     }
+    
+
+    /**
+     * 复制角色
+     * @param srcRoldId 源角色ID
+     * @param dstName 目标角色名
+     */
+    @VOTransactional
+    public void copyRoleAuth(Integer srcRoldId, String dstName)
+    {
+        ComRoleModel qry = new ComRoleModel();
+        qry.setRoleName(dstName);
+        ComRoleModel dstRole = comRoleDao.selectOne(qry);
+        Integer desRoldId = dstRole.getId();
+
+
+        ComResRoleModel rr = new ComResRoleModel();
+        rr.setRoleId(srcRoldId);
+        List<ComResRoleModel> srcList = comResRoleDao.selectList(rr);
+
+        for(ComResRoleModel src : srcList)
+        {
+            ComResRoleModel dst = new ComResRoleModel();
+            dst.setRoleId(desRoldId);
+            dst.setResId(src.getResId());
+
+            if(comResRoleDao.selectCount(dst) == 0)
+            {
+                comResRoleDao.insert(dst);
+            }
+        }
+    }
+    
 }
