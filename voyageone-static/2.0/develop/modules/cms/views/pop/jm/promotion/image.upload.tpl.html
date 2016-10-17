@@ -5,57 +5,29 @@
         </button>
         <h4 class="modal-title">
             <i class="fa fa-pencil-square-o"></i>&nbsp;
-            <span class="ng-scope">选择套图</span>
+            <span class="ng-scope">聚美图片上传</span>
         </h4>
     </div>
     <div class="modal-body wrapper">
-        <div class="table-responsive box box-body" style="overflow: auto">
-            <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="table-layout: fixed;" ng-controller="popupCtrl">
-                <thead>
-                <tr><!--24-->
-                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
-                        <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)">
-                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
-                        </label>
-                    </th>
-                    <th class="text-center">seq</th>
-                    <th class="text-left">概况</th>
-                    <th class="text-center">APP端频道页入口图</th>
-                    <th class="text-center">PC端频道页大图</th>
-                    <th class="text-center">头图（APP端优先）</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td class="text-center mfb-x">
-                        <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox">
-                            <span class="fa fa-check"></span>
-                        </label>
-                    </td>
-                    <td class="text-center">1</td>
-                    <td class="text-left">
-                        活动名称：聚美301店庆6周年大促
-                        活动时间：2016.3.1~2016.3.7
-                        是否使用模板刷图：是
-                    </td>
-                    <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
-                    </td>
-                    <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
-                    </td>
-                    <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <div class="panel panel-info">
+            <div class="panel-heading"><i class="fa fa-camera-retro"></i></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <a href="javascript:void(0)" class="thumbnail" ng-if="ctrl.uploader.queue.length">
+                            <img  flow-img="file" class="img-thumbnail img-thumbnails center-block fix-img" ng-thumb="{ file: ctrl.uploader.queue[0]._file, height: 100 }">{{item}}
+                        </a>
 
-            <div class="col-sm-12 m-t-lg m-b-lg">
-                <vpagination config="vm.feedPageOption"></vpagination>
+                    </div>
+                    <div class="col-md-3 col-md-offset-1">
+                        <div class="text-right">
+                            <input type="file" file-style = "{buttonText:' &nbsp;浏览文件',input:false}" nv-file-select uploader="ctrl.uploader" accept="image/png,image/jpeg">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
