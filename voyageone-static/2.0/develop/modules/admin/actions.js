@@ -174,6 +174,7 @@ define(function () {
                     "root": "/admin/store/self",
                     "searchStoreByPage": "searchStoreByPage",
                     "searchStoreConfigByPage": "searchStoreConfigByPage",
+                    "getStoreByChannelIds": "getStoreByChannelIds",
                     "getAllStore": "getAllStore",
                     "addStore": "addStore",
                     "updateStore": "updateStore",

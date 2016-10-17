@@ -28,5 +28,7 @@ public interface WmsMtStoreDaoExt {
 
 	List<WmsMtStoreBean> selecAllStore(@Param("orderChannelId") String channelId);
 
+	List<WmsMtStoreBean> getStoreByChannelIds(List<String> channelIds);
+
 
 }

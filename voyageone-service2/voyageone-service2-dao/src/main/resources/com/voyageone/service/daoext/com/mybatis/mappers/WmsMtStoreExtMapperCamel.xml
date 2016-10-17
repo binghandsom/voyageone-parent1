@@ -93,5 +93,18 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="getStoreByChannelIds" resultMap="storeModelMap">
+		select wms.store_id, wms.order_channel_id, toc.name as channel_name, wms.store_name, wms.store_type, wms.is_sale,
+			wms.store_location, wms.store_kind, wms.label_type, wms.rsv_sort, wms.inventory_manager,
+		    wms.inventory_hold, wms.inventory_syn_type, wms.store_area, wms.area_id, wms.store_comment,
+		    wms.active, wms.created, wms.creater, wms.modified, wms.modifier,
+		    wms.parent_store_id
+		from wms_mt_store wms left join tm_order_channel toc on toc.order_channel_id = wms.order_channel_id
+		where wms.order_channel_id in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
 
 </mapper>

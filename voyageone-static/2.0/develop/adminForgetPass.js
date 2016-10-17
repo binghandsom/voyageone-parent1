@@ -5,14 +5,14 @@ define(['components/dist/voyageone.angular.com'], function () {
     angular.module('voyageone.admin.adminForgetPass', [
         'blockUI',
         'voyageone.angular'
-    ]).controller('forgetPassController', function ($scope, $http) {
+    ]).controller('forgetPassController', function ($scope, $ajax) {
         $scope.submit = function () {
-            $http({
-                url: '/admin/user/self/forgetPass',
-                method: 'post',
-                params: {'userAccount': $scope.userAccount}
+            $ajax.post('/admin/user/self/forgetPass', {
+                userAccount: $scope.userAccount
             }).then(function (res) {
-                console.log(res);
+                if (res.data == true) {
+                    console.log(res);
+                }
             })
         }
     });

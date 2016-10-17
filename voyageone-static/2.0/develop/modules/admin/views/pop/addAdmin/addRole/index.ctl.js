@@ -55,6 +55,9 @@ define([
                 });
 
                 self.channelService.getAllChannel(null).then(function (res) {
+                    _.forEach(res.data, function (channel) {
+                        channel.name = '(' + channel.orderChannelId + ')' + channel.name;
+                    });
                     self.channelAllListCopy = res.data;
                     self.channelAllList = res.data;
                     if (self.popType == '添加角色') return;
@@ -158,10 +161,17 @@ define([
                 var self = this;
                 self.channelTempAllList = [];
                 self.storeTempAllList = [];
+                self.channelIds = [];
                 if (item.isFilter == true) {
-                    self.storeService.getAllStore(null).then(function (res) {
+                    _.forEach(self.channelList, function (channel) {
+                        self.channelIds.push(channel.orderChannelId);
+                    });
+                    self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
                         self.storeAllListCopy = res.data;
                     });
+                    // self.storeService.getAllStore(null).then(function (res) {
+                    //     self.storeAllListCopy = res.data;
+                    // });
                 }
                 switch (item.type) {
                     case'channel':
@@ -193,7 +203,7 @@ define([
                             });
                             return self.storeTempAllList;
                         } else {
-                            _.filter(self.storeAllList, function (data) {
+                            _.filter(self.storeAllListCopy, function (data) {
                                 if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
                                     self.storeTempAllList.push(data)
                                 }

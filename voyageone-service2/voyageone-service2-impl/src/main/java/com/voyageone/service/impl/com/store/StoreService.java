@@ -42,6 +42,10 @@ public class StoreService extends BaseService {
 	public List<WmsMtStoreBean> getAllStore(String channelId) {
 		return storeDaoExt.selecAllStore(channelId);
 	}
+
+	public List<WmsMtStoreBean> getStoreByChannelIds(List<String> channelIds) {
+		return storeDaoExt.getStoreByChannelIds(channelIds);
+	}
 	
 	public List<WmsMtStoreBean> searchStoreAndConfigByChannelId(String channelId) {
 		List<WmsMtStoreBean> stores = searchStore(channelId, null, null, null, null);

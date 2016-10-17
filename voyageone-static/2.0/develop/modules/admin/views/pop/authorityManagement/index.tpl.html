@@ -75,18 +75,18 @@
                         </table>
                         <script id="table_tree.html" type="text/ng-template">
                             <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:true})">
-                                <td class="mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '5px':'0'}">
+                                <td class="mfb-xxt tooltips" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '5px':'0'}">
                                     <div class="indent" style="padding-left: {{5*level}}px"></div>
                                     <label class="v-middle" ng-if="item.resName.length <= 22">{{item.resName}}</label>
                                     <label class="v-middle" ng-if="item.resName.length > 22" uib-tooltip="{{item.resName}}"
                                            tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resName | stringCutter:true:22:' ...'}}</label>
                                 </td>
-                                <td class="text-left mfb-xxt">
+                                <td class="text-left mfb-xxt tooltips">
                                     <label class="v-middle" ng-if="item.resKey.length <= 38">{{item.resKey}}</label>
                                     <label class="v-middle" ng-if="item.resKey.length > 38" uib-tooltip="{{item.resKey}}"
                                            tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resKey | stringCutter:true:38:' ...'}}</label>
                                 </td>
-                                <td class="text-left mfb-xxt">
+                                <td class="text-left mfb-xxt tooltips">
                                     <label class="v-middle" ng-if="item.resUrl.length <= 35">{{item.resUrl}}</label>
                                     <label class="v-middle" ng-if="item.resUrl.length > 35" uib-tooltip="{{item.resUrl}}"
                                            tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resUrl | stringCutter:true:35:' ...'}}</label>

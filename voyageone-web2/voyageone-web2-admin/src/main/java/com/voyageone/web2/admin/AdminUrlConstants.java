@@ -180,6 +180,8 @@ public interface AdminUrlConstants {
 
 			String GET_ALL_STORE = "getAllStore";
 
+			String GET_STORE_BY_CHANNEL_IDS = "getStoreByChannelIds";
+
 			String UPDATE_STORE = "updateStore";
 
 			String DELETE_STORE = "deleteStore";

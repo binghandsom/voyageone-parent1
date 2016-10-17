@@ -117,7 +117,10 @@
                     <td class="text-left v-middle">{{list.cartName}}</td>
                     <td class="text-left v-middle">{{list.shopName}}</td>
                     <td class="text-left v-middle">
-                        <popover-text content="list.appUrl" direct="top" popover-trigger="mouseenter"></popover-text>
+                        <label ng-if="list.appUrl.length <= 10">{{list.appUrl}}</label>
+                        <label ng-if="list.appUrl.length > 10">
+                            <popover-text content="list.appUrl" direct="top" popover-trigger="mouseenter"></popover-text>
+                        </label>
                     </td>
                     <td class="text-left v-middle">{{list.comment}}</td>
                     <td class="text-center v-middle" ng-bind="list.active!=null?list.active==true ? '启用':'禁用':''"></td>

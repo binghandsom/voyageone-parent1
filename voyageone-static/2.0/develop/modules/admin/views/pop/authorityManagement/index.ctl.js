@@ -24,8 +24,9 @@ define([
                     self.orgList = res.data;
                 });
             },
-            search:function(value){
-            	var self = this;
+            search: function (value) {
+                var self = this;
+                if (value == null) return;
                 self.adminUserService.getAuthByUser({
                     'userAccount': self.sourceData[0].userAccount,
                     'application': value
