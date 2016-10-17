@@ -7,10 +7,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
-import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
 import com.voyageone.service.impl.BaseService;
@@ -38,20 +35,22 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionDaoExt daoExt;
     private final CmsBtTagDao daoCmsBtTag;
     private final CmsBtPromotionDao daoCmsBtPromotion;
-    private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao;
+    private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
+    private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
 
     @Autowired
-    public CmsBtJmPromotionService(CmsBtTagDao daoCmsBtTag,
-                                   CmsBtPromotionDao daoCmsBtPromotion,
-                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionSpecialExtensionDao,
+    public CmsBtJmPromotionService(CmsBtTagDao daoCmsBtTag, CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
-                                   CmsBtJmPromotionDaoExt daoExt) {
+                                   CmsBtJmPromotionDaoExt daoExt,
+                                   CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
         this.daoCmsBtTag = daoCmsBtTag;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
-        this.jmPromotionSpecialExtensionDao = jmPromotionSpecialExtensionDao;
         this.dao = dao;
         this.daoCmsBtJmMasterBrand = daoCmsBtJmMasterBrand;
         this.daoExt = daoExt;
+        this.jmPromotionExtensionDao = jmPromotionExtensionDao;
+        this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
     }
 
     public Map<String, Object> init() {
@@ -81,7 +80,7 @@ public class CmsBtJmPromotionService extends BaseService {
         return dao.insert(entity);
     }
 
-    public CmsBtJmPromotionSpecialExtensionModel getJmPromotionSpecial(Integer jmPromotionId){
+    public CmsBtJmPromotionSpecialExtensionModel getJmPromotionSpecial(Integer jmPromotionId) {
         return jmPromotionExtensionDaoExt.selectOne(jmPromotionId);
     }
 
