@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -116,19 +117,23 @@ public class TagService extends BaseService {
     }
 
     @VOTransactional
-    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, boolean firstTag) {
-        //将取得的数据插入到数据库
-        cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
+    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, final boolean firstTag) {
+        insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, modelConsumer -> {
+            if (firstTag) {
+                modelConsumer.setTagPath("-" + modelConsumer.getId() + "-");
+            } else {
+                //对tagPath进行二次组装
+                modelConsumer.setTagPath(modelConsumer.getTagPath() + modelConsumer.getId() + "-");
+            }
+        });
+    }
 
-        //对tagPath进行二次组装
-        //一级标签
-        if (firstTag) {
-            cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getId() + "-");
-        } else {
-            //对tagPath进行二次组装
-            cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + cmsBtTagModel.getId() + "-");
-        }
-        //更新数据cms_bt_tag
+    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, Consumer<CmsBtTagModel> tagPathSetter) {
+        //将取得的数据插入到数据库
+        cmsBtTagDao.insert(cmsBtTagModel);
+
+        tagPathSetter.accept(cmsBtTagModel);
+
         updateTagModel(cmsBtTagModel);
     }
 
