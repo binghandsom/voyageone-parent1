@@ -6,9 +6,10 @@ define([
 ], function (admin) {
     admin.controller('AddChannelTypeController', (function () {
         function AddChannelTypeController(context, channelService, popups, typeService, AdminCartService, channelAttributeService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' || context.kind == 'add' ? true : false;
             this.readOnly = context.isReadOnly == true ? true : false;
+            this.context = context;
             this.popups = popups;
             this.channelService = channelService;
             this.typeService = typeService;
@@ -53,7 +54,8 @@ define([
                 })
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;
@@ -67,14 +69,15 @@ define([
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }
+                _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.channelAttributeService.addChannelAttribute(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.channelAttributeService.updateChannelAttribute(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 }

@@ -33,7 +33,7 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelAllList = res.data;
                 });
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -83,22 +83,17 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openChannelCarrier('add').then(function () {
-                        self.search(1);
+                    self.popups.openChannelCarrier('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.carrierSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.carrierList, function (Info) {
-                            if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                                self.popups.openChannelCarrier(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.carrierList, function (Info) {
+                        if (Info.mainKey == self.carrierSelList.selList[0].id) {
+                            self.popups.openChannelCarrier(Info);
+                        }
+                    })
                 }
 
             },

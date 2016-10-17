@@ -90,7 +90,6 @@ define([
                 var self = this;
                 if (self.channelSelList.selList.length < 1) {
                     self.popups.openConfig({'configType': type});
-                    return;
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
@@ -103,22 +102,17 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openAdd('add').then(function () {
-                        self.search(1);
+                    self.popups.openAdd('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.channelSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.channelList, function (channelInfo) {
-                            if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                                self.popups.openAdd(channelInfo).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.channelList, function (channelInfo) {
+                        if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
+                            self.popups.openAdd(channelInfo);
+                        }
+                    })
                 }
             },
             delete: function () {
@@ -130,7 +124,7 @@ define([
                         });
                         self.channelService.deleteChannel(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
-                            self.search();
+                            self.search(1);
                         })
                     }
                 );

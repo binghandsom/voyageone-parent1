@@ -81,22 +81,17 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openChannelThird('add').then(function () {
-                        self.search(1);
+                    self.popups.openChannelThird('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.channelThirdSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.channelList, function (channelInfo) {
-                            if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
-                                self.popups.openChannelThird(channelInfo).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.channelList, function (channelInfo) {
+                        if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
+                            self.popups.openChannelThird(channelInfo);
+                        }
+                    })
                 }
             },
             delete: function () {

@@ -6,8 +6,9 @@ define([
 ], function (admin) {
     admin.controller('AddController', (function () {
         function AddController(context, alert, channelService, AdminCartService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' ? true : false;
+            this.context = context;
             this.alert = alert;
             this.channelService = channelService;
             this.AdminCartService = AdminCartService;
@@ -99,7 +100,6 @@ define([
                             _.forEach(self.cartAllList, function (e, i) {
                                 if (e.cartId == item.cartId) {
                                     index = i;
-                                    return;
                                 }
                             });
                             if (index > -1) {
@@ -165,7 +165,8 @@ define([
                 }
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;
@@ -176,13 +177,14 @@ define([
                     tempCartList.push(item.cartId);
                     _.extend(self.sourceData, {'cartIds': tempCartList.join(','), 'companyId': self.companyId});
                 });
+                _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.channelService.addChannel(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
@@ -191,7 +193,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 }
