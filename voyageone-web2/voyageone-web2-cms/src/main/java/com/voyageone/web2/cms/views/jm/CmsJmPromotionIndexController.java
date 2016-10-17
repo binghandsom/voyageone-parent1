@@ -45,11 +45,7 @@ public class CmsJmPromotionIndexController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetEditModel)
     public AjaxResponse getEditModel(@RequestBody int id) {
-        CmsBtJmPromotionSaveBean parameter = new CmsBtJmPromotionSaveBean();
-        CmsBtJmPromotionModel model = new CmsBtJmPromotionModel();
-        model.setId(id);
-        parameter.setModel(model);
-        return success(service.getEditModel(parameter));
+        return success(service.getEditModel(id, false));
     }
 
     /**
@@ -57,7 +53,7 @@ public class CmsJmPromotionIndexController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GetEditModelExt)
     public AjaxResponse getEditModelExt(@RequestBody CmsBtJmPromotionSaveBean parameter) {
-        return success(service.getEditModel(parameter));
+        return success(service.getEditModel(parameter.getModel().getId(), parameter.isHasExt()));
     }
 
     /**

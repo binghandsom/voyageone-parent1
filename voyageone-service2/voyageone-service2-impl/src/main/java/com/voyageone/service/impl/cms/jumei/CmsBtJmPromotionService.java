@@ -75,11 +75,18 @@ public class CmsBtJmPromotionService extends BaseService {
         return jmPromotionSpecialExtensionDao.selectOne(jmPromotionId);
     }
 
-    public CmsBtJmPromotionSaveBean getEditModel(CmsBtJmPromotionSaveBean info) {
-        int id = info.getModel().getId();
-        CmsBtJmPromotionModel model = dao.select(id);
+    /**
+     * 取得聚美活动信息
+     *
+     * @param jmPromotionId 聚美活动ID (对照表cms_bt_jm_promotion.id)
+     * @param hasExtInfo 是否取得专场信息和促销信息
+     * @return CmsBtJmPromotionSaveBean
+     */
+    public CmsBtJmPromotionSaveBean getEditModel(int jmPromotionId, boolean hasExtInfo) {
+        CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
+        CmsBtJmPromotionModel model = dao.select(jmPromotionId);
         if (model == null) {
-            $warn("getEditModel 查询结果为空 id=" + id);
+            $warn("getEditModel 查询结果为空 id=" + jmPromotionId);
             return info;
         }
         info.setModel(model);
@@ -90,17 +97,13 @@ public class CmsBtJmPromotionService extends BaseService {
             List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
             info.setTagList(tagList);
         }
-        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(model.getPrePeriodStart());//北京时间转本地时区时间戳
-        long activityEndTime = DateTimeUtilBeijing.toLocalTime(model.getActivityEnd());//北京时间转本地时区时间戳
-        info.setIsBeginPre(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
-        info.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
 
         // 取得扩展信息
-        if (info.isHasExt()) {
+        if (hasExtInfo) {
             // 活动详情编辑
             CmsBtJmPromotionSpecialExtensionModel extModel = info.getExtModel();
             if (extModel != null && extModel.getId() != null) {
-                info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(id));
+                info.setExtModel(jmPromotionSpecialExtensionDao.selectOne(jmPromotionId));
             }
         }
 
@@ -124,9 +127,6 @@ public class CmsBtJmPromotionService extends BaseService {
         }
         if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getCategory())) {
             parameter.getModel().setCategory("");
-        }
-        if (!StringUtils.isEmpty(parameter.getModel().getSignupDeadline())) {
-            parameter.getModel().setSignupDeadline(DateTimeUtil.parseStr(parameter.getModel().getSignupDeadline(), "yyyy-MM-dd HH:mm:ss"));
         }
 
         // 设置品牌名

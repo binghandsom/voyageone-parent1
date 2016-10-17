@@ -31,14 +31,14 @@
                             <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1"
                                    ng-model="ctrlEdit.editModel.model.promotionScene_1"
                                    ng-required="!ctrlEdit.editModel.model.promotionScene_1 && !ctrlEdit.editModel.model.promotionScene_2"
-                                   ng-disabled="ctrlEdit.vm.isBeginPre">
+                                   ng-disabled="ctrlEdit.vm.isEnd">
                             <span class="fa fa-check"></span> 专场特卖
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="promotionScene_2" style="margin: 0" value="2"
                                    ng-model="ctrlEdit.editModel.model.promotionScene_2"
                                    ng-required="!ctrlEdit.editModel.model.promotionScene_1 && !ctrlEdit.editModel.model.promotionScene_2"
-                                   ng-disabled="ctrlEdit.vm.isBeginPre">
+                                   ng-disabled="ctrlEdit.vm.isEnd">
                             <span class="fa fa-check"></span> 商城铺货
                         </label>
                     </div>
@@ -53,18 +53,18 @@
                     <label class="col-sm-2 control-label s-required">活动类型</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.model.promotionType" required
-                                name="promotionType" width="'100%'">
+                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             <option value="1">日常专场</option>
                             <option value="2">资源位日常专场</option>
                             <option value="3">大促专场</option>
                             <option value="4">资源位大促专场</option>
-                            <option value="6">导购团专场</option>
-                            <option value="7">首焦专场</option>
-                            <option value="8">商城导购</option>
-                            <option value="9">商城伪店铺</option>
-                            <option value="10">商城主推</option>
-                            <option value="11">其他平台促销活动</option>
+                            <option value="5">导购团专场</option>
+                            <option value="6">首焦专场</option>
+                            <option value="7">商城导购</option>
+                            <option value="8">商城伪店铺</option>
+                            <option value="9">商城主推</option>
+                            <option value="10">其他平台促销活动</option>
                         </select>
                     </div>
                 </div>
@@ -92,14 +92,15 @@
                     <label class="col-sm-2 control-label s-required">准备期截止时间</label>
                     <div class="col-sm-7">
                         <div class="col-sm-3 input-group">
-                            <input type="datetime-local" class="form-control" uib-datepicker-popup
+                            <input type="datetime-local" class="form-control" uib-datepicker-popup ng-readonly="vm.isDeadline"
                                    ng-model="ctrlEdit.editModel.model.signupDeadline" name="signupDeadline" required
                                    min-date="ctrlEdit.vm.currentTime"
                                    max-date="ctrlEdit.editModel.model.prePeriodStart"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
-                                   is-open="datePicker4" close-text="Close"/>
+                                   is-open="datePicker4" close-text="Close"
+                                   ng-disabled="ctrlEdit.vm.isDeadline" />
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i
+                            <button type="button" class="btn btn-default" ng-disabled="ctrlEdit.vm.isDeadline" ng-click="datePicker4 = !datePicker4"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                         </div>
@@ -115,16 +116,16 @@
                     <div class="col-sm-7">
                         <div class="col-sm-3 input-group">
                             <input type="datetime-local" class="form-control"
-                                   uib-datepicker-popup ng-readonly="vm.isBegin"
-                                   ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
-                                   min-date="vm.currentTime"
-                                   max-date="editModel.model.activityStart"
+                                   uib-datepicker-popup ng-readonly="vm.isBeginPre"
+                                   ng-model="ctrlEdit.editModel.model.prePeriodStart" name="prePeriodStart" required
+                                   min-date="ctrlEdit.vm.currentTime"
+                                   max-date="ctrlEdit.editModel.model.activityStart"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker3" ng-required="true" close-text="Close"
                                    ng-disabled="ctrlEdit.vm.isBeginPre"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-default" ng-disabled="ctrlEdit.vm.isBegin"
+                            <button type="button" class="btn btn-default" ng-disabled="ctrlEdit.vm.isBeginPre"
                                     ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i>
                             </button>
                         </span>
@@ -141,14 +142,14 @@
                     <div class="col-sm-7 form-inline">
                         <div class="col-sm-4 input-group">
                             <input type="datetime-local" class="form-control"
-                                   ng-readonly="vm.isBegin||editModel.model.status!=0"
+                                   ng-readonly="ctrlEdit.vm.isBegin||ctrlEdit.editModel.model.status!=0"
                                    uib-datepicker-popup
-                                   ng-model="editModel.model.activityStart" name="activityStart" required
-                                   max-date="editModel.model.activityEnd"
-                                   min-date="vm.currentTime"
+                                   ng-model="ctrlEdit.editModel.model.activityStart" name="activityStart" required
+                                   max-date="ctrlEdit.editModel.model.activityEnd"
+                                   min-date="ctrlEdit.vm.currentTime"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker1" ng-required="true" close-text="Close"
-                                   ng-disabled="ctrlEdit.vm.isBeginPre"
+                                   ng-disabled="ctrlEdit.vm.isBegin"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
                             <button type="button" ng-disabled="ctrlEdit.vm.isBegin || ctrlEdit.editModel.model.status!=0"
@@ -159,16 +160,16 @@
                         ~
                         <div class="col-sm-4 input-group" style="margin-left:20px">
                             <input type="datetime-local" class="form-control"
-                                   ng-readonly="vm.isBegin||editModel.model.status!=0"
+                                   ng-readonly="ctrlEdit.vm.isEnd||ctrlEdit.editModel.model.status!=0"
                                    uib-datepicker-popup
-                                   ng-model="editModel.model.activityEnd" name="activityEnd" required
-                                   min-date="editModel.model.activityStart"
+                                   ng-model="ctrlEdit.editModel.model.activityEnd" name="activityEnd" required
+                                   min-date="ctrlEdit.editModel.model.activityStart"
                                    date-model-format="yyyy-MM-dd HH:mm:ss"
                                    is-open="datePicker2" ng-required="true" close-text="Close"
-                                   ng-disabled="ctrlEdit.vm.isBeginPre"
+                                   ng-disabled="ctrlEdit.vm.isEnd"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
-                            <button type="button" ng-disabled="ctrlEdit.vm.isBegin || ctrlEdit.editModel.model.status!=0"
+                            <button type="button" ng-disabled="ctrlEdit.vm.isEnd || ctrlEdit.editModel.model.status!=0"
                                     class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
                         </span>
@@ -224,9 +225,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="tag in getTagList()">
+                        <tr ng-repeat="tag in ctrlEdit.getTagList()">
                             <td class="mfb-xxxsm">
-                                <input class="form-control" ng-model="ctrlEdit.tag.tagName" name="tagName{{$index}}"
+                                <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
                                        ng-required="true" maxlength="20" required>
                                 <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
                             </td>
@@ -239,8 +240,8 @@
                         </tbody>
                     </table>
                     <div class="form-group">
-                        <button ng-disabled="isEdit" class="btn btn-sm btn-success btn-addon pull-right"
-                                style="margin-right:5px" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
+                        <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
+                                ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
                         </button>
                     </div>
                 </div>
@@ -263,12 +264,12 @@
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="displayPlatform_1" style="margin: 0" value="1"
                                    ng-model="ctrlEdit.editModel.extModel.displayPlatform_1"
-                                   ng-required="!ctrlEdit.editModel.model.displayPlatform_1 && !ctrlEdit.editModel.model.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
+                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform_1 && !ctrlEdit.editModel.extModel.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="1"
+                            <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="2"
                                    ng-model="ctrlEdit.editModel.extModel.displayPlatform_2"
-                                   ng-required="!ctrlEdit.editModel.model.displayPlatform_1 && !ctrlEdit.editModel.model.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
+                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform_1 && !ctrlEdit.editModel.extModel.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -279,28 +280,43 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required>
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.mainChannel"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场类型</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionType">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionType" name="sessionType" required>
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
                     </div>
                 </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.sessionType"></vo-message>
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">关联品类</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionCategory">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionCategory" name="sessionCategory" required>
                             <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
                             <option value="food">食品（food【vtm】）</option>
                         </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.sessionCategory"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -324,37 +340,67 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页主标题/专场标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.mainTitle">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.mainTitle" name="mainTitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.mainTitle"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页副标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.subtitle">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.subtitle" name="subtitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.subtitle"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" name="sessionCategory" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.enterGuide"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingTitle">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingTitle" name="marketingTitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.marketingTitle"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingCopywriter">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingCopywriter" name="marketingCopywriter" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.marketingCopywriter"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">促销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionalCopy">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionalCopy" name="promotionalCopy" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionalCopy"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -476,20 +522,20 @@
     <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
         <ul class="nav nav-pills nav-stacked">
             <li>
-                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-base,,-60">Home</button>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-base,,-60">活动基本信息</button>
             </li>
             <li>
-                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-special,,-60">Profile</button>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-special,,-60">活动专场信息</button>
             </li>
             <li>
-                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-gift,,-60">Messages</button>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-gift,,-60">活动促销信息</button>
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrlEdit.save(0)">Save</button>
+                <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
             </li>
             <li>
-                <button type="button" class="btn btn-primary" ng-click="ctrlEdit.save(1)">Submit</button>
+                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)">提交</button>
             </li>
         </ul>
     </sticky>

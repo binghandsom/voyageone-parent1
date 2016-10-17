@@ -21,21 +21,39 @@ define([
             routeParams = self.$routeParams,
             editModel = self.editModel,
             jmPromotionService = self.jmPromotionService;
+        vm.currentTime = new Date();
 
         jmPromotionService.init().then(function (res) {
             vm.jmMasterBrandList = res.data.jmMasterBrandList;
         });
 
         jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}}).then(function (res) {
-            vm.isBeginPre = res.data.isBeginPre;      //预热是否开始
-            vm.isEnd = res.data.isEnd;                //活动是否结束
             editModel.model = res.data.model;
             editModel.tagList = res.data.tagList;
             editModel.model.activityStart = formatToDate(editModel.model.activityStart);
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
             editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
-            editModel.model.prePeriodEnd = formatToDate(editModel.model.prePeriodEnd);
             editModel.model.signupDeadline = formatToDate(editModel.model.signupDeadline);
+            // 准备期是否结束
+            vm.isDeadline = false;
+            if (editModel.model.signupDeadline < vm.currentTime) {
+                vm.isDeadline = true;
+            }
+            // 预热是否开始
+            vm.isBeginPre = false;
+            if (editModel.model.prePeriodStart < vm.currentTime) {
+                vm.isBeginPre = true;
+            }
+            // 活动是否开始
+            vm.isBegin = false;
+            if (editModel.model.activityStart < vm.currentTime) {
+                vm.isBegin = true;
+            }
+            // 活动是否结束
+            vm.isEnd = false;
+            if (editModel.model.activityEnd < vm.currentTime) {
+                vm.isEnd = true;
+            }
 
             if (editModel.model.promotionType) {
                 editModel.model.promotionType = editModel.model.promotionType.toString();

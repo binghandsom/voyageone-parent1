@@ -12,18 +12,38 @@ define([
         $scope.datePicker = [];
 
         $scope.initialize  = function () {
+            /** 默认值设置 */
+            $scope.vm.currentTime = new Date();
             if (context.id) {
                 // 编辑
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    $scope.vm.isBeginPre = res.data.isBeginPre;       //预热是否开始
-                    $scope.vm.isEnd = res.data.isEnd;                //活动是否结束
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
-                    $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
                     $scope.editModel.model.signupDeadline = formatToDate($scope.editModel.model.signupDeadline);
+                    // 准备期是否结束
+                    $scope.vm.isDeadline = false;
+                    if ($scope.editModel.model.signupDeadline < $scope.vm.currentTime) {
+                        $scope.vm.isDeadline = true;
+                    }
+                    // 预热是否开始
+                    $scope.vm.isBeginPre = false;
+                    if ($scope.editModel.model.prePeriodStart < $scope.vm.currentTime) {
+                        $scope.vm.isBeginPre = true;
+                    }
+                    // 活动是否开始
+                    $scope.vm.isBegin = false;
+                    if ($scope.editModel.model.activityStart < $scope.vm.currentTime) {
+                        $scope.vm.isBegin = true;
+                    }
+                    // 活动是否结束
+                    $scope.vm.isEnd = false;
+                    if ($scope.editModel.model.activityEnd < $scope.vm.currentTime) {
+                        $scope.vm.isEnd = true;
+                    }
+
                     if ($scope.editModel.model.promotionType) {
                         $scope.editModel.model.promotionType = $scope.editModel.model.promotionType.toString();
                     }
@@ -34,7 +54,6 @@ define([
                             $scope.editModel.model['promotionScene_' + sceneArr[idx]] = true;
                         }
                     }
-
                 });
             } else {
                 // 新建
@@ -47,9 +66,6 @@ define([
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
-
-            /** 默认值设置 */
-            $scope.vm.currentTime = new Date();
         };
 
         $scope.addTag = function () {
