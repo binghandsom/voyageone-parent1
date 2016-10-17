@@ -81,7 +81,6 @@ define([
                 var self = this;
                 if (self.taskSelList.selList.length < 1) {
                     self.popups.openConfig({'configType': type});
-                    return;
                 } else {
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskId == self.taskSelList.selList[0].id) {
@@ -94,22 +93,19 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openTask('add').then(function () {
-                        self.search(1);
+                    self.popups.openTask('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.taskSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.taskList, function (Info) {
-                            if (Info.taskId == self.taskSelList.selList[0].id) {
-                                self.popups.openTask(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.taskList, function (Info) {
+                        if (Info.taskId == self.taskSelList.selList[0].id) {
+                            self.popups.openTask(Info).then(function () {
+                                self.search(1);
+                            });
+                        }
+                    })
                 }
             },
             delete: function () {

@@ -41,19 +41,21 @@ define([
                 })
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
-                var self = this;
+                var self = this, result = {};
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.typeAttrService.addTypeAttribute(self.sourceData);
                 } else {
-                    self.typeAttrService.updateTypeAttribute(self.context);
+                    self.typeAttrService.updateTypeAttribute(self.sourceData);
                 }
                 self.sourceData.active = self.sourceData.active ? '0' : '1';
-                self.$uibModalInstance.close();
+                _.extend(result, {'res': 'success', 'sourceData': self.context});
+                self.$uibModalInstance.close(result);
             }
         };
         return AddTypeAttrController;

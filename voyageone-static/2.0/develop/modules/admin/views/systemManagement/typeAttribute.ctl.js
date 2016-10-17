@@ -86,25 +86,20 @@ define([
                 var self = this;
                 switch (type) {
                     case 'edit':
-                        if (self.sysTypeAttrSelList.selList.length <= 0) {
-                            self.alert('TXT_MSG_NO_ROWS_SELECT');
-                            return;
-                        } else {
-                            _.forEach(self.systemList, function (Info) {
-                                if (Info.id == self.sysTypeAttrSelList.selList[0].id) {
-                                    self.popups.openTypeAttr(Info).then(function () {
-                                        self.search(1);
-                                    });
-                                }
-                            });
-                        }
+                        _.forEach(self.systemList, function (Info) {
+                            if (Info.id == self.sysTypeAttrSelList.selList[0].id) {
+                                self.popups.openTypeAttr(Info);
+                            }
+                        });
                         break;
                     case 'add':
-                        self.popups.openTypeAttr('add').then(function () {
+                        self.popups.openTypeAttr('add').then(function (res) {
                             self.typeService.getAllType().then(function (res) {
                                 self.typeList = res.data;
                             });
-                            self.search(1);
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }
                         });
                         break;
                 }

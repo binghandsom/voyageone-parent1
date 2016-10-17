@@ -90,7 +90,6 @@ define([
                 var self = this;
                 if (self.storeSelList.selList.length < 1) {
                     self.popups.openConfig({'configType': type});
-                    return;
                 } else {
                     _.forEach(self.storeList, function (storeInfo) {
                         if (storeInfo.storeId == self.storeSelList.selList[0].id) {
@@ -103,26 +102,21 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openStoreAdd('add').then(function () {
-                        self.search(1);
+                    self.popups.openStoreAdd('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.storeSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.storeList, function (Info) {
-                            if (Info.storeId == self.storeSelList.selList[0].id) {
-                                Info['areaId'] = Info['areaId'] + '';
-                                var copyData = Info.inventoryHold.split(",");
-                                Info.inventoryHold = copyData[0];
-                                Info.remainNum = copyData[1];
-                                self.popups.openStoreAdd(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.storeList, function (Info) {
+                        if (Info.storeId == self.storeSelList.selList[0].id) {
+                            Info['areaId'] = Info['areaId'] + '';
+                            var copyData = Info.inventoryHold.split(",");
+                            Info.inventoryHold = copyData[0];
+                            Info.remainNum = copyData[1];
+                            self.popups.openStoreAdd(Info);
+                        }
+                    })
                 }
 
             },

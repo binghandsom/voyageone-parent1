@@ -6,9 +6,10 @@ define([
 ], function (admin) {
     admin.controller('AddTaskController', (function () {
         function AddTaskController(context, taskService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' || context.kind == 'add' ? true : false;
             this.readOnly = context.isReadOnly == true ? true : false;
+            this.context = context;
             this.taskService = taskService;
             this.popType = '编辑';
             this.companyId = this.sourceData.companyId;
@@ -18,7 +19,7 @@ define([
         AddTaskController.prototype = {
             init: function () {
                 var self = this;
-                if (self.sourceData == 'add'||self.sourceData.kind == 'add') {
+                if (self.sourceData == 'add' || self.sourceData.kind == 'add') {
                     self.popType = '添加';
                     if (self.sourceData.isReadOnly !== true) {
                         self.sourceData = {};
@@ -31,7 +32,8 @@ define([
                 });
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;
@@ -40,13 +42,14 @@ define([
                     self.$uibModalInstance.close(self.sourceData);
                     return;
                 }
+                _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.taskService.addTask(self.sourceData).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
+                        _.extend(result, {'res': res.data, 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
@@ -55,7 +58,7 @@ define([
                             self.confirm(res.data.message);
                             return;
                         }
-                        _.extend(result, {'res': res.data, 'sourceData': self.sourceData});
+                        _.extend(result, {'res': res.data, 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 }
