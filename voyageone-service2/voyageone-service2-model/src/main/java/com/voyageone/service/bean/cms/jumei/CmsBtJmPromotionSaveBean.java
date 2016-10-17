@@ -21,6 +21,19 @@ public class CmsBtJmPromotionSaveBean {
     // 操作类型 1:提交/保存 0:暂存
     private int saveType;
 
+    /**
+     * 是否有主推模块
+     */
+    private boolean hasFeaturedModule;
+
+    public boolean isHasFeaturedModule() {
+        return hasFeaturedModule;
+    }
+
+    public void setHasFeaturedModule(boolean hasFeaturedModule) {
+        this.hasFeaturedModule = hasFeaturedModule;
+    }
+
     public CmsBtJmPromotionModel getModel() {
         return model;
     }
