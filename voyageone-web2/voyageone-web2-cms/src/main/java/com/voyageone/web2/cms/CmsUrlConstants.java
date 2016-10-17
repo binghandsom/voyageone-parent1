@@ -86,6 +86,11 @@ public interface CmsUrlConstants {
                 String SelectChangeCountByPromotionId = "selectChangeCountByPromotionId";
             }
         }
+
+        interface Images{
+            String ROOT = "/cms/jmpromotion/images";
+            String INIT = "init";
+        }
     }
 
     interface CmsBtJmPromotionImportTask {

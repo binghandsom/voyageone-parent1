@@ -25,20 +25,20 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label s-required">活动场景</label>
+                    <label class="col-sm-2 control-label s-required">活动场景</label>model:{{ctrlEdit.editModel.model.promotionScene | json}}
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="i1"
+                            <input type="checkbox" name="promotionScene_1"
                                    ng-model="ctrlEdit.editModel.model.promotionScene['i1']"
                                    ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
-                                   ng-disabled="ctrlEdit.vm.isEnd">
+                                   >
                             <span class="fa fa-check"></span> 专场特卖
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_2" style="margin: 0" value="i2"
+                            <input type="checkbox" name="promotionScene_2"
                                    ng-model="ctrlEdit.editModel.model.promotionScene['i2']"
                                    ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
-                                   ng-disabled="ctrlEdit.vm.isEnd">
+                                   >
                             <span class="fa fa-check"></span> 商城铺货
                         </label>
                     </div>
