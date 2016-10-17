@@ -30,7 +30,7 @@
                 </div>
                 <div class="row form-group" >
                     <div class="wrapper" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
-                        <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none">
+                        <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none;word-break: break-all;">
                             <thead>
                             <tr>
                                 <th class="cell-input" style="padding: 5px; width: 13px;">
@@ -52,26 +52,20 @@
                                 </td>
                                 <td class="cell-name text-left tooltips" ng-click="item.opened = !item.opened" style="width: 238px;">
                                     <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">
-                                        <label class="v-middle" ng-if="item.resName.length <= 20">{{item.resName}}</label>
-                                        <label class="v-middle" ng-if="item.resName.length > 20" uib-tooltip="{{item.resName}}"
-                                               tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resName | stringCutter:true:20:' ...'}}</label>
+                                        {{item.resName}}
                                     </div>
                                 </td>
                                 <td class="text-left tooltips">
-                                    <label class="v-middle" ng-if="item.resKey.length <= 20">{{item.resKey}}</label>
-                                    <label class="v-middle" ng-if="item.resKey.length > 20" uib-tooltip="{{item.resKey}}"
-                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resKey | stringCutter:true:20:' ...'}}</label>
+                                    {{item.resKey}}
                                 </td>
                                 <td class="text-left tooltips">
-                                    <label class="v-middle" ng-if="item.resUrl.length <= 25">{{item.resUrl}}</label>
-                                    <label class="v-middle" ng-if="item.resUrl.length > 25" uib-tooltip="{{item.resUrl}}"
-                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resUrl | stringCutter:true:20:' ...'}}</label>
+                                   {{item.resUrl}}
                                 </td>
                                 <td ng-class="{'text-center':level>=1}">{{ctrl.getResType(item.resType)}}</td>
                             </tr>
                             <tr class="children" ng-if="item.children&&item.children.length>0">
                                 <td colspan="5">
-                                    <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none">
+                                    <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none;word-break: break-all;">
                                         <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
                                     </table>
                                 </td>
