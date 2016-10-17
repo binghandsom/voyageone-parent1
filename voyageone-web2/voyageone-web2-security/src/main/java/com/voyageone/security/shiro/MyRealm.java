@@ -3,9 +3,7 @@ package com.voyageone.security.shiro;
 
 import com.voyageone.security.dao.*;
 import com.voyageone.security.daoext.ComUserDaoExt;
-import com.voyageone.security.daoext.ViewResUserCompanyDao;
 import com.voyageone.security.model.*;
-import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
@@ -17,7 +15,6 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
