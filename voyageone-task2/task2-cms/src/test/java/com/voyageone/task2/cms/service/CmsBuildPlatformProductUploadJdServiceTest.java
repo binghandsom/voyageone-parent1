@@ -29,8 +29,8 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         TaskControlBean tcb = new TaskControlBean();
         tcb.setTask_id("CmsBuildPlatformProductUploadJdJob");
         tcb.setCfg_name("order_channel_id");
-        tcb.setCfg_val1("929");
-        tcb.setTask_comment("京东国际悦境店上新允许运行的渠道");
+        tcb.setCfg_val1("928");
+        tcb.setTask_comment("京东国际Liking店上新允许运行的渠道");
         taskControlList.add(tcb);
         uploadJdService.onStartup(taskControlList);
     }
@@ -40,12 +40,12 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(762584);
-        workload.setChannelId("929");
+        workload.setChannelId("928");
         workload.setCartId(29);
-        workload.setGroupId(Long.parseLong("887632"));
+        workload.setGroupId(Long.parseLong("919460"));
         workload.setPublishStatus(0);
 
-        ShopBean shopProp = Shops.getShop("929", "29");
+        ShopBean shopProp = Shops.getShop("928", "29");
 
         uploadJdService.uploadProduct(workload, shopProp);
     }

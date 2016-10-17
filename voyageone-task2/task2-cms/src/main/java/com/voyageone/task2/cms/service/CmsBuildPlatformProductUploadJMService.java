@@ -613,11 +613,6 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 //如果OriginHashId存在，则修改商品属性
                 CmsBtProductModel_Field fields = product.getCommon().getFields();
                 BaseMongoMap<String, Object> jmFields = jmCart.getFields();
-                // delete by desmond 2016/07/08 start
-//                        String brandName = fields.getBrand();
-//                        String productType = fields.getProductType();
-//                        String sizeType = fields.getSizeType();
-                // delete by desmond 2016/07/08 end
 
                 //查询jm_product
                 CmsBtJmProductModel jmProductModel = getCmsBtJmProductModel(channelId, productCode);
@@ -694,13 +689,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 }
                                 else
                                 {
-                                    //如果MySQL库中没有这条SPU,则新增一条
+                                    // 如果MySQL库中没有这条SKU,则新增一条
                                     CmsBtJmSkuModel mySku = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     mySku.setJmSpuNo(oldSku.getSpu_no());
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
                                     mySku.setModified(new Date());
-                                    cmsBtJmSkuDao.insert(mySku);
+                                    // 这里不追加的话，后面还以为这个sku还是不存在，再insert就会出错
+                                    skuList.add(mySku);
                                 }
                             }
                             //更新Spu失败
@@ -715,36 +711,54 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             {
 								addSkuList.add(skuCode);
 
-//								//需要增加SKU
-//                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-////                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                htSkuAddRequest.setCustoms_product_number(" ");
-//                                htSkuAddRequest.setSale_on_this_deal("1");
-//                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
-//                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-//                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-//                                htSkuAddRequest.setJumei_hash_id(originHashId);
-//                                htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
-//                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
-//                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
-//                                    $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                    if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
-//                                    {
-//                                        CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
-//                                        mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-//                                        mySku.setModifier(getTaskName());
-//                                        mySku.setModified(new Date());
-//                                        cmsBtJmSkuDao.update(mySku);
-//                                    }
-//                                }
-//                                //增加Sku失败
-//                                else
-//                                {
-//                                    String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
-//                                    $error(msg);
-//                                    throw  new BusinessException(msg);
-//                                }
+                                // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
+                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
+                                // 聚美Spu_No
+                                htSkuAddRequest.setJumei_spu_no(oldSku.getSpu_no());
+                                // 聚美生成的deal 唯一值
+                                htSkuAddRequest.setJumei_hash_id(originHashId);
+//                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // 海关备案商品编码
+                                htSkuAddRequest.setCustoms_product_number(" ");
+                                // 商家商品编码
+                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // 库存
+                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                // 团购价
+                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                // 市场价
+                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                                // 是否在本次团购售卖，1是，0否
+                                htSkuAddRequest.setSale_on_this_deal("1");
+
+                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
+                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
+                                    $info("更新商品时,向Deal中增加Sku成功！[hashId:%s] [skuCode:%s]", originHashId, skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                    if(skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).count() > 0)
+                                    {
+                                        CmsBtJmSkuModel mySku = skuList.stream().filter(w -> w.getSkuCode().equals(skuCode)).findFirst().get();
+                                        mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+                                        mySku.setModifier(getTaskName());
+                                        mySku.setModified(new Date());
+                                        cmsBtJmSkuDao.update(mySku);
+                                    } else
+                                    {
+                                        CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                        cmsBtJmSkuModel.setJmSpuNo(oldSku.getSpu_no());
+                                        cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+
+                                        skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
+                                    }
+                                }
+                                // 更新商品时,向Deal中增加Sku失败
+                                else
+                                {
+                                    String msg = String.format("更新商品时,向Deal中增加Sku失败！[hashId:%s] [ProductId:%s], [Message:%s]",
+                                            originHashId, product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                    $error(msg);
+                                    throw  new BusinessException(msg);
+                                }
                             }
                         }
                         //新SPU需要增加
@@ -767,7 +781,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             HtSpuAddResponse htSpuAddResponse = jumeiHtSpuService.add(shop, htSpuAddRequest);
 
                             if (htSpuAddResponse != null && htSpuAddResponse.is_Success()) {
-                                $info("新增Spu成功！[ProductId:%s], [JmSpuNo:%s]", product.getProdId(), htSpuAddResponse.getJumei_spu_no());
+                                $info("更新商品时，新增Spu成功！[ProductId:%s], [JmSpuNo:%s]", product.getProdId(), htSpuAddResponse.getJumei_spu_no());
                                 skuMap.setStringAttribute("jmSpuNo", htSpuAddResponse.getJumei_spu_no());
 
                                 // deleted by morse.lu 2016/09/01 start
@@ -776,41 +790,50 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                 // 追加成功时才加进list
                                 addSkuList.add(skuCode);
                                 // added by morse.lu 2016/09/01 end
-//                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
-////                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                htSkuAddRequest.setCustoms_product_number(" ");
-//                                htSkuAddRequest.setSale_on_this_deal("1");
-//                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-//                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
-//                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-//                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-//                                htSkuAddRequest.setJumei_hash_id(originHashId);
-//                                htSkuAddRequest.setJumei_spu_no(htSpuAddResponse.getJumei_spu_no());
-//                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
-//                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
-//                                    $info("增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // 需要增加SKU信息到聚美deal(sku的增加顺序一定要先加deal再加mall,顺序反了会报错)
+                                HtSkuAddRequest htSkuAddRequest = new HtSkuAddRequest();
+                                // 聚美Spu_No
+                                htSkuAddRequest.setJumei_spu_no(htSpuAddResponse.getJumei_spu_no());
+                                // 聚美生成的deal 唯一值
+                                htSkuAddRequest.setJumei_hash_id(originHashId);
+//                                htSkuAddRequest.setCustoms_product_number(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // 海关备案商品编码
+                                htSkuAddRequest.setCustoms_product_number(" ");
+                                // 商家商品编码
+                                htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+                                // 库存
+                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                // 团购价
+                                htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                // 市场价
+                                htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                                // 是否在本次团购售卖，1是，0否
+                                htSkuAddRequest.setSale_on_this_deal("1");
 //
-//                                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
-//                                    cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
-//                                    cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-//                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
-//
-//                                    skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
-//
-//                                }
-//                                //增加Sku失败
-//                                else
-//                                {
-//                                    String msg = String.format("增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
-//                                    $error(msg);
-//                                    throw  new BusinessException(msg);
-//                                }
+                                HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
+                                if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
+                                    $info("更新商品时，新增Spu成功之后再向deal中增加Sku成功！[skuCode:%s]", skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+
+                                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
+                                    cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
+                                    cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
+                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+
+                                    skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
+                                }
+                                // 更新商品时，新增Spu成功之后再向deal中增加Sku失败
+                                else
+                                {
+                                    String msg = String.format("更新商品时，新增Spu成功之后再向deal中增加Sku失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSkuAddResponse.getErrorMsg());
+                                    $error(msg);
+                                    throw  new BusinessException(msg);
+                                }
                                 // deleted by morse.lu 2016/09/01 end
                             }
                             //新增Spu失败
                             else
                             {
-                                String msg = String.format("新增Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuAddResponse.getErrorMsg());
+                                String msg = String.format("更新商品时，新增Spu成功之后再向deal中增加Spu失败！[ProductId:%s], [Message:%s]", product.getProdId(), htSpuAddResponse.getErrorMsg());
                                 $error(msg);
                                 throw  new BusinessException(msg);
                             }
@@ -998,7 +1021,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         Date modifyTime = work.getModified();
         Calendar calendar = Calendar.getInstance() ;
         calendar.setTime(modifyTime);
-        calendar.add(Calendar.MINUTE, -10);
+//        calendar.add(Calendar.MINUTE, -10);
+        // 改为将时间延迟10分钟(因为应该保证先Approve的商品应该先上新)
+        calendar.add(Calendar.MINUTE, 10);
         work.setCreated(calendar.getTime());
         work.setModifier(getTaskName());
         cmsBtSxWorkloadDaoExt.delayWorkload(work);
