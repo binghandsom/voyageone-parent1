@@ -320,7 +320,7 @@ public class AdminRoleService extends BaseService {
 
         //添加角色
         comRoleDao.insert(model);
-        Integer roleId = srcRoleId;
+        Integer roleId = model.getId();
 
         //添加授权渠道
         if ("1".equals(allChannel)) {
