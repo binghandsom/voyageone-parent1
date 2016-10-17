@@ -11,6 +11,7 @@ import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
@@ -33,18 +34,18 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionDao dao;
     private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
-    private final CmsBtTagDao daoCmsBtTag;
+    private final TagService tagService;
     private final CmsBtPromotionDao daoCmsBtPromotion;
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
 
     @Autowired
-    public CmsBtJmPromotionService(CmsBtTagDao daoCmsBtTag, CmsBtPromotionDao daoCmsBtPromotion,
+    public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
-                                   CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
+                                   TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
                                    CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
-        this.daoCmsBtTag = daoCmsBtTag;
+        this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
         this.daoCmsBtJmMasterBrand = daoCmsBtJmMasterBrand;
@@ -100,10 +101,7 @@ public class CmsBtJmPromotionService extends BaseService {
         }
         info.setModel(model);
         if (model.getRefTagId() != null && model.getRefTagId() != 0) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("parentTagId", model.getRefTagId());
-            map.put("active", 1);
-            List<CmsBtTagModel> tagList = daoCmsBtTag.selectList(map);
+            List<CmsBtTagModel> tagList = tagService.getListByParentTagId(model.getRefTagId());
             info.setTagList(tagList);
         }
 
@@ -224,29 +222,22 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     private int updateModel(CmsBtJmPromotionSaveBean parameter) {
-        int result;
-        CmsBtJmPromotionModel model = parameter.getModel();
-        if (model.getRefTagId() == 0) {
-            int refTagId = addTag(model);
-            model.setRefTagId(refTagId);
+        CmsBtJmPromotionModel promotionModel = parameter.getModel();
+
+        if (promotionModel.getRefTagId() == 0) {
+            int refTagId = createPromotionTopTag(promotionModel);
+            promotionModel.setRefTagId(refTagId);
         }
-        result = dao.update(parameter.getModel());
+
+        int result = dao.update(promotionModel);
+
         parameter.getTagList().forEach(cmsBtTagModel -> {
-            cmsBtTagModel.setModifier(parameter.getModel().getModifier());
+            cmsBtTagModel.setModifier(promotionModel.getModifier());
+
             if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
-                daoCmsBtTag.update(cmsBtTagModel);
+                tagService.updateTagModel(cmsBtTagModel);
             } else {
-                cmsBtTagModel.setChannelId(model.getChannelId());
-                cmsBtTagModel.setParentTagId(model.getRefTagId());
-                cmsBtTagModel.setTagType(2);
-                cmsBtTagModel.setTagStatus(0);
-                cmsBtTagModel.setTagPathName(String.format("-%s-%s-", model.getName(), cmsBtTagModel.getTagName()));
-                cmsBtTagModel.setTagPath("");
-                cmsBtTagModel.setCreater(model.getModifier());
-                cmsBtTagModel.setModifier(model.getModifier());
-                daoCmsBtTag.insert(cmsBtTagModel);
-                cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getId()));
-                daoCmsBtTag.update(cmsBtTagModel);
+                addChildTag(cmsBtTagModel, promotionModel);
             }
         });
         return result;
@@ -257,26 +248,32 @@ public class CmsBtJmPromotionService extends BaseService {
         if (StringUtil.isEmpty(model.getCategory())) {
             model.setCategory("");
         }
-        int refTagId = addTag(model);
+        int refTagId = createPromotionTopTag(model);
         model.setRefTagId(refTagId);
         // 子TAG追加
-        parameter.getTagList().forEach(cmsBtTagModel -> {
-            cmsBtTagModel.setChannelId(model.getChannelId());
-            cmsBtTagModel.setParentTagId(refTagId);
-            cmsBtTagModel.setTagType(2);
-            cmsBtTagModel.setTagStatus(0);
-            cmsBtTagModel.setTagPathName(String.format("-%s-%s-", model.getName(), cmsBtTagModel.getTagName()));
-            cmsBtTagModel.setTagPath("");
-            cmsBtTagModel.setCreater(model.getCreater());
-            cmsBtTagModel.setModifier(model.getCreater());
-            daoCmsBtTag.insert(cmsBtTagModel);
-            cmsBtTagModel.setTagPath(String.format("-%s-%s-", refTagId, cmsBtTagModel.getId()));
-            daoCmsBtTag.update(cmsBtTagModel);
-        });
+        parameter.getTagList().forEach(cmsBtTagModel -> addChildTag(cmsBtTagModel, model));
         return dao.insert(model);
     }
 
-    private int addTag(CmsBtJmPromotionModel model) {
+    private void addChildTag(CmsBtTagModel tagModel, CmsBtJmPromotionModel promotionModel) {
+
+        Integer promotionTopTagId = promotionModel.getRefTagId();
+
+        tagModel.setChannelId(promotionModel.getChannelId());
+        tagModel.setParentTagId(promotionTopTagId);
+        tagModel.setTagType(2);
+        tagModel.setTagStatus(0);
+        tagModel.setTagPathName(String.format("-%s-%s-", promotionModel.getName(), tagModel.getTagName()));
+        tagModel.setTagPath("");
+
+        tagModel.setCreater(promotionModel.getModifier());
+        tagModel.setModifier(promotionModel.getModifier());
+
+        tagService.insertCmsBtTagAndUpdateTagPath(tagModel,
+                consumer -> consumer.setTagPath(String.format("-%s-%s-", promotionTopTagId, consumer.getId())));
+    }
+
+    private int createPromotionTopTag(CmsBtJmPromotionModel model) {
         CmsBtTagModel modelTag = new CmsBtTagModel();
         modelTag.setChannelId(model.getChannelId());
         modelTag.setTagName(model.getName());
@@ -287,10 +284,10 @@ public class CmsBtJmPromotionService extends BaseService {
         modelTag.setTagPath(String.format("-%s-", ""));
         modelTag.setTagPathName(String.format("-%s-", model.getName()));
         modelTag.setModifier(model.getModifier());
-        //Tag追加  活动名称
-        daoCmsBtTag.insert(modelTag);
-        modelTag.setTagPath(String.format("-%s-", modelTag.getId()));
-        daoCmsBtTag.update(modelTag);
+
+        tagService.insertCmsBtTagAndUpdateTagPath(modelTag,
+                consumer -> consumer.setTagPath(String.format("-%s-", consumer.getId())));
+
         return modelTag.getId();
     }
 
