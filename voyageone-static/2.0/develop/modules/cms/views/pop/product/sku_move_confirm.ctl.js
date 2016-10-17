@@ -2,13 +2,15 @@
  * Created by sofia on 2016/10/12.
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
     cms.controller("SkuMoveConfirmController", (function () {
 
-        function SkuMoveConfirm(context, $uibModalInstance) {
+        function SkuMoveConfirm(context, popups, $uibModalInstance) {
             this.context = context;
+            this.popups = popups;
             this.$uibModalInstance = $uibModalInstance;
             this.move;
             this.moveType = this.context == 'Sku' ? 'Sku' : 'Code';
@@ -19,7 +21,10 @@ define([
         };
 
         SkuMoveConfirm.prototype.confirm = function () {
-            this.$uibModalInstance.close();
+            var self = this;
+            self.popups.openMoveResult(self.moveType).then(function () {
+                self.$uibModalInstance.close();
+            })
         };
 
         return SkuMoveConfirm;
