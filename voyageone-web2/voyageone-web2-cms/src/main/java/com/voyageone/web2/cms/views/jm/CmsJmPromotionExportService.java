@@ -12,8 +12,10 @@ import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.impl.CmsProperty;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsPromotionExportBean;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -45,6 +47,9 @@ public class CmsJmPromotionExportService extends BaseViewService {
 
     @Autowired
     private CmsBtTagJmModuleExtensionDao cmsBtTagJmModuleExtensionDao;
+    
+    @Autowired
+    private CmsBtJmBayWindowService cmsBtJmBayWindowService;
 
     public byte[] doExportJmPromotionFile(Integer jmPromotionId) {
 
@@ -57,7 +62,7 @@ public class CmsJmPromotionExportService extends BaseViewService {
             Workbook book = WorkbookFactory.create(inputStream);
             writeRecordToJmPromotionInfo(book, cmsBtJmPromotionSaveBean, Arrays.asList("aaaa", "vvv"));
             writeRecordToJmModeInfoMain(book,cmsBtJmPromotionSaveBean.getTagList());
-
+            writeRecordToJBayWindow(book,jmPromotionId);
             $info("文档写入完成");
             try (OutputStream outputStream = new FileOutputStream("/usr/web/contents/cms/file_template/JMPromotion" + DateTimeUtil.format(new Date(), DateTimeUtil.DATE_TIME_FORMAT_2) + ".xlsx")) {
                 book.write(outputStream);
@@ -73,6 +78,25 @@ public class CmsJmPromotionExportService extends BaseViewService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void writeRecordToJBayWindow(Workbook book, Integer jmPromotionId) {
+        CmsBtJmBayWindowModel cmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
+        if(cmsBtJmBayWindowModel != null) {
+            Sheet sheet = book.getSheetAt(2);
+            Row styleRow = FileUtils.row(sheet, 2);
+            CellStyle unlock = styleRow.getRowStyle();
+            int rowIndex = 2;
+            cmsBtJmBayWindowModel.getBayWindows().sort((o1, o2) -> o1.getOrder() > o2.getOrder() ? 1 : -1);
+            int i = 1;
+            for(CmsBtJmBayWindowModel.BayWindow bayWindow : cmsBtJmBayWindowModel.getBayWindows()){
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 0, i++ , unlock);
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "定位飘窗", unlock);
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 2, bayWindow.getName(), unlock);
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 3, bayWindow.getLink(), unlock);
+            }
+
+        }
     }
 
     private void writeRecordToJmPromotionInfo(Workbook book, CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean, List<String> HashIdList) throws Exception {

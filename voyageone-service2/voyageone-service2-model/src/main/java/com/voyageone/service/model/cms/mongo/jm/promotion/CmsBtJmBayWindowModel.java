@@ -72,5 +72,29 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
         private String link;
 
         private Integer order;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(String link) {
+            this.link = link;
+        }
+
+        public Integer getOrder() {
+            return order;
+        }
+
+        public void setOrder(Integer order) {
+            this.order = order;
+        }
     }
 }
