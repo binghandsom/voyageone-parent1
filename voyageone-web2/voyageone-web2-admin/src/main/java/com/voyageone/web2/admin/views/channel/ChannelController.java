@@ -57,6 +57,7 @@ public class ChannelController extends AdminController {
 			put("orderChannelId", item.getOrderChannelId());
 		}}));
 		return success(result);
+
 	}
 	
 	@RequestMapping(AdminUrlConstants.Channel.Self.IS_CHANNEL_USED)
