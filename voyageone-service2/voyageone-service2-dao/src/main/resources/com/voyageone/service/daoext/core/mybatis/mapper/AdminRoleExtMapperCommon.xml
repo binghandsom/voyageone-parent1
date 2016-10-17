@@ -7,7 +7,7 @@
     <sql id="selectRoleFilter">
     	<where>
             <if test="id != null" >
-                and id = #{id}
+                and r.id = #{id}
             </if>
 
             <if test="roleName != null and roleName != ''" >
@@ -21,19 +21,15 @@
             </if>
 
             <if test="active != null" >
-                and active = #{active}
-            </if>
-
-            <if test="roleId != null" >
-                and role_id =#{roleType}
+                and r.active = #{active}
             </if>
 
             <if test="channelId != null and channelId != ''" >
-                and concat(',', channel_id, ',')  like concat('%,', #{channelId}, ',%') or concat(',', channel_id, ',')  like '%,ALL,%'
+                and (concat(',', rc_channel.cfg_val1, ',')  like concat('%,', #{channelId}, ',%') or concat(',', rc_channel.cfg_val1, ',')  like '%,ALL,%')
             </if>
 
             <if test="storeId != null and storeId != ''" >
-                and concat(',', store_id, ',')  like concat('%,', #{storeId}, ',%') or concat(',', store_id, ',')  like '%,ALL,%'
+                and (concat(',', rc_store.cfg_val1, ',')  like concat('%,', #{storeId}, ',%') or concat(',', rc_store.cfg_val1, ',')  like '%,ALL,%')
             </if>
 
             <if test="application != null and application != ''" >
@@ -46,56 +42,32 @@
 
 	
 	<select id="selectRoleByPage" resultMap="comUserModelMap">
-        SELECT * from
-        (
-        SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT  ap.application) as application  from com_role cr LEFT JOIN
-        (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
-        FROM
-        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
-        from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
-        where
-        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id or rc.cfg_val1='ALL'))
-        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
-        and r.id = rc.role_id
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        GROUP BY r.id, rc.cfg_name) t
-        GROUP BY t.id) t1
-        ON cr.id = t1.id
-        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
-        GROUP BY cr.id
-        )t3
-
+        SELECT r.*, GROUP_CONCAT( DISTINCT application) as application ,
+        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id,  GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        FROM com_role r
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND  ch.active = 1 WHERE rc.cfg_name = 'channel_id') rc_channel ON  rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND  st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON  rc_store.role_id =r.id
         <include refid="selectRoleFilter"/>
+        GROUP BY r.id
+
+
 	</select>
 	
 	<select id="selectRoleCount" resultType="Integer">
-        SELECT count(0) from
+        SELECT COUNT(0) FROM
         (
-        SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT  ap.application) as application  from com_role cr LEFT JOIN
-        (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
-        FROM
-        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
-        from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
-        where
-        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id or rc.cfg_val1='ALL'))
-        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
-        and r.id = rc.role_id
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        GROUP BY r.id, rc.cfg_name) t
-        GROUP BY t.id) t1
-        ON cr.id = t1.id
-        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
-        GROUP BY cr.id
-        )t3
-		 <include refid="selectRoleFilter"/>
+        SELECT r.*, GROUP_CONCAT( DISTINCT application) as application ,
+        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id, GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        FROM com_role r
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND ch.active = 1 WHERE rc.cfg_name = 'channel_id')
+        rc_channel ON rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON
+        rc_store.role_id =r.id
+        <include refid="selectRoleFilter"/>
+        GROUP BY r.id
+        )t
 	</select>
 
 
