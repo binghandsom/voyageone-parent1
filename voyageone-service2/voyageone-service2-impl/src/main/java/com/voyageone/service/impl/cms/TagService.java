@@ -112,7 +112,7 @@ public class TagService extends BaseService {
 
     @VOTransactional
     public int updateTagModel(CmsBtTagModel cmsBtTagModel) {
-        return cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+        return cmsBtTagDao.update(cmsBtTagModel);
     }
 
     @VOTransactional
@@ -129,7 +129,7 @@ public class TagService extends BaseService {
             cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + cmsBtTagModel.getId() + "-");
         }
         //更新数据cms_bt_tag
-        cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
+        updateTagModel(cmsBtTagModel);
     }
 
     public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
