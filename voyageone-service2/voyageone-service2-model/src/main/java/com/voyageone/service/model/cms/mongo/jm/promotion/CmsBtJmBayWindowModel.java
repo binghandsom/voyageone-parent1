@@ -17,8 +17,6 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
     private Boolean fixed;
 
-    private Integer cartId;
-
     private Integer promotionId;
 
     private Integer jmPromotionId;
@@ -31,14 +29,6 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
     }
 
     public Integer getPromotionId() {

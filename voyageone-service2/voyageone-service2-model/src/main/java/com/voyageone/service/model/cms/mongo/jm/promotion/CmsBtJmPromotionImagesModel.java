@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * 按渠道拆分的，聚美专场活动使用的，图片数据模型
- *
+ * <p>
  * Created by jonas on 2016/10/14.
  *
  * @author jonas
@@ -14,8 +14,6 @@ import java.util.List;
  * @since 2.8.0
  */
 public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
-
-    private Integer cartId;
 
     private Integer promotionId;
 
@@ -32,117 +30,114 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
     private Boolean useTemplate;
 
     /**
-     * app 入口图样式 (2)
+     * 1-PC端入口图-600×320
      */
-    private List<String> appEnterance;
+    private String pcEntrance;
 
     /**
-     * 详情页、心愿单页面、专场入口图 (2)
+     * 2-移动端入口图-和app首页5号图一致-2048x1024
      */
-    private List<String> appDetailEnterance;
+    private String appEntrance;
 
     /**
-     * app 端分享图
+     * 3-微信分享图-300x300
      */
-    private String appShare;
+    private String wxShare;
 
     /**
-     * app 端专场头图
+     * 4-频道页封面大图-1000×490
      */
-    private String appHeader;
+    private String channelFrontCover;
 
     /**
-     * 频道页大图 (2)
+     * 5-频道页中图-640×420
      */
-    private List<String> pcChannelBig;
+    private String channelMiddleImage;
 
     /**
-     * 频道页中图 (2)
+     * 6-频道页预告图-310×200
      */
-    private List<String> pcChannelMiddle;
+    private String channelComingSoon;
 
     /**
-     * 频道页小图
+     * 7-手机焦点图-1520x622
      */
-    private String pcChannelSmall;
+    private String mobileFocus;
 
     /**
-     * 美妆品牌团入口图 (3)
-     */
-    private List<String> pcBrandEnterance;
-
-    /**
-     * 手机焦点图
-     */
-    private String mobileForce;
-
-    /**
-     * pc 端专场头图
+     * PC端——专场头图-1920x840
      */
     private String pcHeader;
 
     /**
-     * pc 端轮播
+     * 移动端——专场头图-640x790
      */
-    private String pcCarousel;
+    private String appHeader;
 
     /**
-     * app 端轮播
+     * phone正式,app频道页专场入口图(目前使用在首页)-2048x847
+     */
+    private String appChannelEntrance;
+
+    /**
+     * 1-app弧形轮播-2048X1142
+     */
+    private String appArcCarousel;
+
+    /**
+     * 1-app轮播-1520X622
      */
     private String appCarousel;
 
     /**
-     * PC 一排 2 个
+     * 2-pc轮播-1920X350
      */
-    private String pcChannelHeader;
+    private String pcCarousel;
 
     /**
-     * app 端大卡片位左
+     * 3-PC一排2个-472x170
      */
-    private String appLeftBigCard;
+    private String pcRow1Cell2;
 
     /**
-     * app 端大卡片位右
+     * 4-app大卡片位右-2048X1042
      */
     private String appRightBigCard;
 
     /**
-     * app 小卡片位
+     * 4-app大卡片位左-2048X1042
+     */
+    private String appLeftBigCard;
+
+    /**
+     * 4-app小卡片位-1024x1024
      */
     private String appSmallCard;
 
     /**
-     * pc 端首页正式图预热
+     * 7-PC首页预热-535X212
      */
     private String pcIndexPreheat;
 
     /**
-     * pc 端首页正式图
+     * 7-PC首页正式-535X212
      */
     private String pcIndex;
 
     /**
-     * ipad 轮播
+     * 8-ipad轮播-2048x512
      */
     private String padCarousel;
 
     /**
-     * ipad 端卡片位预热
+     * 9-ipad卡片位模板预热-732x244
      */
-    private String padCardPreheat;
+    private String padPreheat;
 
     /**
-     * ipad 端卡片位
+     * 9-ipad卡片位模板正式-732x244
      */
     private String padCard;
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
-    }
 
     public Integer getPromotionId() {
         return promotionId;
@@ -176,76 +171,60 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
         this.useTemplate = useTemplate;
     }
 
-    public List<String> getAppEnterance() {
-        return appEnterance;
+    public String getPcEntrance() {
+        return pcEntrance;
     }
 
-    public void setAppEnterance(List<String> appEnterance) {
-        this.appEnterance = appEnterance;
+    public void setPcEntrance(String pcEntrance) {
+        this.pcEntrance = pcEntrance;
     }
 
-    public List<String> getAppDetailEnterance() {
-        return appDetailEnterance;
+    public String getAppEntrance() {
+        return appEntrance;
     }
 
-    public void setAppDetailEnterance(List<String> appDetailEnterance) {
-        this.appDetailEnterance = appDetailEnterance;
+    public void setAppEntrance(String appEntrance) {
+        this.appEntrance = appEntrance;
     }
 
-    public String getAppShare() {
-        return appShare;
+    public String getWxShare() {
+        return wxShare;
     }
 
-    public void setAppShare(String appShare) {
-        this.appShare = appShare;
+    public void setWxShare(String wxShare) {
+        this.wxShare = wxShare;
     }
 
-    public String getAppHeader() {
-        return appHeader;
+    public String getChannelFrontCover() {
+        return channelFrontCover;
     }
 
-    public void setAppHeader(String appHeader) {
-        this.appHeader = appHeader;
+    public void setChannelFrontCover(String channelFrontCover) {
+        this.channelFrontCover = channelFrontCover;
     }
 
-    public List<String> getPcChannelBig() {
-        return pcChannelBig;
+    public String getChannelMiddleImage() {
+        return channelMiddleImage;
     }
 
-    public void setPcChannelBig(List<String> pcChannelBig) {
-        this.pcChannelBig = pcChannelBig;
+    public void setChannelMiddleImage(String channelMiddleImage) {
+        this.channelMiddleImage = channelMiddleImage;
     }
 
-    public List<String> getPcChannelMiddle() {
-        return pcChannelMiddle;
+    public String getChannelComingSoon() {
+        return channelComingSoon;
     }
 
-    public void setPcChannelMiddle(List<String> pcChannelMiddle) {
-        this.pcChannelMiddle = pcChannelMiddle;
+    public void setChannelComingSoon(String channelComingSoon) {
+        this.channelComingSoon = channelComingSoon;
     }
 
-    public String getPcChannelSmall() {
-        return pcChannelSmall;
+    public String getMobileFocus() {
+        return mobileFocus;
     }
 
-    public void setPcChannelSmall(String pcChannelSmall) {
-        this.pcChannelSmall = pcChannelSmall;
-    }
-
-    public List<String> getPcBrandEnterance() {
-        return pcBrandEnterance;
-    }
-
-    public void setPcBrandEnterance(List<String> pcBrandEnterance) {
-        this.pcBrandEnterance = pcBrandEnterance;
-    }
-
-    public String getMobileForce() {
-        return mobileForce;
-    }
-
-    public void setMobileForce(String mobileForce) {
-        this.mobileForce = mobileForce;
+    public void setMobileFocus(String mobileFocus) {
+        this.mobileFocus = mobileFocus;
     }
 
     public String getPcHeader() {
@@ -256,12 +235,28 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
         this.pcHeader = pcHeader;
     }
 
-    public String getPcCarousel() {
-        return pcCarousel;
+    public String getAppHeader() {
+        return appHeader;
     }
 
-    public void setPcCarousel(String pcCarousel) {
-        this.pcCarousel = pcCarousel;
+    public void setAppHeader(String appHeader) {
+        this.appHeader = appHeader;
+    }
+
+    public String getAppChannelEntrance() {
+        return appChannelEntrance;
+    }
+
+    public void setAppChannelEntrance(String appChannelEntrance) {
+        this.appChannelEntrance = appChannelEntrance;
+    }
+
+    public String getAppArcCarousel() {
+        return appArcCarousel;
+    }
+
+    public void setAppArcCarousel(String appArcCarousel) {
+        this.appArcCarousel = appArcCarousel;
     }
 
     public String getAppCarousel() {
@@ -272,20 +267,20 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
         this.appCarousel = appCarousel;
     }
 
-    public String getPcChannelHeader() {
-        return pcChannelHeader;
+    public String getPcCarousel() {
+        return pcCarousel;
     }
 
-    public void setPcChannelHeader(String pcChannelHeader) {
-        this.pcChannelHeader = pcChannelHeader;
+    public void setPcCarousel(String pcCarousel) {
+        this.pcCarousel = pcCarousel;
     }
 
-    public String getAppLeftBigCard() {
-        return appLeftBigCard;
+    public String getPcRow1Cell2() {
+        return pcRow1Cell2;
     }
 
-    public void setAppLeftBigCard(String appLeftBigCard) {
-        this.appLeftBigCard = appLeftBigCard;
+    public void setPcRow1Cell2(String pcRow1Cell2) {
+        this.pcRow1Cell2 = pcRow1Cell2;
     }
 
     public String getAppRightBigCard() {
@@ -294,6 +289,14 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
 
     public void setAppRightBigCard(String appRightBigCard) {
         this.appRightBigCard = appRightBigCard;
+    }
+
+    public String getAppLeftBigCard() {
+        return appLeftBigCard;
+    }
+
+    public void setAppLeftBigCard(String appLeftBigCard) {
+        this.appLeftBigCard = appLeftBigCard;
     }
 
     public String getAppSmallCard() {
@@ -328,12 +331,12 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
         this.padCarousel = padCarousel;
     }
 
-    public String getPadCardPreheat() {
-        return padCardPreheat;
+    public String getPadPreheat() {
+        return padPreheat;
     }
 
-    public void setPadCardPreheat(String padCardPreheat) {
-        this.padCardPreheat = padCardPreheat;
+    public void setPadPreheat(String padPreheat) {
+        this.padPreheat = padPreheat;
     }
 
     public String getPadCard() {
