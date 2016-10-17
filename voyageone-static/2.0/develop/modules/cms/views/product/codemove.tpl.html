@@ -111,10 +111,10 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="group in ctrl.groupList">
-                                    <td class="control-label text-left form-inline">
-                                        <label class="radio-inline c-radio">
-                                            <input type="radio" name="selGroup" value="{{group.groupInfo.groupId}}" ng-model="ctrl.destGroupId" ng-click="ctrl.selGroup(group)">
-                                            <span class="fa fa-check"></span>
+                                    <td class="control-label v-middle">
+                                        <label class="radio-inline c-radio v-middle">
+                                            <input type="radio" name="selGroup" value="{{group.groupInfo.groupId}}" ng-model="ctrl.destGroupId" ng-click="ctrl.selGroup(group)" style="margin-left: 0;">
+                                            <span class="fa fa-check v-middle"></span>
                                         </label>
                                     </td>
                                     <td class="text-center v-middle">
