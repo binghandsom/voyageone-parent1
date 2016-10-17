@@ -277,19 +277,8 @@ public class CmsBtJmPromotionService extends BaseService {
             return;
         }
 
-        tagJmModuleExtensionModel = new CmsBtTagJmModuleExtensionModel();
-        tagJmModuleExtensionModel.setTagId(tagModel.getId());
-        tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
-        tagJmModuleExtensionModel.setFeatured(true); // 创建默认主推配置
-
-        // 其他属性使用默认
-        tagJmModuleExtensionModel.setHideFlag(0);
-        tagJmModuleExtensionModel.setDisplayStartTime(null);
-        tagJmModuleExtensionModel.setDisplayEndTime(null);
-        tagJmModuleExtensionModel.setShelfType(1);
-        tagJmModuleExtensionModel.setImageType(1);
-        tagJmModuleExtensionModel.setProductsSortBy(1);
-        tagJmModuleExtensionModel.setNoStockToLast(false);
+        tagJmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
+        tagJmModuleExtensionModel.setFeatured(true);
 
         tagService.addJmModule(tagJmModuleExtensionModel);
     }

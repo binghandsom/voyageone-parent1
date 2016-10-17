@@ -186,6 +186,23 @@ public class TagService extends BaseService {
         return cmsBtTagDaoExt.selectListBySameLevel(channelId, parentTagId, tagId);
     }
 
+    public CmsBtTagJmModuleExtensionModel createJmModuleExtension(CmsBtTagModel tagModel) {
+        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = new CmsBtTagJmModuleExtensionModel();
+
+        tagJmModuleExtensionModel.setTagId(tagModel.getId());
+        tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
+        tagJmModuleExtensionModel.setFeatured(false);
+        tagJmModuleExtensionModel.setHideFlag(0);
+        tagJmModuleExtensionModel.setDisplayStartTime(null);
+        tagJmModuleExtensionModel.setDisplayEndTime(null);
+        tagJmModuleExtensionModel.setShelfType(1);
+        tagJmModuleExtensionModel.setImageType(1);
+        tagJmModuleExtensionModel.setProductsSortBy(1);
+        tagJmModuleExtensionModel.setNoStockToLast(false);
+
+        return tagJmModuleExtensionModel;
+    }
+
     /**
      * Tag追加，输入参数检查
      *
