@@ -1,10 +1,12 @@
 package com.voyageone.components.tmall.service;
 
 import com.taobao.api.ApiException;
+import com.taobao.api.domain.InventorySum;
 import com.taobao.api.domain.ScItem;
 import com.taobao.api.domain.ScItemMap;
 import com.taobao.api.request.*;
 import com.taobao.api.response.*;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
@@ -92,13 +94,50 @@ public class TbScItemService extends TbBase {
 		ScitemMapAddResponse res = reqTaobaoApi(shopBean, request);
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
-			return null;
+			throw new BusinessException(res.getSubCode() + ":" + res.getSubMsg());
 		}
 
 		return res.getOuterCode();
 
 	}
 
+	/**
+	 * taobao.inventory.initial (库存初始化)
+	 * @param shopBean shopBean
+	 * @param store_code 商家仓库编码
+	 * @param scItemCode 商家编码
+	 * @param quantity 库存
+	 * @return
+	 * @throws ApiException
+	 */
+	public String doInitialInventory(ShopBean shopBean, String store_code, String scItemCode, String quantity) throws ApiException {
+
+		InventoryInitialRequest request = new InventoryInitialRequest();
+
+		request.setStoreCode(store_code);
+		String items = "[{\"scItemId\":\"0\",\"scItemCode\":\"%s\",\"inventoryType\":\"1\",\"quantity\":\"%s\"}]";
+		items = String.format(items, scItemCode, quantity);
+		request.setItems(items);
+
+		InventoryInitialResponse res = reqTaobaoApi(shopBean, request);
+
+		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+			if (res.getSubMsg() == null || !res.getSubMsg().startsWith("商品已初始化")) {
+				throw new BusinessException(res.getSubCode() + ":" + res.getSubMsg());
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * taobao.scitem.map.query (查找IC商品或分销商品与后端商品的关联信息)
+	 * @param shopBean shopBean
+	 * @param numIId 天猫id
+	 * @param skuId skuId（如果不知道， 就传null）
+	 * @return （符合条件的sku的）关联信息列表
+	 * @throws ApiException
+	 */
 	public List<ScItemMap> getScItemMap(ShopBean shopBean, long numIId, String skuId) throws ApiException {
 		ScitemMapQueryRequest request = new ScitemMapQueryRequest();
 
@@ -115,4 +154,47 @@ public class TbScItemService extends TbBase {
 
 		return res.getScItemMaps();
 	}
+
+	/**
+	 * taobao.inventory.query (查询商品库存信息)
+	 * @param shopBean shopBean
+	 * @param scItemId 后端货品id
+	 * @return （符合条件的sku的）关联信息列表
+	 * @throws ApiException
+	 */
+	public List<InventorySum> getInventoryByScItemId(ShopBean shopBean, long scItemId) throws ApiException {
+		InventoryQueryRequest request = new InventoryQueryRequest();
+
+		request.setScItemIds(String.valueOf(scItemId));
+
+		InventoryQueryResponse res = reqTaobaoApi(shopBean, request);
+
+		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+			return null;
+		}
+
+		return res.getItemInventorys();
+	}
+
+	/**
+	 * taobao.scitem.get (根据id查询商品)
+	 * @param shopBean shopBean
+	 * @param numIId 天猫id
+	 * @return （符合条件的sku的）关联信息列表
+	 * @throws ApiException
+	 */
+	public ScItem getScitemByNumIId(ShopBean shopBean, long numIId) throws ApiException {
+		ScitemGetRequest request = new ScitemGetRequest();
+
+		request.setItemId(numIId);
+
+		ScitemGetResponse res = reqTaobaoApi(shopBean, request);
+
+		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+			return null;
+		}
+
+		return res.getScItem();
+	}
+
 }
