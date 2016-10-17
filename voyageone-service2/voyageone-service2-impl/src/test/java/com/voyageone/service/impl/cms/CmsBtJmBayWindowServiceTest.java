@@ -34,7 +34,6 @@ public class CmsBtJmBayWindowServiceTest {
         bayWindow.setName("ccc");
         bayWindow.setOrder(1);
         bayWindows.add(bayWindow);
-        cmsBtJmBayWindowModel.setCartId(23);
         cmsBtJmBayWindowModel.setJmPromotionId(111);
         cmsBtJmBayWindowModel.setBayWindows(bayWindows);
         cmsBtJmBayWindowService.insert(cmsBtJmBayWindowModel);
