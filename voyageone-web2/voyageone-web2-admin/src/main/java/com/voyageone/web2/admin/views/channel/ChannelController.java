@@ -51,7 +51,8 @@ public class ChannelController extends AdminController {
 	public AjaxResponse getAllChannel() {
 		List<TmOrderChannelModel> channels = channelService.getAllChannel();
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
-		channels.stream().forEach(item -> result.add(new HashMap<String, Object>(){{
+		channels.stream().filter(w -> !(w.getName().equals("ALL"))).
+				forEach(item -> result.add(new HashMap<String, Object>(){{
 			put("name", item.getName());
 			put("orderChannelId", item.getOrderChannelId());
 		}}));
