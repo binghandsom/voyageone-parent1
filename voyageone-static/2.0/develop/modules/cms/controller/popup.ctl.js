@@ -60,7 +60,7 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             },
-            "categoryMul":{
+            "categoryMul": {
                 "templateUrl": "views/pop/bulkUpdate/categoryMul.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/categoryMul.ctl",
                 "controller": 'popCategoryMulCtl as ctrl',
@@ -195,13 +195,13 @@ define([
             }
         },
         "platformMapping": {
-            "propertyMapping":{
+            "propertyMapping": {
                 "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
                 "controller": 'propertyMappingController as ctrl',
                 "size": 'lg'
             },
-            "propertySetting":{
+            "propertySetting": {
                 "templateUrl": "views/pop/platformMapping/propertySetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/propertySetting.ctl",
                 "controller": 'propertySettingController as ctrl',
@@ -471,15 +471,21 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
                 "controller": 'HsCodeChangeController as ctrl'
             },
-            "approveConfirm":{
+            "approveConfirm": {
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
             },
-            "skuMoveConfirm":{
+            "skuMoveConfirm": {
                 "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
                 "controller": 'SkuMoveConfirmController as ctrl'
+            },
+            "moveResult": {
+                "templateUrl": "views/pop/product/move_result.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
+                "controller": 'MoveResultController as ctrl',
+                "size": 'sm'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -607,7 +613,7 @@ define([
          * @param context
          * @returns {*}
          */
-        $scope.popCategoryMul = function popCategoryMul(context){
+        $scope.popCategoryMul = function popCategoryMul(context) {
             return openModal(popActions.bulkUpdate.categoryMul, context);
         };
 
@@ -1029,7 +1035,7 @@ define([
         /**
          * 图片和尺码表确认框
          */
-        $scope.openTemplateConfirm = function openTemplateConfirm(context){
+        $scope.openTemplateConfirm = function openTemplateConfirm(context) {
             return openModal(popActions.store.listing.delConfirm, context);
         };
 
@@ -1170,27 +1176,31 @@ define([
         };
 
         /**税号改变 hsCodeChange*/
-        $scope.openHsCodeChange = function openHsCodeChange(context){
-            return openModal(popActions.product.hsCodeChange,context);
+        $scope.openHsCodeChange = function openHsCodeChange(context) {
+            return openModal(popActions.product.hsCodeChange, context);
         };
 
         /**属性匹配*/
-        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping,searchInfo){
-            return openModal(popActions.platformMapping.propertyMapping,_.extend(fieldMapping,searchInfo));
+        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping, searchInfo) {
+            return openModal(popActions.platformMapping.propertyMapping, _.extend(fieldMapping, searchInfo));
         };
 
         /**属性编辑*/
-        $scope.openPropertySetting = function openPropertySetting(context){
-            return openModal(popActions.platformMapping.propertySetting,context);
+        $scope.openPropertySetting = function openPropertySetting(context) {
+            return openModal(popActions.platformMapping.propertySetting, context);
         };
 
         /**上新价格确认*/
-        $scope.openApproveConfirm = function openApproveConfirm(context){
-            return openModal(popActions.product.approveConfirm,context);
-        }
+        $scope.openApproveConfirm = function openApproveConfirm(context) {
+            return openModal(popActions.product.approveConfirm, context);
+        };
         /**移动SKU确认*/
-        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context){
-            return openModal(popActions.product.skuMoveConfirm,context);
+        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
+            return openModal(popActions.product.skuMoveConfirm, context);
+        };
+        /**移动SKU的结果确认*/
+        $scope.openMoveResult = function openMoveResult(context) {
+            return openModal(popActions.product.moveResult, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
