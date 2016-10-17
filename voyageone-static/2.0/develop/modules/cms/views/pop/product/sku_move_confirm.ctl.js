@@ -21,10 +21,7 @@ define([
         };
 
         SkuMoveConfirm.prototype.confirm = function () {
-            var self = this;
-            self.popups.openMoveResult(self.moveType).then(function () {
-                self.$uibModalInstance.close();
-            })
+            this.$uibModalInstance.close();
         };
 
         return SkuMoveConfirm;

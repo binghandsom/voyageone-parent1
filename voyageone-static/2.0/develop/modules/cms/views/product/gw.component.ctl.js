@@ -236,6 +236,7 @@ define([
                         productDetailService.moveCodeInitCheck({
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,
+                            prodId: scope.productInfo.productId,
                             productCode : scope.vm.mastData.productCode
                         }).then(function (resp) {
                             var moveCodeInfo = {

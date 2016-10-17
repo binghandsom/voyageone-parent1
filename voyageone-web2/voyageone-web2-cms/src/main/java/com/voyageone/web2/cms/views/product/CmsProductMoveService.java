@@ -137,6 +137,7 @@ public class CmsProductMoveService extends BaseViewService {
         }
         returnMap.put("sourceGroupId", moveSourceGroupId);
         returnMap.put("sourceGroupName", moveSourceGroupName);
+        returnMap.put("sourceGroupProductsNum", groupModel.getProductCodes().size());
         return returnMap;
     }
 

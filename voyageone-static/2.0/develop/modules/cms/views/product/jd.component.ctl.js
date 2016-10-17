@@ -267,6 +267,7 @@ define([
                             var moveCodeInfo = {
                                 cartId: scope.cartInfo.value,
                                 cartName: scope.cartInfo.name,
+                                prodId: scope.productInfo.productId,
                                 productCode : scope.vm.mastData.productCode
                             };
                             window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));

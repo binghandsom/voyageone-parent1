@@ -11,6 +11,7 @@ define([
         function CodeMoveController(productDetailService, notify, confirm, alert, popups) {
             this.cartId = null;
             this.cartName;
+            this.prodId;
             this.productCode;
             this.sourceGroupId = null;
             this.sourceGroupName;
@@ -20,6 +21,7 @@ define([
             this.destGroupId = null;
             this.destGroupName;
             this.productUrl;
+            this.sourceGroupProductsNum;
 
             this.show = false;
             this.popups = popups;
@@ -39,6 +41,7 @@ define([
                 if (moveCodeInfo) {
                     self.cartId = moveCodeInfo.cartId;
                     self.cartName = moveCodeInfo.cartName;
+                    self.prodId = moveCodeInfo.prodId;
                     self.productCode = moveCodeInfo.productCode;
                     self.productUrl = carts.valueOf(parseInt(moveCodeInfo.cartId)).pUrl;
                 }
@@ -48,6 +51,11 @@ define([
                 }).then(function (resp) {
                     self.sourceGroupId = resp.data.sourceGroupId;
                     self.sourceGroupName = resp.data.sourceGroupName;
+                    self.sourceGroupProductsNum = resp.data.sourceGroupProductsNum;
+                    if (self.sourceGroupProductsNum == 1) {
+                        self.destGroupType = "select";
+                        self.show = true;
+                    }
                 });
             },
             search: function () {
@@ -136,6 +144,9 @@ define([
                         cartName: self.cartName
                     }).then(function (resp) {
                         self.moveButton = false;
+                        self.popups.openMoveResult("Code").then(function () {
+                            window.location.href = "#/product/detail/" + self.prodId + "/" + self.cartId;
+                        });
                     });
                 });
             }
