@@ -223,8 +223,6 @@ public class CmsBtJmPromotionService extends BaseService {
         }
     }
 
-    /*更新
-    * */
     private int updateModel(CmsBtJmPromotionSaveBean parameter) {
         int result;
         CmsBtJmPromotionModel model = parameter.getModel();
@@ -254,9 +252,6 @@ public class CmsBtJmPromotionService extends BaseService {
         return result;
     }
 
-    /**
-     * 新增
-     */
     private int insertModel(CmsBtJmPromotionSaveBean parameter) {
         CmsBtJmPromotionModel model = parameter.getModel();
         if (StringUtil.isEmpty(model.getCategory())) {
