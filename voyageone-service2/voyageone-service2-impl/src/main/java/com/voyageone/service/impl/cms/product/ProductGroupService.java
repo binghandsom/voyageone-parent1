@@ -479,7 +479,7 @@ public class ProductGroupService extends BaseService {
             if (productModel != null) {
                 for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
                     // 找到对应的平台信息
-                    if (cartId == platform.getValue().getCartId()) {
+                    if (cartId.equals(platform.getValue().getCartId())) {
                         for (Map<String, Object> sku : platform.getValue().getSkus()) {
                             Object objSkuPriceSale = sku.get("priceSale");
                             Double skuPriceSale = null;
@@ -489,7 +489,7 @@ public class ProductGroupService extends BaseService {
                             if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
                                 priceSaleSt = skuPriceSale;
                             }
-                            if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleSt)) {
+                            if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
                                 priceSaleEd = skuPriceSale;
                             }
 
@@ -499,9 +499,9 @@ public class ProductGroupService extends BaseService {
                                 skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
                             }
                             if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
-                                priceSaleSt = skuPriceSale;
+                                priceRetailSt = skuPriceRetail;
                             }
-                            if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailSt)) {
+                            if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
                                 priceRetailEd = skuPriceRetail;
                             }
 
@@ -511,14 +511,15 @@ public class ProductGroupService extends BaseService {
                                 skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
                             }
                             if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
-                                priceSaleSt = skuPriceSale;
+                                priceMsrpSt = skuPriceMsrp;
                             }
-                            if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpSt)) {
+                            if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
                                 priceMsrpEd = skuPriceMsrp;
                             }
                         }
+                        break;
                     }
-                    break;
+
                 }
             }
         }

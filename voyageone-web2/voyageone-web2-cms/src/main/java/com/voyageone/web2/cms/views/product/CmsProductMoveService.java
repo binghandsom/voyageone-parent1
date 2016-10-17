@@ -397,10 +397,16 @@ public class CmsProductMoveService extends BaseViewService {
             productGroupService.calculatePriceRange(destGroupModel);
             // 更新目标Group
             productGroupService.update(destGroupModel);
+
+            // 设定移动Code的Product信息的相关平台下pIsMain=0
+            productService.updateProductPlatformIsMain(0, channelId, productCode, cartId, modifier);
         } else {
             // 目的Group如果是一个新的Group，那么建立一个新的Group（Group的mainProductCode=移动的Code，productCodes中就一个元素：移动的Code）
             destGroupModel = createNewGroup(channelId, cartId, productCode);
             productGroupService.insert(destGroupModel);
+
+            // 设定移动Code的Product信息的相关平台下pIsMain=1
+            productService.updateProductPlatformIsMain(1, channelId, productCode, cartId, modifier);
         }
 
         // 处理源Group

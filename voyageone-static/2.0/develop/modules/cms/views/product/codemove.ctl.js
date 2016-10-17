@@ -24,6 +24,7 @@ define([
             this.show = false;
             this.popups = popups;
             this.showView = false;
+            this.moveButton = true;
 
             this.productDetailService = productDetailService;
             this.notify = notify;
@@ -126,7 +127,16 @@ define([
             move: function (type) {
                 var self = this;
                 self.popups.openSKUMoveConfirm(type).then(function (resp) {
-                    self.alert("11");
+                    self.productDetailService.moveCode({
+                        destGroupType: self.destGroupType,
+                        productCode: self.productCode,
+                        sourceGroupId: self.sourceGroupId,
+                        destGroupId: self.destGroupId,
+                        cartId: self.cartId,
+                        cartName: self.cartName
+                    }).then(function (resp) {
+                        self.moveButton = false;
+                    });
                 });
             }
 
