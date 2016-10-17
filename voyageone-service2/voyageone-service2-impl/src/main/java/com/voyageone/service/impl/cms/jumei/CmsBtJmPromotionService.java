@@ -81,10 +81,6 @@ public class CmsBtJmPromotionService extends BaseService {
         return dao.insert(entity);
     }
 
-    public CmsBtJmPromotionSpecialExtensionModel getJmPromotionSpecial(Integer jmPromotionId) {
-        return jmPromotionExtensionDaoExt.selectOne(jmPromotionId);
-    }
-
     /**
      * 取得聚美活动信息
      *
