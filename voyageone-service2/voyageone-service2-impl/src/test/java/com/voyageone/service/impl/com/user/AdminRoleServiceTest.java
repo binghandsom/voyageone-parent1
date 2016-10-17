@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  * Created by Ethan Shi on 2016-08-18.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class AdminRoleServiceTest {
 
     @Autowired

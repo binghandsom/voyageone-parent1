@@ -50,37 +50,7 @@
 
 	
 	<select id="selectUserByPage" resultMap="comUserMap">
-        SELECT * from
-        (
-        SELECT u.*, GROUP_CONCAT( DISTINCT t3.id) as role_id , GROUP_CONCAT( DISTINCT t3.role_name) as role_name, o.org_name, GROUP_CONCAT( DISTINCT channel_id) as channel_id, store_id, application , co.company FROM com_user u
-        LEFT JOIN com_user_role ur ON ur.user_id = u.id
-        LEFT JOIN (SELECT id, org_name FROM com_organization WHERE active =1) o ON u.org_id = o.id
-        LEFT JOIN (SELECT id, company FROM synship.ct_company WHERE active =1) co ON co.id = u.company_id
-        LEFT JOIN
-        (SELECT * FROM
-        (SELECT cr.*, channel_id , store_id, GROUP_CONCAT( DISTINCT ap.application) as application  from com_role cr LEFT JOIN
-        (SELECT t.id, t.role_name, t.role_type, t.active,t.modified,t.modifier, t.description,
-        MAX(CASE t.cfg_name WHEN 'channel_id' THEN cfg_val1 ELSE NULL END ) channel_id,
-        MAX(CASE t.cfg_name WHEN 'store_id' THEN cfg_val1 ELSE NULL END ) store_id
-        FROM
-        (select r.id, r.role_name,r.role_type, r.description, r.active, r.modified, r.modifier , rc.cfg_name, GROUP_CONCAT( DISTINCT rc.cfg_val1) as cfg_val1
-        from com_role r, com_role_config rc , Synship.wms_mt_store st, Synship.tm_order_channel ch
-        where
-        ((rc.cfg_name = 'store_id' and (rc.cfg_val1 = st.store_id or rc.cfg_val1='ALL'))
-        or (rc.cfg_name = 'channel_id' and (rc.cfg_val1 = ch.order_channel_id or rc.cfg_val1='ALL')))
-        and r.id = rc.role_id
-        and r.active = 1
-        and st.active = 1
-        and ch.active = 1
-        GROUP BY r.id, rc.cfg_name) t
-        GROUP BY t.id) t1
-        ON cr.id = t1.id
-        LEFT JOIN (SELECT id, application from view_role_application ) ap ON cr.id = ap.id
-        GROUP BY cr.id) t2
-        WHERE t2.active =1 ) t3
-        ON t3.id = ur.role_id
-        GROUP By u.id
-        )t4
+
         <include refid="selectUserFilter"/>
 	</select>
 	

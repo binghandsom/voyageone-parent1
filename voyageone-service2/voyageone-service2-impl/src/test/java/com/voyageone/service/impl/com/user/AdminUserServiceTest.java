@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by Ethan Shi on 2016-08-15.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class AdminUserServiceTest {
 
     @Autowired
@@ -330,6 +330,24 @@ public class AdminUserServiceTest {
 
         adminUserService.addRole4User("lisa.lin", cs5com);
 
+
+    }
+
+    @Test
+    public void testCopyRoleAuth() throws Exception {
+//        adminUserService.copyRoleAuth("普通客服1组", "财务1组");
+
+        adminUserService.copyRoleAuth("财务1组", "财务2组");
+        adminUserService.copyRoleAuth("财务1组", "财务3组");
+        adminUserService.copyRoleAuth("财务1组", "财务4组");
+        adminUserService.copyRoleAuth("财务1组", "财务5组");
+
+        adminUserService.copyRoleAuth("财务1组", "财务_001");
+        adminUserService.copyRoleAuth("财务1组", "财务_010");
+        adminUserService.copyRoleAuth("财务1组", "财务_005");
+        adminUserService.copyRoleAuth("财务1组", "财务_007");
+        adminUserService.copyRoleAuth("财务1组", "财务_007");
+        adminUserService.copyRoleAuth("财务1组", "财务_012");
 
     }
 }

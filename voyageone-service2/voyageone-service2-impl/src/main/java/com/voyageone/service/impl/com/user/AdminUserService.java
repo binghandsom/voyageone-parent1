@@ -924,4 +924,36 @@ public class AdminUserService extends BaseService {
             }
         }
     }
+
+    @VOTransactional
+    public void copyRoleAuth(String srcName, String dstName  )
+    {
+        ComRoleModel qry = new ComRoleModel();
+        qry.setRoleName(srcName);
+        ComRoleModel srcRole = comRoleDao.selectOne(qry);
+        Integer srcRoldId = srcRole.getId();
+
+
+        qry = new ComRoleModel();
+        qry.setRoleName(dstName);
+        ComRoleModel dstRole = comRoleDao.selectOne(qry);
+        Integer desRoldId = dstRole.getId();
+
+
+        ComResRoleModel rr = new ComResRoleModel();
+        rr.setRoleId(srcRoldId);
+        List<ComResRoleModel> srcList = comResRoleDao.selectList(rr);
+
+        for(ComResRoleModel src : srcList)
+        {
+            ComResRoleModel dst = new ComResRoleModel();
+            dst.setRoleId(desRoldId);
+            dst.setResId(src.getResId());
+
+            if(comResRoleDao.selectCount(dst) == 0)
+            {
+                comResRoleDao.insert(dst);
+            }
+        }
+    }
 }
