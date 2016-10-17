@@ -206,15 +206,15 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                     continue;
                 }
             }
-            if (com.voyageone.common.util.StringUtils.isEmpty("") && model.getPromotionType() == 2)//大促专场
-            {
-                CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
-                if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
-                    product.setErrorMsg("该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
-                    listErroProduct.add(product);
-                    continue;
-                }
-            }
+//            if (com.voyageone.common.util.StringUtils.isEmpty("") && model.getPromotionType() == 2)//大促专场
+//            {
+//                CmsBtJmPromotionProductModel modelPromotionProduct = daoExtCmsBtJmPromotionProduct.selectDateRepeatByCode(model.getId(), model.getChannelId(), product.getProductCode(), model.getActivityStart(), model.getActivityEnd());
+//                if (modelPromotionProduct != null && modelPromotionProduct.getActivityStart() != model.getActivityStart()) { //活动日期重叠 开始时间不相等
+//                    product.setErrorMsg("该商品已于相关时间段内，在其它专场中完成上传，为避免财务结算问题，请放弃导入,JmPromotionId:" + modelPromotionProduct.getCmsBtJmPromotionId() + "存在该商品");//取一个活动id
+//                    listErroProduct.add(product);
+//                    continue;
+//                }
+//            }
             if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
                 listErroProduct.add(product);

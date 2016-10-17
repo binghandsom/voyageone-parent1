@@ -5,9 +5,11 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.components.jumei.JumeiHtDealService;
+import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtDealUpdate_DealInfo;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 import com.voyageone.components.jumei.bean.HtDeal_UpdateDealStockBatch_UpdateData;
+import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import com.voyageone.service.bean.cms.CallResult;
@@ -268,6 +270,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
         ShopBean shopBean=parameter.shopBean;
         List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
         jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新deal价格
+        jmhtMall_UpdateMallPriceBatch(model,shopBean,listSkuPrice);//更新商城价格
+        //
         String jmSkuNoList = getjmSkuNo(listSkuPrice);
         jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
         model.setPriceStatus(2);
@@ -390,25 +394,29 @@ public class JuMeiProductPlatform3Service extends BaseService {
                     return errorMsg;
                 }
             }
-            if (jmPromotion.getIsPromotionFullMinus())//当前专场为 满减专场
-            { //4.2.3
-                errorMsg = String.format("该商品已加入专场【%s】，并上传成功。满减专场不可与其它专场共用商品，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);
-                return errorMsg;
-            }
+            //1017 3
+//            if (jmPromotion.getIsPromotionFullMinus())//当前专场为 满减专场
+//            { //4.2.3
+//                errorMsg = String.format("该商品已加入专场【%s】，并上传成功。满减专场不可与其它专场共用商品，请于专场【%s】结束后，再进行上传", sellJmPromotionName, sellJmPromotionName);
+//                return errorMsg;
+//            }
 
-            if (!jmPromotion.getIsPromotionFullMinus())//当前专场为 非满减专场
-            { //4.2.4
-                if (sellJmPromotion.getIsPromotionFullMinus())//在售专场为 满减专场
-                {
-                    errorMsg = String.format("该商品已加入满减专场【%s】，并上传成功。满减专场不可与其它专场共用商品，请于专场【%s】结束后，再进行上传.", sellJmPromotionName, sellJmPromotionName);
-                    return errorMsg;
-                }
-            }
+            //1017  4
+//            if (!jmPromotion.getIsPromotionFullMinus())//当前专场为 非满减专场
+//            { //4.2.4
+//                if (sellJmPromotion.getIsPromotionFullMinus())//在售专场为 满减专场
+//                {
+//                    errorMsg = String.format("该商品已加入满减专场【%s】，并上传成功。满减专场不可与其它专场共用商品，请于专场【%s】结束后，再进行上传.", sellJmPromotionName, sellJmPromotionName);
+//                    return errorMsg;
+//                }
+//            }
             // 4.2.5
-            if (jmPromotion.getPromotionType() == 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为 大促非满减专场
-            {
-                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为 非满减专场
-                {
+
+
+            //1017 3.3 if (jmPromotion.getPromotionType() == 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为 大促非满减专场
+//            {
+//                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为 非满减专场
+//                {
                     if (sellJmStartTime == jmActivityStartTime)//开始时间相等
                     {
                         jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
@@ -419,17 +427,17 @@ public class JuMeiProductPlatform3Service extends BaseService {
                         errorMsg = String.format("该商品已加入专场【%s】，并上传成功。介于开始时间相同，当前大促专场引用了同一HashID，并进行了延期。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重", sellJmPromotionName);
                         return errorMsg;
                     }
-                }
-            }
-            //4.2.6
-            if (jmPromotion.getPromotionType() == 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  大促非满减专场
-            {
-                if (sellJmStartTime != jmActivityStartTime)//开始时间不相等
-                {
-                    errorMsg = String.format("该商品已加入专场【%s】，并上传成功。聚美平台监控大促开场，严禁大促专场商品出现时间异常。介于开始时间不相同，该商品已无法在当前大促专场进行售卖，请替换商品.", sellJmPromotionName);
-                    return errorMsg;
-                }
-            }
+              //  }
+         //   }
+            //1017 4.2.6
+//            if (jmPromotion.getPromotionType() == 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  大促非满减专场
+//            {
+//                if (sellJmStartTime != jmActivityStartTime)//开始时间不相等
+//                {
+//                    errorMsg = String.format("该商品已加入专场【%s】，并上传成功。聚美平台监控大促开场，严禁大促专场商品出现时间异常。介于开始时间不相同，该商品已无法在当前大促专场进行售卖，请替换商品.", sellJmPromotionName);
+//                    return errorMsg;
+//                }
+//            }
             //4.2.7
             if (jmPromotion.getPromotionType() != 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  非大促 非满减专场
             {
@@ -443,23 +451,23 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 }
             }
             //4.2.8
-            if (jmPromotion.getPromotionType() != 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  非大促 非满减专场
-            {
-                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
-                {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间4天或以上 时
+//            if (jmPromotion.getPromotionType() != 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  非大促 非满减专场
+//            {
+//                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
+//                {
+                    if (DateTimeUtil.addDays(jmPromotion.getPrePeriodStart(), -5).getTime() >= getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间5天或以上 时
                     {
                         errorMsg = String.format("该商品已加入专场%s，并上传成功。请于【%s】（年月日 时分秒）之后，再进行上传", sellJmPromotionName, DateTimeUtil.format(getDealByHashIDResponse.getEnd_time(), "yyyy-MM-dd HH:mm:ss"));
                         return errorMsg;
                     }
-                }
-            }
+             //   }
+           // }
             //4.2.9
-            if (jmPromotion.getPromotionType() != 2 && !jmPromotion.getIsPromotionFullMinus())//当前专场为  非大促 非满减专场
+            if (jmPromotion.getPromotionType() != 2)//当前专场为  非大促
             {
-                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
-                {
-                    if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -4).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间3天或以下 时，
+//                if (!sellJmPromotion.getIsPromotionFullMinus())//在售专场为非满减专场
+//                {
+                    if (DateTimeUtil.addDays(jmPromotion.getPrePeriodStart(), -6).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间5天或以下 时，
                     {
                         //4.2.9.1
                         jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
@@ -481,6 +489,31 @@ public class JuMeiProductPlatform3Service extends BaseService {
                         }
                         return errorMsg;
                     }
+              //  }
+            }
+            //4.2.10   新加 1017
+            if (jmPromotion.getPromotionType()== 2)//当前专场为  非大促
+            {
+                if (DateTimeUtil.addDays(jmPromotion.getActivityStart(), -6).getTime() < getDealByHashIDResponse.getEnd_time().getTime())//【sell_hash_id】的结束时间早于当前专场结束时间5天或以下 时，
+                {
+                    //4.2.9.1
+                    jmPromotionProduct.setJmHashId(sell_hash_id);//设置当前专场jmHashId
+                    errorMsg = String.format("该商品已加入专场【%s】，并上传成功。当前专场引用了同一HashID，并进行了延期。该商品无预热。如需变更价格，请重新点击【重刷】/【批量同步价格】。操作将影响关联专场，请慎重。介于开始时间不同，聚美平台监控大促开场，请及时联络聚美运营进行Deal时间批量调整慎重。", sellJmPromotionName);
+
+                    //4.2.9.2 新HashID替换MongoDB中，该商品的Origin HashID 参考步骤6.0.3
+                    //4.2.9.2 //在售专场的结束时间小于当前专场结束时间
+                    if (sellJmEndTime < jmActivityEndTime) {
+                        //调用延迟Deal结束时间API
+                        jmPromotionProduct.setDealEndTimeStatus(1);
+                        jmPromotionProduct.setActivityEnd(getDealByHashIDResponse.getEnd_time());
+                        try {
+                            updateDealEndTime(parameter);//自动延期
+                        }
+                        catch (Exception ex) {
+                            errorMsg+=ex.getMessage();
+                        }
+                    }
+                    return errorMsg;
                 }
             }
         }
@@ -569,6 +602,39 @@ public class JuMeiProductPlatform3Service extends BaseService {
         {
             model.setPriceStatus(3);
             throw  ex;
+        }
+    }
+    //更新价格
+    private void   jmhtMall_UpdateMallPriceBatch(CmsBtJmPromotionProductModel model, ShopBean shopBean, List<SkuPriceBean> listSkuPrice) throws Exception {
+
+        List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>();
+        HtMallSkuPriceUpdateInfo updateData = null;
+        //设置请求参数
+        for (SkuPriceBean skuPriceBean : listSkuPrice) {
+            updateData = new HtMallSkuPriceUpdateInfo();
+            list.add(updateData);
+            updateData.setJumei_sku_no(skuPriceBean.getJmSkuNo());
+            updateData.setMall_price(skuPriceBean.getDealPrice());
+            updateData.setMarket_price(skuPriceBean.getMarketPrice());
+        }
+        try {
+            JumeiHtMallService service = new JumeiHtMallService();
+            String errorMsg = "";
+            List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
+            for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
+                $info("jmhtMall_UpdateMallPriceBatch :" + model.getProductCode() + JacksonUtil.bean2Json(page));
+                StringBuffer sb = new StringBuffer();
+                if (!service.updateMallSkuPrice(shopBean, page, sb)) {
+                    model.setPriceStatus(3);
+                    errorMsg += sb.toString();
+                }
+            }
+            if (!StringUtil.isEmpty(errorMsg)) {
+                throw new BusinessException("productId:" + model.getId() + "jmHtDealCopyErrorMsg:" + errorMsg);
+            }
+        } catch (Exception ex) {
+            model.setPriceStatus(3);
+            throw ex;
         }
     }
     //批量同步deal库存
