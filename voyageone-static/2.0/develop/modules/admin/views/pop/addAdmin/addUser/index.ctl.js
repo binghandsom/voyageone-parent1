@@ -18,14 +18,14 @@ define([
             this.companyId = this.sourceData.companyId;
             this.$uibModalInstance = $uibModalInstance;
             this.saveInfo = {
-                id: this.sourceData.id,
+                id: this.sourceData.id != null ? this.sourceData.id : '',
                 userAccount: this.sourceData.userAccount,
                 userName: this.sourceData.userName,
-                orgId: this.sourceData.orgId,
+                orgId: this.sourceData.orgId != null ? this.sourceData.orgId : '',
                 email: this.sourceData.email,
-                active: this.sourceData.active,
-                description: this.sourceData.description,
-                companyId: this.sourceData.companyId + ''
+                active: this.sourceData.active != null ? this.sourceData.active : '1',
+                description: this.sourceData.description != null ? this.sourceData.description : '',
+                companyId: this.sourceData.companyId != null ? this.sourceData.companyId + '' : ''
             };
             this.leftSelectedFlg = false;
             this.rightSelectedFlg = false;
@@ -169,7 +169,8 @@ define([
                 }
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;

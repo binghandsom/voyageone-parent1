@@ -31,7 +31,7 @@ define([
                 orgId: '',
                 application: '',
                 storeId: '',
-                company:'',
+                company: '',
                 pageInfo: this.pageOption
             }
         }
@@ -59,8 +59,8 @@ define([
                 self.adminRoleService.getAllRole().then(function (res) {
                     self.roleList = res.data;
                 });
-                self.channelService.getAllCompany().then(function(res){
-                	self.companyList = res.data;
+                self.channelService.getAllCompany().then(function (res) {
+                    self.companyList = res.data;
                 });
                 self.adminUserService.init().then(function (res) {
                     self.adminList = res.data.result;
@@ -132,49 +132,37 @@ define([
                     channelId: '',
                     orgId: '',
                     application: '',
-        			company:'',
+                    company: '',
                     storeId: ''
                 }
             },
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openAddUser('add').then(function () {
-                        self.search(1);
+                    self.popups.openAddUser('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.adminUserSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.adminList, function (Info) {
-                            if (Info.id == self.adminUserSelList.selList[0].id) {
-                                self.popups.openAddUser(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.adminList, function (Info) {
+                        if (Info.id == self.adminUserSelList.selList[0].id) {
+                            self.popups.openAddUser(Info);
+                        }
+                    })
                 }
             },
             vieAuthority: function () {
                 var self = this;
-                if (self.adminUserSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
-                } else {
-                    var popInfo = [];
-                    _.forEach(self.adminList, function (Info) {
-                        _.forEach(self.adminUserSelList.selList, function (item) {
-                            if (Info.id == item.id) {
-                                popInfo.push(Info);
-                            }
-                        })
-                    });
-                    self.popups.openUserAuthority(popInfo).then(function () {
-                        self.search(1);
-                    });
-                }
+                var popInfo = [];
+                _.forEach(self.adminList, function (Info) {
+                    _.forEach(self.adminUserSelList.selList, function (item) {
+                        if (Info.id == item.id) {
+                            popInfo.push(Info);
+                        }
+                    })
+                });
+                self.popups.openUserAuthority(popInfo);
             },
             delete: function () {
                 var self = this;
@@ -191,24 +179,19 @@ define([
             },
             resetPass: function () {
                 var self = this;
-                if (self.adminUserSelList.selList.length <= 0) {
-                    self.alert('TXT_MSG_NO_ROWS_SELECT');
-                    return;
-                } else {
-                    self.confirm('确认要重置密码吗？').then(function () {
-                    	var idList = [];
-                    	_.forEach(self.adminUserSelList.selList,function(sel){
-                        	idList.push(sel.id);
-                		})
-                        self.adminUserService.resetPass(idList).then(function (res) {
-                            if(res.data==true){
-                            	self.alert('恭喜您！密码重置成功啦！');
-                            }else{
-                            	self.alert('密码充值失败，请重试');
-                            }
-                        });
-                    })
-                }
+                self.confirm('确认要重置密码吗？').then(function () {
+                    var idList = [];
+                    _.forEach(self.adminUserSelList.selList, function (sel) {
+                        idList.push(sel.id);
+                    });
+                    self.adminUserService.resetPass(idList).then(function (res) {
+                        if (res.data == true) {
+                            self.alert('恭喜您！密码重置成功啦！');
+                        } else {
+                            self.alert('密码充值失败，请重试');
+                        }
+                    });
+                })
             },
             getName: function (item) {
                 var self = this;
