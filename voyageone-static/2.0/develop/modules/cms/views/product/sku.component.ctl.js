@@ -30,7 +30,7 @@ define([
                  * 移动Sku到其他Code
                  * */
                 function moveSku() {
-                    confirm("您确定要移动选择的Sku到新的Code吗？").then(function () {
+                    confirm($translate.instant('TXT_CONFIRM_MOVE_CODE')).then(function () {
                         var moveSkuInfo = {
                             skuList: scope.skuList,
                             sourceCode : scope.productInfo.masterField.code

@@ -231,8 +231,8 @@ define([
                  * */
                 function moveToGroup() {
                     if (scope.vm.mastData == null)  return;
-                    var template = _.template("您确定要在<%=cartName%>平台,移动Code:<%=productCode%>到其他Group吗？");
-                    confirm(template({cartName: scope.cartInfo.name,productCode : scope.vm.mastData.productCode})).then(function () {
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name,'productCode' : scope.vm.mastData.productCode});
+                    confirm(template).then(function () {
                         productDetailService.moveCodeInitCheck({
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,

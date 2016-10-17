@@ -73,33 +73,37 @@ public class CmsProductMoveService extends BaseViewService {
         CmsBtProductModel productModel = productService.getProductByCode(channelId, productCode);
 
         // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
-        if (cartId == null
-                || sourceGroupModel == null
+        if (sourceGroupModel == null
                 || productModel == null
                 || !sourceGroupModel.getProductCodes().contains(productCode)) {
-            throw new BusinessException("移动的数据不整合，请重新刷新画面");
+            // 移动的数据不整合，请重新刷新画面
+            throw new BusinessException("7000100");
         }
 
         // check业务上的移动条件是否满足
         // CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
         if (!checkIsMainProduct(sourceGroupModel, productCode)) {
-            throw new BusinessException("移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作");
+            // 移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作
+            throw new BusinessException("7000101", new Object[]{cartName});
         }
 
         // Check这个Code是不是Approved的状态，如果是的话，提示先下线。
         if (!checkCodeStatus(productModel, cartId)) {
-            throw new BusinessException("移动Code的状态是Approved，请先下线后再进行移动Code操作");
+            // 移动Code的状态是Approved，请先下线后再进行移动Code操作
+            throw new BusinessException("7000102");
         }
 
         // Check这个Code是否存在于没有结束的活动中。
         String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode, cartId);
         if (!StringUtil.isEmpty(promotionNames)) {
-            throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
+            //移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作
+            throw new BusinessException("7000103", new Object[]{promotionNames});
         }
 
         // Check这个Code是否是锁定的状态。
         if (!checkCodeLocked(productModel)) {
-            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
+            // 移动Code处于锁定的状态，请先解锁后再进行移动Code操作
+            throw new BusinessException("7000104");
         }
     }
 
@@ -200,7 +204,8 @@ public class CmsProductMoveService extends BaseViewService {
 
         // 如果没有选择移动目的Group，出错
         if (StringUtils.isEmpty(destGroupType) || ("select".equals(destGroupType) && destGroupId == null)) {
-            throw new BusinessException("请选择移动目的Group");
+            // 请选择移动目的Group
+            throw new BusinessException("7000105");
         }
 
         // 取得源Group信息
@@ -335,7 +340,8 @@ public class CmsProductMoveService extends BaseViewService {
 
         // 如果没有选择移动目的Group，出错
         if (StringUtils.isEmpty(destGroupType) || ("select".equals(destGroupType) && destGroupId == null)) {
-            throw new BusinessException("请选择移动目的Group");
+            // 请选择移动目的Group
+            throw new BusinessException("7000105");
         }
 
         // 取得源Group信息
@@ -354,36 +360,41 @@ public class CmsProductMoveService extends BaseViewService {
         if (cartId == null
                 || sourceGroupModel == null
                 || productModel == null
-                || !sourceGroupModel.getProductCodes().contains(productCode)
-                || ("select".equals(destGroupType) && destGroupModel == null)) {
-            throw new BusinessException("移动的数据不整合，移动Code失败");
+                || !sourceGroupModel.getProductCodes().contains(productCode)) {
+            // 移动的数据不整合，移动Code失败
+            throw new BusinessException("7000106");
         }
 
         // check业务上的移动条件是否满足
         // Check这个Code是否是锁定的状态。
         if (!checkCodeLocked(productModel)) {
-            throw new BusinessException("移动Code处于锁定的状态，请先解锁后再进行移动Code操作");
+            // 移动Code处于锁定的状态，请先解锁后再进行移动Code操作
+            throw new BusinessException("7000104");
         }
 
         // Check这个Code的源Group下是否只有一个Code，并且目的Group是新建的，那么不可以移动。
         if ("new".equals(destGroupType) && sourceGroupModel.getProductCodes().size() == 1) {
-            throw new BusinessException("不能移动Code到新Group,因为源Group下是否只有一个Code");
+            // 不能移动Code到新Group,因为源Group下是否只有一个Code
+            throw new BusinessException("7000107");
         }
 
         // CheckGroup中如果包含多了Code，并且这个Code是主商品，那么不可以移动。（提示请切换其他商品为主商品后才可以移动）
         if (!checkIsMainProduct(sourceGroupModel, productCode)) {
-            throw new BusinessException("移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作");
+            // 移动的Code在" + cartName + "平台下是主商品，请先切换其他商品为主商品后再进行移动Code操作
+            throw new BusinessException("7000101", new Object[]{cartName});
         }
 
         // Check这个Code是不是Approved的状态，如果是的话，提示先下线。
         if (!checkCodeStatus(productModel, cartId)) {
-            throw new BusinessException("移动Code的状态是Approved，请先下线后再进行移动Code操作");
+            // 移动Code的状态是Approved，请先下线后再进行移动Code操作
+            throw new BusinessException("7000102");
         }
 
         // Check这个Code是否存在于没有结束的活动中。
         String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, productCode, cartId);
         if (!StringUtil.isEmpty(promotionNames)) {
-            throw new BusinessException("移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作");
+            // 移动Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Code操作
+            throw new BusinessException("7000103", new Object[]{promotionNames});
         }
 
 
@@ -444,28 +455,33 @@ public class CmsProductMoveService extends BaseViewService {
 
         // check移动信息是否匹配（是否存在选择的Sku列表，源Code是否存在）
         if (skuList == null || sourceProductModel == null) {
-            throw new BusinessException("移动的数据不整合，请重新刷新画面");
+            // 移动的数据不整合，请重新刷新画面
+            throw new BusinessException("7000100");
         }
 
         // check这个Code下Sku是否一个都没有被选择
         if (!checkNoSelectSku(skuList)) {
-            throw new BusinessException("请选择要移动的Sku");
+            // 请选择要移动的Sku
+            throw new BusinessException("7000108");
         }
 
         //  check是否选择了这个Code下的所有Sku
         if (!checkSelectAllSkus(skuList)) {
-            throw new BusinessException("不能移动Code下的所有Sku");
+            // 不能移动Code下的所有Sku
+            throw new BusinessException("7000109");
         }
 
         // Check这个Code是否存在于没有结束的活动中。
         String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, sourceCode, null);
         if (!StringUtil.isEmpty(promotionNames)) {
-            throw new BusinessException("处理Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Sku操作");
+            // 处理Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Sku操作
+            throw new BusinessException("7000110", new Object[]{promotionNames});
         }
 
         // Check这个Code是否是锁定的状态。
         if (!checkCodeLocked(sourceProductModel)) {
-            throw new BusinessException("处理Code正处于锁定的状态，请先解锁后再进行移动Sku操作");
+            // 处理Code正处于锁定的状态，请先解锁后再进行移动Sku操作
+            throw new BusinessException("7000111");
         }
     }
 
@@ -514,12 +530,14 @@ public class CmsProductMoveService extends BaseViewService {
 
         // 如果没有选择移动方式，出错
         if (StringUtils.isEmpty(destGroupType)) {
-            throw new BusinessException("请选择移动方式");
+            // 请选择移动方式
+            throw new BusinessException("7000112");
         }
 
         // 参照Code没有选择
         if ("select".equals(destGroupType) && StringUtils.isEmpty(refCode)) {
-            throw new BusinessException("请选择编辑Group时参照的Code");
+            // 请选择编辑Group时参照的Code
+            throw new BusinessException("7000113");
         }
 
 
@@ -528,7 +546,8 @@ public class CmsProductMoveService extends BaseViewService {
 
         // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
         if (skuList == null || sourceProductModel == null) {
-            throw new BusinessException("移动的数据不整合");
+            // 移动的数据不整合
+            throw new BusinessException("7000114");
         }
 
         // 移动前-源Code信息
