@@ -17,10 +17,6 @@ import java.util.Map;
 @Repository
 public class CmsBtTagDaoExt extends ServiceBaseDao {
 
-    public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel) {
-        return insert("insert_cms_bt_tag", cmsBtTagModel);
-    }
-
     public int deleteCmsBtTagByTagId(CmsBtTagModel cmsBtTagModel) {
         return delete("delete_cms_bt_tag_by_tag_id", cmsBtTagModel);
     }
