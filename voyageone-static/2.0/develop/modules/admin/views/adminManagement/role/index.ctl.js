@@ -143,7 +143,7 @@ define([
                             self.search(1);
                         });
                     } else if (type == 'edit') {
-                        Info[0].isCopyRole == true ? Info[0].isCopyRole == false : Info[0].isCopyRole == false;
+                        Info[0].isCopyRole == true ? Info[0].isCopyRole = false : Info[0].isCopyRole = false;
                         self.popups.openRole(Info[0]).then(function () {
                             self.search(1);
                         });
