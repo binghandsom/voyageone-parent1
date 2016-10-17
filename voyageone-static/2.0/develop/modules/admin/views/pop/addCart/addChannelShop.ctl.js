@@ -6,9 +6,10 @@ define([
 ], function (admin) {
     admin.controller('AddChannelShopController', (function () {
         function AddChannelShopController(context, alert, channelService, popups, AdminCartService, cartShopService, $uibModalInstance) {
-            this.sourceData = context ? context : {};
+            this.sourceData = context ? angular.copy(context) : {};
             this.append = context == 'add' || context.kind == 'add' ? true : false;
             this.readOnly = context.isReadOnly == true ? true : false;
+            this.context = context;
             this.popups = popups;
             this.alert = alert;
             this.channelService = channelService;
@@ -31,7 +32,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "1" : "0" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelAllList = [self.sourceData.sourceData];
                 } else {
@@ -40,7 +41,7 @@ define([
                     });
                 }
                 if (self.sourceData.isReadOnly == true) {
-                    self.AdminCartService.getCartByIds({'cartIds':self.sourceData.sourceData.cartIds}).then(function (res) {
+                    self.AdminCartService.getCartByIds({'cartIds': self.sourceData.sourceData.cartIds}).then(function (res) {
                         self.cartAllList = res.data;
                     });
                 } else {
@@ -60,28 +61,30 @@ define([
 
             },
             cancel: function () {
-                this.$uibModalInstance.close();
+                var result = {res: 'failure'};
+                this.$uibModalInstance.close(result);
             },
             save: function () {
                 var self = this;
                 var result = {};
                 self.sourceData.active = self.sourceData.active == '1' ? true : false;
+                _.extend(self.context, self.sourceData);
                 if (self.readOnly == true) {
                     self.data = _.find(self.cartAllList, function (cart) {
                         return cart.cartId == self.sourceData.cartId;
                     });
                     _.extend(self.sourceData, {'cartName': self.data.name});
-                    self.$uibModalInstance.close(self.sourceData);
+                    self.$uibModalInstance.close(self.context);
                     return;
                 }
                 if (self.append == true) {
                     self.cartShopService.addCartShop(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.cartShopService.updateCartShop(self.sourceData).then(function (res) {
-                        _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 }

@@ -94,7 +94,6 @@ define([
                 var self = this;
                 if (self.cartShopSelList.selList.length < 1) {
                     self.popups.openConfig({'configType': type});
-                    return;
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.mainKey == self.cartShopSelList.selList[0].id) {
@@ -107,22 +106,17 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openCartChannelShop('add').then(function () {
-                        self.search(1);
+                    self.popups.openCartChannelShop('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.cartShopSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.cartList, function (Info) {
-                            if (Info.mainKey == self.cartShopSelList.selList[0].id) {
-                                self.popups.openCartChannelShop(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.cartList, function (Info) {
+                        if (Info.mainKey == self.cartShopSelList.selList[0].id) {
+                            self.popups.openCartChannelShop(Info);
+                        }
+                    })
                 }
             },
             delete: function () {

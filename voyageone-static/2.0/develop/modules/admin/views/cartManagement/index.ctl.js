@@ -81,24 +81,18 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openCartAdd('add').then(function () {
-                        self.search(1);
+                    self.popups.openCartAdd('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.cartSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.cartList, function (Info) {
-                            if (Info.cartId == self.cartSelList.selList[0].id) {
-                                self.popups.openCartAdd(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.cartList, function (Info) {
+                        if (Info.cartId == self.cartSelList.selList[0].id) {
+                            self.popups.openCartAdd(Info);
+                        }
+                    })
                 }
-
             },
             delete: function () {
                 var self = this;

@@ -91,22 +91,17 @@ define([
             edit: function (type) {
                 var self = this;
                 if (type == 'add') {
-                    self.popups.openCartTrackingInfo('add').then(function () {
-                        self.search(1);
+                    self.popups.openCartTrackingInfo('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }
                     });
                 } else {
-                    if (self.cartTrackingSelList.selList.length <= 0) {
-                        self.alert('TXT_MSG_NO_ROWS_SELECT');
-                        return;
-                    } else {
-                        _.forEach(self.cartList, function (Info) {
-                            if (Info.seq == self.cartTrackingSelList.selList[0].id) {
-                                self.popups.openCartTrackingInfo(Info).then(function () {
-                                    self.search(1);
-                                });
-                            }
-                        })
-                    }
+                    _.forEach(self.cartList, function (Info) {
+                        if (Info.seq == self.cartTrackingSelList.selList[0].id) {
+                            self.popups.openCartTrackingInfo(Info);
+                        }
+                    })
                 }
             },
             delete: function () {
