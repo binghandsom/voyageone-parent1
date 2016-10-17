@@ -382,8 +382,6 @@ public interface AdminUrlConstants {
 
 			//for dropdown list options
 			String GET_ALL_ROLE_TYPE = "getAllRoleType";
-
-			String COPY_ROLE = "copyRole";
 		}
 
 		/** 组织信息 */

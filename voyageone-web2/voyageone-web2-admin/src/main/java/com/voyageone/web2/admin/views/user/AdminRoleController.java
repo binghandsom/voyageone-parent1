@@ -98,8 +98,9 @@ public class AdminRoleController extends AdminController {
         List<Integer> storeIds = (List<Integer>) requestMap.getOrDefault("storeIds", new ArrayList<>());
         String allChannel = requestMap.getOrDefault("allChannel", "0").toString();
         String allStore = requestMap.getOrDefault("allStore", "0").toString();
+        String action = requestMap.getOrDefault("action", "").toString();
 
-        adminRoleService.addRole(model, applications, channelIds, storeIds, allChannel, allStore);
+        adminRoleService.addRole(model, applications, channelIds, storeIds, allChannel, allStore, action);
 
 
         return success(true);
@@ -265,19 +266,6 @@ public class AdminRoleController extends AdminController {
         result.put("res", res);
         result.put("perms", perms);
         return success(result);
-    }
-    
-    @RequestMapping(AdminUrlConstants.User.Role.COPY_ROLE)
-    public AjaxResponse copyRole(@RequestBody Map<String, Object> params) {
-    	Integer roleId = (Integer) params.get("roleId");
-    	String copyRoleName = (String) params.get("copyRoleName");
-    	
-    	Preconditions.checkNotNull(roleId);
-    	Preconditions.checkArgument(StringUtils.isNoneBlank(copyRoleName));
-    	
-    	adminRoleService.copyRoleAuth(roleId, copyRoleName);
-    	
-    	return success(true);
     }
 
 }

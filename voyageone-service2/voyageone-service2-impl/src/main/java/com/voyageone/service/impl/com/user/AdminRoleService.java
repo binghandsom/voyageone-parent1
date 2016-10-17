@@ -301,10 +301,14 @@ public class AdminRoleService extends BaseService {
         }
     }
 
+    public void addRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
+    	addRole(model, appList, channelIds, storeIds, allChannel, allStore, null);
+    }
 
     @VOTransactional
-    public void addRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
-
+    public void addRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore, String action) {
+    	Integer srcRoleId = model.getId();
+    	model.setId(null);
         //检查roleName唯一性
         Map map = new HashMap<>();
         map.put("roleName", model.getRoleName());
@@ -316,7 +320,7 @@ public class AdminRoleService extends BaseService {
 
         //添加角色
         comRoleDao.insert(model);
-        Integer roleId = model.getId();
+        Integer roleId = srcRoleId;
 
         //添加授权渠道
         if ("1".equals(allChannel)) {
@@ -350,6 +354,11 @@ public class AdminRoleService extends BaseService {
                 rrModel.setCreater(model.getCreater());
                 comResRoleDao.insert(rrModel);
             }
+        }
+        
+        // 复制角色
+        if ("copy".equals(action)) {
+        	copyRoleAuth(srcRoleId, roleId);
         }
     }
 
@@ -587,15 +596,8 @@ public class AdminRoleService extends BaseService {
      * @param srcRoldId 源角色ID
      * @param dstName 目标角色名
      */
-    @VOTransactional
-    public void copyRoleAuth(Integer srcRoldId, String dstName)
+    private void copyRoleAuth(Integer srcRoldId, Integer desRoldId)
     {
-        ComRoleModel qry = new ComRoleModel();
-        qry.setRoleName(dstName);
-        ComRoleModel dstRole = comRoleDao.selectOne(qry);
-        Integer desRoldId = dstRole.getId();
-
-
         ComResRoleModel rr = new ComResRoleModel();
         rr.setRoleId(srcRoldId);
         List<ComResRoleModel> srcList = comResRoleDao.selectList(rr);
