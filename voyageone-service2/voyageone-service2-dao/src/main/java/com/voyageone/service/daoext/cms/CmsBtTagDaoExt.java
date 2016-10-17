@@ -21,10 +21,6 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
         return insert("insert_cms_bt_tag", cmsBtTagModel);
     }
 
-    public int updateCmsBtTag(CmsBtTagModel cmsBtTagModel) {
-        return update("update_cms_bt_tag", cmsBtTagModel);
-    }
-
     public int deleteCmsBtTagByTagId(CmsBtTagModel cmsBtTagModel) {
         return delete("delete_cms_bt_tag_by_tag_id", cmsBtTagModel);
     }
