@@ -40,8 +40,6 @@ public class CmsBtTagModel extends BaseModel {
 
     protected Integer active;
 
-    private CmsBtTagJmModuleExtensionModel tagExt;
-
     public String getChannelId() {
         return channelId;
     }
@@ -112,13 +110,5 @@ public class CmsBtTagModel extends BaseModel {
 
     public void setActive(Integer active) {
         this.active = active;
-    }
-
-    public CmsBtTagJmModuleExtensionModel getTagExt() {
-        return tagExt;
-    }
-
-    public void setTagExt(CmsBtTagJmModuleExtensionModel tagExt) {
-        this.tagExt = tagExt;
     }
 }

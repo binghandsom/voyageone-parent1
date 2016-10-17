@@ -504,6 +504,7 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         cms_bt_jm_promotion_product t2
     WHERE
         t1.cms_bt_jm_promotion_product_id = t2.id
+        and t2.jm_hash_id != ''
     ORDER BY
         t1.id
 </select>

@@ -38,15 +38,13 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtPromotionDao daoCmsBtPromotion;
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
-    private final CmsBtTagJmModuleExtensionDao cmsBtTagJmModuleExtensionDao;
 
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
                                    TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
-                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,
-                                   CmsBtTagJmModuleExtensionDao cmsBtTagJmModuleExtensionDao) {
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -54,7 +52,6 @@ public class CmsBtJmPromotionService extends BaseService {
         this.daoExt = daoExt;
         this.jmPromotionExtensionDao = jmPromotionExtensionDao;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
-        this.cmsBtTagJmModuleExtensionDao = cmsBtTagJmModuleExtensionDao;
     }
 
     public Map<String, Object> init() {
@@ -112,7 +109,6 @@ public class CmsBtJmPromotionService extends BaseService {
         if (hasExtInfo) {
             // 活动详情编辑
             info.setExtModel(jmPromotionExtensionDaoExt.selectOne(jmPromotionId));
-            info.getTagList().forEach(tag->tag.setTagExt(cmsBtTagJmModuleExtensionDao.select(tag.getId())));
         }
 
         return info;

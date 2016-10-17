@@ -34,4 +34,22 @@ public class CmsBtJmPromotionExportBean {
     public String getBrandString(){
         return String.format("%s (%s)",this.model.getCmsBtJmMasterBrandId(), this.model.getBrand());
     }
+    public String getSyncMobile(){
+        return getBooleanString(this.extModel.getSyncMobile());
+    }
+    public String getShowHiddenDeal(){
+        return getBooleanString(this.extModel.getShowHiddenDeal());
+    }
+    public String getShowSoldOutDeal(){
+        return getBooleanString(this.extModel.getShowSoldOutDeal());
+    }
+    private String getBooleanString(Boolean value){
+        if(value){
+            return "是";
+        }else if(value){
+            return "否";
+        }else{
+            return "";
+        }
+    }
 }
