@@ -123,7 +123,7 @@ define([
         return {
             restrict: 'E',
             controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', SpEditDirectiveController],
-            controllerAs: 'ctrl',
+            controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }
     }]);
