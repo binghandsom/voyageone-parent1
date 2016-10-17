@@ -353,7 +353,8 @@ define(function () {
         "jmpromotion_detail": {
             "hash": "/jmpromotion/detail/:promId/:jmpromId",
             "templateUrl": "views/jmpromotion/spdetail.tpl.html",
-            "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl"
+            "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl",
+            "controller": "SpDetailPageController as ctrl"
         },
         "image_create": {
             "hash": "/imagecreate/index",

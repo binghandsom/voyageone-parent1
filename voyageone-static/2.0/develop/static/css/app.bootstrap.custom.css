@@ -43,3 +43,12 @@ small,
 .modal-600 {
     width: 600px;
 }
+
+.form-control-static {
+    padding-top: 4px;
+}
+
+.radio input[type="radio"],
+.checkbox input[type="checkbox"] {
+    margin: 2px 0 0 -20px;
+}

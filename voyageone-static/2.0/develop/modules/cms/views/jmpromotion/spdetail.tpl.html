@@ -1,14 +1,13 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="ctrl.loadPromotion()">
     <uib-accordion class="vo_accordion vo_attr">
         <uib-accordion-group heading="聚美专场" is-open="true">
             <div class="row">
                 <div class="col-sm-4">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-sm-5">聚美专场名称</label>
+                            <label class="control-label col-sm-5">聚美专场名称：</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" readonly="readonly"
-                                       value="聚美61611111111111111111111聚美61611111111111111111111">
+                                <p class="form-control-static">{{ctrl.promotion.name}}</p>
                             </div>
                         </div>
                     </div>
@@ -16,9 +15,9 @@
                 <div class="col-sm-3">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-sm-5">预热时间</label>
+                            <label class="control-label col-sm-5">预热时间：</label>
                             <div class="col-sm-7">
-                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
+                                <p class="form-control-static">{{ctrl.promotion.prePeriodStart}}</p>
                             </div>
                         </div>
                     </div>
@@ -26,14 +25,14 @@
                 <div class="col-sm-4">
                     <div class="form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-sm-2">活动时间</label>
+                            <label class="control-label col-sm-2">活动时间：</label>
                             <label class="control-label col-sm-1">从</label>
                             <div class="col-sm-4">
-                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
+                                <p class="form-control-static">{{ctrl.promotion.activityStart}}</p>
                             </div>
                             <label class="control-label col-sm-1">到</label>
                             <div class="col-sm-4">
-                                <input type="date" class="form-control" readonly="readonly" value="2015-11-11">
+                                <p class="form-control-static">{{ctrl.promotion.activityEnd}}</p>
                             </div>
                         </div>
                     </div>
@@ -72,12 +71,16 @@
         </div>
     </div>
     <uib-tabset class="tab-container vo_nav-tabs">
-        <uib-tab heading="Products">custom directive</uib-tab>
-        <uib-tab heading="Detail">
+        <uib-tab heading="Products" active="true">custom directive</uib-tab>
+        <uib-tab heading="Promotion Detail">
             <sp-edit></sp-edit>
         </uib-tab>
-        <uib-tab heading="Models">custom directive</uib-tab>
-        <uib-tab heading="Images">custom directive</uib-tab>
+        <uib-tab heading="JM Shelf (Module)">
+            <sp-shelf></sp-shelf>
+        </uib-tab>
+        <uib-tab heading="Promotion Images">
+            <sp-images></sp-images>
+        </uib-tab>
         <uib-tab heading="Bay Windows">custom directive</uib-tab>
         <uib-tab heading="Import List">custom directive</uib-tab>
         <uib-tab heading="Export List">custom directive</uib-tab>

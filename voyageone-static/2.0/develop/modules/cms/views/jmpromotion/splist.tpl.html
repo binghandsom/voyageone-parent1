@@ -172,11 +172,11 @@
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
 					<td class="text-left">{{promotion.prePeriodStart}}</td>
 					<td class="text-left">{{promotion.signupDeadline}}</td>
-					<td class="text-center">APP：ppt_jordan_shoes_20161009_app<br>PC : ppt_jordan_shoes_20161009_pc</td>
-					<td class="text-left">耐克运动鞋专场</td>
-					<td class="text-center">23</td>
+					<td class="text-center"><span ng-show="promotion.appPageId||promotion.pcPageId">APP：{{promotion.appPageId}}<br>PC : {{promotion.pcPageId}}</span></td>
+					<td class="text-left">{{promotion.mainTitle}}</td>
+					<td class="text-center">{{promotion.prodSum}}</td>
 					<td class="text-center" ng-controller="popupCtrl">
-						<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail({id:promotion.promotionId,search:search},search)"><i class="fa fa-pencil"></i></button>
+						<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail({id:promotion.id,search:search},search)"><i class="fa fa-pencil"></i></button>
 						<button ng-disabled="promotion.promotionStatus == '0'" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 					</td>
 				</tr>

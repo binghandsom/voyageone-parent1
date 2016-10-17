@@ -197,6 +197,7 @@ define(function () {
                     "getJmPromCount": "getJmPromCount",
                     "getListByWhere": "getListByWhere",
                     "getEditModel": "getEditModel",
+                    "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId"
@@ -235,7 +236,8 @@ define(function () {
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
                     updatePromotionProduct: "updatePromotionProduct",
-                    updatePromotionProductTag: "updatePromotionProductTag"
+                    updatePromotionProductTag: "updatePromotionProductTag",
+                    getPromotionTagModules: 'getPromotionTagModules'
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {

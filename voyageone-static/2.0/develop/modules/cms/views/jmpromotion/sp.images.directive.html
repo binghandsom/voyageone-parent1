@@ -1,0 +1,487 @@
+<section ng-init="ctrl.init()" style="position: relative">
+    <form role="form" class="form-horizontal" novalidate>
+        <div id="jm-sp-images-base" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">快捷设置</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">使用原有套图</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control">
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-default" ng-click="ctrl.popImageSuit()">选择套图</button>
+                    </div>
+                    <div class="col-sm-5">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1">
+                            <span class="fa fa-check"></span> 使用模板刷图
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label class="col-sm-1 control-label">备注</label>
+                        <div class="col-sm-2">
+                            <textarea type="text" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-1 col-sm-offset-4">
+                            <button class="btn btn-default">导入图片</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="jm-sp-images-usual" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">APP端日常专场图片</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">频道页入口图（样式1）</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-default">上传图片</button>
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="text-warnings">
+                                    <i class="fa fa-bell-o"></i>&emsp;
+                                    尺寸：宽度不小于1024px，不大于2048px，且宽度比高度为2:1(建议2048宽*1024高)
+                                    使用位置：app频道页专场入口图(目前使用频道如极速免税店、母婴、食品、服饰、鞋包等)
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">实际尺寸图片地址：</label>
+                            <label class="col-sm-9">
+                                <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                <div class="col-sm-12">
+                                    <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">频道页入口图（样式2）</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-default">上传图片</button>
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="text-warnings">
+                                    <i class="fa fa-bell-o"></i>&emsp;
+                                    尺寸：2048px*847px 或者 1024px*424
+                                    使用位置：app频道页专场入口图（目前使用在首页）<a href="http://www.baidu.com">查看入口图位置</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">实际尺寸图片地址：</label>
+                            <label class="col-sm-9">
+                                <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                <div class="col-sm-12">
+                                    <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">详情页/心愿单页面专场入口图</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-default">上传图片</button>
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="text-warnings">
+                                    <i class="fa fa-bell-o"></i>&emsp;
+                                    尺寸：640 * 420
+                                    使用位置：app商品详情页、心愿单列表专场入口图 <a href="http://www.baidu.com">查看入口图位置</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">图片地址：</label>
+                            <label class="col-sm-9">
+                                <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                <div class="col-sm-12">
+                                    <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                </div>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">图片地址：</label>
+                            <label class="col-sm-9">
+                                <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                <div class="col-sm-12">
+                                    <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 300px;max-height: 250px">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">分享图片</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <button class="btn btn-default">上传图片</button>
+                            </div>
+                            <div class="col-sm-9">
+                                <span class="text-warnings">
+                                    <i class="fa fa-bell-o"></i>&emsp;
+                                    尺寸：300 * 300
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">实际尺寸图片地址：</label>
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <label class="control-label"> 以上为缩略预览图，实际尺寸（宽 * 高）300*300 </label>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">APP端专场头图</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <a href="#">打开热区工具</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-3 control-label text-left">图片地址：</label>
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <a href="#">http://pasfasfasfasfasfasfasfasdfasdfsadfasf</a>
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="jm-sp-images-resource" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">普通资源位专场图片</h4>
+            </div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">APP弧形轮播</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：2048 * 1142<br>
+                                   使用位置：app频道页顶部推广轮播图（目前使用频道如极速免税店、母婴、轻奢、食品、服饰、鞋包等）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">pc轮播</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：1920 * 350<br>
+                                   使用位置：pc频道页顶部推广轮播图（目前使用频道如极速免税店、母婴、轻奢、食品、服饰、鞋包等）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">pc一排2个</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：472 * 170<br>
+                                   使用位置：pc频道页顶部推广轮播图下方（目前使用在轻奢频道）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">app大卡片位右</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：2048 * 1042<br>
+                                   使用位置：app频道页中部资源位推广大图（目前使用在轻奢频道）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">app大卡片位左</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：2048 * 1042<br>
+                                   使用位置：app频道页中部资源位推广大图（目前使用在轻奢频道）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">app大卡片位左</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：2048 * 1042<br>
+                                   使用位置：app频道页中部资源位推广小图（目前使用在轻奢频道）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="jm-sp-images-push" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">主推专场图片</h4>
+            </div>
+            <div class="panel-body">
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">PC首页预热</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：535 * 212<br>
+                                   使用位置：pc端预热图（目前使用在首页）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">PC首页正式</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：535 * 212<br>
+                                   使用位置：pc端正式图（目前使用在首页）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">ipad轮播</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：2048 * 512<br>
+                                   使用位置：ipad端顶部推广轮播图（目前使用在首页）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">ipad卡片位模板预热</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：732 * 244<br>
+                                   使用位置：ipad端资源位预热卡片图（目前使用在首页）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-1 control-label s-required">ipad卡片位模板正式</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <div class="col-sm-9">
+                               <span class="text-warnings">
+                                   尺寸：732 * 244<br>
+                                   使用位置：ipad端资源位正式卡片图（目前使用在首页）
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 500px;max-height: 250px">
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+    <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
+        <ul class="nav nav-pills nav-stacked">
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-images-base,,-60">APP端日常专场图片</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-images-usual,,-60">PC端日常专场图片</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-images-resource,,-60">普通资源位专场图片</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-images-push,,-60">主推专场图片</button>
+            </li>
+            <hr>
+            <li>
+                <button type="button" class="btn btn-success" ng-click="ctrl.save()">暂存</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-success" ng-click="ctrl.save()">发布任务</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary" ng-click="ctrl.save()">提交</button>
+            </li>
+        </ul>
+    </sticky>
+</section>

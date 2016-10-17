@@ -101,5 +101,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     //更新synch_status==2 的errorMsg
     int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("errorMsg") String errorMsg);
+
+    List<CmsBtJmPromotionProductModel> selectProductInfoByTagId(Integer tagId);
     //jm2 end
 }

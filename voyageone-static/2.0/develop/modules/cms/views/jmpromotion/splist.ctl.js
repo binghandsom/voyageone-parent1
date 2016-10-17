@@ -4,7 +4,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (_) {
 
-    function indexController($scope, promotionService, jmPromotionService, promotionDetailService,alert, confirm, $translate, cActions, notify, $location, cRoutes, cookieService, $filter) {
+    function indexController($scope, promotionService, jmPromotionService, alert, confirm, $translate, cookieService) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [{"name":"Open","value":1},{"name":"Close","value":0}],"promotionIdList": [],status: {open: true}};
         $scope.searchInfo = {};
@@ -80,7 +80,6 @@ define([
 
     };
 
-    indexController.$inject = ['$scope', 'promotionService', 'jmPromotionService', 'promotionDetailService',"alert", 'confirm', '$translate', 'cActions','notify','$location','cRoutes', 'cookieService', '$filter'];
-
+    indexController.$inject = ['$scope', 'promotionService', 'jmPromotionService', "alert", 'confirm', '$translate', 'cookieService'];
     return indexController;
 });

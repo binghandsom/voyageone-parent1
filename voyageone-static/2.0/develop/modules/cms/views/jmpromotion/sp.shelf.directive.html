@@ -1,0 +1,83 @@
+<section ng-init="ctrl.loadModules()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                布局标签：<span>移动专场</span>（有库存商品数：<span>98</span>；商品总库存：<span>10000</span>）
+            </h4>
+        </div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-default">调整货架商品排序</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">模块标题</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">模块标题图片预览</label>
+                    <div class="col-sm-7">
+                        <img src="" alt="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">模块名称</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">模块是否隐藏</label>
+                    <div class="col-sm-7">
+                        <div class="radio">
+                            <label><input name="jm-module-show" type="radio"> 不隐藏</label>
+                            <span>&nbsp;&nbsp;</span>
+                            <label><input name="jm-module-show" type="radio"> 预热时隐藏</label>
+                            <span>&nbsp;&nbsp;</span>
+                            <label><input name="jm-module-show" type="radio"> 正式时隐藏</label>
+                            <span>&nbsp;&nbsp;</span>
+                            <label><input name="jm-module-show" type="radio"> 自定义显示</label>
+                        </div>
+                        <span>&nbsp;&nbsp;</span>
+                        <div class="form-inline">
+                            <input class="form-control" type="datetime-local"> ~ <input class="form-control" type="datetime-local">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">货架类型</label>
+                    <div class="col-sm-7">
+                        <div class="radio">
+                            <label><input name="jm-module-shelf" type="radio"> 普通货架</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">图片类型</label>
+                    <div class="col-sm-7">
+                        <div class="radio">
+                            <label><input name="jm-module-image" type="radio"> 方图</label>
+                            <span>&nbsp;&nbsp;</span>
+                            <label><input name="jm-module-image" type="radio"> 竖图</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">商品排序</label>
+                    <div class="col-sm-4">
+                        <select class="form-control"></select>
+                    </div>
+                    <div class="col-sm-2">
+                        <div class="checkbox">
+                            <label><input type="checkbox"> 无库存的自动排至最后</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

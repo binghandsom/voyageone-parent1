@@ -12,18 +12,51 @@ define([
         $scope.datePicker = [];
 
         $scope.initialize  = function () {
+            /** 默认值设置 */
+            $scope.vm.currentTime = new Date();
             if (context.id) {
+                // 编辑
                 jmPromotionService.getEditModel(context.id).then(function (res) {
-                    $scope.vm.isBeginPre=res.data.isBeginPre;       //预热是否开始
-                    $scope.vm.isEnd= res.data.isEnd;                //活动是否结束
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
-                    $scope.editModel.model.prePeriodEnd = formatToDate($scope.editModel.model.prePeriodEnd);
+                    $scope.editModel.model.signupDeadline = formatToDate($scope.editModel.model.signupDeadline);
+                    // 准备期是否结束
+                    $scope.vm.isDeadline = false;
+                    if ($scope.editModel.model.signupDeadline < $scope.vm.currentTime) {
+                        $scope.vm.isDeadline = true;
+                    }
+                    // 预热是否开始
+                    $scope.vm.isBeginPre = false;
+                    if ($scope.editModel.model.prePeriodStart < $scope.vm.currentTime) {
+                        $scope.vm.isBeginPre = true;
+                    }
+                    // 活动是否开始
+                    $scope.vm.isBegin = false;
+                    if ($scope.editModel.model.activityStart < $scope.vm.currentTime) {
+                        $scope.vm.isBegin = true;
+                    }
+                    // 活动是否结束
+                    $scope.vm.isEnd = false;
+                    if ($scope.editModel.model.activityEnd < $scope.vm.currentTime) {
+                        $scope.vm.isEnd = true;
+                    }
+
+                    if ($scope.editModel.model.promotionType) {
+                        $scope.editModel.model.promotionType = $scope.editModel.model.promotionType.toString();
+                    }
+                    // 转换活动场景的值
+                    if ($scope.editModel.model.promotionScene) {
+                        var sceneArr = $scope.editModel.model.promotionScene.split(",");
+                        for (idx in sceneArr) {
+                            $scope.editModel.model['promotionScene_' + sceneArr[idx]] = true;
+                        }
+                    }
                 });
             } else {
+                // 新建
                 $scope.editModel.model.status=0;
                 $scope.editModel.tagList = [];
                 $scope.editModel.tagList.push({"id": "", "channelId": "", "tagName": "移动端专场首推单品", active:1});
@@ -33,9 +66,6 @@ define([
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });
-
-            /** 默认值设置 */
-            $scope.vm.currentTime = new Date();
         };
 
         $scope.addTag = function () {
@@ -107,12 +137,24 @@ define([
             _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
             _upEntity.model.prePeriodEnd =_upEntity.model.activityEnd; //formatToStr(_upEntity.model.prePeriodEnd);
-            _upEntity.model.comment = _upEntity.model.comment || ""; //formatToStr(_upEntity.model.prePeriodEnd);
+            _upEntity.model.signupDeadline = formatToStr(_upEntity.model.signupDeadline);
+            _upEntity.model.comment = _upEntity.model.comment || "";
+            // 转换活动场景的值
+            if (_upEntity.model.promotionScene_1) {
+                if (_upEntity.model.promotionScene_2) {
+                    _upEntity.model.promotionScene = '1,2';
+                } else {
+                    _upEntity.model.promotionScene = '1';
+                }
+            } else {
+                if (_upEntity.model.promotionScene_2) {
+                    _upEntity.model.promotionScene = '2';
+                }
+            }
 
             jmPromotionService.saveModel(_upEntity).then(function () {
-                context =$scope.editModel.model;
+                context = $scope.editModel.model;
                 $scope.$close();
-
             })
         };
 

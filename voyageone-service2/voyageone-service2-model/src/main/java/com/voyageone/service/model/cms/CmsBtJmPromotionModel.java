@@ -59,7 +59,7 @@ public class CmsBtJmPromotionModel extends BaseModel {
     /**
      * 报名截止日期
      */
-    protected String signupDeadline;
+    protected Date signupDeadline;
 
     /**
      * 预热结束时间
@@ -90,6 +90,7 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer promotionType;
 
+    protected String promotionScene;
     /**
      * 是否直降
      */
@@ -291,11 +292,19 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.isPromotionGiveCoupons = isPromotionGiveCoupons;
     }
 
-    public String getSignupDeadline() {
+    public Date getSignupDeadline() {
         return signupDeadline;
     }
 
-    public void setSignupDeadline(String signupDeadline) {
+    public void setSignupDeadline(Date signupDeadline) {
         this.signupDeadline = signupDeadline;
+    }
+
+    public String getPromotionScene() {
+        return promotionScene;
+    }
+
+    public void setPromotionScene(String promotionScene) {
+        this.promotionScene = promotionScene;
     }
 }
