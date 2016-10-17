@@ -396,7 +396,6 @@ define([
                     selApp.push(app.application.toLowerCase());
                 });
                 self.saveInfo.applications = selApp;
-
                 self.saveInfo.roleType = self.saveInfo.roleType - 0;
 
                 self.saveInfo.channelIds = [];
@@ -421,7 +420,10 @@ define([
                     }
                 }
 
-                if (self.append == true) {
+                if (self.append == true||self.sourceData.isCopyRole == true) {
+                    if (self.sourceData.isCopyRole == true) {
+                        _.extend(self.saveInfo, {action: 'copy'});
+                    }
                     self.adminRoleService.addRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
@@ -441,9 +443,6 @@ define([
                     })
                 } else {
                     _.extend(self.saveInfo, {id: self.sourceData.id});
-                    if (self.sourceData.isCopyRole == true) {
-                        _.extend(self.saveInfo, {action: 'copy'});
-                    }
                     self.adminRoleService.updateRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
                             self.confirm(res.data.message);
