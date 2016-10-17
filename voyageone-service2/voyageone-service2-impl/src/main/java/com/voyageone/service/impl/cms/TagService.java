@@ -4,8 +4,10 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,13 @@ import java.util.stream.Collectors;
 public class TagService extends BaseService {
     private final CmsBtTagDaoExt cmsBtTagDaoExt;
     private final CmsBtTagDao cmsBtTagDao;
+    private final CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
 
     @Autowired
-    public TagService(CmsBtTagDaoExt cmsBtTagDaoExt, CmsBtTagDao cmsBtTagDao) {
+    public TagService(CmsBtTagDaoExt cmsBtTagDaoExt, CmsBtTagDao cmsBtTagDao, CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
         this.cmsBtTagDaoExt = cmsBtTagDaoExt;
         this.cmsBtTagDao = cmsBtTagDao;
+        this.tagJmModuleExtensionDao = tagJmModuleExtensionDao;
     }
 
     /**
@@ -60,6 +64,15 @@ public class TagService extends BaseService {
         }
 
         return tag.getId();
+    }
+
+    /**
+     * 通过原始（核心）tag 获取聚美模块的扩展配置数据模型
+     * @param tagModel 原始 tag
+     * @return CmsBtTagJmModuleExtensionModel
+     */
+    public CmsBtTagJmModuleExtensionModel getJmModule(CmsBtTagModel tagModel) {
+        return tagJmModuleExtensionDao.select(tagModel.getId());
     }
 
     /**
