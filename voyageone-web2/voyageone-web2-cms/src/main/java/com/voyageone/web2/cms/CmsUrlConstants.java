@@ -516,6 +516,13 @@ public interface CmsUrlConstants {
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
         }
+
+        interface JM_IMAGE_UPLOAD{
+
+            String ROOT = "/cms/pop/jmPromotion/";
+
+            String UPLOAD = "upload";
+        }
     }
 
     // 产品编辑

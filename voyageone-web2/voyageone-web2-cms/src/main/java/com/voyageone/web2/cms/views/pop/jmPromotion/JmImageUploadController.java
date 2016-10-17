@@ -1,13 +1,17 @@
 package com.voyageone.web2.cms.views.pop.jmPromotion;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.channel.CmsBlackBrandParamBean;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * @author piao
@@ -15,13 +19,29 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2.8.0
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.BLACK_BRAND.ROOT, method = RequestMethod.POST)
+@RequestMapping(value = CmsUrlConstants.POP.JM_IMAGE_UPLOAD.ROOT, method = RequestMethod.POST)
 public class JmImageUploadController extends CmsController {
 
+    @Autowired
+    JmImageUploadService jmImageUploadService;
 
-    @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.INIT)
-    public AjaxResponse init(@RequestBody CmsBlackBrandParamBean blackBrandParamBean) {
-        return success(new Object());
+    @RequestMapping(CmsUrlConstants.POP.JM_IMAGE_UPLOAD.UPLOAD)
+    public AjaxResponse init(HttpServletRequest request, @RequestParam Long promotionId, @RequestParam String imageName) throws Exception {
+
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        MultipartFile file = multipartRequest.getFile("file");
+
+        InputStream input = file.getInputStream();
+        Map<String, Object> response = jmImageUploadService.uploadImage(file, promotionId, imageName, getUser());
+
+        if (response == null) {
+            throw new BusinessException("图片上传失败");
+        }
+
+        input.close();
+
+        return success(response);
+
     }
 
 
