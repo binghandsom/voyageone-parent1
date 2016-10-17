@@ -40,6 +40,7 @@ import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.commons.lang.math.NumberUtils;
@@ -695,9 +696,12 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(skuIncludes)) {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-                } else {
+                } else if(skuList != null && !skuList.isEmpty()){
+                    System.out.print(product.getCommon().getFields().getCode());
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
+                }else{
+                    skus = product.getPlatform(Integer.parseInt(cartId)).getSkus();
                 }
             }
             if (skus == null || skus.size() == 0) return resultInfo;
@@ -1203,17 +1207,19 @@ public class ProductService extends BaseService {
     }
 
     public void addPriceUpdateHistory(CmsBtProductModel cmsProduct, String modifier, String comment) {
-        // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-        if (cmsProduct != null && cmsProduct.getPlatforms() != null && cmsProduct.getPlatforms().size() > 0) {
-            cmsProduct.getPlatforms().forEach((cartId, platform) -> {
-                if (ListUtils.notNull(platform.getSkus())) {
-                    List<String> skuCodeList = new ArrayList<>();
-                    platform.getSkus().forEach(sku -> skuCodeList.add(sku.getStringAttribute("skuCode")));
-                    // 记录商品价格变动履历
-                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(),
-                            platform.getCartId(), modifier, comment);
-                }
-            });
-        }
+
+        cmsBtPriceLogService.addLogAndCallSyncPriceJob(cmsProduct.getChannelId(), cmsProduct, comment, modifier);
+//        // 记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+//        if (cmsProduct != null && cmsProduct.getPlatforms() != null && cmsProduct.getPlatforms().size() > 0) {
+//            cmsProduct.getPlatforms().forEach((cartId, platform) -> {
+//                if (ListUtils.notNull(platform.getSkus())) {
+//                    List<String> skuCodeList = new ArrayList<>();
+//                    platform.getSkus().forEach(sku -> skuCodeList.add(sku.getStringAttribute("skuCode")));
+//                    // 记录商品价格变动履历
+//                    cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skuCodeList, cmsProduct.getChannelId(),
+//                            platform.getCartId(), modifier, comment);
+//                }
+//            });
+//        }
     }
 }

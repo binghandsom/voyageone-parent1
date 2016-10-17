@@ -112,8 +112,8 @@ public class ProductServiceTest {
 
     @Test
     public void testGetProductById() throws Exception {
-        System.out.println(JacksonUtil.bean2Json(productService.getOmsProductsInfo("017", "017-101500", null, null, null, "27", null)));
-        System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
+        System.out.println(JacksonUtil.bean2Json(productService.getOmsProductsInfo("017", "", null, null, null, "27", null)));
+//        System.out.println(JacksonUtil.bean2Json(productService.getWmsProductsInfo("017", "017-101500", null)));
     }
 
     @Test

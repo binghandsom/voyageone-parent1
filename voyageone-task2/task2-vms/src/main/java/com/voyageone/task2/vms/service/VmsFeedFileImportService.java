@@ -549,7 +549,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             String vendorProductUrl = codeModel.getVendorProductUrl();
 
             // AttributeKey
-
             Map<String, List<String>> attributeMap = new HashMap<>();
             makeAttributeMap(attributeMap, codeModel, "code");
 
@@ -646,8 +645,6 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                 } else {
                     feedInfo.setSizeType("No Size Type");
                 }
-                feedInfo.setAttribute(attributeMap);
-
                 // 加入Sku
                 List<CmsBtFeedInfoModel_Sku> skusModel = new ArrayList<>();
                 feedInfo.setSkus(skusModel);
@@ -715,9 +712,79 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         skusModel.add(skuModel);
                     }
                 }
+
+                // AttributeVms存放用户导入Feed的Attribute
+                feedInfo.setAttributeVms(attributeMap);
+                // AttributeVms存放用户导入Feed的Attribute加上所有共通属性
+                feedInfo.setAttribute(createCmsAttribute(attributeMap, feedInfo));
             }
 
             return feedInfo;
+        }
+
+        /**
+         * 做出Cms用的AttributeMap
+         *
+         * @param attributeMap 做出的AttributeMap
+         * @param feedInfo    CmsBtFeedInfoModel
+         * @return Cms用的AttributeMap
+         */
+        private Map<String, List<String>> createCmsAttribute(Map<String, List<String>> attributeMap, CmsBtFeedInfoModel feedInfo) {
+            Map<String, List<String>> cmsAttributeMap = new HashMap<>();
+            // 先加入attributeMap里的内容
+            for (Map.Entry<String, List<String>> entry : attributeMap.entrySet()) {
+                cmsAttributeMap.put(entry.getKey(), entry.getValue());
+            }
+
+            // 加入共通属性
+            // title
+            cmsAttributeMap.put("title", new ArrayList<String>() {{
+                this.add(feedInfo.getName());
+            }});
+
+            // description
+            cmsAttributeMap.put("description", new ArrayList<String>() {{
+                this.add(feedInfo.getLongDescription());
+            }});
+
+            // short-description
+            cmsAttributeMap.put("short-description", new ArrayList<String>() {{
+                this.add(feedInfo.getShortDescription());
+            }});
+
+            // product-origin
+            cmsAttributeMap.put("product-origin", new ArrayList<String>() {{
+                this.add(feedInfo.getOrigin());
+            }});
+
+            // product-type
+            cmsAttributeMap.put("product-type", new ArrayList<String>() {{
+                this.add(feedInfo.getProductType());
+            }});
+
+            // category
+            cmsAttributeMap.put("category", new ArrayList<String>() {{
+                this.add(feedInfo.getCategory());
+            }});
+
+            // brand
+            cmsAttributeMap.put("brand", new ArrayList<String>() {{
+                this.add(feedInfo.getBrand());
+            }});
+
+            // materials
+            cmsAttributeMap.put("materials", new ArrayList<String>() {{
+                this.add(feedInfo.getMaterial());
+            }});
+
+            // weight
+            cmsAttributeMap.put("weight", new ArrayList<String>() {{
+                if (feedInfo.getSkus().size() > 0) {
+                    this.add(feedInfo.getSkus().get(0).getWeightOrg() + " " + feedInfo.getSkus().get(0).getWeightOrgUnit());
+                }
+            }});
+
+            return cmsAttributeMap;
         }
 
         /**

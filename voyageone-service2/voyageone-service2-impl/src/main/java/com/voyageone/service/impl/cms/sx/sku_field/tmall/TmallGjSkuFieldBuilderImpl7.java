@@ -225,10 +225,13 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
             return false;
         }
 
-        if (sku_cspuIdField == null) {
-            $warn(this.getClass().getName() + " requires sku cspuId!");
-            return false;
-        }
+        // deleted by morse.lu 2016/10/13 start
+        // 可能没有规格，有部分类目，因为一个产品只有一个规格，所以商品不需要填规格，schema也没有规格属性
+//        if (sku_cspuIdField == null) {
+//            $warn(this.getClass().getName() + " requires sku cspuId!");
+//            return false;
+//        }
+        // deleted by morse.lu 2016/10/13 end
 
         return true;
     }
@@ -336,7 +339,7 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                     if (sku_sizeField != null && fieldId.equals(sku_sizeField.getId())) {
                         continue;
                     }
-                    if (fieldId.equals(sku_cspuIdField.getId())) {
+                    if (sku_cspuIdField != null && fieldId.equals(sku_cspuIdField.getId())) {
                         skuFieldValue.setSingleCheckFieldValue(fieldId, new Value(expressionParser.getSxData().getDarwinSkuProps(cmsSkuProp.getSkuCode(), false).getCspuId()));
                         continue;
                     }
@@ -383,16 +386,19 @@ public class TmallGjSkuFieldBuilderImpl7 extends AbstractSkuFieldBuilder {
                         continue;
                     }
                     // added by morse.lu 2016/08/17 start
-                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
-                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
-                        if (complexValue != null) {
-                            Field oldField = complexValue.getValueField(fieldId);
-                            if (oldField != null) {
-                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
-                            }
-                        }
-                        continue;
-                    }
+                    // deleted by morse.lu 2016/10/08 start
+                    // 暂时不填，当作新的sku上传
+//                    if (sku_skuIdField != null && fieldId.equals(sku_skuIdField.getId())) {
+//                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+//                        if (complexValue != null) {
+//                            Field oldField = complexValue.getValueField(fieldId);
+//                            if (oldField != null) {
+//                                skuFieldValue.setInputFieldValue(sku_skuIdField.getId(), ((InputField) oldField).getValue());
+//                            }
+//                        }
+//                        continue;
+//                    }
+                    // deleted by morse.lu 2016/10/08 end
                     if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
                         ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
                         if (complexValue != null) {

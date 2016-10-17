@@ -444,7 +444,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
             // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
-            String resultInfo = channelId + " " + channel.getFull_name() + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
                     "所有的feed都不做导入了，请修改好后重新导入]";
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
             resultMap.put(channelId, resultInfo);
@@ -603,7 +603,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             //            $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
 //                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
 
-            String resultInfo = channelId + " " + channel.getFull_name() + " " + strProcName + ":结果 [总件数:" + feedList.size()
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " " + strProcName + ":结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]";
 //            $info(resultInfo);
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
@@ -1091,6 +1091,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
@@ -1144,8 +1146,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log

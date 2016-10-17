@@ -40,6 +40,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
     private Map<String, List<String>> attribute = new HashMap<>();
+    private Map<String, List<String>> attributeVms = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private Integer updFlg;
     private String updMessage="";
@@ -164,6 +165,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setAttribute(Map<String, List<String>> attribute) {
         this.attribute = attribute;
+    }
+
+    public Map<String, List<String>> getAttributeVms() {
+        return attributeVms;
+    }
+
+    public void setAttributeVms(Map<String, List<String>> attributeVms) {
+        this.attributeVms = attributeVms;
     }
 
     public Map<String, Object> getFullAttribute() {

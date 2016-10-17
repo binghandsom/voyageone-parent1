@@ -77,7 +77,7 @@ public class HtDealUpdateResponse extends BaseJMResponse {
                             sbMsg.append("审核失败;(适当重试后还失败，可联系运营手动审核)");
                             break;
                         default:
-                            sbMsg.append(map.get("reason").toString());
+                            sbMsg.append(map.containsKey("reason") ? map.get("reason").toString() : "");
                     }
                     sbMsg.append("] ");
                     this.setErrorMsg(this.getRequestUrl() + sbMsg.toString() + UnicodeUtil.decodeUnicode(body));
