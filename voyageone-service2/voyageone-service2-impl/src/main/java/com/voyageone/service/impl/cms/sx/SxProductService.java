@@ -1003,8 +1003,8 @@ public class SxProductService extends BaseService {
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
         Map<String, String> sizeMap = getSizeMap(
-//                channelId,
-                sxData.getMainProduct().getOrgChannelId(),
+                channelId,
+//                sxData.getMainProduct().getOrgChannelId(),
                 sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(),
                 sxData.getMainProduct().getCommon().getFields().getSizeType()
