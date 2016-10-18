@@ -18,10 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -376,6 +373,18 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.getJmPromotionCount(sqlParams);
     }
 
+    public List<Integer> selectCloseJmPromotionId(){
+        return daoExt.selectCloseJmPromotionId();
+    }
+
+    public List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId){
+        return daoExt.selectCloseJmPromotionSku(jmPromotionId);
+    }
+
+    public int updatePromotionStatus(Integer jmPromotionId, String modifier){
+        return daoExt.updatePromotionStatus(jmPromotionId,modifier);
+    }
+
     private void convertParams(Map sqlParams) {
         // 过滤参数
         sqlParams.put("jmActId", StringUtils.trimToNull((String) sqlParams.get("jmActId")));
@@ -390,4 +399,6 @@ public class CmsBtJmPromotionService extends BaseService {
             sqlParams.put("codeListStr", codeStr);
         }
     }
+
+
 }
