@@ -3,17 +3,25 @@
  */
 define([
     'cms',
+    'modules/cms/service/product.detail.service',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller('SkuMoveController', (function () {
-        function SkuMoveController(popups) {
+        function SkuMoveController(productDetailService, notify, confirm, alert, popups) {
             this.sourceCode;
             this.skuList = [];
             this.skuListView;
+            this.includeJM;
+            this.destGroupType = "new";
 
             this.show = false;
             this.popups = popups;
             this.showView = false;
+
+            this.productDetailService = productDetailService;
+            this.notify = notify;
+            this.confirm = confirm;
+            this.alert = alert;
         }
 
         SkuMoveController.prototype = {
@@ -29,6 +37,11 @@ define([
                     });
                     self.skuListView = self.skuList.join(', ');
                 }
+                self.productDetailService.moveSkuInit({
+                    sourceCode: self.sourceCode
+                }).then(function (resp) {
+                    self.includeJM = resp.data.includeJM;
+                });
             },
             search: function () {
                 var self = this;
@@ -38,7 +51,7 @@ define([
                 var self = this;
                 switch (item.type) {
                     case 'selectGroup':
-                        item.value == 2 ? self.show = true : self.show = false;
+                        item.value == 'select' ? self.show = true : self.show = false;
                         break;
                     case 'buildView':
                         self.showView = true;

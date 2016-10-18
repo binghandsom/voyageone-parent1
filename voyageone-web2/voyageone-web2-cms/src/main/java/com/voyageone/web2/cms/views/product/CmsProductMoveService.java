@@ -487,6 +487,32 @@ public class CmsProductMoveService extends BaseViewService {
     }
 
     /**
+     * 移动Sku-初始化
+     */
+    public Map<String, Object> moveSkuInit(Map<String, Object> params, String channelId) {
+
+        Map<String, Object> returnMap = new HashMap<>();
+
+        // 源Code
+        String sourceCode = (String) params.get("sourceCode");
+
+        // 取得源Code的Product信息
+        CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
+
+        // 取得Code下是否包含聚美平台
+        if (sourceProductModel != null) {
+            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : sourceProductModel.getPlatforms().entrySet()) {
+                if (platform.getValue().getCartId().equals(27)) {
+                    returnMap.put("includeJM", true);
+                    return returnMap;
+                }
+            }
+        }
+        returnMap.put("includeJM", false);
+        return returnMap;
+    }
+
+    /**
      * 移动Sku-根据Code检索产品信息
      */
     public List<CmsBtProductModel> moveSkuSearch(Map<String, Object> params, String channelId, String lang) {

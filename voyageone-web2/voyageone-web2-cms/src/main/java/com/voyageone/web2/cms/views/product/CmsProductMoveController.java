@@ -65,6 +65,11 @@ public class CmsProductMoveController extends CmsController {
         return success(null);
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_SKU_INIT)
+    public AjaxResponse moveSkuInit(@RequestBody Map<String, Object> param) {
+        return success(cmsProductMoveService.moveSkuInit(param, getUser().getSelChannelId()));
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_SKU_SEARCH)
     public AjaxResponse moveSkuSearch(@RequestBody Map<String, Object> param) {
         return success(cmsProductMoveService.moveSkuSearch(param, getUser().getSelChannelId(), getLang()));
