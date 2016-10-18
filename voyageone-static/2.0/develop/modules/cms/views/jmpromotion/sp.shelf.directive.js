@@ -4,14 +4,22 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms, _) {
 
-    function SpModelDirectiveController(spDataService, notify) {
+    function SpModelDirectiveController(spDataService, notify, popups) {
         this.spDataService = spDataService;
         this.notify = notify;
+        this.popups = popups;
     }
 
     SpModelDirectiveController.prototype.productsSortBy = {
         '按销量降序': 1,
         '填写顺序': 2
+    };
+
+    SpModelDirectiveController.prototype.openProductSortPopup = function () {
+        var self = this,
+            popups = self.popups;
+
+        popups.popSortProduct();
     };
 
     SpModelDirectiveController.prototype.loadModules = function () {
@@ -35,7 +43,7 @@ define([
     cms.directive('spShelf', [function spModelDirectivefactory() {
         return {
             restrict: 'E',
-            controller: ['spDataService', 'notify', SpModelDirectiveController],
+            controller: ['spDataService', 'notify', 'popups', SpModelDirectiveController],
             controllerAs: 'ctrl',
             scope: {},
             templateUrl: '/modules/cms/views/jmpromotion/sp.shelf.directive.html'
