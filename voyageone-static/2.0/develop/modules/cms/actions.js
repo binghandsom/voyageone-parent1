@@ -239,6 +239,11 @@ define(function () {
                     updatePromotionProductTag: "updatePromotionProductTag",
                     getPromotionTagModules: 'getPromotionTagModules'
                 },
+                "JmPromotionImagesService": {
+                    "root": "/cms/jmpromotion/images",
+                    "init": "init",
+                    "save": "save"
+                },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
                         "root": "/cms/CmsBtJmPromotionImportTask/index",

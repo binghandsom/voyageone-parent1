@@ -61,6 +61,8 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         private String link;
 
+        private String url;
+
         private Integer order;
 
         public String getName() {
@@ -85,6 +87,14 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         public void setOrder(Integer order) {
             this.order = order;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
         }
     }
 }
