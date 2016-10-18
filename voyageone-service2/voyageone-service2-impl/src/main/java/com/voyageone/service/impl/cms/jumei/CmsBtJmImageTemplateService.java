@@ -48,6 +48,10 @@ public class CmsBtJmImageTemplateService {
 
     public String getUrl(String imageName,String imageType,Integer jmPromotionId){
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
+        return getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
+    }
+
+    public String getUrl(String imageName,String imageType,CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean){
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\""+imageName+"\"," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
         ExpressionParser parser = new SpelExpressionParser();
