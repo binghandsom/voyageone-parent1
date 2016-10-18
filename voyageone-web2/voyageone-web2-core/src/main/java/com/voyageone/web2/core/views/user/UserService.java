@@ -32,40 +32,9 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class UserService extends BaseViewService {
-    @Autowired
-    private UserDao userDao;
 
     @Autowired
     private ComUserService comUserService;
-
-
-//    @Autowired
-//    private UserConfigDao userConfigDao;
-//    public UserSessionBean login(String username, String password, int timezone) {
-
-//        UserBean userBean = new UserBean();
-//        userBean.setUsername(username);
-//
-//        userBean = userDao.selectUser(userBean);
-//
-//        if (userBean == null)
-//            throw new BusinessException("UserName or Password is invalidate");
-//
-//        String cryptoPassword = new Md5Hash(password, username.toLowerCase() + CoreConstants.MD5_FIX_SALT,
-//                CoreConstants.MD5_HASHITERATIONS).toHex();
-//
-//        if (!userBean.getPassword().equals(cryptoPassword))
-//            throw new BusinessException("UserName or Password is invalidate.");
-//
-//        // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
-//        UserSessionBean userSessionBean = new UserSessionBean();
-//        userSessionBean.setUserId(userBean.getId());
-//        userSessionBean.setUserName(userBean.getUsername());
-//        userSessionBean.setTimeZone(timezone);
-//        userSessionBean.setUserConfig(getUserConfig(userBean.getId()));
-//
-//        return userSessionBean;
-//    }
 
     public List<ChannelPermissionBean> getPermissionCompany(UserSessionBean userSessionBean) {
 
