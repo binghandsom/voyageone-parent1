@@ -19,6 +19,8 @@ define([
 
             uploader.onSuccessItem = function (fileItem, response) {
 
+                console.log("response",response.data);
+
             };
 
             uploader.onBeforeUploadItem = function (fileItem) {

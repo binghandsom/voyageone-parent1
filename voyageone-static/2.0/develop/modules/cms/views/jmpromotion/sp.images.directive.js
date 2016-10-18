@@ -22,12 +22,16 @@ define([
     };
 
 
-    SpImagesDirectiveController.prototype.popImageJmUpload = function(){
+    SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
+            spDataService = self.spDataService,
             popups = self.popups;
 
-        popups.openImageJmUpload({}).then(function(res){
-
+        popups.openImageJmUpload({
+            promotionId: +spDataService.jmPromotionId,
+            imageName: imageName
+        }).then(function(res){
+            console.log("res",res);
         });
     };
 

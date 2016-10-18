@@ -7,6 +7,7 @@ import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @version 2.8.0
  * @since 2.8.0
  */
+@Service
 public class JmImageUploadService  extends BaseViewService {
 
     public Map<String, Object> uploadImage(MultipartFile file, Long promotionId, String imageName, UserSessionBean user) throws Exception {
@@ -36,7 +38,7 @@ public class JmImageUploadService  extends BaseViewService {
 
         HttpScene7.uploadImageFile(uploadPath, upLoadName, file.getInputStream());
 
-        response.put("imageName", imageName);
+        response.put("imageName", upLoadName);
 
         return response;
     }
