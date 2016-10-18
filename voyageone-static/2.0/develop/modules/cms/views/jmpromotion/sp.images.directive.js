@@ -38,9 +38,16 @@ define([
             imageName: imageName
         }).then(function(res){
             imgUpEntity[imageName] = ImgTabConfig.rootPath + res.imageName;
-            console.log(imgUpEntity[imageName]);
         });
     };
+
+    SpImagesDirectiveController.prototype.save = function(){
+        var self = this,
+            spDataService = self.spDataService;
+
+        spDataService.savePromotionImages(self.imgUpEntity);
+    };
+
 
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {

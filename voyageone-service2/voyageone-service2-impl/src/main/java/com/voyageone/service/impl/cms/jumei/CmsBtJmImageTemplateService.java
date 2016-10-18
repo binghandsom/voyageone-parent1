@@ -32,9 +32,9 @@ public class CmsBtJmImageTemplateService {
     private CmsBtJmPromotionService cmsBtJmPromotionService;
 
 
-    public CmsBtJmImageTemplateModel getJMImageTemplateByName(String name){
+    public CmsBtJmImageTemplateModel getJMImageTemplateByType(String imageType){
         JongoQuery queryObject = new JongoQuery();
-        Criteria criteria = Criteria.where("name").is(name);
+        Criteria criteria = Criteria.where("imageType").is(imageType);
         queryObject.setQuery(criteria);
         return cmsBtJmImageTemplateDao.selectOneWithQuery(queryObject);
     }
@@ -46,9 +46,9 @@ public class CmsBtJmImageTemplateService {
         return cmsBtJmImageTemplateDao.insert(cmsBtJmImageTemplateModel);
     }
 
-    public String getUrl(String imageName,String name,Integer jmPromotionId){
+    public String getUrl(String imageName,String imageType,Integer jmPromotionId){
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
-        CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByName(name);
+        CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\""+imageName+"\"," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
         ExpressionParser parser = new SpelExpressionParser();
 
