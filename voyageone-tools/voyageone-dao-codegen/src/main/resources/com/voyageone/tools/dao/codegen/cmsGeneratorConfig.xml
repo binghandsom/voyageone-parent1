@@ -439,7 +439,6 @@
         <table tableName="cms_bt_tag_jm_module_extension" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
-            <generatedKey column="tag_id" sqlStatement="JDBC"/>
         </table>
     </context>
 </generatorConfiguration>
