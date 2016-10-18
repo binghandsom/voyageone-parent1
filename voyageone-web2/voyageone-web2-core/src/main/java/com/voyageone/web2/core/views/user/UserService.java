@@ -3,6 +3,7 @@ package com.voyageone.web2.core.views.user;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.security.bean.ComChannelPermissionBean;
+import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
@@ -105,20 +106,28 @@ public class UserService extends BaseViewService {
             return;
         }
 
-        List<String> permissionUrls = getPermissionUrls(user, channelId);
+//        List<String> permissionUrls = getPermissionUrls(user, channelId);
 
         // 设置当前用户选择的公司
         user.setSelChannel(channel);
-        user.setActionPermission(permissionUrls);
+//        user.setActionPermission(permissionUrls);
         user.setApplicationId(applicationId);
         user.setApplication(application);
         // 转换为页面的权限地址
-        List<String> pagePermissions = permissionUrls.stream()
-                .map(url -> url.substring(0, url.lastIndexOf("/")))
-                .distinct()
-                .collect(toList());
+//        List<String> pagePermissions = permissionUrls.stream()
+//                .map(url -> url.substring(0, url.lastIndexOf("/")))
+//                .distinct()
+//                .collect(toList());
 
-        user.setPagePermission(pagePermissions);
+//        user.setPagePermission(pagePermissions);
+
+        //不需要再查询授权信息了
+        user.setActionPermission(new ArrayList<>());
+        user.setPagePermission(new ArrayList<>());
+
+        //清除该用户的授权缓存
+        comUserService.clearCachedAuthorizationInfo();
+
     }
 
     public String getUserLanguage (UserSessionBean user) {
@@ -153,7 +162,11 @@ public class UserService extends BaseViewService {
         return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
+
+
+    @Deprecated
     private List<String> getPermissionUrls(UserSessionBean userSessionBean, String channelId) {
         return  comUserService.getPermissionUrls(userSessionBean.getUserId(), channelId, "cms");
     }
+
 }

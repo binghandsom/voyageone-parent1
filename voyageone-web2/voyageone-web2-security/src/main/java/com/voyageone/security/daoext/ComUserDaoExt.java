@@ -17,7 +17,7 @@ public interface ComUserDaoExt {
     List<String> getPermissionUrls(@Param("userId") Integer userId, @Param("channelId") String channelId, @Param("application") String application);
 
 
-    List<ComRoleModel> selectRolesByUserId(Integer userId);
+    List<ComRoleModel> selectRolesByUserId(@Param("userId") Integer userId, @Param("channelId") String channelId);
 
     List<String> selectAppsByUser(Integer userId);
 

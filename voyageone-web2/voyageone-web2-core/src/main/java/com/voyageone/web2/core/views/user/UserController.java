@@ -148,11 +148,11 @@ public class UserController extends BaseController {
     public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
 
         getSession().setAttribute("voyageone.session.cms", null);
+
+        userService.setSelectChannel(getUser(),params.get("channelId").toString(),params.get("applicationId").toString(),params.get("application").toString());
         getSession().setAttribute("channelId", params.get("channelId").toString());
         getSession().setAttribute("applicationId", params.get("applicationId").toString());
         getSession().setAttribute("application", params.get("application").toString());
-
-        userService.setSelectChannel(getUser(),params.get("channelId").toString(),params.get("applicationId").toString(),params.get("application").toString());
         // 只要不报异常就是ok
         return success(true);
     }
@@ -163,12 +163,14 @@ public class UserController extends BaseController {
     @RequestMapping(CoreUrlConstants.USER.LOGOUT)
     public AjaxResponse logout() {
 
-        // 清空缓存
-        HttpSession session = getSession();
-        if (session != null) {
-            session.invalidate();
-        }
-        SecurityUtils.getSubject().logout();
+//        // 清空缓存
+//        HttpSession session = getSession();
+//        if (session != null) {
+//            session.invalidate();
+//        }
+//        SecurityUtils.getSubject().logout();
+
+        comUserService.logout();
 
         // 只要不报异常就是ok
         return success(true);

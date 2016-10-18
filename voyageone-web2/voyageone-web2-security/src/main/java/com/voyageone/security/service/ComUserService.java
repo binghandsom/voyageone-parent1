@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.voyageone.security.shiro.MyRealm;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -13,6 +14,7 @@ import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.mgt.RealmSecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,11 +38,6 @@ import com.voyageone.security.model.ComUserModel;
 
 @Service
 public class ComUserService {
-
-    // 密码加密固定盐值
-    public  static  final String MD5_FIX_SALT = "crypto.voyageone.la";
-    // 密码加密散列加密次数
-    public  static  final int MD5_HASHITERATIONS = 4;
 
     @Autowired
     ComUserDaoExt comUserDaoExt;
@@ -116,6 +113,13 @@ public class ComUserService {
 
 
 
+    public void  logout()
+    {
+        SecurityUtils.getSubject().logout();
+        clearCache();
+    }
+
+
     /**
      * CMS的channel页面ViewModle
      *
@@ -156,14 +160,59 @@ public class ComUserService {
 
 
 
+    @Deprecated
     public List<String> getPermissionUrls(Integer userId, String channelId, String application) {
         return comUserDaoExt.getPermissionUrls(userId, channelId, application);
     }
 
 
-    public List<ComRoleModel> selectRolesByUserId(Integer userId)
+    /**
+     * 获取用户的角色列表
+     *
+     * @param userId
+     * @return
+     */
+    public List<ComRoleModel> selectRolesByUserId(Integer userId, String channelId)
     {
-        return comUserDaoExt.selectRolesByUserId(userId);
+        return comUserDaoExt.selectRolesByUserId(userId , channelId);
+    }
+
+
+    /**
+     * 清除授权缓存
+     *
+     */
+    public void clearCachedAuthorizationInfo()
+    {
+        Subject user = SecurityUtils.getSubject();
+        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
+        myRealm.clearCachedAuthorizationInfo(user.getPrincipals());
+    }
+
+
+    /**
+     * 清除登录缓存
+     *
+     */
+    public void clearCachedAuthenticationInfo()
+    {
+        Subject user = SecurityUtils.getSubject();
+        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
+        myRealm.clearCachedAuthenticationInfo(user.getPrincipals());
+    }
+
+    /**
+     * 清除所有缓存
+     *
+     */
+    public void clearCache()
+    {
+        Subject user = SecurityUtils.getSubject();
+        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
+        myRealm.clearCache(user.getPrincipals());
     }
 
 }
