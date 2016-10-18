@@ -23,7 +23,8 @@ define([
         'angularFileUpload',
         'localytics.directives',
         'angular-md5',
-        'angular-drag'
+        'angular-drag',
+        'as.sortable'
     ]).constant('cActions', actions)
         .constant('cRoutes', routes)
         .constant('cLanguageType', {

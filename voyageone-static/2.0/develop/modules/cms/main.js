@@ -32,7 +32,8 @@ require.config({
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.5.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
-        'angular-drag':'libs/angular-drag/angular-drag'
+        'angular-drag':'libs/angular-drag/angular-drag',
+        'ng-sortable': 'libs/ng-sortable/1.3.7/ng-sortable'
     },
     waitSeconds: 0,
     shim: {
@@ -57,6 +58,7 @@ require.config({
         'angular-ui-utils': ['angular'],
         'angular-drag':['angular'],
         'md5': ['angular'],
+        'ng-sortable': ['angular'],
         'cms': [
             'underscore',
             'voyageone-angular-com',
@@ -75,7 +77,8 @@ require.config({
             'angular-chosen',
             'angular-ui-utils',
             'md5',
-            'angular-drag'
+            'angular-drag',
+            'ng-sortable'
         ]
     },
     deps: ['cms']
