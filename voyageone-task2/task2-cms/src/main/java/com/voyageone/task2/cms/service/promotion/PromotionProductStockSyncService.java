@@ -126,13 +126,13 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
                  }
 
                  int rs = 0;
-                 List<List<CmsBtJmPromotionProductModel>> allList = CommonUtil.splitList(jmProdList, 500);
+                 List<List<CmsBtJmPromotionProductModel>> allList = CommonUtil.splitList(jmProdList, 1000);
                  for (List<CmsBtJmPromotionProductModel> promList : allList) {
                      rs = jmPromotionProductDaoExt.updateProductStockInfo(promList);
                      $debug("JmPromotionProductStockSyncService 更新结果=%d, channelId=%s, cartId=%s", rs, channelId, cartIdStr);
                  }
 
-                 // 计算该活动中的有库存的商品数
+                 // 计算该活动中的有库存的商品数及库存总数
                  rs = jmPromotionDaoExt.updatePromotionProdSumInfo(channelId, cartId);
                  $debug("JmPromotionProductStockSyncService 商品数更新结果=%d, channelId=%s, cartId=%s", rs, channelId, cartIdStr);
 
@@ -177,7 +177,7 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
                          }
                      }
                  }
-                 List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 500);
+                 List<List<CmsBtPromotionCodesModel>> allList = CommonUtil.splitList(promProdList, 1000);
                  for (List<CmsBtPromotionCodesModel> promList : allList) {
                      int rs = promotionCodesDaoExtCamel.updateProductStockInfo(promList);
                      $debug("PromotionProductStockSyncService 更新结果=%d, channelId=%s, cartId=%s", rs, channelId, cartIdStr);
