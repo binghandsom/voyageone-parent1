@@ -512,4 +512,23 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
 </select>
 
     <!--jm2 end-->
+
+    <!-- 取得当前有效的活动下的所有产品 -->
+    <select id="selectValidProductInfo" parameterType="Map" resultMap="ResultMap">
+        SELECT jmprod.id, jmprod.product_code
+        FROM cms_bt_jm_promotion as jmprom join cms_bt_promotion as prom
+            on prom.promotion_id = jmprom.id and prom.promotion_status = 1 and prom.active = 1 and prom.channel_id = #{channelId} and prom.cart_id = #{cartId}
+                and jmprom.active = 1 and jmprom.activity_end >= now()
+          join cms_bt_jm_promotion_product as jmprod on jmprod.cms_bt_jm_promotion_id = jmprom.id
+    </select>
+
+    <!-- 更新活动下的产品的库存数据 -->
+    <update id="updateProductStockInfo">
+        <foreach item="item" index="i" collection="jmPromotionProductList" open="" close="" separator=";">
+            update cms_bt_jm_promotion_product
+            set quantity = #{item.quantity,jdbcType=INTEGER}
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
 </mapper>

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @Repository
 public interface CmsBtJmPromotionDaoExt {
@@ -38,4 +37,9 @@ public interface CmsBtJmPromotionDaoExt {
     List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId);
 
     int updatePromotionStatus(@Param("jmPromotionId") int jmPromotionId, @Param("modifier") String modifier);
+
+    /**
+     * 更新活动下的有库存产品数
+     */
+    int updatePromotionProdSumInfo(@Param("channelId") String channelId, @Param("cartId") int cartId);
 }

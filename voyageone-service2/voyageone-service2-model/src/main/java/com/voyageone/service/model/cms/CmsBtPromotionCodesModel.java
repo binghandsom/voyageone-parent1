@@ -65,6 +65,10 @@ public class CmsBtPromotionCodesModel extends BaseModel {
     protected String property3;
 
     protected String property4;
+    /**
+     * 库存数量
+     */
+    private Integer quantity;
 
     public Integer getPromotionId() {
         return promotionId;
@@ -240,5 +244,13 @@ public class CmsBtPromotionCodesModel extends BaseModel {
 
     public void setProperty4(String property4) {
         this.property4 = property4 == null ? null : property4.trim();
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }
