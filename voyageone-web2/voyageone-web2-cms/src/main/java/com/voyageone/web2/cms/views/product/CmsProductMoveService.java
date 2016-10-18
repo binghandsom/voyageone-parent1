@@ -470,7 +470,7 @@ public class CmsProductMoveService extends BaseViewService {
 
         //  check是否选择了这个Code下的所有Sku
         if (!checkSelectAllSkus(skuList)) {
-            // 不能移动Code下的所有Sku
+            // 不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行"移动到其他Group"操作
             throw new BusinessException("7000109");
         }
 

@@ -69,10 +69,10 @@
                         <div class="form-group"></div>
                         <div class="m-t-lg">
                             <label class="radio-inline c-radio">
-                                <input type="radio" name="destGroupType" value="new" ng-model="ctrl.destGroupType" ng-disabled="ctrl.sourceGroupProductsNum == 1" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.destGroupType})"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_NEW_GROUP'|translate}}
+                                <input type="radio" name="destGroupType" value="new" ng-model="ctrl.destGroupType" ng-disabled="ctrl.sourceGroupProductsNum == 1" ng-change="ctrl.destGroupChange()"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_NEW_GROUP'|translate}}
                             </label>
                             <label class="radio-inline c-radio" style="margin-left: 2px;">
-                                <input type="radio" name="destGroupType" value="select" ng-model="ctrl.destGroupType" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.destGroupType})"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_SELECTED_GROUP'|translate}}
+                                <input type="radio" name="destGroupType" value="select" ng-model="ctrl.destGroupType" ng-change="ctrl.destGroupChange()"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_SELECTED_GROUP'|translate}}
                             </label>
                         </div>
                     </div>

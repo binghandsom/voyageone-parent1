@@ -22,6 +22,8 @@ define([
             this.destGroupName;
             this.productUrl;
             this.sourceGroupProductsNum;
+            this.destGroupTypeAfterPreview;
+            this.destGroupIdAfterPreview;
 
             this.show = false;
             this.popups = popups;
@@ -68,6 +70,7 @@ define([
                     self.groupList = resp.data.groupList;
                     self.destGroupId = null;
                     self.destGroupName = null;
+                    self.closePreview();
                 });
             },
             ifShow: function (item) {
@@ -77,7 +80,7 @@ define([
                         item.value == "select" ? self.show = true : self.show = false;
                         break;
                     case 'buildView':
-                        self.showView = true;
+                        item.value == true ? self.showView = true : self.showView = false;
                 }
 
             },
@@ -89,6 +92,7 @@ define([
                 } else {
                     self.destGroupName = group.mainProductInfo.common.fields.productNameEn;
                 }
+                self.closePreview();
             },
 
             openImageDetail : function (item) {
@@ -129,7 +133,24 @@ define([
                     self.destGroupInfoAfter = resp.data.destGroupInfoAfter;
                     self.destCodeInfoAfter = resp.data.destCodeInfoAfter;
                     self.ifShow({type:'buildView',value:true})
+                    self.destGroupTypeAfterPreview = self.destGroupType;
+                    self.destGroupIdAfterPreview = self.destGroupId;
                 });
+            },
+
+            destGroupChange: function () {
+                var self = this;
+                self.ifShow({type:'selectGroup',value:self.destGroupType});
+                self.closePreview();
+            },
+
+            closePreview: function () {
+                var self = this;
+                if (self.destGroupTypeAfterPreview != self.destGroupType || self.destGroupIdAfterPreview != self.destGroupId) {
+                    self.ifShow({type:'buildView',value:false});
+                    self.destGroupTypeAfterPreview = "";
+                    self.destGroupIdAfterPreview = null;
+                }
             },
 
             move: function (type) {
