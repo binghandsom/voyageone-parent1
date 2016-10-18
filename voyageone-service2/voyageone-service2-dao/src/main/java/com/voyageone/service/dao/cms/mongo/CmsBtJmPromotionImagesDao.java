@@ -28,7 +28,7 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoChannelDao<CmsBtJmPromot
     }
 
     public List<CmsBtJmPromotionImagesModel> selectJmPromotionImagesList(String channelId,int promotionId,int jmPromotionId) {
-        String query = "{\"promotionId\":\"" + promotionId + "\",\"jmPromotionId\":\"" + jmPromotionId + "\"}";
+        String query = "{\"promotionId\":" + promotionId + ",\"jmPromotionId\":" + jmPromotionId + "}";
         return select(query, channelId);
     }
 }
