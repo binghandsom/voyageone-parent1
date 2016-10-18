@@ -364,8 +364,10 @@ define([
                             'configType': self.searchInfo.configType,
                             'isReadOnly': self.sourceData.isReadOnly
                         });
-                        self.popups.openCreateEdit(cfgInfo).then(function () {
-                            self.search(1);
+                        self.popups.openCreateEdit(cfgInfo).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }
                         });
                     }
                 });
