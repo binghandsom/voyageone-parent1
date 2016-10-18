@@ -56,7 +56,7 @@ public class CnCategoryService extends BaseService {
         if (length > 1) {
             bean.setParentId(catIds[length - 2]); // 父类目Id
         }
-        StringBuilder catFullPath = new StringBuilder("");
+        StringBuilder catFullPath = new StringBuilder("1/2/");
         for (int i = 0; i < length; i++) {
             catFullPath.append(catIds[i]);
             if (i != length - 1) {
