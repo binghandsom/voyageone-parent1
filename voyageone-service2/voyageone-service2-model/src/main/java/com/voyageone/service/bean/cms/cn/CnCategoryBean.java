@@ -20,6 +20,9 @@ public class CnCategoryBean {
     private String SEO_Keywords;
     private String SEO_Description;
     private String SEO_Canonical;
+    private String IsSneakerheadOnly;
+    private String HighlightedProductCode;
+    private String IsEnableFilter;
 
     public String getId() {
         return Id;
@@ -123,5 +126,29 @@ public class CnCategoryBean {
 
     public void setSEO_Canonical(String SEO_Canonical) {
         this.SEO_Canonical = SEO_Canonical;
+    }
+
+    public String getIsSneakerheadOnly() {
+        return IsSneakerheadOnly;
+    }
+
+    public void setIsSneakerheadOnly(String isSneakerheadOnly) {
+        IsSneakerheadOnly = isSneakerheadOnly;
+    }
+
+    public String getHighlightedProductCode() {
+        return HighlightedProductCode;
+    }
+
+    public void setHighlightedProductCode(String highlightedProductCode) {
+        HighlightedProductCode = highlightedProductCode;
+    }
+
+    public String getIsEnableFilter() {
+        return IsEnableFilter;
+    }
+
+    public void setIsEnableFilter(String isEnableFilter) {
+        IsEnableFilter = isEnableFilter;
     }
 }

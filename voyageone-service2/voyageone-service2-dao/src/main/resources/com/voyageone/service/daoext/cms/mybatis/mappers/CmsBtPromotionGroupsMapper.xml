@@ -74,17 +74,17 @@ FROM
     FROM
       voyageone_cms2.cms_bt_promotion_groups b
         <where>
-        <if test="promotionId != null">
-        promotion_id = #{promotionId,jdbcType=INTEGER}
-        </if>
-        <if test="channelId != null and channelId != '' and channelId != '997'">
-        and org_channel_id = #{channelId,jdbcType=VARCHAR}
-        </if>
-        <if test="key !=null and key != ''">
-        and (
-        product_model like '%${key}%'
-        )
-        </if>
+            <if test="promotionId != null">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null and channelId != '' and channelId != '928'">
+                and org_channel_id = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="key !=null and key != ''">
+                and (
+                product_model like '%${key}%'
+                )
+            </if>
         </where>
         <if test="start != null and length != null">
         LIMIT #{start}, #{length}
@@ -167,7 +167,7 @@ FROM
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="channelId != null and channelId != '' and channelId != '997'">
+            <if test="channelId != null and channelId != '' and channelId != '928'">
                 and org_channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="key !=null and key != ''">

@@ -27,10 +27,7 @@ import com.voyageone.service.model.cms.mongo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 平台Schema取得后，对应一些处理操作
@@ -186,11 +183,11 @@ public class PlatformSchemaService extends BaseService {
      * @return List
      */
     private List<Field> getListFieldForProductImage(String channelId, String language, List<Field> listField, List<CmsMtPlatformCategoryInvisibleFieldModel_Field> listInvisibleField, List<CmsMtPlatformCategoryExtendFieldModel_Field> listExtendField) {
-        Map<String, Field> mapField = new HashMap<>();
+        Map<String, Field> mapField = new LinkedHashMap<>();
 
         // 删除不想显示的属性
         if (listInvisibleField != null && !listInvisibleField.isEmpty()) {
-            Map<String, List<Field>> mapFieldName = new HashMap<>();
+            Map<String, List<Field>> mapFieldName = new LinkedHashMap<>();
             for (Field field : listField) {
                 List<Field> fields = mapFieldName.get(field.getName());
                 if (fields == null) {
