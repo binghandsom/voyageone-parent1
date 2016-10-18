@@ -106,12 +106,14 @@
 <!--</update>-->
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
-        SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
+        SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
         ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,d.quantity,a.remark
         FROM `cms_bt_jm_promotion_product` AS a
-        JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
+        JOIN  `cms_bt_jm_product`       AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
+        JOIN  `cms_bt_promotion`        AS c ON a.`cms_bt_jm_promotion_id`=c.`promotion_id`
+        JOIN `cms_bt_promotion_codes`   AS d ON d.`promotion_id`=c.`id` AND a.`product_code`=d.`product_code`
         <where>
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}

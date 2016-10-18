@@ -268,10 +268,12 @@
                                     <th class="text-left">Color</th>
                                     <th class="text-right mfb-xxx">Price</th>
                                     <th class="text-right">聚美价格</th>
+                                    <th class="text-right">聚美MallId</th>
                                     <th class="text-left">聚美Hash ID</th>
                                     <th class="text-center">折扣</th>
                                     <th class="text-center">SKU数</th>
                                     <th class="text-left">错误消息</th>
+                                    <th class="text-left">库存数</th>
                                     <th class="text-left">备注</th>
                                     <th class="text-left">Status</th>
                                     <th class="text-center">Action</th>
@@ -321,6 +323,7 @@
                                         </ul>
                                         </div>
                                     </td>
+                                    <td class="text-left">{{model.jumeiMallId}}</td>
                                     <td class="text-left">{{model.jmHashId}}</td>
                                     <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
                                     <td class="text-center">
@@ -336,7 +339,8 @@
                                             </div>
                                         </a>
                                     </td>
-                                    <td>{{comment}}</td>
+                                    <td>{{model.quantity}}</td>
+                                    <td><textarea  ng-model="model.remark" > </textarea></td>
                                     <td >{{getStatus(model)}}</td>
                                     <td class="text-center">
                                         <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
