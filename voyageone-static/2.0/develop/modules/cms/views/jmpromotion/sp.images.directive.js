@@ -42,6 +42,13 @@ define([
         });
     };
 
+    SpImagesDirectiveController.prototype.popImageJmUpload = function(){
+        var self = this,
+            spDataService = self.spDataService;
+
+        spDataService.savePromotionImages(self.imgUpEntity);
+    };
+
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',

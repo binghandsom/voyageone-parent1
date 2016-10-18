@@ -1,10 +1,12 @@
 define(['cms'], function (cms) {
 
-    function SpDataService(jmPromotionService, jmPromotionDetailService, $routeParams) {
+    function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService,$routeParams,notify) {
         this.promotionId = parseInt($routeParams['promId']);
         this.jmPromotionId = parseInt($routeParams['jmpromId']);
+        this.notify = notify;
         this.jmPromotionService = jmPromotionService;
         this.jmPromotionDetailService = jmPromotionDetailService;
+        this.JmPromotionImagesService = JmPromotionImagesService;
     }
 
     SpDataService.prototype.getPromotion = function () {
@@ -22,6 +24,16 @@ define(['cms'], function (cms) {
 
         return jmPromotionDetailService.getPromotionTagModules(self.jmPromotionId).then(function (resp) {
             return resp.data;
+        });
+    };
+
+    SpDataService.prototype.savePromotionImages = function savePromotionImages(upEntity){
+      var self = this,
+          notify = self.notify,
+          JmPromotionImagesService = self.JmPromotionImagesService;
+
+        JmPromotionImagesService.save(upEntity).then(function(){
+            notify.success("SUCCESS");
         });
     };
 
