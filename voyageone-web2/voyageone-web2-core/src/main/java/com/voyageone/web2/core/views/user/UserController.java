@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +53,6 @@ public class UserController extends BaseController {
         int timezone = (int) params.get("timezone");
 
         String app = (String) params.getOrDefault("application", "cms");
-
-//        // 验证在内部
-//        // 登录成功返回, 否则通过 BusinessException 返回
-//        UserSessionBean userSessionBean = userService.login(username, password, timezone);
-//        // 保存用户
-//        getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
-//        // 保存用户的默认语言
-//        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
-
 
         ComUserModel userModel = comUserService.login(username, password, app);
 
@@ -107,16 +100,40 @@ public class UserController extends BaseController {
 //        }
 
 
-        comUserService.login(username, password, "vms");
+        ComUserModel userModel = comUserService.login(username, password, "vms");
+
+        //取得user对应的channelId
+        List<String> channels = comUserService.selectChannels(userModel.getId());
+        if(channels == null || channels.size() == 0)
+        {
+            throw new BusinessException("Invalid  User.");
+        }
 
         Session session = SecurityUtils.getSubject().getSession();
-        ComUserModel userModel = (ComUserModel)session.getAttribute("comUserModel");
         // 填充用户信息到 Session. 权限部分需要在选择了渠道后获取
         UserSessionBean userSessionBean = new UserSessionBean();
         userSessionBean.setUserId(userModel.getId());
         userSessionBean.setUserName(userModel.getUserAccount());
         userSessionBean.setTimeZone(timezone);
-        userSessionBean.setUserConfig(userService.getUserConfig(userModel.getId()));
+        Map<String, List<UserConfigBean>>  config = userService.getUserConfig(userModel.getId());
+
+        List<UserConfigBean> cfgList =  new ArrayList<>();
+        for (String channel: channels) {
+            UserConfigBean cfg = new UserConfigBean();
+            cfg.setCfg_name("channel_id");
+            cfg.setCfg_val1(channel);
+            cfg.setCfg_val2("");
+            cfg.setComment("");
+            cfg.setUser_id(userModel.getId());
+            cfgList.add(cfg);
+        }
+        config.put("channel_id", cfgList);
+
+        userSessionBean.setUserConfig(config);
+
+
+
+        userService.setSelectChannel(userSessionBean, channels.get(0), "99", "vms");
 
         session.setAttribute(BaseConstants.SESSION_USER, userSessionBean);
 
@@ -124,15 +141,20 @@ public class UserController extends BaseController {
         getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getVendorUserLanguage(userSessionBean));
 
         // 取得user对应的channelId
-        List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
+//        List<UserConfigBean> userConfigBeanList = userSessionBean.getUserConfig().get("channel_id");
+//
+//        // 设置channel_id
+//        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
+//            userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
+//        } else {
+//            throw new BusinessException("Invalid  User.");
+//        }
 
-        // 设置channel_id
-        if (userConfigBeanList != null && userConfigBeanList.size() > 0) {
-            userService.setSelectChannel(userSessionBean, userConfigBeanList.get(0).getCfg_val1(), "99", "vms");
-        } else {
-            throw new BusinessException("Invalid  User.");
-        }
 
+
+
+        session.setAttribute("comUserModel", userModel);
+        session.setAttribute("userId", userModel.getId());
 
         // 返回用户信息
         return success(true);
@@ -162,13 +184,6 @@ public class UserController extends BaseController {
      */
     @RequestMapping(CoreUrlConstants.USER.LOGOUT)
     public AjaxResponse logout() {
-
-//        // 清空缓存
-//        HttpSession session = getSession();
-//        if (session != null) {
-//            session.invalidate();
-//        }
-//        SecurityUtils.getSubject().logout();
 
         comUserService.logout();
 

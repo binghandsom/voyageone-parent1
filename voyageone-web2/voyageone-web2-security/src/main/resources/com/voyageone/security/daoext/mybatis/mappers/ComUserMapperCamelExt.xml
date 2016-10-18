@@ -90,5 +90,13 @@
         GROUP BY t.id, t.user_id,t.application
     </select>
 
+    <select id="selectChannels" resultType="java.lang.String">
+        SELECT DISTINCT ch.channel_id
+        FROM  com_user u, com_user_role ur, com_role r, view_role_channel ch
+        WHERE u.id = ur.user_id AND ur.role_id = r.id AND r.id = ch.id
+        AND r.active =1
+        AND  u.id =  #{userId,jdbcType=INTEGER}
+    </select>
+
 
 </mapper>

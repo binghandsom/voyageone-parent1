@@ -22,4 +22,7 @@ public interface ComUserDaoExt {
     List<String> selectAppsByUser(Integer userId);
 
     List<ViewResUserCompanyModel> selectAction(Object map);
+
+
+    List<String> selectChannels(Object map);
 }

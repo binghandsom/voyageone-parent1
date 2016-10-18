@@ -215,4 +215,14 @@ public class ComUserService {
         myRealm.clearCache(user.getPrincipals());
     }
 
+
+
+    public List<String> selectChannels(Integer userId)
+    {
+        Map<String, Object> query =  new HashMap<>();
+        query.put("userId", userId);
+
+        return comUserDaoExt.selectChannels(query);
+    }
+
 }
