@@ -1027,7 +1027,7 @@ define([
                         case FIELD_TYPES.MULTI_CHECK:
                             (function createCheckboxElements() {
 
-                                var selected;
+                                var selected,valueStringList;
 
                                 innerElement = [];
 
@@ -1046,11 +1046,9 @@ define([
                                     });
 
                                     if (scope.selected[index]) {
-                                        // 当前选中选中, 并且不在集合中的
                                         if (selectedIndex < 0)
                                             field.values.push({value: selectedValue});
                                     } else {
-                                        // 没选中, 并且在集合中的
                                         if (selectedIndex > -1)
                                             field.values.splice(selectedIndex, 1);
                                     }
@@ -1058,6 +1056,13 @@ define([
 
                                 if (!field.values)
                                     field.values = [];
+
+                                // 先把 values 里的选中值取出, 便于后续判断
+                                valueStringList = field.values.map(function (valueObj) {
+                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                    // 所以这一步做额外的处理
+                                    return (valueObj.value = getInputValue(valueObj.value, field).toString());
+                                });
 
                                 each(field.options, function (option, index) {
 
@@ -1071,6 +1076,10 @@ define([
                                     checkbox.attr('title', field.name || field.id);
 
                                     checkbox.attr('ng-change', 'update(' + index + ')');
+
+                                    if (valueStringList.length) {
+                                        selected[index] = !(valueStringList.indexOf(option.value) < 0);
+                                    }
 
                                     label.append(checkbox, '&nbsp;', option.displayName);
 
