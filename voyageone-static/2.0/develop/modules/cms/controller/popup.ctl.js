@@ -366,12 +366,6 @@ define([
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
                     "controller": 'popPriceModifyCtl'
-                },
-                sortProduct: {
-                    templateUrl: "views/pop/jm/promotion/sort.product.html",
-                    controllerUrl: "modules/cms/views/pop/jm/promotion/sort.product.controller",
-                    controller: 'JmSortProductPopupController as ctrl',
-                    size: 'lg'
                 }
             },
             "jmImageManage": {
@@ -1228,10 +1222,6 @@ define([
          */
         $scope.openImageJmUpload = function openImageJmUpload(context) {
             return openModal(popActions.jumei.promotion.imageUpload, context)
-        };
-
-        $scope.popSortProduct = function popSortProduct(context) {
-            return openModal(popActions.jumei.jmPromotionDetail.sortProduct, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {
