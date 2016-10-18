@@ -20,20 +20,20 @@
             </div>
         </div>
         <hr>
-        <div class="row">
-            <div class="col-sm-3" ng-repeat="product in ctrl.productList">
-                <div style="border: 1px solid #CCCCCC; padding: 5px;">
+        <div class="row sortable-container" sv-root sv-part="ctrl.productList">
+            <div class="col-sm-3" ng-repeat="product in ctrl.productList" sv-element="opts">
+                <div class="jm-sortable-product" sv-handle>
                     <div class="row">
                         <div class="col-sm-8">
-                            <span>1234567890</span>
+                            <span>{{product.id}}</span>
                         </div>
                         <div class="col-sm-4">
-                            <button type="button" class="close" style="font-size: 12px"><i class="fa fa-close"></i></button>
+                            <button type="button" class="close"><i class="fa fa-close"></i></button>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-4" style="">
-                            <img image="{{::product.image1}}" style="width: 100%; height: 100%;">
+                        <div class="col-sm-4">
+                            <img image="{{::product.image1}}">
                         </div>
                         <div class="col-sm-8">
                             <div>Jordan 男子休闲鞋</div>
@@ -42,11 +42,11 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-4">
-                            <div style="padding: 3px 5px; background: #CCCCCC; color: red">
+                            <div class="jm-sortable-product-price">
                                 $595
                             </div>
                         </div>
-                        <ul class="col-sm-8 list-inline text-right" style="margin-bottom:0; padding: 0">
+                        <ul class="col-sm-8 list-inline text-right">
                             <li><i class="fa fa-fast-backward"></i></li>
                             <li><i class="fa fa-backward"></i></li>
                             <li><i class="fa fa-forward"></i></li>

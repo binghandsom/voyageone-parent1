@@ -869,3 +869,9 @@ schema .ng-invalid.focus-error {
     border-width: 2px;
     border-style: dotted;
 }
+
+.jm-sortable-product {border: 1px solid #CCCCCC; padding: 5px; background: white;}
+.jm-sortable-product .close {font-size: 12px}
+.jm-sortable-product img {width: 100%; height: 100%;}
+.jm-sortable-product-price {padding: 3px 5px; background: #CCCCCC; color: red;}
+.jm-sortable-product .list-inline {margin-bottom:0; padding: 0;}
