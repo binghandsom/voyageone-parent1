@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -209,12 +210,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             return;
         }
 
+        // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
+        Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
+        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
+        doChannelConfigInit(channelId, cartId, channelConfigValueMap);
+
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据上新任务列表中的groupid循环上新处理
         for(CmsBtSxWorkloadModel cmsBtSxWorkloadModel:sxWorkloadModels) {
             // 启动多线程
-            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp));
+            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -233,7 +239,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      */
-    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -484,7 +490,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 updateProductBean.setWareId(String.valueOf(jdWareId));
                 // 构造更新用商品bean，主要设置SKU相关属性
                 updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, shopProp, productColorMap,
-                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
@@ -552,7 +558,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                 jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, shopProp, productColorMap,
-                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
 
                 // 京东商品更新API返回的更新时间
                 // 调用京东商品更新API
@@ -1104,6 +1110,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
      * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
      * @param salePropStatus String 当前平台主类目对应的销售属性状况
+     * @param channelConfigValueMap cms_mt_channel_config配置表中配置的值集合
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -1112,7 +1119,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                                               Map<String, Integer> skuLogicQtyMap,
                                               List<CmsMtPlatformSkusModel> cmsColorList,
                                               List<CmsMtPlatformSkusModel> cmsSizeList,
-                                              String salePropStatus) throws BusinessException {
+                                              String salePropStatus,
+                                              Map<String, String> channelConfigValueMap) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
 
@@ -1243,10 +1251,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 设置该商品的自定义属性值别名(颜色1:颜色1的别名^颜色2:颜色2的别名)
             // 如果超过25个字(不管中文还是英文),  那就用color, 如果color也超长了, 京东上新会出错写入到business_log表里的, 运营直接修改common的颜色将其缩短即可.
             // 20160630 tom 防止code超长 START
-//            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
-            String color = objProduct.getCommon().getFields().getCode();
-            if (color.length() > 25) {
+            // 如果该店铺在cms_mt_channel_config表中配置了使用哪个字段作为颜色别名就用配置的字段(如:color),否则默认为用code作为颜色别名
+            String color;
+            // 颜色别名配置key(ALIAS_29.color_alias)
+            String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + sxData.getCartId() + CmsConstants.ChannelConfig.COLOR_ALIAS;
+            if ("color".equalsIgnoreCase(channelConfigValueMap.get(colorAliasKey))) {
                 color = objProduct.getCommon().getFields().getColor();
+            } else {
+                color = objProduct.getCommon().getFields().getCode();
+                if (color.length() > 25) {
+                    color = objProduct.getCommon().getFields().getColor();
+                }
             }
             // 20160630 tom 防止code超长 END
             // 如果平台类目颜色和尺寸都存在的时候，颜色存在尺寸不存在的时候在后面SKU循环里面做
@@ -2135,5 +2150,48 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
         cmsBtProductDao.updateFirst(updateProductQuery, channelId);
 
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值集合
+     *
+     * @param channelId String 渠道id
+     * @param cartId int 平台id
+     * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
+     */
+    public void doChannelConfigInit(String channelId, int cartId, Map<String, String> channelConfigValueMap) {
+
+        // 从配置表(cms_mt_channel_config)表中取得颜色别名(ALIAS_29.color_alias)
+        String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + cartId + CmsConstants.ChannelConfig.COLOR_ALIAS;
+        String colorAliasValue1 = getChannelConfigValue(channelId, CmsConstants.ChannelConfig.ALIAS,
+                cartId + CmsConstants.ChannelConfig.COLOR_ALIAS);
+        channelConfigValueMap.put(colorAliasKey, colorAliasValue1);
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
     }
 }
