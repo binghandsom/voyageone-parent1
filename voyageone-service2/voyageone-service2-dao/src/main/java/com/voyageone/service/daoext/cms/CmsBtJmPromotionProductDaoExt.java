@@ -1,8 +1,8 @@
 package com.voyageone.service.daoext.cms;
-import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -104,4 +104,14 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     List<CmsBtJmPromotionProductModel> selectProductInfoByTagId(Integer tagId);
     //jm2 end
+
+    /**
+     * 取得当前有效的活动下的所有产品
+     */
+    List<CmsBtJmPromotionProductModel> selectValidProductInfo(@Param("channelId") String channelId, @Param("cartId") int cartId);
+
+    /**
+     * 更新活动下的产品的库存数据
+     */
+    int updateProductStockInfo(@Param("jmPromotionProductList") List<CmsBtJmPromotionProductModel> productList);
 }

@@ -56,6 +56,11 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private String property4;
 
+    /**
+     * 库存数量
+     */
+    private Integer quantity;
+
     private String time;
 
     private List<CmsBtPromotionSkuBean> skus;
@@ -266,5 +271,13 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     public void setSkus(List<CmsBtPromotionSkuBean> skus) {
         this.skus = skus;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

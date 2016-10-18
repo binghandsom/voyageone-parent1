@@ -41,17 +41,29 @@
             <if test="promotionalCopy != null" >
                 `promotional_copy` = #{promotionalCopy,jdbcType=VARCHAR},
             </if>
-            <if test="syncMobile != null" >
-                `sync_mobile` = #{syncMobile,jdbcType=INTEGER},
+            <if test="syncMobile == true" >
+                `sync_mobile` = 1,
             </if>
-            <if test="showHiddenDeal != null" >
-                `show_hidden_deal` = #{showHiddenDeal,jdbcType=INTEGER},
+            <if test="showHiddenDeal == true" >
+                `show_hidden_deal` = 1,
             </if>
-            <if test="showSoldOutDeal != null" >
-                `show_sold_out_deal` = #{showSoldOutDeal,jdbcType=INTEGER},
+            <if test="showSoldOutDeal == true" >
+                `show_sold_out_deal` = 1,
             </if>
-            <if test="showMobile != null" >
-                `show_mobile` = #{showMobile,jdbcType=INTEGER},
+            <if test="showMobile == true" >
+                `show_mobile` = 1,
+            </if>
+            <if test="syncMobile == null || syncMobile == false" >
+                `sync_mobile` = 0,
+            </if>
+            <if test="showHiddenDeal == null || showHiddenDeal == false" >
+                `show_hidden_deal` = 0,
+            </if>
+            <if test="showSoldOutDeal == null || showSoldOutDeal == false" >
+                `show_sold_out_deal` = 0,
+            </if>
+            <if test="showMobile == null || showMobile == false" >
+                `show_mobile` = 0,
             </if>
             <if test="appPageId != null" >
                 `app_page_id` = #{appPageId,jdbcType=VARCHAR},
@@ -66,36 +78,38 @@
                 `share_content` = #{shareContent,jdbcType=VARCHAR},
             </if>
 
-            <if test="isPromotionFullMinus != null" >
-                `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=TINYINT},
+            <if test="isPromotionFullMinus == true" >
+                `is_promotion_full_minus` = 1,
             </if>
-            <if test="promotionFullAmount != null" >
-                `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL},
+            <if test="isPromotionFullMinus == null || isPromotionFullMinus == false" >
+                `is_promotion_full_minus` = 0,
             </if>
-            <if test="promotionMinusAmount != null" >
-                `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL},
+            `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL},
+            `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL},
+
+            <if test="isPromotionEachfullMinus == true" >
+                `is_promotion_eachfull_minus` = 1,
             </if>
-            <if test="isPromotionEachfullMinus != null" >
-                `is_promotion_eachfull_minus` = #{isPromotionEachfullMinus,jdbcType=TINYINT},
+            <if test="isPromotionEachfullMinus == null || isPromotionEachfullMinus == false" >
+                `is_promotion_eachfull_minus` = 0,
             </if>
-            <if test="promotionEachfullAmount != null" >
-                `promotion_eachfull_amount` = #{promotionEachfullAmount,jdbcType=DECIMAL},
+            `promotion_eachfull_amount` = #{promotionEachfullAmount,jdbcType=DECIMAL},
+            `promotion_eachminus_amount` = #{promotionEachminusAmount,jdbcType=DECIMAL},
+
+            <if test="jmCoupons == true" >
+                `jm_coupons` = 1,
             </if>
-            <if test="promotionEachminusAmount != null" >
-                `promotion_eachminus_amount` = #{promotionEachminusAmount,jdbcType=DECIMAL},
+            <if test="jmCoupons == null || jmCoupons == false" >
+                `jm_coupons` = 0,
             </if>
-            <if test="jmCoupons != null" >
-                `jm_coupons` = #{jmCoupons,jdbcType=TINYINT},
+            `jm_coupons_money` = #{jmCouponsMoney,jdbcType=DECIMAL},
+            <if test="voCoupons == true" >
+                `vo_coupons` = 1,
             </if>
-            <if test="jmCouponsMoney != null" >
-                `jm_coupons_money` = #{jmCouponsMoney,jdbcType=DECIMAL},
+            <if test="voCoupons == null || voCoupons == false" >
+                `vo_coupons` = 0,
             </if>
-            <if test="voCoupons != null" >
-                `vo_coupons` = #{voCoupons,jdbcType=TINYINT},
-            </if>
-            <if test="voCouponsMoney != null" >
-                `vo_coupons_money` = #{voCouponsMoney,jdbcType=DECIMAL},
-            </if>
+            `vo_coupons_money` = #{voCouponsMoney,jdbcType=DECIMAL},
 
             <if test="modified == null" >
                 `modified` = now(),
@@ -259,17 +273,30 @@
             <if test="promotionalCopy != null" >
                 #{promotionalCopy,jdbcType=VARCHAR},
             </if>
-            <if test="syncMobile != null" >
-                #{syncMobile,jdbcType=INTEGER},
+
+            <if test="syncMobile == true" >
+                1,
             </if>
-            <if test="showHiddenDeal != null" >
-                #{showHiddenDeal,jdbcType=INTEGER},
+            <if test="syncMobile == false" >
+                0,
             </if>
-            <if test="showSoldOutDeal != null" >
-                #{showSoldOutDeal,jdbcType=INTEGER},
+            <if test="showHiddenDeal == true" >
+                1,
             </if>
-            <if test="showMobile != null" >
-                #{showMobile,jdbcType=INTEGER},
+            <if test="showHiddenDeal == false" >
+                0,
+            </if>
+            <if test="showSoldOutDeal == true" >
+                1,
+            </if>
+            <if test="showSoldOutDeal == false" >
+                0,
+            </if>
+            <if test="showMobile == true" >
+                1,
+            </if>
+            <if test="showMobile == false" >
+                0,
             </if>
             <if test="appPageId != null" >
                 #{appPageId,jdbcType=VARCHAR},
@@ -284,8 +311,11 @@
                 #{shareContent,jdbcType=VARCHAR},
             </if>
 
-            <if test="isPromotionFullMinus != null" >
-                #{isPromotionFullMinus,jdbcType=TINYINT},
+            <if test="isPromotionFullMinus == true" >
+                1,
+            </if>
+            <if test="isPromotionFullMinus == false" >
+                0,
             </if>
             <if test="promotionFullAmount != null" >
                 #{promotionFullAmount,jdbcType=DECIMAL},
@@ -293,8 +323,11 @@
             <if test="promotionMinusAmount != null" >
                 #{promotionMinusAmount,jdbcType=DECIMAL},
             </if>
-            <if test="isPromotionEachfullMinus != null" >
-                #{isPromotionEachfullMinus,jdbcType=TINYINT},
+            <if test="isPromotionEachfullMinus == true" >
+                1,
+            </if>
+            <if test="isPromotionEachfullMinus == false" >
+                0,
             </if>
             <if test="promotionEachfullAmount != null" >
                 #{promotionEachfullAmount,jdbcType=DECIMAL},
@@ -302,14 +335,20 @@
             <if test="promotionEachminusAmount != null" >
                 #{promotionEachminusAmount,jdbcType=DECIMAL},
             </if>
-            <if test="jmCoupons != null" >
-                #{jmCoupons,jdbcType=TINYINT},
+            <if test="jmCoupons == true" >
+                1,
+            </if>
+            <if test="jmCoupons == false" >
+                0,
             </if>
             <if test="jmCouponsMoney != null" >
                 #{jmCouponsMoney,jdbcType=DECIMAL},
             </if>
-            <if test="voCoupons != null" >
-                #{voCoupons,jdbcType=TINYINT},
+            <if test="voCoupons == true" >
+                1,
+            </if>
+            <if test="voCoupons == false" >
+                0,
             </if>
             <if test="voCouponsMoney != null" >
                 #{voCouponsMoney,jdbcType=DECIMAL},

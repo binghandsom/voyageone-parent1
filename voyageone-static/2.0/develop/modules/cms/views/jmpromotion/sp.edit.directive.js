@@ -23,10 +23,6 @@ define([
             jmPromotionService = self.jmPromotionService;
         vm.currentTime = new Date();
 
-        jmPromotionService.init().then(function (res) {
-            vm.jmMasterBrandList = res.data.jmMasterBrandList;
-        });
-
         jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}, hasExt: true}).then(function (res) {
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;
@@ -61,14 +57,42 @@ define([
             }
 
             // 转换活动场景的值
-            //if (editModel.model.promotionScene) {
-            //    var sceneArr = editModel.model.promotionScene.split(",");
-            //    for (var attr in sceneArr) {
-            //        editModel.model['promotionScene_' + sceneArr[attr]] = true;
-            //    }
-            //}
-        });
+            if (editModel.model.promotionScene) {
+                var sceneArr = editModel.model.promotionScene.split(",");
+                editModel.model.promotionScene = [];
+                angular.forEach(sceneArr, function(element) {
+                    editModel.model.promotionScene[element] = true;
+                });
+            } else {
+                editModel.model.promotionScene = [];
+            }
+            // 转换展示平台的值
+            if (editModel.extModel.displayPlatform) {
+                var sceneArr = editModel.extModel.displayPlatform.split(",");
+                editModel.extModel.displayPlatform = [];
+                angular.forEach(sceneArr, function(element) {
+                    editModel.extModel.displayPlatform[element] = true;
+                });
+            } else {
+                editModel.extModel.displayPlatform = [];
+            }
+            // 转换预展示频道的值
+            if (editModel.extModel.preDisplayChannel) {
+                var sceneArr = editModel.extModel.preDisplayChannel.split(",");
+                editModel.extModel.preDisplayChannel = [];
+                angular.forEach(sceneArr, function(element) {
+                    editModel.extModel.preDisplayChannel[element] = true;
+                });
+            } else {
+                editModel.extModel.preDisplayChannel = [];
+            }
 
+            jmPromotionService.init().then(function (res) {
+                vm.jmMasterBrandList = res.data.jmMasterBrandList;
+                // 记住主品牌初始值
+                _getJmBrandEnName(self, editModel.model.cmsBtJmMasterBrandId);
+            });
+        });
     };
 
     SpEditDirectiveController.prototype.addTag = function () {
@@ -100,21 +124,148 @@ define([
             });
     };
 
+    // 当专场主品牌改变时，记住所选值，用于创建页面标识(主要是品牌英文名，并且要简单处理，去空格和特殊符号)
+    SpEditDirectiveController.prototype.onJmBrandChange = function () {
+        var self = this;
+        _getJmBrandEnName(self, self.editModel.model.cmsBtJmMasterBrandId);
+        self.createActId();
+    };
+
+    // 创建页面标识
+    SpEditDirectiveController.prototype.createActId = function () {
+        var self = this;
+        var idDate = self.$filter("date")(new Date(),"yyyyMMdd");
+        var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+        idTime = parseInt(idTime).toString(36);
+        var jmBrandId = self.editModel.model.cmsBtJmMasterBrandId;
+        var jmBrandName = self.vm.brandEnName;
+        if (jmBrandName == null || jmBrandName == undefined) {
+            jmBrandName = '';
+        }
+        var mainChannel = '';
+        var mainChannel2 = '';
+        if (self.editModel.extModel.mainChannel) {
+            mainChannel = self.editModel.extModel.mainChannel.substring(0, self.editModel.extModel.mainChannel.indexOf(':'));
+            mainChannel2 = self.editModel.extModel.mainChannel.substring(self.editModel.extModel.mainChannel.indexOf(':') + 1);
+        }
+
+        if (self.editModel.model.promotionType == '3') {
+            if (self.editModel.extModel.productType == null || self.editModel.extModel.productType == undefined) {
+                self.editModel.extModel.productType = '';
+            }
+            var pageId = idDate + mainChannel + '_' + self.editModel.extModel.productType + '_' + jmBrandId + '_' + idTime;
+            self.editModel.extModel.pcPageId = pageId + '_pc';
+            self.editModel.extModel.appPageId = pageId + '_app';
+        } else {
+            var pageId = mainChannel2 + '_' + jmBrandName + '_' + idDate + '_' + idTime;
+            self.editModel.extModel.pcPageId = pageId + '_pc';
+            self.editModel.extModel.appPageId = pageId + '_app';
+        }
+    };
+
+    // 保存修改  saveType：0->暂存  1->提交
+    // 只有在'提交'时才检查输入项目
     SpEditDirectiveController.prototype.save = function(saveType) {
         var self = this,
+            alert = self.alert,
             jmPromotionService = self.jmPromotionService;
+
+        if (saveType) {
+            var start = new Date(self.editModel.model.activityStart);
+            var end = new Date(self.editModel.model.activityEnd);
+
+            if (self.editModel.model.activityStart > self.editModel.model.activityEnd) {
+                alert("活动时间检查：请输入结束时间>开始时间，最小间隔为30分钟。");
+                return;
+            }
+
+            if (end.getTime() - start.getTime() < 30 * 60 * 1000) {
+                alert("活动时间检查：最小间隔为30分钟。");
+                return;
+            }
+
+            if (self.editModel.model.prePeriodStart > self.editModel.model.prePeriodEnd) {
+                alert("预热时间检查：请输入结束时间>开始时间。");
+                return;
+            }
+
+            if (self.editModel.model.prePeriodStart > self.editModel.model.activityStart) {
+                alert("预热开始时间不能晚于活动开始时间");
+                return;
+            }
+
+            if (self.editModel.model.signupDeadline > self.editModel.model.prePeriodStart) {
+                alert("报名截止日期不能晚于预热开始时间");
+                return;
+            }
+
+            if (self.getTagList().length === 0) {
+                alert("请至少添加一个标签");
+                return;
+            }
+            var hasTag = _.every(self.getTagList(), function (element) {
+                return element.tagName;
+            });
+            if (!hasTag)
+                return;
+
+            var extModel = self.editModel.extModel;
+            if (extModel.isPromotionFullMinus && (extModel.promotionFullAmount == null || extModel.promotionFullAmount == '' || extModel.promotionFullAmount == undefined
+                || extModel.promotionMinusAmount == null || extModel.promotionMinusAmount == '' || extModel.promotionMinusAmount == undefined)) {
+                alert("当设置满减优惠时，必须填写优惠限额及优惠金额");
+                return;
+            }
+            if (extModel.isPromotionEachfullMinus && (extModel.promotionEachfullAmount == null || extModel.promotionEachfullAmount == '' || extModel.promotionEachfullAmount == undefined
+                || extModel.promotionEachminusAmount == null || extModel.promotionEachminusAmount == '' || extModel.promotionEachminusAmount == undefined)) {
+                alert("当设置每满减优惠时，必须填写优惠限额及优惠金额");
+                return;
+            }
+            if (extModel.jmCoupons && (extModel.jmCouponsMoney == null || extModel.jmCouponsMoney == '' || extModel.jmCouponsMoney == undefined)) {
+                alert("当设置聚美承担优惠券时，必须填写优惠券金额");
+                return;
+            }
+            if (extModel.voCoupons && (extModel.voCouponsMoney == null || extModel.voCouponsMoney == '' || extModel.voCouponsMoney == undefined)) {
+                alert("当设置VO承担优惠券时，必须填写优惠券金额");
+                return;
+            }
+        }
+
         var param = {};
         param.tagList= _.filter( self.editModel.tagList, function(tag){ return tag.tagName != "";});
         param.model = angular.copy(self.editModel.model);
         param.extModel = angular.copy(self.editModel.extModel);
 
-        param.model.promotionScene = _returnKey (param.model.promotionScene);
+        param.extModel.mainChannel = param.extModel.mainChannel.substring(0, param.extModel.mainChannel.indexOf(':') + 1);
+
+        param.model.promotionScene = JSON.stringify(_returnKey (param.model.promotionScene));
+        param.model.promotionScene = param.model.promotionScene.substr(1, param.model.promotionScene.length - 2);
+        param.extModel.displayPlatform = JSON.stringify(_returnKey (param.extModel.displayPlatform));
+        param.extModel.displayPlatform = param.extModel.displayPlatform.substr(1, param.extModel.displayPlatform.length - 2);
+        param.extModel.preDisplayChannel = JSON.stringify(_returnKey (param.extModel.preDisplayChannel));
+        param.extModel.preDisplayChannel = param.extModel.preDisplayChannel.substr(1, param.extModel.preDisplayChannel.length - 2);
+
+        if (!param.extModel.isPromotionFullMinus) {
+            param.extModel.promotionFullAmount = null;
+            param.extModel.promotionMinusAmount = null;
+        }
+        if (!param.extModel.isPromotionEachfullMinus) {
+            param.extModel.promotionEachfullAmount = null;
+            param.extModel.promotionEachminusAmount = null;
+        }
+        if (!param.extModel.jmCoupons) {
+            param.extModel.jmCouponsMoney = null;
+        }
+        if (!param.extModel.voCoupons) {
+            param.extModel.voCouponsMoney = null;
+        }
 
         param.model.activityStart = formatToStr(param.model.activityStart, self.$filter);
         param.model.activityEnd = formatToStr(param.model.activityEnd, self.$filter);
         param.model.prePeriodStart = formatToStr(param.model.prePeriodStart, self.$filter);
         param.model.prePeriodEnd = param.model.activityEnd;
         param.model.signupDeadline = formatToStr(param.model.signupDeadline, self.$filter);
+        param.extModel.shareTitle = param.extModel.marketingTitle;
+        param.extModel.shareContent = param.extModel.marketingCopywriter + '' + param.extModel.promotionalCopy;
 
         param.hasExt = true;
         param.saveType = saveType;
@@ -151,6 +302,28 @@ define([
             .filter(function(value) { return value;})
             .value();
     }
+
+    // 取得专场主品牌的品牌英文名，并且要简单处理，去空格和特殊符号
+    function _getJmBrandEnName(self, jmBrandId) {
+        var brandObj = _.find(self.vm.jmMasterBrandList, function(item) { return item.id == jmBrandId; });
+        if (brandObj == null || brandObj == undefined) {
+            self.vm.brandEnName = "";
+            return;
+        }
+        var enName = brandObj.enName;
+        if (enName == null || enName == undefined || enName == '') {
+            self.vm.brandEnName = "";
+            return;
+        }
+        var nameVal = '';
+        for (var i = 0; i < enName.length; i ++) {
+            var charVal = enName.charAt(i);
+            if (('0' <= charVal && charVal <= '9') || ('a' <= charVal && charVal <= 'z') || ('A' <= charVal && charVal <= 'Z')) {
+                nameVal = nameVal.concat(charVal);
+            }
+        }
+        self.vm.brandEnName = nameVal;
+    };
 
     cms.directive('spEdit', [function spEditDirectiveFactory() {
         return {

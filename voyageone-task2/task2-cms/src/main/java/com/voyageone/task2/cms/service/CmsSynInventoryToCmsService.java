@@ -9,10 +9,10 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +30,10 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
 
     @Autowired
     private InventoryDao inventoryDao;
-
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private MqSender sender;
 
     @Override
     public SubSystem getSubSystem() {
@@ -63,10 +64,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
      */
     @Override
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-
-
         // 获取允许运行的渠道
-
         Set<String> colList = mongoTemplate.getCollectionNames();
         List<String> orderChannelIdList = colList.stream().filter(s -> s.indexOf("cms_bt_product_c") != -1 && s.length() == 19).map(s1 -> s1.substring(16)).collect(Collectors.toList());
 
@@ -97,11 +95,13 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                     }
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                $error("导入库存数据时出错 " + e.getMessage(), e);
                 throw e;
             }
-
         }
+
+        // 同步库存数据到聚美活动表 cms_bt_jm_promotion_product
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob, null);
     }
 
     /**

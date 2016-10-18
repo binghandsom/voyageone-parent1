@@ -20,6 +20,10 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
     /**
+     * 聚美活动中的产品的库存同步
+     */
+    public static final String CMS_BATCH_JmPromotionProductStockSyncServiceJob = "voyageone_cms_batchjob_JmPromotionProductStockSyncService_queue";
+    /**
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";

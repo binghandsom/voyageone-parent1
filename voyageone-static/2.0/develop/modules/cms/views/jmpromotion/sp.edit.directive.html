@@ -25,20 +25,20 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label s-required">活动场景</label>model:{{ctrlEdit.editModel.model.promotionScene | json}}
+                    <label class="col-sm-2 control-label s-required">活动场景</label>
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_1"
-                                   ng-model="ctrlEdit.editModel.model.promotionScene['i1']"
-                                   ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
-                                   >
+                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1"
+                                   ng-model="ctrlEdit.editModel.model.promotionScene['1']"
+                                   ng-required="!ctrlEdit.editModel.model.promotionScene['1'] && !ctrlEdit.editModel.model.promotionScene['2']"
+                                   ng-disabled="ctrlEdit.vm.isEnd">
                             <span class="fa fa-check"></span> 专场特卖
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_2"
-                                   ng-model="ctrlEdit.editModel.model.promotionScene['i2']"
-                                   ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
-                                   >
+                            <input type="checkbox" name="promotionScene_2" style="margin: 0" value="i2"
+                                   ng-model="ctrlEdit.editModel.model.promotionScene['2']"
+                                   ng-required="!ctrlEdit.editModel.model.promotionScene['1'] && !ctrlEdit.editModel.model.promotionScene['2']"
+                                   ng-disabled="ctrlEdit.vm.isEnd">
                             <span class="fa fa-check"></span> 商城铺货
                         </label>
                     </div>
@@ -53,7 +53,7 @@
                     <label class="col-sm-2 control-label s-required">活动类型</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.model.promotionType" required
-                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd">
+                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd" ng-change="ctrlEdit.createActId()">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             <option value="1">日常专场</option>
                             <option value="2">资源位日常专场</option>
@@ -77,8 +77,8 @@
                     <label class="col-sm-2 control-label s-required">专场主品牌</label>
                     <div class="col-sm-5">
                         <select chosen ng-model="ctrlEdit.editModel.model.cmsBtJmMasterBrandId" required
-                                name="cmsBtJmMasterBrandId"
-                                ng-options="brand.id as brand.name for brand in ctrlEdit.vm.jmMasterBrandList" width="'100%'">
+                                ng-options="brand.id as brand.name for brand in ctrlEdit.vm.jmMasterBrandList"
+                                name="cmsBtJmMasterBrandId" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
@@ -185,14 +185,14 @@
                 <div class="row form-group">
                     <label class="col-sm-2 control-label vo_reqfield" translate="TXT_PROMOTION_PC_ID"></label>
                     <div class="col-sm-2">
-                        <input required="" name="promotionPcId" type="number" class="form-control" maxlength="10"
-                               ng-model="ctrlEdit.editModel.model.activityPcId" scale="10,0">
+                        <input required="" name="promotionPcId" type="number" class="form-control" maxlength="20"
+                               ng-model="ctrlEdit.editModel.model.activityPcId" scale="20,0">
                     </div>
 
                     <label class="col-sm-1 control-label vo_reqfield" translate="TXT_PROMOTION_APP_ID"></label>
                     <div class="col-sm-2">
-                        <input required="" name="promotionAppId" type="number" class="form-control" maxlength="10"
-                               ng-model="ctrlEdit.editModel.model.activityAppId" scale="10,0">
+                        <input required="" name="promotionAppId" type="number" class="form-control" maxlength="20"
+                               ng-model="ctrlEdit.editModel.model.activityAppId" scale="20,0">
                     </div>
                 </div>
                 <div class="row form-group">
@@ -257,7 +257,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Product Type</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.productType" >
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.productType" ng-change="ctrlEdit.createActId()">
                     </div>
                 </div>
                 <div class="form-group">
@@ -265,13 +265,13 @@
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="displayPlatform_1" style="margin: 0" value="1"
-                                   ng-model="ctrlEdit.editModel.extModel.displayPlatform_1"
-                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform_1 && !ctrlEdit.editModel.extModel.displayPlatform_2"><span class="fa fa-check"></span> PC</label>
+                                   ng-model="ctrlEdit.editModel.extModel.displayPlatform['1']"
+                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform['1'] && !ctrlEdit.editModel.extModel.displayPlatform['2']"><span class="fa fa-check"></span> PC</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" name="displayPlatform_2" style="margin: 0" value="2"
-                                   ng-model="ctrlEdit.editModel.extModel.displayPlatform_2"
-                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform_1 && !ctrlEdit.editModel.extModel.displayPlatform_2"><span class="fa fa-check"></span> APP</label>
+                                   ng-model="ctrlEdit.editModel.extModel.displayPlatform['2']"
+                                   ng-required="!ctrlEdit.editModel.extModel.displayPlatform['1'] && !ctrlEdit.editModel.extModel.displayPlatform['2']"><span class="fa fa-check"></span> APP</label>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -282,9 +282,10 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required>
-                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
-                            <option value="food">食品（food【vtm】）</option>
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.createActId()">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="luxuryglobal:ppt">轻奢（luxuryglobal【ppt】）</option>
+                            <option value="food:vtm">食品（food【vtm】）</option>
                         </select>
                     </div>
                 </div>
@@ -297,8 +298,44 @@
                     <label class="col-sm-2 control-label s-required">专场类型</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionType" name="sessionType" required>
-                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
-                            <option value="food">食品（food【vtm】）</option>
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="1">常规品牌团（预热+正式）</option>
+                            <option value="2">测试</option>
+                            <option value="3">常规活动</option>
+                            <option value="4">常规品类团（预热+正式）</option>
+                            <option value="5">其他页面</option>
+                            <option value="6">新用户</option>
+                            <option value="7">气泡活动</option>
+                            <option value="8">喜从盒来</option>
+                            <option value="9">商城专场</option>
+                            <option value="10">POP专场</option>
+                            <option value="11">App专享团（预热+正式）</option>
+                            <option value="12">BD合作页面</option>
+                            <option value="13">Gilt X Jumei</option>
+                            <option value="14">母婴专场</option>
+                            <option value="15">2015年520大促</option>
+                            <option value="16">2015年616</option>
+                            <option value="17">轻奢（用户在轻奢频道显示）</option>
+                            <option value="18">2015洗护714大促</option>
+                            <option value="19">2015年801</option>
+                            <option value="20">2015洗护818大促</option>
+                            <option value="21">2015年洗护916大促</option>
+                            <option value="22">2015母婴921大促</option>
+                            <option value="23">2015年1111</option>
+                            <option value="24">2015年母婴1123大促</option>
+                            <option value="25">2015年1127黑五</option>
+                            <option value="26">2015年1212大促</option>
+                            <option value="27">聚美六周年庆（2016）</option>
+                            <option value="28">促销规则</option>
+                            <option value="29">2016.4.5跨境清仓</option>
+                            <option value="30">社区活动专用</option>
+                            <option value="31">防晒季</option>
+                            <option value="32">2016年洗护520大促</option>
+                            <option value="33">2016年616全品类大促</option>
+                            <option value="34">微博活动</option>
+                            <option value="35">2016年801大促</option>
+                            <option value="36">2016年洗护921大促</option>
+                            <option value="37">2016年双11大促</option>
                         </select>
                     </div>
                 </div>
@@ -311,8 +348,98 @@
                     <label class="col-sm-2 control-label s-required">关联品类</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionCategory" name="sessionCategory" required>
-                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
-                            <option value="food">食品（food【vtm】）</option>
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <optgroup label="化妆品"></optgroup>
+                            <option value="1">面部护肤</option>
+                            <option value="3">彩妆</option>
+                            <option value="6">套装礼盒</option>
+                            <option value="21">身体护理</option>
+                            <option value="34">香水</option>
+                            <option value="77">美容工具</option>
+                            <option value="417">男士护理</option>
+                            <optgroup label="食品保健"></optgroup>
+                            <option value="430">瘦身类</option>
+                            <option value="431">保健类</option>
+                            <option value="432">美容类</option>
+                            <option value="433">食品类</option>
+                            <option value="1865">中外名酒</option>
+                            <option value="1874">进口食品</option>
+                            <option value="1886">茗茶</option>
+                            <option value="1912">饮料冲调</option>
+                            <option value="1925">粮油调味</option>
+                            <option value="1937">生鲜食品</option>
+                            <option value="1954">食品礼券</option>
+                            <optgroup label="其他"></optgroup>
+                            <option value="478">其他</option>
+                            <optgroup label="礼品箱包"></optgroup>
+                            <option value="486">钱包/卡包</option>
+                            <option value="498">单肩包/挎包/手包</option>
+                            <option value="507">双肩背包</option>
+                            <option value="512">功能箱包</option>
+                            <option value="517">旅行箱包及配件</option>
+                            <option value="526">商务公文包</option>
+                            <option value="533">电脑包/摄影包</option>
+                            <optgroup label="男士"></optgroup>
+                            <option value="543">上装</option>
+                            <option value="561">下装</option>
+                            <option value="569">外套</option>
+                            <option value="588">男饰配件</option>
+                            <optgroup label="运动户外"></optgroup>
+                            <option value="598">运动</option>
+                            <option value="676">户外</option>
+                            <optgroup label="鞋类"></optgroup>
+                            <option value="741">男鞋</option>
+                            <option value="757">女鞋</option>
+                            <optgroup label="女装"></optgroup>
+                            <option value="783">上装</option>
+                            <option value="803">裙装</option>
+                            <option value="809">裤装</option>
+                            <option value="819">外套</option>
+                            <option value="836">婚纱/礼服</option>
+                            <option value="1704">女士套装</option>
+                            <option value="1990">皮草</option>
+                            <option value="1997">内衣</option>
+                            <optgroup label="饰品配饰"></optgroup>
+                            <option value="840">珠宝黄金</option>
+                            <option value="877">时尚饰品</option>
+                            <option value="918">配饰</option>
+                            <option value="1740">其他饰品配饰</option>
+                            <optgroup label="内衣"></optgroup>
+                            <option value="948">文胸</option>
+                            <option value="965">内裤</option>
+                            <option value="978">睡衣/家居服</option>
+                            <option value="993">保暖内衣</option>
+                            <option value="1002">袜子</option>
+                            <option value="1018">塑身/美体</option>
+                            <option value="1029">基础内衣</option>
+                            <option value="1036">内衣配件</option>
+                            <optgroup label="家居"></optgroup>
+                            <option value="1048">3C数码</option>
+                            <option value="1099">厨具</option>
+                            <option value="1141">家居日用</option>
+                            <option value="1188">汽车用品</option>
+                            <option value="1231">宠物用品</option>
+                            <option value="1272">清洁用品</option>
+                            <option value="1318">家纺</option>
+                            <optgroup label="母婴健康"></optgroup>
+                            <option value="1369">奶粉</option>
+                            <option value="1384">营养辅食</option>
+                            <option value="1402">尿裤湿巾</option>
+                            <option value="1413">洗护用品</option>
+                            <option value="1454">童车童床</option>
+                            <option value="1485">喂养用品</option>
+                            <option value="1526">玩具</option>
+                            <option value="1586">童装童鞋</option>
+                            <option value="1655">妈妈专区</option>
+                            <option value="1676">图书音像</option>
+                            <option value="1687">儿童寝具</option>
+                            <option value="1698">健康护理</option>
+                            <option value="1959">童装</option>
+                            <option value="1862">童鞋</option>
+                            <optgroup label="虚拟商品"></optgroup>
+                            <option value="1773">充值缴费</option>
+                            <option value="2196">虚拟礼包</option>
+                            <option value="2230">虚拟商品</option>
                         </select>
                     </div>
                 </div>
@@ -325,24 +452,24 @@
                     <label class="col-sm-2 control-label">预展示频道</label>
                     <div class="col-sm-5">
                         <div class="row">
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 极速免税店</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 母婴</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 服装</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 鞋包</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 美国馆</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 澳洲馆</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 轻奢</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 美妆品牌团</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 韩国馆</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 日本馆</label>
-                            <label class="col-sm-3"><input type="checkbox" name="pre_display_channel" ng-model="ctrlEdit.editModel.extModel.pre_display_channel"> 食品</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['1']"> 极速免税店</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['2']"> 母婴</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['3']"> 服装</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['4']"> 鞋包</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['5']"> 美国馆</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['6']"> 澳洲馆</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['7']"> 轻奢</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['8']"> 美妆品牌团</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['9']"> 韩国馆</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['10']"> 日本馆</label>
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel['11']"> 食品</label>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页主标题/专场标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.mainTitle" name="mainTitle" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.mainTitle" maxlength="9" name="mainTitle" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -353,7 +480,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">首页副标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.subtitle" name="subtitle" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.subtitle" maxlength="11" name="subtitle" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -364,7 +491,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" name="enterGuide" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" maxlength="8" name="enterGuide" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -375,7 +502,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销标题</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingTitle" name="marketingTitle" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingTitle" maxlength="16" name="marketingTitle" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -386,7 +513,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">营销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingCopywriter" name="marketingCopywriter" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingCopywriter" maxlength="28" name="marketingCopywriter" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -397,7 +524,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">促销文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionalCopy" name="promotionalCopy" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionalCopy" maxlength="15" name="promotionalCopy" required>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -456,13 +583,13 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享标题</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrlEdit.editModel.extModel.shareTitle">
+                                <input type="text" readonly="readonly" class="form-control" value="{{ctrlEdit.editModel.extModel.marketingTitle}}">
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">分享内容</label>
                             <div class="col-sm-10">
-                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrlEdit.editModel.extModel.shareContent">
+                                <input type="text" readonly="readonly" class="form-control" value="{{ctrlEdit.editModel.extModel.marketingCopywriter}}{{ctrlEdit.editModel.extModel.promotionalCopy}}">
                             </div>
                         </div>
                     </div>
@@ -475,7 +602,6 @@
                 <h4 class="panel-title">活动促销信息</h4>
             </div>
             <div class="panel-body">
-
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Gift</label>
                     <div class="col-sm-5">
@@ -492,7 +618,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isPromotionFullMinus"> 满减</label>
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isPromotionEachfullMinus"> 满减</label>
                             <div class="col-sm-1 text-right">
                                 每满
                             </div>
@@ -517,7 +643,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
     </form>
@@ -537,7 +662,7 @@
                 <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
             </li>
             <li>
-                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)">提交</button>
+                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)" ng-disabled="ctrlEdit.promotionForm.$invalid">提交</button>
             </li>
         </ul>
     </sticky>
