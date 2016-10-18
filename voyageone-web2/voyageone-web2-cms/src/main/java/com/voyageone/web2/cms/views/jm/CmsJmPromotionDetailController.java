@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -288,5 +289,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping("getPromotionTagModules")
     public AjaxResponse getPromotionTagModules(@RequestBody int jmPromotionId) {
         return success(jmPromotionService.getPromotionTagModules(jmPromotionId));
+    }
+
+    @RequestMapping("savePromotionTagModules")
+    public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
+        jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
+        return success(true);
     }
 }

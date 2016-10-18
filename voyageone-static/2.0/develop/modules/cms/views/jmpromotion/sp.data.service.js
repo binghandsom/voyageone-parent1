@@ -33,6 +33,15 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.saveModules = function (modules) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     SpDataService.prototype.initPromotionImages = function initPromotionImages(){
        var self = this,
            defer = self.$q.defer(),
