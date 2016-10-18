@@ -163,7 +163,7 @@ public class MyRealm extends AuthorizingRealm {
 	}
 	
 	/**
-	 * 清空所有缓存
+	 * 清空用户所有缓存
 	 */
 	public void clearCache(PrincipalCollection principals) {
 		super.clearCache(principals);
@@ -171,7 +171,7 @@ public class MyRealm extends AuthorizingRealm {
 
 
 	/**
-	 * 清空所有认证缓存
+	 * 清空所有缓存
 	 */
 	public void clearAllCache() {
 		clearAllCachedAuthenticationInfo();
