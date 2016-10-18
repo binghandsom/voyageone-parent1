@@ -137,7 +137,7 @@ public class CmsProductMoveService extends BaseViewService {
         }
         returnMap.put("sourceGroupId", moveSourceGroupId);
         returnMap.put("sourceGroupName", moveSourceGroupName);
-        returnMap.put("sourceGroupProductsNum", groupModel.getProductCodes().size());
+        returnMap.put("sourceGroupProductsNum", groupModel == null ? 0 : groupModel.getProductCodes().size());
         return returnMap;
     }
 
@@ -274,12 +274,14 @@ public class CmsProductMoveService extends BaseViewService {
             sourceCodeInfoMapAfter.put("deleted", true);
             sourceCodeListAfter.add(sourceCodeInfoMapAfter);
         } else {
-            for (String code : sourceGroupModel.getProductCodes()) {
-                // 去除当前移动的Code
-                if (!code.equals(productCode)) {
-                    Map<String, Object> sourceCodeInfoMapAfter = new HashMap<>();
-                    sourceCodeInfoMapAfter.put("code", code);
-                    sourceCodeListAfter.add(sourceCodeInfoMapAfter);
+            if (sourceGroupModel != null) {
+                for (String code : sourceGroupModel.getProductCodes()) {
+                    // 去除当前移动的Code
+                    if (!code.equals(productCode)) {
+                        Map<String, Object> sourceCodeInfoMapAfter = new HashMap<>();
+                        sourceCodeInfoMapAfter.put("code", code);
+                        sourceCodeListAfter.add(sourceCodeInfoMapAfter);
+                    }
                 }
             }
         }
@@ -515,16 +517,21 @@ public class CmsProductMoveService extends BaseViewService {
     /**
      * 移动Sku-根据Code检索产品信息
      */
-    public List<CmsBtProductModel> moveSkuSearch(Map<String, Object> params, String channelId, String lang) {
+    public Map<String, Object> moveSkuSearch(Map<String, Object> params, String channelId, String lang) {
+
+        Map<String, Object> returnMap = new HashMap<>();
 
         List<CmsBtProductModel> codeList = new ArrayList<>();
 
         // 检索的Code
         String searchCode = (String) params.get("searchCode");
+        // 源Code
+        String sourceCode = (String) params.get("sourceCode");
 
         // Code如果不输入，那么没有检索结果
         if (StringUtils.isEmpty(searchCode)) {
-            return codeList;
+            returnMap.put("codeList", codeList);
+            return returnMap;
         }
 
         // 根据输入的Code检索出对应的Product信息
@@ -534,9 +541,10 @@ public class CmsProductMoveService extends BaseViewService {
         }
 
         // 去除自己那条
-        codeList = codeList.stream().filter(codeModel->!codeModel.getCommon().getFields().getCode().equals(searchCode)).collect(Collectors.toList());
+        codeList = codeList.stream().filter(codeModel->!codeModel.getCommon().getFields().getCode().equals(sourceCode)).collect(Collectors.toList());
 
-        return codeList;
+        returnMap.put("codeList", codeList);
+        return returnMap;
     }
 
     /**

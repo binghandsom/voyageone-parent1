@@ -13,6 +13,9 @@ define([
             this.skuListView;
             this.includeJM;
             this.destGroupType = "new";
+            this.codeList = [];
+            this.refCode;
+            this.searchCode;
 
             this.show = false;
             this.popups = popups;
@@ -43,10 +46,41 @@ define([
                     self.includeJM = resp.data.includeJM;
                 });
             },
+
             search: function () {
                 var self = this;
-                console.log(self.type);
+                self.productDetailService.moveSkuSearch({
+                    searchCode: self.searchCode,
+                    sourceCode: self.sourceCode
+                }).then(function (resp) {
+                    self.codeList = resp.data.codeList;
+                    self.refCode = "";
+                });
             },
+
+            selRefCode: function (productInfo) {
+                var self = this;
+                self.refCode = productInfo.common.fields.code;
+            },
+
+            openImageDetail : function (item) {
+                var self = this;
+                if (item.common == undefined || item.common.fields == undefined) {
+                    return;
+                }
+                var picList = [];
+                for (var attr in item.common.fields) {
+                    if (attr.indexOf("images") >= 0) {
+                        var image = _.map(item.common.fields[attr], function (entity) {
+                            var imageKeyName = "image" + attr.substring(6, 7);
+                            return entity[imageKeyName] != null ? entity[imageKeyName] : "";
+                        });
+                        picList.push(image);
+                    }
+                }
+                self.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
+            },
+
             ifShow: function (item) {
                 var self = this;
                 switch (item.type) {

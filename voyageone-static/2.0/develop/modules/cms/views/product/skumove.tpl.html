@@ -86,7 +86,7 @@
                         <div class="form-group">
                             <label class="col-sm-1 control-label">{{'TXT_CODE' | translate}}</label>
                             <div class="col-sm-4">
-                                <input class="form-control">
+                                <input class="form-control" ng-model="ctrl.searchCode">
                             </div>
                             <button class="btn btn-vo" ng-click="ctrl.search()" title="Search"><i class="fa fa-search"></i></button>
                         </div>
@@ -94,36 +94,32 @@
                             <table class="table table-hover-new table-hover table_main m-t-sm">
                                 <thead>
                                 <tr>
-                                    <th class="text-left mfb-xt" style="padding: 4px 0 0 8px;">
-                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-                                            <input type="checkbox" ng-click="selectAll(vm.productSelList)"
-                                                   ng-checked="isAllSelected(vm.productSelList)">
-                                            <span class="fa fa-check" style="vertical-align: middle;"></span>{{'BTN_SELECT'|translate}}
-                                        </label>
-                                    </th>
+                                    <th class="text-left mfb-xt" translate="BTN_SELECT"></th>
                                     <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
                                     <th class="text-left mfb-xx" translate="TXT_PRODUCT_CODE"></th>
                                     <th class="text-left mfb-xxxs" translate="TXT_PRODUCT_NAME"></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr ng-repeat="productInfo in ctrl.codeList">
                                     <td class="control-label v-middle">
-                                        <label class="checkbox-inline c-checkbox v-middle" style="padding-top:4px">
-                                            <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
-                                                   ng-controller="selectRowsCtrl" style="margin-left: 0"
-                                                   ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+                                        <label class="radio-inline c-radio v-middle">
+                                            <input type="radio" name="selCode" value="{{productInfo.common.fields.code}}" ng-model="ctrl.refCode" ng-click="ctrl.selRefCode(productInfo.common.fields.code)" style="margin-left: 0;">
                                             <span class="fa fa-check v-middle"></span>
                                         </label>
                                     </td>
                                     <td class="text-center v-middle">
-                                        <a ng-click=""><img class="thumb-md" image=""></a>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(productInfo)"><img class="thumb-md" image="{{productInfo.common.fields.images1[0].image1}}"></a>
                                     </td>
                                     <td class="text-left v-middle">
-                                        51A0HC13E1-00LCNB0
+                                        <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank">
+                                            {{productInfo.common.fields.code}}</a>
                                     </td>
-                                    <td class="text-left v-middle">
-                                        Jewelry.com 镀925银紫水晶大气魅力女款手镯 欧美时尚饰品
+                                    <td class="text-left v-middle" ng-if="productInfo.common.fields.originalTitleCn != ''">
+                                        {{productInfo.common.fields.originalTitleCn}}
+                                    </td>
+                                    <td class="text-left v-middle" ng-if="productInfo.common.fields.originalTitleCn == ''">
+                                        {{productInfo.common.fields.productNameEn}}
                                     </td>
                                 </tr>
                                 </tbody>
