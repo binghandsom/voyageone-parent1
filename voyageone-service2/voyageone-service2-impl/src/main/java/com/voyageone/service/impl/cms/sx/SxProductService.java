@@ -40,10 +40,7 @@ import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.BusinessLogService;
-import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
-import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -103,6 +100,8 @@ public class SxProductService extends BaseService {
     private SizeChartService sizeChartService;
     @Autowired
     private ImageTemplateService imageTemplateService;
+    @Autowired
+    private TaobaoScItemService taobaoScItemService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -1780,12 +1779,26 @@ public class SxProductService extends BaseService {
      * 直接create一个Master的RuleExpression的方式去做
      */
     public String getProductValueByMasterMapping(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        // modified by morse.lu 2016/10/18 start
+//        RuleExpression rule = new RuleExpression();
+//        // modified by morse.lu 2016/07/13 start
+//        // 把field_id中的【.】替换成【->】
+////        MasterWord masterWord = new MasterWord(field.getId());
+//        MasterWord masterWord = new MasterWord(StringUtil.replaceDot(field.getId()));
+//        // modified by morse.lu 2016/07/13 end
+//        rule.addRuleWord(masterWord);
+//        return expressionParser.parse(rule, shopBean, user, null);
+        return getProductValueByMasterMapping(StringUtil.replaceDot(field.getId()), shopBean, expressionParser, user);
+        // modified by morse.lu 2016/10/18 end
+    }
+
+    /**
+     * 取product表platform下fields里的数据
+     * 直接create一个Master的RuleExpression的方式去做
+     */
+    public String getProductValueByMasterMapping(String field_id, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         RuleExpression rule = new RuleExpression();
-        // modified by morse.lu 2016/07/13 start
-        // 把field_id中的【.】替换成【->】
-//        MasterWord masterWord = new MasterWord(field.getId());
-        MasterWord masterWord = new MasterWord(StringUtil.replaceDot(field.getId()));
-        // modified by morse.lu 2016/07/13 end
+        MasterWord masterWord = new MasterWord(field_id);
         rule.addRuleWord(masterWord);
         return expressionParser.parse(rule, shopBean, user, null);
     }
@@ -2318,15 +2331,38 @@ public class SxProductService extends BaseService {
                         throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
                     }
 
+                    boolean hasSku = false;
+                    for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
+                        if (customMappingIter == CustomMappingType.SKU_INFO) {
+                            hasSku = true;
+                            break;
+                        }
+                    }
+                    if (hasSku) {
+                        $info("已经有sku属性，忽略外部货品id");
+                        continue;
+                    }
+
                     Field field = processFields.get(0);
                     if (field.getType() != FieldTypeEnum.INPUT) {
                         $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
                     } else {
                         InputField inputField = (InputField) field;
-                        String value = inputField.getDefaultValue();
-                        if (!StringUtils.isEmpty(value)) {
-                            inputField.setValue(value);
-                        }
+                        // modified by morse.lu 2016/10/17 start
+//                        String value = inputField.getDefaultValue();
+//                        if (!StringUtils.isEmpty(value)) {
+//                            inputField.setValue(value);
+//                        }
+                        // 外部填写的时候，只有一个code，一个sku，这个check在商品外部编码(outer_id)的逻辑里有了，这里就不再做了
+                        String skuCode = mainSxProduct.getCommon().getSkus().get(0).getSkuCode();
+                        String scProductId = updateTmScProductId(shopBean,
+                                            skuCode,
+                                            getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                            skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
+                        );
+                        inputField.setValue(scProductId);
+                        // modified by morse.lu 2016/10/17 end
+
                         retMap.put(field.getId(), inputField);
                     }
 
@@ -2693,6 +2729,27 @@ public class SxProductService extends BaseService {
             String errMsg = "是达尔文体系，上新逻辑未做成!";
             $error(errMsg);
             throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 更新天猫货品id(关联商品)
+     */
+    public String updateTmScProductId(ShopBean shopBean, String skuCode, String title, String qty) {
+        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean))) {
+            // 不要关联商品
+            return null;
+        }
+        try {
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
+            if (StringUtils.isEmpty(scProductId)) {
+                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
+            }
+            return scProductId;
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception e) {
+            throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生异常!skuCode:%s" + e.getMessage(), skuCode));
         }
     }
 

@@ -122,6 +122,9 @@ public class CmsConstants {
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
+        // 全链路库存管理相关
+        String SCITEM = "SCITEM"; // 后端货品 (val1: 是否使用了全链路库存管理, val2: 商家仓库编码)
+
         // 别名相关
         String ALIAS = "ALIAS";
         String COLOR_ALIAS = ".color_alias";
