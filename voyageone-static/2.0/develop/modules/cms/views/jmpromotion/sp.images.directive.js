@@ -3,9 +3,14 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
+    var ImgTabConfig = {
+      rootPath : 'http://image.sneakerhead.com/is/image/sneakerhead/'
+    };
+
     function SpImagesDirectiveController(spDataService, popups) {
         this.spDataService = spDataService;
         this.popups = popups;
+        this.imgUpEntity = {};
     }
 
     SpImagesDirectiveController.prototype.init = function () {
@@ -25,13 +30,15 @@ define([
     SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
             spDataService = self.spDataService,
+            imgUpEntity = self.imgUpEntity,
             popups = self.popups;
 
         popups.openImageJmUpload({
             promotionId: +spDataService.jmPromotionId,
             imageName: imageName
         }).then(function(res){
-            console.log("res",res);
+            imgUpEntity[imageName] = ImgTabConfig.rootPath + res.imageName;
+            console.log(imgUpEntity[imageName]);
         });
     };
 

@@ -8,17 +8,17 @@ import java.util.List;
  * Created by james on 2016/10/18.
  */
 public class CmsBtJmImageTemplateModel extends BaseMongoModel {
-    private Integer imageId;
+    private String imageType;
     private String name;
     private List<String> templateUrls;
     private List<String> parameters;
 
-    public Integer getImageId() {
-        return imageId;
+    public String getImageType() {
+        return imageType;
     }
 
-    public void setImageId(Integer imageId) {
-        this.imageId = imageId;
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
     }
 
     public String getName() {
