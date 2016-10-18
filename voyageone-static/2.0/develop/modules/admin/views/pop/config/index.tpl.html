@@ -88,7 +88,7 @@
                         <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length < 1"><i class="fa fa-trash"></i>&nbsp;删除</button>
                     </div>
                 </div>
-                <table class="table table-responsive table-hover-new table-hover table_main">
+                <table class="table table-responsive table-hover-new table-hover table_main table_fixed">
                     <thead>
                         <tr>
                             <th class="text-left mfb-xt">
@@ -123,26 +123,22 @@
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.channelName}}</td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType=='Shop'">{{list.cartName}}</td>
                         <td class="text-left v-middle" ng-if="ctrl.searchInfo.configType!=='Shop'">{{list.channelName||list.storeName||list.taskId}}</td>
-                        <td class="text-left v-middle tooltips">
-                            <label class="v-middle" ng-if="list.cfgName.length <= 15">{{list.cfgName}}</label>
-                            <label class="v-middle" ng-if="list.cfgName.length > 15" uib-tooltip="{{list.cfgName}}"
-                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgName | stringCutter:true:15:' ...'}}</label>
-                        </td>
-                        <td class="text-left v-middle tooltips" style="overflow: auto;max-width: 116px;">
-                            <label class="v-middle" ng-if="list.cfgVal1.length <= 15">{{list.cfgVal1}}</label>
-                            <label class="v-middle" ng-if="list.cfgVal1.length > 15" uib-tooltip="{{list.cfgVal1}}"
-                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgVal1 | stringCutter:true:15:' ...'}}</label>
-                        </td>
-                        <td class="text-left v-middle tooltips" style="overflow: auto;max-width: 116px;">
-                            <label class="v-middle" ng-if="list.cfgVal2.length <= 15">{{list.cfgVal2}}</label>
-                            <label class="v-middle" ng-if="list.cfgVal2.length > 15" uib-tooltip="{{list.cfgVal2}}"
-                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.cfgVal2 | stringCutter:true:15:' ...'}}</label>
-                        </td>
-                        <td class="text-center v-middle tooltips" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-left v-middle">
-                            <label class="v-middle" ng-if="list.comment.length <= 10">{{list.comment}}</label>
-                            <label class="v-middle" ng-if="list.comment.length > 10" uib-tooltip="{{list.comment}}"
-                                   tooltip-trigger="mouseenter" tooltip-placement="top">{{list.comment | stringCutter:true:10:' ...'}}</label>
+                            <label ng-if="list.cfgName.length <= 10">{{list.cfgName}}</label>
+                            <label ng-if="list.cfgName.length > 10"><popover-text content="list.cfgName" direct="top" popover-trigger="mouseenter"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.cfgVal1.length <= 10">{{list.cfgVal1}}</label>
+                            <label ng-if="list.cfgVal1.length > 10"><popover-text content="list.cfgVal1" direct="top" popover-trigger="mouseenter"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.cfgVal2.length <= 10">{{list.cfgVal2}}</label>
+                            <label ng-if="list.cfgVal2.length > 10"><popover-text content="list.cfgVal2" direct="top" popover-trigger="mouseenter"></popover-text></label>
+                        </td>
+                        <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.comment.length <= 10">{{list.comment}}</label>
+                            <label ng-if="list.comment.length > 10"><popover-text content="list.comment" direct="top" popover-trigger="mouseenter"></popover-text></label>
                         </td>
                     </tr>
                     </tbody>
