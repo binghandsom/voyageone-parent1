@@ -59,8 +59,6 @@ public class CmsJmMallPriceReductionService extends BaseTaskService {
             es.shutdown();
             es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         }
-
-
     }
 
     private void mallPriceReduction(Integer jmPid) {
