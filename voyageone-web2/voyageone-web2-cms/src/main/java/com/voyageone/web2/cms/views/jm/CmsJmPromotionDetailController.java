@@ -274,6 +274,15 @@ public class CmsJmPromotionDetailController extends CmsController {
         int count = service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
         return success(count);
     }
+
+
+    //刷新参考价格
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
+    public  AjaxResponse refreshPrice(@RequestBody long cmsBtJmPromotionId) {
+
+        // // TODO: 2016/10/18  加入 发消息  李俊提供
+        return success(null);
+    }
     //jm2 end
 
     @RequestMapping("getPromotionTagModules")
