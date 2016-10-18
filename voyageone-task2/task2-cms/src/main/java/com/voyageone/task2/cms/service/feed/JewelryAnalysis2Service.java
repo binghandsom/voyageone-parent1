@@ -409,36 +409,36 @@ public class JewelryAnalysis2Service extends BaseAnalysisService {
         $info("异常数据清除开始");
 
 
-        // 取得category异常数据
-        List<String> err_categorylist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql2));
-
-        // 异常数据-邮件提示
-        String err_data_maill = "category异常:";
-        // 删除异常数据
-        String err_data = "";
-        for (String anErr_categorylist : err_categorylist) {
-            err_data = err_data + " '" + anErr_categorylist + "',";
-        }
-        err_data_maill = err_data_maill + err_data;
-        // 存在异常数据
-        if (err_data.length() > 0) {
-//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
-
-            // 去掉最后一个“，”
-            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
-
-            if (superfeeddao.deleteErrData(table, err_data) <= 0) {
-                //异常数据清除失败
-                $info("异常数据清除失败");
-                logIssue("cms 数据导入处理", "异常数据清除失败");
-                isSuccess = false;
-            }
-        }
+//        // 取得category异常数据
+//        List<String> err_categorylist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql2));
+//
+//        // 异常数据-邮件提示
+//        String err_data_maill = "category异常:";
+//        // 删除异常数据
+//        String err_data = "";
+//        for (String anErr_categorylist : err_categorylist) {
+//            err_data = err_data + " '" + anErr_categorylist + "',";
+//        }
+//        err_data_maill = err_data_maill + err_data;
+//        // 存在异常数据
+//        if (err_data.length() > 0) {
+////            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//
+//            // 去掉最后一个“，”
+//            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+//
+//            if (superfeeddao.deleteErrData(table, err_data) <= 0) {
+//                //异常数据清除失败
+//                $info("异常数据清除失败");
+//                logIssue("cms 数据导入处理", "异常数据清除失败");
+//                isSuccess = false;
+//            }
+//        }
 
         // 取得model异常数据
         List<String> err_modellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_model_sql2));
-        err_data_maill = "model异常:";
-        err_data = "";
+        String err_data_maill = "model异常:";
+        String err_data = "";
         for (String anErr_modellist : err_modellist) {
             err_data = err_data + " '" + anErr_modellist + "',";
         }
