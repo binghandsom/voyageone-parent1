@@ -1,0 +1,39 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h4 class="modal-title">
+            <i class="fa fa-pencil-square-o"></i>&nbsp;
+            <span class="ng-scope">聚美图片上传</span>
+        </h4>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="panel panel-info">
+            <div class="panel-heading"><i class="fa fa-camera-retro"></i></div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <a href="javascript:void(0)" class="thumbnail" ng-if="ctrl.uploader.queue.length">
+                            <img  flow-img="file" class="img-thumbnail img-thumbnails center-block fix-img" ng-thumb="{ file: ctrl.uploader.queue[0]._file, height: 100 }">{{item}}
+                        </a>
+
+                    </div>
+                    <div class="col-md-3 col-md-offset-1">
+                        <div class="text-right">
+                            <input type="file" file-style = "{buttonText:' &nbsp;浏览文件',input:false}" nv-file-select uploader="ctrl.uploader" accept="image/png,image/jpeg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length > 10 || ctrl.uploader.queue.length == 0">
+            <i class="fa fa-check"></i>&nbsp;
+            上传
+        </button>
+    </div>
+</div>

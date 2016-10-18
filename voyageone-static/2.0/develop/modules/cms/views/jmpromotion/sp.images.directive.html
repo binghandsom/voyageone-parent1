@@ -1,4 +1,4 @@
-<section ng-init="ctrl.init()" style="position: relative">
+<section ng-init="ctrlImages.init()" style="position: relative">
     <form role="form" class="form-horizontal" novalidate>
         <div id="jm-sp-images-base" class="panel panel-vo">
             <div class="panel-heading">
@@ -11,7 +11,7 @@
                         <input type="text" class="form-control">
                     </div>
                     <div class="col-sm-1">
-                        <button class="btn btn-default" ng-click="ctrl.popImageSuit()">选择套图</button>
+                        <button class="btn btn-default" ng-click="ctrlImages.popImageSuit()">选择套图</button>
                     </div>
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
@@ -47,7 +47,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-default">上传图片</button>
+                                <button class="btn btn-default" ng-click="ctrlImages.popImageJmUpload('test1')">上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -474,13 +474,13 @@
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.save()">暂存</button>
+                <button type="button" class="btn btn-success" ng-click="ctrlImages.save()">暂存</button>
             </li>
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.save()">发布任务</button>
+                <button type="button" class="btn btn-success" ng-click="ctrlImages.save()">发布任务</button>
             </li>
             <li>
-                <button type="button" class="btn btn-primary" ng-click="ctrl.save()">提交</button>
+                <button type="button" class="btn btn-primary" ng-click="ctrlImages.save()">提交</button>
             </li>
         </ul>
     </sticky>

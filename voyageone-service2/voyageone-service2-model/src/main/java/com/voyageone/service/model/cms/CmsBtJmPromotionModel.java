@@ -57,11 +57,6 @@ public class CmsBtJmPromotionModel extends BaseModel {
     protected Date prePeriodStart;
 
     /**
-     * 报名截止日期
-     */
-    protected Date signupDeadline;
-
-    /**
      * 预热结束时间
      */
     protected Date prePeriodEnd;
@@ -86,11 +81,15 @@ public class CmsBtJmPromotionModel extends BaseModel {
     protected Integer recoveryStatus;
 
     /**
+     * 活动场景,因为可以多选,逗号分割
+     */
+    protected String promotionScene;
+
+    /**
      * 活动类型 0:日常专场 1:导购团 2:大促 3长期场馆
      */
     protected Integer promotionType;
 
-    protected String promotionScene;
     /**
      * 是否直降
      */
@@ -115,6 +114,16 @@ public class CmsBtJmPromotionModel extends BaseModel {
      * 是否赠送优惠卷
      */
     protected Boolean isPromotionGiveCoupons;
+
+    /**
+     * 准备期截止时间
+     */
+    protected Date signupDeadline;
+
+    /**
+     * 有库存商品数
+     */
+    protected Integer prodSum;
 
     public String getChannelId() {
         return channelId;
@@ -244,6 +253,14 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.recoveryStatus = recoveryStatus;
     }
 
+    public String getPromotionScene() {
+        return promotionScene;
+    }
+
+    public void setPromotionScene(String promotionScene) {
+        this.promotionScene = promotionScene == null ? null : promotionScene.trim();
+    }
+
     public Integer getPromotionType() {
         return promotionType;
     }
@@ -300,11 +317,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.signupDeadline = signupDeadline;
     }
 
-    public String getPromotionScene() {
-        return promotionScene;
+    public Integer getProdSum() {
+        return prodSum;
     }
 
-    public void setPromotionScene(String promotionScene) {
-        this.promotionScene = promotionScene;
+    public void setProdSum(Integer prodSum) {
+        this.prodSum = prodSum;
     }
 }

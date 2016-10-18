@@ -86,6 +86,11 @@ public interface CmsUrlConstants {
                 String SelectChangeCountByPromotionId = "selectChangeCountByPromotionId";
             }
         }
+
+        interface Images{
+            String ROOT = "/cms/jmpromotion/images";
+            String INIT = "init";
+        }
     }
 
     interface CmsBtJmPromotionImportTask {
@@ -510,6 +515,13 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/add_to_channel_category";
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
+        }
+
+        interface JM_IMAGE_UPLOAD{
+
+            String ROOT = "/cms/pop/jmPromotion/";
+
+            String UPLOAD = "upload";
         }
     }
 
