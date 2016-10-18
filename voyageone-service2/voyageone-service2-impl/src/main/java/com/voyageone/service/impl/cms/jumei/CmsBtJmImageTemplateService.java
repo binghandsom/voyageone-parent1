@@ -46,14 +46,31 @@ public class CmsBtJmImageTemplateService {
         return cmsBtJmImageTemplateDao.insert(cmsBtJmImageTemplateModel);
     }
 
+    /**
+     * 根据jmPromotionId 和图片类型 返回 带模板的url地址
+     * @param imageName 底图的文件名
+     * @param imageType 图片类型
+     * @param jmPromotionId 活动Id
+     * @return
+     */
     public String getUrl(String imageName,String imageType,Integer jmPromotionId){
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
         return getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
     }
 
+    /**
+     * 根据jmPromotionId 和图片类型 返回 带模板的url地址
+     * @param imageName
+     * @param imageType
+     * @param cmsBtJmPromotionSaveBean
+     * @return
+     */
     public String getUrl(String imageName,String imageType,CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean){
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
-        String paramString = "\""+imageName+"\"," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
+        String paramString = "\""+imageName+"\"";
+        if(cmsBtJmImageTemplateModel.getParameters() != null && cmsBtJmImageTemplateModel.getParameters().size() > 0){
+            paramString += "," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
+        }
         ExpressionParser parser = new SpelExpressionParser();
 
         Expression expression = parser.parseExpression("new Object[]{"+ paramString +"}");
