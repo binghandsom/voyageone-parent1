@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtJmProductDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmProductModel" />
     <sql id="Base_Column_List" >
-        `id`, `channel_id`, `jumei_product_id`, `origin_jm_hash_id`, `product_code`, `origin`, 
+        `id`, `channel_id`, `jumei_product_id`, `origin_jm_hash_id`, `product_code`, `jumei_mall_id`, `origin`,
         `product_name_cn`, `vo_category_name`, `vo_brand_name`, `brand_name`, `product_type`, 
         `size_type`, `product_des_en`, `attribute`, `foreign_language_name`, `address_of_produce`, 
         `available_period`, `product_des_cn`, `applicable_crowd`, `specialNote`, `color_en`, 
@@ -34,6 +34,9 @@
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="jumeiMallId != null" >
+                `jumei_mall_id` = #{jumeiMallId,jdbcType=VARCHAR},
             </if>
             <if test="origin != null" >
                 `origin` = #{origin,jdbcType=VARCHAR},
@@ -172,6 +175,9 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
+            <if test="jumeiMallId != null" >
+                and `jumei_mall_id` = #{jumeiMallId,jdbcType=VARCHAR}
+            </if>
             <if test="origin != null" >
                 and `origin` = #{origin,jdbcType=VARCHAR}
             </if>
@@ -301,6 +307,9 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
+            <if test="jumeiMallId != null" >
+                and `jumei_mall_id` = #{jumeiMallId,jdbcType=VARCHAR}
+            </if>
             <if test="origin != null" >
                 and `origin` = #{origin,jdbcType=VARCHAR}
             </if>
@@ -426,6 +435,9 @@
             </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="jumeiMallId != null" >
+                and `jumei_mall_id` = #{jumeiMallId,jdbcType=VARCHAR}
             </if>
             <if test="origin != null" >
                 and `origin` = #{origin,jdbcType=VARCHAR}
@@ -553,6 +565,9 @@
             <if test="productCode != null" >
                 `product_code`,
             </if>
+            <if test="jumeiMallId != null" >
+                `jumei_mall_id`,
+            </if>
             <if test="origin != null" >
                 `origin`,
             </if>
@@ -673,6 +688,9 @@
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="jumeiMallId != null" >
+                #{jumeiMallId,jdbcType=VARCHAR},
             </if>
             <if test="origin != null" >
                 #{origin,jdbcType=VARCHAR},
