@@ -89,5 +89,14 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.getPromotionProducts = function (tagId) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.getPromotionProducts(tagId).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     cms.service('spDataService', SpDataService);
 });

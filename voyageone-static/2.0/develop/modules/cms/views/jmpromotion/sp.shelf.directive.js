@@ -15,11 +15,11 @@ define([
         '填写顺序': 2
     };
 
-    SpModelDirectiveController.prototype.openProductSortPopup = function () {
+    SpModelDirectiveController.prototype.openProductSortPopup = function (tagId) {
         var self = this,
             popups = self.popups;
 
-        popups.popSortProduct();
+        popups.popSortProduct({tagId: tagId});
     };
 
     SpModelDirectiveController.prototype.loadModules = function () {
