@@ -139,18 +139,10 @@ define([
             _upEntity.model.prePeriodEnd =_upEntity.model.activityEnd; //formatToStr(_upEntity.model.prePeriodEnd);
             _upEntity.model.signupDeadline = formatToStr(_upEntity.model.signupDeadline);
             _upEntity.model.comment = _upEntity.model.comment || "";
+
             // 转换活动场景的值
-            if (_upEntity.model.promotionScene_1) {
-                if (_upEntity.model.promotionScene_2) {
-                    _upEntity.model.promotionScene = '1,2';
-                } else {
-                    _upEntity.model.promotionScene = '1';
-                }
-            } else {
-                if (_upEntity.model.promotionScene_2) {
-                    _upEntity.model.promotionScene = '2';
-                }
-            }
+            _upEntity.model.promotionScene = JSON.stringify(_returnKey (_upEntity.model.promotionScene));
+            _upEntity.model.promotionScene = _upEntity.model.promotionScene.substr(1, _upEntity.model.promotionScene.length - 2);
 
             jmPromotionService.saveModel(_upEntity).then(function () {
                 context = $scope.editModel.model;
@@ -174,6 +166,19 @@ define([
 
         function formatToStr(date){
             return $filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+        }
+
+        /**
+         * 如果checkbox被选中,返回被选中的value.
+         * eg.[{new: true, pending: false, approved: true}] -> [new, approved]
+         * @param object
+         * @returns {*}
+         */
+        function _returnKey(object) {
+            return _.chain(object)
+                .map(function(value, key) { return value ? key : null;})
+                .filter(function(value) { return value;})
+                .value();
         }
     });
 });
