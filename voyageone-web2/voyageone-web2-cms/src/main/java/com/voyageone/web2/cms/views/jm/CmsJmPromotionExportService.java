@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.jm;
 
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExcelUtils;
@@ -22,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +86,11 @@ public class CmsJmPromotionExportService extends BaseViewService {
         CmsBtJmBayWindowModel cmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
         if(cmsBtJmBayWindowModel != null) {
             Sheet sheet = book.getSheetAt(2);
-            Row styleRow = FileUtils.row(sheet, 2);
-            CellStyle unlock = styleRow.getRowStyle();
+            XSSFCellStyle unlock = (XSSFCellStyle) book.createCellStyle();
+            unlock.setBorderBottom(CellStyle.BORDER_THIN);
+            unlock.setBorderTop(CellStyle.BORDER_THIN);
+            unlock.setBorderLeft(CellStyle.BORDER_THIN);
+            unlock.setBorderRight(CellStyle.BORDER_THIN);
             int rowIndex = 2;
             cmsBtJmBayWindowModel.getBayWindows().sort((o1, o2) -> o1.getOrder() > o2.getOrder() ? 1 : -1);
             int i = 1;
@@ -95,6 +100,9 @@ public class CmsJmPromotionExportService extends BaseViewService {
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 2, bayWindow.getName(), unlock);
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 3, bayWindow.getLink(), unlock);
             }
+
+            String[] a= {"a","b"};
+            String.format("aa%s",a);
 
         }
     }

@@ -1,0 +1,72 @@
+package com.voyageone.service.impl.cms.jumei;
+
+import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtJmImageTemplateDao;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Created by james on 2016/10/18.
+ */
+@Service
+public class CmsBtJmImageTemplateService {
+
+    @Autowired
+    private CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao;
+    @Autowired
+    private CmsBtJmPromotionService cmsBtJmPromotionService;
+
+
+    public CmsBtJmImageTemplateModel getJMImageTemplateByName(String name){
+        JongoQuery queryObject = new JongoQuery();
+        Criteria criteria = Criteria.where("name").is(name);
+        queryObject.setQuery(criteria);
+        return cmsBtJmImageTemplateDao.selectOneWithQuery(queryObject);
+    }
+    public List<CmsBtJmImageTemplateModel> getAllJMImageTemplate(){
+        return cmsBtJmImageTemplateDao.selectAll();
+    }
+
+    public WriteResult insert(CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel){
+        return cmsBtJmImageTemplateDao.insert(cmsBtJmImageTemplateModel);
+    }
+
+    public String getUrl(String imageName,String name,Integer jmPromotionId){
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
+        CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByName(name);
+        String paramString = "\""+imageName+"\"," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression("new Object[]{"+ paramString +"}");
+
+        StandardEvaluationContext context = new StandardEvaluationContext(cmsBtJmPromotionSaveBean);
+
+        try {
+            Object[] paramsObject = expression.getValue(context, Object[].class);
+            for(int i=0;i<paramsObject.length;i++){
+                if(paramsObject[i] instanceof Date){
+                    paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i],"M.d");
+                }
+            }
+            return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0),paramsObject);
+        } catch (SpelEvaluationException sp) {
+
+        }
+        return null;
+    }
+}
