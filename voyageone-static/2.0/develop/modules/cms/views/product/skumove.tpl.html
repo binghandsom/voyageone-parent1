@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -12,7 +12,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_TYPE_OF_OPERATION"></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" readonly>
+                                        <input type="text" class="form-control" value="{{'TXT_MOVE_SKU_TO_NEW_CODE'|translate}}" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -22,7 +22,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label" translate="TXT_MOVED_SKU"></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" readonly>
+                                        <input type="text" class="form-control" ng-model="ctrl.skuListView" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -32,7 +32,7 @@
                                 <div class="form-group form-inline">
                                     <label class="col-sm-3 control-label" translate="TXT_MOVED_SOURCE_CODE"></label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" readonly>
+                                        <input type="text" class="form-control" ng-model="ctrl.sourceCode" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -60,10 +60,10 @@
                         <div class="m-t-lg">
                             <label class="radio-inline c-radio">
                                 <input type="radio" name="type" value="0" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_NEW_GROUP'|translate}}
-                            </label>
+                            </label><br>
                             <label class="radio-inline c-radio">
                                 <input type="radio" name="type" value="1" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_UNDER_OLD_GROUP'|translate}}
-                            </label>
+                            </label><br>
                             <label class="radio-inline c-radio" style="margin-left: 2px;">
                                 <input type="radio" name="type" value="2" ng-model="ctrl.type" ng-change="ctrl.ifShow({type:'selectGroup',value:ctrl.type})"><span class="fa fa-check"></span> {{'TXT_NEW_CODE_CHOOSED_GROUP'|translate}}
                             </label>

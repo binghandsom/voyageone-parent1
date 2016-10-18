@@ -7,6 +7,10 @@ define([
 ], function (cms) {
     cms.controller('SkuMoveController', (function () {
         function SkuMoveController(popups) {
+            this.sourceCode;
+            this.skuList = [];
+            this.skuListView;
+
             this.show = false;
             this.popups = popups;
             this.showView = false;
@@ -15,6 +19,16 @@ define([
         SkuMoveController.prototype = {
             init: function () {
                 var self = this;
+                var moveSkuInfo = JSON.parse(window.sessionStorage.getItem('moveSkuInfo'));
+                if (moveSkuInfo) {
+                    self.sourceCode = moveSkuInfo.sourceCode;
+                    _.each(moveSkuInfo.skuList, function (sku) {
+                        if(sku.isChecked) {
+                            self.skuList.push(sku.skuCode);
+                        }
+                    });
+                    self.skuListView = self.skuList.join(', ');
+                }
             },
             search: function () {
                 var self = this;

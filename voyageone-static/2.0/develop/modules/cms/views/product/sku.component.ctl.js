@@ -5,7 +5,7 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    cms.directive("skuSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm, selectRowsFactory) {
+    cms.directive("skuSchema", function (productDetailService, $translate, alert, notify, confirm) {
         return {
             restrict: "E",
             templateUrl: "views/product/sku.component.tpl.html",
@@ -31,15 +31,19 @@ define([
                  * */
                 function moveSku() {
                     confirm($translate.instant('TXT_CONFIRM_MOVE_CODE')).then(function () {
-                        var moveSkuInfo = {
+                        productDetailService.moveSkuInitCheck({
                             skuList: scope.skuList,
                             sourceCode : scope.productInfo.masterField.code
-                        };
-                        window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
-                        window.open("#/product/sku_move","_blank");
+                        }).then(function (resp) {
+                            var moveSkuInfo = {
+                                skuList: scope.skuList,
+                                sourceCode : scope.productInfo.masterField.code
+                            };
+                            window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
+                            window.open("#/product/sku_move","_blank");
+                        });
                     });
                 }
-
             }
         };
     });

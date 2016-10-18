@@ -834,6 +834,7 @@ define(function () {
         "TXT_MOVE_TO_NEW_GROUP": "移动到新的Group",
         "TXT_MOVE_TO_SELECTED_GROUP": "移动到下面选择的Group",
         "TXT_MOVE_CODE_TO_OTHER_GROUP": "Code移动到其他Group",
+        "TXT_MOVE_SKU_TO_NEW_CODE": "Sku移动到新Code",
         "TXT_NEW_CODE_UNDER_NEW_GROUP": "新Group下新建Code",
         "TXT_NEW_CODE_UNDER_OLD_GROUP": "原Group下新建Code (聚美平台因为1个Group下只能存在一个Code,所以还是新Group)",
         "TXT_NEW_CODE_CHOOSED_GROUP": "下面选择的Code对应的Group下新建Code(聚美平台因为1个Group下只能存在一个Code,所以还是新Group)",

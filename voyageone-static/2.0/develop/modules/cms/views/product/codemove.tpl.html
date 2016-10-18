@@ -125,7 +125,8 @@
                                         {{group.mainProductInfo.common.fields.originalTitleCn}}</a>
                                     </td>
                                     <td class="text-left v-middle" ng-if="group.mainProductInfo.common.fields.originalTitleCn == ''">
-                                        {{group.mainProductInfo.common.fields.productNameEn}}
+                                        <a ng-href="#/product/detail/{{group.mainProductInfo.prodId}}" target="_blank">
+                                        {{group.mainProductInfo.common.fields.productNameEn}}</a>
                                     </td>
                                     <td class="text-left v-middle">
                                         <a ng-href="{{ctrl.productUrl}}{{group.groupInfo.numIId}}{{ctrl.cartId=='27'?'.html':''}}" target="_blank">
