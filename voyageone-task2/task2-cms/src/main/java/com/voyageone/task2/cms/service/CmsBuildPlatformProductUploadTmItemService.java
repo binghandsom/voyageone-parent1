@@ -61,29 +61,32 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         // added by morse.lu 2016/07/14 end
 
         String itemSchema = cmsMtPlatformCategorySchemaModel.getPropsItem();
+        // deleted by morse.lu 2016/10/16 start
+        // 这段又不需要了- -！ 因为允许改类目了
         // added by morse.lu 2016/08/16 start
-        if (!StringUtils.isEmpty(numIId)) {
-            // 更新的话，实时去取
-            // 获取更新商品的规则的schema
-            String errMsg = String.format("更新商品schema取得失败!商品编号[%s]", numIId);
-            try {
-                TmallItemUpdateSchemaGetResponse updateItemResponse = tbProductService.doGetWareInfoItem(numIId, shopBean);
-                if (updateItemResponse.getErrorCode() != null) {
-                    logger.error(updateItemResponse.getSubMsg());
-                    sxData.setErrorMessage(updateItemResponse.getSubMsg());
-                    throw new BusinessException(updateItemResponse.getSubMsg());
-                }
-                itemSchema = updateItemResponse.getUpdateItemResult();
-                if (StringUtils.isEmpty(itemSchema)) {
-                    sxData.setErrorMessage(errMsg);
-                    throw new BusinessException(errMsg);
-                }
-            } catch (ApiException e) {
-                sxData.setErrorMessage(e.getMessage());
-                throw new BusinessException(e.getMessage());
-            }
-        }
+//        if (!StringUtils.isEmpty(numIId)) {
+//            // 更新的话，实时去取
+//            // 获取更新商品的规则的schema
+//            String errMsg = String.format("更新商品schema取得失败!商品编号[%s]", numIId);
+//            try {
+//                TmallItemUpdateSchemaGetResponse updateItemResponse = tbProductService.doGetWareInfoItem(numIId, shopBean);
+//                if (updateItemResponse.getErrorCode() != null) {
+//                    logger.error(updateItemResponse.getSubMsg());
+//                    sxData.setErrorMessage(updateItemResponse.getSubMsg());
+//                    throw new BusinessException(updateItemResponse.getSubMsg());
+//                }
+//                itemSchema = updateItemResponse.getUpdateItemResult();
+//                if (StringUtils.isEmpty(itemSchema)) {
+//                    sxData.setErrorMessage(errMsg);
+//                    throw new BusinessException(errMsg);
+//                }
+//            } catch (ApiException e) {
+//                sxData.setErrorMessage(e.getMessage());
+//                throw new BusinessException(e.getMessage());
+//            }
+//        }
         // added by morse.lu 2016/08/16 end
+        // deleted by morse.lu 2016/10/16 end
         $debug("itemSchema:" + itemSchema);
 
         List<Field> fields;
