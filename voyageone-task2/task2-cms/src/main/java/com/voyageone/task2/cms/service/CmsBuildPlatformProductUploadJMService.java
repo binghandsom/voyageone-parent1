@@ -1686,10 +1686,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                             stock = 0;
                         }
 
+                        // delete desmond 2016/10/18 改为库存为0的时候也把这个SKU上传到商城
                         // 聚美mall sku 不能追加库存为0的sku, 所以如果库存为0的场合, 跳过不追加
-                        if (stock == 0) {
-                        	continue;
-						}
+//                        if (stock == 0) {
+//                        	continue;
+//						}
 
                         skuInfo.setStocks(stock);
                         skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
