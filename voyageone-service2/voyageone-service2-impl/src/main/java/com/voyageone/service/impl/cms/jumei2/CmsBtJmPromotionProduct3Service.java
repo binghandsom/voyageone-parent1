@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by dell on 2016/3/18.
  */
@@ -384,6 +386,23 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     public int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId) {
         return daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    }
+
+    public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+
+        parameter.setCmsBtTagId(tagId);
+
+        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
+
+        if (jmPromotionTagProductModelList.isEmpty())
+            return new ArrayList<>(0);
+
+        return jmPromotionTagProductModelList
+                .stream()
+                .map(CmsBtJmPromotionTagProductModel::getCmsBtJmPromotionProductId)
+                .map(productId -> dao.select(productId))
+                .collect(toList());
     }
 }
 

@@ -37,7 +37,7 @@ import java.util.Map;
 public class CmsJmPromotionDetailController extends CmsController {
     private final CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
     private final CmsBtJmProductService cmsBtJmProductService;
-    private final CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
+    private final CmsBtJmPromotionProductService jmPromotionProductService;
     private final CmsBtJmSkuService cmsBtJmSkuService;
     private final CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
     private final CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
@@ -63,7 +63,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
         this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
         this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
-        this.cmsBtJmPromotionProductService = cmsBtJmPromotionProductService;
+        this.jmPromotionProductService = cmsBtJmPromotionProductService;
         this.service3 = service3;
         this.cmsBtJmProductService = cmsBtJmProductService;
         this.cmsBtJmMasterBrandService = cmsBtJmMasterBrandService;
@@ -295,5 +295,10 @@ public class CmsJmPromotionDetailController extends CmsController {
     public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
         jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
         return success(true);
+    }
+
+    @RequestMapping("getPromotionProducts")
+    public AjaxResponse getPromotionProducts(@RequestBody int jmPromotionId) {
+        return success(service3.getPromotionTagProductList(jmPromotionId));
     }
 }
