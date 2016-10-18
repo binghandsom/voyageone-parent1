@@ -38,8 +38,9 @@ public class MenuService extends BaseViewService {
 
 
         // 获取menu列表.
-        List<Map<String, Object>> menuList = this.getApplicationList(userId, channelId);
-        resultbean.put("applicationList", menuList);
+//        List<Map<String, Object>> menuList = this.getApplicationList(userId, channelId);
+//        resultbean.put("applicationList", menuList);
+        resultbean.put("applicationList", new ArrayList<>());
         // 获取language列表.
         List<TypeBean> languageList = this.getLanguageList();
         resultbean.put("languageList", languageList);
