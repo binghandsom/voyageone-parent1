@@ -3,18 +3,20 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    var ImgTabConfig = {
-      rootPath : 'http://image.sneakerhead.com/is/image/sneakerhead/'
-    };
-
     function SpImagesDirectiveController(spDataService, popups) {
         this.spDataService = spDataService;
         this.popups = popups;
         this.imgUpEntity = {};
+        this.imgUrls = {};
     }
 
     SpImagesDirectiveController.prototype.init = function () {
+        var self = this,
+            spDataService = self.spDataService;
 
+        spDataService.initPromotionImages().then(function(res){
+            console.log("res",res);
+        });
     };
 
     SpImagesDirectiveController.prototype.popImageSuit = function () {
@@ -31,13 +33,17 @@ define([
         var self = this,
             spDataService = self.spDataService,
             imgUpEntity = self.imgUpEntity,
+            imgUrls = self.imgUrls,
             popups = self.popups;
 
         popups.openImageJmUpload({
             promotionId: +spDataService.jmPromotionId,
             imageName: imageName
         }).then(function(res){
-            imgUpEntity[imageName] = ImgTabConfig.rootPath + res.imageName;
+            //用于显示
+            imgUrls[imageName] = res.templateUrl;
+            //用于存储图片名称
+            imgUpEntity[imageName] =  spDataService.jmPromotionId + "-" + imageName
         });
     };
 
@@ -45,7 +51,9 @@ define([
         var self = this,
             spDataService = self.spDataService;
 
-        spDataService.savePromotionImages(self.imgUpEntity);
+        spDataService.savePromotionImages({
+            "promotionImages":self.imgUpEntity
+        });
     };
 
 

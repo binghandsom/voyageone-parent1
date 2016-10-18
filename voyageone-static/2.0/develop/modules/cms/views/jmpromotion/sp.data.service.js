@@ -1,12 +1,18 @@
 define(['cms'], function (cms) {
 
-    function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService,$routeParams,notify) {
-        this.promotionId = parseInt($routeParams['promId']);
-        this.jmPromotionId = parseInt($routeParams['jmpromId']);
-        this.notify = notify;
-        this.jmPromotionService = jmPromotionService;
-        this.jmPromotionDetailService = jmPromotionDetailService;
-        this.JmPromotionImagesService = JmPromotionImagesService;
+    function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService,$routeParams,$q,notify) {
+        var self = this;
+        self.promotionId = parseInt($routeParams['promId']);
+        self.jmPromotionId = parseInt($routeParams['jmpromId']);
+        self.commonUpEntity = {
+            promotionId:self.promotionId,
+            jmPromotionId:self.jmPromotionId
+        };
+        self.notify = notify;
+        self.$q = $q;
+        self.jmPromotionService = jmPromotionService;
+        self.jmPromotionDetailService = jmPromotionDetailService;
+        self.JmPromotionImagesService = JmPromotionImagesService;
     }
 
     SpDataService.prototype.getPromotion = function () {
@@ -27,12 +33,26 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.initPromotionImages = function initPromotionImages(){
+       var self = this,
+           defer = self.$q.defer(),
+           JmPromotionImagesService = self.JmPromotionImagesService;
+
+        JmPromotionImagesService.init(self.commonUpEntity).then(function(res){
+            defer.resolve(res);
+        },function(res){
+            defer.reject(res);
+        });
+
+        return defer.promise;
+    };
+
     SpDataService.prototype.savePromotionImages = function savePromotionImages(upEntity){
       var self = this,
           notify = self.notify,
           JmPromotionImagesService = self.JmPromotionImagesService;
 
-        JmPromotionImagesService.save(upEntity).then(function(){
+        JmPromotionImagesService.save(_.extend(upEntity,self.commonUpEntity)).then(function(){
             notify.success("SUCCESS");
         });
     };

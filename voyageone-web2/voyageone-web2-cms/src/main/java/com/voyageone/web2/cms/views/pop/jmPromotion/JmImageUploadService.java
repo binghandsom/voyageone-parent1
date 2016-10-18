@@ -5,8 +5,10 @@ import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
@@ -19,6 +21,10 @@ import java.util.Map;
  */
 @Service
 public class JmImageUploadService  extends BaseViewService {
+
+    @Autowired
+    CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
+
 
     public Map<String, Object> uploadImage(MultipartFile file, Long promotionId, String imageName, UserSessionBean user) throws Exception {
 
@@ -38,7 +44,7 @@ public class JmImageUploadService  extends BaseViewService {
 
         HttpScene7.uploadImageFile(uploadPath, upLoadName, file.getInputStream());
 
-        response.put("imageName", upLoadName);
+        response.put("templateUrl", cmsBtJmImageTemplateService.getUrl(upLoadName,"appEntrance",Integer.parseInt(String.valueOf(promotionId))));
 
         return response;
     }
