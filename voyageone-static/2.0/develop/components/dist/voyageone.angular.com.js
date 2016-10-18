@@ -145,6 +145,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     type: values.type,
                     value1: values.value,
                     value2: values.value2,
+                    value3: values.value3,
                     templateUrl: 'dynamicPopoverTemplate.html'
                 };
             }
