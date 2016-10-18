@@ -59,7 +59,7 @@ public class CmsBtTagJmModuleExtensionModel extends BaseModel {
     /**
      * 是否为主推
      */
-    protected Byte featured;
+    protected Boolean featured;
 
     public Integer getTagId() {
         return tagId;
@@ -133,11 +133,11 @@ public class CmsBtTagJmModuleExtensionModel extends BaseModel {
         this.noStockToLast = noStockToLast;
     }
 
-    public Byte getFeatured() {
+    public Boolean getFeatured() {
         return featured;
     }
 
-    public void setFeatured(Byte featured) {
+    public void setFeatured(Boolean featured) {
         this.featured = featured;
     }
 }

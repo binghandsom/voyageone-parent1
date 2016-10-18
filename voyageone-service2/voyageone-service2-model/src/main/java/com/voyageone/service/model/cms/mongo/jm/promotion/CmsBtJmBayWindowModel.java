@@ -17,8 +17,6 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
     private Boolean fixed;
 
-    private Integer cartId;
-
     private Integer promotionId;
 
     private Integer jmPromotionId;
@@ -31,14 +29,6 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
     public void setFixed(Boolean fixed) {
         this.fixed = fixed;
-    }
-
-    public Integer getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
     }
 
     public Integer getPromotionId() {
@@ -72,5 +62,29 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
         private String link;
 
         private Integer order;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(String link) {
+            this.link = link;
+        }
+
+        public Integer getOrder() {
+            return order;
+        }
+
+        public void setOrder(Integer order) {
+            this.order = order;
+        }
     }
 }

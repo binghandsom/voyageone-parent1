@@ -157,9 +157,12 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel" useGeneratedKeys="true" keyProperty="tagId" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel" >
         insert into cms_bt_tag_jm_module_extension
         <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="tagId != null" >
+                `tag_id`,
+            </if>
             <if test="moduleTitle != null" >
                 `module_title`,
             </if>
@@ -189,6 +192,9 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="tagId != null" >
+                #{tagId,jdbcType=INTEGER},
+            </if>
             <if test="moduleTitle != null" >
                 #{moduleTitle,jdbcType=VARCHAR},
             </if>

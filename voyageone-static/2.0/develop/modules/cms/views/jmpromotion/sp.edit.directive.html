@@ -25,20 +25,20 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label s-required">活动场景</label>
+                    <label class="col-sm-2 control-label s-required">活动场景</label>model:{{ctrlEdit.editModel.model.promotionScene | json}}
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1"
-                                   ng-model="ctrlEdit.editModel.model.promotionScene_1"
-                                   ng-required="!ctrlEdit.editModel.model.promotionScene_1 && !ctrlEdit.editModel.model.promotionScene_2"
-                                   ng-disabled="ctrlEdit.vm.isEnd">
+                            <input type="checkbox" name="promotionScene_1"
+                                   ng-model="ctrlEdit.editModel.model.promotionScene['i1']"
+                                   ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
+                                   >
                             <span class="fa fa-check"></span> 专场特卖
                         </label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_2" style="margin: 0" value="2"
-                                   ng-model="ctrlEdit.editModel.model.promotionScene_2"
-                                   ng-required="!ctrlEdit.editModel.model.promotionScene_1 && !ctrlEdit.editModel.model.promotionScene_2"
-                                   ng-disabled="ctrlEdit.vm.isEnd">
+                            <input type="checkbox" name="promotionScene_2"
+                                   ng-model="ctrlEdit.editModel.model.promotionScene['i2']"
+                                   ng-required="!ctrlEdit.editModel.model.promotionScene['i1'] && !ctrlEdit.editModel.model.promotionScene['i2']"
+                                   >
                             <span class="fa fa-check"></span> 商城铺货
                         </label>
                     </div>
@@ -216,33 +216,35 @@
                         <textarea class="form-control no-resize" rows="3" ng-model="ctrlEdit.editModel.model.comment"></textarea>
                     </div>
                 </div>
-                <div class="col-sm-7 table-responsive m-l-md m-r-md m-b-md" style="margin-left:80px">
-                    <table class="table table-hover-new table-hover">
-                        <thead>
-                        <tr class="control-label">
-                            <th>TAG</th>
-                            <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="tag in ctrlEdit.getTagList()">
-                            <td class="mfb-xxxsm">
-                                <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
-                                       ng-required="true" maxlength="20" required>
-                                <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
-                            </td>
-                            <td class="mfb-xxs text-center">
-                                <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
-                                        ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="form-group">
-                        <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
-                                ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
-                        </button>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <table class="table table-hover-new table-hover">
+                            <thead>
+                            <tr class="control-label">
+                                <th>TAG</th>
+                                <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="tag in ctrlEdit.getTagList()">
+                                <td class="mfb-xxxsm">
+                                    <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
+                                           ng-required="true" maxlength="20" required>
+                                    <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
+                                </td>
+                                <td class="mfb-xxs text-center">
+                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
+                                            ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
+                                    ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -362,7 +364,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" name="sessionCategory" required>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" name="enterGuide" required>
                     </div>
                 </div>
                 <div class="row form-group">

@@ -22,11 +22,24 @@ define([
     };
 
 
+    SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
+        var self = this,
+            spDataService = self.spDataService,
+            popups = self.popups;
+
+        popups.openImageJmUpload({
+            promotionId: +spDataService.jmPromotionId,
+            imageName: imageName
+        }).then(function(res){
+            console.log("res",res);
+        });
+    };
+
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',
             controller: ['spDataService', 'popups', SpImagesDirectiveController],
-            controllerAs: 'ctrl',
+            controllerAs: 'ctrlImages',
             templateUrl: '/modules/cms/views/jmpromotion/sp.images.directive.html'
         }
     }]);

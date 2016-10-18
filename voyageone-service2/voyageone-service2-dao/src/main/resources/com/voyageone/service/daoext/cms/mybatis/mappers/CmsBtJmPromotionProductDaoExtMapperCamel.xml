@@ -489,7 +489,25 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         </foreach>
     </update>
 
-
+<select id="selectProductInfoByTagId" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionProductModel" parameterType="java.lang.Integer">
+    SELECT
+	t2.*
+    FROM
+        (
+            SELECT
+                *
+            FROM
+                cms_bt_jm_promotion_tag_product
+            WHERE
+                cms_bt_tag_id = #{tagId}
+        ) t1,
+        cms_bt_jm_promotion_product t2
+    WHERE
+        t1.cms_bt_jm_promotion_product_id = t2.id
+        and t2.jm_hash_id != ''
+    ORDER BY
+        t1.id
+</select>
 
     <!--jm2 end-->
 </mapper>

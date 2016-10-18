@@ -1,5 +1,6 @@
 package com.voyageone.service.bean.cms.jumei;
 
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -15,10 +16,23 @@ public class CmsBtJmPromotionSaveBean {
     private CmsBtJmPromotionSpecialExtensionModel extModel;
     private List<CmsBtTagModel> tagList;
 
-    // 是否有扩展信息
+    // 是否要处理扩展信息
     private boolean hasExt;
     // 操作类型 1:提交/保存 0:暂存
     private int saveType;
+
+    /**
+     * 是否有主推模块
+     */
+    private boolean hasFeaturedModule;
+
+    public boolean isHasFeaturedModule() {
+        return hasFeaturedModule;
+    }
+
+    public void setHasFeaturedModule(boolean hasFeaturedModule) {
+        this.hasFeaturedModule = hasFeaturedModule;
+    }
 
     public CmsBtJmPromotionModel getModel() {
         return model;

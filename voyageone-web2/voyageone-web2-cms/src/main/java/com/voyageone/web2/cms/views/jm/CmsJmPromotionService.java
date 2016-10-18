@@ -5,7 +5,6 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
-import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.impl.cms.TagService;
@@ -42,21 +41,18 @@ class CmsJmPromotionService extends BaseViewService {
     private final CmsAdvanceSearchService advanceSearchService;
     private final TagService tagService;
     private final CmsBtJmPromotionService jmPromotionService;
-    private final CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
 
     @Autowired
     public CmsJmPromotionService(CmsBtProductDao productDao, CmsAdvanceSearchService advanceSearchService,
                                  CmsBtJmProductDaoExt cmsBtJmProductDaoExt,
                                  CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service,
-                                 TagService tagService, CmsBtJmPromotionService jmPromotionService,
-                                 CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
+                                 TagService tagService, CmsBtJmPromotionService jmPromotionService) {
         this.productDao = productDao;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtJmProductDaoExt = cmsBtJmProductDaoExt;
         this.cmsBtJmPromotionImportTask3Service = cmsBtJmPromotionImportTask3Service;
         this.tagService = tagService;
         this.jmPromotionService = jmPromotionService;
-        this.tagJmModuleExtensionDao = tagJmModuleExtensionDao;
     }
 
     /**
@@ -164,7 +160,7 @@ class CmsJmPromotionService extends BaseViewService {
     /**
      * 获取活动聚美模块数据
      */
-    List<HashMap<String, Object>> getPromotionTagModules(int jmPromotionId) {
+    List<Map<String, Object>> getPromotionTagModules(int jmPromotionId) {
 
         CmsBtJmPromotionModel jmPromotionModel = jmPromotionService.select(jmPromotionId);
 
@@ -172,12 +168,19 @@ class CmsJmPromotionService extends BaseViewService {
 
         return tagModelList.stream().map(tagModel -> {
 
-            CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagJmModuleExtensionDao.select(tagModel.getId());
+            CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.getJmModule(tagModel);
 
-            return new HashMap<String, Object>(){{
-                put("tag", tagModel);
-                put("module", jmModuleExtensionModel);
-            }};
+            if (jmModuleExtensionModel == null) {
+                jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
+                tagService.addJmModule(jmModuleExtensionModel);
+            }
+
+            Map<String, Object> tagMap = new HashMap<>();
+
+            tagMap.put("tag", tagModel);
+            tagMap.put("module", jmModuleExtensionModel);
+
+            return tagMap;
         }).collect(toList());
     }
 

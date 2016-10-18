@@ -37,7 +37,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 主频道
      */
-    protected Integer mainChannel;
+    protected String mainChannel;
 
     /**
      * 专场类型
@@ -47,7 +47,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 关联品类
      */
-    protected Integer sessionCategory;
+    protected String sessionCategory;
 
     /**
      * 预展示频道（多选）（以数组的JSON形式存储）
@@ -206,11 +206,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.displayPlatform = displayPlatform == null ? null : displayPlatform.trim();
     }
 
-    public Integer getMainChannel() {
+    public String getMainChannel() {
         return mainChannel;
     }
 
-    public void setMainChannel(Integer mainChannel) {
+    public void setMainChannel(String mainChannel) {
         this.mainChannel = mainChannel;
     }
 
@@ -222,11 +222,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.sessionType = sessionType == null ? null : sessionType.trim();
     }
 
-    public Integer getSessionCategory() {
+    public String getSessionCategory() {
         return sessionCategory;
     }
 
-    public void setSessionCategory(Integer sessionCategory) {
+    public void setSessionCategory(String sessionCategory) {
         this.sessionCategory = sessionCategory;
     }
 

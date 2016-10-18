@@ -27,8 +27,9 @@ define([
             vm.jmMasterBrandList = res.data.jmMasterBrandList;
         });
 
-        jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}}).then(function (res) {
+        jmPromotionService.getEditModelExt({model: {id: routeParams.jmpromId}, hasExt: true}).then(function (res) {
             editModel.model = res.data.model;
+            editModel.extModel = res.data.extModel;
             editModel.tagList = res.data.tagList;
             editModel.model.activityStart = formatToDate(editModel.model.activityStart);
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
@@ -60,12 +61,12 @@ define([
             }
 
             // 转换活动场景的值
-            if (editModel.model.promotionScene) {
-                var sceneArr = editModel.model.promotionScene.split(",");
-                for (var attr in sceneArr) {
-                    editModel.model['promotionScene_' + sceneArr[attr]] = true;
-                }
-            }
+            //if (editModel.model.promotionScene) {
+            //    var sceneArr = editModel.model.promotionScene.split(",");
+            //    for (var attr in sceneArr) {
+            //        editModel.model['promotionScene_' + sceneArr[attr]] = true;
+            //    }
+            //}
         });
 
     };
@@ -107,9 +108,7 @@ define([
         param.model = angular.copy(self.editModel.model);
         param.extModel = angular.copy(self.editModel.extModel);
 
-        if (param.extModel.displayPlatform_1) {
-            param.extModel.displayPlatform = "1";
-        }
+        param.model.promotionScene = _returnKey (param.model.promotionScene);
 
         param.model.activityStart = formatToStr(param.model.activityStart, self.$filter);
         param.model.activityEnd = formatToStr(param.model.activityEnd, self.$filter);
@@ -119,6 +118,9 @@ define([
 
         param.hasExt = true;
         param.saveType = saveType;
+        param.extModel.promotionId = self.$routeParams.promId;
+        param.extModel.jmpromotionId = self.$routeParams.jmpromId;
+
         jmPromotionService.saveModel(param).then(function(res){
 
         });
@@ -135,6 +137,19 @@ define([
 
     function formatToStr(date,filter){
         return filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+    }
+
+    /**
+     * 如果checkbox被选中,返回被选中的value.
+     * eg.[{new: true, pending: false, approved: true}] -> [new, approved]
+     * @param object
+     * @returns {*}
+     */
+    function _returnKey(object) {
+        return _.chain(object)
+            .map(function(value, key) { return value ? key : null;})
+            .filter(function(value) { return value;})
+            .value();
     }
 
     cms.directive('spEdit', [function spEditDirectiveFactory() {
