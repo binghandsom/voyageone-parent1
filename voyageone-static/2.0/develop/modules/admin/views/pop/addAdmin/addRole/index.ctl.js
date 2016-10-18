@@ -33,7 +33,7 @@ define([
                 applications: this.sourceData !== 'add' ? this.sourceData.application : [],
                 channelIds: this.sourceData !== 'add' ? this.sourceData.channelId : [],
                 storeIds: this.sourceData !== 'add' ? this.sourceData.storeId : []
-            }
+            };
         }
 
         AddRoleController.prototype = {
@@ -88,7 +88,6 @@ define([
                     self.channelAllList = [];
                     if (self.channelList.length == 0) {
                         self.channelAllList = channelAllListCopy;
-                        return;
                     } else {
                         self.channelAllList = channelAllListCopy;
                         _.forEach(self.channelList, function (item) {
@@ -173,9 +172,6 @@ define([
                     self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
                         self.storeAllListCopy = res.data;
                     });
-                    // self.storeService.getAllStore(null).then(function (res) {
-                    //     self.storeAllListCopy = res.data;
-                    // });
                 }
                 switch (item.type) {
                     case'channel':
@@ -199,13 +195,20 @@ define([
                         break;
                     case'store':
                         if (item.isFilter == true) {
+                            _.forEach(self.storeAllListCopy, function (filteredStoreList) {
+                                filteredStoreList.storeName = filteredStoreList.storeName.indexOf('(') < 0 ? '(' + filteredStoreList.channelId + ')' + filteredStoreList.storeName : filteredStoreList.storeName;
+                            });
                             _.filter(self.storeAllList.length < self.storeAllListCopy.length ? self.storeAllListCopy : self.storeAllList, function (data) {
                                 if (data.channelId == item.value) {
                                     data.storeName = data.storeName.indexOf('(') < 0 ? '(' + data.channelId + ')' + data.storeName : data.storeName;
-                                    self.storeTempAllList.push(data)
+                                    self.storeTempAllList.push(data);
                                 }
                             });
-                            return self.storeTempAllList;
+                            if (self.storeTempAllList.length == 0) {
+                                return self.storeTempAllList = self.storeAllListCopy;
+                            } else {
+                                return self.storeTempAllList;
+                            }
                         } else {
                             _.filter(self.storeAllListCopy, function (data) {
                                 if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
@@ -235,20 +238,26 @@ define([
                         });
                         break;
                     case 'allInclude':
-                        if (self.channelTempAllList) {
+                        self.channelIds = [];
+                        if (self.channelTempAllList && self.channelTempAllList.length > 0) {
                             self.channelAllList = self.channelTempAllList;
                             _.forEach(self.channelAllList, function (item) {
                                 self.channelList.push(item);
                             });
-                            self.channelAllList = [];
-                            break;
                         } else {
                             _.forEach(self.channelAllList, function (item) {
                                 self.channelList.push(item);
                             });
-                            self.channelAllList = [];
-                            break;
                         }
+                        _.forEach(self.channelList, function (channel) {
+                            self.channelIds.push(channel.orderChannelId);
+                        });
+                        self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
+                            self.storeAllListCopy = res.data;
+                        });
+                        self.storeMove('');
+                        self.channelAllList = [];
+                        break;
                     case 'include':
                         if (self.rightSelectedFlg == true) {
                             self.data = _.find(self.channelAllList, function (channel) {
@@ -421,9 +430,9 @@ define([
                     }
                 }
 
-                if (self.append == true||self.sourceData.isCopyRole == true) {
+                if (self.append == true || self.sourceData.isCopyRole == true) {
                     if (self.sourceData.isCopyRole == true) {
-                        _.extend(self.saveInfo, {action: 'copy',id: self.sourceData.id});
+                        _.extend(self.saveInfo, {action: 'copy', id: self.sourceData.id});
                     }
                     self.adminRoleService.addRole(self.saveInfo).then(function (res) {
                         if (res.data == false) {
