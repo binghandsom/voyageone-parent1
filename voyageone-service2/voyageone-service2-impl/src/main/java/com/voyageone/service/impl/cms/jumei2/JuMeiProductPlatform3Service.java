@@ -68,6 +68,8 @@ public class JuMeiProductPlatform3Service extends BaseService {
     FeedInfoService feedInfoService;
     @Autowired
     CmsBtBrandBlockService CmsBtBrandBlockService;
+    @Autowired
+    JumeiHtMallService jumeiHtMallService;
     private static final Logger LOG = LoggerFactory.getLogger(JuMeiProductPlatform3Service.class);
 
     public void updateJmByPromotionId(int promotionId) throws Exception {
@@ -618,13 +620,12 @@ public class JuMeiProductPlatform3Service extends BaseService {
             updateData.setMarket_price(skuPriceBean.getMarketPrice());
         }
         try {
-            JumeiHtMallService service = new JumeiHtMallService();
             String errorMsg = "";
             List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
             for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
                 $info("jmhtMall_UpdateMallPriceBatch :" + model.getProductCode() + JacksonUtil.bean2Json(page));
                 StringBuffer sb = new StringBuffer();
-                if (!service.updateMallSkuPrice(shopBean, page, sb)) {
+                if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
                     model.setPriceStatus(3);
                     errorMsg += sb.toString();
                 }
