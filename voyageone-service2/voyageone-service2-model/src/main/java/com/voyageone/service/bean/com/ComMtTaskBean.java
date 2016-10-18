@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.service.model.com.ComMtTaskModel;
 
 /**
@@ -17,11 +16,10 @@ public class ComMtTaskBean extends ComMtTaskModel {
 	
 	private List<TmTaskControlBean> taskConfig;
 	
-	@JsonIgnore
 	public void setTaskId(String taskId) {
 		if (StringUtils.startsWith(taskId, "X")) {
 			super.setTaskId(null);
-		} else {
+		} else if (StringUtils.isNoneEmpty(taskId)) {
 			super.setTaskId(Integer.valueOf(taskId));
 		}
 	}
