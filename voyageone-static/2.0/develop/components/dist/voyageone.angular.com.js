@@ -1,11 +1,9 @@
-
-
 /*****************************/
 
 /**
  * angular component head file。
  * 声明各个组件的父模块
- * 
+ *
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -129,17 +127,28 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     function showInfo(values) {
         if (values == undefined || values == '') {
             return '';
-        }
-        var tempHtml = "";
-        if (values instanceof Array) {
-            angular.forEach(values, function (data, index) {
-                tempHtml += data;
-                if (index !== values.length) {
-                    tempHtml += "<br>";
-                }
-            });
+        } else if (values.value == undefined) {
+            var tempHtml = "";
+            if (values instanceof Array) {
+                angular.forEach(values, function (data, index) {
+                    tempHtml += data;
+                    if (index !== values.length) {
+                        tempHtml += "<br>";
+                    }
+                });
+            } else {
+                tempHtml += values;
+            }
         } else {
-            tempHtml += values;
+            if (values.isUseComplexTemplate == true) {
+                $scope.dynamicPopover = {
+                    type: values.type,
+                    value1: values.value,
+                    value2: values.value2,
+                    value3: values.value3,
+                    templateUrl: 'dynamicPopoverTemplate.html'
+                };
+            }
         }
         return tempHtml;
     }
@@ -271,15 +280,15 @@ angular.module("voyageone.angular.directives").directive("enterClick", function 
  */
 angular.module("voyageone.angular.directives").directive("fileStyle", function () {
 
-    function FileStyleController($scope,$element){
+    function FileStyleController($scope, $element) {
         this.scope = $scope;
         this.element = $element;
     }
 
-    FileStyleController.prototype.init = function(attrs){
+    FileStyleController.prototype.init = function (attrs) {
         var options;
 
-        if(attrs.fileStyle != null && attrs.fileStyle != "")
+        if (attrs.fileStyle != null && attrs.fileStyle != "")
             options = eval("(" + attrs.fileStyle + ")");
 
         this.element.filestyle(options);
@@ -287,10 +296,10 @@ angular.module("voyageone.angular.directives").directive("fileStyle", function (
 
     return {
         restrict: "A",
-        scope:true,
+        scope: true,
         controller: FileStyleController,
         controllerAs: 'styleCtrl',
-        link: function($scope,$element,$attrs){
+        link: function ($scope, $element, $attrs) {
             $scope.styleCtrl.init($attrs);
         }
     };
@@ -306,13 +315,13 @@ angular.module("voyageone.angular.directives").directive("fileStyle", function (
  * @User:    tony-piao
  * @Version: 0.1.0, 2016-5-24
  */
-angular.module("voyageone.angular.directives").directive("goTop", function() {
+angular.module("voyageone.angular.directives").directive("goTop", function () {
     return {
         restrict: "A",
-        link: function(scope, element,attrs) {
+        link: function (scope, element, attrs) {
             var speed = +attrs.goTop;
-            $(element).on("click",function(){
-                $("body").animate({ scrollTop: 0 }, speed);
+            $(element).on("click", function () {
+                $("body").animate({scrollTop: 0}, speed);
                 return false;
             });
         }
@@ -438,11 +447,11 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 return;
 
             //默认为2位
-            var scale , _length;
+            var scale, _length;
 
-            var _numArr =  attr.scale.split(",");
+            var _numArr = attr.scale.split(",");
 
-            if(_numArr.length !== 2){
+            if (_numArr.length !== 2) {
 
                 console.warn("scale格式为{ 位数 },{ 精度 } 默认值=》位数：15位，精度为小数点2位。");
 
@@ -450,7 +459,7 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 _length = 15;
                 scale = 2;
 
-            }else{
+            } else {
 
                 _length = _numArr[0];
                 scale = _numArr[1];
@@ -461,7 +470,7 @@ angular.module("voyageone.angular.directives").directive("input", function () {
 
                 var regex;
 
-                if(scale != 0)
+                if (scale != 0)
                     regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
                 else
                     regex = new RegExp("^\\d+$");
@@ -473,11 +482,11 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 ngModelController.$setViewValue(this.value.substr(0, this.value.length - 1));
                 ngModelController.$render();
 
-            }).on("keypress",function(event){
+            }).on("keypress", function (event) {
 
                 var _value = angular.copy(this.value);
 
-                if(_value.toString().length >= _length){
+                if (_value.toString().length >= _length) {
                     event.preventDefault();
                 }
 
@@ -663,43 +672,42 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
  * @version: 2.3.0, 2016-7-1
  */
 'use strict';
-angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function($window) {
+angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function ($window) {
 
-        var helper = {
-            support: !!($window.FileReader && $window.CanvasRenderingContext2D),
-            isFile: function(item) {
-                return angular.isObject(item) && item instanceof $window.File;
-            },
-            isImage: function(file) {
-                var type =  '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        };
+    var helper = {
+        support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+        isFile: function (item) {
+            return angular.isObject(item) && item instanceof $window.File;
+        },
+        isImage: function (file) {
+            var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    };
 
-        return {
-            restrict: 'A',
-            link: function(scope, element, attributes) {
-                if (!helper.support) return;
+    return {
+        restrict: 'A',
+        link: function (scope, element, attributes) {
+            if (!helper.support) return;
 
-                var params = scope.$eval(attributes.ngThumb);
+            var params = scope.$eval(attributes.ngThumb);
 
-                if (!helper.isImage(params.file)) return;
+            if (!helper.isImage(params.file)) return;
 
-                var fileReader = new FileReader();
+            var fileReader = new FileReader();
 
-                fileReader.readAsDataURL(params.file);
+            fileReader.readAsDataURL(params.file);
 
-                fileReader.onload = function (event) {
-                    scope.$apply(function () {
-                        attributes.$set('src', event.target.result);
-                    });
-                };
+            fileReader.onload = function (event) {
+                scope.$apply(function () {
+                    attributes.$set('src', event.target.result);
+                });
+            };
 
 
-            }
-        };
-    }]);
-
+        }
+    };
+}]);
 
 
 /*****************************/
@@ -3184,7 +3192,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args).then(function (res) {
                         result = _resolve(res);
-                        
+
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3193,7 +3201,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-                        
+
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3298,7 +3306,6 @@ AjaxService.prototype.post = function (url, data) {
 
     return defer.promise;
 };
-
 
 
 /*****************************/
@@ -3491,12 +3498,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-    
+
     languages: {
         en: "en",
         zh: "zh"
     },
-    
+
     /**
      * set the web side language type.
      */
@@ -3507,7 +3514,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-    
+
     /**
      * get the browser language type.
      * @returns {string}
