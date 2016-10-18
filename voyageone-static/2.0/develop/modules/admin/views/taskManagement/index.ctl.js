@@ -101,8 +101,10 @@ define([
                 } else {
                     _.forEach(self.taskList, function (Info) {
                         if (Info.taskId == self.taskSelList.selList[0].id) {
-                            self.popups.openTask(Info).then(function () {
-                                self.search(1);
+                            self.popups.openTask(Info).then(function (res) {
+                            	if(res.res == 'success'){
+                                    self.search(1);	
+                            	}
                             });
                         }
                     })
