@@ -55,6 +55,9 @@ define([
             if (editModel.model.promotionType) {
                 editModel.model.promotionType = editModel.model.promotionType.toString();
             }
+            if (editModel.extModel.directmailType == undefined || editModel.extModel.directmailType == null || editModel.extModel.directmailType == '') {
+                editModel.extModel.directmailType = '1';
+            }
 
             // 转换活动场景的值
             if (editModel.model.promotionScene) {
