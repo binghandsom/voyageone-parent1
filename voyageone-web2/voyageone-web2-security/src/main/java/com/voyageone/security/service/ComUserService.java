@@ -60,6 +60,8 @@ public class ComUserService {
      */
     public ComUserModel login(String account, String password, String app)
     {
+        logout();
+
         Subject user = SecurityUtils.getSubject();
 
         UsernamePasswordToken token = new UsernamePasswordToken(account, password);
