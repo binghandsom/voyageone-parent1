@@ -7,6 +7,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.security.dao.*;
 import com.voyageone.security.model.*;
+import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.dao.com.*;
@@ -85,6 +86,9 @@ public class AdminUserService extends BaseService {
 
     @Autowired
     AdminRoleService adminRoleService;
+    @Autowired
+    ComUserService comUserService;
+
 
 
     /**
@@ -217,6 +221,12 @@ public class AdminUserService extends BaseService {
             rModel.setCreater(username);
             comUserRoleDao.insert(rModel);
         }
+
+        //清除该用户的授权缓存
+        if(addList.size() > 0 || deleteList.size() > 0)
+        {
+            comUserService.clearCachedAuthorizationInfo(user.getUserAccount());
+        }
     }
 
 
@@ -282,13 +292,13 @@ public class AdminUserService extends BaseService {
     @VOTransactional
     public void deleteUser(List<Integer> userIds, String username) {
         for (Integer id : userIds) {
-            ComUserModel model = new ComUserModel();
-            model.setId(id);
+            ComUserModel model = comUserDao.select(id);
             model.setActive(0);
             model.setModifier(username);
             if (!(comUserDao.update(model) > 0)) {
                 throw new BusinessException("删除用户信息失败");
             }
+            comUserService.clearCache(model.getUserAccount());
         }
     }
 
@@ -307,6 +317,7 @@ public class AdminUserService extends BaseService {
         encryptPassword(user);
         comUserDao.update(user);
         comUserTokenDao.delete(model.getId());
+        comUserService.clearCachedAuthenticationInfo(user.getUserAccount());
     }
 
     public Map getUserByToken(String token) {
@@ -319,14 +330,14 @@ public class AdminUserService extends BaseService {
 
     private ComUserTokenModel getComUserTokenModel(String token) {
         if (StringUtils.isEmpty(token))
-            throw new BusinessException("A007", "Bad Request Token.");
+            throw new BusinessException("A009", "Bad Request Token.");
 
         ComUserTokenModel model = new ComUserTokenModel();
         model.setToken(token);
         model = comUserTokenDao.selectOne(model);
 
         if (model == null) {
-            throw new BusinessException("A007", "Bad Request Token.");
+            throw new BusinessException("A009", "Bad Request Token.");
         }
 
         Date modified = model.getModified();
@@ -356,6 +367,10 @@ public class AdminUserService extends BaseService {
         if (!(comUserDao.update(model) > 0)) {
             throw new BusinessException("重设密码失败");
         }
+        //清除该用户的登录缓存
+        String account = comUserDao.select(userId).getUserAccount();
+        comUserService.clearCachedAuthenticationInfo(account);
+
     }
 
     public void forgetPass(String account) {

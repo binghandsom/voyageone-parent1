@@ -22,5 +22,7 @@ public interface AdminUserDaoExt {
 
     int insert(ComUserModel record);
 
+    List<String> selectUserByRoles(List<Integer> roleIds);
+
 
 }

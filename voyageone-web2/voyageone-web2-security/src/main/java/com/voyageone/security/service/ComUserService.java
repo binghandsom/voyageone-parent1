@@ -1,26 +1,5 @@
 package com.voyageone.security.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.voyageone.security.shiro.MyRealm;
-import org.apache.commons.lang.StringUtils;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.crypto.hash.Md5Hash;
-import org.apache.shiro.mgt.RealmSecurityManager;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.security.bean.ComChannelPermissionBean;
 import com.voyageone.security.dao.ComLoginLogDao;
@@ -31,9 +10,29 @@ import com.voyageone.security.model.ComLoginLogModel;
 import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.security.model.ComUserConfigModel;
 import com.voyageone.security.model.ComUserModel;
+import com.voyageone.security.shiro.MyRealm;
+import org.apache.commons.lang.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.ExcessiveAttemptsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by Ethan Shi on 2016-08-12. */
+ * Created by Ethan Shi on 2016-08-12.
+ */
 
 
 @Service
@@ -58,8 +57,7 @@ public class ComUserService {
      * @param account
      * @param password
      */
-    public ComUserModel login(String account, String password, String app)
-    {
+    public ComUserModel login(String account, String password, String app) {
         logout();
 
         Subject user = SecurityUtils.getSubject();
@@ -68,9 +66,9 @@ public class ComUserService {
 
         try {
             user.login(token);
-        }catch (LockedAccountException lae) {
+        } catch (LockedAccountException lae) {
             token.clear();
-            throw new BusinessException("A003","user locked!", lae);
+            throw new BusinessException("A003", "user locked!", lae);
         } catch (ExcessiveAttemptsException e) {
             token.clear();
             throw new BusinessException("A004", "too many fails, user will be locked for 10 minutes.", e);
@@ -82,14 +80,13 @@ public class ComUserService {
 
         ComUserModel userModel = new ComUserModel();
         userModel.setUserAccount(account);
-        userModel =comUserDao.selectOne(userModel);
+        userModel = comUserDao.selectOne(userModel);
 
         //如果用户没有该系统的权限，则拒绝登录
         List<String> apps = getAppsByUser(userModel.getId());
 
-        if(!apps.contains(app))
-        {
-            throw new BusinessException("A007", "access denied: " + app , null);
+        if (!apps.contains(app)) {
+            throw new BusinessException("A007", "access denied: " + app, null);
         }
 
 
@@ -104,7 +101,7 @@ public class ComUserService {
         model.setCreater(account);
         String clientIP = request.getHeader("x-forwarded-for");
         if (StringUtils.isEmpty(clientIP)) {
-        	clientIP = request.getRemoteAddr();
+            clientIP = request.getRemoteAddr();
         }
         model.setIp(clientIP);
 
@@ -114,11 +111,8 @@ public class ComUserService {
     }
 
 
-
-    public void  logout()
-    {
+    public void logout() {
         SecurityUtils.getSubject().logout();
-        clearCache();
     }
 
 
@@ -128,19 +122,19 @@ public class ComUserService {
      * @param userId
      * @return
      */
-    public List<ComChannelPermissionBean> getPermissionCompany(Integer  userId) {
-        List<ComChannelPermissionBean>  list =  comUserDaoExt.selectPermissionChannel(userId);
-        return  list;
+    public List<ComChannelPermissionBean> getPermissionCompany(Integer userId) {
+        List<ComChannelPermissionBean> list = comUserDaoExt.selectPermissionChannel(userId);
+        return list;
     }
 
 
     /**
      * 查找授权系统
+     *
      * @param userId
      * @return
      */
-    public List<String> getAppsByUser(Integer  userId)
-    {
+    public List<String> getAppsByUser(Integer userId) {
         return comUserDaoExt.selectAppsByUser(userId);
     }
 
@@ -156,10 +150,9 @@ public class ComUserService {
         Map map = new HashMap<>();
         map.put("userId", userId);
         map.put("active", 1);
-        List<ComUserConfigModel>  list =  comUserConfigDao.selectList(map);
+        List<ComUserConfigModel> list = comUserConfigDao.selectList(map);
         return list;
     }
-
 
 
     @Deprecated
@@ -174,54 +167,81 @@ public class ComUserService {
      * @param userId
      * @return
      */
-    public List<ComRoleModel> selectRolesByUserId(Integer userId, String channelId)
-    {
-        return comUserDaoExt.selectRolesByUserId(userId , channelId);
+    public List<ComRoleModel> selectRolesByUserId(Integer userId, String channelId) {
+        return comUserDaoExt.selectRolesByUserId(userId, channelId);
     }
 
 
     /**
      * 清除授权缓存
-     *
      */
-    public void clearCachedAuthorizationInfo()
-    {
+    public void clearCachedAuthorizationInfo() {
         Subject user = SecurityUtils.getSubject();
-        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
-        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
-        myRealm.clearCachedAuthorizationInfo(user.getPrincipals());
+        if (user != null  || user.getPrincipals() != null){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            myRealm.clearCachedAuthorizationInfo(user.getPrincipals());
+        }
+    }
+
+    public void clearCachedAuthorizationInfo(String account) {
+
+        if (account != null ){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            SimplePrincipalCollection principals = new SimplePrincipalCollection(account, myRealm.getName());
+            myRealm.clearCachedAuthorizationInfo(principals);
+        }
     }
 
 
     /**
      * 清除登录缓存
-     *
      */
-    public void clearCachedAuthenticationInfo()
-    {
+    public void clearCachedAuthenticationInfo() {
         Subject user = SecurityUtils.getSubject();
-        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
-        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
-        myRealm.clearCachedAuthenticationInfo(user.getPrincipals());
+        if (user != null  || user.getPrincipals() != null){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            myRealm.clearCachedAuthenticationInfo(user.getPrincipals());
+        }
+    }
+
+    public void clearCachedAuthenticationInfo(String account) {
+
+        if (account != null ){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            SimplePrincipalCollection principals = new SimplePrincipalCollection(account, myRealm.getName());
+            myRealm.clearCachedAuthenticationInfo(principals);
+        }
     }
 
     /**
      * 清除所有缓存
-     *
      */
-    public void clearCache()
-    {
+    public void clearCache() {
         Subject user = SecurityUtils.getSubject();
-        RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
-        MyRealm myRealm = (MyRealm)securityManager.getRealms().iterator().next();
-        myRealm.clearCache(user.getPrincipals());
+        if (user != null  || user.getPrincipals() != null){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            myRealm.clearCache(user.getPrincipals());
+        }
+    }
+
+    public void clearCache(String account) {
+
+        if (account != null ){
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            SimplePrincipalCollection principals = new SimplePrincipalCollection(account, myRealm.getName());
+            myRealm.clearCache(principals);
+        }
     }
 
 
-
-    public List<String> selectChannels(Integer userId)
-    {
-        Map<String, Object> query =  new HashMap<>();
+    public List<String> selectChannels(Integer userId) {
+        Map<String, Object> query = new HashMap<>();
         query.put("userId", userId);
 
         return comUserDaoExt.selectChannels(query);

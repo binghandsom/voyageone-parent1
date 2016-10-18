@@ -156,7 +156,7 @@ public class MyRealm extends AuthorizingRealm {
 	}
 
 	/**
-	 * 清除用户信息缓存.
+	 * 清除用户登录信息缓存.
 	 */
 	public void clearAllCachedAuthenticationInfo() {
 		getAuthenticationCache().clear();

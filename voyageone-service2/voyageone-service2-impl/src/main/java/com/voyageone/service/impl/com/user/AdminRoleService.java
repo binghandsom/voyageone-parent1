@@ -8,11 +8,13 @@ import com.voyageone.security.model.ComResRoleModel;
 import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.security.model.ComRoleConfigModel;
 import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminRoleDaoExt;
+import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.PageModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -55,7 +57,11 @@ public class AdminRoleService extends BaseService {
     @Autowired
     AdminUserService adminUserService;
 
+    @Autowired
+    ComUserService comUserService;
 
+    @Autowired
+    AdminUserDaoExt adminUserDaoExt;
 
     public List<Map<String, Object>> getAllRole() {
         List<ComRoleModel> roleList = comRoleDao.selectList(new HashMap<String, Object>() {{
@@ -362,6 +368,7 @@ public class AdminRoleService extends BaseService {
         }
     }
 
+    @VOTransactional
     public void deleteRole(List<Integer> ids, String username) {
         for (Integer id : ids) {
             ComRoleModel model = new ComRoleModel();
@@ -372,6 +379,13 @@ public class AdminRoleService extends BaseService {
                 throw new BusinessException("禁用角色信息失败");
             }
         }
+
+        List<String> users = adminUserDaoExt.selectUserByRoles(ids);
+
+        for (String account: users) {
+            comUserService.clearCachedAuthorizationInfo(account);
+        }
+
     }
 
     @VOTransactional
@@ -390,6 +404,12 @@ public class AdminRoleService extends BaseService {
                     comResRoleDao.insert(model);
                 }
             }
+        }
+
+        List<String> users = adminUserDaoExt.selectUserByRoles(roleIds);
+
+        for (String account: users) {
+            comUserService.clearCachedAuthorizationInfo(account);
         }
     }
 
@@ -410,6 +430,12 @@ public class AdminRoleService extends BaseService {
                     comResRoleDao.delete(old.getId());
                 }
             }
+        }
+
+        List<String> users =  adminUserDaoExt.selectUserByRoles(roleIds);
+
+        for (String account: users) {
+            comUserService.clearCachedAuthorizationInfo(account);
         }
     }
 
@@ -471,6 +497,13 @@ public class AdminRoleService extends BaseService {
                     model.setCreater(username);
                     comResRoleDao.insert(model);
                 }
+            }
+
+
+            List<String> users =  adminUserDaoExt.selectUserByRoles(roleIds);
+
+            for (String account: users) {
+                comUserService.clearCachedAuthorizationInfo(account);
             }
         }
     }
@@ -614,5 +647,7 @@ public class AdminRoleService extends BaseService {
             }
         }
     }
-    
+
+
+
 }
