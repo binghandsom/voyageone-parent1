@@ -22,6 +22,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -220,6 +221,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     @VOTransactional
     public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        //Map<String,Object> map=new HashedMap();
 
         // 2.7.1
         if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {

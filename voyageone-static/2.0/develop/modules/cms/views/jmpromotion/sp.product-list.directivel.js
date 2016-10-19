@@ -1,12 +1,10 @@
-/**
- * Created by linanbin on 15/12/7.
- */
 define([
-    'underscore',
+    'cms',
     'modules/cms/controller/popup.ctl'
-], function () {
-    function detailController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm, platformMappingService,$filter) {
+], function (cms) {
 
+    function SProductListDirectiveController($scope,$routeParams,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
+    {
         $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.parentId,
@@ -250,7 +248,7 @@ define([
         $scope.getStatus = function (model) {
             //0:未更新 2:上新成功 3:上传异常    未上传；处理中；上传成功；上传失败
 
-             if (model.synchStatus == 1) {
+            if (model.synchStatus == 1) {
                 return "待上传";
             }
             else if (model.priceStatus== 1) {//model.priceStatus == 1 ||
@@ -259,7 +257,7 @@ define([
             else if (model.dealEndTimeStatus == 1) {
                 return "待延期";
             }
-           else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
+            else if(model.synchStatus==3||model.priceStatus==3 ||model.dealEndTimeStatus==3 || model.stockStatus==3)
             {
                 return "上传失败";
             }
@@ -578,6 +576,11 @@ define([
         }
     }
 
-    detailController.$inject = ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService'];
-    return detailController;
+    cms.directive('spProductList', [function spProductListDirectiveFactory() {
+        return {
+            restrict: 'E',
+            controller: ['$scope','$routeParams', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'alert', 'confirm', '$translate', '$filter', SProductListDirectiveController],
+            templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
+        }
+    }]);
 });

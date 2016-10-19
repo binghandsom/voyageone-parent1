@@ -2,7 +2,8 @@ define(['cms',
     './sp.edit.directive',
     './sp.shelf.directive',
     './sp.images.directive',
-    './sp.data.service'
+    './sp.data.service',
+    './sp.product-list.directivel'
 ], function (cms) {
 
     function SpDetailPageController(spDataService) {
