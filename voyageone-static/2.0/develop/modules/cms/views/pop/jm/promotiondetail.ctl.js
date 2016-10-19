@@ -49,10 +49,13 @@ define([
                     }
                     // 转换活动场景的值
                     if ($scope.editModel.model.promotionScene) {
-                        var sceneArr = $scope.editModel.model.promotionScene.split(",");
-                        for (idx in sceneArr) {
-                            $scope.editModel.model['promotionScene_' + sceneArr[idx]] = true;
-                        }
+                        var sceneArr = JSON.parse($scope.editModel.model.promotionScene);
+                        $scope.editModel.model.promotionScene = [];
+                        angular.forEach(sceneArr, function(element) {
+                            $scope.editModel.model.promotionScene[element] = true;
+                        });
+                    } else {
+                        $scope.editModel.model.promotionScene = [];
                     }
                 });
             } else {
@@ -75,12 +78,6 @@ define([
                 $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": "",active:1}];
             }
         };
-
-        $scope.getTagList = getTagList;
-        function getTagList(){
-            var tagList = _.filter( $scope.editModel.tagList, function(tag){ return tag.active==1; });
-            return tagList || [];
-        }
 
         $scope.delTag = function (tag) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
@@ -118,15 +115,13 @@ define([
                 return;
             }
 
-            if(getTagList().length === 0){
+            if ($scope.editModel.tagList.length === 0){
                 alert("请至少添加一个标签");
                 return;
             }
-
-            var hasTag = _.every(getTagList(),function(element){
+            var hasTag = _.every($scope.editModel.tagList, function(element) {
                 return element.tagName;
             });
-
             if(!hasTag)
                 return;
 
@@ -142,7 +137,6 @@ define([
 
             // 转换活动场景的值
             _upEntity.model.promotionScene = JSON.stringify(_returnKey (_upEntity.model.promotionScene));
-            _upEntity.model.promotionScene = _upEntity.model.promotionScene.substr(1, _upEntity.model.promotionScene.length - 2);
 
             jmPromotionService.saveModel(_upEntity).then(function () {
                 context = $scope.editModel.model;
