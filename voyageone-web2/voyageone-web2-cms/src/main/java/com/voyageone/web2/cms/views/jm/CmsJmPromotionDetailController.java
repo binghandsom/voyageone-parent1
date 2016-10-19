@@ -300,22 +300,38 @@ public class CmsJmPromotionDetailController extends CmsController {
     }
     //jm2 end
 
+    /**
+     * 获取活动下所有的聚美模块
+     * @since 2.8.0
+     */
     @RequestMapping("getPromotionTagModules")
     public AjaxResponse getPromotionTagModules(@RequestBody int jmPromotionId) {
         return success(jmPromotionService.getPromotionTagModules(jmPromotionId));
     }
 
+    /**
+     * 保存所有聚美模块
+     * @since 2.8.0
+     */
     @RequestMapping("savePromotionTagModules")
     public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
         jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
         return success(true);
     }
 
+    /**
+     * 获取聚美模块下所有的商品
+     * @since 2.8.0
+     */
     @RequestMapping("getPromotionProducts")
-    public AjaxResponse getPromotionProducts(@RequestBody int jmPromotionId) {
-        return success(service3.getPromotionTagProductList(jmPromotionId));
+    public AjaxResponse getPromotionProducts(@RequestBody int tagId) {
+        return success(service3.getPromotionTagProductList(tagId));
     }
 
+    /**
+     * 按顺序保存模块下的商品
+     * @since 2.8.0
+     */
     @RequestMapping("saveProductSort")
     public AjaxResponse saveProductSort(@RequestBody SaveProductSort param) {
         service3.saveProductSort(tagService.getTagByTagId(param.getTagId()), param.getJmProductList(), getUser().getUserName());
