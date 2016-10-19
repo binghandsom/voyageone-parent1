@@ -265,16 +265,16 @@
         UPDATE cms_bt_promotion set promotion_status = 0, modifier=#{modifier},modified =now() where promotion_id = #{jmPromotionId};
     </update>
 
-    <!-- 更新活动下的有库存产品数 注意：该语句只能用在mysql，不兼容其他数据库 -->
+    <!-- 更新活动下的有库存产品数及库存总数 注意：该语句只能用在mysql，不兼容其他数据库 -->
     <update id="updatePromotionProdSumInfo">
-        update cms_bt_jm_promotion as a INNER JOIN ( select cms_bt_jm_promotion_id, count(product_code) as cnt from
+        update cms_bt_jm_promotion as a INNER JOIN ( select cms_bt_jm_promotion_id, count(product_code) as cnt, sum(quantity) as quantity_sum from
             cms_bt_jm_promotion_product where quantity > 0 group by cms_bt_jm_promotion_id ) c
             on c.cms_bt_jm_promotion_id = a.id
                 and a.id in ( SELECT prom.promotion_id
                     FROM cms_bt_promotion as prom
                     where prom.promotion_status = 1 and prom.active = 1 and prom.channel_id = #{channelId} and prom.cart_id = #{cartId}
                     and  prom.activity_end >= now())
-        set a.prod_sum = c.cnt
+        set a.prod_sum = c.cnt, a.quantity_sum = c.quantity_sum
     </update>
 
 </mapper>
