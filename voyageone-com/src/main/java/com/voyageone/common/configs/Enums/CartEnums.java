@@ -149,5 +149,16 @@ public class CartEnums {
 		public static boolean isSimple(Cart cart) {
 			return TT.equals(cart) || USTT.equals(cart);
 		}
-	}
+
+		/**
+		 * 判断给定的店铺是否是京东系
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是京东系
+		 * @since 2.6.0
+		 */
+		public static boolean isJdSeries(Cart cart) {
+			return JD.equals(cart) || JG.equals(cart) || JGJ.equals(cart) || JGY.equals(cart);
+		}
+    }
 }

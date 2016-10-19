@@ -735,7 +735,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         // 如果这里设成OnSale，新增商品时会直接上架，在售商品不能删除
         jdProductBean.setOptionType(OptioinType_offsale);
         // 外部商品编号，对应商家后台货号(非必须)
-        String productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+        String productModel = null;
+        if (mainProduct.getPlatform(sxData.getCartId()) != null) {
+            if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
+                productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+            }
+        }
         if (StringUtils.isEmpty(productModel)) {
             // 默认使用model来设置
             jdProductBean.setItemNum(mainProduct.getCommon().getFields().getModel());

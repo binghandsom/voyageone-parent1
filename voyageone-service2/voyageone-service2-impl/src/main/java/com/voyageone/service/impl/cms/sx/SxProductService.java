@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -827,25 +828,15 @@ public class SxProductService extends BaseService {
             }
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
-            // 2016/06/02 Update by desmond Start  分平台对应
-//            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
-//                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
-//                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-//                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
-//                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-//                    removeProductList.add(productModel);
-//                    continue;
-//                }
-//            } else {
-                // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
-                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
-                if (productPlatformCart == null ||
-                        !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
-                    removeProductList.add(productModel);
-                    continue;
-                }
-//            }
-            // 2016/06/02 Update by desmond end
+            // 取得status判断是否已经Approved（智能上新模式的场合， 无需approve）（但是后面锁住的判断， sku是否售卖的判断仍然是要的）
+            CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
+            if (productPlatformCart == null) {
+                continue;
+            }
+            if (!isSmartSx(channelId, cartId) && !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                removeProductList.add(productModel);
+                continue;
+            }
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -1103,6 +1094,33 @@ public class SxProductService extends BaseService {
         sxData.setSkuList(skuList);
 
         return sxData;
+    }
+
+    /**
+     * 是否为智能上新（智能上新的场合， 无需approve， 只需要sx_workload表里有这条记录就会上新）
+     * （但是被锁住的记录， 不想上新的sku， 那些内容仍然会被剔除了， 只不过无需approve而已）
+     * @param channelId channel id
+     * @param cartId cart id
+     * @return 是否为智能上新
+     */
+    public boolean isSmartSx(String channelId, int cartId) {
+        // 目前只支持京东系的上新
+        if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
+
+        // 获取当前channel的配置
+        CmsChannelConfigBean sxSmartConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SX_SMART, String.valueOf(cartId));
+
+        String sxSmart = null;
+        if (sxSmartConfig != null) {
+            sxSmart = org.apache.commons.lang3.StringUtils.trimToNull(sxSmartConfig.getConfigValue1());
+        }
+
+        // 如果没有配置， 那就不做智能上新。 如果不为1， 那么就不做智能上新
+        if (StringUtils.isEmpty(sxSmart) || !"1".equals(sxSmart)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -3363,8 +3381,75 @@ public class SxProductService extends BaseService {
                         retMap = new HashMap<>();
                     }
                     retMap.putAll(resolveField);
+                } else {
+					if (isSmartSx(sxData.getChannelId(), sxData.getCartId())) {
+						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData);
+						if (resolveField_smart != null) {
+							if (retMap == null) {
+								retMap = new HashMap<>();
+							}
+							retMap.putAll(resolveField_smart);
+						}
+					}
                 }
             }
+        }
+
+        return retMap;
+    }
+
+    private Map<String, Field> getValueBySmartCore(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        // 目前只做必填项
+        if (field.getRules() == null || field.getRuleByName("requiredRule") == null || !field.getRuleByName("requiredRule").getValue().equals("true")) {
+            return null;
+        }
+
+        // 具体逻辑
+        switch (field.getType()) {
+            case INPUT:
+                break;
+            case SINGLECHECK:
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+
+                // 先看看有没有默认值
+                String val = singleCheckField.getDefaultValue();
+
+                // 看看所有候选项里是否有"其他""其它"
+                if (StringUtils.isEmpty(val)) {
+                    for (Option option : singleCheckField.getOptions()) {
+                        if (option.getDisplayName().equals("其他") ||
+                                option.getDisplayName().equals("其它")
+                                ) {
+                            val = option.getValue();
+                            break;
+                        }
+                    }
+                }
+
+                // 还没有的话， 就用第一个候选项
+                if (StringUtils.isEmpty(val)) {
+                    if (singleCheckField.getOptions() != null && singleCheckField.getOptions().size() > 0) {
+                        val = singleCheckField.getOptions().get(0).getValue();
+                    }
+                }
+
+                singleCheckField.setValue(val);
+                retMap.put(field.getId(), singleCheckField);
+                break;
+            case MULTIINPUT:
+                break;
+            case MULTICHECK:
+                break;
+            case COMPLEX:
+                break;
+            case MULTICOMPLEX:
+                break;
+            case LABEL:
+                break;
+            default:
+                return null;
         }
 
         return retMap;

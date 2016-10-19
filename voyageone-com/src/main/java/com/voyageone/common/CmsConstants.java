@@ -134,6 +134,9 @@ public class CmsConstants {
         // App端启用开关(用于控制所有平台的)
         String APP_SWITCH = "APP_SWITCH";
 
+        // 上新方式
+        String SX_SMART = "SX_SMART";
+
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";
 
