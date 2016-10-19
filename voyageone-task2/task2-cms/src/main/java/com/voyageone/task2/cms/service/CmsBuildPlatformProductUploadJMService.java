@@ -1730,6 +1730,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                                      List<BaseMongoMap<String, Object>> jmSkus) throws Exception{
         if (ListUtils.isNull(remoteSpus)) return;
 
+        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
+        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
+
         for (JmGetProductInfo_Spus spu : remoteSpus) {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
             if (isNotExistBusinessmanCode(spu, jmSkus)) {
@@ -1754,21 +1757,31 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
 				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
-                // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
-                // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
-                // 把Deal的库存修改成0
-				if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
-					String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
-					$info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
-				}
+                // P27.sku.isSale = false的时候
+                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
+                if (ListUtils.notNull(remoteSkuList)
+                        && "1".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+                    // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
+                    // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
+                    // 把Deal的库存修改成0
+                    if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+                        String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
+                        $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+                    }
 
-                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
-				if (!StringUtils.isEmpty(spu.getSku_no())) {
-					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
-				}
+                    // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
+                    if (!StringUtils.isEmpty(spu.getSku_no())) {
+                        updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+                    }
+                }
             } else {
-                // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
-//                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
+                // P27.sku.isSale = true的时候
+                // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1)
+                if (ListUtils.notNull(remoteSkuList)
+                        && "0".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+                    // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
+                    updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
+                }
             }
         }
     }
@@ -2126,6 +2139,27 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         }
 
         return remoteSpus;
+    }
+
+    /**
+     * 取得聚美平台上的指定deal的sku信息
+     *
+     * @param shop 店铺信息
+     * @param jumeiHashId 聚美HashId(聚美Deal唯一值)
+     */
+    protected List<LinkedHashMap<String,Object>> getRemoteDealSkuList(ShopBean shop, String jumeiHashId) throws Exception {
+        List<LinkedHashMap<String,Object>> remoteSkuList = null;
+
+        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
+        HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
+        getDealByHashIDRequest.setJumei_hash_id(jumeiHashId);
+        getDealByHashIDRequest.setFields("start_time,end_time,deal_status,product_id,sku_list");
+        HtDealGetDealByHashIDResponse getDealByHashIDResponse = jumeiHtDealService.getDealByHashID(shop, getDealByHashIDRequest);
+        if (getDealByHashIDResponse != null && getDealByHashIDResponse.is_Success()) {
+            remoteSkuList = getDealByHashIDResponse.getSkuList();
+        }
+
+        return remoteSkuList;
     }
 
 }
