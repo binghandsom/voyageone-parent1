@@ -19,6 +19,22 @@
                                             <textarea type="text" rows="4" class="form-control no-resize" ng-model="searchInfo.code"></textarea>
                                         </div>
                                     </div>
+                                    <div class="form-group"><!-- 查询库存状态 -->
+                                        <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+                                        <div class="col-sm-8" style="padding-left:0px">
+                                            <div class="col-sm-5">
+                                                <select class="form-control m-r-xs" style="margin-left:4px" ng-model="searchInfo.compareType">
+                                                    <option value="">请选择...</option>
+                                                    <option value=">">大于</option>
+                                                    <option value="=">等于</option>
+                                                    <option value="&lt;">小于</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-5" style="margin-left:1px">
+                                                <input type="number" class="form-control" ng-model="searchInfo.stockQty" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
@@ -177,15 +193,15 @@
                         <li><a href="" ng-click="openPriceModifyWin()" ng-if="!vm.isEnd && vm.isUpdateJM">批量变更价格</a></li>
                     </ul>
                 </div>
-                <div class="btn-group dropdown" uib-dropdown="" >
-                    <button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-arrow-circle-right"></i>&nbsp;专场变更&nbsp;<span class="caret"></span>
-                    </button>
-                    <ul uib-dropdown-menu="" class="ng-scope dropdown-menu">
-                        <li><a href="" ng-click="openJmPromotionDetailWin()">编辑专场</a></li>
+                <!--<div class="btn-group dropdown" uib-dropdown="" >-->
+                    <!--<button type="button" class="btn btn-default dropdown-toggle" uib-dropdown-toggle="" aria-haspopup="true" aria-expanded="false">-->
+                        <!--<i class="fa fa-arrow-circle-right"></i>&nbsp;专场变更&nbsp;<span class="caret"></span>-->
+                    <!--</button>-->
+                    <!--<ul uib-dropdown-menu="" class="ng-scope dropdown-menu">-->
+                        <!--<li><a href="" ng-click="openJmPromotionDetailWin()">编辑专场</a></li>-->
 
-                    </ul>
-                </div>
+                    <!--</ul>-->
+                <!--</div>-->
             </div>
             <tabset class="tab-container vo_nav-tabs">
                 <tab>
