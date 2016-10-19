@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,18 +38,8 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
     @Test
     public void testDoSetPlatformJdSchemaCommon() throws Exception {
         int cartId = 28;  // 京东国际Liking匠心界店铺
-//        int cartId = 29;  // 京东国际Liking悦境店铺
 
-        ShopBean shopProp = new ShopBean();
-        shopProp.setApp_url("https://api.jd.com/routerjson");
-        shopProp.setAppKey("");
-        shopProp.setAppSecret("");
-        shopProp.setSessionKey("");   // 28 匠心界
-//        shopProp.setSessionKey("");   // 29 悦境
-        // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
-        shopProp.setPlatform_id("2");
-
-        cmsBuildPlatformCategorySchemaJdMqService.doSetPlatformJdSchemaCommon(shopProp, cartId);
+        cmsBuildPlatformCategorySchemaJdMqService.doSetPlatformJdSchemaCommon(cartId);
     }
 
 
