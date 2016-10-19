@@ -241,7 +241,7 @@
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             #{promotionId,jdbcType=INTEGER},
-            #{jmPromotionId,jdbcType=INTEGER},
+            #{jmpromotionId,jdbcType=INTEGER},
             <if test="promotionProductType != null" >
                 #{promotionProductType,jdbcType=VARCHAR},
             </if>
