@@ -18,11 +18,12 @@ define([
             this.searchCode;
 
             this.destGroupTypeAfterPreview;
-            this.destRefCodeAfterPreview;
+            this.refCodeAfterPreview;
 
             this.show = false;
             this.popups = popups;
             this.showView = false;
+            this.moveButton = true;
 
             this.productDetailService = productDetailService;
             this.notify = notify;
@@ -58,12 +59,14 @@ define([
                 }).then(function (resp) {
                     self.codeList = resp.data.codeList;
                     self.refCode = "";
+                    self.closePreview();
                 });
             },
 
             selRefCode: function (productInfo) {
                 var self = this;
                 self.refCode = productInfo.common.fields.code;
+                self.closePreview();
             },
 
             openImageDetail : function (item) {
@@ -102,7 +105,7 @@ define([
                     self.destSkuInfoAfter = resp.data.destSkuInfoAfter;
                     self.ifShow({type:'buildView',value:true})
                     self.destGroupTypeAfterPreview = self.destGroupType;
-                    self.destRefCodeAfterPreview = self.refCode;
+                    self.refCodeAfterPreview = self.refCode;
                 });
             },
 
@@ -117,9 +120,37 @@ define([
                 }
 
             },
+
+            destGroupChange: function () {
+                var self = this;
+                self.ifShow({type:'selectGroup',value:self.destGroupType});
+                self.closePreview();
+            },
+
+            closePreview: function () {
+                var self = this;
+                if (self.destGroupTypeAfterPreview != self.destGroupType || self.refCodeAfterPreview != self.refCode) {
+                    self.ifShow({type:'buildView',value:false});
+                    self.destGroupTypeAfterPreview = "";
+                    self.refCodeAfterPreview = "";
+                }
+            },
+
             move: function (type) {
                 var self = this;
-                self.popups.openSKUMoveConfirm(type);
+                self.popups.openSKUMoveConfirm(type).then(function (resp) {
+                    self.productDetailService.moveSku({
+                        destGroupType: self.destGroupType,
+                        skuList: self.skuList,
+                        sourceCode: self.sourceCode,
+                        refCode: self.refCode
+                    }).then(function (resp) {
+                        self.moveButton = false;
+                        self.popups.openMoveResult("Sku").then(function () {
+                            window.location.href = "#/product/detail/" + resp.data.newProdId;
+                        });
+                    });
+                });
             }
 
         };

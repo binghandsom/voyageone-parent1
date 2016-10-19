@@ -456,8 +456,8 @@ public class CmsProductMoveService extends BaseViewService {
         // 取得源Code的Product信息
         CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
 
-        // check移动信息是否匹配（是否存在选择的Sku列表，源Code是否存在）
-        if (skuList == null || sourceProductModel == null) {
+        // check移动信息是否匹配（是否存在选择的Sku列表，源Code是否存在, 源Code是否存在包含选择的Sku列表）
+        if (skuList == null || sourceProductModel == null || !checkSkusInCode(sourceProductModel, skuList)) {
             // 移动的数据不整合，请重新刷新画面
             throw new BusinessException("7000100");
         }
@@ -645,8 +645,11 @@ public class CmsProductMoveService extends BaseViewService {
      * 移动Sku-从一个Code到新Code
      */
     @VOTransactional
-    public void moveSku(Map<String, Object> params, String channelId, String modifier, String lang) {
+    public Map<String, Object> moveSku(Map<String, Object> params, String channelId, String modifier, String lang) {
+        Map<String, Object> returnInfo = new HashMap<>();
 
+        returnInfo.put("newProdId", new Integer(2513260));
+        return returnInfo;
     }
 
 
@@ -721,6 +724,38 @@ public class CmsProductMoveService extends BaseViewService {
         }
         return true;
     }
+
+    /**
+     * 源Code是否存在包含选择的Sku列表。
+     */
+    private boolean checkSkusInCode(CmsBtProductModel productModel, List skuList) {
+        for (Object sku : skuList) {
+            String selectedSku = "";
+            boolean find = false;
+            if (sku instanceof Map) {
+                Boolean isChecked = (Boolean) ((Map) sku).get("isChecked");
+                if (isChecked != null && isChecked) {
+                    selectedSku = (String) ((Map) sku).get("skuCode");
+                }
+            } else if (sku instanceof String) {
+                selectedSku = (String) sku;
+            }
+            if (!StringUtils.isEmpty(selectedSku)) {
+                for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+                    if (selectedSku.equals(skuModel.getSkuCode())) {
+                        find = true;
+                        break;
+                    }
+                }
+                if (!find) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
 
     /**
      * 新建一个新的Group。

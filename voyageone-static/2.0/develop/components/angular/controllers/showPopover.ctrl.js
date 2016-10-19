@@ -9,28 +9,17 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     function showInfo(values) {
         if (values == undefined || values == '') {
             return '';
-        } else if (values.value == undefined) {
-            var tempHtml = "";
-            if (values instanceof Array) {
-                angular.forEach(values, function (data, index) {
-                    tempHtml += data;
-                    if (index !== values.length) {
-                        tempHtml += "<br>";
-                    }
-                });
-            } else {
-                tempHtml += values;
-            }
+        }
+        var tempHtml = "";
+        if (values instanceof Array) {
+            angular.forEach(values, function (data, index) {
+                tempHtml += data;
+                if (index !== values.length) {
+                    tempHtml += "<br>";
+                }
+            });
         } else {
-            if (values.isUseComplexTemplate == true) {
-                $scope.dynamicPopover = {
-                    type: values.type,
-                    value1: values.value,
-                    value2: values.value2,
-                    value3: values.value3,
-                    templateUrl: 'dynamicPopoverTemplate.html'
-                };
-            }
+            tempHtml += values;
         }
         return tempHtml;
     }

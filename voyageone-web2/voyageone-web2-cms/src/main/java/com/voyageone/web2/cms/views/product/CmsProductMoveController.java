@@ -82,8 +82,7 @@ public class CmsProductMoveController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.MOVE_SKU)
     public AjaxResponse moveSku(@RequestBody Map<String, Object> param) {
-        cmsProductMoveService.moveSku(param, getUser().getSelChannelId(), getUser().getUserName(), getLang());
-        return success(null);
+        return success(cmsProductMoveService.moveSku(param, getUser().getSelChannelId(), getUser().getUserName(), getLang()));
     }
 
 }
