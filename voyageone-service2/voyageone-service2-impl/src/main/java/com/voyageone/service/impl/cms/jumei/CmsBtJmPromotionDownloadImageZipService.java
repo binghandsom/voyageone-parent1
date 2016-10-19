@@ -78,10 +78,11 @@ public class CmsBtJmPromotionDownloadImageZipService {
             }
         });
         //压缩图片的流
-        imageToZip(strZipName, promotionImagesList);
+        ZipOutputStream zipOutputStream = imageToZip(strZipName, promotionImagesList);
         //返回压缩流
         return outputStream.toByteArray();
     }
+
     /**
      * 下载商品主图包
      *
@@ -107,7 +108,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
             promotionImagesList.add(urlMap);
         }
         //压缩图片的流
-        imageToZip(strZipName, promotionImagesList);
+        ZipOutputStream zipOutputStream = imageToZip(strZipName, promotionImagesList);
         //返回压缩包流
         return outputStream.toByteArray();
     }
@@ -133,7 +134,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 //压缩包内生成图片的路径以及名称
                 out.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
-                try{
+                try {
                     InputStream inputStream = conn.getInputStream();
                     //读入需要下载的文件的内容，打包到zip文件
                     while ((len = inputStream.read(buffer)) > 0) {
