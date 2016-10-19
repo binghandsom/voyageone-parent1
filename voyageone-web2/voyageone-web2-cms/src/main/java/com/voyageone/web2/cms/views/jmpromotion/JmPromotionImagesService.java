@@ -7,7 +7,9 @@ import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Created by piao on 9/7/16.
@@ -21,12 +23,29 @@ public class JmPromotionImagesService extends BaseViewService {
 
     @Autowired
     private CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
+    @Autowired
+    private CmsBtJmPromotionService cmsBtJmPromotionService;
+    @Autowired
+    private CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
-    public List<CmsBtJmPromotionImagesModel> getJmPromotionImagesList(UserSessionBean user, int promotionId, int jmPromotionId) {
-        List<CmsBtJmPromotionImagesModel> juImageList = null;
+    public Map<String,Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
-        ///juImageList = cmsBtJmPromotionImagesDao.selectJmPromotionImagesList(user.getSelChannelId(), promotionId, jmPromotionId);
-        return juImageList;
+        CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
+
+        Map<String,String> promotionImageUrl = new HashMap<String,String>();
+        Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(promotionImagesModel));
+        imageMap.forEach((s, o) -> {
+            if (o instanceof String && o.toString().contains("-")) {
+                promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(jmPromotionId+"-"+o.toString(),"appEntrance",cmsBtJmPromotionSaveBean));
+            }
+        });
+
+        Map<String,Object> result = new HashMap<String,Object>();
+        result.put("promotionImagesModel",promotionImagesModel);
+        result.put("promotionImageUrl",promotionImageUrl);
+
+        return result;
     }
 
     public void saveJmPromotionImages(CmsBtJmPromotionImagesModel model) {

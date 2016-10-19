@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
 import com.voyageone.common.asserts.Assert;
+import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,7 +29,7 @@ import java.util.Map;
 public class JmPromotionImagesController extends CmsController {
 
     @Autowired
-    JmPromotionImagesService jmPromotionImagesService;
+    private JmPromotionImagesService jmPromotionImagesService;
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.INIT)
     public AjaxResponse init(@RequestBody Map<String, String> requestMap) {
@@ -35,7 +40,18 @@ public class JmPromotionImagesController extends CmsController {
         int jmPromotionId = Integer.parseInt(requestMap.get("jmPromotionId"));
         Assert.notNull(jmPromotionId).elseThrowDefaultWithTitle("jmPromotionId");
 
-        return success(jmPromotionImagesService.getJmPromotionImagesList(getUser(), promotionId, jmPromotionId));
+        jmPromotionImagesService.getJmPromotionImage(promotionId, jmPromotionId);
+
+/*        List<CmsBtJmPromotionImagesModel> jmPromotionImagesList = jmPromotionImagesService.getJmPromotionImagesList(getUser(), promotionId, jmPromotionId);
+
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
+        List<String> imgUrls = new ArrayList<String>();
+
+        for(CmsBtJmPromotionImagesModel entity:jmPromotionImagesList){
+            cmsBtJmImageTemplateService.getUrl();
+        }*/
+
+        return success(null);
     }
 
     /**
