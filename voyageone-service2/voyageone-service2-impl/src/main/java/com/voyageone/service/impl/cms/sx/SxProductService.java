@@ -3349,6 +3349,9 @@ public class SxProductService extends BaseService {
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
+		// 是否智能上新
+		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
+
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
                 // 特殊字段
@@ -3382,7 +3385,7 @@ public class SxProductService extends BaseService {
                     }
                     retMap.putAll(resolveField);
                 } else {
-					if (isSmartSx(sxData.getChannelId(), sxData.getCartId())) {
+					if (blnIsSmartSx) {
 						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData);
 						if (resolveField_smart != null) {
 							if (retMap == null) {
@@ -3435,8 +3438,10 @@ public class SxProductService extends BaseService {
                     }
                 }
 
-                singleCheckField.setValue(val);
-                retMap.put(field.getId(), singleCheckField);
+				if (!StringUtils.isEmpty(val)) {
+					singleCheckField.setValue(val);
+					retMap.put(field.getId(), singleCheckField);
+				}
                 break;
             case MULTIINPUT:
                 break;
