@@ -1227,7 +1227,7 @@ public class ProductService extends BaseService {
         }
     }
 
-    public void updateProductPlatformIsMain(Integer isMain, String channelId, String productCode, Integer cartId, String modifier) {
+    public void updateProductPlatformIsMain(Integer isMain, String mainProductCode, String channelId, String productCode, Integer cartId, String modifier) {
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("common.fields.code", productCode);
@@ -1236,6 +1236,7 @@ public class ProductService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
 
         updateMap.put("platforms.P" + cartId + ".pIsMain", isMain);
+        updateMap.put("platforms.P" + cartId + ".mainProductCode", mainProductCode);
         updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
