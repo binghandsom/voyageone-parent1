@@ -17,6 +17,7 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
@@ -398,7 +399,7 @@ public class CmsBtJmPromotionProduct3Service {
         return daoExt.selectCountByPromotionId(JmPromotionId);
     }
 
-    public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {
+    public List<JmProduct> getPromotionTagProductList(int tagId) {
         CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
 
         parameter.setCmsBtTagId(tagId);
@@ -411,8 +412,66 @@ public class CmsBtJmPromotionProduct3Service {
         return jmPromotionTagProductModelList
                 .stream()
                 .map(CmsBtJmPromotionTagProductModel::getCmsBtJmPromotionProductId)
-                .map(productId -> dao.select(productId))
+                .map(productId -> {
+                    CmsBtJmPromotionProductModel jmPromotionProductModel = dao.select(productId);
+                    CmsBtJmProductModel productModel = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(jmPromotionProductModel.getProductCode(), jmPromotionProductModel.getChannelId());
+                    return new JmProduct(productModel, jmPromotionProductModel);
+                })
                 .collect(toList());
+    }
+
+    public void saveProductSort(CmsBtTagModel tagModel, List<JmProduct> jmProductList, final String username) {
+        // 查询老数据
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+        parameter.setCmsBtTagId(tagModel.getId());
+        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
+        // 清空老数据
+        if (!jmPromotionTagProductModelList.isEmpty())
+            jmPromotionTagProductModelList.forEach(cmsBtJmPromotionTagProductModel -> daoCmsBtJmPromotionTagProduct.delete(cmsBtJmPromotionTagProductModel.getId()));
+        // 插入新数据
+        jmProductList
+                .stream()
+                .map(JmProduct::getJmPromotionProduct)
+                .forEach(jmPromotionProduct -> {
+                    CmsBtJmPromotionTagProductModel tagProduct = new CmsBtJmPromotionTagProductModel();
+                    tagProduct.setChannelId(tagModel.getChannelId());
+                    tagProduct.setCmsBtJmPromotionProductId(jmPromotionProduct.getId());
+                    tagProduct.setCmsBtTagId(tagModel.getId());
+                    tagProduct.setTagName(tagModel.getTagName());
+                    tagProduct.setCreater(username);
+                    tagProduct.setModifier(username);
+
+                    daoCmsBtJmPromotionTagProduct.insert(tagProduct);
+                });
+    }
+
+    public static class JmProduct {
+        CmsBtJmProductModel jmProduct;
+        CmsBtJmPromotionProductModel jmPromotionProduct;
+
+        public JmProduct() {
+        }
+
+        JmProduct(CmsBtJmProductModel jmProduct, CmsBtJmPromotionProductModel jmPromotionProduct) {
+            this.jmProduct = jmProduct;
+            this.jmPromotionProduct = jmPromotionProduct;
+        }
+
+        public CmsBtJmProductModel getJmProduct() {
+            return jmProduct;
+        }
+
+        public void setJmProduct(CmsBtJmProductModel jmProduct) {
+            this.jmProduct = jmProduct;
+        }
+
+        public CmsBtJmPromotionProductModel getJmPromotionProduct() {
+            return jmPromotionProduct;
+        }
+
+        public void setJmPromotionProduct(CmsBtJmPromotionProductModel jmPromotionProduct) {
+            this.jmPromotionProduct = jmPromotionProduct;
+        }
     }
 }
 
