@@ -94,13 +94,13 @@ public class CmsBtJmPromotionDownloadImageZipService {
         //抽取图片数据的条件
         Map<String, Object> params = new HashMap<>();
         //promotionId
-        params.put("promotionId", promotionId);
+        params.put("cmsBtJmPromotionId", promotionId);
         //取得打包图片的名称和url
         List<CmsBtJmPromotionProductModel> modelList = cmsBtJmPromotionProductDao.selectList(params);
         for (CmsBtJmPromotionProductModel model : modelList) {
             //压缩图片的所需要的对象
             Map<String, String> urlMap = new HashMap<>();
-            urlMap.put("url", url + model.getImage1() + suffix);
+            urlMap.put("url", url + model.getImage1());
             urlMap.put("picturePath", model.getProductCode());
             promotionImagesList.add(urlMap);
         }
