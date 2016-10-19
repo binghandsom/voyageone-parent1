@@ -5,7 +5,6 @@ define([
 
     function SPImportListDirectiveController($scope,$routeParams,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
     {
-        $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.parentId,
             cmsBtJmPromotionImportTaskList: [],
