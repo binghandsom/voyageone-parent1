@@ -7,9 +7,16 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
-        $scope.vm = {"jmMasterBrandList":[]};
+        $scope.vm = {"jmMasterBrandList":[], "isFromBox": false};
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
+
+        $scope.$watch('editModel.model.activityEnd', function (newValue, oldValue) {
+            if (newValue && $scope.vm.isFromBox) {
+                $scope.vm.isFromBox = false;
+                $scope.editModel.model.activityEnd = new Date(newValue.toString().substr(0, 11) + "23:59:59");
+            }
+        });
 
         $scope.initialize  = function () {
             /** 默认值设置 */
@@ -147,6 +154,17 @@ define([
         /**禁用日期*/
         $scope.disabled = function(date, mode) {
             return ( mode === 'day' && $scope.vm.isBeginPre );
+        };
+
+        // 只用于监控活动结束时间发生变化
+        $scope.onDateChange = function () {
+            $scope.vm.isFromBox = true;
+
+            if ($scope.vm.datePicker2) {
+                $scope.vm.datePicker2 = false;
+            } else {
+                $scope.vm.datePicker2 = true;
+            }
         };
 
         /**
