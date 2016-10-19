@@ -36,6 +36,8 @@ public interface CmsBtJmPromotionDaoExt {
 
     List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId);
 
+    List<Integer> selectEffectiveJmPromotionId();
+
     int updatePromotionStatus(@Param("jmPromotionId") int jmPromotionId, @Param("modifier") String modifier);
 
     /**
