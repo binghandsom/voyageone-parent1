@@ -58,7 +58,6 @@ public class CmsBtJmPromotionDownloadImageZipService {
     public byte[] selectSpecialImagesList(Integer promotionId) {
         //压缩图片的所需要的对象
         List<Map<String, String>> promotionImagesList = new ArrayList<>();
-
         //根据promotionId在数据库中取得对应的Url-----专场入口图
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(promotionId, true);
         //取得打包图片的名称
