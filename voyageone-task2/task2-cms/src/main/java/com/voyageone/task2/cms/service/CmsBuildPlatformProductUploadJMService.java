@@ -1649,10 +1649,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             stock = 0;
                         }
 
+                        // delete desmond 2016/10/18 改为库存为0的时候也把这个SKU上传到商城
                         // 聚美mall sku 不能追加库存为0的sku, 所以如果库存为0的场合, 跳过不追加
-                        if (stock == 0) {
-                        	continue;
-						}
+//                        if (stock == 0) {
+//                        	continue;
+//						}
 
                         skuInfo.setStocks(stock);
                         skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
@@ -1681,7 +1682,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
     }
 
     /**
-     * 回写Mall Id 到product表和group表
+     * 回写Mall Id 到product表和group表，以及voyageone_cms2.cms_bt_jm_product表
      * @param product
      * @param mallId 聚美Mall Id
      */
@@ -1715,6 +1716,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         updateGroupQuery.setUpdateParameters(mallId, CmsConstants.PlatformStatus.OnSale);
 
         cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
+
+        // add by desmond 2016/10/18 start
+        // 回写mallId到voyageone_cms2.cms_bt_jm_product表中
+        CmsBtJmProductModel productModel = getCmsBtJmProductModel(channelId, code);
+        if(productModel != null) {
+            productModel.setJumeiMallId(mallId);
+            cmsBtJmProductDao.update(productModel);
+            //保存jm_product_id
+            $info("保存jumei_mall_id到cms_bt_jm_product表成功！[ProductCode:%s],[ProductId:%s], [ChannelId:%s], [CartId:%s]", code, product.getProdId(), channelId, CART_ID);
+        }
+        // add by desmond 2016/10/18 end
     }
 
     /**
