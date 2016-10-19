@@ -18,6 +18,8 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_JuMeiProductUpdate = "voyageone_cms_batchjob_JuMeiProductUpdate_queue";
 
+    public static final String CMS_BATCH_JmSynPromotionDealPrice = "voyageone_cms_batchjob_JmSynPromotionDealPrice_queue";
+
     public static final String CMS_BATCH_JuMeiProductUpdateDealEndTimeJob = "voyageone_cms_batchjob_JuMeiProductUpdateDealEndTimeJobService_queue";
     /**
      * 聚美活动中的产品的库存同步
