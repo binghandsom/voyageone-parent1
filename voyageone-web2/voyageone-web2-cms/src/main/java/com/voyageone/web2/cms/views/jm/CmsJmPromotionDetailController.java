@@ -19,6 +19,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,7 +37,7 @@ import java.util.Map;
 public class CmsJmPromotionDetailController extends CmsController {
     private final CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct;
     private final CmsBtJmProductService cmsBtJmProductService;
-    private final CmsBtJmPromotionProductService jmPromotionProductService;
+    private final CmsBtJmPromotionProductService cmsBtJmPromotionProductService;
     private final CmsBtJmSkuService cmsBtJmSkuService;
     private final CmsBtJmPromotionSkuService cmsBtJmPromotionSkuService;
     private final CmsBtJmMasterBrandService cmsBtJmMasterBrandService;
@@ -63,7 +63,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
         this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
         this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
-        this.jmPromotionProductService = cmsBtJmPromotionProductService;
+        this.cmsBtJmPromotionProductService = cmsBtJmPromotionProductService;
         this.service3 = service3;
         this.cmsBtJmProductService = cmsBtJmProductService;
         this.cmsBtJmMasterBrandService = cmsBtJmMasterBrandService;
@@ -279,8 +279,10 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     //刷新参考价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
-    public  AjaxResponse refreshPrice(@RequestBody long cmsBtJmPromotionId) {
-
+    public  AjaxResponse refreshPrice(@RequestBody int jmPromotionId) {
+        Map<String,Object> param=new HashedMap();
+        param.put("jmPromotionId",jmPromotionId);
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
         // // TODO: 2016/10/18  加入 发消息  李俊提供
         return success(null);
     }
@@ -289,16 +291,5 @@ public class CmsJmPromotionDetailController extends CmsController {
     @RequestMapping("getPromotionTagModules")
     public AjaxResponse getPromotionTagModules(@RequestBody int jmPromotionId) {
         return success(jmPromotionService.getPromotionTagModules(jmPromotionId));
-    }
-
-    @RequestMapping("savePromotionTagModules")
-    public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
-        jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
-        return success(true);
-    }
-
-    @RequestMapping("getPromotionProducts")
-    public AjaxResponse getPromotionProducts(@RequestBody int jmPromotionId) {
-        return success(service3.getPromotionTagProductList(jmPromotionId));
     }
 }

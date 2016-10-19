@@ -6,8 +6,9 @@
         `id`, `channel_id`, `name`, `activity_pc_id`, `activity_app_id`, `cms_bt_jm_master_brand_Id`, 
         `brand`, `category`, `activity_start`, `activity_end`, `pre_period_start`, `pre_period_end`, 
         `created`, `creater`, `modified`, `modifier`, `active`, `comment`, `ref_tag_id`, 
-        `status`, `recovery_status`, `promotion_type`, `promotion_scene`, `is_promotion_down`, `is_promotion_full_minus`,
-        `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`, `signup_deadline`
+        `status`, `recovery_status`, `promotion_scene`, `promotion_type`, `is_promotion_down`, 
+        `is_promotion_full_minus`, `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`, 
+        `signup_deadline`, `prod_sum`, `quantity_sum`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -83,6 +84,9 @@
             <if test="recoveryStatus != null" >
                 `recovery_status` = #{recoveryStatus,jdbcType=INTEGER},
             </if>
+            <if test="promotionScene != null" >
+                `promotion_scene` = #{promotionScene,jdbcType=VARCHAR},
+            </if>
             <if test="promotionType != null" >
                 `promotion_type` = #{promotionType,jdbcType=INTEGER},
             </if>
@@ -103,6 +107,12 @@
             </if>
             <if test="signupDeadline != null" >
                 `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="prodSum != null" >
+                `prod_sum` = #{prodSum,jdbcType=INTEGER},
+            </if>
+            <if test="quantitySum != null" >
+                `quantity_sum` = #{quantitySum,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -178,6 +188,9 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionScene != null" >
+                and `promotion_scene` = #{promotionScene,jdbcType=VARCHAR}
+            </if>
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
@@ -195,6 +208,15 @@
             </if>
             <if test="isPromotionGiveCoupons != null" >
                 and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
+            </if>
+            <if test="signupDeadline != null" >
+                and `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP}
+            </if>
+            <if test="prodSum != null" >
+                and `prod_sum` = #{prodSum,jdbcType=INTEGER}
+            </if>
+            <if test="quantitySum != null" >
+                and `quantity_sum` = #{quantitySum,jdbcType=INTEGER}
             </if>
         </where>
         limit 1
@@ -265,6 +287,9 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionScene != null" >
+                and `promotion_scene` = #{promotionScene,jdbcType=VARCHAR}
+            </if>
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
@@ -282,6 +307,15 @@
             </if>
             <if test="isPromotionGiveCoupons != null" >
                 and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
+            </if>
+            <if test="signupDeadline != null" >
+                and `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP}
+            </if>
+            <if test="prodSum != null" >
+                and `prod_sum` = #{prodSum,jdbcType=INTEGER}
+            </if>
+            <if test="quantitySum != null" >
+                and `quantity_sum` = #{quantitySum,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -349,6 +383,9 @@
             <if test="recoveryStatus != null" >
                 and `recovery_status` = #{recoveryStatus,jdbcType=INTEGER}
             </if>
+            <if test="promotionScene != null" >
+                and `promotion_scene` = #{promotionScene,jdbcType=VARCHAR}
+            </if>
             <if test="promotionType != null" >
                 and `promotion_type` = #{promotionType,jdbcType=INTEGER}
             </if>
@@ -366,6 +403,15 @@
             </if>
             <if test="isPromotionGiveCoupons != null" >
                 and `is_promotion_give_coupons` = #{isPromotionGiveCoupons,jdbcType=BIT}
+            </if>
+            <if test="signupDeadline != null" >
+                and `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP}
+            </if>
+            <if test="prodSum != null" >
+                and `prod_sum` = #{prodSum,jdbcType=INTEGER}
+            </if>
+            <if test="quantitySum != null" >
+                and `quantity_sum` = #{quantitySum,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -432,11 +478,11 @@
             <if test="recoveryStatus != null" >
                 `recovery_status`,
             </if>
-            <if test="promotionType != null" >
-                `promotion_type`,
-            </if>
             <if test="promotionScene != null" >
                 `promotion_scene`,
+            </if>
+            <if test="promotionType != null" >
+                `promotion_type`,
             </if>
             <if test="isPromotionDown != null" >
                 `is_promotion_down`,
@@ -455,6 +501,12 @@
             </if>
             <if test="signupDeadline != null" >
                 `signup_deadline`,
+            </if>
+            <if test="prodSum != null" >
+                `prod_sum`,
+            </if>
+            <if test="quantitySum != null" >
+                `quantity_sum`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -527,11 +579,11 @@
             <if test="recoveryStatus != null" >
                 #{recoveryStatus,jdbcType=INTEGER},
             </if>
-            <if test="promotionType != null" >
-                #{promotionType,jdbcType=INTEGER},
-            </if>
             <if test="promotionScene != null" >
                 #{promotionScene,jdbcType=VARCHAR},
+            </if>
+            <if test="promotionType != null" >
+                #{promotionType,jdbcType=INTEGER},
             </if>
             <if test="isPromotionDown != null" >
                 #{isPromotionDown,jdbcType=BIT},
@@ -550,6 +602,12 @@
             </if>
             <if test="signupDeadline != null" >
                 #{signupDeadline,jdbcType=TIMESTAMP},
+            </if>
+            <if test="prodSum != null" >
+                #{prodSum,jdbcType=INTEGER},
+            </if>
+            <if test="quantitySum != null" >
+                #{quantitySum,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>

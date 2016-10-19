@@ -3,26 +3,28 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SProductListDirectiveController($scope,$routeParams,popups,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
+    function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm,platformMappingService)
     {
         $scope.datePicker = [];
         $scope.vm = {
-            "promotionId": $routeParams.parentId,
+            "promotionId": $routeParams.jmpromId,
             modelList: [],
             cmsBtJmPromotionImportTaskList: [],
             cmsBtJmPromotionExportTaskList: [],
             tagList: [],
             changeCount:0
         };
-        $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId, pCatPath: null, pCatId: null};
+        $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
         $scope.modelUpdateDealEndTime = {};
         $scope.modelAllUpdateDealEndTime = {};
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-            jmPromotionDetailService.init({jmPromotionRowId:$routeParams.parentId}).then(function(res){
+
+            jmPromotionDetailService.init({jmPromotionRowId:$routeParams.jmpromId}).then(function(res){
                 $scope.parentModel = res.data.modelPromotion;
+                console.log(res.data);
                 $scope.vm.tagList = res.data.listTag;
                 $scope.vm.changeCount = res.data.changeCount;
                 $scope.vm.isBegin=res.data.isBegin;//活动是否开始
@@ -31,13 +33,13 @@ define([
                 $scope.vm.brandList = res.data.brandList;
             });
             $scope.search();
-            $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
+            $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
             $scope.modelUpdateDealEndTime.isBatch = true;
 
         };
         $scope.clear = function () {
-            $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.parentId};
+            $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId};
             $scope.searchInfo.brand = null;
             $scope.searchInfo.selectedChanged = null;
         };
@@ -178,13 +180,13 @@ define([
             })
         };
         $scope.searchImport = function () {
-            cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
+            cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.jmpromId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })
         }
         $scope.searchExport = function () {
-            cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
+            cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.jmpromId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
             }, function (res) {
             })
@@ -495,7 +497,7 @@ define([
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
         }
         $scope.openJmPromotionDetailWin = function () {
-            var parameter={ id : $routeParams.parentId};
+            var parameter={ id : $routeParams.jmpromId};
             parameter.isBegin= $scope.vm.isBegin;//活动是否开始
             parameter.isEnd= $scope.vm.isEnd;//活动是否结束
             popups.openJmPromotionDetail(parameter).then(function(context){
@@ -579,7 +581,7 @@ define([
     cms.directive('spProductList', [function spProductListDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$scope','$routeParams','popups','cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'alert', 'confirm', '$translate', '$filter', SProductListDirectiveController],
+            controller: ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService', SProductListDirectiveController],
             templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
         }
     }]);
