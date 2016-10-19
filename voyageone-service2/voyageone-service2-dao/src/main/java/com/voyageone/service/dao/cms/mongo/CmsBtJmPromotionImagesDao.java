@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms.mongo;
 
-import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import org.springframework.stereotype.Repository;
 
@@ -17,18 +17,31 @@ import java.util.List;
  * @since 2.8.0
  */
 @Repository
-public class CmsBtJmPromotionImagesDao extends BaseMongoChannelDao<CmsBtJmPromotionImagesModel> {
+public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImagesModel> {
 
     /**
-     * 存储聚美活动图片信息
-     * @param model: 聚美活动图片模型
+     * 下载专场图片
+     * @param promotionId
+     * @return List<CmsBtJmPromotionImagesModel>
      */
+    public List<CmsBtJmPromotionImagesModel> selectPromotionImagesList(Integer promotionId) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery(String.format("{\"promotionId\":\"" + promotionId + "\"}"));
+        return select(query);
+    }
+
     public void saveJmPromotionImages(CmsBtJmPromotionImagesModel model){
         mongoTemplate.save(model);
     }
 
-    public List<CmsBtJmPromotionImagesModel> selectJmPromotionImagesList(String channelId,int promotionId,int jmPromotionId) {
+    /**
+     * 通过promotionid和jmpromotionid选出聚美活动图片集合
+     * @param promotionId
+     * @param jmPromotionId
+     * @return
+     */
+    public CmsBtJmPromotionImagesModel selectJmPromotionImage(int promotionId,int jmPromotionId) {
         String query = "{\"promotionId\":" + promotionId + ",\"jmPromotionId\":" + jmPromotionId + "}";
-        return select(query, channelId);
+        return selectOneWithQuery(query);
     }
 }

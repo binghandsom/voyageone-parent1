@@ -9,7 +9,8 @@
         `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`, `stock_status`, 
         `max_msrp_usd`, `max_msrp_rmb`, `max_retail_price`, `max_sale_price`, `min_msrp_usd`, 
         `min_msrp_rmb`, `min_retail_price`, `min_sale_price`, `max_market_price`, `min_market_price`, 
-        `max_deal_price`, `min_deal_price`, `deal_price`, `market_price`
+        `max_deal_price`, `min_deal_price`, `deal_price`, `market_price`, `image1`, `product_name_en`, 
+        `remark`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -136,6 +137,15 @@
             <if test="marketPrice != null" >
                 `market_price` = #{marketPrice,jdbcType=DECIMAL},
             </if>
+            <if test="image1 != null" >
+                `image1` = #{image1,jdbcType=VARCHAR},
+            </if>
+            <if test="productNameEn != null" >
+                `product_name_en` = #{productNameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                `remark` = #{remark,jdbcType=VARCHAR},
+            </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -261,6 +271,15 @@
             <if test="marketPrice != null" >
                 and `market_price` = #{marketPrice,jdbcType=DECIMAL}
             </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameEn != null" >
+                and `product_name_en` = #{productNameEn,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
         </where>
         limit 1
     </select>
@@ -381,6 +400,15 @@
             <if test="marketPrice != null" >
                 and `market_price` = #{marketPrice,jdbcType=DECIMAL}
             </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameEn != null" >
+                and `product_name_en` = #{productNameEn,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -498,6 +526,15 @@
             <if test="marketPrice != null" >
                 and `market_price` = #{marketPrice,jdbcType=DECIMAL}
             </if>
+            <if test="image1 != null" >
+                and `image1` = #{image1,jdbcType=VARCHAR}
+            </if>
+            <if test="productNameEn != null" >
+                and `product_name_en` = #{productNameEn,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
         </where>
     </select>
 
@@ -613,6 +650,15 @@
             </if>
             <if test="marketPrice != null" >
                 `market_price`,
+            </if>
+            <if test="image1 != null" >
+                `image1`,
+            </if>
+            <if test="productNameEn != null" >
+                `product_name_en`,
+            </if>
+            <if test="remark != null" >
+                `remark`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -735,6 +781,15 @@
             </if>
             <if test="marketPrice != null" >
                 #{marketPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="image1 != null" >
+                #{image1,jdbcType=VARCHAR},
+            </if>
+            <if test="productNameEn != null" >
+                #{productNameEn,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
