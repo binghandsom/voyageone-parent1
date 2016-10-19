@@ -239,6 +239,14 @@
         t1.id = t2.promotion_id and
         t2.promotion_status = 1
     </select>
+    <select id="selectEffectiveJmPromotionId" resultType="Integer">
+        SELECT
+        t2.id
+        FROM
+        cms_bt_jm_promotion t2
+        WHERE
+        t2.signup_deadline > now()
+    </select>
     <select id="selectCloseJmPromotionSku" resultType="HashMap" parameterType="java.lang.Integer">
     SELECT
         t2.channel_id,
@@ -276,5 +284,17 @@
                     and  prom.activity_end >= now())
         set a.prod_sum = c.cnt, a.quantity_sum = c.quantity_sum
     </update>
+
+    <!-- 即将要开始的活动 -->
+    <select id="selectJmPromotionBegin" resultType="Integer">
+        SELECT
+        t1.id
+        FROM
+        `cms_bt_jm_promotion` t1 join cms_bt_promotion t2
+        on
+        (NOW() &lt;= t1.activity_start and t1.activity_start &lt;= DATE_ADD(NOW(), INTERVAL 5 MINUTE)) and
+        t1.id = t2.promotion_id and
+        t2.promotion_status = 1 and t2.active = 1
+    </select>
 
 </mapper>

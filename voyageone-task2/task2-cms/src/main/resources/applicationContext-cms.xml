@@ -156,10 +156,15 @@
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
+        <!-- 聚美活动开始 把商城的价格设置为活动价 -->
+        <task:scheduled ref="CmsJmMallPromotionPriceSyncJob" method="run" cron="0 0/5 * * * ?"/>
         <!-- 聚美活动结束 把商城的价格回复 -->
         <task:scheduled ref="CmsJmMallPriceReductionJob" method="run" cron="0 0/5 * * * ?"/>
 
-        <!-- 取所有平台tree和schema（每天早上5点一次） -->
+        <!-- 聚美活动结束 把商城的价格回复 -->
+        <task:scheduled ref="CmsSynJmPromotionDealPriceJob" method="run" cron="0 0 17 * * ?"/>
+
+        <!-- 每天同步聚美活动里面的价格 -->
         <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
 
         <!--&lt;!&ndash; 独立域名上新xml准备（每分钟一次） &ndash;&gt;-->

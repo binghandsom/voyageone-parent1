@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SProductListDirectiveController($scope,$routeParams,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
+    function SProductListDirectiveController($scope,$routeParams,popups,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
     {
         $scope.datePicker = [];
         $scope.vm = {
@@ -579,7 +579,7 @@ define([
     cms.directive('spProductList', [function spProductListDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$scope','$routeParams', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'alert', 'confirm', '$translate', '$filter', SProductListDirectiveController],
+            controller: ['$scope','$routeParams','popups','cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'alert', 'confirm', '$translate', '$filter', SProductListDirectiveController],
             templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
         }
     }]);

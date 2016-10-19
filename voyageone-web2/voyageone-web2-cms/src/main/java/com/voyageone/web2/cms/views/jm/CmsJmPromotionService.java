@@ -19,6 +19,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -160,7 +161,7 @@ class CmsJmPromotionService extends BaseViewService {
     /**
      * 获取活动聚美模块数据
      */
-    List<Map<String, Object>> getPromotionTagModules(int jmPromotionId) {
+    List<CmsJmTagModules> getPromotionTagModules(int jmPromotionId) {
 
         CmsBtJmPromotionModel jmPromotionModel = jmPromotionService.select(jmPromotionId);
 
@@ -175,13 +176,27 @@ class CmsJmPromotionService extends BaseViewService {
                 tagService.addJmModule(jmModuleExtensionModel);
             }
 
-            Map<String, Object> tagMap = new HashMap<>();
+            CmsJmTagModules jmTagModules = new CmsJmTagModules();
 
-            tagMap.put("tag", tagModel);
-            tagMap.put("module", jmModuleExtensionModel);
+            jmTagModules.setTag(tagModel);
+            jmTagModules.setModule(jmModuleExtensionModel);
 
-            return tagMap;
+            return jmTagModules;
         }).collect(toList());
+    }
+
+    void savePromotionTagModules(List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
+
+        for (CmsJmTagModules jmTagModule : jmTagModulesList) {
+
+            CmsBtTagModel tagModel = jmTagModule.getTag();
+            tagModel.setModifier(user.getUserName());
+
+            CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = jmTagModule.getModule();
+
+            tagService.updateTagModel(tagModel);
+            tagService.updateTagModel(tagJmModuleExtensionModel);
+        }
     }
 
     private ProductImportBean buildProductFrom(CmsBtProductModel model, CmsBtJmPromotionModel promotion) {
@@ -263,5 +278,26 @@ class CmsJmPromotionService extends BaseViewService {
     }
 
     //------------------聚美活动新增商品end-------------------------------------------------------------------------------
+
+    static class CmsJmTagModules {
+        private CmsBtTagModel tag;
+        private CmsBtTagJmModuleExtensionModel module;
+
+        public CmsBtTagModel getTag() {
+            return tag;
+        }
+
+        public void setTag(CmsBtTagModel tag) {
+            this.tag = tag;
+        }
+
+        public CmsBtTagJmModuleExtensionModel getModule() {
+            return module;
+        }
+
+        public void setModule(CmsBtTagJmModuleExtensionModel module) {
+            this.module = module;
+        }
+    }
 }
 

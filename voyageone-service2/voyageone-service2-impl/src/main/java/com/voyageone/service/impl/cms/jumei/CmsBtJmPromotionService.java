@@ -377,6 +377,10 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.selectCloseJmPromotionId();
     }
 
+    public List<Integer> selectEffectiveJmPromotionId(){
+        return daoExt.selectEffectiveJmPromotionId();
+    }
+
     public List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId){
         return daoExt.selectCloseJmPromotionSku(jmPromotionId);
     }
