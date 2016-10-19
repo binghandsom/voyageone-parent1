@@ -1,6 +1,6 @@
 define(['cms'], function (cms) {
 
-    function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService, $routeParams, $q) {
+    function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService, $routeParams, $q, $filter) {
         var self = this;
         self.promotionId = parseInt($routeParams['promId']);
         self.jmPromotionId = parseInt($routeParams['jmpromId']);
