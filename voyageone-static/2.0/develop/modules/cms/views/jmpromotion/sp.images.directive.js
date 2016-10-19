@@ -15,7 +15,10 @@ define([
             spDataService = self.spDataService;
 
         spDataService.initPromotionImages().then(function(res){
-            console.log("res",res);
+            //用于显示
+            self.imgUrls = res.data.promotionImageUrl;
+            //用于存储图片名称
+            self.imgUpEntity = res.data.promotionImagesModel
         });
     };
 
@@ -27,7 +30,6 @@ define([
 
         });
     };
-
 
     SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
