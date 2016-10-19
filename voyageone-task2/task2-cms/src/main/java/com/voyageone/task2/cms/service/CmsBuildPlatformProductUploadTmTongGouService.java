@@ -11,12 +11,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -28,6 +26,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
+import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -36,6 +35,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
+import com.voyageone.service.model.cms.CmsMtChannelConditionMappingConfigModel;
 import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -88,6 +88,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
     private CmsBtTmTonggouFeedAttrDao cmsBtTmTonggouFeedAttrDao;
     @Autowired
     private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
+    @Autowired
+    private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
 
 	@Override
     public SubSystem getSubSystem() {
@@ -168,12 +170,27 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             return;
         }
 
+        // 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台一级类目之间的mapping关系数据
+        Map<String, String> conditionMappingParamMap = new HashMap<>();
+        conditionMappingParamMap.put("channelId", channelId);
+        conditionMappingParamMap.put("cartId", StringUtils.toString(cartId));
+        conditionMappingParamMap.put("propName", "tt_category");   // 天猫同购一级类目匹配
+        List<CmsMtChannelConditionMappingConfigModel> conditionMappingConfigModels =
+                cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
+        if (ListUtils.isNull(conditionMappingConfigModels)) {
+            $error("cms_mt_channel_condition_mapping_config表中没有该渠道和平台对应的天猫同购一级类目匹配信息！[ChannelId:%s] " +
+                    "[CartId:%s] [propName:%s]", channelId, cartId, "tt_category");
+            return;
+        }
+        Map<String, String> conditionMappingMap = new HashMap<>();
+        conditionMappingConfigModels.forEach(p -> conditionMappingMap.put(p.getMapKey(), p.getMapValue()));
+
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据上新任务列表中的groupid循环上新处理
         for (CmsBtSxWorkloadModel cmsBtSxWorkloadModel : sxWorkloadModels) {
             // 启动多线程
-            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, tmTonggouFeedAttrList));
+            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, tmTonggouFeedAttrList, conditionMappingMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -192,8 +209,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      * @param tmTonggouFeedAttrList List<String> 当前渠道和平台设置的可以天猫官网同购上传的feed attribute列表
+     * @param conditionMappingMap 当前渠道和平台设置的天猫同购一级类目匹配信息map
      */
-    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, List<String> tmTonggouFeedAttrList) {
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp,
+                              List<String> tmTonggouFeedAttrList, Map<String, String> conditionMappingMap) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -292,7 +311,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
             }
 
             // 编辑天猫国际官网同购共通属性
-            BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue, skuLogicQtyMap, tmTonggouFeedAttrList);
+            BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue,
+                    skuLogicQtyMap, tmTonggouFeedAttrList, conditionMappingMap);
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -399,11 +419,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      * @param priceConfigValue String 该店铺上新用项目名
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
      * @param tmTonggouFeedAttrList List<String> 当前渠道和平台设置的可以天猫官网同购上传的feed attribute列表
+     * @param conditionMappingMap 当前渠道和平台设置的天猫同购一级类目匹配信息map
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private BaseMongoMap<String, String> getProductInfo(SxData sxData, ShopBean shopProp, String priceConfigValue,
-                                                 Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList) throws BusinessException {
+                                                 Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList,
+                                                 Map<String, String> conditionMappingMap) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
 
@@ -451,7 +473,24 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
 
 			// TODO 测试代码, 这里需要改进
 //            valCategory = feedInfo.getCategory().replaceAll("-", "&gt;");
-            valCategory = "居家布艺";
+//            valCategory = "居家布艺";
+
+            String tmallCatKey = getValueFromPageOrCondition("tmall_category_key", "", mainProductPlatformCart, sxData, shopProp);
+            if (!StringUtils.isEmpty(tmallCatKey)) {
+                if (conditionMappingMap != null && conditionMappingMap.containsKey(tmallCatKey)) {
+                    valCategory = conditionMappingMap.get(tmallCatKey);
+                } else {
+                    String errMsg = String.format("从cms_mt_channel_condition_mapping_config表中没有取到客户类目对应的天猫" +
+                            "平台一级类目信息，中止上新！[Mapkey:%s]", tmallCatKey);
+                    $error(errMsg);
+                    throw new BusinessException(errMsg);
+                }
+            } else {
+                String errMsg = String.format("从cms_mt_channel_condition_config表中没有取到客户类目key配置信息,导致不能取得对应的天猫" +
+                        "平台一级类目信息，中止上新！");
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
         }
         productInfoMap.put("category", valCategory);
 
@@ -560,8 +599,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         // 如果设置成false邮关申报后，商品不需要设置HSCODE
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
         // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
+        // 根据配置取得商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
+        String color = getValueFromPageOrCondition("color_code_codediff", mainProduct.getCommon().getFields().getCode(), mainProductPlatformCart, sxData, shopProp);
         List<BaseMongoMap<String, Object>> targetSkuList = getSkus(sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
         productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList));
 
 
@@ -760,7 +801,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
         try {
             RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
             for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression().trim();
                 RuleExpression conditionExpression;
                 String propValue;
 
@@ -841,13 +882,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
      * @param expressionParser 解析子
      * @param shopProp ShopBean 店铺信息
      * @param crossBorderRreportFlg String 入关方式(true表示跨境申报，false表示邮关申报)
+     * @param color 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
      * @return List<BaseMongoMap<String, Object>> 天猫同购上新用skus列表
      */
     private List<BaseMongoMap<String, Object>> getSkus(Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg) {
+                                                       ShopBean shopProp, String crossBorderRreportFlg, String color) {
         List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
         // 循环productList设置颜色和尺码等信息到sku列表
         for (CmsBtProductModel product : productList) {
@@ -878,10 +920,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskServi
                 BaseMongoMap<String, Object> skuMap = new BaseMongoMap<>();
                 // 销售属性map(颜色，尺寸)
                 BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
-                // 商品特质英文（颜色/口味/香型等）
-                // TODO: 现在先用CODE, 之后要根据配置来判断, 使用颜色还是用CODE
+                // 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
 //                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
-                saleProp.put("color", product.getCommon().getFields().getCode());
+//                saleProp.put("color", product.getCommon().getFields().getCode());
+                saleProp.put("color", color);
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
                 BaseMongoMap<String, Object> mergedSku = skuList.stream()
                         .filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
