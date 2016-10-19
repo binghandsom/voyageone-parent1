@@ -2,10 +2,10 @@ package com.voyageone.components.jumei.reponse;
 
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * HtDealCopyDealResponse
@@ -24,6 +24,16 @@ public class HtDealGetDealByHashIDResponse extends BaseJMResponse {
     private String errorMsg;
     private String body;
     String response;
+
+    private List<LinkedHashMap<String,Object>> skuList;
+
+    public List<LinkedHashMap<String,Object>> getSkuList() {
+        return skuList;
+    }
+
+    public void setSkuList(List<LinkedHashMap<String,Object>> skuList) {
+        this.skuList = skuList;
+    }
 
     public String getResponse() {
         return response;
@@ -117,8 +127,14 @@ public class HtDealGetDealByHashIDResponse extends BaseJMResponse {
                 if (map.containsKey("product_id")) {
                     this.setProduct_id(map.get("product_id").toString());
                 }
+
+                if (map.containsKey("sku_list")) {
+                    List<LinkedHashMap<String,Object>> skuListMapList = (ArrayList<LinkedHashMap<String,Object>>)map.get("sku_list");
+                    this.setSkuList(skuListMapList);
+                }
+
             }
-            if ("".equals(this.error_code)) {
+            if (StringUtils.isEmpty(this.error_code)) {
                 this.setIs_Success(true);
             } else {
                 this.setErrorMsg(this.getRequestUrl()+this.body);
@@ -129,4 +145,5 @@ public class HtDealGetDealByHashIDResponse extends BaseJMResponse {
             this.setErrorMsg("返回参数解析错误" + this.body);
         }
     }
+
 }
