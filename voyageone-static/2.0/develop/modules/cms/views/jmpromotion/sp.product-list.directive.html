@@ -313,9 +313,9 @@
                     <a href="javascript:void(0)" class="list-group-item active">
                         商品概述
                     </a>
-                    <a href="javascript:void(0)" class="list-group-item">有库存商品数：22/400</a>
-                    <a href="javascript:void(0)" class="list-group-item">活动总库存：46</a>
-                    <a href="javascript:void(0)" class="list-group-item">变更后未同步商品数：22</a>
+                    <a href="javascript:void(0)" class="list-group-item">有库存商品数：{{parentModel.prodSum}}/400</a>
+                    <a href="javascript:void(0)" class="list-group-item">活动总库存：{{parentModel.quantitySum}}</a>
+                    <a href="javascript:void(0)" class="list-group-item">变更后未同步商品数：{{vm.changeCount}}</a>
                 </div>
             </li>
             <hr>

@@ -125,6 +125,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer prodSum;
 
+    /**
+     * 库存合计
+     */
+    protected Integer quantitySum;
+
     public String getChannelId() {
         return channelId;
     }
@@ -323,5 +328,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setProdSum(Integer prodSum) {
         this.prodSum = prodSum;
+    }
+
+    public Integer getQuantitySum() {
+        return quantitySum;
+    }
+
+    public void setQuantitySum(Integer quantitySum) {
+        this.quantitySum = quantitySum;
     }
 }

@@ -6,14 +6,14 @@ define([
     function SPImportListDirectiveController($scope,$routeParams,cmsBtJmPromotionImportTaskService,cmsBtJmPromotionExportTaskService,jmPromotionDetailService, alert, confirm, $translate, $filter)
     {
         $scope.vm = {
-            "promotionId": $routeParams.parentId,
+            "promotionId": $routeParams.jmpromIdd,
             cmsBtJmPromotionImportTaskList: [],
         };
         $scope.initialize = function () {
             $scope.searchImport();
         };
         $scope.searchImport = function () {
-            cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
+            cmsBtJmPromotionImportTaskService.getByPromotionId($routeParams.jmpromId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })

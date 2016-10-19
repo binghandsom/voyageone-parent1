@@ -384,8 +384,8 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         }
     }
 
-    public int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId) {
-        return daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    public int selectChangeCountByPromotionId(long JmPromotionId) {
+        return daoExt.selectChangeCountByPromotionId(JmPromotionId);
     }
 
     public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {
