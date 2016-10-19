@@ -90,4 +90,9 @@ public class CmsBtJmImageTemplateService {
         }
         return null;
     }
+
+    public String getSeparatorBar(String modeName){
+        CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType("separatorBar");
+        return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0),modeName);
+    }
 }
