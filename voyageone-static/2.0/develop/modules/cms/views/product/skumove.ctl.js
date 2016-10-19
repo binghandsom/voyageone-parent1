@@ -17,6 +17,9 @@ define([
             this.refCode;
             this.searchCode;
 
+            this.destGroupTypeAfterPreview;
+            this.destRefCodeAfterPreview;
+
             this.show = false;
             this.popups = popups;
             this.showView = false;
@@ -81,6 +84,28 @@ define([
                 self.popups.openImagedetail({'mainPic': picList[0][0], 'picList': picList, 'search': 'master'});
             },
 
+            preview: function () {
+                var self = this;
+                self.productDetailService.moveSkuPreview({
+                    destGroupType: self.destGroupType,
+                    skuList: self.skuList,
+                    sourceCode: self.sourceCode,
+                    refCode: self.refCode
+                }).then(function (resp) {
+                    self.sourceCodeInfoBefore = resp.data.sourceCodeInfoBefore;
+                    self.sourceSkuInfoBefore = resp.data.sourceSkuInfoBefore;
+                    self.destCodeInfoBefore = resp.data.destCodeInfoBefore;
+                    self.destSkuInfoBefore = resp.data.destSkuInfoBefore;
+                    self.sourceCodeInfoAfter = resp.data.sourceCodeInfoAfter;
+                    self.sourceSkuInfoAfter = resp.data.sourceSkuInfoAfter;
+                    self.destCodeInfoAfter = resp.data.destCodeInfoAfter;
+                    self.destSkuInfoAfter = resp.data.destSkuInfoAfter;
+                    self.ifShow({type:'buildView',value:true})
+                    self.destGroupTypeAfterPreview = self.destGroupType;
+                    self.destRefCodeAfterPreview = self.refCode;
+                });
+            },
+
             ifShow: function (item) {
                 var self = this;
                 switch (item.type) {
@@ -88,7 +113,7 @@ define([
                         item.value == 'select' ? self.show = true : self.show = false;
                         break;
                     case 'buildView':
-                        self.showView = true;
+                        item.value == true ? self.showView = true : self.showView = false;
                 }
 
             },

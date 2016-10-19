@@ -594,7 +594,7 @@ public class CmsProductMoveService extends BaseViewService {
             Map<String, Object> sourceSkuInfoMapBefore = new HashMap<>();
             sourceSkuInfoMapBefore.put("sku", sku.getSkuCode());
             // 如果这个Code是当前移动的Code,那么就高亮显示
-            if (skuList.equals(sku.getSkuCode())) {
+            if (skuList.contains(sku.getSkuCode())) {
                 sourceSkuInfoMapBefore.put("current", true);
             }
             sourceSkuListBefore.add(sourceSkuInfoMapBefore);
@@ -615,7 +615,7 @@ public class CmsProductMoveService extends BaseViewService {
         List<Map<String, Object>> sourceSkuListAfter = new ArrayList<>();
         for (CmsBtProductModel_Sku sku : sourceProductModel.getCommon().getSkus()) {
             // 去除当前移动的Sku
-            if (!skuList.equals(sku.getSkuCode())) {
+            if (!skuList.contains(sku.getSkuCode())) {
                 Map<String, Object> sourceSkuInfoMapAfter = new HashMap<>();
                 sourceSkuInfoMapAfter.put("sku", sku.getSkuCode());
                 sourceSkuListAfter.add(sourceSkuInfoMapAfter);
@@ -640,6 +640,14 @@ public class CmsProductMoveService extends BaseViewService {
         return previewInfo;
     }
 
+
+    /**
+     * 移动Sku-从一个Code到新Code
+     */
+    @VOTransactional
+    public void moveSku(Map<String, Object> params, String channelId, String modifier, String lang) {
+
+    }
 
 
 
