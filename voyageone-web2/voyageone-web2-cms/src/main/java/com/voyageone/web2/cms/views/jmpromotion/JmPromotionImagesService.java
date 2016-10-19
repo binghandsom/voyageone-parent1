@@ -1,9 +1,12 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -40,18 +40,7 @@ public class JmPromotionImagesController extends CmsController {
         int jmPromotionId = Integer.parseInt(requestMap.get("jmPromotionId"));
         Assert.notNull(jmPromotionId).elseThrowDefaultWithTitle("jmPromotionId");
 
-        jmPromotionImagesService.getJmPromotionImage(promotionId, jmPromotionId);
-
-/*        List<CmsBtJmPromotionImagesModel> jmPromotionImagesList = jmPromotionImagesService.getJmPromotionImagesList(getUser(), promotionId, jmPromotionId);
-
-        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
-        List<String> imgUrls = new ArrayList<String>();
-
-        for(CmsBtJmPromotionImagesModel entity:jmPromotionImagesList){
-            cmsBtJmImageTemplateService.getUrl();
-        }*/
-
-        return success(null);
+        return success(jmPromotionImagesService.getJmPromotionImage(promotionId, jmPromotionId));
     }
 
     /**
