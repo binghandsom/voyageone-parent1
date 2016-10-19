@@ -471,6 +471,10 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
+    <select id="selectCountByPromotionId" resultType="int">
+        SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
+        WHERE   `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+    </select>
     <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
         SELECT * from  cms_bt_jm_promotion_product
         WHERE synch_status!=2  and   id in

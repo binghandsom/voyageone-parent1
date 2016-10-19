@@ -12,7 +12,8 @@ define([
             cmsBtJmPromotionImportTaskList: [],
             cmsBtJmPromotionExportTaskList: [],
             tagList: [],
-            changeCount:0
+            changeCount:0,
+            productCount:0
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
@@ -26,6 +27,7 @@ define([
                 $scope.parentModel = res.data.modelPromotion;
                 console.log(res.data);
                 $scope.vm.tagList = res.data.listTag;
+                $scope.vm.productCount=res.data.productCount;
                 $scope.vm.changeCount = res.data.changeCount;
                 $scope.vm.isBegin=res.data.isBegin;//活动是否开始
                 $scope.vm.isEnd=res.data.isEnd;//活动是否结束
