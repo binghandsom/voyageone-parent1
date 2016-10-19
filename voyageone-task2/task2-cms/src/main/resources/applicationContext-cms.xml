@@ -156,6 +156,8 @@
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
+        <!-- 聚美活动开始 把商城的价格设置为活动价 -->
+        <task:scheduled ref="CmsJmMallPromotionPriceSyncJob" method="run" cron="0 0/5 * * * ?"/>
         <!-- 聚美活动结束 把商城的价格回复 -->
         <task:scheduled ref="CmsJmMallPriceReductionJob" method="run" cron="0 0/5 * * * ?"/>
 

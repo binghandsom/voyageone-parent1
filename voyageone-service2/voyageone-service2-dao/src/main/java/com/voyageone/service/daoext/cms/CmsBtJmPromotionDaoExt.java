@@ -42,4 +42,7 @@ public interface CmsBtJmPromotionDaoExt {
      * 更新活动下的有库存产品数
      */
     int updatePromotionProdSumInfo(@Param("channelId") String channelId, @Param("cartId") int cartId);
+
+    List<Integer> selectJmPromotionBegin();
+
 }
