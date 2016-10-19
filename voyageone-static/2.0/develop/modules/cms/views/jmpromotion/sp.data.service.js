@@ -15,7 +15,7 @@ define(['cms'], function (cms) {
         self.dateFilter = $filter('date');
     }
 
-    SpDataService.prototype.getPromotion = function () {
+    SpDataService.prototype.getPromotion = function getPromotion() {
         var self = this,
             jmPromotionService = self.jmPromotionService;
 
@@ -24,7 +24,7 @@ define(['cms'], function (cms) {
         });
     };
 
-    SpDataService.prototype.getPromotionModules = function () {
+    SpDataService.prototype.getPromotionModules = function getPromotionModules() {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;
 
@@ -39,7 +39,7 @@ define(['cms'], function (cms) {
         });
     };
 
-    SpDataService.prototype.saveModules = function (modules) {
+    SpDataService.prototype.saveModules = function saveModules(modules) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService,
             dateFilter = self.dateFilter;
