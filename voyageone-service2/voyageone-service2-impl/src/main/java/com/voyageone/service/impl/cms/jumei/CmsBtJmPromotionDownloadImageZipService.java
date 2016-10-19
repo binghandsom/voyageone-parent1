@@ -47,14 +47,14 @@ public class CmsBtJmPromotionDownloadImageZipService {
      */
     public byte[] selectSpecialImagesList(Integer promotionId, String strZipName) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        //压缩图片的所需要的对象
+        List<Map<String, String>> promotionImagesList = new ArrayList<>();
+        //根据promotionId在数据库中取得对应的Url
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(promotionId, true);
         //取得打包图片的名称
         List<CmsBtJmPromotionImagesModel> picNameList = cmsBtJmPromotionImagesDao.selectPromotionImagesList(promotionId);
         //取得打包图片的名称转换成对象
         Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameList.get(0)));
-        List<Map<String, String>> promotionImagesList = new ArrayList<>();
-
-        //根据promotionId在数据库中取得对应的Url
-        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(promotionId, true);
         imageNameMap.forEach((s, o) -> {
             if (o instanceof String) {
                 CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = cmsBtJmImageTemplateService.getJMImageTemplateByType(s);
@@ -67,7 +67,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                     String imagePath = cmsBtJmImageTemplateModel.getName();
                     //imageUrl
                     String url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
-
+                    //压缩图片的所需要的对象
                     Map<String, String> urlMap = new HashMap<>();
                     urlMap.put("url", url);
                     urlMap.put("picturePath", imagePath);
@@ -80,8 +80,6 @@ public class CmsBtJmPromotionDownloadImageZipService {
         //返回压缩流
         return outputStream.toByteArray();
     }
-
-
     /**
      * 下载商品主图包
      *
@@ -91,12 +89,16 @@ public class CmsBtJmPromotionDownloadImageZipService {
      */
     public byte[] selectWaresImageList(Integer promotionId, String strZipName) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        //商品主图包List
+        //压缩图片的所需要的对象
         List<Map<String, String>> promotionImagesList = new ArrayList<>();
+        //抽取图片数据的条件
         Map<String, Object> params = new HashMap<>();
+        //promotionId
         params.put("promotionId", promotionId);
+        //取得打包图片的名称和url
         List<CmsBtJmPromotionProductModel> modelList = cmsBtJmPromotionProductDao.selectList(params);
         for (CmsBtJmPromotionProductModel model : modelList) {
+            //压缩图片的所需要的对象
             Map<String, String> urlMap = new HashMap<>();
             urlMap.put("url", url + model.getImage1() + suffix);
             urlMap.put("picturePath", model.getProductCode());
@@ -139,7 +141,6 @@ public class CmsBtJmPromotionDownloadImageZipService {
             }
             out.close();
         } catch (Exception e) {
-
         }
         return zipOut;
     }
