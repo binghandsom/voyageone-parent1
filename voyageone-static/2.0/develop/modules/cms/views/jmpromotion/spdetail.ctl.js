@@ -3,7 +3,7 @@ define(['cms',
     './sp.shelf.directive',
     './sp.images.directive',
     './sp.data.service',
-    './sp.product-list.directivel'
+    './sp.product-list.directive'
 ], function (cms) {
 
     function SpDetailPageController(spDataService) {
