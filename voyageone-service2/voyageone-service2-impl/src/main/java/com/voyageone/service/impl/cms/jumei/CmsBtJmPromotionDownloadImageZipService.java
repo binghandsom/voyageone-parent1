@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.jumei;
 
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -128,26 +126,28 @@ public class CmsBtJmPromotionDownloadImageZipService {
             zipOut = new ZipOutputStream(new FileOutputStream(strZipName));
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(strZipName));
             for (Map<String, String> urlMap : promotionImagesList) {
-                int len;
-                URL url = new URL(urlMap.get("url"));
-                //Url
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                //压缩包内生成图片的路径以及名称
-                out.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
                 try {
+                    int len;
+                    URL url = new URL(urlMap.get("url"));
+                    //Url
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //压缩包内生成图片的路径以及名称
+                    out.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
                     InputStream inputStream = conn.getInputStream();
                     //读入需要下载的文件的内容，打包到zip文件
                     while ((len = inputStream.read(buffer)) > 0) {
                         out.write(buffer, 0, len);
                     }
                     inputStream.close();
+                    out.closeEntry();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                out.closeEntry();
             }
             out.close();
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return zipOut;
