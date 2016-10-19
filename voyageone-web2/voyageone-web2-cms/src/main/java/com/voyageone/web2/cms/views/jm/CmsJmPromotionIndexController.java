@@ -1,17 +1,24 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = CmsUrlConstants.JMPROMOTION.LIST.INDEX.ROOT, method = RequestMethod.POST)
@@ -19,13 +26,18 @@ public class CmsJmPromotionIndexController extends CmsController {
     private final CmsBtJmPromotionService service;
     private final CmsBtJmPromotion3Service service3;
     private final JmBtDealImportService serviceJmBtDealImport;
+    private final CmsBtJmBayWindowService jmBayWindowService;
+    private final TagService tagService;
 
     @Autowired
     public CmsJmPromotionIndexController(JmBtDealImportService serviceJmBtDealImport, CmsBtJmPromotionService service,
-                                         CmsBtJmPromotion3Service service3) {
+                                         CmsBtJmPromotion3Service service3, CmsBtJmBayWindowService jmBayWindowService,
+                                         TagService tagService) {
         this.serviceJmBtDealImport = serviceJmBtDealImport;
         this.service = service;
         this.service3 = service3;
+        this.jmBayWindowService = jmBayWindowService;
+        this.tagService = tagService;
     }
 
     @RequestMapping(CmsUrlConstants.PROMOTION.LIST.INDEX.INIT)
@@ -108,5 +120,26 @@ public class CmsJmPromotionIndexController extends CmsController {
         // return success(service3.getTagListByPromotionId(promotionId));
         return serviceJmBtDealImport.importJM(channelId);
         // return "true";
+    }
+
+    /**
+     * 获取活动下的飘窗定义
+     * @since 2.8.0
+     */
+    @RequestMapping("getBayWindow")
+    public AjaxResponse getBayWindow(@RequestBody int jmPromotionId) {
+
+        CmsBtJmBayWindowModel jmBayWindowModel = jmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
+
+        if (jmBayWindowModel == null) {
+            CmsBtJmPromotionModel jmPromotionModel = service.select(jmPromotionId);
+            List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList = tagService.getListByParentTagId(jmPromotionModel.getRefTagId())
+                    .stream()
+                    .map(tagService::getJmModule)
+                    .collect(Collectors.toList());
+            jmBayWindowModel = jmBayWindowService.createByPromotion(jmPromotionModel, tagJmModuleExtensionModelList, getUser().getUserName());
+        }
+
+        return success(jmBayWindowModel);
     }
 }

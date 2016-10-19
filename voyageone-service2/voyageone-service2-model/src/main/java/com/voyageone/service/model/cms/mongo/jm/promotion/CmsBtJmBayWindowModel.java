@@ -65,6 +65,8 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         private Integer order;
 
+        private Boolean enabled;
+
         public String getName() {
             return name;
         }
@@ -95,6 +97,14 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        public Boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }
