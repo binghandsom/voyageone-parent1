@@ -13,12 +13,7 @@
             <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="table-layout: fixed;" ng-controller="popupCtrl">
                 <thead>
                 <tr><!--24-->
-                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">
-                        <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" ng-click="selectAll(vm.feedSelList)">
-                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
-                        </label>
-                    </th>
+                    <th class="text-center mfb-x" style="width:66px;padding-left:0px">#</th>
                     <th class="text-center">seq</th>
                     <th class="text-left">概况</th>
                     <th class="text-center">APP端频道页入口图</th>
@@ -26,40 +21,34 @@
                     <th class="text-center">头图（APP端优先）</th>
                 </tr>
                 </thead>
-                <tr>
+                <tr ng-repeat="image in ctrl.dataList">
                     <td class="text-center mfb-x">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" ng-model="ctrl.selected[image.promotionId]">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>
-                    <td class="text-center">1</td>
+                    <td class="text-center">{{$index + 1}}</td>
                     <td class="text-left">
-                        活动名称：聚美301店庆6周年大促
-                        活动时间：2016.3.1~2016.3.7
-                        是否使用模板刷图：是
+                        {{image.comment}}
                     </td>
                     <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
+                        <img ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.appEntrance}}?fmt=jpg&scl=1&qlt=100" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
                     </td>
                     <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
+                        <img ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.channelFrontCover}}?fmt=jpg&scl=1&qlt=100" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
                     </td>
                     <td class="text-center">
-                        <img src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
+                        <img ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.appHeader}}?fmt=jpg&scl=1&qlt=100" class="img-thumbnail" style="max-width: 100px;max-height: 100px">
                     </td>
                 </tr>
                 </tbody>
             </table>
-
-            <div class="col-sm-12 m-t-lg m-b-lg">
-                <vpagination config="vm.feedPageOption"></vpagination>
-            </div>
         </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length > 10 || ctrl.uploader.queue.length == 0">
+        <button class="btn btn-vo" ng-click="ctrl.chose()">
             <i class="fa fa-check"></i>&nbsp;
             选择
         </button>

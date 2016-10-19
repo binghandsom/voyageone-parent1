@@ -92,6 +92,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/jmpromotion/images";
             String INIT = "init";
             String SAVE = "save";
+            String GET_IMAGE_FOR_SUIT = "getImageForSuit";
+            String GET_IMAGE_TEMPLATE=  "getImageTemplate";
         }
     }
 

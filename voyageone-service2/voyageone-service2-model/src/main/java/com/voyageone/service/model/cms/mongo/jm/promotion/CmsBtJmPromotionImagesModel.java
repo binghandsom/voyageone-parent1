@@ -19,6 +19,8 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
 
     private Integer jmPromotionId;
 
+    private String brand;
+
     /**
      * 备注
      */
@@ -153,6 +155,14 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
 
     public void setJmPromotionId(Integer jmPromotionId) {
         this.jmPromotionId = jmPromotionId;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getComment() {
