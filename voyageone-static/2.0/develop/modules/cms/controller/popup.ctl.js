@@ -321,6 +321,11 @@ define([
                     "templateUrl": "views/pop/jm/promotion/image.upload.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/promotion/image.upload.ctl",
                     "controller": 'imageUploadCtl as ctrl'
+                },
+                "imageBatchUpload": {
+                    "templateUrl": "views/pop/jm/promotion/image.batch.upload.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.batch.upload.ctl",
+                    "controller": 'imageBatchUploadCtl as ctrl'
                 }
             },
             "jmPromotionDefaultSetting": {
@@ -1218,10 +1223,17 @@ define([
         };
 
         /**
-         * 聚美图片上传
+         * 聚美活动图片上传
          */
         $scope.openImageJmUpload = function openImageJmUpload(context) {
             return openModal(popActions.jumei.promotion.imageUpload, context)
+        };
+
+        /**
+         * 聚美活动图片批量上传
+         */
+        $scope.openImageBatchJmUpload = function openImageBatchJmUpload(context) {
+            return openModal(popActions.jumei.promotion.imageBatchUpload, context)
         };
 
     }).factory('popups', function ($controller, $rootScope) {

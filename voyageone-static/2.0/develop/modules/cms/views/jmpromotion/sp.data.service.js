@@ -85,6 +85,15 @@ define(['cms'], function (cms) {
         return JmPromotionImagesService.save(_.extend(upEntity, self.commonUpEntity));
     };
 
+    SpDataService.prototype.getPromotionImgTpl = function getPromotionImgTpl(upEntity) {
+        var self = this,
+            JmPromotionImagesService = self.JmPromotionImagesService;
+
+        return JmPromotionImagesService.getImageTemplate(upEntity).then(function(resp){
+            return resp.data;
+        });
+    };
+
     SpDataService.prototype.getPromotionProducts = function (tagId) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;

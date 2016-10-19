@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -31,24 +32,27 @@ public class JmPromotionImagesService extends BaseViewService {
     @Autowired
     private CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
-    public Map<String,Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
+    public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
-        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId,true);
 
-        Map<String,String> promotionImageUrl = new HashMap<String,String>();
-        Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(promotionImagesModel));
-        if (imageMap != null) {
-            imageMap.forEach((s, o) -> {
-                if (o instanceof String && o.toString().contains("-")) {
-                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(jmPromotionId + "-" + o.toString(), "appEntrance", cmsBtJmPromotionSaveBean));
-                }
-            });
-        }
+        return getJmImageTemplate(promotionImagesModel);
+    }
 
-        Map<String,Object> result = new HashMap<String,Object>();
-        result.put("promotionImagesModel",promotionImagesModel);
-        result.put("promotionImageUrl",promotionImageUrl);
+    public Map<String, Object> getJmImageTemplate(CmsBtJmPromotionImagesModel model) {
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(model.getJmPromotionId(), true);
+
+        Map<String, String> promotionImageUrl = new HashMap<String, String>();
+        Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(model));
+        imageMap.forEach((s, o) -> {
+            if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
+                promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), "appEntrance", cmsBtJmPromotionSaveBean));
+            }
+        });
+
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("promotionImagesModel", model);
+        result.put("promotionImageUrl", promotionImageUrl);
 
         return result;
     }
@@ -59,6 +63,14 @@ public class JmPromotionImagesService extends BaseViewService {
             return;
 
         cmsBtJmPromotionImagesDao.saveJmPromotionImages(model);
+    }
+
+    public List<CmsBtJmPromotionImagesModel> getImageForSuit(String brand) {
+
+        if (brand == null)
+            return null;
+
+        return cmsBtJmPromotionImagesDao.selectJmImageForSuit(brand);
     }
 
 }
