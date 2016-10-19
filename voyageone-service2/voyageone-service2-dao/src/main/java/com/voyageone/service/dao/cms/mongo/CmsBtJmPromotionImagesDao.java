@@ -24,9 +24,9 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
      * @param promotionId
      * @return List<CmsBtJmPromotionImagesModel>
      */
-    public List<CmsBtJmPromotionImagesModel> selectPromotionImagesList(Integer promotionId) {
-        String query = "{\"promotionId\":" + promotionId + "}";
-        return select(query);
+    public CmsBtJmPromotionImagesModel selectPromotionImagesList(Integer promotionId) {
+        String query = "{\"jmPromotionId\":" + promotionId + "}";
+        return selectOneWithQuery(query);
     }
 
     public void saveJmPromotionImages(CmsBtJmPromotionImagesModel model){

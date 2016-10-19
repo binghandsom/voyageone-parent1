@@ -4,8 +4,12 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,8 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by gjl on 2016/10/18.
  */
@@ -33,6 +39,11 @@ public class CmsBtJmPromotionDownloadImageZipService {
     CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
     @Autowired
     private CmsBtJmPromotionService cmsBtJmPromotionService;
+    @Autowired
+    private CmsBtJmBayWindowService CmsBtJmBayWindowService;
+    @Autowired
+    private TagService tagService;
+
     //图片模板前缀
     private static final String url = "http://s7d5.scene7.com/is/image/sneakerhead/";
     //图片模板后缀
@@ -49,12 +60,14 @@ public class CmsBtJmPromotionDownloadImageZipService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         //压缩图片的所需要的对象
         List<Map<String, String>> promotionImagesList = new ArrayList<>();
+
+        /*---------------------专场入口图 Start---------------------*/
         //根据promotionId在数据库中取得对应的Url
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(promotionId, true);
         //取得打包图片的名称
-        List<CmsBtJmPromotionImagesModel> picNameList = cmsBtJmPromotionImagesDao.selectPromotionImagesList(promotionId);
+        CmsBtJmPromotionImagesModel picNameModel = cmsBtJmPromotionImagesDao.selectPromotionImagesList(promotionId);
         //取得打包图片的名称转换成对象
-        Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameList.get(0)));
+        Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameModel));
         imageNameMap.forEach((s, o) -> {
             if (o instanceof String) {
                 CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = cmsBtJmImageTemplateService.getJMImageTemplateByType(s);
@@ -75,6 +88,35 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 }
             }
         });
+        /*---------------------专场入口图 end---------------------*/
+
+        /*---------------------专场分隔栏 Start---------------------*/
+        List<String> moduleTitleList = cmsBtJmPromotionSaveBean
+                .getTagList()
+                .stream()
+                .map(cmsBtTagModel -> tagService.getJmModule(cmsBtTagModel))
+                .map(CmsBtTagJmModuleExtensionModel::getModuleTitle)
+                .collect(toList());
+        for (String moduleName : moduleTitleList) {
+            Map<String, String> urlMap = new HashMap<>();
+            String url = cmsBtJmImageTemplateService.getSeparatorBar(moduleName);
+            urlMap.put("url", url);
+            urlMap.put("picturePath", "聚美专场图片sample\\专场分隔栏\\" + moduleName);
+            promotionImagesList.add(urlMap);
+        }
+        /*---------------------专场分隔栏 End---------------------*/
+
+
+        /*---------------------专场飘窗 Start---------------------*/
+        CmsBtJmBayWindowModel cmsBtJmBayWindowModel = CmsBtJmBayWindowService.getBayWindowByJmPromotionId(promotionId);
+        for (CmsBtJmBayWindowModel.BayWindow model : cmsBtJmBayWindowModel.getBayWindows()) {
+            Map<String, String> urlMap = new HashMap<>();
+            urlMap.put("url", model.getUrl());
+            urlMap.put("picturePath", "聚美专场图片sample\\专场飘窗\\" + model.getName());
+            promotionImagesList.add(urlMap);
+        }
+        /*---------------------专场飘窗 End---------------------*/
+
         //压缩图片的流
         ZipOutputStream zipOutputStream = imageToZip(strZipName, promotionImagesList);
         //返回压缩流
@@ -101,12 +143,13 @@ public class CmsBtJmPromotionDownloadImageZipService {
         for (CmsBtJmPromotionProductModel model : modelList) {
             //压缩图片的所需要的对象
             Map<String, String> urlMap = new HashMap<>();
-            urlMap.put("url", url + model.getImage1());
+            urlMap.put("url", url + model.getImage1() + suffix);
             urlMap.put("picturePath", model.getProductCode());
             promotionImagesList.add(urlMap);
         }
         //压缩图片的流
         ZipOutputStream zipOutputStream = imageToZip(strZipName, promotionImagesList);
+
         //返回压缩包流
         return outputStream.toByteArray();
     }
@@ -121,9 +164,9 @@ public class CmsBtJmPromotionDownloadImageZipService {
     public ZipOutputStream imageToZip(String strZipName, List<Map<String, String>> promotionImagesList) {
         byte[] buffer = new byte[1024];
         //压缩流
-        ZipOutputStream zipOut = null;
+        ZipOutputStream zipOutputStream = null;
         try {
-            zipOut = new ZipOutputStream(new FileOutputStream(strZipName));
+            zipOutputStream = new ZipOutputStream(new FileOutputStream(strZipName));
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(strZipName));
             for (Map<String, String> urlMap : promotionImagesList) {
                 try {
@@ -150,6 +193,6 @@ public class CmsBtJmPromotionDownloadImageZipService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return zipOut;
+        return zipOutputStream;
     }
 }
