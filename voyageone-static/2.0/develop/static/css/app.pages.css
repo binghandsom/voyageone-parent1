@@ -496,6 +496,7 @@ s-field textarea.s-html {
 
 .product-shema-detail .thumbnail {
     max-width: 100px;
+    max-height: 110px;
 }
 
 .product-shema-detail .thumbnail.current {
@@ -861,11 +862,16 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav{
+.default-attr .nav {
     position: fixed;
     width: 100px;
-    margin-left:25px;
+    margin-left: 25px;
     cursor: pointer;
     border-width: 2px;
     border-style: dotted;
+}
+
+/*clear margin*/
+.clear-margin-bottom {
+    margin-bottom: 0;
 }

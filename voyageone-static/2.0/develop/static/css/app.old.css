@@ -1971,7 +1971,9 @@ pre {
         overflow: auto;
     }
 }
-
+.text-wrap{
+    word-break: break-all;
+}
 .text-vo {
     color: #e67e22;
 }
