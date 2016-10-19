@@ -20,6 +20,7 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -28,6 +29,7 @@ import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
@@ -73,6 +75,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
+    @Autowired
+    private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -268,11 +272,11 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
         insertCnInfoModel.setCartId(cartId);
         insertCnInfoModel.setGroupId(groupId);
-        List<String> catIds = new ArrayList<>();
+        Set<String> catIds = new HashSet<>();
         for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
             catIds.addAll(sellerCat.getcIds());
         }
-        insertCnInfoModel.setCatIds(catIds);
+        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
         insertCnInfoModel.setProductXml(productXml);
@@ -345,10 +349,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         }
 
         // 匹配之后的XML格式数据
-        String xml = cnSchemaService.writeSkuXmlString(listSku);
-        $debug("sku xml:" + xml);
+        if (ListUtils.notNull(listSku)) {
+            String xml = cnSchemaService.writeSkuXmlString(listSku);
+            $debug("sku xml:" + xml);
+            return xml;
+        } else {
+            return null;
+        }
 
-        return xml;
     }
 
     /**
@@ -464,18 +472,31 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 }
 
                 String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, sizeMap, skuInventoryMap.get(skuCode));
-                listSku.add(fieldList);
+                fieldList = constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, sizeMap, skuInventoryMap.get(skuCode));
+                if (ListUtils.notNull(fieldList)) {
+                    listSku.add(fieldList);
+                }
             }
         }
 
         return listSku;
     }
 
-    private void constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Map<String, String> sizeMap, Integer qty) throws Exception {
+    private List<Field> constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Map<String, String> sizeMap, Integer qty) throws Exception {
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
             fieldsMap.put(field.getId(), field);
+        }
+
+        boolean hasChange = false;
+
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", product.getChannelId());
+        searchParam.put("code", product.getCommon().getFields().getCode());
+        searchParam.put("sku", sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+        CmsBtSxCnSkuModel searchModel = cmsBtSxCnSkuDao.selectOne(searchParam);
+        if (searchModel == null) {
+            hasChange = true;
         }
 
 //        {
@@ -522,6 +543,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             }
 
             ((InputField) field).setValue(adjSize);
+
+            if (!hasChange && !((InputField) field).getValue().equals(searchModel.getSize())) {
+                hasChange = true;
+            }
         }
         {
             // ShowSize 显示尺码
@@ -529,6 +554,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+
+            if (!hasChange && !((InputField) field).getValue().equals(searchModel.getShowSize())) {
+                hasChange = true;
+            }
         }
         {
             // Msrp 建议零售价
@@ -536,6 +565,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(searchModel.getMsrp())) {
+                hasChange = true;
+            }
         }
         {
             // Price 价格
@@ -543,8 +576,17 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(searchModel.getPrice())) {
+                hasChange = true;
+            }
         }
 
+        if (hasChange) {
+            return fields;
+        } else {
+            return null;
+        }
     }
 
     /**

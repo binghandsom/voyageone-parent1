@@ -44,12 +44,6 @@
             <if test="categoryIds != null" >
                 `category_ids` = #{categoryIds,jdbcType=VARCHAR},
             </if>
-            <if test="created != null" >
-                `created` = #{created,jdbcType=TIMESTAMP},
-            </if>
-            <if test="creater != null" >
-                `creater` = #{creater,jdbcType=VARCHAR},
-            </if>
             <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
