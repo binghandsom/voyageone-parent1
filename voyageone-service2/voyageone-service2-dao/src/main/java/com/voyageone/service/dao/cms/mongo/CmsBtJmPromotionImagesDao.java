@@ -25,8 +25,7 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
      * @return List<CmsBtJmPromotionImagesModel>
      */
     public List<CmsBtJmPromotionImagesModel> selectPromotionImagesList(Integer promotionId) {
-        JongoQuery query = new JongoQuery();
-        query.setQuery(String.format("{\"promotionId\":\"" + promotionId + "\"}"));
+        String query = "{\"promotionId\":" + promotionId + "}";
         return select(query);
     }
 
