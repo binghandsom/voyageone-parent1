@@ -61,7 +61,7 @@ define([
 
             // 转换活动场景的值
             if (editModel.model.promotionScene) {
-                var sceneArr = editModel.model.promotionScene.split(",");
+                var sceneArr = JSON.parse(editModel.model.promotionScene);
                 editModel.model.promotionScene = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.model.promotionScene[element] = true;
@@ -70,8 +70,8 @@ define([
                 editModel.model.promotionScene = [];
             }
             // 转换展示平台的值
-            if (editModel.extModel.displayPlatform) {
-                var sceneArr = editModel.extModel.displayPlatform.split(",");
+            if (editModel.extModel.extModel) {
+                var sceneArr = JSON.parse(editModel.extModel.extModel);
                 editModel.extModel.displayPlatform = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.extModel.displayPlatform[element] = true;
@@ -81,7 +81,7 @@ define([
             }
             // 转换预展示频道的值
             if (editModel.extModel.preDisplayChannel) {
-                var sceneArr = editModel.extModel.preDisplayChannel.split(",");
+                var sceneArr = JSON.parse(editModel.extModel.preDisplayChannel);
                 editModel.extModel.preDisplayChannel = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.extModel.preDisplayChannel[element] = true;
@@ -107,13 +107,6 @@ define([
         } else {
             editModel.tagList = [{"id": "", "channelId": "", "tagName": "", active: 1}];
         }
-    };
-
-    SpEditDirectiveController.prototype.getTagList = function () {
-        var self = this,
-            editModel = self.editModel;
-
-        return _.filter( editModel.tagList, function(tag){ return tag.active==1; }) || [];
     };
 
     SpEditDirectiveController.prototype.delTag = function () {
@@ -202,11 +195,11 @@ define([
                 return;
             }
 
-            if (self.getTagList().length === 0) {
+            if (self.editModel.tagList.length === 0) {
                 alert("请至少添加一个标签");
                 return;
             }
-            var hasTag = _.every(self.getTagList(), function (element) {
+            var hasTag = _.every(self.editModel.tagList, function (element) {
                 return element.tagName;
             });
             if (!hasTag)
@@ -241,11 +234,8 @@ define([
         param.extModel.mainChannel = param.extModel.mainChannel.substring(0, param.extModel.mainChannel.indexOf(':') + 1);
 
         param.model.promotionScene = JSON.stringify(_returnKey (param.model.promotionScene));
-        param.model.promotionScene = param.model.promotionScene.substr(1, param.model.promotionScene.length - 2);
         param.extModel.displayPlatform = JSON.stringify(_returnKey (param.extModel.displayPlatform));
-        param.extModel.displayPlatform = param.extModel.displayPlatform.substr(1, param.extModel.displayPlatform.length - 2);
         param.extModel.preDisplayChannel = JSON.stringify(_returnKey (param.extModel.preDisplayChannel));
-        param.extModel.preDisplayChannel = param.extModel.preDisplayChannel.substr(1, param.extModel.preDisplayChannel.length - 2);
 
         if (!param.extModel.isPromotionFullMinus) {
             param.extModel.promotionFullAmount = null;

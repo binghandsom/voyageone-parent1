@@ -38,11 +38,13 @@ public class JmPromotionImagesService extends BaseViewService {
 
         Map<String,String> promotionImageUrl = new HashMap<String,String>();
         Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(promotionImagesModel));
-        imageMap.forEach((s, o) -> {
-            if (o instanceof String && o.toString().contains("-")) {
-                promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(jmPromotionId+"-"+o.toString(),"appEntrance",cmsBtJmPromotionSaveBean));
-            }
-        });
+        if (imageMap != null) {
+            imageMap.forEach((s, o) -> {
+                if (o instanceof String && o.toString().contains("-")) {
+                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(jmPromotionId + "-" + o.toString(), "appEntrance", cmsBtJmPromotionSaveBean));
+                }
+            });
+        }
 
         Map<String,Object> result = new HashMap<String,Object>();
         result.put("promotionImagesModel",promotionImagesModel);
