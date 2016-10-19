@@ -105,7 +105,8 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
 
             List<Field> fields = new ArrayList<>();
             fields.add(createInputField("Id", catId)); // Id
-            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+//            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+            fields.add(createInputField("ProductCodes", codes.stream().map(code-> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
 
             result.add(fields);
         }

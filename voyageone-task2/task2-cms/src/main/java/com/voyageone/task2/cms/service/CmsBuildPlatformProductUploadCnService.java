@@ -199,7 +199,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             } else {
                 for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                     // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
-                    String numIId = sxModel.getOrgChannelId() + "-" + Long.toString(sxModel.getProdId()); // 因为现在是一个group一个code
+                    String numIId = sxModel.getUrlKey(); // 因为现在是一个group一个code
                     try {
                         updateProductGroupNumIIdStatus(sxModel, numIId);
                         // 回写ims_bt_product表(numIId)
@@ -367,6 +367,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             for (Field field : fieldList) {
                 if ("ProductCode".equals(field.getId())) {
                     String code = getFieldValue(field);
+                    code = code.substring(1); // 推送的是 固定"C" + code
                     model.setCode(code);
                     model.setOrgChannelId(mapProductOrgChannel.get(code));
                     model.setCategoryIds(mapProductCats.get(code).stream().collect(Collectors.joining(",")));

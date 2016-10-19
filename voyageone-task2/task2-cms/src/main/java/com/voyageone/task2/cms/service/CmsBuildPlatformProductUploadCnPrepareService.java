@@ -21,6 +21,8 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
+import com.voyageone.service.dao.cms.CmsTmpSxCnCodeDao;
+import com.voyageone.service.dao.cms.CmsTmpSxCnSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -29,9 +31,7 @@ import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -77,6 +77,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
     @Autowired
     private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
+    @Autowired
+    private CmsTmpSxCnCodeDao cmsTmpSxCnCodeDao;
+    @Autowired
+    private CmsTmpSxCnSkuDao cmsTmpSxCnSkuDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -208,6 +212,20 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
             sxData.setHasSku(true); // 独立域名都有sku
 
+            // added by morse.lu 2016/10/19 start
+            // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_code这张表且删了这张表之后，把这里的删掉
+            Map<String, Object> searchParam = new HashMap<>();
+            searchParam.put("channelId", channelId);
+            searchParam.put("code", sxData.getMainProduct().getCommon().getFields().getCode());
+            CmsTmpSxCnCodeModel tmpSxCnCodeModel = cmsTmpSxCnCodeDao.selectOne(searchParam);
+            if (tmpSxCnCodeModel == null) {
+                String errMsg = String.format("cms_tmp_sx_cn_code不存在此code[%s]信息!", sxData.getMainProduct().getCommon().getFields().getCode());
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            sxData.setTmpSxCnCode(tmpSxCnCodeModel);
+            // added by morse.lu 2016/10/19 end
+
             // 上传code信息
             String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskNameForUpdate());
 
@@ -279,6 +297,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
+        String strUrlKey =
+                sxData.getMainProduct().getOrgChannelId()
+                        + "-" + sxData.getTmpSxCnCode().getBrand()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getModel()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getCode()
+                ;
+        strUrlKey = strUrlKey.replaceAll(" ", "").replaceAll("_", "-");
+        insertCnInfoModel.setUrlKey(strUrlKey);
         insertCnInfoModel.setProductXml(productXml);
         insertCnInfoModel.setSkuXml(skuXml);
         insertCnInfoModel.setPublishFlg(0);
@@ -494,12 +520,22 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         searchParam.put("channelId", product.getChannelId());
         searchParam.put("code", product.getCommon().getFields().getCode());
         searchParam.put("sku", sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-        CmsBtSxCnSkuModel searchModel = cmsBtSxCnSkuDao.selectOne(searchParam);
-        if (searchModel == null) {
+        CmsBtSxCnSkuModel oldSxCnSkuModel = cmsBtSxCnSkuDao.selectOne(searchParam);
+        if (oldSxCnSkuModel == null) {
             hasChange = true;
         }
 
-//        {
+        // added by morse.lu 2016/10/19 start
+        // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_sku这张表且删了这张表之后，把这里的删掉
+        CmsTmpSxCnSkuModel tmpSxCnSkuModel = cmsTmpSxCnSkuDao.selectOne(searchParam);
+        if (tmpSxCnSkuModel == null) {
+            String errMsg = String.format("cms_tmp_sx_cn_sku不存在此code[%s]信息!", product.getCommon().getFields().getCode());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+        // added by morse.lu 2016/10/19 end
+
+ //        {
 //            // OrgChannelId 原始channel id
 //            String field_id = "OrgChannelId";
 //            Field field = fieldsMap.get(field_id);
@@ -518,7 +554,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "Sku";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+            ((InputField) field).setValue("S" + sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
         }
         {
             // Quantity 库存
@@ -537,14 +573,15 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            String adjSize = sizeMap.get(size);
+//            String adjSize = sizeMap.get(size);
+            String adjSize = tmpSxCnSkuModel.getSize();
             if (StringUtils.isEmpty(adjSize)) {
                 throw new BusinessException("未设定尺码转换!");
             }
 
             ((InputField) field).setValue(adjSize);
 
-            if (!hasChange && !((InputField) field).getValue().equals(searchModel.getSize())) {
+            if (!hasChange && !((InputField) field).getValue().equals(oldSxCnSkuModel.getSize())) {
                 hasChange = true;
             }
         }
@@ -553,9 +590,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "ShowSize";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+            ((InputField) field).setValue(tmpSxCnSkuModel.getShowSize());
 
-            if (!hasChange && !((InputField) field).getValue().equals(searchModel.getShowSize())) {
+            if (!hasChange && !((InputField) field).getValue().equals(oldSxCnSkuModel.getShowSize())) {
                 hasChange = true;
             }
         }
@@ -566,7 +604,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(searchModel.getMsrp())) {
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
                 hasChange = true;
             }
         }
@@ -577,7 +615,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
 
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(searchModel.getPrice())) {
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
                 hasChange = true;
             }
         }
@@ -597,7 +635,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
      */
     private void constructProductCustomPlatformProps(List<Field> fields, List<String> listSp, CmsBtProductModel product, ExpressionParser expressionParser, ShopBean shopBean, String modifier) throws Exception {
         SxData sxData = expressionParser.getSxData();
-        String strUrlKey = product.getOrgChannelId() + "-" + Long.toString(product.getProdId());
+//        String strUrlKey = product.getOrgChannelId() + "-" + Long.toString(product.getProdId());
+        String strUrlKey =
+                sxData.getMainProduct().getOrgChannelId()
+                        + "-" + sxData.getTmpSxCnCode().getBrand()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getModel()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getCode()
+                ;
+        strUrlKey = strUrlKey.replaceAll(" ", "").replaceAll("_", "-");
 
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
@@ -650,7 +695,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getCode());
+            ((InputField) field).setValue("C" + product.getCommon().getFields().getCode());
         }
         {
             // Status 商品处理动作：1创建或更新， 2删除
@@ -682,6 +727,30 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(strUrlKey);
+        }
+        {
+            // AttributeSetName productType
+            String field_id = "AttributeSetName";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+        }
+        {
+            // ColorSn color
+            String field_id = "ColorSn";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColor());
+        }
+        {
+            // ShColorSn colorSh
+            String field_id = "ShColorSn";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColorSh());
         }
         {
             // CategoryIds
@@ -770,7 +839,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getBrand());
+//            ((InputField) field).setValue(product.getCommon().getFields().getBrand());
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getBrand());
         }
 //        {
 //            // IsOnSale 上下架（0下架， 1上架）
