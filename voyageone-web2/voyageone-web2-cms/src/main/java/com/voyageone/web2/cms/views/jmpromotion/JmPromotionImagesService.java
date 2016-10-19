@@ -25,7 +25,7 @@ public class JmPromotionImagesService extends BaseViewService {
     public List<CmsBtJmPromotionImagesModel> getJmPromotionImagesList(UserSessionBean user, int promotionId, int jmPromotionId) {
         List<CmsBtJmPromotionImagesModel> juImageList = null;
 
-        //juImageList = cmsBtJmPromotionImagesDao.selectJmPromotionImagesList(user.getSelChannelId(), promotionId, jmPromotionId);
+        ///juImageList = cmsBtJmPromotionImagesDao.selectJmPromotionImagesList(user.getSelChannelId(), promotionId, jmPromotionId);
         return juImageList;
     }
 
