@@ -17,13 +17,11 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
-import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -400,20 +398,15 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     public List<JmProduct> getPromotionTagProductList(int tagId) {
-        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
 
-        parameter.setCmsBtTagId(tagId);
+        List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = getPromotionProductInTag(tagId);
 
-        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
-
-        if (jmPromotionTagProductModelList.isEmpty())
+        if (jmPromotionProductModelList.isEmpty())
             return new ArrayList<>(0);
 
-        return jmPromotionTagProductModelList
+        return jmPromotionProductModelList
                 .stream()
-                .map(CmsBtJmPromotionTagProductModel::getCmsBtJmPromotionProductId)
-                .map(productId -> {
-                    CmsBtJmPromotionProductModel jmPromotionProductModel = dao.select(productId);
+                .map(jmPromotionProductModel -> {
                     CmsBtJmProductModel productModel = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(jmPromotionProductModel.getProductCode(), jmPromotionProductModel.getChannelId());
                     return new JmProduct(productModel, jmPromotionProductModel);
                 })
@@ -432,6 +425,7 @@ public class CmsBtJmPromotionProduct3Service {
         jmProductList
                 .stream()
                 .map(JmProduct::getJmPromotionProduct)
+                .filter(jmPromotionProduct -> jmPromotionProduct != null)
                 .forEach(jmPromotionProduct -> {
                     CmsBtJmPromotionTagProductModel tagProduct = new CmsBtJmPromotionTagProductModel();
                     tagProduct.setChannelId(tagModel.getChannelId());
@@ -443,6 +437,19 @@ public class CmsBtJmPromotionProduct3Service {
 
                     daoCmsBtJmPromotionTagProduct.insert(tagProduct);
                 });
+    }
+
+    public List<CmsBtJmPromotionProductModel> getPromotionProductInTag(Integer tagId) {
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+        parameter.setCmsBtTagId(tagId);
+        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
+        if (jmPromotionTagProductModelList.isEmpty())
+            return new ArrayList<>(0);
+
+        return jmPromotionTagProductModelList
+                .stream()
+                .map(jmPromotionTagProductModel -> dao.select(jmPromotionTagProductModel.getCmsBtJmPromotionProductId()))
+                .collect(toList());
     }
 
     public static class JmProduct {

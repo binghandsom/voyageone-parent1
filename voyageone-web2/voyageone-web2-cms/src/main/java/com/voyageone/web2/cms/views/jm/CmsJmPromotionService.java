@@ -10,10 +10,8 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
-import com.voyageone.service.model.cms.CmsBtJmProductModel;
-import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
@@ -42,18 +40,21 @@ class CmsJmPromotionService extends BaseViewService {
     private final CmsAdvanceSearchService advanceSearchService;
     private final TagService tagService;
     private final CmsBtJmPromotionService jmPromotionService;
+    private final CmsBtJmPromotionProduct3Service jmPromotionProduct3Service;
 
     @Autowired
     public CmsJmPromotionService(CmsBtProductDao productDao, CmsAdvanceSearchService advanceSearchService,
                                  CmsBtJmProductDaoExt cmsBtJmProductDaoExt,
                                  CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service,
-                                 TagService tagService, CmsBtJmPromotionService jmPromotionService) {
+                                 TagService tagService, CmsBtJmPromotionService jmPromotionService,
+                                 CmsBtJmPromotionProduct3Service jmPromotionProduct3Service) {
         this.productDao = productDao;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtJmProductDaoExt = cmsBtJmProductDaoExt;
         this.cmsBtJmPromotionImportTask3Service = cmsBtJmPromotionImportTask3Service;
         this.tagService = tagService;
         this.jmPromotionService = jmPromotionService;
+        this.jmPromotionProduct3Service = jmPromotionProduct3Service;
     }
 
     /**
@@ -176,10 +177,22 @@ class CmsJmPromotionService extends BaseViewService {
                 tagService.addJmModule(jmModuleExtensionModel);
             }
 
+            List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = jmPromotionProduct3Service.getPromotionProductInTag(tagModel.getId());
+
+            long countProductHasStockInJmModule = jmPromotionProductModelList.stream()
+                    .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() > 0)
+                    .count();
+
+            long totalStock = jmPromotionProductModelList.stream()
+                    .mapToLong(CmsBtJmPromotionProductModel::getQuantity)
+                    .sum();
+
             CmsJmTagModules jmTagModules = new CmsJmTagModules();
 
             jmTagModules.setTag(tagModel);
             jmTagModules.setModule(jmModuleExtensionModel);
+            jmTagModules.setProductCountInStock(countProductHasStockInJmModule);
+            jmTagModules.setTotalStock(totalStock);
 
             return jmTagModules;
         }).collect(toList());
@@ -282,6 +295,8 @@ class CmsJmPromotionService extends BaseViewService {
     static class CmsJmTagModules {
         private CmsBtTagModel tag;
         private CmsBtTagJmModuleExtensionModel module;
+        private Long productCountInStock;
+        private Long totalStock;
 
         public CmsBtTagModel getTag() {
             return tag;
@@ -297,6 +312,22 @@ class CmsJmPromotionService extends BaseViewService {
 
         public void setModule(CmsBtTagJmModuleExtensionModel module) {
             this.module = module;
+        }
+
+        public Long getProductCountInStock() {
+            return productCountInStock;
+        }
+
+        public void setProductCountInStock(Long productCountInStock) {
+            this.productCountInStock = productCountInStock;
+        }
+
+        public Long getTotalStock() {
+            return totalStock;
+        }
+
+        public void setTotalStock(Long totalStock) {
+            this.totalStock = totalStock;
         }
     }
 }
