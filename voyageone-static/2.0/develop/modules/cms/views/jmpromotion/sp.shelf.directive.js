@@ -1,13 +1,17 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/views/jmpromotion/sort.product.controller'
 ], function (cms, _) {
 
-    function SpModelDirectiveController(spDataService, notify, popups) {
+    function SpModelDirectiveController(spDataService, notify, popups, $compile, $templateRequest, $document, $scope) {
         this.spDataService = spDataService;
         this.notify = notify;
         this.popups = popups;
+        this.$compile = $compile;
+        this.$templateRequest = $templateRequest;
+        this.$document = $document;
+        this.$scope = $scope;
     }
 
     SpModelDirectiveController.prototype.productsSortBy = {
@@ -17,9 +21,21 @@ define([
 
     SpModelDirectiveController.prototype.openProductSortPopup = function (tagId) {
         var self = this,
-            popups = self.popups;
+            $compile = self.$compile,
+            $document = self.$document,
+            $templateRequest = self.$templateRequest,
+            $scope = self.$scope,
+            body = $document[0].body;
 
-        popups.popSortProduct({tagId: tagId});
+        $templateRequest('/modules/cms/views/jmpromotion/sort.product.html').then(function (html) {
+            var modal = $(html);
+            var modalChildScope = $scope.$new();
+
+            modalChildScope.tagId = tagId;
+
+            modal.appendTo(body);
+            $compile(modal)(modalChildScope);
+        });
     };
 
     SpModelDirectiveController.prototype.loadModules = function () {
@@ -43,7 +59,7 @@ define([
     cms.directive('spShelf', [function spModelDirectivefactory() {
         return {
             restrict: 'E',
-            controller: ['spDataService', 'notify', 'popups', SpModelDirectiveController],
+            controller: ['spDataService', 'notify', 'popups', '$compile', '$templateRequest', '$document', '$scope', SpModelDirectiveController],
             controllerAs: 'ctrl',
             scope: {},
             templateUrl: '/modules/cms/views/jmpromotion/sp.shelf.directive.html'

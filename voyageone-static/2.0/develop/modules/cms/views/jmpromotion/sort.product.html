@@ -1,60 +1,50 @@
-<div class="vo_modal">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
-            <span aria-hidden="true"><i class="fa fa-close"></i></span>
-        </button>
-        <h4 class="modal-title">
-            <i class="fa fa-pencil-square-o"></i>&nbsp;<span class="ng-scope">聚美货架商品排序</span>
-        </h4>
-    </div>
-    <div class="modal-body">
-        <div class="row">
-            <div class="col-sm-6">
-                <button type="button" class="btn btn-default">库存 <i class="fa fa-sort"></i></button>
-                <button type="button" class="btn btn-default">销量 <i class="fa fa-sort"></i></button>
-                <button type="button" class="btn btn-default">价格 <i class="fa fa-sort"></i></button>
-                <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
-            </div>
-            <div class="col-sm-6 text-right">
-                <button type="button" class="btn btn-info">保存</button>
-            </div>
+<div class="jm-sortable-product-modal" ng-controller="JmSortProductPopupController as ctrl">
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-default">库存 <i class="fa fa-sort"></i></button>
+            <button type="button" class="btn btn-default">销量 <i class="fa fa-sort"></i></button>
+            <button type="button" class="btn btn-default">价格 <i class="fa fa-sort"></i></button>
+            <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
         </div>
-        <hr>
-        <div class="row sortable-container" sv-root sv-part="ctrl.productList">
-            <div class="col-sm-3" ng-repeat="product in ctrl.productList" sv-element="opts">
-                <div class="jm-sortable-product" sv-handle>
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <span>{{product.id}}</span>
-                        </div>
-                        <div class="col-sm-4">
-                            <button type="button" class="close"><i class="fa fa-close"></i></button>
-                        </div>
+        <div class="col-sm-6 text-right">
+            <button type="button" class="btn btn-info">保存</button>
+        </div>
+    </div>
+    <hr>
+    <ul class="list-inline sortable-container" sv-root sv-part="ctrl.productList">
+        <li class="jm-sortable-product" ng-repeat="product in ctrl.productList" sv-element="opts">
+            <div class="jm-sortable-product-handle" sv-handle>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <span>{{product.id}}</span>
                     </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <img image="{{::product.image1}}">
-                        </div>
-                        <div class="col-sm-8">
-                            <div>Jordan 男子休闲鞋</div>
-                            <div>库存 4</div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <div class="jm-sortable-product-price">
-                                $595
-                            </div>
-                        </div>
-                        <ul class="col-sm-8 list-inline text-right">
-                            <li><i class="fa fa-fast-backward"></i></li>
-                            <li><i class="fa fa-backward"></i></li>
-                            <li><i class="fa fa-forward"></i></li>
-                            <li><i class="fa fa-fast-forward"></i></li>
-                        </ul>
+                    <div class="col-sm-4">
+                        <button type="button" class="close"><i class="fa fa-close"></i></button>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img image="{{::product.image1}}">
+                    </div>
+                    <div class="col-sm-8">
+                        <div>Jordan 男子休闲鞋</div>
+                        <div>库存 4</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="jm-sortable-product-price">
+                            $595
+                        </div>
+                    </div>
+                    <ul class="col-sm-8 list-inline text-right">
+                        <li><i class="fa fa-fast-backward"></i></li>
+                        <li><i class="fa fa-backward"></i></li>
+                        <li><i class="fa fa-forward"></i></li>
+                        <li><i class="fa fa-fast-forward"></i></li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </div>
+        </li>
+    </ul>
 </div>

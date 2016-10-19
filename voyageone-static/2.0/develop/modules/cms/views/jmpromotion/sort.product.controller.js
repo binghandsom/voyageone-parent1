@@ -1,6 +1,6 @@
 define(['cms'], function (cms) {
-    function JmSortProductPopupController(spDataService, context) {
-        this.tagId = context.tagId;
+    function JmSortProductPopupController(spDataService, $scope) {
+        this.tagId = $scope.tagId;
         this.spDataService = spDataService;
         this.loadProduct();
     }
@@ -14,5 +14,5 @@ define(['cms'], function (cms) {
         });
     };
 
-    cms.controller('JmSortProductPopupController', ['spDataService', 'context', JmSortProductPopupController]);
+    cms.controller('JmSortProductPopupController', ['spDataService', '$scope', JmSortProductPopupController]);
 });
