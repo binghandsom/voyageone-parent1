@@ -125,6 +125,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     protected String shareContent;
 
     /**
+     * 直邮信息
+     */
+    private String directmailType;
+
+    /**
      * 是否满减
      */
     protected Boolean isPromotionFullMinus;
@@ -428,5 +433,13 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
 
     public void setVoCouponsMoney(BigDecimal voCouponsMoney) {
         this.voCouponsMoney = voCouponsMoney;
+    }
+
+    public String getDirectmailType() {
+        return directmailType;
+    }
+
+    public void setDirectmailType(String directmailType) {
+        this.directmailType = directmailType;
     }
 }

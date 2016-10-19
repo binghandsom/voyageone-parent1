@@ -237,7 +237,9 @@ define(function () {
                     "updateDealPrice": "updateDealPrice",
                     updatePromotionProduct: "updatePromotionProduct",
                     updatePromotionProductTag: "updatePromotionProductTag",
-                    getPromotionTagModules: 'getPromotionTagModules'
+                    getPromotionTagModules: 'getPromotionTagModules',
+                    savePromotionTagModules: 'savePromotionTagModules',
+                    getPromotionProducts: 'getPromotionProducts'
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmpromotion/images",

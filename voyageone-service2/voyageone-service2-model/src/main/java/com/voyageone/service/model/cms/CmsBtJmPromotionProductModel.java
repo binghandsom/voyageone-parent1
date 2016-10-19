@@ -168,6 +168,12 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
      */
     protected BigDecimal marketPrice;
 
+    protected String image1;
+
+    protected String productNameEn;
+
+    protected String remark;
+
     public String getChannelId() {
         return channelId;
     }
@@ -430,5 +436,29 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setMarketPrice(BigDecimal marketPrice) {
         this.marketPrice = marketPrice;
+    }
+
+    public String getImage1() {
+        return image1;
+    }
+
+    public void setImage1(String image1) {
+        this.image1 = image1 == null ? null : image1.trim();
+    }
+
+    public String getProductNameEn() {
+        return productNameEn;
+    }
+
+    public void setProductNameEn(String productNameEn) {
+        this.productNameEn = productNameEn == null ? null : productNameEn.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

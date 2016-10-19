@@ -77,6 +77,9 @@
             <if test="shareContent != null" >
                 `share_content` = #{shareContent,jdbcType=VARCHAR},
             </if>
+            <if test="directmailType != null" >
+                `directmail_type` = #{directmailType,jdbcType=VARCHAR},
+            </if>
 
             <if test="isPromotionFullMinus == true" >
                 `is_promotion_full_minus` = 1,
@@ -200,7 +203,9 @@
             <if test="shareContent != null" >
                 `share_content`,
             </if>
-
+            <if test="directmailType != null" >
+                `directmail_type`,
+            </if>
             <if test="isPromotionFullMinus != null" >
                 `is_promotion_full_minus`,
             </if>
@@ -310,7 +315,9 @@
             <if test="shareContent != null" >
                 #{shareContent,jdbcType=VARCHAR},
             </if>
-
+            <if test="directmailType != null" >
+                #{directmailType,jdbcType=VARCHAR},
+            </if>
             <if test="isPromotionFullMinus == true" >
                 1,
             </if>

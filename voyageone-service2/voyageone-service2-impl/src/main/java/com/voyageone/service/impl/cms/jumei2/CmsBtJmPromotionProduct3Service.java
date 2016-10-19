@@ -22,10 +22,13 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by dell on 2016/3/18.
@@ -220,6 +223,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
     @VOTransactional
     public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
+        //Map<String,Object> map=new HashedMap();
 
         // 2.7.1
         if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
@@ -382,6 +386,23 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     public int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId) {
         return daoExt.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
+    }
+
+    public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+
+        parameter.setCmsBtTagId(tagId);
+
+        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
+
+        if (jmPromotionTagProductModelList.isEmpty())
+            return new ArrayList<>(0);
+
+        return jmPromotionTagProductModelList
+                .stream()
+                .map(CmsBtJmPromotionTagProductModel::getCmsBtJmPromotionProductId)
+                .map(productId -> dao.select(productId))
+                .collect(toList());
     }
 }
 
