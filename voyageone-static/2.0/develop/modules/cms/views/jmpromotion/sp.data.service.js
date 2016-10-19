@@ -13,6 +13,7 @@ define(['cms'], function (cms) {
         self.jmPromotionService = jmPromotionService;
         self.jmPromotionDetailService = jmPromotionDetailService;
         self.JmPromotionImagesService = JmPromotionImagesService;
+        self.dateFilter = $filter('date');
     }
 
     SpDataService.prototype.getPromotion = function () {
@@ -29,6 +30,37 @@ define(['cms'], function (cms) {
             jmPromotionDetailService = self.jmPromotionDetailService;
 
         return jmPromotionDetailService.getPromotionTagModules(self.jmPromotionId).then(function (resp) {
+            return resp.data.map(function (item) {
+                if (item.module.displayStartTime)
+                    item.module.displayStartTime = new Date(item.module.displayStartTime);
+                if (item.module.displayEndTime)
+                    item.module.displayEndTime = new Date(item.module.displayEndTime);
+                return item;
+            });
+        });
+    };
+
+    SpDataService.prototype.saveModules = function (modules) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService,
+            dateFilter = self.dateFilter;
+
+        // like deep copy
+        modules = modules.map(function (item) {
+            var clone = {
+                tag: angular.copy(item.tag),
+                module: angular.copy(item.module)
+            };
+
+            if (clone.module.displayStartTime)
+                clone.module.displayStartTime = dateFilter(clone.module.displayStartTime, 'yyyy-MM-dd HH:mm:ss');
+            if (clone.module.displayEndTime)
+                clone.module.displayEndTime = dateFilter(clone.module.displayEndTime, 'yyyy-MM-dd HH:mm:ss');
+
+            return clone;
+        });
+
+        return jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
             return resp.data;
         });
     };
@@ -54,6 +86,15 @@ define(['cms'], function (cms) {
 
         JmPromotionImagesService.save(_.extend(upEntity,self.commonUpEntity)).then(function(){
             notify.success("SUCCESS");
+        });
+    };
+
+    SpDataService.prototype.getPromotionProducts = function (tagId) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.getPromotionProducts(tagId).then(function (resp) {
+            return resp.data;
         });
     };
 
