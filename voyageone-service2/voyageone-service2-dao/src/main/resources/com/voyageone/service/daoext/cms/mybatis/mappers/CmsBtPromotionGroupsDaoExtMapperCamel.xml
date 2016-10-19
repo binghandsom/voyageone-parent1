@@ -89,13 +89,13 @@
         </trim>
     </insert>
 
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel" />
+    <resultMap id="BaseResultMap2" type="com.voyageone.service.model.cms.CmsBtPromotionGroupsModel" />
     <sql id="Base_Column_List" >
         `id`, `promotion_id`, `org_channel_id`, `model_id`, `product_model`, `cat_path`,
         `num_iid`, `syn_flg`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
-    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    <select id="select" resultMap="BaseResultMap2" parameterType="java.lang.Integer" >
         select
         <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
@@ -150,7 +150,7 @@
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
-    <select id="selectOne" resultMap="BaseResultMap" >
+    <select id="selectOne" resultMap="BaseResultMap2" >
         select
         <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
@@ -192,7 +192,7 @@
         limit 1
     </select>
 
-    <select id="selectList" resultMap="BaseResultMap" >
+    <select id="selectList" resultMap="BaseResultMap2" >
         select
         <include refid="Base_Column_List" />
         from cms_bt_promotion_groups
