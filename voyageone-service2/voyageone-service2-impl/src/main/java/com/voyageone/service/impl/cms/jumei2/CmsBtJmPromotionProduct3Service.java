@@ -43,11 +43,11 @@ public class CmsBtJmPromotionProduct3Service {
     CmsBtJmProductDaoExt daoExtCmsBtJmProductDaoExt;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-//    @Autowired
+    //    @Autowired
 //    JuMeiProductPlatformService serviceJuMeiProductPlatform;
     @Autowired
     CmsMtJmConfigService serviceCmsMtJmConfig;
-//    @Autowired
+    //    @Autowired
 //    JMShopBeanService serviceJMShopBean;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJmPromotion;
@@ -67,8 +67,9 @@ public class CmsBtJmPromotionProduct3Service {
     private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
     @Autowired
     private CmsMtChannelValuesService cmsMtChannelValuesService;
-@Autowired
-private CmsBtPromotionDao daoCmsBtPromotion;
+    @Autowired
+    private CmsBtPromotionDao daoCmsBtPromotion;
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -79,26 +80,26 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     public InitResult init(InitParameter parameter, String channelId, String language) {
         InitResult result = new InitResult();
-        CmsBtJmPromotionModel model=daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId());
-        if(model==null) throw new  BusinessException("该活动不存在");
+        CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId());
+        if (model == null) throw new BusinessException("该活动不存在");
         result.setModelPromotion(model);//CmsBtJmPromotion
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
-
+        result.setProductCount(selectCountByPromotionId(parameter.getJmPromotionRowId()));
         long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
         long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
         result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
         result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
-       // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+        // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
         result.setIsUpdateJM(true);
-       // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
+        // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
         boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 10).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
-        if(isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+        if (isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
         {
-           result.setIsUpdateJM(false);
+            result.setIsUpdateJM(false);
         }
         // // ODO: 2016/8/10  测试完 取消注释  spt begin
-       // result.setIsUpdateJM(true);
+        // result.setIsUpdateJM(true);
         // // ODO: 2016/8/10   测试完 取消注释  spt end
         // 获取brand list
         result.setBrandList(TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
@@ -113,14 +114,14 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         return dao.delete(id);
     }
 
-    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
-    {
+    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId) {
         Map<String, Object> map = new HashMap<>();
-        map.put("promotionId",jmPromotionId);
+        map.put("promotionId", jmPromotionId);
         map.put("cartId", CartEnums.Cart.JM.getValue());
         CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
-        return  promotion;
+        return promotion;
     }
+
     //批量修改价格 批量变更价格
     @VOTransactional
     public CallResult batchUpdateDealPrice(BatchUpdatePriceParameterBean parameter) {
@@ -162,7 +163,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         }
         daoExtCmsBtJmPromotionSku.batchUpdateDealPrice(parameter.getListPromotionProductId(), price);//更新sku价格
         daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
-        daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(),parameter.getListPromotionProductId());
+        daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
         return result;
     }
 
@@ -197,7 +198,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         //更新为待上传   1. if未上传  then synch_status=1
         daoExt.batchCopyDeal(parameter.getListPromotionProductId());
         //更新为价格待更新  2. if已上传  then update_status=1
-         daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
+        daoExt.batchCopyDealUpdatePrice(parameter.getListPromotionProductId());
 
     }
 
@@ -241,7 +242,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
         //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
-        if (modelCmsBtPromotion != null&&listNotSych.size()>0) {
+        if (modelCmsBtPromotion != null && listNotSych.size() > 0) {
             List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
             Map<String, Object> map = new HashMap<>();
             map.put("listProductCode", listNotSychCode);
@@ -250,14 +251,15 @@ private CmsBtPromotionDao daoCmsBtPromotion;
             daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
         }
     }
-    public List<String> getListNotSychCode(List<CmsBtJmPromotionProductModel> listNotSych)
-    {
-        List<String> codeList=new ArrayList<>();
-        listNotSych.stream().forEach((o)->{
+
+    public List<String> getListNotSychCode(List<CmsBtJmPromotionProductModel> listNotSych) {
+        List<String> codeList = new ArrayList<>();
+        listNotSych.stream().forEach((o) -> {
             codeList.add(o.getProductCode());
         });
         return codeList;
     }
+
     // 全量删除
     @VOTransactional //删除全部product  已经再售的不删
     public CallResult deleteAllProduct(int jmPromotionId) {
@@ -284,6 +286,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         }
         return result;
     }
+
     public CallResult updateDealEndTimeAll(ParameterUpdateDealEndTimeAll parameter) {
         CallResult result = new CallResult();
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(parameter.getPromotionId());
@@ -299,12 +302,14 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         daoExt.updateDealEndTimeAll(parameter);//商品改变延期状态
         return result;
     }
+
     public boolean existsCopyDealByPromotionId(int promotionId) {
         Map<String, Object> map = new HashMap<>();
         map.put("cmsBtJmPromotionId", promotionId);
         map.put("synchStatus", 2);
         return dao.selectOne(map) != null;
     }
+
     //商品预览
     public ProductViewBean getProductView(int promotionProductId) {
         ProductViewBean productViewBean = new ProductViewBean();
@@ -316,6 +321,7 @@ private CmsBtPromotionDao daoCmsBtPromotion;
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }
+
     //更新PromotionProduct 目前只更新 limit
     public int updatePromotionProduct(UpdatePromotionProductParameter parameter, String userName) {
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
@@ -386,6 +392,10 @@ private CmsBtPromotionDao daoCmsBtPromotion;
 
     public int selectChangeCountByPromotionId(long JmPromotionId) {
         return daoExt.selectChangeCountByPromotionId(JmPromotionId);
+    }
+
+    public int selectCountByPromotionId(long JmPromotionId) {
+        return daoExt.selectCountByPromotionId(JmPromotionId);
     }
 
     public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {

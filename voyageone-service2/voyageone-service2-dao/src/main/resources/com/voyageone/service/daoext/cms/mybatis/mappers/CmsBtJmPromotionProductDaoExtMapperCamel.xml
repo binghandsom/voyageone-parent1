@@ -69,20 +69,7 @@
         </if>
     </where>
 </select>
-<!--<select id="selectExportInfoListByPromotionId" resultType="MapModel">-->
-    <!--SELECT a.`jm_hash_id`,a.`product_code`,a.`deal_price`,a.`market_price`,a.`discount`,a.`sku_count`,a.`quantity`,b.`product_name_cn`,`app_id`,`pc_id`-->
 
-    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
-    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
-    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
-    <!--ORDER by b.`product_code`,b.`vo_category_name`-->
-<!--</select>-->
-<!--<select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">-->
-    <!--SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`-->
-    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
-    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
-    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
-<!--</select>-->
 <delete id="deleteByPromotionId">
     DELETE FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
 </delete>
@@ -97,13 +84,6 @@
 <update id="updateDealEndTimeAll">
     update cms_bt_jm_promotion_product set deal_end_time_status=1 where cms_bt_jm_promotion_id=#{promotionId}
 </update>
-<!--<update id="updateDealEndTime">-->
-    <!--UPDATE  `cms_bt_jm_promotion_product` set deal_end_time_state=1 WHERE `cms_bt_jm_promotion_id`=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)-->
-    <!--and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"-->
-                                             <!--open="(" separator="," close=")">-->
-    <!--#{item}-->
-<!--</foreach>-->
-<!--</update>-->
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
         SELECT a.deal_end_time_status,b.image1,b.product_Long_Name  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
@@ -126,6 +106,10 @@
                         #{item}
                     </foreach> )
                 )
+            </if>
+            <if test="stockQty!=null and compareType!=null">
+
+                and a.quantity ${compareType} #{stockQty}
             </if>
             <if test="productNameCn!=null">
                 and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
@@ -240,6 +224,10 @@
             </foreach> )
                 )
             </if>
+            <if test="stockQty!=null and compareType!=null">
+
+                and a.quantity ${compareType} #{stockQty}
+            </if>
             <if test="productNameCn!=null">
                 and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
                 or  b.product_long_name like CONCAT(#{productNameCn},'%')
@@ -269,15 +257,23 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <if test="synchStatusList!=null and synchStatusList.size()!=0">
-                and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
-                                                open="(" separator="," close=")">
-                #{item}
-            </foreach>
+            <if test="hasStatus!=null">
+                and ( 1!=1
+                <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                    or  a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                </if>
+                <if test="allErrorStatus!=null">
+                    or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
+                </if>
+                <if test="allStatus1!=null">
+                    or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                )
             </if>
-            <!--<if test="errorStatus!=null">-->
-            <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
-            <!--</if>-->
+
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -286,26 +282,26 @@
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
-                    and   b.msrp_rmb>=#{beginPrice}
+                    and   a.max_msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp_rmb&lt;=#{endPrice}
+                    and   a.min_msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    b.retail_price>=#{beginPrice}
+                    and    a.max_retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.retail_price&lt;=#{endPrice}
+                    and   a.min_retail_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  b.sale_price>=#{beginPrice}
+                    and a.max_sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  b.sale_price&lt;=#{endPrice}
+                    and  a.min_sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='dealPrice'">
@@ -470,6 +466,10 @@
     <select id="selectChangeCountByPromotionId" resultType="int">
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+    </select>
+    <select id="selectCountByPromotionId" resultType="int">
+        SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
+        WHERE   `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
     <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
         SELECT * from  cms_bt_jm_promotion_product

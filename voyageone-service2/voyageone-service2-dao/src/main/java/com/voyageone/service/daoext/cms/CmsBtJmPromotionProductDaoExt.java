@@ -92,7 +92,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     //获取变更数量
     int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);
-
+    int selectCountByPromotionId(long cmsBtJmPromotionProductId);
     //获取本活动商品在其他活动处于在售状态的商品
     CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("nowDate") Date nowDate);
 

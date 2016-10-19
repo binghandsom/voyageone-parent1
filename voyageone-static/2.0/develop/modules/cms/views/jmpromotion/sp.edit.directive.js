@@ -10,7 +10,7 @@ define([
         this.confirm = confirm;
         this.$translate = $translate;
         this.$filter = $filter;
-        this.vm = {"jmMasterBrandList": []};
+        this.vm = {"jmMasterBrandList": [], "brandEnName": '', "mainChannelAb": ''};
         this.editModel = {model: {}};
         this.datePicker = [];
     }
@@ -55,13 +55,16 @@ define([
             if (editModel.model.promotionType) {
                 editModel.model.promotionType = editModel.model.promotionType.toString();
             }
+            if (editModel.extModel == undefined || editModel.extModel == null || editModel.extModel == '') {
+                editModel.extModel = {};
+            }
             if (editModel.extModel.directmailType == undefined || editModel.extModel.directmailType == null || editModel.extModel.directmailType == '') {
                 editModel.extModel.directmailType = '1';
             }
 
             // 转换活动场景的值
             if (editModel.model.promotionScene) {
-                var sceneArr = editModel.model.promotionScene.split(",");
+                var sceneArr = JSON.parse(editModel.model.promotionScene);
                 editModel.model.promotionScene = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.model.promotionScene[element] = true;
@@ -71,7 +74,7 @@ define([
             }
             // 转换展示平台的值
             if (editModel.extModel.displayPlatform) {
-                var sceneArr = editModel.extModel.displayPlatform.split(",");
+                var sceneArr = JSON.parse(editModel.extModel.displayPlatform);
                 editModel.extModel.displayPlatform = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.extModel.displayPlatform[element] = true;
@@ -81,7 +84,7 @@ define([
             }
             // 转换预展示频道的值
             if (editModel.extModel.preDisplayChannel) {
-                var sceneArr = editModel.extModel.preDisplayChannel.split(",");
+                var sceneArr = JSON.parse(editModel.extModel.preDisplayChannel);
                 editModel.extModel.preDisplayChannel = [];
                 angular.forEach(sceneArr, function(element) {
                     editModel.extModel.preDisplayChannel[element] = true;
@@ -95,6 +98,8 @@ define([
                 // 记住主品牌初始值
                 _getJmBrandEnName(self, editModel.model.cmsBtJmMasterBrandId);
             });
+            // 记住主频道英文缩写
+            _getJmMainChannelAb(self, editModel.extModel.mainChannel);
         });
     };
 
@@ -107,13 +112,6 @@ define([
         } else {
             editModel.tagList = [{"id": "", "channelId": "", "tagName": "", active: 1}];
         }
-    };
-
-    SpEditDirectiveController.prototype.getTagList = function () {
-        var self = this,
-            editModel = self.editModel;
-
-        return _.filter( editModel.tagList, function(tag){ return tag.active==1; }) || [];
     };
 
     SpEditDirectiveController.prototype.delTag = function () {
@@ -134,6 +132,13 @@ define([
         self.createActId();
     };
 
+    // 当主频道改变时，记住所选值（缩写），用于创建页面标识
+    SpEditDirectiveController.prototype.onMainChannelChange = function () {
+        var self = this;
+        _getJmMainChannelAb(self, self.editModel.extModel.mainChannel);
+        self.createActId();
+    };
+
     // 创建页面标识
     SpEditDirectiveController.prototype.createActId = function () {
         var self = this;
@@ -141,26 +146,21 @@ define([
         var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
         idTime = parseInt(idTime).toString(36);
         var jmBrandId = self.editModel.model.cmsBtJmMasterBrandId;
-        var jmBrandName = self.vm.brandEnName;
-        if (jmBrandName == null || jmBrandName == undefined) {
-            jmBrandName = '';
-        }
-        var mainChannel = '';
-        var mainChannel2 = '';
-        if (self.editModel.extModel.mainChannel) {
-            mainChannel = self.editModel.extModel.mainChannel.substring(0, self.editModel.extModel.mainChannel.indexOf(':'));
-            mainChannel2 = self.editModel.extModel.mainChannel.substring(self.editModel.extModel.mainChannel.indexOf(':') + 1);
+
+        var mainChannel = self.editModel.extModel.mainChannel;
+        if (mainChannel == undefined || mainChannel == null) {
+            mainChannel = '';
         }
 
         if (self.editModel.model.promotionType == '3') {
-            if (self.editModel.extModel.productType == null || self.editModel.extModel.productType == undefined) {
-                self.editModel.extModel.productType = '';
+            if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
+                self.editModel.extModel.promotionProductType = '';
             }
-            var pageId = idDate + mainChannel + '_' + self.editModel.extModel.productType + '_' + jmBrandId + '_' + idTime;
+            var pageId = idDate + mainChannel + '_' + self.editModel.extModel.promotionProductType + '_' + jmBrandId + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         } else {
-            var pageId = mainChannel2 + '_' + jmBrandName + '_' + idDate + '_' + idTime;
+            var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + '_' + idDate + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         }
@@ -173,11 +173,14 @@ define([
             alert = self.alert,
             jmPromotionService = self.jmPromotionService;
 
+        var model = self.editModel.model;
+        var extModel = self.editModel.extModel;
         if (saveType) {
-            var start = new Date(self.editModel.model.activityStart);
-            var end = new Date(self.editModel.model.activityEnd);
+            // 在'提交'时检查输入项目
+            var start = new Date(model.activityStart);
+            var end = new Date(model.activityEnd);
 
-            if (self.editModel.model.activityStart > self.editModel.model.activityEnd) {
+            if (model.activityStart > model.activityEnd) {
                 alert("活动时间检查：请输入结束时间>开始时间，最小间隔为30分钟。");
                 return;
             }
@@ -187,32 +190,31 @@ define([
                 return;
             }
 
-            if (self.editModel.model.prePeriodStart > self.editModel.model.prePeriodEnd) {
+            if (model.prePeriodStart > model.prePeriodEnd) {
                 alert("预热时间检查：请输入结束时间>开始时间。");
                 return;
             }
 
-            if (self.editModel.model.prePeriodStart > self.editModel.model.activityStart) {
+            if (model.prePeriodStart > model.activityStart) {
                 alert("预热开始时间不能晚于活动开始时间");
                 return;
             }
 
-            if (self.editModel.model.signupDeadline > self.editModel.model.prePeriodStart) {
+            if (model.signupDeadline > model.prePeriodStart) {
                 alert("报名截止日期不能晚于预热开始时间");
                 return;
             }
 
-            if (self.getTagList().length === 0) {
+            if (self.editModel.tagList.length === 0) {
                 alert("请至少添加一个标签");
                 return;
             }
-            var hasTag = _.every(self.getTagList(), function (element) {
+            var hasTag = _.every(self.editModel.tagList, function (element) {
                 return element.tagName;
             });
             if (!hasTag)
                 return;
 
-            var extModel = self.editModel.extModel;
             if (extModel.isPromotionFullMinus && (extModel.promotionFullAmount == null || extModel.promotionFullAmount == '' || extModel.promotionFullAmount == undefined
                 || extModel.promotionMinusAmount == null || extModel.promotionMinusAmount == '' || extModel.promotionMinusAmount == undefined)) {
                 alert("当设置满减优惠时，必须填写优惠限额及优惠金额");
@@ -235,17 +237,12 @@ define([
 
         var param = {};
         param.tagList= _.filter( self.editModel.tagList, function(tag){ return tag.tagName != "";});
-        param.model = angular.copy(self.editModel.model);
-        param.extModel = angular.copy(self.editModel.extModel);
-
-        param.extModel.mainChannel = param.extModel.mainChannel.substring(0, param.extModel.mainChannel.indexOf(':') + 1);
+        param.model = angular.copy(model);
+        param.extModel = angular.copy(extModel);
 
         param.model.promotionScene = JSON.stringify(_returnKey (param.model.promotionScene));
-        param.model.promotionScene = param.model.promotionScene.substr(1, param.model.promotionScene.length - 2);
         param.extModel.displayPlatform = JSON.stringify(_returnKey (param.extModel.displayPlatform));
-        param.extModel.displayPlatform = param.extModel.displayPlatform.substr(1, param.extModel.displayPlatform.length - 2);
         param.extModel.preDisplayChannel = JSON.stringify(_returnKey (param.extModel.preDisplayChannel));
-        param.extModel.preDisplayChannel = param.extModel.preDisplayChannel.substr(1, param.extModel.preDisplayChannel.length - 2);
 
         if (!param.extModel.isPromotionFullMinus) {
             param.extModel.promotionFullAmount = null;
@@ -267,7 +264,14 @@ define([
         param.model.prePeriodStart = formatToStr(param.model.prePeriodStart, self.$filter);
         param.model.prePeriodEnd = param.model.activityEnd;
         param.model.signupDeadline = formatToStr(param.model.signupDeadline, self.$filter);
+
         param.extModel.shareTitle = param.extModel.marketingTitle;
+        if (param.extModel.marketingCopywriter == undefined || param.extModel.marketingCopywriter == null) {
+            param.extModel.marketingCopywriter = '';
+        }
+        if (param.extModel.promotionalCopy == undefined || param.extModel.promotionalCopy == null) {
+            param.extModel.promotionalCopy = '';
+        }
         param.extModel.shareContent = param.extModel.marketingCopywriter + '' + param.extModel.promotionalCopy;
 
         param.hasExt = true;
@@ -326,6 +330,20 @@ define([
             }
         }
         self.vm.brandEnName = nameVal;
+    };
+
+    // 取得主频道英文缩写
+    function _getJmMainChannelAb(self, mainChannelName) {
+        if (mainChannelName == undefined || mainChannelName == null) {
+            self.vm.mainChannelAb = '';
+            return;
+        }
+        // TODO 这里数据先固定，将来要改从数据库取
+        if ('luxuryglobal' == mainChannelName) {
+            self.vm.mainChannelAb = 'ppt';
+        } else if ('food' == mainChannelName) {
+            self.vm.mainChannelAb = 'vtm';
+        }
     };
 
     cms.directive('spEdit', [function spEditDirectiveFactory() {

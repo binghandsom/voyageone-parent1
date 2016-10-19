@@ -197,12 +197,21 @@ public class CmsBtJmPromotionService extends BaseService {
         promotion.setModifier(model.getModifier());
         promotion.setCreater(model.getCreater());
         promotion.setActive(model.getActive());
-        promotion.setActivityStart(DateTimeUtil.getDateTime(model.getActivityStart(), "yyyy-MM-dd HH:mm:ss"));
-        promotion.setActivityEnd(DateTimeUtil.getDateTime(model.getActivityEnd(), "yyyy-MM-dd HH:mm:ss"));
+        if (model.getActivityStart() != null) {
+            promotion.setActivityStart(DateTimeUtil.getDateTime(model.getActivityStart(), "yyyy-MM-dd HH:mm:ss"));
+        }
+        if (model.getActivityEnd() != null) {
+            promotion.setActivityEnd(DateTimeUtil.getDateTime(model.getActivityEnd(), "yyyy-MM-dd HH:mm:ss"));
+        }
         promotion.setCartId(CartEnums.Cart.JM.getValue());
         promotion.setPromotionName(model.getName());
-        promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
-        promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
+        if (model.getPrePeriodStart() != null) {
+            promotion.setPrePeriodStart(DateTimeUtil.getDateTime(model.getPrePeriodStart(), "yyyy-MM-dd HH:mm:ss"));
+        }
+        if (model.getPrePeriodEnd() != null) {
+            promotion.setPrePeriodEnd(DateTimeUtil.getDateTime(model.getPrePeriodEnd(), "yyyy-MM-dd HH:mm:ss"));
+        }
+
         promotion.setPromotionStatus(1);
         promotion.setTejiabaoId("");
         promotion.setIsAllPromotion(0);

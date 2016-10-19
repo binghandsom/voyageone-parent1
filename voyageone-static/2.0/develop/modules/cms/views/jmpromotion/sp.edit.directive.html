@@ -226,7 +226,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="tag in ctrlEdit.getTagList()">
+                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList">
                                 <td class="mfb-xxxsm">
                                     <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
                                            ng-required="true" maxlength="20" required>
@@ -257,7 +257,7 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Product Type</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.productType" ng-change="ctrlEdit.createActId()">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionProductType" ng-change="ctrlEdit.createActId()">
                     </div>
                 </div>
                 <div class="form-group">
@@ -282,10 +282,10 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.createActId()">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.onMainChannelChange()">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            <option value="luxuryglobal:ppt">轻奢（luxuryglobal【ppt】）</option>
-                            <option value="food:vtm">食品（food【vtm】）</option>
+                            <option value="luxuryglobal">轻奢（luxuryglobal【ppt】）</option>
+                            <option value="food">食品（food【vtm】）</option>
                         </select>
                     </div>
                 </div>
