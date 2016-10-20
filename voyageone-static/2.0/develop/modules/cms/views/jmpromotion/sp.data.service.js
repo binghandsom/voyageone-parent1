@@ -85,11 +85,32 @@ define(['cms'], function (cms) {
         return JmPromotionImagesService.save(_.extend(upEntity, self.commonUpEntity));
     };
 
+    SpDataService.prototype.getPromotionImgTpl = function getPromotionImgTpl(upEntity) {
+        var self = this,
+            JmPromotionImagesService = self.JmPromotionImagesService;
+
+        return JmPromotionImagesService.getImageTemplate(upEntity).then(function(resp){
+            return resp.data;
+        });
+    };
+
     SpDataService.prototype.getPromotionProducts = function (tagId) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;
 
         return jmPromotionDetailService.getPromotionProducts(tagId).then(function (resp) {
+            return resp.data;
+        });
+    };
+
+    SpDataService.prototype.saveProductSort = function saveProductSort(tagId, productList) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.saveProductSort({
+            tagId: tagId,
+            jmProductList: productList
+        }).then(function (resp) {
             return resp.data;
         });
     };

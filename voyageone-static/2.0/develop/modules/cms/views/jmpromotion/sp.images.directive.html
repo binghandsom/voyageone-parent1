@@ -30,7 +30,7 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-1 col-sm-offset-4">
-                            <button class="btn btn-default">导入图片</button>
+                            <button class="btn btn-default" ng-click="ctrlImages.popImageBatchUpload()">导入图片</button>
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('hannelComingSoon')">上传图片</button>
+                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('channelComingSoon')">上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -114,9 +114,9 @@
                         <div class="row">
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a href="#">{{ctrlImages.imgUrls['hannelComingSoon']}}</a>
+                                <a href="#">{{ctrlImages.imgUrls['channelComingSoon']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['hannelComingSoon']}}" class="img-thumbnail" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['channelComingSoon']}}" class="img-thumbnail" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>

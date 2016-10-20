@@ -3,9 +3,10 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpImagesDirectiveController(spDataService, popups) {
+    function SpImagesDirectiveController(spDataService, popups,notify) {
         this.spDataService = spDataService;
         this.popups = popups;
+        this.notify = notify;
         this.imgUpEntity = {};
         this.imgUrls = {};
     }
@@ -15,21 +16,44 @@ define([
             spDataService = self.spDataService;
 
         spDataService.initPromotionImages().then(function(res){
-            //用于显示
+
             self.imgUrls = res.data.promotionImageUrl;
-            //用于存储图片名称
-            self.imgUpEntity = res.data.promotionImagesModel
+            self.imgUpEntity = res.data.promotionImagesModel;
         });
+
+        spDataService.getPromotion().then(function(res){
+            self.promotionInfo = res;
+        });
+
     };
 
     SpImagesDirectiveController.prototype.popImageSuit = function () {
         var self = this,
+            promotionInfo = self.promotionInfo,
+            spDataService = self.spDataService,
             popups = self.popups;
 
-        popups.openImageSuit({}).then(function () {
-
+        popups.openImageSuit({brand:promotionInfo.brand}).then(function (context) {
+            spDataService.getPromotionImgTpl(context).then(function(res){
+                self.imgUrls = res.promotionImageUrl;
+                self.imgUpEntity = res.promotionImagesModel;
+            });
         });
     };
+
+    SpImagesDirectiveController.prototype.popImageBatchUpload = function () {
+        var self = this,
+            promotionInfo = self.promotionInfo,
+            spDataService = self.spDataService,
+            popups = self.popups;
+
+        popups.openImageBatchJmUpload({brand:promotionInfo.brand}).then(function (context) {
+            spDataService.getPromotionImgTpl(context).then(function(res){
+
+            });
+        });
+    };
+
 
     SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
@@ -51,10 +75,14 @@ define([
 
     SpImagesDirectiveController.prototype.save = function(){
         var self = this,
+            notify = self.notify,
             spDataService = self.spDataService;
 
         spDataService.savePromotionImages({
-            "promotionImages":self.imgUpEntity
+            "promotionImages":self.imgUpEntity,
+            "brand":self.promotionInfo.brand
+        }).then(function(){
+            notify.success("更新成功!");
         });
     };
 
@@ -62,7 +90,7 @@ define([
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['spDataService', 'popups', SpImagesDirectiveController],
+            controller: ['spDataService', 'popups', 'notify',SpImagesDirectiveController],
             controllerAs: 'ctrlImages',
             templateUrl: '/modules/cms/views/jmpromotion/sp.images.directive.html'
         }

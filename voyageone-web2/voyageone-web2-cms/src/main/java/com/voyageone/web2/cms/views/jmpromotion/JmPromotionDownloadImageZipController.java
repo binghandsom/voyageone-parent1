@@ -25,7 +25,7 @@ public class JmPromotionDownloadImageZipController extends CmsController {
     public ResponseEntity downloadSpecialImageZip(@RequestBody Map<String, Object> params) {
         Integer promotionId = (Integer) params.get("promotionId");
         String strZipName ="";
-        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(promotionId,strZipName);
+        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(promotionId);
         return genResponseEntityFromBytes(strZipName,data);
     }
     /**
@@ -34,7 +34,7 @@ public class JmPromotionDownloadImageZipController extends CmsController {
     public ResponseEntity downloadWaresImageZip(@RequestBody Map<String, Object> params) {
         Integer promotionId = (Integer) params.get("promotionId");
         String strZipName ="";
-        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectWaresImageList(promotionId,strZipName);
+        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectWaresImageList(promotionId);
         return genResponseEntityFromBytes(strZipName,data);
     }
 }

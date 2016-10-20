@@ -2,6 +2,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
@@ -102,7 +103,7 @@ public interface CmsBtJmPromotionProductDaoExt {
     //更新synch_status==2 的errorMsg
     int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("errorMsg") String errorMsg);
 
-    List<CmsBtJmPromotionProductModel> selectProductInfoByTagId(Integer tagId);
+    List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
     //jm2 end
 
     /**

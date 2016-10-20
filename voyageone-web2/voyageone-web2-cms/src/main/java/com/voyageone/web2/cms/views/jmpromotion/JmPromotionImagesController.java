@@ -1,9 +1,6 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
 import com.voyageone.common.asserts.Assert;
-import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
-import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -14,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -58,8 +53,14 @@ public class JmPromotionImagesController extends CmsController {
 
         CmsBtJmPromotionImagesModel imageEntity = params.getPromotionImages();
 
+        Assert.notNull(params.getPromotionId()).elseThrowDefaultWithTitle("promotionId");
         imageEntity.setPromotionId(params.getPromotionId());
+
+        Assert.notNull(params.getJmPromotionId()).elseThrowDefaultWithTitle("jmPromotionId");
         imageEntity.setJmPromotionId(params.getJmPromotionId());
+
+        Assert.notNull(params.getBrand()).elseThrowDefaultWithTitle("brand");
+        imageEntity.setBrand(params.getBrand());
 
         jmPromotionImagesService.saveJmPromotionImages(imageEntity);
 
@@ -67,12 +68,28 @@ public class JmPromotionImagesController extends CmsController {
     }
 
 
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.GET_IMAGE_FOR_SUIT)
+    public AjaxResponse getImageForSuit(@RequestBody Map<String, String> requestMap) {
+
+        String brand = requestMap.get("brand");
+        Assert.notNull(brand).elseThrowDefaultWithTitle("brand");
+
+        return success(jmPromotionImagesService.getImageForSuit(brand));
+    }
+
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.GET_IMAGE_TEMPLATE)
+    public AjaxResponse getImageForSuit(@RequestBody CmsBtJmPromotionImagesModel model) {
+        return success(jmPromotionImagesService.getJmImageTemplate(model));
+    }
+
     public static class Wrapper {
         CmsBtJmPromotionImagesModel promotionImages;
 
         private Integer promotionId;
 
         private Integer jmPromotionId;
+
+        private String brand;
 
         public CmsBtJmPromotionImagesModel getPromotionImages() {
             return promotionImages;
@@ -96,6 +113,14 @@ public class JmPromotionImagesController extends CmsController {
 
         public void setJmPromotionId(Integer jmPromotionId) {
             this.jmPromotionId = jmPromotionId;
+        }
+
+        public String getBrand() {
+            return brand;
+        }
+
+        public void setBrand(String brand) {
+            this.brand = brand;
         }
     }
 }

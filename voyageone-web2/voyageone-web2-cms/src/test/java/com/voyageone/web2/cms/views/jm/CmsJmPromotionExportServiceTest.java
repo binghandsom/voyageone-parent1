@@ -34,7 +34,7 @@ public class CmsJmPromotionExportServiceTest {
     CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
     @Test
     public void doExportJmPromotionFile() throws Exception {
-        cmsJmPromotionExportService.doExportJmPromotionFile(111);
+        cmsJmPromotionExportService.doExportJmPromotionFile(111,CmsJmPromotionExportService.HASHID);
     }
 
 }

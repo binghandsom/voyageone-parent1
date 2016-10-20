@@ -112,9 +112,9 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm:"priceConfirm",
+                    priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice:"updateSkuPrice"
+                    updateSkuPrice: "updateSkuPrice"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -185,7 +185,7 @@ define(function () {
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
-                    "saveSkuPromotionPrices":"saveSkuPromotionPrices"
+                    "saveSkuPromotionPrices": "saveSkuPromotionPrices"
                 }
             },
             "jmpromotion": {
@@ -239,12 +239,15 @@ define(function () {
                     updatePromotionProductTag: "updatePromotionProductTag",
                     getPromotionTagModules: 'getPromotionTagModules',
                     savePromotionTagModules: 'savePromotionTagModules',
-                    getPromotionProducts: 'getPromotionProducts'
+                    getPromotionProducts: 'getPromotionProducts',
+                    saveProductSort: 'saveProductSort'
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmpromotion/images",
                     "init": "init",
-                    "save": "save"
+                    "save": "save",
+                    "getImageForSuit": "getImageForSuit",
+                    "getImageTemplate": "getImageTemplate"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
@@ -517,7 +520,7 @@ define(function () {
                     "search": "search",
                     "save": "save",
                     "delete": "delete",
-                    "getNoMatchSizeImageGroupList":"getNoMatchSizeImageGroupList"
+                    "getNoMatchSizeImageGroupList": "getNoMatchSizeImageGroupList"
                 },
                 "imageGroupDetailService": {
                     "root": "/cms/channel/image_group_detail",
@@ -537,8 +540,8 @@ define(function () {
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
-                        "getNoMatchList":"getNoMatchList",
-                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
+                        "getNoMatchList": "getNoMatchList",
+                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {
@@ -599,10 +602,10 @@ define(function () {
                     cacheWith: [KEY.CHANNEL]
                 }
             },
-            "blackBrandService":{
-                root:"/cms/channel/black_brand/",
-                list:"searchBlackBrand",
-                update:"updateBlackBrand"
+            "blackBrandService": {
+                root: "/cms/channel/black_brand/",
+                list: "searchBlackBrand",
+                update: "updateBlackBrand"
             }
         }
     };

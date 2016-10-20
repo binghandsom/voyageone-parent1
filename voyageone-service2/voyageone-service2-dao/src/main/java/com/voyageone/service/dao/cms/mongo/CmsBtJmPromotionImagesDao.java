@@ -3,6 +3,7 @@ package com.voyageone.service.dao.cms.mongo;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,9 +25,9 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
      * @param promotionId
      * @return List<CmsBtJmPromotionImagesModel>
      */
-    public List<CmsBtJmPromotionImagesModel> selectPromotionImagesList(Integer promotionId) {
-        String query = "{\"promotionId\":" + promotionId + "}";
-        return select(query);
+    public CmsBtJmPromotionImagesModel selectPromotionImagesList(Integer promotionId) {
+        String query = "{\"jmPromotionId\":" + promotionId + "}";
+        return selectOneWithQuery(query);
     }
 
     public void saveJmPromotionImages(CmsBtJmPromotionImagesModel model){
@@ -43,4 +44,17 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
         String query = "{\"promotionId\":" + promotionId + ",\"jmPromotionId\":" + jmPromotionId + "}";
         return selectOneWithQuery(query);
     }
+
+    /**
+     * 通过品牌选取最近的10条数据
+     * @return
+     */
+    public List<CmsBtJmPromotionImagesModel> selectJmImageForSuit(String brand){
+        Criteria criteria = new Criteria("brand").is(brand);
+
+        return select(new JongoQuery(criteria)
+                .setProjection("{\"mappings\":0}")
+                .setSort("{\"modified\":-1}").setLimit(10));
+    }
+
 }

@@ -1,27 +1,21 @@
 package com.voyageone.web2.cms.views.jm;
 
 
-import com.voyageone.common.configs.Properties;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.CmsBtTagJmModuleExtensionBean;
-import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionExportBean;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
-import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
+import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.cms.bean.CmsPromotionExportBean;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -41,8 +35,14 @@ import java.util.List;
 @Service
 public class CmsJmPromotionExportService extends BaseViewService {
 
+    public static final Integer HASHID = 0;
+
+    public static final Integer MALLID = 1;
     @Autowired
     private CmsBtJmPromotionService cmsBtJmPromotionService;
+
+    @Autowired
+    private CmsMtJmConfigService cmsMtJmConfigService;
 
     @Autowired
     private CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
@@ -53,7 +53,10 @@ public class CmsJmPromotionExportService extends BaseViewService {
     @Autowired
     private CmsBtJmBayWindowService cmsBtJmBayWindowService;
 
-    public byte[] doExportJmPromotionFile(Integer jmPromotionId) {
+    @Autowired
+    private CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
+
+    public byte[] doExportJmPromotionFile(Integer jmPromotionId, Integer type) {
 
         String templatePath = "/usr/web/contents/cms/file_template/JMPromotion-template.xlsx";
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId, true);
@@ -63,7 +66,7 @@ public class CmsJmPromotionExportService extends BaseViewService {
         try (InputStream inputStream = new FileInputStream(templatePath)) {
             Workbook book = WorkbookFactory.create(inputStream);
             writeRecordToJmPromotionInfo(book, cmsBtJmPromotionSaveBean, Arrays.asList("aaaa", "vvv"));
-            writeRecordToJmModeInfoMain(book,cmsBtJmPromotionSaveBean.getTagList());
+            writeRecordToJmModeInfoMain(book,cmsBtJmPromotionSaveBean.getTagList(), type);
             writeRecordToJBayWindow(book,jmPromotionId);
             $info("文档写入完成");
             try (OutputStream outputStream = new FileOutputStream("/usr/web/contents/cms/file_template/JMPromotion" + DateTimeUtil.format(new Date(), DateTimeUtil.DATE_TIME_FORMAT_2) + ".xlsx")) {
@@ -98,7 +101,8 @@ public class CmsJmPromotionExportService extends BaseViewService {
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 0, i++ , unlock);
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "定位飘窗", unlock);
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 2, bayWindow.getName(), unlock);
-                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 3, bayWindow.getLink(), unlock);
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 3, bayWindow.getUrl(), unlock);
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 4, bayWindow.getLink(), unlock);
             }
 
             String[] a= {"a","b"};
@@ -108,67 +112,65 @@ public class CmsJmPromotionExportService extends BaseViewService {
     }
 
     private void writeRecordToJmPromotionInfo(Workbook book, CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean, List<String> HashIdList) throws Exception {
-        CmsBtJmPromotionExportBean cmsBtJmPromotionExportBean = new CmsBtJmPromotionExportBean(cmsBtJmPromotionSaveBean);
+        CmsBtJmPromotionExportContext cmsBtJmPromotionExportContext = new CmsBtJmPromotionExportContext(cmsBtJmPromotionSaveBean, cmsMtJmConfigService);
         Sheet sheet = book.getSheetAt(0);
         Row styleRow = FileUtils.row(sheet, 2);
         CellStyle unlock = styleRow.getRowStyle();
         int rowIndex = 1;
 
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getDisplayPlatform(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getDisplayPlatform(), unlock);
         rowIndex++;
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getBrandString(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getBrandString(), unlock);
 
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getModel().getActivityPcId(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getModel().getActivityAppId(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getSessionType(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getSessionCategory(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getPreDisplayChannel(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getMainTitle(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getMarketingTitle(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getMarketingCopywriter(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getPromotionalCopy(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getPcPageId(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getAppPageId(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportBean.getModel().getPrePeriodStart(), null), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportBean.getModel().getActivityStart(), null), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportBean.getModel().getActivityEnd(), null), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getSyncMobile(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getShowHiddenDeal(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getShowSoldOutDeal(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getModel().getActivityPcId(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getModel().getActivityAppId(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getSessionType(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getSessionCategory(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getPreDisplayChannel(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getMainTitle(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getMarketingTitle(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getMarketingCopywriter(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getPromotionalCopy(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getPcPageId(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getAppPageId(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportContext.getModel().getPrePeriodStart(), null), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportContext.getModel().getActivityStart(), null), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, DateTimeUtil.format(cmsBtJmPromotionExportContext.getModel().getActivityEnd(), null), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getSyncMobile(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getShowHiddenDeal(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getShowSoldOutDeal(), unlock);
         rowIndex++;
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getShareTitle(), unlock);
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportBean.getExtModel().getShareContent(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getShareTitle(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getShareContent(), unlock);
         rowIndex++;
 
     }
 
-    private void writeRecordToJmModeInfoMain(Workbook book, List<CmsBtTagModel> tags) {
+    private void writeRecordToJmModeInfoMain(Workbook book, List<CmsBtTagModel> tags, Integer type) {
 
         tags.forEach(cmsBtTagModel -> {
             CmsBtTagJmModuleExtensionModel cmsBtTagJmModuleExtensionModel = cmsBtTagJmModuleExtensionDao.select(cmsBtTagModel.getId());
-            List<CmsBtJmPromotionProductModel> cmsBtJmPromotionProductModels = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(cmsBtTagModel.getId());
+            List<CmsBtJmPromotionProductExtModel> cmsBtJmPromotionProductModels = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(cmsBtTagModel.getId());
             if(cmsBtJmPromotionProductModels != null && cmsBtJmPromotionProductModels.size()>0){
-                List<List<CmsBtJmPromotionProductModel>> products = CommonUtil.splitList(cmsBtJmPromotionProductModels,100);
+                List<List<CmsBtJmPromotionProductExtModel>> products = CommonUtil.splitList(cmsBtJmPromotionProductModels,100);
                 for(int i=0;i<products.size();i++){
                     if(cmsBtTagJmModuleExtensionModel.getFeatured()){
-                        writeRecordToFeaturedHashId(book,products.get(i));
+                        writeRecordToFeaturedHashId(book,products.get(i), type);
                     }else{
                         if(i == 0){
-                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, products.get(i), cmsBtTagModel.getTagName());
+                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, products.get(i), cmsBtTagModel.getTagName(), type);
                         }else{
-                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, products.get(i), cmsBtTagModel.getTagName()+(i+1));
+                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, products.get(i), cmsBtTagModel.getTagName()+(i+1), type);
                         }
                     }
                 }
-
             }
-
         });
         book.removeSheetAt(3);
 
     }
 
-    private void writeRecordToJmModeInfo(Workbook book, CmsBtTagModel tags, CmsBtTagJmModuleExtensionModel cmsBtTagJmModuleExtensionModel, List<CmsBtJmPromotionProductModel> cmsBtJmPromotionProductModels, String modelName) {
+    private void writeRecordToJmModeInfo(Workbook book, CmsBtTagModel tags, CmsBtTagJmModuleExtensionModel cmsBtTagJmModuleExtensionModel, List<CmsBtJmPromotionProductExtModel> cmsBtJmPromotionProductModels, String modelName, Integer type) {
 
         CmsBtTagJmModuleExtensionBean tagExt = new CmsBtTagJmModuleExtensionBean(cmsBtTagJmModuleExtensionModel);
 
@@ -183,26 +185,34 @@ public class CmsJmPromotionExportService extends BaseViewService {
         CellStyle unlock = styleRow.getRowStyle();
         int rowIndex = 3;
 
-        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tags.getTagName(), unlock);
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, modelName, unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getHideFlag(), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getShelfType(), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getImageType(), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getCmsBtTagJmModuleExtensionModel().getModuleTitle(), unlock);
-        rowIndex++;
+        ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmImageTemplateService.getSeparatorBar(modelName), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getProductsSortBy(), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getNoStockToLast(), unlock);
-        for(CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel:cmsBtJmPromotionProductModels){
-            ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJmHashId(), unlock);
+        for(CmsBtJmPromotionProductExtModel cmsBtJmPromotionProductModel:cmsBtJmPromotionProductModels){
+            if(type == CmsJmPromotionExportService.HASHID){
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJmHashId(), unlock);
+            }else{
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJumeiMallId(), unlock);
+            }
         }
     }
 
-    private void writeRecordToFeaturedHashId(Workbook book, List<CmsBtJmPromotionProductModel> cmsBtJmPromotionProductModels){
+    private void writeRecordToFeaturedHashId(Workbook book, List<CmsBtJmPromotionProductExtModel> cmsBtJmPromotionProductModels, Integer type){
         Sheet sheet = book.getSheetAt(0);
         Row styleRow = FileUtils.row(sheet, 2);
         CellStyle unlock = styleRow.getRowStyle();
         int rowIndex = 25;
-        for (CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel : cmsBtJmPromotionProductModels) {
-            ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJmHashId(), unlock);
+        for (CmsBtJmPromotionProductExtModel cmsBtJmPromotionProductModel : cmsBtJmPromotionProductModels) {
+            if(type == CmsJmPromotionExportService.HASHID) {
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJmHashId(), unlock);
+            }else{
+                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionProductModel.getJumeiMallId(), unlock);
+            }
         }
     }
 }

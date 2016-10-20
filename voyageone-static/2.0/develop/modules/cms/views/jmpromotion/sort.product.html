@@ -1,13 +1,14 @@
 <div class="jm-sortable-product-modal" ng-controller="JmSortProductPopupController as ctrl">
     <div class="row">
         <div class="col-sm-6">
-            <button type="button" class="btn btn-default">库存 <i class="fa fa-sort"></i></button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.stock)">库存 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.stock)}}"></i></button>
             <button type="button" class="btn btn-default">销量 <i class="fa fa-sort"></i></button>
-            <button type="button" class="btn btn-default">价格 <i class="fa fa-sort"></i></button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.price)">价格 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.price)}}"></i></button>
             <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
         </div>
         <div class="col-sm-6 text-right">
-            <button type="button" class="btn btn-info">保存</button>
+            <button type="button" class="btn btn-primary" ng-click="ctrl.save()">保存</button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.destroy()">取消</button>
         </div>
     </div>
     <hr>
@@ -16,25 +17,25 @@
             <div class="jm-sortable-product-handle" sv-handle>
                 <div class="row">
                     <div class="col-sm-8">
-                        <span>{{product.id}}</span>
+                        Mall ID: <span>{{::product.jmProduct.jumeiMallId}}</span>
                     </div>
                     <div class="col-sm-4">
-                        <button type="button" class="close"><i class="fa fa-close"></i></button>
+                        <button type="button" class="close" ng-click="ctrl.remove($index, product)"><i class="fa fa-close"></i></button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <img image="{{::product.image1}}">
+                        <img image="{{::(product.jmPromotionProduct.image1 || product.jmProduct.image1)}}" title="{{::product.jmProduct.image1}}" alt="{{::product.jmPromotionProduct.image1}}">
                     </div>
                     <div class="col-sm-8">
-                        <div>Jordan 男子休闲鞋</div>
+                        <div>{{::product.jmProduct.productShortName}}</div>
                         <div>库存 4</div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="jm-sortable-product-price">
-                            $595
+                            ¥ <span>{{::product.jmPromotionProduct.dealPrice}}</span>
                         </div>
                     </div>
                     <ul class="col-sm-8 list-inline text-right">

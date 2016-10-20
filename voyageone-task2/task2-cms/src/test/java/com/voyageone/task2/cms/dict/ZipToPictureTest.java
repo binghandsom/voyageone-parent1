@@ -1,8 +1,14 @@
 package com.voyageone.task2.cms.dict;
 
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionDownloadImageZipService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -17,12 +23,19 @@ import java.util.zip.ZipOutputStream;
 /**
  * Created by gjl on 2016/10/14.
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:context-cms-test.xml")
 public class ZipToPictureTest {
+
+    @Autowired
+    CmsBtJmPromotionDownloadImageZipService cmsBtJmPromotionDownloadImageZipService ;
     @Test
     public void main() throws Exception {
+
         //生成的ZIP文件名为Demo.zip
         String strZipName = "D:/picture/Demo_HhMmSs.zip";
-        getUrlInputStream(strZipName);
+        cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(111,strZipName);
+//        getUrlInputStream(strZipName);
         System.out.println("生成Demo.zip成功");
     }
 
