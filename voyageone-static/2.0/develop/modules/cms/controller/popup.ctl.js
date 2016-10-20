@@ -371,7 +371,8 @@ define([
                 "priceModify": {
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
-                    "controller": 'popPriceModifyCtl'
+                    "controller": 'popPriceModifyCtl',
+                    "size": '600'
                 }
             },
             "jmImageManage": {

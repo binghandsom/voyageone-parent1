@@ -2,11 +2,20 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popPriceModifyCtl', function ($scope,jmPromotionDetailService,alert,context, $routeParams) {
-        $scope.model={priceValueType:1,priceType:"1",discount:0,price:0};
+    angularAMD.controller('popPriceModifyCtl', function ($scope, $translate, jmPromotionDetailService,alert,context, $routeParams) {
+
+        $scope.model = {priceValueType:1,priceType:"1",discount:0,price:0};
         var listPromotionProduct=[];
         var jmPromotionId=undefined;
         var isBegin=false;
+        $scope.vm = {
+            property: context.property,
+            _optStatus: false,
+            priceTypeId: 0,
+            roundType: 1,
+            skuUpdType: 1
+        };
+
         /**
          * 初始化数据.
          */
@@ -21,13 +30,38 @@ define([
                 isBegin = context.isBegin;
             }
         };
-        $scope.ok = function () {
 
-            if(listPromotionProduct.length==0)
-            {
+        $scope.ok = function () {
+            if (listPromotionProduct.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
             }
+            // 检查输入
+            if ($scope.vm.priceTypeId == 0) {
+                alert("未选择基准价格，请选择后再操作。");
+                return;
+            }
+            if ($scope.vm.optType == undefined || $scope.vm.optType == '') {
+                alert("未选择表达式，请选择后再操作。");
+                return;
+            }
+            if ($scope.vm.optType != '=' && ($scope.vm.priceValue == undefined || $scope.vm.priceValue == '')) {
+                alert("未填写价格，请填写后再操作。");
+                return;
+            }
+            if ($scope.vm.priceTypeId == 4 && ($scope.vm.priceValue == undefined || $scope.vm.priceValue == '')) {
+                alert("未填写价格，请填写后再操作。");
+                return;
+            }
+            // 检查输入数据
+            var intVal = $scope.vm.priceValue;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格必须是数字");
+                    return;
+                }
+            }
+
             //  if(预热已开始&&synch_status==2)//包含已上新的商品 提示
             var isUpdate=true;
             if(isBegin) {
@@ -55,21 +89,49 @@ define([
             }, function (res) {
               alert(res);
             })
-        }
-        $scope.getSelectedPromotionProductIdList = function (modelList) {
-            var listPromotionProductId = [];
-            for (var i = 0; i < modelList.length; i++) {
-                if (modelList[i].isChecked) {
-                    listPromotionProductId.push(modelList[i].id);
+        };
+
+        // 选择表达式时的画面检查
+        $scope.chkOptionType = function () {
+            $scope.vm.priceValue = null;
+            if ($scope.vm.optType == '') {
+                $scope.vm._opeText = '';
+                $scope.vm.priceInputFlg = false;
+            } else if ($scope.vm.optType == '=') {
+                $scope.vm._opeText = '';
+                if ($scope.vm.priceTypeId == 4) {
+                    // 基准价格为None时才可以输入
+                    $scope.vm.priceInputFlg = true;
+                } else {
+                    $scope.vm.priceInputFlg = false;
                 }
+            } else {
+                $scope.vm._opeText = $scope.vm.optType;
+                $scope.vm.priceInputFlg = true;
             }
-            return listPromotionProductId;
-        }
-        $scope.mnumberKeydown=function(e){
-            var ss=window.event||e;
-            if(!((ss.keyCode>47&&ss.keyCode<58)||(ss.keyCode>64&&ss.keyCode<91)||(ss.keyCode>95&&ss.keyCode<106))){
-                ss.preventDefault();
+        };
+
+        // 选择基准价格时的画面检查
+        $scope.chkPriceType = function (priceTypeVal, typeTxt) {
+            $scope.vm.priceTypeId = priceTypeVal;
+            $scope.vm.priceValue = null;
+            $scope.vm.roundType = "1";
+            if (priceTypeVal == 4) {
+                // 基准价格为None时只允许选等于号
+                $scope.vm._optStatus = true;
+                $scope.vm.optType = '=';
+                $scope.vm._opeText = '';
+                $scope.vm._typeText = '';
+                $scope.vm.priceInputFlg = true;
+                $scope.vm.skuUpdType = "0";
+            } else {
+                $scope.vm._optStatus = false;
+                $scope.vm.optType = '';
+                $scope.vm._opeText = '';
+                $scope.vm._typeText = $translate.instant(typeTxt);
+                $scope.vm.priceInputFlg = false;
+                $scope.vm.skuUpdType = "1";
             }
-        }
+        };
     });
 });
