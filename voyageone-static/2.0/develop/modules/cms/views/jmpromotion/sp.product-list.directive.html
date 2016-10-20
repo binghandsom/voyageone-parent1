@@ -293,7 +293,7 @@
                                             </a>
                                         </td>
                                         <td>{{model.quantity}}</td>
-                                        <td><textarea  ng-model="model.remark" > </textarea></td>
+                                        <td><textarea  ng-model="model.remark"  ng-blur="updateRemark(model)" > </textarea></td>
                                         <td >{{getStatus(model)}}</td>
                                         <td class="text-center">
                                             <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>

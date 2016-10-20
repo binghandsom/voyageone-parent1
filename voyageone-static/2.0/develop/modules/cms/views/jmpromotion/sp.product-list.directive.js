@@ -521,6 +521,7 @@ define([
             //$scope.vm.tagList.
             // alert(m.tagNameList.toString());
         }
+        //刷新价格
         $scope.refreshPrice=function () {
             jmPromotionDetailService.refreshPrice($scope.vm.promotionId).then(function (res) {
                   alert($translate.instant('TXT_SUCCESS'));
@@ -529,6 +530,17 @@ define([
             });
 
         }
+        //更新备注
+        $scope.updateRemark=function (item) {
+            // alert(item.remark);
+            var parameter={jmPromotionProductId:item.id,remark:item.remark};
+            jmPromotionDetailService.updateRemark(parameter).then(function (res) {
+                //   alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+        }
+
         /**
          * popup弹出选择聚美平台数据类目
          * @param popupNewCategory
