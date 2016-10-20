@@ -18,7 +18,6 @@ import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
-import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
@@ -29,7 +28,6 @@ import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -66,8 +64,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
     private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
     @Autowired
     private CmsBtSxCnSkuDaoExt cmsBtSxCnSkuDaoExt;
-    @Autowired
-    private ImsBtProductDao imsBtProductDao;
     @Autowired
     private CmsBtSxWorkloadDao sxWorkloadDao;
     @Autowired
@@ -202,8 +198,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                     String numIId = sxModel.getUrlKey(); // 因为现在是一个group一个code
                     try {
                         updateProductGroupNumIIdStatus(sxModel, numIId);
-                        // 回写ims_bt_product表(numIId)
-                        updateImsBtProduct(sxModel, numIId);
                         // 回写workload表   (1上新成功)
                         updateSxWorkload(sxModel.getSxWorkloadId(), CmsConstants.SxWorkloadPublishStatusNum.okNum);
                     } catch (Exception ex) {
@@ -306,39 +300,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
 
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
         productGroupService.updateGroupsPlatformStatus(grpModel, new ArrayList<String>(){{this.add(sxModel.getCode());}});
-    }
-
-    /**
-     * 回写ims_bt_product表
-     */
-    private void updateImsBtProduct(CmsBtSxCnInfoModel sxModel, String numIId) {
-        // s:sku级别, p:product级别
-        String updateType = "s";
-
-        // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
-        String code = sxModel.getCode();
-
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                sxModel.getOrgChannelId(),   // ims表要用OrgChannelId
-                sxModel.getCartId(),
-                code);
-        if (imsBtProductModel == null) {
-            // 没找到就插入
-            imsBtProductModel = new ImsBtProductModel();
-            imsBtProductModel.setChannelId(sxModel.getOrgChannelId()); // ims表要用OrgChannelId
-            imsBtProductModel.setCartId(sxModel.getCartId());
-            imsBtProductModel.setCode(code);
-            imsBtProductModel.setNumIid(numIId);
-            imsBtProductModel.setQuantityUpdateType(updateType);
-
-            imsBtProductDao.insertImsBtProduct(imsBtProductModel, getTaskName());
-        } else {
-            // 找到了, 更新
-            imsBtProductModel.setNumIid(numIId);
-            imsBtProductModel.setQuantityUpdateType(updateType);
-
-            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, getTaskName());
-        }
     }
 
     /**
