@@ -48,6 +48,10 @@ public class CmsBtJmPromotionDownloadImageZipService {
     private static final String url = "http://s7d5.scene7.com/is/image/sneakerhead/";
     //图片模板后缀
     private static final String suffix = "?fmt=jpg&scl=1&qlt=100";
+    //专场飘窗
+    private static final String bayWindowPath = "聚美专场图片sample\\专场飘窗\\";
+    //专场分隔栏
+    private static final String bayTagPath = "聚美专场图片sample\\专场分隔栏\\";
 
     /**
      * 下载专场图片包
@@ -66,6 +70,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
         Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameModel));
         imageNameMap.forEach((s, o) -> {
             if (o instanceof String) {
+                //取得打包图片的信息(图片类型及图片路径)
                 CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = cmsBtJmImageTemplateService.getJMImageTemplateByType(s);
                 if (cmsBtJmImageTemplateModel != null) {
                     //imageName
@@ -100,7 +105,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 Map<String, String> urlMap = new HashMap<>();
                 String url = cmsBtJmImageTemplateService.getSeparatorBar(moduleName);
                 urlMap.put("url", url);
-                urlMap.put("picturePath", "聚美专场图片sample\\专场分隔栏\\" + moduleName);
+                urlMap.put("picturePath", bayTagPath + moduleName);
                 promotionImagesList.add(urlMap);
             }
         }
@@ -110,7 +115,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
             for (CmsBtJmBayWindowModel.BayWindow model : cmsBtJmBayWindowModel.getBayWindows()) {
                 Map<String, String> urlMap = new HashMap<>();
                 urlMap.put("url", model.getUrl());
-                urlMap.put("picturePath", "聚美专场图片sample\\专场飘窗\\" + model.getName());
+                urlMap.put("picturePath", bayWindowPath + model.getName());
                 promotionImagesList.add(urlMap);
             }
         }
@@ -158,7 +163,6 @@ public class CmsBtJmPromotionDownloadImageZipService {
             byte[] buffer = new byte[1024];
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                  ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
-
                 for (Map<String, String> urlMap : promotionImagesList) {
                     int len;
                     URL url = new URL(urlMap.get("url"));
