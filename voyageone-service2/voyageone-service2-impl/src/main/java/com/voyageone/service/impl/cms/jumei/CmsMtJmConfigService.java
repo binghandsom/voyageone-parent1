@@ -29,7 +29,8 @@ public class CmsMtJmConfigService {
 
         displayPlatform(1), // 展示平台
         preDisplayChannel(2), // 预展示频道
-        sessionCategory(3)  //关联品类
+        sessionCategory(3),  //关联品类
+        sessionType(4)  //专场类型
         ;
         private Integer type;
 
