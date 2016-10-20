@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.tools.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -20,7 +21,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -168,8 +168,7 @@ public class TranslationTaskService extends BaseService {
                     product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
                 } else if ("priority".equalsIgnoreCase(priority)) {
                     // 优先级参数
-                    JongoQuery queryObjOrg = new JongoQuery();
-                    BeanUtils.copyProperties(queryObj, queryObjOrg);
+                    JongoQuery queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
 
                     // 先查询优先翻译并且有优先翻译日期的
                     queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$nin:[null,'']}}");
@@ -177,12 +176,12 @@ public class TranslationTaskService extends BaseService {
                     product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
                     if (product == null) {
                         // 再查询优先翻译并且没有优先翻译日期的
-                        BeanUtils.copyProperties(queryObj, queryObjOrg);
+                        queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
                         queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$in:[null,'']}}");
                         product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
                         if (product == null) {
                             // 再查询未翻译的
-                            BeanUtils.copyProperties(queryObj, queryObjOrg);
+                            queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
                             queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
                             product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
                         }

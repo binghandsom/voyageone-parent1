@@ -16,4 +16,18 @@ import java.util.Map;
 @Repository
 public interface CmsBtPromotionGroupsDaoExtCamel {
     int deleteByPromotionId(int promotionId);
+
+    int insert(CmsBtPromotionGroupsModel record);
+
+    List<CmsBtPromotionGroupsModel> selectList(Object map);
+
+    CmsBtPromotionGroupsModel selectOne(Object map);
+
+    int selectCount(Object map);
+
+    CmsBtPromotionGroupsModel select(Integer id);
+
+    int update(CmsBtPromotionGroupsModel record);
+
+    int delete(Integer id);
 }

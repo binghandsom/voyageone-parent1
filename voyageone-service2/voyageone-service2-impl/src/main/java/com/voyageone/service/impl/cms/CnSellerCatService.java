@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.cn.CnCategoryBean;
@@ -30,26 +31,35 @@ public class CnSellerCatService {
                 catFullId = parentCurrentNode.getFullCatId();
             }
         }
-        if (!StringUtils.isEmpty(catFullId)) {
+        if (StringUtils.isEmpty(catFullId)) {
             catFullId = catId;
         } else {
             catFullId = catFullId + "-" + catId;
         }
-        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
+        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName);
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
 
         return catId;
     }
     public void  updateSellerCat(String channelId,String catId, ShopBean shopBean)
     {
         CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
-        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
     }
     public void  deleteSellerCat(String channelId,String catId, ShopBean shopBean)
     {
         CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
-        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), "");
-        cnCategoryService.uploadCnCategory(cnCategoryBean,true,shopBean);
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,true,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
     }
 }

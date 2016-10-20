@@ -124,7 +124,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
                         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
                         if ("1".equals(categoryId) || "京东共通".equals(categoryPath)) {
-                            getAllPlatformsInfoService.doJdPlatformCategoryCommon(shopBean, Integer.valueOf(cartId));
+                            getAllPlatformsInfoService.doJdPlatformCategoryCommon(Integer.valueOf(cartId));
                         } else {
                             CmsMtPlatformCategorySchemaModel schemaModel;
                             if (!StringUtils.isEmpty(categoryId)) {
@@ -231,7 +231,7 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
                 if (i == 1) {
                     // modified by morse.lu 2016/09/14 start
 //                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel);
-                    doSetPlatformJdSchemaCommon(shop, platformCategoriesModel.getCartId());
+                    doSetPlatformJdSchemaCommon(platformCategoriesModel.getCartId());
                     // modified by morse.lu 2016/09/14 end
                 }
                 // 设置各个类目schema信息
@@ -329,11 +329,11 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
      * 设置京东类目schema共通信息
      * 将京东平台上新时用到一些平台相关的输入项目转换成XML设置到mongoDB的schema表中的propsProduct字段
      *
-     * @param shop ShopBean  店铺信息
+     * @param cartId int  平台id
      */
     // modified by morse.lu 2016/09/14 start
 //    private void doSetPlatformJdSchemaCommon(ShopBean shop, CmsMtPlatformCategoryTreeModel platformCategoriesModel) {
-    protected void doSetPlatformJdSchemaCommon(ShopBean shop, int cartId) {
+    protected void doSetPlatformJdSchemaCommon(int cartId) {
         // modified by morse.lu 2016/09/14 end
         CmsMtPlatformCategorySchemaModel schemaCommonModel = new CmsMtPlatformCategorySchemaModel();
         schemaCommonModel.setCartId(cartId);
@@ -350,6 +350,19 @@ public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService 
 
         // 商品标语（最大45位字符）
         addInputField(productFieldsList, "productAdContent", "商品标语", "", false, "45", "");
+
+        // 是否支持7天无理由退货, 0为否，1为是(必须,不设默认值，让运营自己手动设置，也可以在CMS批量设置里面批量设置)
+        List<Option> is7ToReturnOptionList = new ArrayList<>();
+        Option is7ToReturnOptionTrue = new Option();
+        is7ToReturnOptionTrue.setValue("1");
+        is7ToReturnOptionTrue.setDisplayName("支持");
+        is7ToReturnOptionList.add(is7ToReturnOptionTrue);
+        Option is7ToReturnOptionFalse = new Option();
+        is7ToReturnOptionFalse.setValue("0");
+        is7ToReturnOptionFalse.setDisplayName("不支持");
+        is7ToReturnOptionList.add(is7ToReturnOptionFalse);
+        addSingleCheckField(productFieldsList, "productIs7ToReturn", "7天无理由退货",
+                null, true, is7ToReturnOptionList);
 
         // 长(单位:mm) (必须，最大长度5位, 默认值为50mm)
         addInputField(productFieldsList, "productLengthMm", "长", "50", true, "5", "单位:mm");
