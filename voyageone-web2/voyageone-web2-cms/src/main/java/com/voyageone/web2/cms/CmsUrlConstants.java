@@ -526,6 +526,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/jmPromotion/";
 
             String UPLOAD = "upload";
+
+            String BATCH_UPLOAD = "batchUpload";
         }
     }
 

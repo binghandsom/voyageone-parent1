@@ -235,6 +235,7 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
+                    "refreshPrice":"refreshPrice",
                     updatePromotionProduct: "updatePromotionProduct",
                     updatePromotionProductTag: "updatePromotionProductTag",
                     getPromotionTagModules: 'getPromotionTagModules',
