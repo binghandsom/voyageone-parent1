@@ -34,7 +34,7 @@ public class ZipToPictureTest {
 
         //生成的ZIP文件名为Demo.zip
         String strZipName = "D:/picture/Demo_HhMmSs.zip";
-        cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(111,strZipName);
+//        cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(111,strZipName);
 //        getUrlInputStream(strZipName);
         System.out.println("生成Demo.zip成功");
     }
