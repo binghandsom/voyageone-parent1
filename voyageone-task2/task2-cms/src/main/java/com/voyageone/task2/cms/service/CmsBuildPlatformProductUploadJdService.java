@@ -579,6 +579,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 }
             }
 
+            // 新增/更新商品没有报异常的时候，给商品打标（设置"7天无理由退货"等特殊features属性）,出错报异常让运营感知到异常
+            doMergeWareFeatures(shopProp, jdProductBean, jdWareId);
+
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
                 // 新增或更新商品成功时
@@ -729,6 +732,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
         // 商品标题(必须)
         jdProductBean.setTitle(jdCommonInfoMap.get("productTitle"));
+        // 7天无理由退货 1为支持，0为不支持 (非必须)
+        jdProductBean.setIs7ToReturn(jdCommonInfoMap.get("productIs7ToReturn"));
         // UPC编码(非必须)
 //        jdProductBean.setUpcCode(mainProduct.getXXX());                 // 不使用
         // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
@@ -2193,5 +2198,32 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
 
         return strConfigValue;
+    }
+
+    /**
+     * 给京东商品打标，设置一些特殊的属性(如：7天无理由退货等feature特殊属性)
+     *
+     * @param shop String 渠道id
+     * @param jdProductBean JdProductBean 京东产品对象(目前只需要取得is7ToReturn,以后可能还会取得其他属性值)
+     * @param jdWareId Long 京东商品id
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public boolean doMergeWareFeatures(ShopBean shop, JdProductBean jdProductBean, Long jdWareId) {
+        boolean result = false;
+        if (shop == null || jdProductBean == null || jdWareId == null || jdWareId == 0) return result;
+
+        // 特殊标key(最大20个，用逗号分隔)
+        StringBuilder sbFeatureKey = new StringBuilder();
+        // 特殊标值(最大20个，用逗号分隔)
+        StringBuilder sbFeatureValue  = new StringBuilder();
+
+        // 设置7天无理由退货(1为支持，0为不支持)
+        if ("0".equals(jdProductBean.getIs7ToReturn()) || "1".equals(jdProductBean.getIs7ToReturn())) {
+            sbFeatureKey.append("is7ToReturn");
+            sbFeatureValue.append(jdProductBean.getIs7ToReturn());
+            result = jdWareService.mergeWareFeatures(shop, jdWareId, sbFeatureKey.toString(), sbFeatureValue.toString());
+        }
+
+        return result;
     }
 }
