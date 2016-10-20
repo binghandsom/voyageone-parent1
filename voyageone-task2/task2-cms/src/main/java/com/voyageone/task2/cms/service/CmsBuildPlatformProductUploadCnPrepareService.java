@@ -199,6 +199,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             if (platformActive == CmsConstants.PlatformActive.ToInStock && StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // ToInStock 删除，但numIId = null(没上过)，就没必要推送了
+                // 回写workload表   (1 上新成功)
+                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskNameForUpdate());
                 return;
             }
 
