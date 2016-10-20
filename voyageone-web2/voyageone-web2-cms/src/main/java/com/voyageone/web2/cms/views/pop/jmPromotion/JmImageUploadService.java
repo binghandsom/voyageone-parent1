@@ -38,7 +38,7 @@ public class JmImageUploadService extends BaseViewService {
 
         uploadToServer(orderChannelId, upLoadName, file);
 
-        response.put("templateUrl", cmsBtJmImageTemplateService.getUrl(upLoadName, "appEntrance", Integer.parseInt(String.valueOf(promotionId))));
+        response.put("templateUrl", cmsBtJmImageTemplateService.getUrl(upLoadName, imageName, Integer.parseInt(String.valueOf(promotionId))));
 
         return response;
     }

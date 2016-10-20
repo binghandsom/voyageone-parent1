@@ -32,6 +32,8 @@ public class JmPromotionImagesService extends BaseViewService {
     @Autowired
     private CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
+    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100";
+
     public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
@@ -50,7 +52,10 @@ public class JmPromotionImagesService extends BaseViewService {
         if (imageMap != null) {
             imageMap.forEach((s, o) -> {
                 if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
-                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
+                    if(model.getUseTemplate())
+                        promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
+                    else
+                        promotionImageUrl.put(s, ORIGINAL_SCENE7_IMAGE_URL.replace("✓",o.toString()));
                 }
             });
         }

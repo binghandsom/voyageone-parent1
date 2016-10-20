@@ -13,7 +13,7 @@
                     </div>
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1">
+                            <input type="checkbox" name="promotionScene_1" style="margin: 0" ng-model="ctrlImages.imgUpEntity['useTemplate']">
                             <span class="fa fa-check"></span> 使用模板刷图
                         </label>
                     </div>
@@ -23,7 +23,7 @@
                     <div class="row">
                         <label class="col-sm-1 control-label">备注</label>
                         <div class="col-sm-2">
-                            <textarea type="text" class="form-control"></textarea>
+                            <textarea type="text" class="form-control" ng-model="ctrlImages.imgUpEntity['comment']"></textarea>
                         </div>
                     </div>
                 </div>

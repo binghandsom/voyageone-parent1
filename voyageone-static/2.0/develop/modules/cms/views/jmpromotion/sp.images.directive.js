@@ -27,6 +27,9 @@ define([
 
     };
 
+    /**
+     * 页面选择套图弹出框
+     */
     SpImagesDirectiveController.prototype.popImageSuit = function () {
         var self = this,
             promotionInfo = self.promotionInfo,
@@ -42,6 +45,9 @@ define([
         });
     };
 
+    /**
+     *  页面批量导入弹出框
+     */
     SpImagesDirectiveController.prototype.popImageBatchUpload = function () {
         var self = this,
             promotionInfo = self.promotionInfo,
@@ -55,7 +61,10 @@ define([
         });
     };
 
-
+    /**
+     * 页面单个图片上传弹出框
+     * @param imageName  图片类型
+     */
     SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
             spDataService = self.spDataService,
