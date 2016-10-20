@@ -791,7 +791,8 @@ public class UploadToUSJoiService extends BaseTaskService {
             // 如果是聚美或者独立官网的时候，是一个Code对应一个Group,其他的平台都是几个Code对应一个Group
             // 目前的USJOI有京东国际平台, 也有聚美平台(27)
             if (!CartEnums.Cart.JM.getId().equals(currentCartId)
-                    && !CartEnums.Cart.CN.getId().equals(currentCartId)) {
+                    && !CartEnums.Cart.CN.getId().equals(currentCartId)
+                    && !CartEnums.Cart.LIKING.getId().equals(currentCartId)) {
                 // 聚美和官网以外的平台，先取得product.model对应的group信息(根据model取得Product(没找到直接返回null),再根据productCode查找group信息)
                 // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
                 // 例如:A店铺的Product1(model="model0001")已经生成了group信息，然后B店铺的Product2(model="model0001")就会查出来Product1对应的group,会把B店铺的Product2加到A店铺的Product1对应的group中去
