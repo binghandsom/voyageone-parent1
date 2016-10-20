@@ -203,9 +203,7 @@
                     <!--</ul>-->
                 <!--</div>-->
             </div>
-            <tabset class="tab-container vo_nav-tabs">
-                <tab>
-                    <tab-heading>Product 详情</tab-heading>
+            <div  style="clear:both">
                     <div class="box">
                         <div class="box-body">
                             <div class="table-responsive">
@@ -316,8 +314,7 @@
                             <vpagination config="dataPageOption"></vpagination>
                         </div>
                     </div>
-                </tab>
-            </tabset>
+                </div>
         </div>
 
     </div>
@@ -336,7 +333,7 @@
             </li>
             <hr>
             <li>
-                <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">参考价刷新</button>
+                <button type="button" class="btn btn-success" style="width:90px" ng-click="refreshPrice()">参考价刷新</button>
             </li>
             <li>
                 <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)" ng-disabled="ctrlEdit.promotionForm.$invalid">提交</button>

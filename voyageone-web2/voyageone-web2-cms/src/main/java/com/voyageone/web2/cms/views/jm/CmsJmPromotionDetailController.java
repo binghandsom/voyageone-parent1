@@ -287,7 +287,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         Map<String,Object> param=new HashedMap();
         param.put("jmPromotionId",jmPromotionId);
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
-        // // TODO: 2016/10/18  加入 发消息  李俊提供
         return success(null);
     }
     //jm2 end

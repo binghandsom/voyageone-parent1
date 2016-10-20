@@ -521,6 +521,14 @@ define([
             //$scope.vm.tagList.
             // alert(m.tagNameList.toString());
         }
+        $scope.refreshPrice=function () {
+            jmPromotionDetailService.refreshPrice($scope.vm.promotionId).then(function (res) {
+                  alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+
+        }
         /**
          * popup弹出选择聚美平台数据类目
          * @param popupNewCategory
