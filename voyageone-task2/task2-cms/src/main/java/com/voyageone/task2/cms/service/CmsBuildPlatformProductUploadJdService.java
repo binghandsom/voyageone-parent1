@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -70,7 +70,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService {
 
     // 京东平台的操作类型(在售)
     private final static String OptioinType_onsale = "onsale";
@@ -740,7 +740,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         // 如果这里设成OnSale，新增商品时会直接上架，在售商品不能删除
         jdProductBean.setOptionType(OptioinType_offsale);
         // 外部商品编号，对应商家后台货号(非必须)
-        String productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+        String productModel = null;
+        if (mainProduct.getPlatform(sxData.getCartId()) != null) {
+            if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
+                productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+            }
+        }
         if (StringUtils.isEmpty(productModel)) {
             // 默认使用model来设置
             jdProductBean.setItemNum(mainProduct.getCommon().getFields().getModel());

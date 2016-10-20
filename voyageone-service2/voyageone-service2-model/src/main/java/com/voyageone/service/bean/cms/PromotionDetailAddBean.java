@@ -2,6 +2,8 @@ package com.voyageone.service.bean.cms;
 
 import com.voyageone.common.util.JsonUtil;
 
+import java.util.Map;
+
 /**
  * @author aooer 2016/1/19.
  * @version 2.0.0
@@ -16,7 +18,7 @@ public class PromotionDetailAddBean {
     private Integer cartId;
     private String channelId;
     private String orgChannelId;
-    private Double promotionPrice;
+    private Map<String, Double> promotionPrice;
     private String productCode;
     private Long productId;
 
@@ -52,11 +54,11 @@ public class PromotionDetailAddBean {
         this.channelId = channelId;
     }
 
-    public Double getPromotionPrice() {
+    public Map<String, Double> getPromotionPrice() {
         return promotionPrice;
     }
 
-    public void setPromotionPrice(Double promotionPrice) {
+    public void setPromotionPrice(Map<String, Double> promotionPrice) {
         this.promotionPrice = promotionPrice;
     }
 

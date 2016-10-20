@@ -1,0 +1,112 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+
+    <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+        <uib-accordion-group is-open="true">
+            <uib-accordion-heading>
+                <i class="fa fa-search"></i>&nbsp;{{'TXT_ADVANCE_SEARCH' | translate}}
+                <i class="pull-right glyphicon glyphicon-menu-down"
+                   ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+            </uib-accordion-heading>
+
+            <div class="row">
+                <div class="col-sm-7 m-t-sm">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" translate="TXT_MASTER_MAPPING_SUATUS"></label>
+
+                            <div class="col-sm-8">
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[3]"><span
+                                        class="fa fa-check"></span>
+                                    {{'TXT_INCOMPLETE'|translate}}
+                                </label>
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[2]"><span
+                                        class="fa fa-check"></span>
+                                    {{'TXT_INCOMPLETE_REJECT'|translate}}
+                                </label>
+                                <label class="checkbox-inline  c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[0]"><span
+                                        class="fa fa-check"></span>
+                                    {{'TXT_MASTER_MAPPING_APPLICATION'|translate}}
+                                </label>
+                                <label class="checkbox-inline c-checkbox">
+                                    <input type="checkbox" ng-model="ctrl.status[1]"><span
+                                        class="fa fa-check"></span>
+                                    {{'TXT_COMPLETE'|translate}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label" translate="TXT_FEED_BRAND"></label>
+
+                            <div class="col-sm-7">
+                                <input type="text" ng-model="ctrl.feedBrand" class="form-control"
+                                       placeholder={{'TXT_FUZZY_SEARCH'|translate}}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row m-t-sm text-center">
+                <button class="btn btn-default"><i class="fa fa-remove"></i>清空</button>
+                <button class="btn btn-vo" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SEARCH'
+                    | translate}}
+                </button>
+            </div>
+            <br>
+
+        </uib-accordion-group>
+    </uib-accordion>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="btn-group">
+                <button class="btn btn-default btn-pop" ng-click="ctrl.search()">
+                    <i class="fa fa-arrow-circle-right"></i>&nbsp;申请Master品牌
+                </button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="box-body">
+                <div class="table-responsive">
+                    <div class="col-sm-12 dropdown_table_main">
+                        <table class="table table-hover-new vo_table tableWordBreak">
+                            <thead>
+                            <tr>
+                                <th class="mfb-xxt text-left" translate="TXT_FEED_BRAND"></th>
+                                <th class="mfb-xxt text-left" translate="TXT_MASTER_BRAND"></th>
+                                <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
+                                <th class="mfb-xt3 text-center" translate="TXT_COMMENT"></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-if="ctrl.masterBrandList.length > 0">
+                            <tr ng-repeat="item in ctrl.masterBrandList">
+                                <td class="mfb-xxt text-left">{{item.key}}</td>
+                                <td class="mfb-xxt text-left">{{item.masterBrandEn}}</td>
+                                <td class="mfb-xt3 text-center">
+                                    <button class="btn btn-success btn-xs" ng-click="ctrl.popBrandMatching(item)"
+                                            ng-if="item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null">
+                                        {{item.masterFlag == null ? ctrl.mappingValue[3]:ctrl.mappingValue[item.masterFlag]}}
+                                    </button>
+                                    <span ng-if="!(item.masterFlag == 1 || item.masterFlag == 2 || item.masterFlag == null)">
+                                        {{item.masterFlag == null ? ctrl.mappingValue[3]:ctrl.mappingValue[item.masterFlag]}}
+                                    </span>
+                                </td>
+                                <td class="mfb-xxt text-center">{{item.comment}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <vpagination config="ctrl.prodPageOption"></vpagination>
+        </div>
+    </div>
+
+</div>

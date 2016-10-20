@@ -45,9 +45,14 @@
         <id column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
     </resultMap>
     <select id="select_cms_bt_promotion_task_price" resultMap="cms_bt_promotion_task_price_map" parameterType="HashMap" >
+        SELECT t.*,GROUP_CONCAT(CONCAT(sku.`product_sku`,": ",sku.`promotion_price`,'&lt;br\/&gt;') SEPARATOR  '') AS skuPromotionPriceList
+               ,MIN(sku.`promotion_price`) AS minPromotionPrice ,MAX(sku.`promotion_price`) AS maxPromotionPrice
+        FROM
+        (
         select
         a.id,
         a.promotion_id,
+        b.product_code,
         a.task_type,
         a.`key`,
         b.promotion_price,
@@ -62,24 +67,26 @@
         voyageone_cms2.cms_bt_task_tejiabao a,
         voyageone_cms2.cms_bt_promotion_codes b
         where
-            a.promotion_id = b.promotion_id
-            and a.key = b.product_code
-            <if test="promotionId != null and promotionId != ''">
-                and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+        a.promotion_id = b.promotion_id
+        and a.key = b.product_code
+        <if test="promotionId != null and promotionId != ''">and a.promotion_id = #{promotionId,jdbcType=INTEGER}
+        </if>
+            <if test="
+        taskType != null">and a.task_type = #{taskType,jdbcType=INTEGER}
             </if>
-            <if test="taskType != null">
-                and a.task_type = #{taskType,jdbcType=INTEGER}
+            <if test="
+        key != null and key != ''">and a.`key` = #{key,jdbcType=VARCHAR}
             </if>
-            <if test="key != null and key != ''">
-                and a.`key` = #{key,jdbcType=VARCHAR}
-            </if>
-            <if test="synFlg != null">
-                and a.syn_flg = #{synFlg,jdbcType=INTEGER}
+            <if test="
+        synFlg != null">and a.syn_flg = #{synFlg,jdbcType=INTEGER}
             </if>
         ORDER BY a.syn_flg desc,a.key
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
+        ) as t
+        JOIN voyageone_cms2.cms_bt_promotion_skus AS sku ON t.promotion_id=sku.promotion_id AND t.product_code=sku.product_code
+        GROUP BY t.product_code
     </select>
     <select id="select_cms_bt_promotion_task_price_cnt" resultType="int" parameterType="HashMap" >
         select

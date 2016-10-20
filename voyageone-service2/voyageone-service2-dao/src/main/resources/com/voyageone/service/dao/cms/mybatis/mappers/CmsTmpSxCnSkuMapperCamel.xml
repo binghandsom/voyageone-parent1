@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsTmpSxCnSkuDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsTmpSxCnSkuModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `code`, `sku`, `size`, `show_size`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsTmpSxCnSkuModel" >
+        update cms_tmp_sx_cn_sku
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                `sku` = #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null" >
+                `size` = #{size,jdbcType=VARCHAR},
+            </if>
+            <if test="showSize != null" >
+                `show_size` = #{showSize,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_tmp_sx_cn_sku
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="size != null" >
+                and `size` = #{size,jdbcType=VARCHAR}
+            </if>
+            <if test="showSize != null" >
+                and `show_size` = #{showSize,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="size != null" >
+                and `size` = #{size,jdbcType=VARCHAR}
+            </if>
+            <if test="showSize != null" >
+                and `show_size` = #{showSize,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_tmp_sx_cn_sku
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="size != null" >
+                and `size` = #{size,jdbcType=VARCHAR}
+            </if>
+            <if test="showSize != null" >
+                and `show_size` = #{showSize,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsTmpSxCnSkuModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_tmp_sx_cn_sku
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="code != null" >
+                `code`,
+            </if>
+            <if test="sku != null" >
+                `sku`,
+            </if>
+            <if test="size != null" >
+                `size`,
+            </if>
+            <if test="showSize != null" >
+                `show_size`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="sku != null" >
+                #{sku,jdbcType=VARCHAR},
+            </if>
+            <if test="size != null" >
+                #{size,jdbcType=VARCHAR},
+            </if>
+            <if test="showSize != null" >
+                #{showSize,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

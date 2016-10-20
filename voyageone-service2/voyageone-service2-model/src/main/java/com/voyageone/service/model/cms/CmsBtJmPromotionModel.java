@@ -57,6 +57,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
     protected Date prePeriodStart;
 
     /**
+     * 报名截止日期
+     */
+    protected String signupDeadline;
+
+    /**
      * 预热结束时间
      */
     protected Date prePeriodEnd;
@@ -284,5 +289,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setIsPromotionGiveCoupons(Boolean isPromotionGiveCoupons) {
         this.isPromotionGiveCoupons = isPromotionGiveCoupons;
+    }
+
+    public String getSignupDeadline() {
+        return signupDeadline;
+    }
+
+    public void setSignupDeadline(String signupDeadline) {
+        this.signupDeadline = signupDeadline;
     }
 }

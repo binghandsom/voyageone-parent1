@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.components.jumei.bean.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmPicBean;
 import com.voyageone.task2.cms.dao.DealImportDao;
@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * @version 2.0.0
  */
 @Service
-public class CmsUploadJmProductService extends BaseTaskService {
+public class CmsUploadJmProductService extends BaseCronTaskService {
     @Autowired
     private JMUploadProductDao jmUploadProductDao;
 

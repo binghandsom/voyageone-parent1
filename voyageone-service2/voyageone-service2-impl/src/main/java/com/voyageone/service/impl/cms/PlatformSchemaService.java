@@ -93,7 +93,8 @@ public class PlatformSchemaService extends BaseService {
         if (CartEnums.Cart.JM.getValue() == cartId
                 || CartEnums.Cart.TT.getValue() == cartId
                 || CartEnums.Cart.USTT.getValue() == cartId
-                || CartEnums.Cart.CN.getValue() == cartId
+//                || CartEnums.Cart.CN.getValue() == cartId
+                || CartEnums.Cart.LIKING.getValue() == cartId
                 ) {
             // “聚美”或“天猫国际官网同购”或“Usjoi天猫国际官网同购”或"独立域名"的场合，因为只有一个catId，写死 catId = 1
             catId = "1";

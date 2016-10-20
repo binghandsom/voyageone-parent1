@@ -107,7 +107,10 @@ public class CmsImageGroupService extends BaseViewService {
      */
     private List<CmsBtImageGroupBean> changeToBeanList(List<CmsBtImageGroupModel> imageGroupList, String channelId, String lang) {
         List<CmsBtImageGroupBean> imageGroupBeanList = new ArrayList<>();
-
+        List<TypeChannelBean> beans53 = TypeChannels.getTypeList(Constants.comMtTypeChannel.SKU_CARTS_53, channelId);
+        List<TypeChannelBean> beans41 = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
+        List<TypeChannelBean> beans57 = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId);
+        List<TypeChannelBean> beans58 = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId);
         for (CmsBtImageGroupModel imageGroup : imageGroupList) {
             CmsBtImageGroupBean dest = new CmsBtImageGroupBean();
             try {
@@ -117,7 +120,7 @@ public class CmsImageGroupService extends BaseViewService {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
-            editImageGroupBean(dest, channelId, lang);
+            editImageGroupBean(beans53, beans41, beans57, beans58, dest, channelId, lang);
             imageGroupBeanList.add(dest);
         }
 
@@ -132,16 +135,23 @@ public class CmsImageGroupService extends BaseViewService {
      * @param channelId 渠道id
      * @param lang 语言
      */
-    private void editImageGroupBean(CmsBtImageGroupBean bean, String channelId, String lang) {
+    private void editImageGroupBean(List<TypeChannelBean> beans53, List<TypeChannelBean> beans41, List<TypeChannelBean> beans57, List<TypeChannelBean> beans58,
+                                    CmsBtImageGroupBean bean, String channelId, String lang) {
 
         // ImageType
         bean.setImageTypeName(Types.getTypeName(71, lang, String.valueOf(bean.getImageType())));
 
         // Platform
-        TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
+//        TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, String.valueOf(bean.getCartId()), lang);
+        TypeChannelBean typeChannelBean = null;
+        for (TypeChannelBean typeChannelBeanTemp : beans53) {
+            if (typeChannelBeanTemp.getValue().equals(String.valueOf(bean.getCartId())) && typeChannelBeanTemp.getLang_id().equals(lang))
+                typeChannelBean =  typeChannelBeanTemp;
+        }
         if (typeChannelBean != null) {
             bean.setCartName(typeChannelBean.getName());
         }
+
          // ViewType
          if (bean.getViewType() == 1) {
              bean.setViewTypeName("PC");
@@ -155,7 +165,12 @@ public class CmsImageGroupService extends BaseViewService {
             if ("All".equals(brandName)) {
                 brandNameTrans.add("All");
             } else {
-                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                // typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans41) {
+                    if (typeChannelBeanTemp.getValue().equals(brandName) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     brandNameTrans.add(typeChannelBean.getName());
                 }
@@ -169,7 +184,12 @@ public class CmsImageGroupService extends BaseViewService {
             if ("All".equals(productType)) {
                 productTypeTrans.add("All");
             } else {
-                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                // typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans57) {
+                    if (typeChannelBeanTemp.getValue().equals(productType) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     productTypeTrans.add(typeChannelBean.getName());
                 }
@@ -183,7 +203,12 @@ public class CmsImageGroupService extends BaseViewService {
             if ("All".equals(sizeType)) {
                 sizeTypeTrans.add("All");
             } else {
-                typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                // typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans58) {
+                    if (typeChannelBeanTemp.getValue().equals(sizeType) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     sizeTypeTrans.add(typeChannelBean.getName());
                 }

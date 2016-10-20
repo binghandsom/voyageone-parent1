@@ -100,7 +100,9 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                         viewType = "1"; // 默认 PC端
                     }
                     // added by morse.lu 2016/09/19 end
-                    completeImageUrl = sxProductService.getImageTemplate(sxData.getChannelId(),
+                    completeImageUrl = sxProductService.getImageTemplate(
+                                                    sxData.getChannelId(),
+//                                                    sxData.getMainProduct().getOrgChannelId(),
                                                     sxData.getCartId(),
                                                     3, // 3：详情细节模版
 //                                                    1, // PC端

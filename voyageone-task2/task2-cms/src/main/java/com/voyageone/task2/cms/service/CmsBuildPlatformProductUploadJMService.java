@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -61,7 +61,7 @@ import java.util.stream.Collectors;
  * @version 2.1.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService {
 
     public static final int LIMIT = 100;
     public static final int WORK_LOAD_FAIL = 2;
@@ -504,47 +504,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             }
             //更新产品
             else {
-                //先去聚美查一下product
-//                JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
-                JmGetProductInfoRes jmGetProductInfoRes = null;
-                // 首先用pProductId去查询聚美平台商品信息
-                if (jmCart != null && !StringUtils.isEmpty(jmCart.getpProductId())) {
-                    try {
-                        // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
-                        jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
-                    } catch (Exception e) {
-                        $info("更新商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
-                                productCode, jmCart.getpProductId(), e.getMessage());
-                    }
-                }
-                // 如果用pProductId没查到商品信息的话，用名称再去查一下
-                if (jmGetProductInfoRes == null) {
-                    String productName = "";
-                    try {
-                        // 查询用名称
-                        productName = jmCart.getFields().getStringAttribute("productNameCn") + " " +
-                                special_symbol.matcher(productCode).replaceAll("-");
-                        // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
-                        if (!StringUtils.isEmpty(productName))
-                            jmGetProductInfoRes = jumeiProductService.getProductByName(shop, productName);
-                    } catch (Exception e) {
-                        String msg = String.format("更新商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
-                                        "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
-                                productCode, jmCart.getpProductId(), productName, e.getMessage());
-                        $error(msg);
-                        throw new BusinessException(msg);
-                    }
-                }
-
-                List<JmGetProductInfo_Spus> remoteSpus = null;
-                if(jmGetProductInfoRes != null)
-                {
-                    remoteSpus = jmGetProductInfoRes.getSpus();
-                }
-                if(remoteSpus == null)
-                {
-                    remoteSpus = new ArrayList<>();
-                }
+                // 取得聚美平台上的spu信息
+                List<JmGetProductInfo_Spus> remoteSpus = getRemoteSpus(shop, jmCart, productCode);
 
                 // 补全两个属性, 这两个属性最终会回写到数据库中 START
 				for (BaseMongoMap map : product.getPlatform(CART_ID).getSkus()) {
@@ -897,11 +858,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                 uploadMall(product, shop, expressionParser, addSkuList, skuLogicQtyMap);
                 // added by morse.lu 2016/08/30 end
 
+                // 取得最新聚美平台上的spu信息
+                List<JmGetProductInfo_Spus> currentRemoteSpus = getRemoteSpus(shop, jmCart, productCode);
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
-                doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(CART_ID).getSkus());
+                doHideNotExistSkuDeal(shop, originHashId, currentRemoteSpus, product.getPlatform(CART_ID).getSkus());
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在聚美商城上隐藏该商品编码并把库存改为0
                 if (!StringUtils.isEmpty(product.getPlatform(CART_ID).getpPlatformMallId()))
-                    doHideNotExistSkuMall(shop, remoteSpus, product.getPlatform(CART_ID).getSkus());
+                    doHideNotExistSkuMall(shop, currentRemoteSpus, product.getPlatform(CART_ID).getSkus());
             }
 
             //保存workload
@@ -1719,7 +1682,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
     }
 
     /**
-     * 回写Mall Id 到product表和group表
+     * 回写Mall Id 到product表和group表，以及voyageone_cms2.cms_bt_jm_product表
      * @param product
      * @param mallId 聚美Mall Id
      */
@@ -1753,6 +1716,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
         updateGroupQuery.setUpdateParameters(mallId, CmsConstants.PlatformStatus.OnSale);
 
         cmsBtProductGroupDao.updateFirst(updateGroupQuery, channelId);
+
+        // add by desmond 2016/10/18 start
+        // 回写mallId到voyageone_cms2.cms_bt_jm_product表中
+        CmsBtJmProductModel productModel = getCmsBtJmProductModel(channelId, code);
+        if(productModel != null) {
+            productModel.setJumeiMallId(mallId);
+            cmsBtJmProductDao.update(productModel);
+            //保存jm_product_id
+            $info("保存jumei_mall_id到cms_bt_jm_product表成功！[ProductCode:%s],[ProductId:%s], [ChannelId:%s], [CartId:%s]", code, product.getProdId(), channelId, CART_ID);
+        }
+        // add by desmond 2016/10/18 end
     }
 
     /**
@@ -1767,6 +1741,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
                                                      List<JmGetProductInfo_Spus> remoteSpus,
                                                      List<BaseMongoMap<String, Object>> jmSkus) throws Exception{
         if (ListUtils.isNull(remoteSpus)) return;
+
+        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
+        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
 
         for (JmGetProductInfo_Spus spu : remoteSpus) {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
@@ -1792,21 +1769,31 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
 					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
 				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
-                // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
-                // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
-                // 把Deal的库存修改成0
-				if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
-					String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
-					$info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
-				}
+                // P27.sku.isSale = false的时候
+                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
+                if (ListUtils.notNull(remoteSkuList)
+                        && "1".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+                    // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
+                    // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
+                    // 把Deal的库存修改成0
+                    if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+                        String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
+                        $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+                    }
 
-                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
-				if (!StringUtils.isEmpty(spu.getSku_no())) {
-					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
-				}
+                    // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
+                    if (!StringUtils.isEmpty(spu.getSku_no())) {
+                        updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+                    }
+                }
             } else {
-                // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
-//                updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
+                // P27.sku.isSale = true的时候
+                // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1)
+                if (ListUtils.notNull(remoteSkuList)
+                        && "0".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+                    // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
+                    updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
+                }
             }
         }
     }
@@ -2110,6 +2097,81 @@ public class CmsBuildPlatformProductUploadJMService extends BaseTaskService {
             // 即使批量修改deal价格失败，也继续做后面的uploadMall
             $error("批量更新deal价格%s失败! [ProductCode=%s], [JumeiHashId=%s], [Error=%s]", strUpdatePrice, productCode, jmHashId, e.getMessage());
         }
+    }
+
+    /**
+     * 取得聚美平台上的spu信息
+     * 通过首先用pProductId去查询聚美平台商品信息；如果用pProductId没查到商品信息的话，用名称再去查一下
+     *
+     * @param shop 店铺信息
+     * @param jmCart 聚美产品分平台信息
+     * @param productCode 产品code
+     */
+    private List<JmGetProductInfo_Spus> getRemoteSpus(ShopBean shop, CmsBtProductModel_Platform_Cart jmCart, String productCode) {
+        List<JmGetProductInfo_Spus> remoteSpus = null;
+
+        //先去聚美查一下product
+        JmGetProductInfoRes jmGetProductInfoRes = null;
+        // 首先用pProductId去查询聚美平台商品信息
+        if (jmCart != null && !StringUtils.isEmpty(jmCart.getpProductId())) {
+            try {
+                // 调用聚美API根据商品ID获取商品详情(/v1/htProduct/getProductByIdOrName)
+                jmGetProductInfoRes = jumeiProductService.getProductById(shop, jmCart.getpProductId() );
+            } catch (Exception e) {
+                $info("更新商品时,通过聚美商品ID取得商品信息异常结束！[ProductCode:%s] [P27.pProductId:%s] [Msg:%s]",
+                        productCode, jmCart.getpProductId(), e.getMessage());
+            }
+        }
+        // 如果用pProductId没查到商品信息的话，用名称再去查一下
+        if (jmGetProductInfoRes == null) {
+            String productName = "";
+            try {
+                // 查询用名称
+                productName = jmCart.getFields().getStringAttribute("productNameCn") + " " +
+                        special_symbol.matcher(productCode).replaceAll("-");
+                // 调用聚美API根据商品名称获取商品详情(/v1/htProduct/getProductByIdOrName)
+                if (!StringUtils.isEmpty(productName))
+                    jmGetProductInfoRes = jumeiProductService.getProductByName(shop, productName);
+            } catch (Exception e) {
+                String msg = String.format("更新商品时,通过聚美平台商品id和聚美商品名称都没有查到对应的" +
+                                "聚美平台商品信息！[ProductCode:%s] [P27.pProductId:%s] [ProductName:%s] [Msg:%s]",
+                        productCode, jmCart.getpProductId(), productName, e.getMessage());
+                $error(msg);
+                throw new BusinessException(msg);
+            }
+        }
+
+        if(jmGetProductInfoRes != null)
+        {
+            remoteSpus = jmGetProductInfoRes.getSpus();
+        }
+        if(remoteSpus == null)
+        {
+            remoteSpus = new ArrayList<>();
+        }
+
+        return remoteSpus;
+    }
+
+    /**
+     * 取得聚美平台上的指定deal的sku信息
+     *
+     * @param shop 店铺信息
+     * @param jumeiHashId 聚美HashId(聚美Deal唯一值)
+     */
+    protected List<LinkedHashMap<String,Object>> getRemoteDealSkuList(ShopBean shop, String jumeiHashId) throws Exception {
+        List<LinkedHashMap<String,Object>> remoteSkuList = null;
+
+        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
+        HtDealGetDealByHashIDRequest getDealByHashIDRequest = new HtDealGetDealByHashIDRequest();
+        getDealByHashIDRequest.setJumei_hash_id(jumeiHashId);
+        getDealByHashIDRequest.setFields("start_time,end_time,deal_status,product_id,sku_list");
+        HtDealGetDealByHashIDResponse getDealByHashIDResponse = jumeiHtDealService.getDealByHashID(shop, getDealByHashIDRequest);
+        if (getDealByHashIDResponse != null && getDealByHashIDResponse.is_Success()) {
+            remoteSkuList = getDealByHashIDResponse.getSkuList();
+        }
+
+        return remoteSkuList;
     }
 
 }

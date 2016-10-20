@@ -4,7 +4,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version 2.0.0
  */
 @Service
-public class CmsImportOrdersHisInfoService extends BaseTaskService {
+public class CmsImportOrdersHisInfoService extends BaseCronTaskService {
 
     @Autowired
     private CmsCopyOrdersInfoService cmsCopyOrdersInfoService;

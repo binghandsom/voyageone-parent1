@@ -6,7 +6,7 @@ import com.voyageone.service.dao.vms.VmsBtDataAmountDao;
 import com.voyageone.service.daoext.vms.VmsBtOrderDetailDaoExt;
 import com.voyageone.service.daoext.vms.VmsBtShipmentDaoExt;
 import com.voyageone.service.model.vms.VmsBtDataAmountModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -23,7 +23,7 @@ import java.util.*;
  * @version 1.0
  */
 @Service
-public class VmsGetHomeInfoService extends BaseTaskService {
+public class VmsGetHomeInfoService extends BaseCronTaskService {
 
     @Autowired
     private VmsBtOrderDetailDaoExt vmsBtOrderDetailDaoExt;

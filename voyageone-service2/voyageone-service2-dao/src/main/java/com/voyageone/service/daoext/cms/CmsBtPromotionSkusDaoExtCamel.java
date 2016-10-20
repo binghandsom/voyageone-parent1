@@ -7,6 +7,7 @@
  */
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
 import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,5 @@ import java.util.Map;
 public interface CmsBtPromotionSkusDaoExtCamel {
     int deleteByPromotionId(int promotionId);
     int deleteByPromotionCodeList(Map<String,Object> map);
+    int updatePromotionPrice(SaveSkuPromotionPricesParameter parameter);
 }

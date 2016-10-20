@@ -4,7 +4,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.daoext.cms.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Map;
  * @version 0.0.1, 16/3/31
  */
 @Service
-public class StockWaitingRevertService extends BaseTaskService {
+public class StockWaitingRevertService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtTasksStockDaoExt cmsBtTasksStockDaoExt;

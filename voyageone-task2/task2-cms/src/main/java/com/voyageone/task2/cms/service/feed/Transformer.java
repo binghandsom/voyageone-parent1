@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.cms.dao.feed.TransformSqlDao;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.cms.dao.feed.TransformSqlDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

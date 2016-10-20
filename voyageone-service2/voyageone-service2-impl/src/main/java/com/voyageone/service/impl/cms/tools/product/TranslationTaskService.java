@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.tools.product;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -122,37 +123,29 @@ public class TranslationTaskService extends BaseService {
 
         //先查是否有任务未完成
         String queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s', " +
                 "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
 
         long cnt = cmsBtProductDao.countByQuery(queryStr, channelId);
-
         if (cnt > 0) {
             throw new BusinessException("当前任务还未完成，不能领取新的任务！");
         }
 
         //再查是否有过期任务，优先分配过期任务
         queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s'}", userName);
 
         CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryStr, channelId);
 
         if (product == null) {
-            //没有过期任务，按优先级参数分配
+            //没有过期任务，按分发规则分配
             JongoQuery queryObj = new JongoQuery();
-
-            //不能有2个or
-            queryObj.addQuery("{'lock':'0'}");
-            queryObj.addQuery("{'common.fields.isMasterMain':1}");
-            queryObj.addQuery("{'common.fields.translateStatus': {'$ne' : '1' }}");
             queryObj.addQuery("{'$or': [{'common.fields.translator':''},{'common.fields.translateTime':{'$lte':#}},{'common.fields.translator': null}, {'common.fields.translateTime':null}, {'common.fields.translateTime':''}]}");
             queryObj.addParameters(translateTimeStr);
 
-
             if (!StringUtils.isNullOrBlank2(keyWord)) {
-
                 List<String> codeList = Arrays.asList(keyWord.split("\n"));
                 if (codeList.size() == 1) {
                     queryObj.addQuery("{'$or':[ {'common.fields.code':#},{'common.fields.productNameEn':{'$regex': #}},{'common.fields.originalTitleCn':{'$regex': #}}]}");
@@ -165,40 +158,64 @@ public class TranslationTaskService extends BaseService {
 
             if (!StringUtils.isNullOrBlank2(priority)) {
                 if ("quantity".equalsIgnoreCase(priority)) {
+                    // 按库存
+                    queryObj.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
                     if ("asc".equalsIgnoreCase(sort)) {
                         queryObj.setSort("{'common.fields.quantity' : 1}");
                     } else {
                         queryObj.setSort("{'common.fields.quantity' : -1}");
                     }
-                }
-            }
+                    product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+                } else if ("priority".equalsIgnoreCase(priority)) {
+                    // 优先级参数
+                    JongoQuery queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
 
-            product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+                    // 先查询优先翻译并且有优先翻译日期的
+                    queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$nin:[null,'']}}");
+                    queryObjOrg.setSort("{'common.fields.priorTranslateDate':1}");
+                    product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                    if (product == null) {
+                        // 再查询优先翻译并且没有优先翻译日期的
+                        queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
+                        queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'2', 'common.fields.priorTranslateDate':{$in:[null,'']}}");
+                        product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                        if (product == null) {
+                            // 再查询未翻译的
+                            queryObjOrg = JsonUtil.jsonToBean(JsonUtil.bean2Json(queryObj), JongoQuery.class);
+                            queryObjOrg.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
+                            product = cmsBtProductDao.selectOneWithQuery(queryObjOrg, channelId);
+                        }
+                    }
+                }
+            } else {
+                // 无分发规则
+                queryObj.addQuery("{'lock':'0', 'common.fields.isMasterMain':1, 'common.fields.translateStatus':'0'}");
+                product = cmsBtProductDao.selectOneWithQuery(queryObj, channelId);
+            }
         }
 
         if (product == null) {
             throw new BusinessException("当前没有待领取的翻译任务！");
-        }
-
-        //修改任务状态
-        else {
+        } else {
+            // 有任务，修改任务状态
             Map<String, Object> rsMap = new HashMap<>();
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("prodId", product.getProdId());
             rsMap.put("common.fields.translator", userName);
             rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-            rsMap.put("common.fields.translateStatus", '0');
+            if (!"2".equals(product.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
+                rsMap.put("common.fields.translateStatus", '0');
+            }
+
             rsMap.put("modifier", userName);
             rsMap.put("modified", DateTimeUtil.getNow());
             Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("$set", rsMap);
 
             cmsBtProductDao.update(channelId, queryMap, updateMap);
-
             return fillTranslationTaskBean(product);
         }
     }
-
 
     /**
      * 取当前任务
@@ -274,11 +291,11 @@ public class TranslationTaskService extends BaseService {
             rsMap.put("common.fields.origin", cnFields.getOrigin());
             rsMap.put("common.fields.translator", userName);
             rsMap.put("common.fields.translateTime", DateTimeUtil.getNow());
-
-            if (status.equals("1")) {
-                rsMap.put("common.fields.translateStatus", '1');
-            } else if (product.getCommon().getFields().getTranslateStatus() == null) {
-                rsMap.put("common.fields.translateStatus", '0');
+            // 设置翻译状态
+            rsMap.put("common.fields.translateStatus", status);
+            if ("2".equals(product.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
+                // 如果原来的翻译状态是'优先翻译'，则清空'优先翻译日期'
+                rsMap.put("common.fields.priorTranslateDate", "");
             }
 
             rsMap.put("modifier", userName);
@@ -425,7 +442,6 @@ public class TranslationTaskService extends BaseService {
             if (img3 != null && !img3.isEmpty()) {
                 commonFields.setImages3(img3);
             }
-
 
             List<CmsBtProductModel_Field_Image> img4 = fields.getImages1();
             if (img4 != null && !img4.isEmpty()) {

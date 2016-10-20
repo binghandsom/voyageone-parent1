@@ -27,6 +27,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                supplierType: 1,
                 brandSelType: 1
             },
             _selall: false,
@@ -159,6 +160,7 @@ define([
                 cidValue: [],
                 promotionTagType: 1,
                 freeTagType: 1,
+                supplierType: 1,
                 brandSelType: 1,
                 shopCatStatus: null,
                 inventory: '',
@@ -281,9 +283,9 @@ define([
             }
             var msg = '';
             var selList = getSelProductList();
+            $scope.vm.searchInfo._selCodeList = [];
             if (selList.length > 0) {
                 msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
-                $scope.vm.searchInfo._selCodeList = [];
                 _.forEach(selList, function (object) {
                     $scope.vm.searchInfo._selCodeList.push(object.code);
                 });

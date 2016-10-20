@@ -81,8 +81,8 @@ define([
                 return;
             }
 
-            if($scope.editModel.model.prePeriodEnd > $scope.editModel.model.activityEnd){
-                alert("预热结束时间不能晚于活动结束时间");
+            if($scope.editModel.model.signupDeadline > $scope.editModel.model.prePeriodStart){
+                alert("报名截止日期不能晚于预热开始时间");
                 return;
             }
 

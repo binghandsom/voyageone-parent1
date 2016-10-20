@@ -43,7 +43,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -67,7 +67,7 @@ import java.util.concurrent.TimeUnit;
  * @since 2.5.0
  */
 @Service
-public class CmsBuildPlatformProductUploadTmTongGouService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskService {
 
     // 分隔符(,)
     private final static String Separtor_Coma = ",";

@@ -96,6 +96,11 @@
             <artifactId>voyageone-components-overstock</artifactId>
             <version>${voyageone.components.overstock.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-solr</artifactId>
+            <version>${voyageone.components.solr.version}</version>
+        </dependency>
 
     </dependencies>
     <build>

@@ -1,8 +1,11 @@
 package com.voyageone.task2.cms.service;
 
+import com.google.common.collect.Lists;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
@@ -451,6 +454,51 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void testHidByCode() {
+        String channelId = "027";
+        int cartId = 27;
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        String[] codes = {"027-1101-03","027-1101-05","027-1101-06","027-1101-07","027-1101-08","027-1101-09","027-1101-12","027-1101-13","027-1101-14","027-1101-15"};
+        List<String> listSku = Lists.newArrayList("027-1101XL03","027-1101XXL03","027-1101XXXL03","027-1101XL05","027-1101XXL05","027-1101XXXL05","027-1101XL06","027-1101XXL06","027-1101XXXL06","027-1101XL07","027-1101XXL07","027-1101XXXL07","027-1101XL08","027-1101XXL08","027-1101XXXL08","027-1101XL09","027-1101XXL09","027-1101XXXL09","027-1101XL12","027-1101XXL12","027-1101XXXL12","027-1101XL13","027-1101XXL13","027-1101XXXL13","027-1101XL14","027-1101XXL14","027-1101XXXL14","027-1101XL15","027-1101XXL15","027-1101XXXL15");
+
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codes, "$in") + "}", channelId);
+
+        for (CmsBtProductModel productModel : productModelList) {
+            String originHashId = productModel.getPlatform(cartId).getpNumIId();
+            for (BaseMongoMap<String, Object> sku : productModel.getPlatform(cartId).getSkus()) {
+                String skuCode = sku.getStringAttribute("skuCode");
+                if (!listSku.contains(skuCode)) {
+                    continue;
+                }
+
+                String jmSkuNo = sku.getStringAttribute("jmSkuNo");
+                try {
+                    cmsBuildPlatformProductUploadJMService.updateSkuIsEnableDeal(shopBean, originHashId, jmSkuNo, "0");
+                    logger.info(String.format("jmSkuNo[%s] Deal 下架成功!", jmSkuNo));
+                } catch (Exception e) {
+                    logger.error(String.format("jmSkuNo[%s] Deal 下架失败!" + e.getMessage(), jmSkuNo));
+                }
+
+
+                StringBuffer failCause = new StringBuffer("");
+                try {
+                    cmsBuildPlatformProductUploadJMService.updateSkuIsEnableMall(shopBean, jmSkuNo, "disabled", failCause);
+                    if (failCause.length() > 0) {
+                        logger.error(String.format("jmSkuNo[%s] Mall 下架失败!" + failCause.toString(), jmSkuNo));
+                    } else {
+                        logger.info(String.format("jmSkuNo[%s] Mall 下架成功!", jmSkuNo));
+                    }
+                } catch (Exception e) {
+                    logger.error(String.format("jmSkuNo[%s] Mall 下架失败!" + e.getMessage(), jmSkuNo));
+                }
+
+            }
+        }
+
     }
 
 

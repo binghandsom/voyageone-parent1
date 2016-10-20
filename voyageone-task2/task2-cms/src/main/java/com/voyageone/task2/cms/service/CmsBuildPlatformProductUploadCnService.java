@@ -4,33 +4,40 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
+import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.ims.ImsBtProductModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +47,7 @@ import java.util.stream.Collectors;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService {
 
     @Autowired
     private CnSchemaService cnSchemaService;
@@ -55,6 +62,10 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
     @Autowired
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
+    @Autowired
+    private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
+    @Autowired
+    private CmsBtSxCnSkuDaoExt cmsBtSxCnSkuDaoExt;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
     @Autowired
@@ -87,8 +98,16 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-                // 独立域名商品信息新增或更新
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+//                {
+//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+//                    // 独立域名商品信息新增或更新
+//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    // 独立域名商品信息新增或更新
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                }
             }
         }
 
@@ -101,10 +120,14 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
      *
      * @param channelId String 渠道ID
      * @param cartId    String 平台ID
+     * @param shopBean 作为传进来,可以做测试程序
      */
-    public void doUpload(String channelId, int cartId) {
+    public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         // 等待上传 的数据
         List<CmsBtSxCnInfoModel> listSxModel = cmsBtSxCnInfoDao.selectWaitingPublishData(channelId, PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        if (ListUtils.isNull(listSxModel)) {
+            return;
+        }
 
         // 把状态更新成 1:上传中，防止推过来更新的xml数据
         List<Long> listGroupId = listSxModel.stream().map(CmsBtSxCnInfoModel::getGroupId).collect(Collectors.toList());
@@ -118,6 +141,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             List<List<Field>> listProductFields = new ArrayList<>();
             List<List<Field>> listSkuFields = new ArrayList<>();
             Set<String> catIds = new HashSet<>();
+            Map<String, List<String>> mapProductCats = new HashMap<>(); // Map<code, List<catId>>
+            Map<String, String> mapProductOrgChannel = new HashMap<>(); // Map<code, orgChannelId>
+            List<String> listDelCodes = new ArrayList<>(); // 删除的code列表
             int index = 0;
             for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                 if (index == 0) {
@@ -128,18 +154,40 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
                 }
 
                 listProductFields.addAll(cnSchemaService.readProductXmlString(sxModel.getProductXml()));
-                listSkuFields.addAll(cnSchemaService.readSkuXmlString(sxModel.getSkuXml()));
+                if (sxModel.getPlatformActive() == CmsConstants.PlatformActive.ToInStock) {
+                    // 删除
+                    listDelCodes.add(sxModel.getCode());
+                }
+                if (!StringUtils.isEmpty(sxModel.getSkuXml())) {
+                    // 存在sku没变化，不推的情况
+                    listSkuFields.addAll(cnSchemaService.readSkuXmlString(sxModel.getSkuXml()));
+                }
                 catIds.addAll(sxModel.getCatIds());
+                mapProductCats.put(sxModel.getCode(), new ArrayList<>(sxModel.getCatIds()));
+                mapProductOrgChannel.put(sxModel.getCode(), sxModel.getOrgChannelId());
 
                 index++;
             }
             String productXml = cnSchemaService.writeProductXmlString(listProductFields);
-            String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
             $debug("独立域名上传产品的xml:" + productXml);
-            $debug("独立域名上传Sku的xml:" + skuXml);
-            // TODO: doPost
+            // doPost
             boolean isSuccess = false;
 
+            String result = cnSchemaService.postXml(productXml, shopBean);
+            if (result != null && result.indexOf("Success") >= 0) {
+                // product成功了，再传sku
+                if (ListUtils.notNull(listSkuFields)) {
+                    String skuXml = cnSchemaService.writeSkuXmlString(listSkuFields);
+                    $debug("独立域名上传Sku的xml:" + skuXml);
+                    result = cnSchemaService.postXml(skuXml, shopBean);
+                    if (result != null && result.indexOf("Success") >= 0) {
+                        isSuccess = true;
+                    }
+                } else {
+                    // 存在sku没变化，不推的情况
+                    isSuccess = true;
+                }
+            }
 
             if (!isSuccess) {
                 // 只有网络问题推送失败才会false，所以就打个log，不把status更新成error
@@ -151,7 +199,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
             } else {
                 for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                     // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
-                    String numIId = sxModel.getOrgChannelId() + "-" + Long.toString(sxModel.getProdId()); // 因为现在是一个group一个code
+                    String numIId = sxModel.getUrlKey(); // 因为现在是一个group一个code
                     try {
                         updateProductGroupNumIIdStatus(sxModel, numIId);
                         // 回写ims_bt_product表(numIId)
@@ -166,6 +214,12 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
 
                 // 类目保存，用于之后上传类目下code以及排序
                 cnCategoryService.updateProductSellercatForUpload(channelId, catIds, getTaskName());
+
+                // 更新cms_bt_sx_cn_sku表，用于刷全量库存
+                updateSxCnSku(channelId, cartId, listSkuFields, mapProductCats, mapProductOrgChannel);
+                if (ListUtils.notNull(listDelCodes)) {
+                    deleteSxCnSku(channelId, listDelCodes);
+                }
 
                 // 把状态更新成 2:上传结束
                 cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName(), 1);
@@ -228,7 +282,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     /**
      * 回写product group表中的numIId和platformStatus(Onsale/InStock)
      */
-    public void updateProductGroupNumIIdStatus(CmsBtSxCnInfoModel sxModel, String numIId) {
+    private void updateProductGroupNumIIdStatus(CmsBtSxCnInfoModel sxModel, String numIId) {
         CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{'groupId':" + sxModel.getGroupId() + "}", sxModel.getChannelId());
         if (grpModel == null) {
             throw new BusinessException("group表数据已删除!");
@@ -257,7 +311,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     /**
      * 回写ims_bt_product表
      */
-    public void updateImsBtProduct(CmsBtSxCnInfoModel sxModel, String numIId) {
+    private void updateImsBtProduct(CmsBtSxCnInfoModel sxModel, String numIId) {
         // s:sku级别, p:product级别
         String updateType = "s";
 
@@ -290,10 +344,89 @@ public class CmsBuildPlatformProductUploadCnService extends BaseTaskService {
     /**
      * 回写cms_bt_sx_workload表
      */
-    public int updateSxWorkload(int sxWorkloadId, int publishStatus) {
+    private int updateSxWorkload(int sxWorkloadId, int publishStatus) {
         CmsBtSxWorkloadModel upModel = sxWorkloadDao.select(sxWorkloadId);
         upModel.setPublishStatus(publishStatus);
         upModel.setModifier(getTaskName());
         return sxWorkloadDaoExt.updateSxWorkloadModelWithModifier(upModel);
+    }
+
+    /**
+     * 更新cms_bt_sx_cn_sku表，用于刷全量库存
+     * 相同sku保存一条,找到更新，找不到insert
+     * 暂时不做批量insert了
+     */
+    private int updateSxCnSku(String channelId, int cartId, List<List<Field>> listSkuFields, Map<String, List<String>> mapProductCats, Map<String, String> mapProductOrgChannel) {
+        int cnt = 0;
+
+        CmsBtSxCnSkuModel model;
+        for(List<Field> fieldList : listSkuFields) {
+            model = new CmsBtSxCnSkuModel();
+            model.setChannelId(channelId);
+            model.setCreater(getTaskName());
+            for (Field field : fieldList) {
+                if ("ProductCode".equals(field.getId())) {
+                    String code = getFieldValue(field);
+                    code = code.substring(1); // 推送的是 固定"C" + code
+                    model.setCode(code);
+                    model.setOrgChannelId(mapProductOrgChannel.get(code));
+                    model.setCategoryIds(mapProductCats.get(code).stream().collect(Collectors.joining(",")));
+                } else if ("Sku".equals(field.getId())) {
+                    model.setSku(getFieldValue(field));
+                } else if ("Size".equals(field.getId())) {
+                    model.setSize(getFieldValue(field));
+                } else if ("ShowSize".equals(field.getId())) {
+                    model.setShowSize(getFieldValue(field));
+                } else if ("Msrp".equals(field.getId())) {
+                    model.setMsrp(Double.valueOf(getFieldValue(field)));
+                } else if ("Price".equals(field.getId())) {
+                    model.setPrice(Double.valueOf(getFieldValue(field)));
+                }
+            }
+
+            Map<String, Object> searchParam = new HashMap<>();
+            searchParam.put("channelId", channelId);
+            searchParam.put("code", model.getCode());
+            searchParam.put("sku", model.getSku());
+            CmsBtSxCnSkuModel searchModel = cmsBtSxCnSkuDao.selectOne(searchParam);
+            if (searchModel == null) {
+                // insert
+                cnt += cmsBtSxCnSkuDao.insert(model);
+            } else {
+                // update
+                searchModel.setCategoryIds(model.getCategoryIds());
+                searchModel.setSize(model.getSize());
+                searchModel.setShowSize(model.getShowSize());
+                searchModel.setMsrp(model.getMsrp());
+                searchModel.setPrice(model.getPrice());
+                searchModel.setModifier(getTaskName());
+                searchModel.setModified(DateTimeUtil.getDate());
+                cnt += cmsBtSxCnSkuDao.update(searchModel);
+            }
+        }
+
+        $info("cms_bt_sx_cn_sku更新了%d件!", cnt);
+        return cnt;
+    }
+
+    private String getFieldValue(Field field) {
+        FieldTypeEnum fieldType = field.getType();
+        if (fieldType == FieldTypeEnum.INPUT) {
+            return  ((InputField) field).getValue();
+        } else if (fieldType == FieldTypeEnum.SINGLECHECK) {
+            return ((SingleCheckField) field).getValue().getValue();
+        } else {
+            // 不支持
+            return null;
+        }
+    }
+
+    /**
+     * 删除cms_bt_sx_cn_sku表
+     */
+    private int deleteSxCnSku(String channelId,  List<String> listDelCodes) {
+        int delCnt = cmsBtSxCnSkuDaoExt.deleteByListCodes(channelId, listDelCodes);
+        $info("cms_bt_sx_cn_sku删除了%d件,code列表:" + listDelCodes, delCnt);
+        return delCnt;
     }
 }
