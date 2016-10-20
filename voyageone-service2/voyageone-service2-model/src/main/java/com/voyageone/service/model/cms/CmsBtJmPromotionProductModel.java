@@ -65,6 +65,10 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer quantity;
 
     /**
+     * 销量
+     */
+    protected Integer sales;
+    /**
      * 活动开始时间
      */
     protected Date activityStart;
@@ -461,4 +465,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }
+
+    public Integer getSales() {
+        return sales;
+    }
+
+    public void setSales(Integer sales) {
+        this.sales = sales;
+    }
+
 }

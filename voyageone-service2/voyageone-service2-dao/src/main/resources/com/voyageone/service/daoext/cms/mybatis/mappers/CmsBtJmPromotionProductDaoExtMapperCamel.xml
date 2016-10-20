@@ -530,7 +530,7 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     <update id="updateProductStockInfo">
         <foreach item="item" index="i" collection="jmPromotionProductList" open="" close="" separator=";">
             update cms_bt_jm_promotion_product
-            set quantity = #{item.quantity,jdbcType=INTEGER}
+            set quantity = #{item.quantity,jdbcType=INTEGER}, sales = #{item.sales,jdbcType=INTEGER}
             WHERE id = #{item.id}
         </foreach>
     </update>
