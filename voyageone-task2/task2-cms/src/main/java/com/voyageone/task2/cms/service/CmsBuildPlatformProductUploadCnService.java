@@ -191,7 +191,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                 cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName(), 1);
                 needRetry = true;
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
+                insertBusinessLog(channelId, cartId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
             } else {
                 for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                     // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
@@ -202,7 +202,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                         updateSxWorkload(sxModel.getSxWorkloadId(), CmsConstants.SxWorkloadPublishStatusNum.okNum);
                     } catch (Exception ex) {
                         $error(ex.getMessage());
-                        insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
+                        insertBusinessLog(channelId, cartId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
                     }
                 }
 
@@ -223,12 +223,12 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             if (!needRetry) {
                 // 不需要重新传
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+                insertBusinessLog(channelId, cartId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
                 // 把状态更新成 2:上传结束
                 cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName(), 1);
             } else {
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+                insertBusinessLog(channelId, cartId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
             }
         }
     }
@@ -238,7 +238,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
      *
      * @param errorMsg 错误信息
      */
-    private void insertBusinessLog(String channelId, String errorMsg, CmsBtSxCnInfoModel sxModel) {
+    private void insertBusinessLog(String channelId, int cartId, String errorMsg, CmsBtSxCnInfoModel sxModel) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
         // 渠道id
         businessLogModel.setChannelId(channelId);
@@ -252,6 +252,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
         businessLogModel.setCreater(getTaskName());
         // 更新者
         businessLogModel.setModifier(getTaskName());
+		// 平台id
+		businessLogModel.setCartId(cartId);
 
         if (sxModel != null) {
             // 单个产品错误
@@ -260,8 +262,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             // 类目id
 //           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
             // deleted by morse.lu 2016/09/22 end
-            // 平台id
-            businessLogModel.setCartId(sxModel.getCartId());
             // Group id
             businessLogModel.setGroupId(String.valueOf(sxModel.getGroupId()));
             // 主商品的product_id

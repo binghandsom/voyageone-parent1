@@ -290,11 +290,22 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
         insertCnInfoModel.setCartId(cartId);
         insertCnInfoModel.setGroupId(groupId);
-        Set<String> catIds = new HashSet<>();
-        for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
-            catIds.addAll(sellerCat.getcIds());
-        }
-        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
+//        Set<String> catIds = new HashSet<>();
+//        for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
+//            catIds.addAll(sellerCat.getcIds());
+//        }
+//        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
+		{
+			// 临时写死一下
+			String productType = sxData.getTmpSxCnCode().getProductType();
+			if("Shoes".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("10");}});
+			} else if("Accessories".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("13");}});
+			} else if("WomenApparel".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("15");}});
+			}
+		}
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
         String strUrlKey =
