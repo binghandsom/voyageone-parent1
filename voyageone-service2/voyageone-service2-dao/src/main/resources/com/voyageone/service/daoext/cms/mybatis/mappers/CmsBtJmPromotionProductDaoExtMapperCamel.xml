@@ -512,7 +512,9 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         ORDER BY
             t1.id
     </select>
-
+    <update id="updateRemark">
+    UPDATE `cms_bt_jm_promotion_product` SET `remark`=#{remark} where id=#{jmPromotionProductId}
+    </update>
     <!--jm2 end-->
 
     <!-- 取得当前有效的活动下的所有产品 -->
