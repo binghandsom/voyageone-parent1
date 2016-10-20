@@ -200,7 +200,8 @@ define(function () {
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
                     "delete": "delete",
-                    "getTagListByPromotionId": "getTagListByPromotionId"
+                    "getTagListByPromotionId": "getTagListByPromotionId",
+                    getBayWindow: 'getBayWindow'
                 },
                 "jmPromotionProductAddService": {
                     "root": "/cms/jm/promotion/product/",
@@ -244,7 +245,7 @@ define(function () {
                     savePromotionTagModules: 'savePromotionTagModules',
                     getPromotionProducts: 'getPromotionProducts',
                     saveProductSort: 'saveProductSort',
-                    getSeparatorBarUrl: {url: 'getSeparatorBarUrl', cache: CACHE.LOCAL}
+                    getJmTemplateUrls: {url: 'getJmTemplateUrls', cache: CACHE.LOCAL}
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmPromotion/images",

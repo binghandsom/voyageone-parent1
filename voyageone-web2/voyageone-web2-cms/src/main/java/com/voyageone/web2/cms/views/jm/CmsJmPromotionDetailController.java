@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -304,12 +305,21 @@ public class CmsJmPromotionDetailController extends CmsController {
     //jm2 end
 
     /**
-     * 获取专场活动所使用的分隔栏背景模板地址
+     * 获取专场活动所使用的各种背景模板地址
      * @since 2.8.0
      */
-    @RequestMapping("getSeparatorBarUrl")
-    public AjaxResponse getSeparatorBarUrl() {
-        return success(jmImageTemplateService.getSeparatorBar(""));
+    @RequestMapping("getJmTemplateUrls")
+    public AjaxResponse getJmTemplateUrls() {
+
+        Map<String, Object> template = new HashMap<>();
+
+        List<String> bayWindowTemplateUrls = jmImageTemplateService.getBayWindowTemplateUrls();
+        String separatorBar = jmImageTemplateService.getSeparatorBar("");
+
+        template.put("bayWindowTemplateUrls", bayWindowTemplateUrls);
+        template.put("separatorBar", separatorBar);
+
+        return success(template);
     }
 
     /**

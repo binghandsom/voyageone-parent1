@@ -115,11 +115,20 @@ define(['cms'], function (cms) {
         });
     };
 
-    SpDataService.prototype.getSeparatorBarUrl = function getSeparatorBarUrl() {
+    SpDataService.prototype.getJmTemplateUrls = function getJmTemplateUrls() {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;
 
-        return jmPromotionDetailService.getSeparatorBarUrl().then(function (resp) {
+        return jmPromotionDetailService.getJmTemplateUrls().then(function (resp) {
+            return resp.data;
+        });
+    };
+
+    SpDataService.prototype.getBayWindow = function getBayWindow() {
+        var self = this,
+            jmPromotionService = self.jmPromotionService;
+
+        return jmPromotionService.getBayWindow(self.jmPromotionId).then(function (resp) {
             return resp.data;
         });
     };
