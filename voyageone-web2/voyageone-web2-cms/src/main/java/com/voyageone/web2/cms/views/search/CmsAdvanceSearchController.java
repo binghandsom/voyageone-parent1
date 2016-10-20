@@ -12,11 +12,12 @@ import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,9 @@ public class CmsAdvanceSearchController extends CmsController {
     private PlatformService platformService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private CmsProductSearchQueryService cmsProductSearchQueryService;
 
     /**
      * 初始化,获取master数据
@@ -194,7 +198,7 @@ public class CmsAdvanceSearchController extends CmsController {
     public AjaxResponse createFile(@RequestBody Map<String, Object> params) {
         String fileName = null;
         Integer fileType = (Integer) params.get("fileType");
-        Map<String, Object> resultBean = new HashMap<String, Object>();
+        Map<String, Object> resultBean = new HashMap<>();
         if (fileType == null) {
             resultBean.put("ecd", "4002");
             return success(resultBean);
@@ -376,4 +380,62 @@ public class CmsAdvanceSearchController extends CmsController {
             return success(typeBeanList);
         }
     }
+
+
+    /**
+     * 根据Solr 检索product数据,group数据只是在点击[GROUP一览]时才加载，性能优化
+     */
+    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH_AUTO_COMPLETE_SOLR)
+    public AjaxResponse searchAutoCompleteWithSolr(@RequestBody String params) {
+
+        UserSessionBean userInfo = getUser();
+        List<String> resultBean = cmsProductSearchQueryService.getTop10ProductModelCodeSkuList(params, userInfo.getSelChannelId());
+
+        System.out.println(JacksonUtil.bean2Json(resultBean));
+
+        // 返回用户信息
+        return success(resultBean);
+    }
+
+//    /**
+//     * 根据Solr 检索product数据,group数据只是在点击[GROUP一览]时才加载，性能优化
+//     */
+//    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
+//    public AjaxResponse searchWithSolr(@RequestBody CmsSearchInfoBean2 params) {
+//
+//        Map<String, Object> resultBean = new HashMap<>();
+//        UserSessionBean userInfo = getUser();
+//        CmsSessionBean cmsSession = getCmsSession();
+//        cmsSession.putAttribute("_adv_search_params", params);
+//
+//        // 获取product列表
+//        CmsProductCodeListBean productCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+//        List<String> currCodeList = productCodeListBean.getProductCodeList();
+//        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+//        searchIndexService.checkProcStatus(prodInfoList, getLang());
+//        resultBean.put("productList", prodInfoList);
+//        resultBean.put("productListTotal", productCodeListBean.getTotalCount());
+//        // 先统计product件数,并放到session中(这时group总件数为空)
+//        cmsSession.putAttribute("_adv_search_productListTotal", productCodeListBean.getTotalCount());
+//        cmsSession.putAttribute("_adv_search_groupListTotal", null);
+//
+//        // 查询平台显示商品URL
+//        Integer cartId = params.getCartId();
+//        resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
+//
+//        // 查询商品其它画面显示用的信息
+//        List[] infoArr = advSearchOtherService.getGroupExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId, false);
+//        resultBean.put("prodOrgChaNameList", infoArr[0]);
+//        resultBean.put("freeTagsList", infoArr[1]);
+//
+//        // 获取该用户自定义显示列设置
+//        resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
+//        resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
+//        resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
+//        resultBean.put("selBiDataList", cmsSession.getAttribute("_adv_search_selBiDataList"));
+//
+//        // 返回用户信息
+//        return success(resultBean);
+//    }
+
 }

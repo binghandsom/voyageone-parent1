@@ -34,7 +34,7 @@ import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ import static java.util.stream.Collectors.toList;
  * @version 2.0.0
  */
 @Service
-public class UploadToUSJoiService extends BaseTaskService {
+public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     ProductGroupService productGroupService;
@@ -219,12 +219,30 @@ public class UploadToUSJoiService extends BaseTaskService {
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
         // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
-        final List<Integer> cartIds;
-        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
-        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
-            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-        } else {
-            cartIds = new ArrayList<>();
+        final List<Integer> cartIds = new ArrayList<>();
+//        final List<Integer> cartIds;
+//        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
+//        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
+//            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
+//        } else {
+//            cartIds = new ArrayList<>();
+//        }
+        // 从synship.com_mt_value_channel表中取得USJOI店铺channel对应的可售卖的cartId列表（如928对应28,29,27等）
+        List<TypeChannelBean> approveCartList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "A", "en"); // 取得可售卖平台数据
+        if (ListUtils.notNull(approveCartList)) {
+            // 取得配置表中可售卖的非空cartId列表
+            approveCartList.forEach(p -> {
+                if(!StringUtils.isEmpty(p.getValue()))
+                    cartIds.add(NumberUtils.toInt(p.getValue()));
+            });
+        }
+        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(approveCartList)) {
+            String errMsg = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) + " com_mt_value_channel表中没有usJoiChannel(" +
+                    usjoiChannelId + ")对应的可售卖平台(53 A en)mapping信息,不能生成Product.PXX分平台信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
+            $info(errMsg);
+            // channel级的共通配置异常，本USJOI channel后面的产品都不导入了
+            resultMap.put(usjoiChannelId, errMsg);
+            return;
         }
 
         // 该usjoichannel每次子店->USJOI主店导入最大件数(最大2000件,默认为500件)

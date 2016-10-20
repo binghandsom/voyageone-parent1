@@ -195,9 +195,10 @@ MongoSequenceService commSequenceMongoService;
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+//        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName);
+          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName,shopBean);
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
@@ -224,9 +225,10 @@ MongoSequenceService commSequenceMongoService;
             jdShopService.updateShopCategory(shopBean, cId, cName);
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
-        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+//        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-            cnSellerCatService.updateSellerCat(channelId,cId);
+            cnSellerCatService.updateSellerCat(channelId,cId, shopBean);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -258,8 +260,9 @@ MongoSequenceService commSequenceMongoService;
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
             }
-        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-            cnSellerCatService.deleteSellerCat(channelId,cId);
+//        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+            cnSellerCatService.deleteSellerCat(channelId,cId,shopBean);
         }
 
 

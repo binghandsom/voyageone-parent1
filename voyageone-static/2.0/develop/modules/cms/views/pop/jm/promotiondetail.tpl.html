@@ -134,7 +134,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
@@ -142,7 +141,25 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label">专场优惠</label>
+                <label class="col-sm-3 control-label">准备期截止时间</label>
+                <div class="col-sm-9">
+                    <div class="row form-inline">
+                        <div class="col-sm-5 input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup
+                                   ng-model="editModel.model.signupDeadline"
+                                   max-date="editModel.model.prePeriodStart"
+                                   date-model-format="yyyy-MM-dd"
+                                   is-open="datePicker4" close-text="Close" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield">专场优惠</label>
                 <div class="col-sm-8">
                     <div class="row wrapper-xs">
                         <label class="checkbox-inline c-checkbox col-md-2">

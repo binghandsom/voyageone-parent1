@@ -28,6 +28,12 @@ define([
 
             search();
         }
+        $scope.getMinMaxPrice = function (minPrice,maxPrice) {
+            if (maxPrice== minPrice)
+                return maxPrice.toFixed(2);
+
+            return minPrice.toFixed(2) + "~" +maxPrice.toFixed(2);
+        };
         $scope.search=search;
         function search() {
             taskPriceService.getPriceList({

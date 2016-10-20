@@ -21,7 +21,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.CmsMtImageCategoryDao;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
@@ -44,7 +44,7 @@ import java.util.List;
  * @version 2.0.0
  */
 @Service
-public class CmsUploadImageToPlatformService extends BaseTaskService {
+public class CmsUploadImageToPlatformService extends BaseCronTaskService {
 
 
     /* 斜杠分隔符 */

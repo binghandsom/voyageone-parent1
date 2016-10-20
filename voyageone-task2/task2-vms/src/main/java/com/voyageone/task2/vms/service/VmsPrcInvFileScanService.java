@@ -10,7 +10,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.vms.VmsBtInventoryFileDao;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -34,7 +34,7 @@ import static com.voyageone.task2.vms.VmsConstants.VMS_PROPERTY;
  * Created by vantis on 16-9-8.
  */
 @Service
-public class VmsPrcInvFileScanService extends BaseTaskService {
+public class VmsPrcInvFileScanService extends BaseCronTaskService {
 
     private VmsBtInventoryFileDao vmsBtInventoryFileDao;
     private MqSender mqSender;

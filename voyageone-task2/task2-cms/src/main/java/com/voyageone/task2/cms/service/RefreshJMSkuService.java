@@ -18,7 +18,7 @@ import com.voyageone.components.jumei.request.HtSpuUpdateRequest;
 import com.voyageone.components.jumei.service.JumeiProductService;
 import com.voyageone.components.jumei.service.JumeiService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import java.util.List;
  * Created by Ethan Shi on 2016/7/19.
  */
 @Service
-public class RefreshJMSkuService extends BaseTaskService {
+public class RefreshJMSkuService extends BaseCronTaskService {
 
 
     @Autowired

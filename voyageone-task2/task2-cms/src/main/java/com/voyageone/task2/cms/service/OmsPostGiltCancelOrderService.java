@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.components.gilt.bean.GiltOrder;
 import com.voyageone.components.gilt.bean.GiltOrderStatus;
 import com.voyageone.components.gilt.bean.GiltPatchOrderRequest;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Constants;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class OmsPostGiltCancelOrderService extends BaseTaskService {
+public class OmsPostGiltCancelOrderService extends BaseCronTaskService {
 	
 	@Autowired
 	private OrderDao orderDao;

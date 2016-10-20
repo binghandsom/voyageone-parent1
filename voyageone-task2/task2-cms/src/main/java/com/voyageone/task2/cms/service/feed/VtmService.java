@@ -5,7 +5,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
@@ -27,7 +27,7 @@ import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCK
  * @version 0.0.1, 16/3/4
  */
 @Service
-public class VtmService extends BaseTaskService {
+public class VtmService extends BaseCronTaskService {
 
     @Autowired
     private SuperFeed2Dao superfeeddao;

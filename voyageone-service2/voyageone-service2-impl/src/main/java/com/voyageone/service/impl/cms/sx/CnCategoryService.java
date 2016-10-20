@@ -1,5 +1,8 @@
 package com.voyageone.service.impl.cms.sx;
 
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
@@ -53,7 +56,7 @@ public class CnCategoryService extends BaseService {
         if (length > 1) {
             bean.setParentId(catIds[length - 2]); // 父类目Id
         }
-        StringBuilder catFullPath = new StringBuilder("");
+        StringBuilder catFullPath = new StringBuilder("1/2/");
         for (int i = 0; i < length; i++) {
             catFullPath.append(catIds[i]);
             if (i != length - 1) {
@@ -75,8 +78,8 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete) {
-        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete);
+    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, ShopBean shopBean) {
+        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, shopBean);
     }
 
     /**
@@ -86,7 +89,7 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, ShopBean shopBean) {
         for (CnCategoryBean bean : listBean) {
             if (isDelete) {
                 bean.setIsPublished("0");
@@ -97,7 +100,7 @@ public class CnCategoryService extends BaseService {
             }
         }
 
-        return uploadCnCategory(listBean);
+        return uploadCnCategory(listBean, shopBean);
     }
 
     /**
@@ -106,7 +109,7 @@ public class CnCategoryService extends BaseService {
      * @param listBean
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
         boolean isSuccess = false;
 
         List<List<Field>> listCatField = new ArrayList<>();
@@ -142,9 +145,17 @@ public class CnCategoryService extends BaseService {
         }
 
         String xml = cnSchemaService.writeCategoryXmlString(listCatField);
-        $info("独立域名上传类目xml:" + xml);
+        $debug("独立域名上传类目xml:" + xml);
 
-        // TODO:doPost
+        // doPost
+        try {
+            String result = cnSchemaService.postXml(xml, shopBean);
+            if (result != null && result.indexOf("Success") >= 0) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            $error("推送类目xml时发生异常!" + e.getMessage());
+        }
 
         return isSuccess;
     }

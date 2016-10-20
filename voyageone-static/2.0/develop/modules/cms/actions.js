@@ -58,6 +58,7 @@ define(function () {
                     "root": "/cms/search/advanceSearch/",
                     "init": "init",
                     "search": "search",
+                    "searchAutoComplete":"searchAutoComplete",
                     "getGroupList": "getGroupList",
                     "getProductList": "getProductList",
                     "exportProducts": "exportProducts",
@@ -184,6 +185,8 @@ define(function () {
                     "delPromotionCode": "delPromotionCode",
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
+                    "getPromotionSkuList": "getPromotionSkuList",
+                    "saveSkuPromotionPrices":"saveSkuPromotionPrices"
                 }
             },
             "jmpromotion": {
@@ -594,6 +597,20 @@ define(function () {
                 root:"/cms/channel/black_brand/",
                 list:"searchBlackBrand",
                 update:"updateBlackBrand"
+            },
+            //主品牌匹配页面
+            "masterBrandService":{
+                root:"/cms/tools/common/",
+                search:"getMasterBrandInfo"
+            },
+            //主品牌管理页面
+            "masterBrandApplicationService":{
+                root:"/cms/maintain/common/",
+                init:"initMasterBrandInfo",
+                search:"getMasterBrandInfo",
+                reviewed:"reviewedMasterBrandInfo",
+                edit:"editMasterBrandInfo",
+                mappingSearch:"mappingMasterBrandInfoToPlatform"
             }
         }
     };

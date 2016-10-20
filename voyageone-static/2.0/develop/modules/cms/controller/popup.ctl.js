@@ -301,6 +301,12 @@ define([
                 "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                 "controller": 'popAddStockIncrementCtl'
+            },
+            "setSkuPrice":{
+                "templateUrl": "views/pop/promotion/setSkuPrice.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/promotion/setSkuPrice.ctl",
+                "controller": 'setSkuPriceCtl as ctrl',
+                "size":"lg"
             }
         },
         "jumei": {
@@ -399,6 +405,25 @@ define([
                 "templateUrl": "views/pop/system/channelList.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/system/channelList.ctl",
                 "controller": 'popChannelListCtl'
+            }
+        },
+        "maintain":{
+            "masterBrandCheck": {
+                "templateUrl": "views/pop/maintain/masterBrandCheck.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandCheck.ctl",
+                "controller": 'masterBrandCheckCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandMapDetail": {
+                "templateUrl": "views/pop/maintain/masterBrandMapDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandMapDetail.ctl",
+                "controller": 'masterBrandMapDetailCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandEdit":{
+                "templateUrl": "views/pop/maintain/masterBrandEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandEdit.ctl",
+                "controller": 'masterBrandEditCtl as ctrl'
             }
         },
         "store": {
@@ -914,6 +939,13 @@ define([
         };
 
         /**
+         * sku价格刷新
+         */
+        $scope.openSetSkuPrice = function openSetSkuPrice(context){
+            return openModal(popActions.promotion.setSkuPrice, context);
+        };
+
+        /**
          * 新增feed查询页图片弹出
          * */
         $scope.openImagedetail = function openImagedetail(context) {
@@ -1182,6 +1214,27 @@ define([
         /**上新价格确认*/
         $scope.openApproveConfirm = function openApproveConfirm(context){
             return openModal(popActions.product.approveConfirm,context);
+        };
+
+        /**
+         * 品牌审核弹出框
+         */
+        $scope.openMasterBrandCheck = function openMasterBrandCheck(context){
+            return openModal(popActions.maintain.masterBrandCheck,context);
+        };
+
+        /**
+         * master 品牌匹配
+         */
+        $scope.openMasterBrandMapDetail = function openMasterBrandMapDetail(context){
+            return openModal(popActions.maintain.masterBrandMapDetail,context)
+        };
+
+        /**
+         * 主品牌编辑
+         */
+        $scope.openMasterBrandEdit = function openMasterBrandEdit(context){
+            return openModal(popActions.maintain.masterBrandEdit,context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
