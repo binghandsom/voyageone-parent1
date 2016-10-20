@@ -72,6 +72,11 @@ public class CartEnums {
         USTT("31"),
 
 		/**
+		 * Liking官网
+		 */
+		LIKING("32"),
+
+		/**
 		 * USJOI测试
 		 */
 		JGT("98"),
