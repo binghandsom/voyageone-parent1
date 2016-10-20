@@ -50,7 +50,7 @@ public class JmPromotionImagesService extends BaseViewService {
         if (imageMap != null) {
             imageMap.forEach((s, o) -> {
                 if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
-                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), "appEntrance", cmsBtJmPromotionSaveBean));
+                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
                 }
             });
         }
