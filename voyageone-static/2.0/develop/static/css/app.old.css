@@ -6511,7 +6511,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
     list-style-type: none;
 }
 /*菜单*/
-li input {
+.nav li input {
     position:absolute;left:0;margin-left:0;opacity:0;z-index:2;cursor:pointer;height:1em;width:1em;top:0;
 }
 input + ol {
