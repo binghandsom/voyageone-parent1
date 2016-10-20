@@ -111,11 +111,11 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-horizontal">
+						<div class="form-horizontal" ng-if="searchInfo.activityStart||searchInfo.activityEnd">
 							<div class="form-group">
 								<label class="col-sm-3 control-label">款号/Code/SKU</label>
 								<div class="col-sm-7">
-									<textarea class="form-control inherited no-resize" rows="3" ng-model="searchInfo.codeList" ></textarea>
+									<textarea class="form-control inherited no-resize" rows="3" ng-model="searchInfo.codeList"></textarea>
 									<div class="text-warnings" style="padding-left:0px">
 										<i class="icon fa fa-bell-o"></i>&nbsp;多项查询(多项换行分割)，精确查询
 									</div>

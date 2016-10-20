@@ -431,11 +431,11 @@ public class CmsBtJmPromotionService extends BaseService {
         String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
         if (codeListStr != null) {
             List<String> codeList = Arrays.asList(codeListStr.split("\n"));
-            codeList = codeList.stream().map(code -> StringUtils.trimToNull(code)).filter(code -> code != null).collect(Collectors.toList());
-            String codeStr = "'" + StringUtils.join(codeList, "','") + "'";
-            sqlParams.put("codeListStr", codeStr);
+            codeList = codeList.stream().map(pCode -> StringUtils.trimToNull(pCode)).filter(pCode -> pCode != null).distinct().collect(Collectors.toList());
+            sqlParams.put("codeList", codeList);
+        } else {
+            sqlParams.put("codeList", null);
         }
     }
-
 
 }

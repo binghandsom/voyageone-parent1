@@ -77,6 +77,31 @@ public class CmsBtJmPromotionExportContext {
         return stringBuffer.toString();
     }
 
+    public String getSessionType(){
+        String sessionCategory = "";
+        if (!StringUtil.isEmpty(this.extModel.getSessionType())) {
+            CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionType);
+            Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> this.extModel.getSessionCategory().equalsIgnoreCase(objectObjectMap.get("value").toString()) ).findFirst().orElse(null);
+            if(value != null){
+                sessionCategory = value.get("name").toString();
+            }
+        }
+        return sessionCategory;
+    }
+
+
+    public String getSessionCategory(){
+        String sessionCategory = "";
+        if (!StringUtil.isEmpty(this.extModel.getSessionCategory())) {
+            CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionCategory);
+            Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> this.extModel.getSessionCategory().equalsIgnoreCase(objectObjectMap.get("value").toString()) ).findFirst().orElse(null);
+            if(value != null){
+                sessionCategory = value.get("name").toString();
+            }
+        }
+        return sessionCategory;
+    }
+
     public String getBrandString() {
         return String.format("%s (%s)", this.model.getCmsBtJmMasterBrandId(), this.model.getBrand());
     }
