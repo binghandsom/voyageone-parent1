@@ -74,11 +74,15 @@ public class CmsBtJmPromotionDownloadImageZipService {
                     String imageType = cmsBtJmImageTemplateModel.getImageType();
                     //imagePath
                     String imagePath = cmsBtJmImageTemplateModel.getName();
-                    //imageUrl
-                    String url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
                     //压缩图片的所需要的对象
                     Map<String, String> urlMap = new HashMap<>();
-                    urlMap.put("url", url);
+                    if (picNameModel.getUseTemplate()) {
+                        //imageUrl
+                        String url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
+                        urlMap.put("url", url);
+                    } else {
+                        urlMap.put("url", url + imageName + suffix);
+                    }
                     urlMap.put("picturePath", imagePath);
                     promotionImagesList.add(urlMap);
                 }
@@ -91,21 +95,24 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 .map(cmsBtTagModel -> tagService.getJmModule(cmsBtTagModel))
                 .map(CmsBtTagJmModuleExtensionModel::getModuleTitle)
                 .collect(toList());
-        for (String moduleName : moduleTitleList) {
-            Map<String, String> urlMap = new HashMap<>();
-            String url = cmsBtJmImageTemplateService.getSeparatorBar(moduleName);
-            urlMap.put("url", url);
-            urlMap.put("picturePath", "聚美专场图片sample\\专场分隔栏\\" + moduleName);
-            promotionImagesList.add(urlMap);
+        if (moduleTitleList.size() > 0) {
+            for (String moduleName : moduleTitleList) {
+                Map<String, String> urlMap = new HashMap<>();
+                String url = cmsBtJmImageTemplateService.getSeparatorBar(moduleName);
+                urlMap.put("url", url);
+                urlMap.put("picturePath", "聚美专场图片sample\\专场分隔栏\\" + moduleName);
+                promotionImagesList.add(urlMap);
+            }
         }
-
         //根据promotionId在数据库中取得对应的Url-----专场飘窗图
         CmsBtJmBayWindowModel cmsBtJmBayWindowModel = CmsBtJmBayWindowService.getBayWindowByJmPromotionId(promotionId);
-        for (CmsBtJmBayWindowModel.BayWindow model : cmsBtJmBayWindowModel.getBayWindows()) {
-            Map<String, String> urlMap = new HashMap<>();
-            urlMap.put("url", model.getUrl());
-            urlMap.put("picturePath", "聚美专场图片sample\\专场飘窗\\" + model.getName());
-            promotionImagesList.add(urlMap);
+        if (cmsBtJmBayWindowModel != null) {
+            for (CmsBtJmBayWindowModel.BayWindow model : cmsBtJmBayWindowModel.getBayWindows()) {
+                Map<String, String> urlMap = new HashMap<>();
+                urlMap.put("url", model.getUrl());
+                urlMap.put("picturePath", "聚美专场图片sample\\专场飘窗\\" + model.getName());
+                promotionImagesList.add(urlMap);
+            }
         }
         //返回压缩流
         return imageToZip(promotionImagesList);
@@ -126,12 +133,14 @@ public class CmsBtJmPromotionDownloadImageZipService {
         params.put("cmsBtJmPromotionId", promotionId);
         //取得打包图片的名称和url
         List<CmsBtJmPromotionProductModel> modelList = cmsBtJmPromotionProductDao.selectList(params);
-        for (CmsBtJmPromotionProductModel model : modelList) {
-            //压缩图片的所需要的对象
-            Map<String, String> urlMap = new HashMap<>();
-            urlMap.put("url", url + model.getImage1() + suffix);
-            urlMap.put("picturePath", model.getProductCode());
-            promotionImagesList.add(urlMap);
+        if (modelList.size() > 0) {
+            for (CmsBtJmPromotionProductModel model : modelList) {
+                //压缩图片的所需要的对象
+                Map<String, String> urlMap = new HashMap<>();
+                urlMap.put("url", url + model.getImage1() + suffix);
+                urlMap.put("picturePath", model.getProductCode());
+                promotionImagesList.add(urlMap);
+            }
         }
         //返回压缩包流
         return imageToZip(promotionImagesList);
@@ -144,29 +153,30 @@ public class CmsBtJmPromotionDownloadImageZipService {
      * @return ZipOutputStream
      */
     public byte[] imageToZip(List<Map<String, String>> promotionImagesList) {
+        //如果promotionImagesList为空的时，不做处理
+        if (promotionImagesList.size() > 0 || promotionImagesList != null) {
+            byte[] buffer = new byte[1024];
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                 ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
 
-        byte[] buffer = new byte[1024];
-
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
-
-            for (Map<String, String> urlMap : promotionImagesList) {
-                int len;
-                URL url = new URL(urlMap.get("url"));
-                //Url
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                //压缩包内生成图片的路径以及名称
-                zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
-                try (InputStream inputStream = conn.getInputStream()) {
-                    //读入需要下载的文件的内容，打包到zip文件
-                    while ((len = inputStream.read(buffer)) > 0) {
-                        zipOutputStream.write(buffer, 0, len);
+                for (Map<String, String> urlMap : promotionImagesList) {
+                    int len;
+                    URL url = new URL(urlMap.get("url"));
+                    //Url
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //压缩包内生成图片的路径以及名称
+                    zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
+                    try (InputStream inputStream = conn.getInputStream()) {
+                        //读入需要下载的文件的内容，打包到zip文件
+                        while ((len = inputStream.read(buffer)) > 0) {
+                            zipOutputStream.write(buffer, 0, len);
+                        }
                     }
                 }
+                return byteArrayOutputStream.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return byteArrayOutputStream.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return null;
     }

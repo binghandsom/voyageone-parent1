@@ -325,7 +325,8 @@ define([
                 "imageBatchUpload": {
                     "templateUrl": "views/pop/jm/promotion/image.batch.upload.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/promotion/image.batch.upload.ctl",
-                    "controller": 'imageBatchUploadCtl as ctrl'
+                    "controller": 'imageBatchUploadCtl as ctrl',
+                    "size": "lg"
                 }
             },
             "jmPromotionDefaultSetting": {

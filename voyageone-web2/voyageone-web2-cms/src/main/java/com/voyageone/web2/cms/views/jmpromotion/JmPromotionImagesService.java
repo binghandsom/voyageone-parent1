@@ -36,6 +36,9 @@ public class JmPromotionImagesService extends BaseViewService {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
 
+        if (promotionImagesModel == null) {
+            return new HashMap<>(0);
+        }
         return getJmImageTemplate(promotionImagesModel);
     }
 
@@ -44,11 +47,13 @@ public class JmPromotionImagesService extends BaseViewService {
 
         Map<String, String> promotionImageUrl = new HashMap<String, String>();
         Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(model));
-        imageMap.forEach((s, o) -> {
-            if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
-                promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), "appEntrance", cmsBtJmPromotionSaveBean));
-            }
-        });
+        if (imageMap != null) {
+            imageMap.forEach((s, o) -> {
+                if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
+                    promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
+                }
+            });
+        }
 
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("promotionImagesModel", model);

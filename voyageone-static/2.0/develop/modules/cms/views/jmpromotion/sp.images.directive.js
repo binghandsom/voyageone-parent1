@@ -31,9 +31,10 @@ define([
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
+            brand = promotionInfo.brand ? promotionInfo.brand : '',
             popups = self.popups;
 
-        popups.openImageSuit({brand:promotionInfo.brand}).then(function (context) {
+        popups.openImageSuit({brand:brand}).then(function (context) {
             spDataService.getPromotionImgTpl(context).then(function(res){
                 self.imgUrls = res.promotionImageUrl;
                 self.imgUpEntity = res.promotionImagesModel;
@@ -45,12 +46,12 @@ define([
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
+            brand = promotionInfo ? promotionInfo.brand : '',
             popups = self.popups;
 
-        popups.openImageBatchJmUpload({brand:promotionInfo.brand}).then(function (context) {
-            spDataService.getPromotionImgTpl(context).then(function(res){
+        popups.openImageBatchJmUpload(_.extend(spDataService.commonUpEntity,{brand:brand
+            ,imgUpEntity:self.imgUpEntity})).then(function (context) {
 
-            });
         });
     };
 
