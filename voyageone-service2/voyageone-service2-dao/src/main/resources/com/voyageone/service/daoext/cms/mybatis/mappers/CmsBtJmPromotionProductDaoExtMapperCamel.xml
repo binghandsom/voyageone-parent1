@@ -489,25 +489,29 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         </foreach>
     </update>
 
-<select id="selectProductInfoByTagId" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionProductModel" parameterType="java.lang.Integer">
-    SELECT
-	t2.*
-    FROM
-        (
-            SELECT
-                *
-            FROM
-                cms_bt_jm_promotion_tag_product
-            WHERE
-                cms_bt_tag_id = #{tagId}
-        ) t1,
-        cms_bt_jm_promotion_product t2
-    WHERE
-        t1.cms_bt_jm_promotion_product_id = t2.id
-        and t2.jm_hash_id != ''
-    ORDER BY
-        t1.id
-</select>
+    <select id="selectProductInfoByTagId" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel" parameterType="java.lang.Integer">
+        SELECT
+            t2.*, t3.jumei_mall_id
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    cms_bt_jm_promotion_tag_product
+                WHERE
+                    cms_bt_tag_id = 998
+            ) t1,
+            cms_bt_jm_promotion_product t2,
+            cms_bt_jm_product t3
+        WHERE
+            t1.cms_bt_jm_promotion_product_id = t2.id
+        AND t2.jm_hash_id != ''
+        AND t2.quantity > 0
+        AND t2.channel_id = t3.channel_id
+        AND t2.product_code = t3.product_code
+        ORDER BY
+            t1.id
+    </select>
 
     <!--jm2 end-->
 

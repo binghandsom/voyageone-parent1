@@ -3,16 +3,23 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpEditDirectiveController($routeParams, jmPromotionService, alert, confirm, $translate, $filter) {
+    function SpEditDirectiveController($routeParams, jmPromotionService, alert, confirm, $translate, $filter, $scope) {
         this.$routeParams = $routeParams;
         this.jmPromotionService = jmPromotionService;
         this.alert = alert;
         this.confirm = confirm;
         this.$translate = $translate;
         this.$filter = $filter;
-        this.vm = {"jmMasterBrandList": [], "brandEnName": '', "mainChannelAb": ''};
+        this.vm = {"jmMasterBrandList": [], "brandEnName": '', "mainChannelAb": '', "isFromBox": false};
         this.editModel = {model: {}};
         this.datePicker = [];
+
+        $scope.$watch('ctrlEdit.editModel.model.activityEnd', function (newValue, oldValue, scope) {
+            if (newValue && scope.ctrlEdit.vm.isFromBox) {
+                scope.ctrlEdit.vm.isFromBox = false;
+                scope.ctrlEdit.editModel.model.activityEnd = new Date(newValue.toString().substr(0, 11) + "23:59:59");
+            }
+        });
     }
 
     SpEditDirectiveController.prototype.init = function () {
@@ -111,6 +118,18 @@ define([
             editModel.tagList.push({"id": "", "channelId": "", "tagName": "", active: 1});
         } else {
             editModel.tagList = [{"id": "", "channelId": "", "tagName": "", active: 1}];
+        }
+    };
+
+    // 只用于监控活动结束时间发生变化
+    SpEditDirectiveController.prototype.onDateChange = function () {
+        var self = this;
+        self.vm.isFromBox = true;
+
+        if (self.vm.datePicker2) {
+            self.vm.datePicker2 = false;
+        } else {
+            self.vm.datePicker2 = true;
         }
     };
 
@@ -349,7 +368,7 @@ define([
     cms.directive('spEdit', [function spEditDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', SpEditDirectiveController],
+            controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
             controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }

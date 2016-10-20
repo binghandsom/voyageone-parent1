@@ -103,5 +103,17 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.saveProductSort = function saveProductSort(tagId, productList) {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.saveProductSort({
+            tagId: tagId,
+            jmProductList: productList
+        }).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     cms.service('spDataService', SpDataService);
 });
