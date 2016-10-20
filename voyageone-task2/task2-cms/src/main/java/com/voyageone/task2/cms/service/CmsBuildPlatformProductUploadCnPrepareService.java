@@ -735,7 +735,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+            ((SingleCheckField) field).setValue(sxData.getTmpSxCnCode().getProductType());
         }
         {
             // ColorSn color
@@ -783,7 +783,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(((InputField) fieldsMap.get("Status")).getValue());
+            ((InputField) field).setValue(((SingleCheckField) fieldsMap.get("Status")).getValue().getValue());
         }
         {
             // Name 标题
@@ -807,7 +807,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("0");
+            ((SingleCheckField) field).setValue("0");
         }
         {
             // IsNewArrival 是否新品（0否， 1新品）
@@ -815,7 +815,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("0");
+            ((SingleCheckField) field).setValue("0");
         }
         {
             // IsRewardEligible 当前商品购买后是否计入积分（0否， 1计入）
@@ -823,7 +823,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("1");
+            ((SingleCheckField) field).setValue("1");
         }
         {
             // IsDiscountEligible 是否允许使用优惠券（0否， 1允许）
@@ -831,7 +831,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("1");
+            ((SingleCheckField) field).setValue("1");
         }
         {
             // OrderLimitCount 每单限购（0不限购， 大于0的场合就是限购件数）
@@ -839,7 +839,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue("0");
+            ((SingleCheckField) field).setValue("0");
         }
         {
             // IsPhoneOrderOnly 先写死0
