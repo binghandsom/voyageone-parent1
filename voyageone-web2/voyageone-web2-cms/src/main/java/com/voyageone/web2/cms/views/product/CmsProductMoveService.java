@@ -1,21 +1,31 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.impl.wms.InventoryCenterLogicService;
+import com.voyageone.service.impl.wms.InventoryCenterService;
+import com.voyageone.service.impl.wms.ItemDetailsService;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +60,21 @@ public class CmsProductMoveService extends BaseViewService {
 
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
+
+    @Autowired
+    private MongoSequenceService commSequenceMongoService;
+
+    @Autowired
+    private PriceService priceService;
+
+    @Autowired
+    private ItemDetailsService itemDetailsService;
+
+    @Autowired
+    private InventoryCenterService inventoryCenterService;
+
+    @Autowired
+    private InventoryCenterLogicService inventoryCenterLogicService;
 
     /**********************************************************/
     /****************移动Code到Group***************************/
@@ -504,13 +529,14 @@ public class CmsProductMoveService extends BaseViewService {
         // 取得Code下是否包含聚美平台
         if (sourceProductModel != null) {
             for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : sourceProductModel.getPlatforms().entrySet()) {
-                if (platform.getValue().getCartId().equals(27)) {
-                    returnMap.put("includeJM", true);
+                if (String.valueOf(platform.getValue().getCartId()).equals(CartEnums.Cart.JM.getId())
+                        || String.valueOf(platform.getValue().getCartId()).equals(CartEnums.Cart.CN.getId())) {
+                    returnMap.put("includeJMCN", true);
                     return returnMap;
                 }
             }
         }
-        returnMap.put("includeJM", false);
+        returnMap.put("includeJMCN", false);
         return returnMap;
     }
 
@@ -562,6 +588,8 @@ public class CmsProductMoveService extends BaseViewService {
         String sourceCode = (String) params.get("sourceCode");
         // 参照Code
         String refCode = (String) params.get("refCode");
+        // 参照Code的Product信息
+        CmsBtProductModel refProductModel = null;
 
         // 如果没有选择移动方式，出错
         if (StringUtils.isEmpty(destGroupType)) {
@@ -569,12 +597,19 @@ public class CmsProductMoveService extends BaseViewService {
             throw new BusinessException("7000112");
         }
 
-        // 参照Code没有选择
-        if ("select".equals(destGroupType) && StringUtils.isEmpty(refCode)) {
-            // 请选择编辑Group时参照的Code
-            throw new BusinessException("7000113");
+        // 选择参照Code
+        if ("select".equals(destGroupType)) {
+            if (StringUtils.isEmpty(refCode)) {
+                // 请选择编辑Group时参照的Code
+                throw new BusinessException("7000113");
+            } else {
+                refProductModel = productService.getProductByCode(channelId, refCode);
+                if (refProductModel == null) {
+                    // 移动的数据不整合
+                    throw new BusinessException("7000114");
+                }
+            }
         }
-
 
         // 取得源Code的Product信息
         CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
@@ -648,7 +683,294 @@ public class CmsProductMoveService extends BaseViewService {
     public Map<String, Object> moveSku(Map<String, Object> params, String channelId, String modifier, String lang) {
         Map<String, Object> returnInfo = new HashMap<>();
 
-        returnInfo.put("newProdId", new Integer(2513260));
+        // 取得移动需要的信息
+        // 目标Group类型 "new" or "old" or "select"
+        String destGroupType = (String) params.get("destGroupType");
+        // 移动的Sku列表
+        List<String> skuList = (List) params.get("skuList");
+        // 源Code
+        String sourceCode = (String) params.get("sourceCode");
+        // 参照Code
+        String refCode = (String) params.get("refCode");
+        // 参照Code的Product信息
+        CmsBtProductModel refProductModel = null;
+
+        // 如果没有选择移动方式，出错
+        if (StringUtils.isEmpty(destGroupType)) {
+            // 请选择移动方式
+            throw new BusinessException("7000112");
+        }
+
+        // 选择参照Code
+        if ("select".equals(destGroupType)) {
+            if (StringUtils.isEmpty(refCode)) {
+                // 请选择编辑Group时参照的Code
+                throw new BusinessException("7000113");
+            } else {
+                refProductModel = productService.getProductByCode(channelId, refCode);
+                if (refProductModel == null) {
+                    // 移动的数据不整合,移动Sku失败
+                    throw new BusinessException("7000116");
+                }
+            }
+        }
+
+        // 取得源Code的Product信息
+        CmsBtProductModel sourceProductModel = productService.getProductByCode(channelId, sourceCode);
+
+        // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
+        if (skuList == null || sourceProductModel == null || skuList.size() == 0 || !checkSkusInCode(sourceProductModel, skuList)) {
+            // 移动的数据不整合,移动Sku失败
+            throw new BusinessException("7000116");
+        }
+
+        // Check源Code是否存在于没有结束的活动中。
+        String promotionNames = promotionCodeService.getExistCodeInActivePromotion(channelId, sourceCode, null);
+        if (!StringUtil.isEmpty(promotionNames)) {
+            // 处理Code存在于没有结束的活动:" + promotionNames + "中，请从活动中移除，或者等活动结束后再进行移动Sku操作
+            throw new BusinessException("7000110", new Object[]{promotionNames});
+        }
+
+        // Check源Code是否是锁定的状态。
+        if (!checkCodeLocked(sourceProductModel)) {
+            // 处理Code正处于锁定的状态，请先解锁后再进行移动Sku操作
+            throw new BusinessException("7000111");
+        }
+
+        // ************这里开始正式移动*************
+        // 处理目标Code（新Code）
+        CmsBtProductModel newProductModel = null;
+        // 把源Code完整复制为新Code
+        BeanUtils.copy(sourceProductModel, newProductModel);
+        String now = DateTimeUtil.getNow();
+
+        // 重新设置那些需要更新的属性
+        newProductModel.setCreated(now);
+        newProductModel.setModified(now);
+        newProductModel.setCreater(modifier);
+        newProductModel.setModifier(modifier);
+        newProductModel.set_id(null);
+        newProductModel.setBi(new BaseMongoMap());
+        // 处理sales数据只保留移动的Sku
+        CmsBtProductModel_Sales sales = newProductModel.getSales();
+        if (sales != null) {
+            sales.setCodeSum7(new BaseMongoMap());
+            sales.setCodeSum30(new BaseMongoMap());
+            sales.setCodeSumAll(new BaseMongoMap());
+            List<CmsBtProductModel_Sales_Sku> saleSkus = sales.getSkus();
+            List<CmsBtProductModel_Sales_Sku> newSaleSkus = new ArrayList<>();
+            if (saleSkus != null) {
+                for (CmsBtProductModel_Sales_Sku saleSku : saleSkus) {
+                    if (skuList.contains(saleSku.getSkuCode())) {
+                        newSaleSkus.add(saleSku);
+                    }
+                }
+            }
+            sales.setSkus(newSaleSkus);
+        }
+        // 处理common
+        CmsBtProductModel_Common newCommonModel = newProductModel.getCommon();
+        newCommonModel.setModifier(modifier);
+        newCommonModel.setModified(now);
+
+        // 处理common.fields
+        CmsBtProductModel_Field newFieldModel = newCommonModel.getFields();
+        newFieldModel.setCode(skuList.get(0));
+        newFieldModel.setIsMasterMain(0);
+
+        // 处理common.sku
+        List<CmsBtProductModel_Sku> skusModel = newCommonModel.getSkus();
+        List<CmsBtProductModel_Sku> newSkusModel = new ArrayList<>();
+        // 去除没有选择的Sku
+        for (CmsBtProductModel_Sku skuModel : skusModel) {
+            if (skuList.contains(skuModel.getSkuCode())) {
+                newSkusModel.add(skuModel);
+            }
+        }
+        newCommonModel.setSkus(newSkusModel);
+
+        // 处理platforms.P0
+        CmsBtProductModel_Platform_Cart newP0Model = newProductModel.getPlatform(0);
+        if ("new".equals(destGroupType)) {
+            // 新Group的场合，P0下的主商品=源Code
+            newP0Model.setMainProductCode(sourceCode);
+        } else {
+            if ("old".equals(destGroupType)) {
+                // 原Group的场合,P0下的主商品不变
+            } else {
+                // 选择参照Code的场合,P0下的主商品=参照Code对应Group(carId=0)的主商品
+                CmsBtProductGroupModel group0 = productGroupService.selectProductGroupByCode(channelId, refCode, 0);
+                if (group0 != null) {
+                    newP0Model.setMainProductCode(group0.getMainProductCode());
+                } else {
+                    // 移动的数据不整合,移动Sku失败
+                    throw new BusinessException("7000116");
+                }
+            }
+        }
+
+        // 处理platforms.PXX
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : newProductModel.getPlatforms().entrySet()) {
+
+            CmsBtProductModel_Platform_Cart newPlatformModel = entry.getValue();
+            // 跳过P0（主数据）
+            if (entry.getValue().getCartId().equals(0)) {
+                continue;
+            }
+
+            newPlatformModel.setStatus(CmsConstants.ProductStatus.Pending.toString());
+            newPlatformModel.setpProductId(null);
+            newPlatformModel.setpNumIId(null);
+            newPlatformModel.setpPlatformMallId(null);
+            newPlatformModel.setpPublishTime(null);
+            newPlatformModel.setpPublishError(null);
+            newPlatformModel.setpStatus(CmsConstants.PlatformStatus.WaitingPublish);
+            newPlatformModel.setpBrandId(null);
+            newPlatformModel.setpBrandName(null);
+            newPlatformModel.setpReallyStatus(null);
+
+            // 去除没有选择的Sku
+            List<BaseMongoMap<String, Object>> platformSkusModel = newPlatformModel.getSkus();
+            List<BaseMongoMap<String, Object>> newPlatformSkusModel = new ArrayList<>();
+            //
+            for (BaseMongoMap<String, Object> platformSkus : platformSkusModel) {
+                if (skuList.contains(platformSkus.get("skuCode"))) {
+                    newPlatformSkusModel.add(platformSkus);
+                }
+            }
+            newPlatformModel.setSkus(newPlatformSkusModel);
+
+            // 设置主商品
+            if ("new".equals(destGroupType)) {
+                newPlatformModel.setpIsMain(1);
+                newPlatformModel.setMainProductCode(newFieldModel.getCode());
+            } else {
+                if ("old".equals(destGroupType)) {
+                    // 原Group的场合,PXX下的主商品不变
+                    newPlatformModel.setpIsMain(0);
+                } else {
+                    newPlatformModel.setpIsMain(0);
+                    // 选择参照Code的场合,PXX下的主商品=参照Code对应Group(carId=0)的主商品
+                    CmsBtProductGroupModel groupInfo = productGroupService.selectProductGroupByCode(channelId, refCode, entry.getValue().getCartId());
+                    if (groupInfo != null) {
+                        newPlatformModel.setMainProductCode(groupInfo.getMainProductCode());
+                    } else {
+                        // 移动的数据不整合,移动Sku失败
+                        throw new BusinessException("7000116");
+                    }
+                }
+            }
+        }
+
+        // 重新计算价格
+        try {
+            priceService.setPrice(newProductModel, false);
+        } catch (IllegalPriceConfigException ex) {
+            // 新Code价格计算时出现异常
+            throw new BusinessException("7000117");
+        } catch (PriceCalculateException ex) {
+            // 新Code价格计算时出现异常
+            throw new BusinessException("7000117");
+        }
+
+        newProductModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+
+        // 计算商品价格区间
+        productService.calculatePriceRange(newProductModel);
+        // 插入DB
+        productService.insert(newProductModel);
+
+
+        // 处理源Code
+        // common.skus中去除移动的sku
+        List<CmsBtProductModel_Sku> sourceSkusModel = sourceProductModel.getCommon().getSkus();
+        List<CmsBtProductModel_Sku> sourceSkusModelNew = sourceProductModel.getCommon().getSkus();
+        for (CmsBtProductModel_Sku skuModel : sourceSkusModel) {
+            if (!skuList.contains(skuModel.getSkuCode())) {
+                sourceSkusModelNew.add(skuModel);
+            }
+        }
+        sourceProductModel.getCommon().setSkus(sourceSkusModelNew);
+        sourceProductModel.getCommon().setModified(now);
+        sourceProductModel.getCommon().setModifier(modifier);
+
+        // platforms.skus中去除移动的sku
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : sourceProductModel.getPlatforms().entrySet()) {
+            // 跳过P0（主数据）
+            if (platform.getValue().getCartId().equals(0)) {
+                continue;
+            }
+            List<BaseMongoMap<String, Object>> platformSkusNew = new ArrayList<>();
+            for (BaseMongoMap<String, Object> platformSku : platform.getValue().getSkus()) {
+                if (!skuList.contains((String) platformSku.get("skuCode"))) {
+                    platformSkusNew.add(platformSku);
+                }
+            }
+            platform.getValue().setSkus(platformSkusNew);
+            platform.getValue().setModified(now);
+        }
+
+        // sales中去除移动的sku
+        List<CmsBtProductModel_Sales_Sku> salesSkusNew = new ArrayList<>();
+        for (CmsBtProductModel_Sales_Sku salesSku : sourceProductModel.getSales().getSkus()) {
+            if (!skuList.contains(salesSku.getSkuCode())) {
+                salesSkusNew.add(salesSku);
+            }
+        }
+        sourceProductModel.getSales().setSkus(salesSkusNew);
+
+        // 计算商品价格区间
+        productService.calculatePriceRange(sourceProductModel);
+        // 更新源Code
+        productService.updateProductForMove(channelId, sourceProductModel, modifier);
+
+
+
+        // 处理Group
+        List<TypeChannelBean> typeChannelBeanListDisplay = TypeChannels.getTypeListSkuCarts(channelId, "D", "en"); // 取得展示用数据
+        if (ListUtils.isNull(typeChannelBeanListDisplay)) {
+            // 移动的数据不整合,移动Sku失败
+            throw new BusinessException("7000116");
+        }
+        for (TypeChannelBean shop : typeChannelBeanListDisplay) {
+            // 新建Group(选择新Group或者聚美平台或者独立官网平台)
+            if ("new".equals(destGroupType)
+                    || shop.getValue().equals(CartEnums.Cart.JM.getId())
+                    || shop.getValue().equals(CartEnums.Cart.CN.getId())) {
+                createNewGroup(channelId, Integer.parseInt(shop.getValue()), newFieldModel.getCode());
+            } else {
+                // 取得Group信息
+                CmsBtProductGroupModel groupModel = null;
+                if ("old".equals(destGroupType)) {
+                    groupModel = productGroupService.selectProductGroupByCode(channelId, sourceCode, Integer.parseInt(shop.getValue()));
+                    groupModel.getProductCodes().add(sourceCode);
+                } else {
+                    groupModel = productGroupService.selectProductGroupByCode(channelId, refCode, Integer.parseInt(shop.getValue()));
+                    groupModel.getProductCodes().add(refCode);
+                }
+                // 计算Group价格区间
+                productGroupService.calculatePriceRange(groupModel);
+                // 更新Group
+                productGroupService.update(groupModel);
+            }
+        }
+
+        // 更新wms_bt_item_details表
+        itemDetailsService.updateCodeForMove(channelId, sourceCode, skuList, newFieldModel.getCode(), modifier);
+        // 更新wms_bt_inventory_center表
+        inventoryCenterService.updateCodeForMove(channelId, sourceCode, skuList, newFieldModel.getCode(), modifier);
+        // 更新wms_bt_inventory_center_logic表
+        inventoryCenterLogicService.updateCodeForMove(channelId, sourceCode, skuList, newFieldModel.getCode(), modifier);
+
+
+        // 插入商品操作履历
+//        productStatusHistoryService.insert(channelId, sourceCode,
+//                productModel.getPlatform(cartId).getStatus(), cartId, EnumProductOperationType.MoveCode,
+//                "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + destGroupModel.getGroupId(), modifier);
+
+
+
+        returnInfo.put("newProdId", newProductModel.getProdId());
         return returnInfo;
     }
 

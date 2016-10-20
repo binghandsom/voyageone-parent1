@@ -11,7 +11,7 @@ define([
             this.sourceCode;
             this.skuList = [];
             this.skuListView;
-            this.includeJM;
+            this.includeJMCN;
             this.destGroupType = "new";
             this.codeList = [];
             this.refCode;
@@ -47,7 +47,7 @@ define([
                 self.productDetailService.moveSkuInit({
                     sourceCode: self.sourceCode
                 }).then(function (resp) {
-                    self.includeJM = resp.data.includeJM;
+                    self.includeJMCN = resp.data.includeJMCN;
                 });
             },
 

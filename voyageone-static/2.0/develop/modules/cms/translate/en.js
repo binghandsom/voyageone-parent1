@@ -838,7 +838,7 @@ define(function () {
         "TXT_NEW_CODE_UNDER_NEW_GROUP": "新Group下新建Code",
         "TXT_NEW_CODE_UNDER_OLD_GROUP": "原Group下新建Code ",
         "TXT_NEW_CODE_CHOOSED_GROUP": "下面选择的Code对应的Group下新建Code",
-        "TXT_NEW_CODE_JUMEI_ALERT": "(聚美平台因为1个Group下只能存在一个Code,所以还是新Group)",
+        "TXT_NEW_CODE_JUMEI_ALERT": "(聚美和独立官网平台因为1个Group下只能存在一个Code,所以还是新Group)",
         "TXT_GROUP_SEARCH": "Group 检索",
         "TXT_CODE_SEARCH": "Code 检索",
         "TXT_SALE_STATUS": "售卖状态",
