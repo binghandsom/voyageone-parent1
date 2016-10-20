@@ -529,9 +529,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_sku这张表且删了这张表之后，把这里的删掉
         CmsTmpSxCnSkuModel tmpSxCnSkuModel = cmsTmpSxCnSkuDao.selectOne(searchParam);
         if (tmpSxCnSkuModel == null) {
-            String errMsg = String.format("cms_tmp_sx_cn_sku不存在此code[%s]信息!", product.getCommon().getFields().getCode());
+            String errMsg = String.format("cms_tmp_sx_cn_sku不存在此code[%s]sku[%s]信息!", product.getCommon().getFields().getCode(), sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
             $error(errMsg);
-            throw new BusinessException(errMsg);
+//            throw new BusinessException(errMsg);
+            return null;
         }
         // added by morse.lu 2016/10/19 end
 
