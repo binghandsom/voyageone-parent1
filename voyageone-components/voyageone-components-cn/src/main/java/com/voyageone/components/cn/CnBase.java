@@ -19,7 +19,7 @@ public abstract class CnBase extends ComponentBase {
     protected static final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
     protected static final String trustStore_jc_password = "voyage1#";
 
-    protected static final String trustStore_liking = "/vdb/app-shared/voyageone_web/contents/other/third_party/Liking/cn_key/liking_store";
+    protected static final String trustStore_liking = "/opt/app-shared/voyageone_web/contents/other/third_party/Liking/cn_key/liking_store";
     protected static final String trustStore_liking_password = "voyage1#";
 
     protected String post(String apiAction, Map<String, Object> jsonMap, ShopBean shopBean) throws Exception {
