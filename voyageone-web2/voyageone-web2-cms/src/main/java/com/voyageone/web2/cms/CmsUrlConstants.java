@@ -84,6 +84,7 @@ public interface CmsUrlConstants {
                 String UpdatePromotionProduct = "updatePromotionProduct";
                 String UpdatePromotionProductTag = "updatePromotionProductTag";
                 String SelectChangeCountByPromotionId = "selectChangeCountByPromotionId";
+                String UpdateRemark="updateRemark";
                 String RefreshPrice="refreshPrice";
             }
         }
@@ -526,6 +527,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/jmPromotion/";
 
             String UPLOAD = "upload";
+
+            String BATCH_UPLOAD = "batchUpload";
         }
     }
 

@@ -9,6 +9,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -395,6 +396,11 @@ public class CmsBtJmPromotionProduct3Service {
 
     public int selectCountByPromotionId(long JmPromotionId) {
         return daoExt.selectCountByPromotionId(JmPromotionId);
+    }
+
+
+    public int updateRemark(UpdateRemarkParameter parameter) {
+        return daoExt.updateRemark(parameter.getJmPromotionProductId(), parameter.getRemark());
     }
 
     public List<JmProduct> getPromotionTagProductList(int tagId) {

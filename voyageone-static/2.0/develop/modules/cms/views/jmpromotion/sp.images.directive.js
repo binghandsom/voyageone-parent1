@@ -27,13 +27,17 @@ define([
 
     };
 
+    /**
+     * 页面选择套图弹出框
+     */
     SpImagesDirectiveController.prototype.popImageSuit = function () {
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
+            brand = promotionInfo.brand ? promotionInfo.brand : '',
             popups = self.popups;
 
-        popups.openImageSuit({brand:promotionInfo.brand}).then(function (context) {
+        popups.openImageSuit({brand:brand}).then(function (context) {
             spDataService.getPromotionImgTpl(context).then(function(res){
                 self.imgUrls = res.promotionImageUrl;
                 self.imgUpEntity = res.promotionImagesModel;
@@ -41,20 +45,26 @@ define([
         });
     };
 
+    /**
+     *  页面批量导入弹出框
+     */
     SpImagesDirectiveController.prototype.popImageBatchUpload = function () {
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
+            brand = promotionInfo ? promotionInfo.brand : '',
             popups = self.popups;
 
-        popups.openImageBatchJmUpload({brand:promotionInfo.brand}).then(function (context) {
-            spDataService.getPromotionImgTpl(context).then(function(res){
+        popups.openImageBatchJmUpload(_.extend(spDataService.commonUpEntity,{brand:brand
+            ,imgUpEntity:self.imgUpEntity})).then(function (context) {
 
-            });
         });
     };
 
-
+    /**
+     * 页面单个图片上传弹出框
+     * @param imageName  图片类型
+     */
     SpImagesDirectiveController.prototype.popImageJmUpload = function(imageName){
         var self = this,
             spDataService = self.spDataService,

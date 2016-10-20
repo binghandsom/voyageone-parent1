@@ -166,7 +166,10 @@
 						</label>
 					</td>
 					<td class="text-center">{{promotion.id}}</td>
-					<td class="text-center"></td>
+					<td class="text-left" style="width:165px;height: 114px">
+						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)">
+							<img image="{{promotion.entryImg}}" alt="" class="thumb-sm-search pull-left"/></a>
+					</td>
 					<td class="text-left yellowLink"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
 					<td class="text-left">{{promotion.brand}}</td>
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>

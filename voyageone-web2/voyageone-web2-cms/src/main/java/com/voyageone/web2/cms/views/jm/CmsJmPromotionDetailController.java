@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitParameter;
@@ -279,7 +280,11 @@ public class CmsJmPromotionDetailController extends CmsController {
         int count = service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
         return success(count);
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateRemark)
+    public AjaxResponse updateRemark(@RequestBody UpdateRemarkParameter parameter) {
+        int count = service3.updateRemark(parameter);
+        return success(count);
+    }
 
     //刷新参考价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.RefreshPrice)
@@ -287,7 +292,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         Map<String,Object> param=new HashedMap();
         param.put("jmPromotionId",jmPromotionId);
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
-        // // TODO: 2016/10/18  加入 发消息  李俊提供
         return success(null);
     }
     //jm2 end
