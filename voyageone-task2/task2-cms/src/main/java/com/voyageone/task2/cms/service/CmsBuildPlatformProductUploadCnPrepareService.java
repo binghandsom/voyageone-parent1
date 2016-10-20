@@ -839,7 +839,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((SingleCheckField) field).setValue("0");
+            ((InputField) field).setValue("0");
         }
         {
             // IsPhoneOrderOnly 先写死0
