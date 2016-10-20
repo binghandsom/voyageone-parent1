@@ -40,6 +40,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
     private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
+    @Autowired
+    private CmsBtJmImageTemplateService jmImageTemplateService;
 
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
@@ -384,10 +386,11 @@ public class CmsBtJmPromotionService extends BaseService {
             qryObj.setProjectionExt("appChannelEntrance");
 
             for (MapModel promObj : promList) {
-                qryObj.setParameters(promObj.get("id"));
+                Integer jmId = (Integer) promObj.get("id");
+                qryObj.setParameters(jmId);
                 CmsBtJmPromotionImagesModel imgObj = jmPromotionImagesDao.selectOneWithQuery(qryObj);
                 if (imgObj != null) {
-                    promObj.put("entryImg", imgObj.getAppChannelEntrance());
+                    promObj.put("entryImg", jmImageTemplateService.getUrl(jmId + "_" + imgObj.getAppChannelEntrance(), "appChannelEntrance", jmId));
                 }
             }
         }

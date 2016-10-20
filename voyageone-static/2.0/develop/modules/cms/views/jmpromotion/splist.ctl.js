@@ -78,6 +78,9 @@ define([
             })
         };
 
+        $scope.openProdImagedetail = function(item) {
+            this.openImagedetail({'mainPic': item.entryImg, 'search': 'jmpromlist', 'hostUrl': 0});
+        };
     };
 
     indexController.$inject = ['$scope', 'promotionService', 'jmPromotionService', "alert", 'confirm', '$translate', 'cookieService'];
