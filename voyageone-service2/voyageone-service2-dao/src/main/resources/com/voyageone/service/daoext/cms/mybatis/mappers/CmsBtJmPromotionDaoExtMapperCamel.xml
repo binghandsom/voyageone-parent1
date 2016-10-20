@@ -103,10 +103,10 @@
 
     <!-- 查询聚美专场一览  ！！改了本sql的查询条件时必须要修改统计个数的sql文 -->
     <select id="getJmPromotionList" resultType="com.voyageone.service.model.util.MapModel">
-        select jmprom.*, prom.id as promId, jmpromext.app_page_id, jmpromext.pc_page_id, jmpromext.main_title
+        select DISTINCT jmprom.*, prom.id as promId, jmpromext.app_page_id, jmpromext.pc_page_id, jmpromext.main_title
         from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
         on prom.promotion_id = jmprom.id
-        <if test="codeListStr != null">
+        <if test="codeList != null">
             INNER JOIN cms_bt_jm_promotion_sku as jmpromsku
             on jmpromsku.cms_bt_jm_promotion_id = jmprom.id and jmpromsku.channel_id = #{channelId}
         </if>
@@ -155,8 +155,10 @@
                     and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
                 </if>
             </if>
-            <if test="codeListStr != null">
-                and ( jmpromsku.product_code in (#{codeListStr}) or jmpromsku.sku_code in (#{codeListStr}) or jmpromsku.product_model in (#{codeListStr}) )
+            <if test="codeList != null">
+                and ( jmpromsku.product_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
             </if>
         </where>
         order by id desc
@@ -165,9 +167,9 @@
 
     <!-- 统计聚美专场个数的sql文 -->
     <select id="getJmPromotionCount" resultType="long">
-        select count(jmprom.id) from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
+        select count(DISTINCT jmprom.id) from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
         on prom.promotion_id = jmprom.id
-        <if test="codeListStr != null">
+        <if test="codeList != null">
             INNER JOIN cms_bt_jm_promotion_sku as jmpromsku
             on jmpromsku.cms_bt_jm_promotion_id = jmprom.id and jmpromsku.channel_id = #{channelId}
         </if>
@@ -216,8 +218,10 @@
                     and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
                 </if>
             </if>
-            <if test="codeListStr != null">
-                and ( jmpromsku.product_code in (#{codeListStr}) or jmpromsku.sku_code in (#{codeListStr}) or jmpromsku.product_model in (#{codeListStr}) )
+            <if test="codeList != null">
+                and ( jmpromsku.product_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
             </if>
         </where>
     </select>
