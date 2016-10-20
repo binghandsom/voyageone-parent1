@@ -753,6 +753,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             ((InputField) field).setValue(sxData.getTmpSxCnCode().getColorSh());
         }
         {
+            // Weight 先写死1
+            String field_id = "Weight";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("1");
+        }
+        {
             // CategoryIds
             String field_id = "CategoryIds";
             listSp.add(field_id);
