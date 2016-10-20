@@ -31,7 +31,7 @@ public class CnSellerCatService {
                 catFullId = parentCurrentNode.getFullCatId();
             }
         }
-        if (!StringUtils.isEmpty(catFullId)) {
+        if (StringUtils.isEmpty(catFullId)) {
             catFullId = catId;
         } else {
             catFullId = catFullId + "-" + catId;
