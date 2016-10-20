@@ -229,7 +229,9 @@ public class CmsSizeChartService extends BaseViewService {
      */
     public List<CmsBtSizeChartBean> changeToBeanList(List<CmsBtSizeChartModel> imageGroupList, String channelId, String lang) {
         List<CmsBtSizeChartBean> CmsBtSizeChartBeanList = new ArrayList<>();
-
+        List<TypeChannelBean> beans41 = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, channelId);
+        List<TypeChannelBean> beans57 = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId);
+        List<TypeChannelBean> beans58 = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId);
         for (CmsBtSizeChartModel imageGroup : imageGroupList) {
             CmsBtSizeChartBean dest = new CmsBtSizeChartBean();
             try {
@@ -239,7 +241,7 @@ public class CmsSizeChartService extends BaseViewService {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
-            editCmsBtSizeChartBean(dest, channelId, lang);
+            editCmsBtSizeChartBean(beans41, beans57, beans58, dest, channelId, lang);
             CmsBtSizeChartBeanList.add(dest);
         }
 
@@ -253,13 +255,19 @@ public class CmsSizeChartService extends BaseViewService {
      * @param channelId 渠道id
      * @param lang 语言
      */
-    public void editCmsBtSizeChartBean(CmsBtSizeChartBean bean, String channelId, String lang) {
+    public void editCmsBtSizeChartBean(List<TypeChannelBean> beans41, List<TypeChannelBean> beans57, List<TypeChannelBean> beans58,
+                                       CmsBtSizeChartBean bean, String channelId, String lang) {
         List<String> brandNameTrans = new ArrayList<>();
         for (String brandName : bean.getBrandName()) {
             if ("All".equals(brandName)) {
                 brandNameTrans.add("All");
             } else {
-                TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                // TypeChannelBean  typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, channelId, brandName, lang);
+                TypeChannelBean typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans41) {
+                    if (typeChannelBeanTemp.getValue().equals(brandName) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     brandNameTrans.add(typeChannelBean.getName());
                 }
@@ -272,7 +280,12 @@ public class CmsSizeChartService extends BaseViewService {
             if ("All".equals(productType)) {
                 productTypeTrans.add("All");
             } else {
-                TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                // TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, productType, lang);
+                TypeChannelBean typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans57) {
+                    if (typeChannelBeanTemp.getValue().equals(productType) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     productTypeTrans.add(typeChannelBean.getName());
                 }
@@ -285,7 +298,12 @@ public class CmsSizeChartService extends BaseViewService {
             if ("All".equals(sizeType)) {
                 sizeTypeTrans.add("All");
             } else {
-                TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                // TypeChannelBean typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, sizeType, lang);
+                TypeChannelBean typeChannelBean = null;
+                for (TypeChannelBean typeChannelBeanTemp : beans58) {
+                    if (typeChannelBeanTemp.getValue().equals(sizeType) && typeChannelBeanTemp.getLang_id().equals(lang))
+                        typeChannelBean =  typeChannelBeanTemp;
+                }
                 if (typeChannelBean != null) {
                     sizeTypeTrans.add(typeChannelBean.getName());
                 }

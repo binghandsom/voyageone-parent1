@@ -128,6 +128,8 @@ public class CartEnums {
 					return TT;
                 case "31":
                     return USTT;
+				case "32":
+					return LIKING;
 				case "928":
 					return USJGJ;
 				case "929":

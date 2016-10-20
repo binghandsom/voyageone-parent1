@@ -20,6 +20,9 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.product.SxData;
+import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
+import com.voyageone.service.dao.cms.CmsTmpSxCnCodeDao;
+import com.voyageone.service.dao.cms.CmsTmpSxCnSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -28,8 +31,7 @@ import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -73,6 +75,12 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private CmsBtSxCnInfoDao cmsBtSxCnInfoDao;
+    @Autowired
+    private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
+    @Autowired
+    private CmsTmpSxCnCodeDao cmsTmpSxCnCodeDao;
+    @Autowired
+    private CmsTmpSxCnSkuDao cmsTmpSxCnSkuDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -204,6 +212,20 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
             sxData.setHasSku(true); // 独立域名都有sku
 
+            // added by morse.lu 2016/10/19 start
+            // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_code这张表且删了这张表之后，把这里的删掉
+            Map<String, Object> searchParam = new HashMap<>();
+            searchParam.put("channelId", channelId);
+            searchParam.put("code", sxData.getMainProduct().getCommon().getFields().getCode());
+            CmsTmpSxCnCodeModel tmpSxCnCodeModel = cmsTmpSxCnCodeDao.selectOne(searchParam);
+            if (tmpSxCnCodeModel == null) {
+                String errMsg = String.format("cms_tmp_sx_cn_code不存在此code[%s]信息!", sxData.getMainProduct().getCommon().getFields().getCode());
+                $error(errMsg);
+                throw new BusinessException(errMsg);
+            }
+            sxData.setTmpSxCnCode(tmpSxCnCodeModel);
+            // added by morse.lu 2016/10/19 end
+
             // 上传code信息
             String productXml = uploadProduct(sxData, cmsMtPlatformCategorySchemaModel, shopBean, getTaskNameForUpdate());
 
@@ -268,13 +290,21 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
         insertCnInfoModel.setCartId(cartId);
         insertCnInfoModel.setGroupId(groupId);
-        List<String> catIds = new ArrayList<>();
+        Set<String> catIds = new HashSet<>();
         for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
             catIds.addAll(sellerCat.getcIds());
         }
-        insertCnInfoModel.setCatIds(catIds);
+        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
+        String strUrlKey =
+                sxData.getMainProduct().getOrgChannelId()
+                        + "-" + sxData.getTmpSxCnCode().getBrand()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getModel()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getCode()
+                ;
+        strUrlKey = strUrlKey.replaceAll(" ", "").replaceAll("_", "-");
+        insertCnInfoModel.setUrlKey(strUrlKey);
         insertCnInfoModel.setProductXml(productXml);
         insertCnInfoModel.setSkuXml(skuXml);
         insertCnInfoModel.setPublishFlg(0);
@@ -345,10 +375,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         }
 
         // 匹配之后的XML格式数据
-        String xml = cnSchemaService.writeSkuXmlString(listSku);
-        $debug("sku xml:" + xml);
+        if (ListUtils.notNull(listSku)) {
+            String xml = cnSchemaService.writeSkuXmlString(listSku);
+            $debug("sku xml:" + xml);
+            return xml;
+        } else {
+            return null;
+        }
 
-        return xml;
     }
 
     /**
@@ -464,21 +498,45 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 }
 
                 String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, sizeMap, skuInventoryMap.get(skuCode));
-                listSku.add(fieldList);
+                fieldList = constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, sizeMap, skuInventoryMap.get(skuCode));
+                if (ListUtils.notNull(fieldList)) {
+                    listSku.add(fieldList);
+                }
             }
         }
 
         return listSku;
     }
 
-    private void constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Map<String, String> sizeMap, Integer qty) throws Exception {
+    private List<Field> constructEachSkuPlatformProps(List<Field> fields, BaseMongoMap<String, Object> sku, CmsBtProductModel product, Map<String, String> sizeMap, Integer qty) throws Exception {
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
             fieldsMap.put(field.getId(), field);
         }
 
-//        {
+        boolean hasChange = false;
+
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", product.getChannelId());
+        searchParam.put("code", product.getCommon().getFields().getCode());
+        searchParam.put("sku", sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+        CmsBtSxCnSkuModel oldSxCnSkuModel = cmsBtSxCnSkuDao.selectOne(searchParam);
+        if (oldSxCnSkuModel == null) {
+            hasChange = true;
+        }
+
+        // added by morse.lu 2016/10/19 start
+        // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_sku这张表且删了这张表之后，把这里的删掉
+        CmsTmpSxCnSkuModel tmpSxCnSkuModel = cmsTmpSxCnSkuDao.selectOne(searchParam);
+        if (tmpSxCnSkuModel == null) {
+            String errMsg = String.format("cms_tmp_sx_cn_sku不存在此code[%s]sku[%s]信息!", product.getCommon().getFields().getCode(), sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+            $error(errMsg);
+//            throw new BusinessException(errMsg);
+            return null;
+        }
+        // added by morse.lu 2016/10/19 end
+
+ //        {
 //            // OrgChannelId 原始channel id
 //            String field_id = "OrgChannelId";
 //            Field field = fieldsMap.get(field_id);
@@ -497,7 +555,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "Sku";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+            ((InputField) field).setValue("S" + sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
         }
         {
             // Quantity 库存
@@ -516,19 +574,29 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
-            String adjSize = sizeMap.get(size);
+//            String adjSize = sizeMap.get(size);
+            String adjSize = tmpSxCnSkuModel.getSize();
             if (StringUtils.isEmpty(adjSize)) {
                 throw new BusinessException("未设定尺码转换!");
             }
 
             ((InputField) field).setValue(adjSize);
+
+            if (!hasChange && !((InputField) field).getValue().equals(oldSxCnSkuModel.getSize())) {
+                hasChange = true;
+            }
         }
         {
             // ShowSize 显示尺码
             String field_id = "ShowSize";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
+            ((InputField) field).setValue(tmpSxCnSkuModel.getShowSize());
+
+            if (!hasChange && !((InputField) field).getValue().equals(oldSxCnSkuModel.getShowSize())) {
+                hasChange = true;
+            }
         }
         {
             // Msrp 建议零售价
@@ -536,6 +604,10 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
+                hasChange = true;
+            }
         }
         {
             // Price 价格
@@ -543,8 +615,17 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+
+            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
+                hasChange = true;
+            }
         }
 
+        if (hasChange) {
+            return fields;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -555,7 +636,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
      */
     private void constructProductCustomPlatformProps(List<Field> fields, List<String> listSp, CmsBtProductModel product, ExpressionParser expressionParser, ShopBean shopBean, String modifier) throws Exception {
         SxData sxData = expressionParser.getSxData();
-        String strUrlKey = product.getOrgChannelId() + "-" + Long.toString(product.getProdId());
+//        String strUrlKey = product.getOrgChannelId() + "-" + Long.toString(product.getProdId());
+        String strUrlKey =
+                sxData.getMainProduct().getOrgChannelId()
+                        + "-" + sxData.getTmpSxCnCode().getBrand()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getModel()
+                        + "-" + sxData.getMainProduct().getCommon().getFields().getCode()
+                ;
+        strUrlKey = strUrlKey.replaceAll(" ", "").replaceAll("_", "-");
 
         Map<String, Field> fieldsMap = new HashMap<>();
         for (Field field : fields) {
@@ -608,7 +696,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getCode());
+            ((InputField) field).setValue("C" + product.getCommon().getFields().getCode());
         }
         {
             // Status 商品处理动作：1创建或更新， 2删除
@@ -642,6 +730,187 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             ((InputField) field).setValue(strUrlKey);
         }
         {
+            // AttributeSetName productType
+            String field_id = "AttributeSetName";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+        }
+        {
+            // ColorSn color
+            String field_id = "ColorSn";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColor());
+        }
+        {
+            // ShColorSn colorSh
+            String field_id = "ShColorSn";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColorSh());
+        }
+        {
+            // ColorMap 和ColorSn一样
+            String field_id = "ColorMap";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(((InputField) fieldsMap.get("ColorSn")).getValue());
+        }
+        {
+            // ShColorMap 和ShColorSn一样
+            String field_id = "ShColorMap";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(((InputField) fieldsMap.get("ShColorSn")).getValue());
+        }
+        {
+            // Weight 先写死1
+            String field_id = "Weight";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("1");
+        }
+        {
+            // StatusCN 和status一样
+            String field_id = "StatusCN";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(((InputField) fieldsMap.get("Status")).getValue());
+        }
+        {
+            // Name 标题
+            String field_id = "Name";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getCommon().getFields().getOriginalTitleCn());
+        }
+        {
+            // Abstract 同Name
+            String field_id = "Abstract";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(((InputField) fieldsMap.get("Name")).getValue());
+        }
+        {
+            // Taxable 是否需要缴税（0无税， 2需要缴税<按收货地区固定税率>）
+            String field_id = "Taxable";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // IsNewArrival 是否新品（0否， 1新品）
+            String field_id = "IsNewArrival";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // IsRewardEligible 当前商品购买后是否计入积分（0否， 1计入）
+            String field_id = "IsRewardEligible";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("1");
+        }
+        {
+            // IsDiscountEligible 是否允许使用优惠券（0否， 1允许）
+            String field_id = "IsDiscountEligible";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("1");
+        }
+        {
+            // OrderLimitCount 每单限购（0不限购， 大于0的场合就是限购件数）
+            String field_id = "OrderLimitCount";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // IsPhoneOrderOnly 先写死0
+            String field_id = "IsPhoneOrderOnly";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // Shipped 先写死0
+            String field_id = "Shipped";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // Returned 先写死0
+            String field_id = "Returned";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // ReturnRatePercentage 先写死0
+            String field_id = "ReturnRatePercentage";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0.00");
+        }
+        {
+            // Popularity 先写死0
+            String field_id = "Popularity";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // PopularityPercentage 先写死0
+            String field_id = "PopularityPercentage";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue("0");
+        }
+        {
+            // MaterialFabric_01 材质
+            String field_id = "MaterialFabric_01";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getCommon().getFields().getMaterialCn());
+        }
+        {
+            // PrimaryCategoryId 主类目id
+            String field_id = "PrimaryCategoryId";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
+            if (ListUtils.notNull(defaultValues)) {
+//                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
+                String propValue = defaultValues.get(0).getcIds().stream().collect(Collectors.joining(","));
+                ((InputField) field).setValue(propValue);
+            }
+        }
+        {
             // CategoryIds
             String field_id = "CategoryIds";
             listSp.add(field_id);
@@ -650,7 +919,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             // 用"店铺内分类"，逗号分隔
             List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
             if (ListUtils.notNull(defaultValues)) {
-                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
+//                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
+                String propValue = defaultValues.stream().map(cids -> cids.getcIds().stream().collect(Collectors.joining(","))).collect(Collectors.joining(","));
                 ((InputField) field).setValue(propValue);
             } else {
                 throw new BusinessException(String.format("商品[code:]未选择店铺内分类!", product.getCommon().getFields().getCode()));
@@ -662,7 +932,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            setDescriptionValue(expressionParser, shopBean, modifier, field, true);
+//            setDescriptionValue(expressionParser, shopBean, modifier, field, true);
+            ((InputField) field).setValue(product.getCommon().getFields().getLongDesCn());
         }
         {
             // ShortDescription 商品简短说明
@@ -670,7 +941,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            setDescriptionValue(expressionParser, shopBean, modifier, field, false);
+//            setDescriptionValue(expressionParser, shopBean, modifier, field, false);
+            ((InputField) field).setValue(product.getCommon().getFields().getShortDesCn());
         }
         {
             // MainImageList 商品主图  逗号分隔
@@ -728,23 +1000,24 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getBrand());
+//            ((InputField) field).setValue(product.getCommon().getFields().getBrand());
+            ((InputField) field).setValue(sxData.getTmpSxCnCode().getBrand());
         }
-//        {
-//            // IsOnSale 上下架（0下架， 1上架）
-//            String field_id = "IsOnSale";
-//            listSp.add(field_id);
-//            Field field = fieldsMap.get(field_id);
-//
-//            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
-//            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
-//                ((SingleCheckField) field).setValue("1");
-//            } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
-//                ((SingleCheckField) field).setValue("0");
-//            } else {
-//                throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
-//            }
-//        }
+        {
+            // IsOnSale 上下架（0下架， 1上架）
+            String field_id = "IsOnSale";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+            if (platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                ((SingleCheckField) field).setValue("1");
+            } else if (platformActive == CmsConstants.PlatformActive.ToInStock) {
+                ((SingleCheckField) field).setValue("0");
+            } else {
+                throw new BusinessException("PlatformActive must be Onsale or Instock, but now it is " + platformActive);
+            }
+        }
         {
             // Msrp 建议零售价
             String field_id = "Msrp";

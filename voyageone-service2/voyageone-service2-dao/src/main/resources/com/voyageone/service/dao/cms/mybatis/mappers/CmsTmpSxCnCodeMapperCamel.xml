@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsTmpSxCnCodeDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsTmpSxCnCodeModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `code`, `product_type`, `color`, `color_sh`, `brand`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_code
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsTmpSxCnCodeModel" >
+        update cms_tmp_sx_cn_code
+        <set >
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null" >
+                `product_type` = #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="color != null" >
+                `color` = #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="colorSh != null" >
+                `color_sh` = #{colorSh,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null" >
+                `brand` = #{brand,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_tmp_sx_cn_code
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_code
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="color != null" >
+                and `color` = #{color,jdbcType=VARCHAR}
+            </if>
+            <if test="colorSh != null" >
+                and `color_sh` = #{colorSh,jdbcType=VARCHAR}
+            </if>
+            <if test="brand != null" >
+                and `brand` = #{brand,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_tmp_sx_cn_code
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="color != null" >
+                and `color` = #{color,jdbcType=VARCHAR}
+            </if>
+            <if test="colorSh != null" >
+                and `color_sh` = #{colorSh,jdbcType=VARCHAR}
+            </if>
+            <if test="brand != null" >
+                and `brand` = #{brand,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_tmp_sx_cn_code
+        <where >
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="color != null" >
+                and `color` = #{color,jdbcType=VARCHAR}
+            </if>
+            <if test="colorSh != null" >
+                and `color_sh` = #{colorSh,jdbcType=VARCHAR}
+            </if>
+            <if test="brand != null" >
+                and `brand` = #{brand,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsTmpSxCnCodeModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_tmp_sx_cn_code
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="code != null" >
+                `code`,
+            </if>
+            <if test="productType != null" >
+                `product_type`,
+            </if>
+            <if test="color != null" >
+                `color`,
+            </if>
+            <if test="colorSh != null" >
+                `color_sh`,
+            </if>
+            <if test="brand != null" >
+                `brand`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="productType != null" >
+                #{productType,jdbcType=VARCHAR},
+            </if>
+            <if test="color != null" >
+                #{color,jdbcType=VARCHAR},
+            </if>
+            <if test="colorSh != null" >
+                #{colorSh,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null" >
+                #{brand,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
