@@ -78,20 +78,15 @@ public class CmsBtJmPromotionExportContext {
     }
 
     public String getSessionCategory(){
-        StringBuffer stringBuffer = new StringBuffer();
+        String sessionCategory = "";
         if (!StringUtil.isEmpty(this.extModel.getSessionCategory())) {
             CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionCategory);
-            List<Integer> displayPllatforms = JacksonUtil.jsonToBeanList(this.extModel.getPreDisplayChannel(), Integer.class);
-
-            displayPllatforms.forEach(displayPllatform -> {
-                Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value") == displayPllatform).findFirst().orElse(null);
-                if(value != null){
-                    stringBuffer.append(value.get("name"));
-                    stringBuffer.append(" ");
-                }
-            });
+            Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value") == this.extModel.getSessionCategory()).findFirst().orElse(null);
+            if(value != null){
+                sessionCategory = value.get("name").toString();
+            }
         }
-        return stringBuffer.toString();
+        return sessionCategory;
     }
 
     public String getBrandString() {
