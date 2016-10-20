@@ -132,12 +132,12 @@ public class CmsJmPromotionIndexController extends CmsController {
         CmsBtJmBayWindowModel jmBayWindowModel = jmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
 
         if (jmBayWindowModel == null) {
+            // 没有的话呢，就创建一个
+            // 但不创建具体的飘窗定义
+            // 因为是否使用固定交给前台取数据并生成
             CmsBtJmPromotionModel jmPromotionModel = service.select(jmPromotionId);
-            List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList = tagService.getListByParentTagId(jmPromotionModel.getRefTagId())
-                    .stream()
-                    .map(tagService::getJmModule)
-                    .collect(Collectors.toList());
-            jmBayWindowModel = jmBayWindowService.createByPromotion(jmPromotionModel, tagJmModuleExtensionModelList, getUser().getUserName());
+            jmBayWindowModel = jmBayWindowService.createByPromotion(jmPromotionModel, getUser().getUserName());
+            jmBayWindowService.insert(jmBayWindowModel);
         }
 
         return success(jmBayWindowModel);

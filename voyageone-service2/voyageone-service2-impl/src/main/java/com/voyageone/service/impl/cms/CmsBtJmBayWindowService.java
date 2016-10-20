@@ -33,11 +33,11 @@ public class CmsBtJmBayWindowService extends BaseService {
         return cmsBtJmBayWindowDao.selectOneWithQuery("{'jmPromotionId':" + JmPromotionId + "}");
     }
 
-    protected void insert(CmsBtJmBayWindowModel cmsBtJmBayWindowModel) {
+    public void insert(CmsBtJmBayWindowModel cmsBtJmBayWindowModel) {
         cmsBtJmBayWindowDao.insert(cmsBtJmBayWindowModel);
     }
 
-    public CmsBtJmBayWindowModel createByPromotion(CmsBtJmPromotionModel jmPromotionModel, List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList, String username) {
+    public CmsBtJmBayWindowModel createByPromotion(CmsBtJmPromotionModel jmPromotionModel, String username) {
         CmsBtJmBayWindowModel jmBayWindowModel = new CmsBtJmBayWindowModel();
 
         jmBayWindowModel.setChannelId(jmPromotionModel.getChannelId());
@@ -45,17 +45,6 @@ public class CmsBtJmBayWindowService extends BaseService {
         jmBayWindowModel.setFixed(true);
         jmBayWindowModel.setCreater(username);
         jmBayWindowModel.setModifier(username);
-
-        List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = tagJmModuleExtensionModelList.stream()
-                .map(tagJmModuleExtensionModel -> {
-                    CmsBtJmBayWindowModel.BayWindow bayWindow = new CmsBtJmBayWindowModel.BayWindow();
-                    bayWindow.setName(tagJmModuleExtensionModel.getModuleTitle());
-                    bayWindow.setEnabled(true);
-                    return bayWindow;
-                })
-                .collect(toList());
-
-        jmBayWindowModel.setBayWindows(bayWindowList);
 
         return jmBayWindowModel;
     }
