@@ -36,6 +36,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.dao.ims.ImsBtProductExceptDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
@@ -108,6 +109,8 @@ public class SxProductService extends BaseService {
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
+    @Autowired
+    private ImsBtProductExceptDao imsBtProductExceptDao;
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
@@ -991,6 +994,20 @@ public class SxProductService extends BaseService {
             // update by desmond 2016/07/12 end
         }
         // added by morse.lu 2016/06/12 end
+
+        // 20161020 tom 判断是否是隔离库存的商品 START
+        List<String> strSqlSkuList = new ArrayList<>();
+        for (int i = 0; i < skuList.size(); i++) {
+            strSqlSkuList.add(skuList.get(i).getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+        }
+        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, cartId, strSqlSkuList);
+        if (cnt > 0) {
+            String errorMsg = "取得上新数据(SxData)失败! 库存已经被隔离， 不能执行上新程序。groupId(" + groupId + "), main code(" + mainProductCode + ")";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
+        // 20161020 tom 判断是否是隔离库存的商品 END
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
