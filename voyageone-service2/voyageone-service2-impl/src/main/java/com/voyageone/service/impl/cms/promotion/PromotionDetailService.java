@@ -400,6 +400,23 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setCreater(operator);
             cmsBtPromotionTask.setModifier(operator);
 
+            PromotionDetailAddBean request=new PromotionDetailAddBean();
+            request.setModifier(cmsBtPromotionCodesBean.getModifier());
+            request.setChannelId(cmsBtPromotionCodesBean.getChannelId());
+            request.setCartId(cmsBtPromotionCodesBean.getCartId());
+            request.setProductId(cmsBtPromotionCodesBean.getProductId());
+            request.setProductCode(cmsBtPromotionCodesBean.getProductCode());
+            request.setPromotionId(cmsBtPromotionCodesBean.getPromotionId());
+            Map<String,Double> promostionPrice = new HashedMap();
+            if(cmsBtPromotionCodesBean.getSkus() != null){
+                cmsBtPromotionCodesBean.getSkus().forEach(cmsBtPromotionSkuBean -> promostionPrice.put(cmsBtPromotionSkuBean.getProductSku(),cmsBtPromotionSkuBean.getPromotionPrice().doubleValue()));
+            }
+            request.setPromotionPrice(promostionPrice);
+            request.setTagId(cmsBtPromotionCodesBean.getTagId());
+            request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
+
+            addPromotionDetail(request);
+
             if (isUpdateAllPromotionTask(cmsBtPromotionCodesBean)) {
                 cmsBtPromotionTask.setSynFlg(1);
             }
