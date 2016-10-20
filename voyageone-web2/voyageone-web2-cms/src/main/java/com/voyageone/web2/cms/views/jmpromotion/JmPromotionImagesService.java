@@ -35,6 +35,7 @@ public class JmPromotionImagesService extends BaseViewService {
     public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
+
         if (promotionImagesModel == null) {
             return new HashMap<>(0);
         }
