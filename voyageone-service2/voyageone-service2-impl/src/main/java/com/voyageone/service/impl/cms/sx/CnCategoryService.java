@@ -67,6 +67,11 @@ public class CnCategoryService extends BaseService {
         bean.setCategoryPath(catFullPath.toString()); // 类目的path
         bean.setName(name);
         bean.setHeaderTitle(description);
+        {
+            // 临时写死
+            bean.setIsSneakerheadOnly("0");
+            bean.setIsEnableFilter("1");
+        }
 
         return bean;
     }
