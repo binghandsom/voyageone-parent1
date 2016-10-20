@@ -2,7 +2,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popPriceModifyCtl', function ($scope,jmPromotionDetailService,alert,context, $routeParams) {
+    angularAMD.controller('popTagModifyCtl', function ($scope,jmPromotionDetailService,alert,context, $routeParams) {
         $scope.vm={tagNameList:[],tagList:[]};
         var listPromotionProduct=[];
         var jmPromotionId=undefined;
@@ -18,6 +18,7 @@ define([
             if (context) {
                 listPromotionProduct = context.listPromotionProduct;
                 jmPromotionId = context.jmPromotionId;
+                $scope.vm.tagList = context.tagList;
                 isBegin = context.isBegin;
             }
         };

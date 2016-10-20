@@ -74,6 +74,7 @@ define([
                     }
                 }
             }
+
             if(!isUpdate) return;
             $scope.model.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
             $scope.model.jmPromotionId=jmPromotionId;

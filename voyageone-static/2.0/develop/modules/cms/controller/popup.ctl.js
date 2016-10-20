@@ -1124,6 +1124,11 @@ define([
             return openModal(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
 
+
+        //聚美一览中，price
+        $scope.openJMTagModify = function (context) {
+            return openModal(popActions.jumei.jmPromotionDetail.tagModify, context);
+        };
         //聚美图片管理中，追加按钮
         $scope.openJmImageSetting = function openJmImageSetting(context) {
             return openModal(popActions.jumei.jmImageManage.imageSetting, context);
