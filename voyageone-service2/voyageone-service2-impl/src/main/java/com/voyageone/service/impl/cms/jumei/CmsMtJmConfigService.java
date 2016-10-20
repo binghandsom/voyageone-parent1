@@ -28,8 +28,9 @@ public class CmsMtJmConfigService {
     public static enum JmCofigTypeEnum{
 
         displayPlatform(1), // 展示平台
-        preDisplayChannel(2); // 预展示频道
-
+        preDisplayChannel(2), // 预展示频道
+        sessionCategory(3)  //关联品类
+        ;
         private Integer type;
 
         JmCofigTypeEnum(Integer type){

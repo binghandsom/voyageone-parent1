@@ -77,6 +77,23 @@ public class CmsBtJmPromotionExportContext {
         return stringBuffer.toString();
     }
 
+    public String getSessionCategory(){
+        StringBuffer stringBuffer = new StringBuffer();
+        if (!StringUtil.isEmpty(this.extModel.getSessionCategory())) {
+            CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionCategory);
+            List<Integer> displayPllatforms = JacksonUtil.jsonToBeanList(this.extModel.getPreDisplayChannel(), Integer.class);
+
+            displayPllatforms.forEach(displayPllatform -> {
+                Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value") == displayPllatform).findFirst().orElse(null);
+                if(value != null){
+                    stringBuffer.append(value.get("name"));
+                    stringBuffer.append(" ");
+                }
+            });
+        }
+        return stringBuffer.toString();
+    }
+
     public String getBrandString() {
         return String.format("%s (%s)", this.model.getCmsBtJmMasterBrandId(), this.model.getBrand());
     }
