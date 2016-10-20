@@ -372,7 +372,13 @@ define([
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
                     "controller": 'popPriceModifyCtl',
-                    "size": '600'
+                    "size": '600',
+                    "controller": 'popPriceModifyCtl'
+                },
+                "tagModify": {
+                    "templateUrl": "views/pop/jm/tagmodify.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/tagmodify.ctl",
+                    "controller": 'popTagModifyCtl'
                 }
             },
             "jmImageManage": {

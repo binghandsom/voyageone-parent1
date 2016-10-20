@@ -1,0 +1,27 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;Jumei Activity Product Price Modify</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="row form-group">
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="col-lg-10">
+                        <div class="input-group">
+                            <span class="input-group-addon">Promotion Tag</span>
+                            <select multiple chosen class="form-control"   ng-model="vm.tagNameList"
+                                    ng-options="m.tagName as m.tagName for m in vm.tagList">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+    </div>
+</div><!-- .vo_modal -->

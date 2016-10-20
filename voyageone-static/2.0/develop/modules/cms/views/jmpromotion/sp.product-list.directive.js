@@ -452,6 +452,14 @@ define([
             }
             popups.openPriceModify({search: $scope.search,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
         }
+        $scope.openTagModifyWin = function () {
+            var listPromotionProduct = $scope.getSelectedPromotionProductList();
+            if (listPromotionProduct.length == 0) {
+                alert("请选择修改价格的商品!");
+                return;
+            }
+            popups.openTagModify({search: $scope.search,tagList:$scope.vm.tagList,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
+        }
         $scope.openProductDetailWin = function (object) {
 
             popups.openJmProductDetail(object).then(function () {
