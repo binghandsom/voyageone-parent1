@@ -199,8 +199,6 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             if (platformActive == CmsConstants.PlatformActive.ToInStock && StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // ToInStock 删除，但numIId = null(没上过)，就没必要推送了
-                // 回写workload表   (1 上新成功)
-                sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskNameForUpdate());
                 return;
             }
 
@@ -292,11 +290,22 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         insertCnInfoModel.setOrgChannelId(sxData.getMainProduct().getOrgChannelId());
         insertCnInfoModel.setCartId(cartId);
         insertCnInfoModel.setGroupId(groupId);
-        Set<String> catIds = new HashSet<>();
-        for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
-            catIds.addAll(sellerCat.getcIds());
-        }
-        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
+//        Set<String> catIds = new HashSet<>();
+//        for (CmsBtProductModel_SellerCat sellerCat : sxData.getMainProduct().getPlatform(cartId).getSellerCats()) {
+//            catIds.addAll(sellerCat.getcIds());
+//        }
+//        insertCnInfoModel.setCatIds(new ArrayList<>(catIds));
+		{
+			// 临时写死一下
+			String productType = sxData.getTmpSxCnCode().getProductType();
+			if("Shoes".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("10");}});
+			} else if("Accessories".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("13");}});
+			} else if("WomenApparel".equals(productType)) {
+				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("15");}});
+			}
+		}
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
         String strUrlKey =
@@ -550,7 +559,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "ProductCode";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getCode());
+            ((InputField) field).setValue("C" + product.getCommon().getFields().getCode());
         }
         {
             // Sku Sku
@@ -600,28 +609,28 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 hasChange = true;
             }
         }
-        {
-            // Msrp 建议零售价
-            String field_id = "Msrp";
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
-                hasChange = true;
-            }
-        }
-        {
-            // Price 价格
-            String field_id = "Price";
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
-                hasChange = true;
-            }
-        }
+//        {
+//            // Msrp 建议零售价
+//            String field_id = "Msrp";
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+//
+//            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
+//                hasChange = true;
+//            }
+//        }
+//        {
+//            // Price 价格
+//            String field_id = "Price";
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+//
+//            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
+//                hasChange = true;
+//            }
+//        }
 
         if (hasChange) {
             return fields;
@@ -737,7 +746,18 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((SingleCheckField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+//            ((SingleCheckField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+			{
+				// 临时写死一下
+				String productType = sxData.getTmpSxCnCode().getProductType();
+				if("Shoes".equals(productType)) {
+					((SingleCheckField) field).setValue("shoesize");
+				} else if("Accessories".equals(productType)) {
+					((SingleCheckField) field).setValue("accessorysize");
+				} else if("WomenApparel".equals(productType)) {
+					((SingleCheckField) field).setValue("womenapparelsize");
+				}
+			}
         }
         {
             // ColorSn color
@@ -809,7 +829,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((SingleCheckField) field).setValue("0");
+            ((SingleCheckField) field).setValue("2");
         }
         {
             // IsNewArrival 是否新品（0否， 1新品）
@@ -905,11 +925,22 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
-            if (ListUtils.notNull(defaultValues)) {
-//                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
-                String propValue = defaultValues.get(0).getcIds().stream().collect(Collectors.joining(","));
-                ((InputField) field).setValue(propValue);
+//            List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
+//            if (ListUtils.notNull(defaultValues)) {
+////                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
+//                String propValue = defaultValues.get(0).getcIds().stream().collect(Collectors.joining(","));
+//                ((InputField) field).setValue(propValue);
+//            }
+            {
+                // 临时写死一下
+                String productType = sxData.getTmpSxCnCode().getProductType();
+                if("Shoes".equals(productType)) {
+                    ((InputField) field).setValue("10");
+                } else if("Accessories".equals(productType)) {
+                    ((InputField) field).setValue("13");
+                } else if("WomenApparel".equals(productType)) {
+                    ((InputField) field).setValue("15");
+                }
             }
         }
         {
@@ -919,13 +950,24 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             // 用"店铺内分类"，逗号分隔
-            List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
-            if (ListUtils.notNull(defaultValues)) {
-//                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
-                String propValue = defaultValues.stream().map(cids -> cids.getcIds().stream().collect(Collectors.joining(","))).collect(Collectors.joining(","));
-                ((InputField) field).setValue(propValue);
-            } else {
-                throw new BusinessException(String.format("商品[code:]未选择店铺内分类!", product.getCommon().getFields().getCode()));
+//            List<CmsBtProductModel_SellerCat> defaultValues = product.getPlatform(sxData.getCartId()).getSellerCats();
+//            if (ListUtils.notNull(defaultValues)) {
+////                String propValue = defaultValues.stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.joining(","));
+//                String propValue = defaultValues.stream().map(cids -> cids.getcIds().stream().collect(Collectors.joining(","))).collect(Collectors.joining(","));
+//                ((InputField) field).setValue(propValue);
+//            } else {
+//                throw new BusinessException(String.format("商品[code:]未选择店铺内分类!", product.getCommon().getFields().getCode()));
+//            }
+            {
+                // 临时写死一下
+                String productType = sxData.getTmpSxCnCode().getProductType();
+                if("Shoes".equals(productType)) {
+                    ((InputField) field).setValue("10");
+                } else if("Accessories".equals(productType)) {
+                    ((InputField) field).setValue("13");
+                } else if("WomenApparel".equals(productType)) {
+                    ((InputField) field).setValue("15");
+                }
             }
         }
         {
