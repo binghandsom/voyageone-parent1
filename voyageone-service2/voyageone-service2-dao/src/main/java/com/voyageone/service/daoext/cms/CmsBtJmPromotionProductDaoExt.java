@@ -104,6 +104,9 @@ public interface CmsBtJmPromotionProductDaoExt {
     int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("errorMsg") String errorMsg);
 
     List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
+
+    int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
+
     //jm2 end
 
     /**

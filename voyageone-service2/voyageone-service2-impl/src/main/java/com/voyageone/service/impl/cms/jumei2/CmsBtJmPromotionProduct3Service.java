@@ -9,6 +9,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
+import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -22,7 +23,6 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -398,21 +398,93 @@ public class CmsBtJmPromotionProduct3Service {
         return daoExt.selectCountByPromotionId(JmPromotionId);
     }
 
-    public List<CmsBtJmPromotionProductModel> getPromotionTagProductList(int tagId) {
+
+    public int updateRemark(UpdateRemarkParameter parameter) {
+        return daoExt.updateRemark(parameter.getJmPromotionProductId(), parameter.getRemark());
+    }
+
+    public List<JmProduct> getPromotionTagProductList(int tagId) {
+
+        List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = getPromotionProductInTag(tagId);
+
+        if (jmPromotionProductModelList.isEmpty())
+            return new ArrayList<>(0);
+
+        return jmPromotionProductModelList
+                .stream()
+                .map(jmPromotionProductModel -> {
+                    CmsBtJmProductModel productModel = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(jmPromotionProductModel.getProductCode(), jmPromotionProductModel.getChannelId());
+                    return new JmProduct(productModel, jmPromotionProductModel);
+                })
+                .collect(toList());
+    }
+
+    public void saveProductSort(CmsBtTagModel tagModel, List<JmProduct> jmProductList, final String username) {
+        // 查询老数据
         CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
-
-        parameter.setCmsBtTagId(tagId);
-
+        parameter.setCmsBtTagId(tagModel.getId());
         List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
+        // 清空老数据
+        if (!jmPromotionTagProductModelList.isEmpty())
+            jmPromotionTagProductModelList.forEach(cmsBtJmPromotionTagProductModel -> daoCmsBtJmPromotionTagProduct.delete(cmsBtJmPromotionTagProductModel.getId()));
+        // 插入新数据
+        jmProductList
+                .stream()
+                .map(JmProduct::getJmPromotionProduct)
+                .filter(jmPromotionProduct -> jmPromotionProduct != null)
+                .forEach(jmPromotionProduct -> {
+                    CmsBtJmPromotionTagProductModel tagProduct = new CmsBtJmPromotionTagProductModel();
+                    tagProduct.setChannelId(tagModel.getChannelId());
+                    tagProduct.setCmsBtJmPromotionProductId(jmPromotionProduct.getId());
+                    tagProduct.setCmsBtTagId(tagModel.getId());
+                    tagProduct.setTagName(tagModel.getTagName());
+                    tagProduct.setCreater(username);
+                    tagProduct.setModifier(username);
 
+                    daoCmsBtJmPromotionTagProduct.insert(tagProduct);
+                });
+    }
+
+    public List<CmsBtJmPromotionProductModel> getPromotionProductInTag(Integer tagId) {
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+        parameter.setCmsBtTagId(tagId);
+        List<CmsBtJmPromotionTagProductModel> jmPromotionTagProductModelList = daoCmsBtJmPromotionTagProduct.selectList(parameter);
         if (jmPromotionTagProductModelList.isEmpty())
             return new ArrayList<>(0);
 
         return jmPromotionTagProductModelList
                 .stream()
-                .map(CmsBtJmPromotionTagProductModel::getCmsBtJmPromotionProductId)
-                .map(productId -> dao.select(productId))
+                .map(jmPromotionTagProductModel -> dao.select(jmPromotionTagProductModel.getCmsBtJmPromotionProductId()))
                 .collect(toList());
+    }
+
+    public static class JmProduct {
+        CmsBtJmProductModel jmProduct;
+        CmsBtJmPromotionProductModel jmPromotionProduct;
+
+        public JmProduct() {
+        }
+
+        JmProduct(CmsBtJmProductModel jmProduct, CmsBtJmPromotionProductModel jmPromotionProduct) {
+            this.jmProduct = jmProduct;
+            this.jmPromotionProduct = jmPromotionProduct;
+        }
+
+        public CmsBtJmProductModel getJmProduct() {
+            return jmProduct;
+        }
+
+        public void setJmProduct(CmsBtJmProductModel jmProduct) {
+            this.jmProduct = jmProduct;
+        }
+
+        public CmsBtJmPromotionProductModel getJmPromotionProduct() {
+            return jmPromotionProduct;
+        }
+
+        public void setJmPromotionProduct(CmsBtJmPromotionProductModel jmPromotionProduct) {
+            this.jmPromotionProduct = jmPromotionProduct;
+        }
     }
 }
 

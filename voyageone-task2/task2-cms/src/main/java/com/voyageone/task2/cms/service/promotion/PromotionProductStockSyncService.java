@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
  * 从mongo:cms_bt_product_cxxx表取得当前有效活动中的产品的库存数，保存到cms_bt_jm_promotion_product.quantity / cms_bt_promotion_codes.quantity
  * 并计算该活动中的有库存的商品数，保存到cms_bt_jm_promotion.prod_sum （此项只针对聚美平台）
  *
+ * 从mongo:cms_bt_product_cxxx表取得当前有效活动中的产品的聚美平台的总销量，保存到cms_bt_jm_promotion_product.sales
+ *
  * @author jiangjusheng 2016/10/18.
  * @version 2.0.0
  * @since 2.0.0
@@ -103,7 +105,7 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
                  JongoQuery queryObj = new JongoQuery();
                  queryObj.setQuery("{common.fields.code:{$in:#}}");
                  queryObj.setParameters(codeList);
-                 queryObj.setProjectionExt("common.fields.code", "common.fields.quantity");
+                 queryObj.setProjectionExt("common.fields.code", "common.fields.quantity", "sales.codeSumAll.cartId27");
                  List<CmsBtProductModel> prodList = cmsBtProductDao.select(queryObj, channelId);
                  if (prodList == null || prodList.isEmpty()) {
                      $warn("JmPromotionProductStockSyncService 无指定的产品数据！ channelId=%s, cartId=%s", channelId, cartIdStr);
@@ -120,6 +122,9 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
                      for (CmsBtProductModel prodObj : prodList) {
                          if (prodCode.equals(prodObj.getCommonNotNull().getFieldsNotNull().getCode())) {
                              jmPromProd.setQuantity(prodObj.getCommonNotNull().getFieldsNotNull().getQuantity());
+                             if (prodObj.getSales() != null) {
+                                 jmPromProd.setSales(prodObj.getSales().getCodeSumAll(CartEnums.Cart.JM.getValue()));
+                             }
                              break;
                          }
                      }

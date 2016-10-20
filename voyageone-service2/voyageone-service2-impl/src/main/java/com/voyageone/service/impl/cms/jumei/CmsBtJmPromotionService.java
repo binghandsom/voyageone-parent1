@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -8,11 +9,13 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
+
     private final CmsBtJmPromotionDao dao;
     private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
@@ -35,13 +39,16 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtPromotionDao daoCmsBtPromotion;
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
+    private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
+    @Autowired
+    private CmsBtJmImageTemplateService jmImageTemplateService;
 
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
                                    TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
-                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt, CmsBtJmPromotionImagesDao jmPromotionImagesDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -49,6 +56,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.daoExt = daoExt;
         this.jmPromotionExtensionDao = jmPromotionExtensionDao;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
+        this.jmPromotionImagesDao = jmPromotionImagesDao;
     }
 
     public Map<String, Object> init() {
@@ -370,7 +378,23 @@ public class CmsBtJmPromotionService extends BaseService {
         int pageRowCount = (Integer) params.get("pageRowCount");
         sqlParams.put("offset", (pageIndex - 1) * pageRowCount);
         sqlParams.put("size", pageRowCount);
-        return daoExt.getJmPromotionList(sqlParams);
+        List<MapModel> promList = daoExt.getJmPromotionList(sqlParams);
+        if (promList != null && promList.size() > 0) {
+            // 获取频道页入口图（APP端日常专场图片）
+            JongoQuery qryObj = new JongoQuery();
+            qryObj.setQuery("{'jmPromotionId':#}");
+            qryObj.setProjectionExt("appChannelEntrance");
+
+            for (MapModel promObj : promList) {
+                Integer jmId = (Integer) promObj.get("id");
+                qryObj.setParameters(jmId);
+                CmsBtJmPromotionImagesModel imgObj = jmPromotionImagesDao.selectOneWithQuery(qryObj);
+                if (imgObj != null) {
+                    promObj.put("entryImg", jmImageTemplateService.getUrl(jmId + "_" + imgObj.getAppChannelEntrance(), "appChannelEntrance", jmId));
+                }
+            }
+        }
+        return promList;
     }
 
     public long getJmPromotionCount(Map params) {

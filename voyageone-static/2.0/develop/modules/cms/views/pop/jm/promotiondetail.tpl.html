@@ -94,7 +94,7 @@
                                    ng-model="editModel.model.signupDeadline" name="signupDeadline" required
                                    min-date="vm.currentTime"
                                    max-date="editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-ddTHH:mm:ss" step="1"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                    is-open="datePicker4" close-text="Close"
                                    ng-disabled="vm.isDeadline"/>
                             <span class="input-group-btn">
@@ -121,7 +121,7 @@
                                     ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
                                     min-date="vm.currentTime"
                                     max-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-ddTHH:mm:ss" step="1"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                     is-open="datePicker3" ng-required="true" close-text="Close"
                                     ng-disabled="vm.isBeginPre"
                                     date-disabled="disabled(date, mode)"/>
@@ -149,7 +149,7 @@
                                     ng-model="editModel.model.activityStart" name="activityStart" required
                                     max-date="editModel.model.activityEnd"
                                     min-date = "vm.currentTime"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                     is-open="datePicker1" ng-required="true" close-text="Close"
                                     ng-disabled="vm.isBegin"
                                     date-disabled="disabled(date, mode)"/>
@@ -163,12 +163,12 @@
                                     datepicker-popup
                                     ng-model="editModel.model.activityEnd" name="activityEnd" required
                                     min-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
-                                    is-open="datePicker2" ng-required="true" close-text="Close"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                    is-open="vm.datePicker2" ng-required="true" close-text="Close"
                                     ng-disabled="vm.isEnd"
                                     date-disabled="disabled(date, mode)"/>
                             <span class="input-group-btn">
-                                <button type="button" ng-disabled="vm.isEnd ||editModel.model.status!=0" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" ng-disabled="vm.isEnd ||editModel.model.status!=0" class="btn btn-default" ng-click="onDateChange()"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>

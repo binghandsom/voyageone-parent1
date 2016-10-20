@@ -96,7 +96,7 @@
                                    ng-model="ctrlEdit.editModel.model.signupDeadline" name="signupDeadline" required
                                    min-date="ctrlEdit.vm.currentTime"
                                    max-date="ctrlEdit.editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-dd HH:mm:ss"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                    is-open="datePicker4" close-text="Close"
                                    ng-disabled="ctrlEdit.vm.isDeadline" />
                         <span class="input-group-btn">
@@ -120,7 +120,7 @@
                                    ng-model="ctrlEdit.editModel.model.prePeriodStart" name="prePeriodStart" required
                                    min-date="ctrlEdit.vm.currentTime"
                                    max-date="ctrlEdit.editModel.model.activityStart"
-                                   date-model-format="yyyy-MM-dd HH:mm:ss"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                    is-open="datePicker3" ng-required="true" close-text="Close"
                                    ng-disabled="ctrlEdit.vm.isBeginPre"
                                    date-disabled="disabled(date, mode)"/>
@@ -147,7 +147,7 @@
                                    ng-model="ctrlEdit.editModel.model.activityStart" name="activityStart" required
                                    max-date="ctrlEdit.editModel.model.activityEnd"
                                    min-date="ctrlEdit.vm.currentTime"
-                                   date-model-format="yyyy-MM-dd HH:mm:ss"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                    is-open="datePicker1" ng-required="true" close-text="Close"
                                    ng-disabled="ctrlEdit.vm.isBegin"
                                    date-disabled="disabled(date, mode)"/>
@@ -164,13 +164,13 @@
                                    uib-datepicker-popup
                                    ng-model="ctrlEdit.editModel.model.activityEnd" name="activityEnd" required
                                    min-date="ctrlEdit.editModel.model.activityStart"
-                                   date-model-format="yyyy-MM-dd HH:mm:ss"
-                                   is-open="datePicker2" ng-required="true" close-text="Close"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="ctrlEdit.vm.datePicker2" ng-required="true" close-text="Close"
                                    ng-disabled="ctrlEdit.vm.isEnd"
                                    date-disabled="disabled(date, mode)"/>
                         <span class="input-group-btn">
                             <button type="button" ng-disabled="ctrlEdit.vm.isEnd || ctrlEdit.editModel.model.status!=0"
-                                    class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
+                                    class="btn btn-default" ng-click="ctrlEdit.onDateChange()"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                         </div>

@@ -67,7 +67,11 @@ public class JmPromotionImagesController extends CmsController {
         return success(null);
     }
 
-
+    /**
+     * 页面上获取套图初始化页面
+     * @param requestMap
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.GET_IMAGE_FOR_SUIT)
     public AjaxResponse getImageForSuit(@RequestBody Map<String, String> requestMap) {
 
@@ -77,11 +81,19 @@ public class JmPromotionImagesController extends CmsController {
         return success(jmPromotionImagesService.getImageForSuit(brand));
     }
 
+    /**
+     * 获取套用模板地址
+     * @param model
+     * @return
+     */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.GET_IMAGE_TEMPLATE)
     public AjaxResponse getImageForSuit(@RequestBody CmsBtJmPromotionImagesModel model) {
         return success(jmPromotionImagesService.getJmImageTemplate(model));
     }
 
+    /**
+     * 用于接受上行参数
+     */
     public static class Wrapper {
         CmsBtJmPromotionImagesModel promotionImages;
 

@@ -7,15 +7,13 @@
             <div class="panel-body">
                 <div class="form-group">
                     <label class="col-sm-1 control-label">使用原有套图</label>
-                    <div class="col-sm-2">
-                        <input type="text" class="form-control">
-                    </div>
+
                     <div class="col-sm-1">
-                        <button class="btn btn-default" ng-click="ctrlImages.popImageSuit()">选择套图</button>
+                        <button class="btn btn-default btn-pop" ng-click="ctrlImages.popImageSuit()"><i class="fa fa-folder-open"></i> 选择套图</button>
                     </div>
                     <div class="col-sm-5">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1">
+                            <input type="checkbox" name="promotionScene_1" style="margin: 0" ng-model="ctrlImages.imgUpEntity['useTemplate']">
                             <span class="fa fa-check"></span> 使用模板刷图
                         </label>
                     </div>
@@ -25,12 +23,18 @@
                     <div class="row">
                         <label class="col-sm-1 control-label">备注</label>
                         <div class="col-sm-2">
-                            <textarea type="text" class="form-control"></textarea>
+                            <textarea type="text" class="form-control" ng-model="ctrlImages.imgUpEntity['comment']"></textarea>
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group">
                     <div class="row">
-                        <div class="col-sm-1 col-sm-offset-4">
-                            <button class="btn btn-default" ng-click="ctrlImages.popImageBatchUpload()">导入图片</button>
+                        <label class="col-sm-1 control-label"> 批量导入</label>
+                        <div class="col-sm-1">
+                            <button class="btn btn-default btn-pop" ng-click="ctrlImages.popImageBatchUpload()">
+                                <i class="fa fa-share"></i> 导入图片
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -47,7 +51,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('channelFrontCover')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('channelFrontCover')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -75,7 +79,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('channelMiddleImage')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('channelMiddleImage')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -101,7 +105,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('channelComingSoon')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('channelComingSoon')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -128,7 +132,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcEntrance')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcEntrance')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -157,7 +161,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('mobileFocus')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('mobileFocus')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -183,7 +187,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcHeader')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcHeader')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
 <!--                            <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -220,7 +224,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appEntrance')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appEntrance')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -247,7 +251,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appChannelEntrance')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appChannelEntrance')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -274,7 +278,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('wxShare')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('wxShare')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                 <span class="text-warnings">
@@ -305,7 +309,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appHeader')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appHeader')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                         </div>
                         <div class="row">
@@ -340,7 +344,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appArcCarousel')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appArcCarousel')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -366,7 +370,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcCarousel')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcCarousel')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -392,7 +396,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcRow1Cell2')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcRow1Cell2')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -418,7 +422,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appRightBigCard')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appRightBigCard')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -444,7 +448,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appLeftBigCard')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appLeftBigCard')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -470,7 +474,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('appSmallCard')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('appSmallCard')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -504,7 +508,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcIndexPreheat')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcIndexPreheat')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -530,7 +534,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('pcIndex')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('pcIndex')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -556,7 +560,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('padCarousel')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('padCarousel')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -582,7 +586,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('padPreheat')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('padPreheat')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">
@@ -608,7 +612,7 @@
                     <div class="col-sm-5">
                         <div class="row">
                             <div class="col-sm-2">
-                                <button class="btn btn-info" ng-click="ctrlImages.popImageJmUpload('padCard')">上传图片</button>
+                                <button class="btn btn-info btn-pop" ng-click="ctrlImages.popImageJmUpload('padCard')"><i class='fa fa-upload'></i>&nbsp;上传图片</button>
                             </div>
                             <div class="col-sm-9">
                                <span class="text-warnings">

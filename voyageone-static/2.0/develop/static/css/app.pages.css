@@ -908,8 +908,10 @@ schema .ng-invalid.focus-error {
 
 .jm-sortable-product-price {
     padding: 3px 5px;
-    background: #CCCCCC;
+    background: #e6e6e6;
     color: red;
+    border: 1px solid white;
+    border-radius: 5px;
 }
 
 .jm-sortable-product .list-inline {

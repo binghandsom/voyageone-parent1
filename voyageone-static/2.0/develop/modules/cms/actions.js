@@ -235,11 +235,14 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
+                    "refreshPrice":"refreshPrice",
+                    "updateRemark":"updateRemark",
                     updatePromotionProduct: "updatePromotionProduct",
                     updatePromotionProductTag: "updatePromotionProductTag",
                     getPromotionTagModules: 'getPromotionTagModules',
                     savePromotionTagModules: 'savePromotionTagModules',
-                    getPromotionProducts: 'getPromotionProducts'
+                    getPromotionProducts: 'getPromotionProducts',
+                    saveProductSort: 'saveProductSort'
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmpromotion/images",
