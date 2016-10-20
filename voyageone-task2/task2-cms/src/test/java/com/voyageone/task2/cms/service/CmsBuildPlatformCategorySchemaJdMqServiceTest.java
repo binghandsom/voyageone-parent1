@@ -61,8 +61,8 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
             return;
         }
         shopProp.setApp_url("https://api.jd.com/routerjson");
-        shopProp.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shopProp.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
         shopProp.setSessionKey("");  // 京东国际悦境店(SessionKey)
         // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
         shopProp.setPlatform_id("2");
