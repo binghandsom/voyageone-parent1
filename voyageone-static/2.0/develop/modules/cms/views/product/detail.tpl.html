@@ -52,7 +52,7 @@
                     <tab-heading>{{platformType.name}}详情</tab-heading>
 
                     <!--聚美 & 京东 & 天猫国际-->
-                    <div ng-if="platformType.value > 20 && platformType.value < 30"  || >
+                    <div ng-if="(platformType.value > 20 && platformType.value < 30)  || platformType.value == 32 ">
                         <jd-schema product-info="ctrl.product" cart-info="platformType"></jd-schema>
                     </div>
 
