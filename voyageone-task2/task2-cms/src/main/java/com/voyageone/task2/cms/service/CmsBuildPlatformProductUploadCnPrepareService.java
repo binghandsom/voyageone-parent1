@@ -548,7 +548,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             String field_id = "ProductCode";
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getCode());
+            ((InputField) field).setValue("C" + product.getCommon().getFields().getCode());
         }
         {
             // Sku Sku
@@ -598,28 +598,28 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 hasChange = true;
             }
         }
-        {
-            // Msrp 建议零售价
-            String field_id = "Msrp";
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
-                hasChange = true;
-            }
-        }
-        {
-            // Price 价格
-            String field_id = "Price";
-            Field field = fieldsMap.get(field_id);
-
-            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-
-            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
-                hasChange = true;
-            }
-        }
+//        {
+//            // Msrp 建议零售价
+//            String field_id = "Msrp";
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+//
+//            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getMsrp())) {
+//                hasChange = true;
+//            }
+//        }
+//        {
+//            // Price 价格
+//            String field_id = "Price";
+//            Field field = fieldsMap.get(field_id);
+//
+//            ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+//
+//            if (!hasChange && !Double.valueOf(((InputField) field).getValue()).equals(oldSxCnSkuModel.getPrice())) {
+//                hasChange = true;
+//            }
+//        }
 
         if (hasChange) {
             return fields;
@@ -735,7 +735,18 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((SingleCheckField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+//            ((SingleCheckField) field).setValue(sxData.getTmpSxCnCode().getProductType());
+			{
+				// 临时写死一下
+				String productType = sxData.getTmpSxCnCode().getProductType();
+				if("Shoes".equals(productType)) {
+					((SingleCheckField) field).setValue("shoesize");
+				} else if("Accessories".equals(productType)) {
+					((SingleCheckField) field).setValue("accessorysize");
+				} else if("WomenApparel".equals(productType)) {
+					((SingleCheckField) field).setValue("womenapparelsize");
+				}
+			}
         }
         {
             // ColorSn color
@@ -807,7 +818,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((SingleCheckField) field).setValue("0");
+            ((SingleCheckField) field).setValue("2");
         }
         {
             // IsNewArrival 是否新品（0否， 1新品）
