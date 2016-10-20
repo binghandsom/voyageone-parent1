@@ -89,12 +89,12 @@ define(['cms'], function (cms) {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService;
 
-        return JmPromotionImagesService.getImageTemplate(upEntity).then(function(resp){
+        return JmPromotionImagesService.getImageTemplate(upEntity).then(function (resp) {
             return resp.data;
         });
     };
 
-    SpDataService.prototype.getPromotionProducts = function (tagId) {
+    SpDataService.prototype.getPromotionProducts = function getPromotionProducts(tagId) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;
 
@@ -111,6 +111,15 @@ define(['cms'], function (cms) {
             tagId: tagId,
             jmProductList: productList
         }).then(function (resp) {
+            return resp.data;
+        });
+    };
+
+    SpDataService.prototype.getSeparatorBarUrl = function getSeparatorBarUrl() {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.getSeparatorBarUrl().then(function (resp) {
             return resp.data;
         });
     };

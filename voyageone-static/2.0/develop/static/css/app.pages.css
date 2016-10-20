@@ -919,4 +919,14 @@ schema .ng-invalid.focus-error {
     padding: 0;
 }
 
+.jm-module-bar-preview {
+    width: 960px;
+    height: 40px;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    font-size: 24px;
+    background-repeat: no-repeat;
+}
+
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */

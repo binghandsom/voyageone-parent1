@@ -243,7 +243,8 @@ define(function () {
                     getPromotionTagModules: 'getPromotionTagModules',
                     savePromotionTagModules: 'savePromotionTagModules',
                     getPromotionProducts: 'getPromotionProducts',
-                    saveProductSort: 'saveProductSort'
+                    saveProductSort: 'saveProductSort',
+                    getSeparatorBarUrl: {url: 'getSeparatorBarUrl', cache: CACHE.LOCAL}
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmPromotion/images",

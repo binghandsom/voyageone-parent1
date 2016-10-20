@@ -50,6 +50,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     private final CmsJmPromotionService jmPromotionService;
     private final TagService tagService;
+    private final CmsBtJmImageTemplateService jmImageTemplateService;
 
     @Autowired
     public CmsJmPromotionDetailController(CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct,
@@ -60,7 +61,8 @@ public class CmsJmPromotionDetailController extends CmsController {
                                           CmsBtJmProductService cmsBtJmProductService,
                                           CmsBtJmMasterBrandService cmsBtJmMasterBrandService,
                                           CmsBtJmSkuService cmsBtJmSkuService, MqSender sender,
-                                          CmsJmPromotionService jmPromotionService, TagService tagService) {
+                                          CmsJmPromotionService jmPromotionService, TagService tagService,
+                                          CmsBtJmImageTemplateService jmImageTemplateService) {
         this.serviceCmsBtJmPromotionProduct = serviceCmsBtJmPromotionProduct;
         this.service3CmsBtJmPromotionSku = service3CmsBtJmPromotionSku;
         this.cmsBtJmPromotionSkuService = cmsBtJmPromotionSkuService;
@@ -72,6 +74,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         this.sender = sender;
         this.jmPromotionService = jmPromotionService;
         this.tagService = tagService;
+        this.jmImageTemplateService = jmImageTemplateService;
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.INIT)
@@ -299,6 +302,15 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(null);
     }
     //jm2 end
+
+    /**
+     * 获取专场活动所使用的分隔栏背景模板地址
+     * @since 2.8.0
+     */
+    @RequestMapping("getSeparatorBarUrl")
+    public AjaxResponse getSeparatorBarUrl() {
+        return success(jmImageTemplateService.getSeparatorBar(""));
+    }
 
     /**
      * 获取活动下所有的聚美模块

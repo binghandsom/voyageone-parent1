@@ -45,6 +45,10 @@ define([
         spDataService.getPromotionModules().then(function (modules) {
             self.modules = modules;
         });
+
+        spDataService.getSeparatorBarUrl().then(function (url) {
+            self.barUrl = url;
+        });
     };
 
     SpModelDirectiveController.prototype.saveAll = function () {
