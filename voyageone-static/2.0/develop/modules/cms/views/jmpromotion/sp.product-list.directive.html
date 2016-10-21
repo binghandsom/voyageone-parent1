@@ -110,6 +110,10 @@
                                         <label class="col-sm-3 control-label" translate="TXT_PROMOTION_PRODUCT_STATUS"></label>
                                         <div class="col-sm-8">
                                             <label class="checkbox-inline c-checkbox">
+                                                <input type="checkbox" value="-1" ng-model="searchInfo.synchStatus_1" style="margin:0" />
+                                                <span class="fa fa-check"></span>上新未完成
+                                            </label>
+                                            <label class="checkbox-inline c-checkbox">
                                                 <input type="checkbox" value="0" ng-model="searchInfo.synchStatus0" style="margin:0">
                                                 <span class="fa fa-check"></span> 未上传
                                             </label>
@@ -252,7 +256,7 @@
                             <div class="table_main">
                                 <ul>
                                     <li>海外官网价格:{{getMinMaxPrice(model.minMsrpUsd,model.maxMsrpUsd)}}</li>
-                                    <li>中国官网售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
+                                    <li>中国建议售价:{{getMinMaxPrice(model.minMsrpRmb,model.maxMsrpRmb)}}</li>
                                     <li>中国指导售价:{{getMinMaxPrice(model.minRetailPrice,model.maxRetailPrice)}}</li>
                                     <li>中国最终售价:{{getMinMaxPrice(model.minSalePrice,model.maxSalePrice)}}</li>
                                 </ul>

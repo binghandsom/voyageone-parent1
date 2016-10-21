@@ -230,21 +230,25 @@ define([
             $scope.searchInfo.synchStatusList = [];
             //$scope.searchInfo.errorStatus=undefined;//错误状态
             //$scope.searchInfo.allStatus1=undefined;//处理中
-            $scope.searchInfo.hasStatus=undefined;//是否有状态
+            $scope.searchInfo.hasStatus = undefined;//是否有状态
             if ($scope.searchInfo.synchStatus0) {
                 $scope.searchInfo.synchStatusList.push(0)
                 $scope.searchInfo.synchStatusList.push(1)
-                $scope.searchInfo.hasStatus=1;
+                $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.allStatus1) {
-                $scope.searchInfo.hasStatus=1;
+                $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.synchStatus2) {
                 $scope.searchInfo.synchStatusList.push(2)
-                $scope.searchInfo.hasStatus=1;
+                $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.allErrorStatus) {
-                $scope.searchInfo.hasStatus=1;
+                $scope.searchInfo.hasStatus = 1;
+            }
+            if ($scope.searchInfo.synchStatus_1) {
+                $scope.searchInfo.isInJm = 1;
+                $scope.searchInfo.hasStatus = 1;
             }
         }
         $scope.getStatus = function (model) {
