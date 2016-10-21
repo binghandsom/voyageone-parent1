@@ -16,11 +16,9 @@ import java.util.Map;
 
 
 /**
- * Created by piao on 9/7/16.
- *
- * @author jonas
- * @version 2.6.0
- * @since 2.6.0
+ * @author piao
+ * @version 2.8.0
+ * @since 2.8.0
  */
 @Service
 public class JmPromotionImagesService extends BaseViewService {

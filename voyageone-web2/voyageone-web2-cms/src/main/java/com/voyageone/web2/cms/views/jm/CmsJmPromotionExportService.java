@@ -108,7 +108,11 @@ public class CmsJmPromotionExportService extends BaseViewService {
             int i = 1;
             for (CmsBtJmBayWindowModel.BayWindow bayWindow : cmsBtJmBayWindowModel.getBayWindows()) {
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 0, i++, unlock);
-                ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "定位飘窗", unlock);
+                if(cmsBtJmBayWindowModel.getFixed()){
+                    ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "定位飘窗", unlock);
+                }else{
+                    ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "链接飘窗", unlock);
+                }
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 2, bayWindow.getName(), unlock);
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 3, bayWindow.getUrl(), unlock);
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 4, bayWindow.getLink(), unlock);

@@ -50,8 +50,11 @@ public class CmsJmPromotionDetailController extends CmsController {
     //end 2
 
     private final CmsJmPromotionService jmPromotionService;
+
     private final TagService tagService;
     private final CmsBtJmImageTemplateService jmImageTemplateService;
+    @Autowired
+    private CmsBtJmPromotionService btJmPromotionService;
 
     @Autowired
     public CmsJmPromotionDetailController(CmsBtJmPromotionProductService serviceCmsBtJmPromotionProduct,
@@ -383,5 +386,17 @@ public class CmsJmPromotionDetailController extends CmsController {
         public void setJmProductList(List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList) {
             this.jmProductList = jmProductList;
         }
+    }
+
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    @RequestMapping("setJmPromotionStepStatus")
+    public AjaxResponse setJmPromotionStepStatus(@RequestBody Map<String, Object> param) {
+        btJmPromotionService.setJmPromotionStepStatus((Integer) param.get("jmPromId"),
+                CmsBtJmPromotionService.JmPromotionStepNameEnum.valueOf((String) param.get("stepName")),
+                CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
+                getUser().getUserName());
+        return success(true);
     }
 }

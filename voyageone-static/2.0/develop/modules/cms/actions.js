@@ -248,6 +248,7 @@ define(function () {
                     savePromotionTagModules: 'savePromotionTagModules',
                     getPromotionProducts: 'getPromotionProducts',
                     saveProductSort: 'saveProductSort',
+                    "setJmPromotionStepStatus": 'setJmPromotionStepStatus',
                     getJmTemplateUrls: {url: 'getJmTemplateUrls', cache: CACHE.LOCAL}
                 },
                 "JmPromotionImagesService": {

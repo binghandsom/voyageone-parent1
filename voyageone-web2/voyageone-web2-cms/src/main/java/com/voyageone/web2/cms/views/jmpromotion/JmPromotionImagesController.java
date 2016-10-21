@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
 import com.voyageone.common.asserts.Assert;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -25,6 +26,8 @@ public class JmPromotionImagesController extends CmsController {
 
     @Autowired
     private JmPromotionImagesService jmPromotionImagesService;
+    @Autowired
+    private CmsBtJmPromotionService btJmPromotionService;
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.INIT)
     public AjaxResponse init(@RequestBody Map<String, String> requestMap) {
@@ -48,7 +51,8 @@ public class JmPromotionImagesController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.SAVE)
     public AjaxResponse save(@RequestBody Wrapper params) {
-
+        btJmPromotionService.setJmPromotionStepStatus(params.getJmPromotionId(),
+                CmsBtJmPromotionService.JmPromotionStepNameEnum.PromotionImage, CmsBtJmPromotionService.JmPromotionStepStatusEnum.Error, getUser().getUserName());
         Assert.notNull(params.getPromotionImages()).elseThrowDefaultWithTitle("promotionImages");
 
         CmsBtJmPromotionImagesModel imageEntity = params.getPromotionImages();
@@ -63,7 +67,11 @@ public class JmPromotionImagesController extends CmsController {
         imageEntity.setBrand(params.getBrand());
 
         jmPromotionImagesService.saveJmPromotionImages(imageEntity);
-
+        if (params.getSaveType() != null && (params.getSaveType() == 1 || params.getSaveType() == 2)) {
+            // 1：提交  2：发布任务
+            btJmPromotionService.setJmPromotionStepStatus(params.getJmPromotionId(),
+                    CmsBtJmPromotionService.JmPromotionStepNameEnum.PromotionImage, CmsBtJmPromotionService.JmPromotionStepStatusEnum.Success, getUser().getUserName());
+        }
         return success(null);
     }
 
@@ -100,7 +108,7 @@ public class JmPromotionImagesController extends CmsController {
         private Integer promotionId;
 
         private Integer jmPromotionId;
-
+        private Integer saveType;
         private String brand;
 
         public CmsBtJmPromotionImagesModel getPromotionImages() {
@@ -133,6 +141,14 @@ public class JmPromotionImagesController extends CmsController {
 
         public void setBrand(String brand) {
             this.brand = brand;
+        }
+
+        public Integer getSaveType() {
+            return saveType;
+        }
+
+        public void setSaveType(Integer saveType) {
+            this.saveType = saveType;
         }
     }
 }
