@@ -1700,7 +1700,8 @@ public class BackDoorController extends CmsController {
             error41Param.put("channelId", channelId);
             error41Param.put("productCode", value);
             CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error41Param);
-            cmsBtJmProductDao.delete(jmproductModel.getId());
+            if (jmproductModel != null)
+                cmsBtJmProductDao.delete(jmproductModel.getId());
 
             error41Param.put("skuCode", key);
             CmsBtJmSkuModel jmSku = cmsBtJmSkuDao.selectOne(error41Param);
