@@ -106,7 +106,6 @@ public class JmPromotionImagesController extends CmsController {
         CmsBtJmPromotionImagesModel promotionImages;
 
         private Integer promotionId;
-
         private Integer jmPromotionId;
         private Integer saveType;
         private String brand;

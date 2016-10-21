@@ -41,6 +41,9 @@ define([
             spDataService = self.spDataService,
             imgUpEntity = self.imgUpEntity;
 
+        if(!imgUpEntity.jmPromotionId)
+            return;
+
         spDataService.getPromotionImgTpl(imgUpEntity).then(function (res) {
             self.imgUrls = res.promotionImageUrl;
             self.imgUpEntity = res.promotionImagesModel;
@@ -103,10 +106,10 @@ define([
             //用于显示
             imgUrls[imageName] = res.templateUrl;
             //用于存储图片名称
-            imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName
+            imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName;
 
             //更新
-            self.save();
+            self.save(0);
         });
     };
 
@@ -119,7 +122,9 @@ define([
             alert = self.alert,
             counts = 0,
             spDataService = self.spDataService;
+
         spDataService.jmPromotionObj.imageStatus = 2;
+
 
         if (saveType == 1) {
             _.each(self.imgUpEntity, function (value, key) {
@@ -133,6 +138,7 @@ define([
             }
         }
 
+        self.imgUpEntity.saveType = saveType;
         spDataService.savePromotionImages({
             "promotionImages": self.imgUpEntity,
             "brand": self.promotionInfo.brand,

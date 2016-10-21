@@ -2,8 +2,6 @@ package com.voyageone.service.model.cms.mongo.jm.promotion;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
-import java.util.List;
-
 /**
  * 按渠道拆分的，聚美专场活动使用的，图片数据模型
  * <p>
@@ -20,6 +18,11 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
     private Integer jmPromotionId;
 
     private String brand;
+
+    /**
+     * 保存类型:    0:暂存    1：提交    2：发布任务
+     * */
+    private Integer saveType;
 
     /**
      * 备注
@@ -170,6 +173,14 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
 
     public Boolean getUseTemplate() {
         return useTemplate;
+    }
+
+    public Integer getSaveType() {
+        return saveType;
+    }
+
+    public void setSaveType(Integer saveType) {
+        this.saveType = saveType;
     }
 
     public void setUseTemplate(Boolean useTemplate) {
