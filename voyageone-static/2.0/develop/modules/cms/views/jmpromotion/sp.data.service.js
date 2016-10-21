@@ -93,8 +93,8 @@ define(['cms'], function (cms) {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService,
             jmPromotionObj = self.jmPromotionObj;
-        self.jmPromotionObj.imageStatus = 2;
-        saveType = upEntity.saveType;
+        jmPromotionObj.imageStatus = 2;
+        var saveType = upEntity.saveType;
 
         return JmPromotionImagesService.save(_.extend(upEntity, self.commonUpEntity)).then(function (res) {
             if (saveType == 1 || saveType == 2) {
