@@ -53,7 +53,6 @@ public class CmsBtJmPromotionImagesDao extends BaseMongoDao<CmsBtJmPromotionImag
         Criteria criteria = new Criteria("brand").is(brand);
 
         return select(new JongoQuery(criteria)
-                .setProjection("{\"mappings\":0}")
                 .setSort("{\"modified\":-1}").setLimit(10));
     }
 
