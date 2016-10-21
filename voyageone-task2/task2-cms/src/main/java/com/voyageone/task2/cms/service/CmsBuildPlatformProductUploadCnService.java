@@ -18,7 +18,6 @@ import com.voyageone.service.dao.cms.CmsBtSxCnSkuDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSxCnInfoDao;
-import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
@@ -29,7 +28,6 @@ import com.voyageone.service.model.cms.CmsBtSxCnSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSxCnInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -66,8 +64,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
     private CmsBtSxCnSkuDao cmsBtSxCnSkuDao;
     @Autowired
     private CmsBtSxCnSkuDaoExt cmsBtSxCnSkuDaoExt;
-    @Autowired
-    private ImsBtProductDao imsBtProductDao;
     @Autowired
     private CmsBtSxWorkloadDao sxWorkloadDao;
     @Autowired
@@ -195,20 +191,18 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                 cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 0, getTaskName(), 1);
                 needRetry = true;
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
+                insertBusinessLog(channelId, cartId, String.format("独立域名xml推送失败!请耐心等待下一次推送!本次推送数据的Approve时间为[%s]-[%s]", startTime, endTime), null);
             } else {
                 for (CmsBtSxCnInfoModel sxModel : listSxModel) {
                     // 上传产品和sku成功的场合,回写product group表中的numIId和platformStatus(Onsale/InStock)
                     String numIId = sxModel.getUrlKey(); // 因为现在是一个group一个code
                     try {
                         updateProductGroupNumIIdStatus(sxModel, numIId);
-                        // 回写ims_bt_product表(numIId)
-                        updateImsBtProduct(sxModel, numIId);
                         // 回写workload表   (1上新成功)
                         updateSxWorkload(sxModel.getSxWorkloadId(), CmsConstants.SxWorkloadPublishStatusNum.okNum);
                     } catch (Exception ex) {
                         $error(ex.getMessage());
-                        insertBusinessLog(channelId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
+                        insertBusinessLog(channelId, cartId, "回写numIId发生异常!" + ex.getMessage(), sxModel);
                     }
                 }
 
@@ -229,12 +223,12 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             if (!needRetry) {
                 // 不需要重新传
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+                insertBusinessLog(channelId, cartId, String.format("发生预想外的异常,需要重新Approve!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
                 // 把状态更新成 2:上传结束
                 cmsBtSxCnInfoDao.updatePublishFlg(channelId, listGroupId, 2, getTaskName(), 1);
             } else {
                 // 回写详细错误信息表(cms_bt_business_log)
-                insertBusinessLog(channelId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
+                insertBusinessLog(channelId, cartId, String.format("发生预想外的异常,请等待系统自动重新上传!本次推送数据的Approve时间为[%s]-[%s]!错误内容是[%s]", startTime, endTime, ex.getMessage()), null);
             }
         }
     }
@@ -244,7 +238,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
      *
      * @param errorMsg 错误信息
      */
-    private void insertBusinessLog(String channelId, String errorMsg, CmsBtSxCnInfoModel sxModel) {
+    private void insertBusinessLog(String channelId, int cartId, String errorMsg, CmsBtSxCnInfoModel sxModel) {
         CmsBtBusinessLogModel businessLogModel = new CmsBtBusinessLogModel();
         // 渠道id
         businessLogModel.setChannelId(channelId);
@@ -258,6 +252,8 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
         businessLogModel.setCreater(getTaskName());
         // 更新者
         businessLogModel.setModifier(getTaskName());
+		// 平台id
+		businessLogModel.setCartId(cartId);
 
         if (sxModel != null) {
             // 单个产品错误
@@ -266,8 +262,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             // 类目id
 //           businessLogModel.setCatId(sxModel.getCatIds().stream().collect(Collectors.joining(",")));
             // deleted by morse.lu 2016/09/22 end
-            // 平台id
-            businessLogModel.setCartId(sxModel.getCartId());
             // Group id
             businessLogModel.setGroupId(String.valueOf(sxModel.getGroupId()));
             // 主商品的product_id
@@ -306,39 +300,6 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
 
         // 更新ProductGroup表(更新该model对应的所有(包括product表)和上新有关的状态信息)
         productGroupService.updateGroupsPlatformStatus(grpModel, new ArrayList<String>(){{this.add(sxModel.getCode());}});
-    }
-
-    /**
-     * 回写ims_bt_product表
-     */
-    private void updateImsBtProduct(CmsBtSxCnInfoModel sxModel, String numIId) {
-        // s:sku级别, p:product级别
-        String updateType = "s";
-
-        // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
-        String code = sxModel.getCode();
-
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
-                sxModel.getOrgChannelId(),   // ims表要用OrgChannelId
-                sxModel.getCartId(),
-                code);
-        if (imsBtProductModel == null) {
-            // 没找到就插入
-            imsBtProductModel = new ImsBtProductModel();
-            imsBtProductModel.setChannelId(sxModel.getOrgChannelId()); // ims表要用OrgChannelId
-            imsBtProductModel.setCartId(sxModel.getCartId());
-            imsBtProductModel.setCode(code);
-            imsBtProductModel.setNumIid(numIId);
-            imsBtProductModel.setQuantityUpdateType(updateType);
-
-            imsBtProductDao.insertImsBtProduct(imsBtProductModel, getTaskName());
-        } else {
-            // 找到了, 更新
-            imsBtProductModel.setNumIid(numIId);
-            imsBtProductModel.setQuantityUpdateType(updateType);
-
-            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, getTaskName());
-        }
     }
 
     /**
