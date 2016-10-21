@@ -4,10 +4,7 @@ import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.InitParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductParameter;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
@@ -269,10 +266,16 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(null);
     }
 
+    //修改单个商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
     public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
         service3.updatePromotionProductTag(parameter, getUser().getUserName());
         return success(null);
+    }
+    //批量修改商品tag
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
+    public int updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
+        return service3.updatePromotionListProductTag(parameter, getUser().getUserName());
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
@@ -280,6 +283,7 @@ public class CmsJmPromotionDetailController extends CmsController {
         int count = service3.selectChangeCountByPromotionId(cmsBtJmPromotionProductId);
         return success(count);
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdateRemark)
     public AjaxResponse updateRemark(@RequestBody UpdateRemarkParameter parameter) {
         int count = service3.updateRemark(parameter);

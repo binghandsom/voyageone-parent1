@@ -83,6 +83,7 @@ public interface CmsUrlConstants {
                 String UpdateDealPrice = "updateDealPrice";
                 String UpdatePromotionProduct = "updatePromotionProduct";
                 String UpdatePromotionProductTag = "updatePromotionProductTag";
+                String UpdatePromotionListProductTag="updatePromotionListProductTag";
                 String SelectChangeCountByPromotionId = "selectChangeCountByPromotionId";
                 String UpdateRemark="updateRemark";
                 String RefreshPrice="refreshPrice";
