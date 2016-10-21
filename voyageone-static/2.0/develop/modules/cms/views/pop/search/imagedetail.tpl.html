@@ -11,13 +11,13 @@
             <div id="vo_fixProdPanel">
                 <!-- product photos -->
                 <div class="vo_prodGallery" ng-if="vm.picInfo.search != 'jmpromlist'">
-                    <div class="imageContainer">
+                    <div class="imageContainer" >
                         <img class="imageWrapper" style="margin:0 auto;cursor: pointer" ng-src="{{!vm.currentImage ? vm.picInfo.mainPic : vm.currentImage}}" title="【click me】" ng-click="goDetail()">
                     </div>
                 </div>
                 <div class="vo_prodGallery" ng-if="vm.picInfo.search == 'jmpromlist'">
                     <div class="imageContainer">
-                        <img class="imageWrapper" style="margin:0 auto" ng-src="{{vm.picInfo.mainPic}}" title="" alt="">
+                        <img class="imageWrapper" style="margin:0 auto;max-width:460px" ng-src="{{vm.picInfo.mainPic}}" title="" alt="">
                     </div>
                 </div>
                 <uib-tabset class="tab-container vo_nav-tabs" ng-if="vm.picInfo.search != 'jmpromlist'">

@@ -43,6 +43,8 @@ public class CmsBtJmPromotionService extends BaseService {
     @Autowired
     private CmsBtJmImageTemplateService jmImageTemplateService;
 
+    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
+
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
@@ -389,14 +391,20 @@ public class CmsBtJmPromotionService extends BaseService {
             // 获取频道页入口图（APP端日常专场图片）
             JongoQuery qryObj = new JongoQuery();
             qryObj.setQuery("{'jmPromotionId':#}");
-            qryObj.setProjectionExt("appChannelEntrance");
+            qryObj.setProjectionExt("appEntrance");
 
             for (MapModel promObj : promList) {
                 Integer jmId = (Integer) promObj.get("id");
                 qryObj.setParameters(jmId);
                 CmsBtJmPromotionImagesModel imgObj = jmPromotionImagesDao.selectOneWithQuery(qryObj);
                 if (imgObj != null) {
-                    promObj.put("entryImg", jmImageTemplateService.getUrl(jmId + "_" + imgObj.getAppChannelEntrance(), "appChannelEntrance", jmId));
+                    String imgName = StringUtils.trimToNull(imgObj.getAppEntrance());
+                    if (imgName != null) {
+                        if (imgObj.getUseTemplate() != null && imgObj.getUseTemplate())
+                            promObj.put("entryImg", jmImageTemplateService.getUrl(imgName, "appEntrance", jmId));
+                        else
+                            promObj.put("entryImg", String.format(ORIGINAL_SCENE7_IMAGE_URL, imgName));
+                    }
                 }
             }
         }
