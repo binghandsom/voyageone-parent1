@@ -55,7 +55,6 @@ define([
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
-            imgUpEntity = self.imgUpEntity,
             brand = promotionInfo.brand ? promotionInfo.brand : '',
             popups = self.popups;
 
@@ -81,8 +80,8 @@ define([
         popups.openImageBatchJmUpload(_.extend(spDataService.commonUpEntity, {
             brand: brand
             , imgUpEntity: self.imgUpEntity
-        })).then(function (context) {
-
+        })).then(function () {
+            self.init();
         });
     };
 
@@ -105,6 +104,9 @@ define([
             imgUrls[imageName] = res.templateUrl;
             //用于存储图片名称
             imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName
+
+            //更新
+            self.save();
         });
     };
 
@@ -137,6 +139,10 @@ define([
             "saveType": saveType
         }).then(function(){
             notify.success("更新成功!");
+            spDataService.jmPromotionObj.imageStatus = 1;
+
+            //刷新页面
+            self.init();
         });
     };
 
