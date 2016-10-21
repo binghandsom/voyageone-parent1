@@ -141,7 +141,12 @@ public class CmsJmPromotionIndexController extends CmsController {
      */
     @RequestMapping("saveBayWindow")
     public AjaxResponse saveBayWindow(@RequestBody CmsBtJmBayWindowModel bayWindowModel) {
+        service.setJmPromotionStepStatus(bayWindowModel.getJmPromotionId(),
+                CmsBtJmPromotionService.JmPromotionStepNameEnum.PromotionBayWindow, CmsBtJmPromotionService.JmPromotionStepStatusEnum.Error, getUser().getUserName());
+
         jmBayWindowService.update(bayWindowModel);
+        service.setJmPromotionStepStatus(bayWindowModel.getJmPromotionId(),
+                CmsBtJmPromotionService.JmPromotionStepNameEnum.PromotionBayWindow, CmsBtJmPromotionService.JmPromotionStepStatusEnum.Success, getUser().getUserName());
         return success(true);
     }
 }

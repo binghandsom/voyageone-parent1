@@ -175,9 +175,12 @@ define(['cms'], function (cms) {
 
     SpDataService.prototype.saveBayWindow = function saveBayWindow(bayWindow) {
         var self = this,
-            jmPromotionService = self.jmPromotionService;
+            jmPromotionService = self.jmPromotionService,
+        jmPromotionObj = self.jmPromotionObj;
+        jmPromotionObj.bayWindowStatus = 2;
 
         return jmPromotionService.saveBayWindow(bayWindow).then(function (resp) {
+            jmPromotionObj.bayWindowStatus = 1;
             return resp.data;
         });
     };
