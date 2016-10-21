@@ -12,7 +12,7 @@ define(['cms'], function (cms) {
 
     JmSortProductPopupController.prototype.sortFields = {
         stock: 'jmPromotionProduct.quantity',
-        xiaoliang: 3,
+        sales: 'jmPromotionProduct.sales',
         price: 'jmPromotionProduct.dealPrice'
     };
 

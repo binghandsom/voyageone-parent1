@@ -143,6 +143,7 @@ define(['cms'], function (cms) {
             return resp.data;
         });
     };
+
     SpDataService.prototype.downloadWaresImageZip = function downloadWaresImageZip() {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService;
@@ -153,5 +154,15 @@ define(['cms'], function (cms) {
             return resp.data;
         });
     };
+
+    SpDataService.prototype.saveBayWindow = function saveBayWindow(bayWindow) {
+        var self = this,
+            jmPromotionService = self.jmPromotionService;
+
+        return jmPromotionService.saveBayWindow(bayWindow).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     cms.service('spDataService', SpDataService);
 });

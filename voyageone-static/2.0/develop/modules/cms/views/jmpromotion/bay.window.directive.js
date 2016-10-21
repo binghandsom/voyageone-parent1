@@ -1,13 +1,22 @@
 define(['cms'], function (cms) {
-    function BayWindowComponentController(spDataService) {
+    function BayWindowComponentController(spDataService, confirm, notify) {
         var self = this;
         self.fixedWindows = [];
         self.linkWindows = [];
+        self.confirm = confirm;
+        self.notify = notify;
         self.spDataService = spDataService;
         self.loadTemplates().then(function () {
             self.loadBayWindow();
         })
     }
+
+    BayWindowComponentController.prototype.moveKeys = {
+        up: 'up',
+        upToTop: 'upToTop',
+        down: 'down',
+        downToLast: 'downToLast'
+    };
 
     BayWindowComponentController.prototype.loadTemplates = function loadTemplates() {
         var self = this,
@@ -66,7 +75,7 @@ define(['cms'], function (cms) {
         item.url = this.getImage(item.name, index);
     };
 
-    BayWindowComponentController.prototype.add = function add() {
+    BayWindowComponentController.prototype.addLinkWindow = function addLinkWindow() {
         var self = this,
             linkWindows = self.linkWindows;
 
@@ -79,10 +88,68 @@ define(['cms'], function (cms) {
         });
     };
 
-    BayWindowComponentController.prototype.switchPreview = function () {
+    BayWindowComponentController.prototype.switchPreview = function switchPreview() {
         var self = this,
             bayWindow = self.bayWindow;
         self.previewWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
+    };
+
+    BayWindowComponentController.prototype.removeLinkWindow = function removeLinkWindow(item, index) {
+        var self = this,
+            linkWindows = self.linkWindows;
+
+        self.confirm('确定要删除么？').then(function () {
+            linkWindows.splice(index, 1);
+        });
+    };
+
+    BayWindowComponentController.prototype.moveLinkWindow = function moveLinkWindow(i, moveKey) {
+        var self = this,
+            linkWindows = self.linkWindows,
+            moveKeys = self.moveKeys,
+            temp;
+
+        switch (moveKey) {
+            case moveKeys.up:
+                if (i === 1)
+                    return;
+                temp = linkWindows[i];
+                linkWindows[i] = linkWindows[i - 1];
+                linkWindows[i - 1] = temp;
+                return;
+            case moveKeys.upToTop:
+                if (i === 1)
+                    return;
+                temp = linkWindows.splice(i, 1);
+                linkWindows.splice(1, 0, temp[0]);
+                return;
+            case moveKeys.down:
+                if (i === linkWindows.length - 1)
+                    return;
+                temp = linkWindows[i];
+                linkWindows[i] = linkWindows[i + 1];
+                linkWindows[i + 1] = temp;
+                return;
+            case moveKeys.downToLast:
+                if (i === linkWindows.length - 1)
+                    return;
+                temp = linkWindows.splice(i, 1);
+                linkWindows.push(temp[0]);
+                return;
+        }
+    };
+
+    BayWindowComponentController.prototype.saveAll = function saveAll() {
+        var self = this,
+            spDataService = self.spDataService,
+            bayWindow = self.bayWindow,
+            notify = self.notify;
+
+        bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
+
+        spDataService.saveBayWindow(bayWindow).then(function () {
+            notify.success('保存成功');
+        });
     };
 
     cms.directive('bayWindow', function bayWindowDirectiveFactory() {
@@ -90,7 +157,7 @@ define(['cms'], function (cms) {
             templateUrl: '/modules/cms/views/jmpromotion/bay.window.directive.html',
             scope: {},
             controllerAs: 'ctrl',
-            controller: ['spDataService', BayWindowComponentController]
+            controller: ['spDataService', 'confirm', 'notify', BayWindowComponentController]
         };
     });
 });

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-6">
             <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.stock)">库存 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.stock)}}"></i></button>
-            <button type="button" class="btn btn-default">销量 <i class="fa fa-sort"></i></button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.sales)">销量 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.sales)}}"></i></button>
             <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.price)">价格 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.price)}}"></i></button>
             <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
         </div>
@@ -29,7 +29,8 @@
                     </div>
                     <div class="col-sm-8">
                         <div>{{::product.jmProduct.productShortName}}</div>
-                        <div>库存 4</div>
+                        <div>库存 <span>{{::product.jmPromotionProduct.quantity}}</span></div>
+                        <div>销售 <span>{{::product.jmPromotionProduct.sales}}</span></div>
                     </div>
                 </div>
                 <div class="row">

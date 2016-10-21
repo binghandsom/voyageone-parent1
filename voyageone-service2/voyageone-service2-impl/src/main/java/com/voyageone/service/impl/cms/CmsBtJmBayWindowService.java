@@ -1,17 +1,11 @@
 package com.voyageone.service.impl.cms;
 
-import com.mongodb.WriteResult;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmBayWindowDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
-import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by james on 2016/10/17.
@@ -30,7 +24,7 @@ public class CmsBtJmBayWindowService extends BaseService {
     }
 
     public CmsBtJmBayWindowModel getBayWindowByJmPromotionId(Integer JmPromotionId) {
-        return cmsBtJmBayWindowDao.selectOneWithQuery("{'jmPromotionId':" + JmPromotionId + "}");
+        return cmsBtJmBayWindowDao.selectOneWithQuery("{jmPromotionId:" + JmPromotionId + "}");
     }
 
     public void insert(CmsBtJmBayWindowModel cmsBtJmBayWindowModel) {
@@ -40,12 +34,15 @@ public class CmsBtJmBayWindowService extends BaseService {
     public CmsBtJmBayWindowModel createByPromotion(CmsBtJmPromotionModel jmPromotionModel, String username) {
         CmsBtJmBayWindowModel jmBayWindowModel = new CmsBtJmBayWindowModel();
 
-        jmBayWindowModel.setChannelId(jmPromotionModel.getChannelId());
         jmBayWindowModel.setJmPromotionId(jmPromotionModel.getId());
         jmBayWindowModel.setFixed(true);
         jmBayWindowModel.setCreater(username);
         jmBayWindowModel.setModifier(username);
 
         return jmBayWindowModel;
+    }
+
+    public void update(CmsBtJmBayWindowModel bayWindowModel) {
+        cmsBtJmBayWindowDao.update(bayWindowModel);
     }
 }

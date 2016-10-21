@@ -42,7 +42,7 @@
                 `no_stock_to_last` = #{noStockToLast,jdbcType=BIT},
             </if>
             <if test="featured != null" >
-                `featured` = #{featured,jdbcType=TINYINT},
+                `featured` = #{featured,jdbcType=BIT},
             </if>
         </set>
         where `tag_id` = #{tagId,jdbcType=INTEGER}
@@ -83,7 +83,7 @@
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
             </if>
             <if test="featured != null" >
-                and `featured` = #{featured,jdbcType=TINYINT}
+                and `featured` = #{featured,jdbcType=BIT}
             </if>
         </where>
         limit 1
@@ -119,7 +119,7 @@
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
             </if>
             <if test="featured != null" >
-                and `featured` = #{featured,jdbcType=TINYINT}
+                and `featured` = #{featured,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -152,7 +152,7 @@
                 and `no_stock_to_last` = #{noStockToLast,jdbcType=BIT}
             </if>
             <if test="featured != null" >
-                and `featured` = #{featured,jdbcType=TINYINT}
+                and `featured` = #{featured,jdbcType=BIT}
             </if>
         </where>
     </select>
@@ -220,7 +220,7 @@
                 #{noStockToLast,jdbcType=BIT},
             </if>
             <if test="featured != null" >
-                #{featured,jdbcType=TINYINT},
+                #{featured,jdbcType=BIT},
             </if>
         </trim>
     </insert>

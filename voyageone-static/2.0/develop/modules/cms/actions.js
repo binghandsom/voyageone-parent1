@@ -201,7 +201,8 @@ define(function () {
                     "saveModel": "saveModel",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId",
-                    getBayWindow: 'getBayWindow'
+                    getBayWindow: 'getBayWindow',
+                    saveBayWindow: 'saveBayWindow'
                 },
                 "jmPromotionProductAddService": {
                     "root": "/cms/jm/promotion/product/",
