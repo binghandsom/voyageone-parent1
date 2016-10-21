@@ -177,11 +177,12 @@ public class CmsBtJmPromotionDownloadImageZipService {
                         }
                         inputStream.close();
                         zipOutputStream.closeEntry();
-                        zipOutputStream.close();
+
                     }catch (Exception e){
 
                     }
                 }
+                zipOutputStream.close();
                 return byteArrayOutputStream.toByteArray();
             } catch (IOException e) {
                 e.printStackTrace();
