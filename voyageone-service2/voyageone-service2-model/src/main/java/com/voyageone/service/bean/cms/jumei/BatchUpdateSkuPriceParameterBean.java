@@ -15,7 +15,7 @@ public class BatchUpdateSkuPriceParameterBean {
     String optType;
     //price value
     double priceValue;
-    List<Long> listPromotionProductId;
+    List<Integer> listPromotionProductId;
     int jmPromotionId;
     public int getPriceTypeId() {
         return priceTypeId;
@@ -57,11 +57,11 @@ public class BatchUpdateSkuPriceParameterBean {
         this.priceValue = priceValue;
     }
 
-    public List<Long> getListPromotionProductId() {
+    public List<Integer> getListPromotionProductId() {
         return listPromotionProductId;
     }
 
-    public void setListPromotionProductId(List<Long> listPromotionProductId) {
+    public void setListPromotionProductId(List<Integer> listPromotionProductId) {
         this.listPromotionProductId = listPromotionProductId;
     }
 

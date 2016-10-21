@@ -18,7 +18,7 @@ import java.util.Map;
 public interface CmsBtPromotionCodesDaoExtCamel {
     int deleteByPromotionId(int promotionId);
     int deleteByPromotionCodeList(Map<String,Object> map);
-    int updateJmPromotionPrice(@Param("jmPromotionId")int jmPromotionId, @Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int updateJmPromotionPrice(@Param("jmPromotionId")int jmPromotionId, @Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     /**
      * 取得当前有效的活动下的所有产品

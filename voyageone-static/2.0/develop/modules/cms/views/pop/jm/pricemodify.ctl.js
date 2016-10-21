@@ -32,7 +32,6 @@ define([
 
         $scope.ok = function () {
             console.log($scope.vm);
-            return;
             if (listPromotionProduct.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
@@ -77,11 +76,18 @@ define([
             }
 
             if(!isUpdate) return;
-            $scope.model.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
-            $scope.model.jmPromotionId=jmPromotionId;
-            var parameter= angular.copy($scope.model);
-            parameter.discount = $scope.model.discount ? $scope.model.discount * 0.1 : 1;
-            jmPromotionDetailService.batchUpdateDealPrice(parameter).then(function (res) {
+            var parameter={};
+            parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
+            parameter.jmPromotionId=jmPromotionId;
+
+            parameter.priceTypeId=$scope.vm.priceTypeId;
+            parameter.priceValue=$scope.vm.priceValue;
+            parameter.skuUpdType=$scope.vm.skuUpdType;
+            parameter.optType=$scope.vm.optType;
+            parameter.roundType=$scope.vm.roundType;
+
+            console.log(parameter);
+            jmPromotionDetailService.batchUpdateSkuDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
                     alert(res.data.msg);
                     return;
@@ -92,7 +98,15 @@ define([
               alert(res);
             })
         };
-
+        $scope.getSelectedPromotionProductIdList = function (modelList) {
+            var listPromotionProductId = [];
+            for (var i = 0; i < modelList.length; i++) {
+                if (modelList[i].isChecked) {
+                    listPromotionProductId.push(modelList[i].id);
+                }
+            }
+            return listPromotionProductId;
+        }
         // 选择表达式时的画面检查
         $scope.chkOptionType = function () {
             $scope.vm.priceValue = null;

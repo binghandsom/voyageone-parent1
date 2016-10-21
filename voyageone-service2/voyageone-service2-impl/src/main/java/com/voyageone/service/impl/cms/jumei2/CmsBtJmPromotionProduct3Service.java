@@ -70,6 +70,9 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     private CmsBtPromotionDao daoCmsBtPromotion;
 
+    @Autowired
+    CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -169,46 +172,19 @@ public class CmsBtJmPromotionProduct3Service {
 
 
     @VOTransactional
-    public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter) {
+    public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter,String userName) {
         CallResult result = new CallResult();
-//        <option value="0">中国官网价格</option> <!--msrp_rmb-->
-//        <option value="1">中国指导价格</option> <!--retail_price-->
-//        <option value="2">中国最终售价</option> <!--sale_price-->
+        if (parameter.getListPromotionProductId().isEmpty())
+            return result;
 
-        if (parameter.getListPromotionProductId().isEmpty()) return result;
-        //价格类型    1 建议售价   2指导售价  3最终售价  4固定售价
-        double price = 0;
-        if (parameter.getPriceTypeId() == 4) {//价格
-            price = parameter.getPriceValue();
-        } else//折扣 0：市场价 1：团购价
-        {
-            if (parameter.getPriceTypeId() == 1)//团购价 deal_price
-            {
-                // price = "a.msrp_rmb*" + Double.toString(parameter.getDiscount());//中国官网价格
-            } else if (parameter.getPriceTypeId() == 2) //市场价 market_price
-            {
-                // price = "a.retail_price*" + Double.toString(parameter.getDiscount());//中国指导价格
-            } else if (parameter.getPriceTypeId() == 3) {
-                //price = "a.sale_price*" + Double.toString(parameter.getDiscount());//中国最终售价
-            }
-        }
-        switch (parameter.getOptType()) {
-            case "+":
-                break;
-            case "-":
-                break;
-            case "*":
-                break;
-            case "=":
-                break;
-            default:
-                break;
-        }
-        //price = "CEIL(" + price + ")";//向上取整
-        //         向下取整 floor
-
-         return result;
+        parameter.getListPromotionProductId().forEach(id -> {
+            cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, id,userName);
+        });
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
+        daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
+        return result;
     }
+
 
 
 
