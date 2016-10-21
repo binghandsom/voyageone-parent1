@@ -301,4 +301,9 @@
         t2.promotion_status = 1 and t2.active = 1
     </select>
 
+    <!-- 设置聚美活动各阶段的状态 -->
+    <update id="setJmPromotionStepStatus"  parameterType="HashMap">
+        UPDATE cms_bt_jm_promotion set ${stepName} = ${stepStatus}, modifier = #{modifier} ,modified = now() where id = #{jmPromotionId}
+    </update>
+
 </mapper>

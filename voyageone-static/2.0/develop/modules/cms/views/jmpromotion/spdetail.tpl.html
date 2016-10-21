@@ -44,11 +44,21 @@
         <div class="col-sm-8">
             <div class="product-shema-detail">
                 <ul class="nav nav-pills">
-                    <li><span class="label on-sale">专场上传 <i class="fa fa-check ng-scope"></i></span></li>
-                    <li><span class="label on-sale">活动信息 <i class="fa fa-check ng-scope"></i></span></li>
-                    <li><span class="label on-sale">活动货架 <i class="fa fa-check ng-scope"></i></span></li>
-                    <li><span class="label on-sale">活动图片 <i class="fa fa-check ng-scope"></i></span></li>
-                    <li><span class="label on-sale">活动飘窗 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.uploadStatus==0"><span class="label on-sale" style="background:darkgray">专场上传 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.uploadStatus==1"><span class="label on-sale">专场上传 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.uploadStatus==2"><span class="label on-sale tagFlag">专场上传 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==0"><span class="label on-sale" style="background:darkgray">活动信息 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==1"><span class="label on-sale">活动信息 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==2"><span class="label on-sale tagFlag">活动信息 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==0"><span class="label on-sale" style="background:darkgray">活动货架 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==1"><span class="label on-sale">活动货架 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==2"><span class="label on-sale tagFlag">活动货架 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==0"><span class="label on-sale" style="background:darkgray">活动图片 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==1"><span class="label on-sale">活动图片 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==2"><span class="label on-sale tagFlag">活动图片 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==0"><span class="label on-sale" style="background:darkgray">活动飘窗 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==1"><span class="label on-sale">活动飘窗 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==2"><span class="label on-sale tagFlag">活动飘窗 <i class="fa fa-times ng-scope"></i></span></li>
                 </ul>
             </div>
         </div>

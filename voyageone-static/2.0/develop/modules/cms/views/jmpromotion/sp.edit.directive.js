@@ -3,9 +3,10 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpEditDirectiveController($routeParams, jmPromotionService, alert, confirm, $translate, $filter, $scope) {
+    function SpEditDirectiveController($routeParams, jmPromotionService, spDataService, alert, confirm, $translate, $filter, $scope) {
         this.$routeParams = $routeParams;
         this.jmPromotionService = jmPromotionService;
+        this.spDataService = spDataService;
         this.alert = alert;
         this.confirm = confirm;
         this.$translate = $translate;
@@ -190,7 +191,8 @@ define([
     SpEditDirectiveController.prototype.save = function(saveType) {
         var self = this,
             alert = self.alert,
-            jmPromotionService = self.jmPromotionService;
+            jmPromotionService = self.jmPromotionService,
+            spDataService = self.spDataService;
 
         var model = self.editModel.model;
         var extModel = self.editModel.extModel;
@@ -297,9 +299,12 @@ define([
         param.saveType = saveType;
         param.extModel.promotionId = self.$routeParams.promId;
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
+        spDataService.jmPromotionObj.detailStatus = 2;
 
-        jmPromotionService.saveModel(param).then(function(res){
-
+        jmPromotionService.saveModel(param).then(function(res) {
+            if (saveType == 1) {
+                spDataService.jmPromotionObj.detailStatus = 1;
+            }
         });
     };
 
@@ -368,7 +373,7 @@ define([
     cms.directive('spEdit', [function spEditDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['$routeParams', 'jmPromotionService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
+            controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
             controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }
