@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionDownloadImageZipService;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -23,20 +24,16 @@ public class JmPromotionDownloadImageZipController extends CmsController {
      * 下载专场图片包
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.DOWNLOAD_SPECIAL_IMAGE_ZIP)
-    public ResponseEntity downloadSpecialImageZip(@RequestBody Map<String, String> requestMap) {
-        String strZipName ="11";
-        int promotionId = Integer.parseInt(requestMap.get("promotionId"));
-        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(promotionId);
-        return genResponseEntityFromBytes(strZipName,data);
+    public ResponseEntity downloadSpecialImageZip(@RequestParam Integer jmPromotionId,@RequestParam String promotionName) {
+        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectSpecialImagesList(jmPromotionId);
+        return genResponseEntityFromBytes(String.format("%s(%s).zip",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".zip"), data);
     }
     /**
      * 下载商品主图包
      */
     @RequestMapping(CmsUrlConstants.JMPROMOTION.Images.DOWNLOAD_WARES_IMAGE_ZIP)
-    public ResponseEntity downloadWaresImageZip(@RequestBody Map<String, String> requestMap) {
-        String strZipName ="111";
-        int promotionId = Integer.parseInt(requestMap.get("promotionId"));
-        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectWaresImageList(promotionId);
-        return genResponseEntityFromBytes(strZipName,data);
+    public ResponseEntity downloadWaresImageZip(@RequestParam Integer jmPromotionId,@RequestParam String promotionName) {
+        byte[] data=cmsBtJmPromotionDownloadImageZipService.selectWaresImageList(jmPromotionId);
+        return genResponseEntityFromBytes(String.format("%s(%s).zip",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".zip"), data);
     }
 }

@@ -267,7 +267,8 @@ define(function () {
                 "cmsBtJmPromotionExportTaskService": {
                     "root": "/cms/CmsBtJmPromotionExportTask/index",
                     "getByPromotionId": "getByPromotionId",
-                    "addExport": "addExport"
+                    "addExport": "addExport",
+                    "exportJmPromotionInfo":"exportJmPromotionInfo"
                 }
             },
             "cmsMtImageCreate": {
