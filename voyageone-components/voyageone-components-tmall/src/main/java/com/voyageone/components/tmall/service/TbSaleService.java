@@ -12,11 +12,8 @@ import com.taobao.api.response.ItemsInventoryGetResponse;
 import com.taobao.api.response.ItemsOnsaleGetResponse;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.components.tmall.TbBase;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,13 +26,18 @@ import java.util.List;
 public class TbSaleService extends TbBase {
 
     /**
-     * 商品上架
+     * 天猫/淘宝商品上架
+     *
+     * @param shopBean 店铺信息
+     * @param numIid String 商品数字ID，该参数必须
+     * @param num Long 需要上架的商品的数量，该参数必须  取值范围:大于零的整数。如果商品有sku，则上架数量默认为所有sku数量总和，不可修改。否则商品数量根据设置数量调整为num
      */
-    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
+    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid, Long num) {
         logger.info("商品上架 " + numIid);
         ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
         request.setNumIid(NumberUtils.toLong(numIid));
-        request.setNum(1L);
+        // 需要上架的商品的数量。取值范围:大于零的整数。如果商品有sku，则上架数量默认为所有sku数量总和，不可修改。否则商品数量根据设置数量调整为num
+        request.setNum(num);  // 例如:1L, 2L等
         ItemUpdateListingResponse response = null;
 
         try {
@@ -49,7 +51,10 @@ public class TbSaleService extends TbBase {
     }
 
     /**
-     * 商品下架
+     * 天猫/淘宝商品下架
+     *
+     * @param shopBean 店铺信息
+     * @param numIid String 商品数字ID，该参数必须
      */
     public ItemUpdateDelistingResponse doWareUpdateDelisting(ShopBean shopBean, String numIid) {
         logger.info("商品下架 " + numIid);

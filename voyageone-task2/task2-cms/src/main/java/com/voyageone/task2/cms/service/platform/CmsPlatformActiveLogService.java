@@ -273,7 +273,7 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
                     } else {
                         if (CmsConstants.PlatformActive.ToOnSale.name().equals(activeStatus)) {
                             // 上架
-                            ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId);
+                            ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopProp, numIId, 1L);
                             if (response == null) {
                                 errMsg = "调用淘宝商品上架API失败";
                             } else {
