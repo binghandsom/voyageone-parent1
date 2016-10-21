@@ -5,15 +5,15 @@
         <h5 class="modal-title">&nbsp;修改商品Tag</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" name="tagModifyForm">
             <div class="row form-group">
                 <div class="col-lg-10 col-lg-offset-1">
                     <div class="col-lg-10">
                         <div class="input-group">
                             <span class="input-group-addon">Promotion Tag</span>
-                            <select multiple chosen class="form-control"   ng-model="vm.tagNameList"
+                            <select required multiple chosen class="form-control"   ng-model="vm.tagNameList"
                                     ng-options="m.tagName as m.tagName for m in vm.tagList">
-                            </select>
+                            </select >
                         </div>
                     </div>
                 </div>
@@ -22,6 +22,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+        <button class="btn btn-vo" ng-disabled="tagModifyForm.$invalid" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
     </div>
 </div><!-- .vo_modal -->
