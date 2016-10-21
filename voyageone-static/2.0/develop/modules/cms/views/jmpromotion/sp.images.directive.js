@@ -16,9 +16,10 @@ define([
             spDataService = self.spDataService;
 
         spDataService.initPromotionImages().then(function(res){
-
-            self.imgUrls = res.data.promotionImageUrl;
-            self.imgUpEntity = res.data.promotionImagesModel;
+            if(res.data.promotionImageUrl)
+                self.imgUrls = res.data.promotionImageUrl;
+            if(res.data.promotionImagesModel)
+                self.imgUpEntity = res.data.promotionImagesModel;
         });
 
         spDataService.getPromotion().then(function(res){
@@ -100,10 +101,22 @@ define([
         });
     };
 
-    SpImagesDirectiveController.prototype.save = function(){
+    /**
+     * @param saveType    0:暂存    1：提交    2：发布任务
+     */
+    SpImagesDirectiveController.prototype.save = function(saveType){
         var self = this,
             notify = self.notify,
+            counts = 0
             spDataService = self.spDataService;
+
+        if(saveType == 1){
+            _.each(self.imgUpEntity,function(){
+                counts ++ ;
+            });
+
+            console.log("counts",counts);
+        }
 
         spDataService.savePromotionImages({
             "promotionImages":self.imgUpEntity,
