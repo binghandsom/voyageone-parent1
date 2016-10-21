@@ -391,10 +391,16 @@ public class CmsAdvSearchQueryService extends BaseService {
             queryObject.addParameters(searchValue.getLockFlg());
         }
 
-        // MINI MALL 店铺时查询原始CHANNEL
-        if (StringUtils.isNotEmpty(searchValue.getOrgChaId()) && !ChannelConfigEnums.Channel.NONE.getId().equals(searchValue.getOrgChaId())) {
-            queryObject.addQuery("{'orgChannelId':#}");
-            queryObject.addParameters(searchValue.getOrgChaId());
+        // MINI MALL 店铺时查询原始CHANNEL(供应商)
+        if (searchValue.getSupplierList() != null && searchValue.getSupplierList().size() > 0 && searchValue.getSupplierType() > 0) {
+            if (searchValue.getSupplierType() == 1) {
+                queryObject.addQuery("{'orgChannelId':{$in:#}}");
+                queryObject.addParameters(searchValue.getSupplierList());
+            } else if (searchValue.getSupplierType() == 2) {
+                // 不在指定范围
+                queryObject.addQuery("{'orgChannelId':{$nin:#}}");
+                queryObject.addParameters(searchValue.getSupplierList());
+            }
         }
 
         // 获取code list用于检索code,model,sku

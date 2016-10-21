@@ -923,4 +923,49 @@ public class JdWareService extends JdBase {
         return catId;
     }
 
+    /**
+     * 商品打标(设置商品特殊属性feature，例如7天无理由退货等)
+     * featureKey和featureValue具体的值，可以在京东后台设置好了该属性之后，取得商品属性中的feature看到
+     * 一次最多能同时打标的个数为20
+     *
+     * @param shop ShopBean   店铺信息
+     * @param wareId Long  京东商品编号
+     * @param featureKeys String 特殊标属性key(最大不超过20个,多个用逗号分隔)
+     * @param featureValues String 特殊标属性值(最大不超过20个,多个用逗号分隔)
+     * @return boolean  设置关联版式到商品是否成功
+     */
+    public boolean mergeWareFeatures(ShopBean shop, Long wareId, String featureKeys, String featureValues) {
+
+        WareWriteMergeWareFeaturesRequest request = new WareWriteMergeWareFeaturesRequest();
+        // 商品编号
+        request.setWareId(wareId);
+        // 特殊标属性key，最大不超过20个(非必须)(例：is7ToReturn,12312123)
+        request.setFeatureKey(featureKeys);
+        // 特殊标属性值，最大不超过20个(非必须)(例：1,12312124)
+        request.setFeatureValue(featureValues);
+
+        try {
+            // 调用京东商品打标API(jingdong.ware.write.mergeWareFeatures)
+            WareWriteMergeWareFeaturesResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 返回京东商品打标成功
+                    return true;
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API设置商品打标失败! 商品编号:" + wareId + ",errorMsg:" + ex.getMessage());
+
+            throw new BusinessException("设置商品打标失败 " + ex.getMessage());
+        }
+
+        logger.error("调用京东API设置商品打标失败! 商品编号:" + wareId + ",response=null");
+        return false;
+    }
+
 }

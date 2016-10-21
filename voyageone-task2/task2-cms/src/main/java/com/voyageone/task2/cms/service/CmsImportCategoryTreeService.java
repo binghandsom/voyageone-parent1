@@ -14,7 +14,7 @@ import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  * @since 2.1.0
  */
 @Service
-public class CmsImportCategoryTreeService extends BaseTaskService {
+public class CmsImportCategoryTreeService extends BaseCronTaskService {
 
     private final static String CATEGORY_SHEET_NAME = "主数据类目层次";
     private final static String TMALL_MAPPING_SHEET_NAME = "天猫-Master";

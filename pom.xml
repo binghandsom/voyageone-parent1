@@ -99,6 +99,8 @@
         <!--<voyageone.components.imagecreate.version>0.0.1-SNAPSHOT</voyageone.components.imagecreate.version>-->
         <voyageone.components.ftp.version>0.0.1-SNAPSHOT</voyageone.components.ftp.version>
         <voyageone.components.overstock.version>0.0.1-SNAPSHOT</voyageone.components.overstock.version>
+        <voyageone.components.solr.version>0.0.1-SNAPSHOT</voyageone.components.solr.version>
+
     </properties>
 
     <dependencyManagement>
@@ -593,6 +595,13 @@
                 <groupId>com.github.miemiedev</groupId>
                 <artifactId>mybatis-paginator</artifactId>
                 <version>1.2.17</version>
+            </dependency>
+
+            <!-- spring-data-solr -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-solr</artifactId>
+                <version>1.5.5.RELEASE</version>
             </dependency>
 
         </dependencies>

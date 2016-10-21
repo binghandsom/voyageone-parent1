@@ -50,7 +50,7 @@ define([
             }
         })
 
-        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider) {
+        .config(function ($routeProvider, $translateProvider, cLanguageType, $uibModalProvider, blockUIConfig) {
             // 加载所有的语言配置
             _.each(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
@@ -61,6 +61,8 @@ define([
             });
             // 默认设置所有的弹出模态框的背景不能关闭模态框
             $uibModalProvider.options.backdrop = 'static';
+            // 禁用自动显示
+            blockUIConfig.autoBlock = false;
         })
 
         .run(function ($vresources, $localStorage) {
@@ -292,7 +294,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -305,6 +307,7 @@ define([
         $scope.selectLanguage = selectLanguage;
         $scope.goSearchPage = goSearchPage;
         $scope.logout = logout;
+        $scope.loadSearchAutoCompletes = loadSearchAutoCompletes;
 
         function initialize() {
             menuService.getMenuHeaderInfo().then(function (data) {
@@ -323,6 +326,12 @@ define([
         function selectChannel() {
             menuService.clearChannel().then(function () {
                 $window.location = cCommonRoutes.channel.url;
+            });
+        }
+
+        function loadSearchAutoCompletes(query) {
+            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp)  {
+                return resp.data;
             });
         }
 

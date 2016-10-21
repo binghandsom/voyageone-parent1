@@ -426,7 +426,7 @@
     </li>
 
     <!-- 维护设置管理 -->
-<!--    <li ng-if="!$root.isTranslator">
+    <li ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -441,7 +441,7 @@
                     <span translate="TXT_MAINTAIN_SETTING_MANAGER"></span>
                 </a>
             </li>
-            &lt;!&ndash; 权限设置 &ndash;&gt;
+            <!-- 共通设置 -->
             <li ui-sref-active="active">
                 <a class="auto">
                     <span class="pull-right text-muted">
@@ -449,171 +449,20 @@
                       <i class="fa fa-fw fa-angle-down text-active"></i>
                     </span>
                     <i class="fa fa-plus icon-small text-vo"></i>
-                    <span translate="TXT_MAINTAIN_SETTING_ROLE"></span>
+                    <span translate="TXT_MAINTAIN_SETTING_COMMON"></span>
                 </a>
                 <ul class="nav nav-sub dk" style="padding-left:10px" >
-                    &lt;!&ndash; 主类目权限设置 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/role_main_category">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_MAIN_CATEGORY"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 主品牌权限设置 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/role_main_brand">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_MAIN_BRAND"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 税号权限设置 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/role_tax_number">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_TAX_NUMBER"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 平台店权限设置 &ndash;&gt;
+                    <!-- 主品牌设置-->
                     <li ui-sref-active="active">
-                        <a ng-href="#/maintain_setting/role_cart">
+                        <a ng-href="#/maintain/common/masterBrandApplication/">
                             <i class="fa fa-minus icon text-vo"></i>
-                            <span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_CART"></span>
+                            <span TRANSLATE="TXT_MASTER_BRAND_SETTING"></span>
                         </a>
                     </li>
-                    &lt;!&ndash; 集合店权限设置 &ndash;&gt;
-                    <li ui-sref-active="active">
-                        <a ng-href="#/maintain_setting/role_channel">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_CHANNEL"></span>
-                        </a>
-                    </li>
-                    &lt;!&ndash; 账号权限设置 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/role_user">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_ROLE_USER"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                </ul>
-            </li>
-            &lt;!&ndash; 类目设置 &ndash;&gt;
-            <li ui-sref-active="active">
-                <a class="auto">
-                    <span class="pull-right text-muted">
-                      <i class="fa fa-fw fa-angle-right text"></i>
-                      <i class="fa fa-fw fa-angle-down text-active"></i>
-                    </span>
-                    <i class="fa fa-plus icon-small text-vo"></i>
-                    <span translate="TXT_MAINTAIN_SETTING_CATEGORY"></span>
-                </a>
-                <ul class="nav nav-sub dk" style="padding-left:10px" >
-                    &lt;!&ndash; 主类目一览 &ndash;&gt;
-                    <li ui-sref-active="active">
-                        <a ng-href="#/maintain_setting/category_main_category_list">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span TRANSLATE="TXT_MAINTAIN_SETTING_CATEGORY_MAIN_CATEGORY_LIST"></span>
-                        </a>
-                    </li>
-                    &lt;!&ndash; 平台类目一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/category_platform_category_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CATEGORY_PLATFORM_CATEGORY_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                </ul>
-            </li>
-            &lt;!&ndash; 共通设置 &ndash;&gt;
-            &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                &lt;!&ndash;<a class="auto">&ndash;&gt;
-                    &lt;!&ndash;<span class="pull-right text-muted">&ndash;&gt;
-                      &lt;!&ndash;<i class="fa fa-fw fa-angle-right text"></i>&ndash;&gt;
-                      &lt;!&ndash;<i class="fa fa-fw fa-angle-down text-active"></i>&ndash;&gt;
-                    &lt;!&ndash;</span>&ndash;&gt;
-                    &lt;!&ndash;<i class="fa fa-plus icon-small text-vo"></i>&ndash;&gt;
-                    &lt;!&ndash;<span translate="TXT_MAINTAIN_SETTING_COMMON"></span>&ndash;&gt;
-                &lt;!&ndash;</a>&ndash;&gt;
-                &lt;!&ndash;<ul class="nav nav-sub dk" style="padding-left:10px" >&ndash;&gt;
-                    &lt;!&ndash;&lt;!&ndash; 主数据共通属性设置 todo:暂时不支持 &ndash;&gt;&ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/common_main_property_setting">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_COMMON_MAIN_PROPERTY_SETTING"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                &lt;!&ndash;</ul>&ndash;&gt;
-            &lt;!&ndash;</li>&ndash;&gt;
-            &lt;!&ndash; 当前店铺设置 &ndash;&gt;
-            <li ui-sref-active="active">
-                <a class="auto">
-                    <span class="pull-right text-muted">
-                      <i class="fa fa-fw fa-angle-right text"></i>
-                      <i class="fa fa-fw fa-angle-down text-active"></i>
-                    </span>
-                    <i class="fa fa-plus icon-small text-vo"></i>
-                    <span translate="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL"></span>
-                </a>
-                <ul class="nav nav-sub dk" style="padding-left:10px" >
-                    &lt;!&ndash; 黑名单一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_black_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_BLACK_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 适用人群一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_size_type_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_SIZE_TYPE_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 禁用词一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_stop_words_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_STOP_WORDS_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 自定义属性一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_custom_attribute_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_CUSTOM_ATTRIBUTE_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 子店权限一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_branch_right_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_BRANCH_RIGHT_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 词典一览 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_dictionary_list">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_DICTIONARY_LIST"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
-                    &lt;!&ndash; 全量处理一览 &ndash;&gt;
-                    <li ui-sref-active="active">
-                        <a ng-href="#/maintain_setting/current_channel_total_update">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_TOTAL_UPDATE"></span>
-                        </a>
-                    </li>
-                    &lt;!&ndash; 高权限检索处理 todo:暂时不支持 &ndash;&gt;
-                    &lt;!&ndash;<li ui-sref-active="active">&ndash;&gt;
-                        &lt;!&ndash;<a ng-href="#/maintain_setting/current_channel_senior_search">&ndash;&gt;
-                            &lt;!&ndash;<i class="fa fa-minus icon text-vo"></i>&ndash;&gt;
-                            &lt;!&ndash;<span TRANSLATE="TXT_MAINTAIN_SETTING_CURRENT_CHANNEL_SENIOR_SEARCH"></span>&ndash;&gt;
-                        &lt;!&ndash;</a>&ndash;&gt;
-                    &lt;!&ndash;</li>&ndash;&gt;
                 </ul>
             </li>
         </ul>
-    </li>-->
+    </li>
 
     <!-- 工具管理 -->
     <li>
@@ -711,6 +560,26 @@
                             <!--<span TRANSLATE="TOOLS_PRODUCT_PLATFORM_ATTRIBUTE_SETTING"></span>-->
                         <!--</a>-->
                     <!--</li>-->
+                </ul>
+            </li>
+            <!-- 共同处理 -->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span translate="TOOLS_COMMON"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 主品牌匹配 -->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/tools/common/masterBrandMapping">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_MAIN_BRAND_MAPPING"></span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <!-- 类目处理 -->

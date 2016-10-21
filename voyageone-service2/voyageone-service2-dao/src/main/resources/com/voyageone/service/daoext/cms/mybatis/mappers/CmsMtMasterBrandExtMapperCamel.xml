@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtMasterBrandDaoExt">
+    <!-- 检索品牌品牌分页 -->
+    <resultMap id="ResultMap" type="com.voyageone.service.bean.cms.CmsMtMasterBrandBean">
+    </resultMap>
+
+    <select id="searchBrandsByPage" resultMap="ResultMap">
+        select a.key,a.value,b.*
+        from voyageone_cms2.cms_mt_channel_values a left join voyageone_cms2.cms_mt_master_brand b on a.value1 = b.id
+        where a.channel_id = #{channelId}
+        and a.type = 0
+        <if test="statusListFlag == null">
+            <if test="statusList != null and statusList.size() > 0">
+                and b.master_flag in
+                <foreach collection="statusList" item="proStatus" open="(" separator="," close=")">
+                    #{proStatus}
+                </foreach>
+            </if>
+        </if>
+        <if test="statusListFlag != null">
+            <if test="statusList != null and statusList.size() > 0">
+                and( b.master_flag in
+                <foreach collection="statusList" item="proStatus" open="(" separator="," close=")">
+                    #{proStatus}
+                </foreach>
+                or b.master_flag is NULL)
+            </if>
+        </if>
+        <if test="feedBrand !=null and feedBrand != ''">
+            and (a.key like '%${feedBrand}%')
+        </if>
+        <if test="masterBrandEn !=null and masterBrandEn != ''">
+            and (b.masterBrandEn like '%${masterBrandEn}%')
+        </if>
+        <if test="masterChannelId != null and masterChannelId != ''">
+            and b.channelId = #{masterChannelId}
+        </if>
+        <if test="cartBrandName !=null and cartBrandName != ''">
+            and (b.platform_brand_name like '%${cartBrandName}%')
+        </if>
+        <if test="offset != null">
+            limit #{offset}, #{size}
+        </if>
+    </select>
+    <!-- 检索品牌品牌总数 -->
+    <select id="searchBrandsCount" resultType="int">
+        select count(1)
+        from voyageone_cms2.cms_mt_channel_values a left join voyageone_cms2.cms_mt_master_brand b on a.value1 = b.id
+        where a.channel_id = #{channelId}
+          and a.type = 0
+        <if test="statusListFlag == null">
+            <if test="statusList != null and statusList.size() > 0">
+                and b.master_flag in
+                <foreach collection="statusList" item="proStatus" open="(" separator="," close=")">
+                    #{proStatus}
+                </foreach>
+            </if>
+        </if>
+        <if test="statusListFlag != null">
+            <if test="statusList != null and statusList.size() > 0">
+                and( b.master_flag in
+                <foreach collection="statusList" item="proStatus" open="(" separator="," close=")">
+                    #{proStatus}
+                </foreach>
+                or b.master_flag is NULL)
+            </if>
+        </if>
+        <if test="masterBrandEn !=null and masterBrandEn != ''">
+            and (b.masterBrandEn like '%${masterBrandEn}%')
+        </if>
+        <if test="masterChannelId != null and masterChannelId != ''">
+            and b.channelId = #{masterChannelId}
+        </if>
+        <if test="cartBrandName !=null and cartBrandName != ''">
+            and (b.platform_brand_name like '%${cartBrandName}%')
+        </if>
+        <if test="feedBrand !=null and feedBrand != ''">
+            and (a.key like '%${feedBrand}%')
+        </if>
+    </select>
+</mapper>

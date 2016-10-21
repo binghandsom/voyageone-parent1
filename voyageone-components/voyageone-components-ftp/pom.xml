@@ -9,7 +9,7 @@
     <artifactId>voyageone-components-ftp</artifactId>
     <version>${voyageone.components.ftp.version}</version>
     <packaging>jar</packaging>
-    <name>voyageone-components ftp sftp</name>
+    <name>VoyageOne Components Ftp Sftp</name>
     <dependencies>
         <dependency>
             <groupId>com.voyageone</groupId>

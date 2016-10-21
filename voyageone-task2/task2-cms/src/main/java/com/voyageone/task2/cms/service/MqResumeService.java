@@ -4,7 +4,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MqBackMessageService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 
 @Service
-public class MqResumeService extends BaseTaskService {
+public class MqResumeService extends BaseCronTaskService {
 
     @Autowired
     private MqSender sender;

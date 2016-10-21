@@ -7,7 +7,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.vms.VmsBtFeedFileDao;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.vms.VmsBtFeedFileModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -25,7 +25,7 @@ import java.util.*;
  * @version 1.0
  */
 @Service
-public class VmsFeedFileScanService extends BaseTaskService {
+public class VmsFeedFileScanService extends BaseCronTaskService {
 
     @Autowired
     private VmsBtFeedFileDao vmsBtFeedFileDao;

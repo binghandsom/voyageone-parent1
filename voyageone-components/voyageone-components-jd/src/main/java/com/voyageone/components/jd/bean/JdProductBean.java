@@ -19,6 +19,7 @@ public class JdProductBean {
     private String cid;                 // 类目id
     private String shopCategory;        // 自定义店内分类(通过360buy.sellercats.get获取店铺分类的parent_id及cid，按“parent_id-cid"格式传入，同时设置多个以分号（;）分隔即可。店内分类，格式:206-208;207-208 206(一级)-208(二级);207(一级)-207(一级))
     private String title;               // 商品标题
+    private String is7ToReturn;         // 7天无理由退货, 1为支持，0为不支持
     private String upcCode;             // UPC编码
     private String optionType;          // 操作类型 现只支持：offsale 或onsale,默认为下架状态
     private String itemNum;             // 外部商品编号，对应商家后台货号
@@ -265,6 +266,14 @@ public class JdProductBean {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getIs7ToReturn() {
+        return this.is7ToReturn;
+    }
+
+    public void setIs7ToReturn(String is7ToReturn) {
+        this.is7ToReturn = is7ToReturn;
     }
 
     public String getUpcCode() {

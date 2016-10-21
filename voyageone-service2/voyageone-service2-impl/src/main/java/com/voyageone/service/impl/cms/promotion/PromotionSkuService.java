@@ -47,6 +47,13 @@ public class PromotionSkuService extends BaseService {
 //        map.put("productId", product_id);
         return cmsBtPromotionSkusDao.selectList(map);
     }
+    public CmsBtPromotionSkusModel get(int promotionId,String productCode,String productSku) {
+        Map<String, Object> map = new HashedMap();
+        map.put("promotionId", promotionId);
+        map.put("productCode", productCode);
+        map.put("productSku", productSku);
+        return cmsBtPromotionSkusDao.selectOne(map);
+    }
     @VOTransactional
     public void saveSkuPromotionPrices(List<SaveSkuPromotionPricesParameter> list) {
         list.forEach((p) -> {

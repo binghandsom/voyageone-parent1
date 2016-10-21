@@ -13,6 +13,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtSxCspuDao;
 import com.voyageone.service.dao.cms.CmsBtSxProductDao;
@@ -31,7 +32,8 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -39,6 +41,7 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +59,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService {
 
     @Autowired
     private ConditionPropValueRepo conditionPropValueRepo;
@@ -579,6 +582,42 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
             tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
         }
 
+//        if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+//            for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
+//                // 获取价格
+//                // modified by morse.lu 2016/06/28 start
+//                // product表结构变化
+////                if (sxProductModel.getSkus() == null || sxProductModel.getSkus().size() == 0) {
+//                if (sxProductModel.getCommon().getSkus() == null || sxProductModel.getCommon().getSkus().size() == 0) {
+//                    // modified by morse.lu 2016/06/28 end
+//                    // 没有sku的code, 跳过
+//                    continue;
+//                }
+//                // modified by morse.lu 2016/06/28 start
+//                // product表结构变化
+////                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+//                Double dblPrice = Double.parseDouble(sxProductModel.getPlatform(sxData.getCartId()).getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+//                // modified by morse.lu 2016/06/28 end
+//
+//                // 设置特价宝
+//                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+//                cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+//                cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
+//                cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
+//                // modified by morse.lu 2016/06/28 start
+//                // product表结构变化
+////                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getFields().getCode());
+//                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
+//                // modified by morse.lu 2016/06/28 end
+//                cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
+//                cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+//                cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
+//                cmsBtPromotionCodesBean.setModifier(getTaskName());
+//                // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+//                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+//            }
+//        }
+
         if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
             for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
                 // 获取价格
@@ -590,9 +629,16 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                     // 没有sku的code, 跳过
                     continue;
                 }
-                // modified by morse.lu 2016/06/28 start
-                // product表结构变化
-//                Double dblPrice = Double.parseDouble(sxProductModel.getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+
+                List<CmsBtPromotionSkuBean> skus = new ArrayList<>();
+                for (CmsBtProductModel_Sku sku : sxProductModel.getCommon().getSkus()) {
+                    CmsBtPromotionSkuBean skuBean = new CmsBtPromotionSkuBean();
+                    skuBean.setProductSku(sku.getSkuCode());
+                    Double dblPriceSku = Double.parseDouble(sku.getAttribute(tejiabaoPricePropName).toString());
+                    skuBean.setPromotionPrice(new BigDecimal(dblPriceSku));
+                    skus.add(skuBean);
+                }
+
                 Double dblPrice = Double.parseDouble(sxProductModel.getPlatform(sxData.getCartId()).getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
                 // modified by morse.lu 2016/06/28 end
 
@@ -610,10 +656,13 @@ public class CmsBuildPlatformProductUploadTmService extends BaseTaskService {
                 cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
                 cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
                 cmsBtPromotionCodesBean.setModifier(getTaskName());
+                cmsBtPromotionCodesBean.setSkus(skus);
                 // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
                 promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+
             }
         }
+
     }
 
 }

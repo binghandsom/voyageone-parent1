@@ -3232,9 +3232,9 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
             _url = getActionUrl(_root, _url);
 
-            _ServiceClass.prototype[actionName] = _cacheFlag === 0 ? function (args) {
-                return this._a.post(_url, args).then(_resolve, _reject);
-            } : function (args) {
+            _ServiceClass.prototype[actionName] = _cacheFlag === 0 ? function (args, option) {
+                return this._a.post(_url, args, option).then(_resolve, _reject);
+            } : function (args, option) {
                 var deferred, result;
                 var session = this._sc,
                     local = this._lc,
@@ -3251,7 +3251,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
-                    this._a.post(_url, args).then(function (res) {
+                    this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
                         
                         switch (_cacheFlag) {
@@ -3311,13 +3311,37 @@ angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("aj
     };
 }]);
 
-function $Ajax($http, $q) {
+function $Ajax($http, $q, blockUI, $timeout) {
     this.$http = $http;
     this.$q = $q;
+    this.blockUI = blockUI;
+    this.$timeout = $timeout;
 }
 
-$Ajax.prototype.post = function (url, data) {
-    var defer = this.$q.defer();
+$Ajax.prototype.post = function (url, data, option) {
+    var defer = this.$q.defer(),
+        blockUI = this.blockUI,
+        $timeout = this.$timeout,
+        cancelBlock = null;
+
+    option = option || {
+            autoBlock: true,
+            blockDelay: 1000
+        };
+
+    var autoBlock = option.autoBlock,
+        blockDelay = option.blockDelay;
+
+    if (autoBlock) {
+        cancelBlock = (function (blockPromise) {
+            return function () {
+                $timeout.cancel(blockPromise);
+                blockUI.stop();
+            };
+        })($timeout(function () {
+            blockUI.start();
+        }, blockDelay));
+    }
 
     if (data === undefined) {
         data = {};
@@ -3325,6 +3349,9 @@ $Ajax.prototype.post = function (url, data) {
 
     this.$http.post(url, data).then(function (response) {
         var res = response.data;
+
+        if (cancelBlock) cancelBlock();
+
         if (!res) {
             alert("相应结果不存在?????");
             defer.reject(null);
@@ -3336,6 +3363,8 @@ $Ajax.prototype.post = function (url, data) {
         }
         defer.resolve(res);
     }, function (response) {
+        if (cancelBlock) cancelBlock();
+
         defer.reject(null, response);
     });
 
@@ -3348,10 +3377,10 @@ function AjaxService($q, $ajax, messageService) {
     this.messageService = messageService;
 }
 
-AjaxService.prototype.post = function (url, data) {
+AjaxService.prototype.post = function (url, data, option) {
     var defer = this.$q.defer();
 
-    this.$ajax.post(url, data).then(function (res) {
+    this.$ajax.post(url, data, option).then(function (res) {
         // 成功
         defer.resolve(res);
         return res;

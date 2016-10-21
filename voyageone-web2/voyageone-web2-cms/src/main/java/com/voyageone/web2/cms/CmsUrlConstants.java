@@ -331,6 +331,7 @@ public interface CmsUrlConstants {
 
             String INIT = "init";
             String SEARCH = "search";
+            String SEARCH_AUTO_COMPLETE_SOLR = "searchAutoComplete";
 
             String GET_GROUP_LIST = "getGroupList";
             String GET_PRODUCT_LIST = "getProductList";
@@ -760,10 +761,9 @@ public interface CmsUrlConstants {
         String DownloadImportErrorExcel = "downloadImportErrorExcel";
     }
 
-    // hsCode编辑
     interface TOOLS {
+        // hsCode编辑
         interface PRODUCT {
-
             String ROOT = "/cms/tools/product/";
 
             String INIT_HS_CODE_INFO = "initHsCodeInfo";
@@ -775,6 +775,10 @@ public interface CmsUrlConstants {
             String SAVE_HS_CODE_INFO = "saveHsCodeInfo";
 
             String CANCEL_HS_CODE_INFO = "cancelHsCodeInfo";
+        }
+        interface COMMON {
+            String ROOT = "/cms/tools/common/";
+            String SEARCH_MASTER_BRAND_INFO = "getMasterBrandInfo";
         }
     }
 
@@ -795,5 +799,18 @@ public interface CmsUrlConstants {
         String DELETE = "delete";
         String GET_COMMONSCHEMA = "getCommonSchema";
         String GET_FEEDCUSTOMPROPS = "getFeedCustomProps";
+    }
+
+    interface MAINTAIN_SETTING {
+        interface COMMON {
+            interface BRAND_ADMINISTRATION{
+                String ROOT="/cms/maintain/common/";
+                String MASTER_BRAND_APPLICATION_INIT="initMasterBrandInfo";
+                String MASTER_BRAND_APPLICATION_SEARCH="getMasterBrandInfo";
+                String MASTER_BRAND_APPLICATION_REVIEWED="reviewedMasterBrandInfo";
+                String MASTER_BRAND_APPLICATION_EDIT="editMasterBrandInfo";
+                String MASTER_BRAND_APPLICATION_PLATFORM_SEARCH="mappingMasterBrandInfoToPlatform";
+            }
+        }
     }
 }

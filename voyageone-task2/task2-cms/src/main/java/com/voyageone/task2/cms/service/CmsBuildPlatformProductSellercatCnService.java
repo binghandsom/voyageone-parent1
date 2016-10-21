@@ -11,7 +11,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
+public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskService {
 
     @Autowired
     private CnSchemaService cnSchemaService;
@@ -66,9 +66,16 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-                ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
-                // 主处理
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                {
+//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+//                    // 主处理
+//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    // 主处理
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                }
             }
         }
 
@@ -98,7 +105,8 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
 
             List<Field> fields = new ArrayList<>();
             fields.add(createInputField("Id", catId)); // Id
-            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+//            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+            fields.add(createInputField("ProductCodes", codes.stream().map(code-> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
 
             result.add(fields);
         }

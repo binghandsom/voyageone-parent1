@@ -69,7 +69,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             queryObject.addParameters(codeList);
         }else{
             cnt = feedInfoService.getCnt(channelId, searchValue);
-            queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
+            queryObject.setQuery(feedInfoService.getSearchQuery(channelId, searchValue));
         }
 
         $info("导出的产品数" + cnt);

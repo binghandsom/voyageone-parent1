@@ -42,6 +42,7 @@ public class ExpressionParser extends VOAbsLoggable {
         this.sxProductService = sxProductService;
         this.sxData = sxData;
         this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId(), sxData.getCartId());
+//        this.dictWordParser = new DictWordParser(sxProductService, sxData.getMainProduct().getOrgChannelId(), sxData.getCartId());
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 

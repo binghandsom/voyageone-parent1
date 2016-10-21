@@ -215,11 +215,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
 //                    continue;
 //                }
 //            }
+            /*DOC-159-1:[聚美活动添加逻辑]如果未上新的产品，无条件加入到聚美活动
             if (daoExtCmsBtJmProduct.existsCode(product.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 product.setErrorMsg("code:" + product.getProductCode() + "从未上新或不存在");
                 listErroProduct.add(product);
                 continue;
             }
+           */
         }
         if (isImport) {
             listProductModel.removeAll(listErroProduct);//移除不能导入的 product
@@ -230,12 +232,16 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         List<SkuImportBean> listErroSku = new ArrayList<>();
         for (SkuImportBean sku : listSkuModel) {
 
+
+            /*DOC-159-1:[聚美活动添加逻辑]如果未上新的产品，无条件加入到聚美活动
             if (daoExtCmsBtJmSkuDao.existsCode(sku.getSkuCode(), sku.getProductCode(), model.getChannelId()) != Boolean.TRUE) {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "从未上新或不存在");
                 if (isImport) {
                     listErroSku.add(sku);
                 }
-            } else if (sku.getDealPrice() > sku.getMarketPrice()) {
+            } else
+             */
+             if (sku.getDealPrice() > sku.getMarketPrice()) {
                 sku.setErrorMsg("skuCode:" + sku.getSkuCode() + "请重新确认价格，市场价必须大于团购价！");
                 if (isImport) {
                     listErroSku.add(sku);
@@ -268,12 +274,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             if (saveInfo.p_ProductInfo == null) {
                 product.setErrorMsg("不存在" + product.getProductCode());
                 listProducctErrorMap.add(BeanUtils.toMap(product));
-                break;
+                continue;
             }
             if(isBlocked(saveInfo.p_ProductInfo,mapMasterBrand)) {
                 product.setErrorMsg("该商品品牌已加入黑名单,不能导入" + product.getProductCode());
                 listProducctErrorMap.add(BeanUtils.toMap(product));
-                break;
+                continue;
             }
             saveInfo.p_Platform_Cart = saveInfo.p_ProductInfo.getPlatform(CartEnums.Cart.JM);
 
@@ -354,6 +360,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setChannelId(model.getChannelId());
             saveInfo.jmProductModel.setSynchStatus(0);
             saveInfo.jmProductModel.setLimit(product.getLimit());
+            saveInfo.jmProductModel.setProductNameEn(saveInfo.p_ProductInfo.getCommon().getFields().getProductNameEn());
+            if (saveInfo.p_ProductInfo.getCommon().getFields().getImages1() != null && saveInfo.p_ProductInfo.getCommon().getFields().getImages1().size() > 0) {
+                if(saveInfo.p_ProductInfo.getCommon().getFields().getImages1().get(0).get("image1")!=null) {
+                    saveInfo.jmProductModel.setImage1(saveInfo.p_ProductInfo.getCommon().getFields().getImages1().get(0).get("image1").toString());
+                }
+            }
         } else {
             if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
                 product.setErrorMsg("该商品预热已开始,不能导入");
@@ -517,6 +529,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 if (cmsBtProductModel_sku != null) {
                     skusModel.setMsrpUsd(new BigDecimal(cmsBtProductModel_sku.getClientMsrpPrice()));
                 }
+                skusModel.setPromotionPrice(new BigDecimal(skuImport.getDealPrice()));
                 saveInfo.skusModels.add(skusModel);
             }
         }

@@ -15,6 +15,7 @@ import com.voyageone.common.util.*;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -43,6 +44,8 @@ public class CmsFeedSearchService extends BaseViewService {
     private CmsFeedCustPropService cmsFeedCustPropService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+    @Autowired
+    private CmsMasterBrandMappingService cmsMasterBrandMappingService;
 
     @Autowired
     private MqSender sender;
@@ -73,6 +76,8 @@ public class CmsFeedSearchService extends BaseViewService {
 
         // 获取brand list
         masterData.put("brandList", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.BRAND));
+
+//        masterData.put("masterBrandList",cmsMasterBrandMappingService.getMasterBrandListByChannelId(channelId));
         // 获取category list
         List<CmsMtFeedCategoryTreeModel> feedCatList = cmsFeedCustPropService.getCategoryList(channelId);
         if (!feedCatList.isEmpty()) {
@@ -92,6 +97,7 @@ public class CmsFeedSearchService extends BaseViewService {
         masterData.put("categoryList", feedCatList);
         masterData.put("productType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.PRODUCT_TYPE));
         masterData.put("sizeType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.SIZE_TYPE));
+
         // 判断是否是minimall/usjoi用户
         boolean isMiniMall = Channels.isUsJoi(userInfo.getSelChannelId());
         masterData.put("isminimall", isMiniMall ? 1 : 0);
@@ -139,15 +145,15 @@ public class CmsFeedSearchService extends BaseViewService {
      * @return
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, UserSessionBean userInfo) {
+        String channelId = searchValue.get("orgChaId") == null ? userInfo.getSelChannelId() : searchValue.get("orgChaId").toString();
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery(feedInfoService.getSearchQuery(searchValue));
+        queryObject.setQuery(feedInfoService.getSearchQuery(channelId, searchValue));
         queryObject.setProjection(searchItems);
         queryObject.setSort(setSortValue(searchValue));
         int pageNum = (Integer) searchValue.get("pageNum");
         int pageSize = (Integer) searchValue.get("pageSize");
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
-        String channelId = searchValue.get("orgChaId") == null ? userInfo.getSelChannelId() : searchValue.get("orgChaId").toString();
         return feedInfoService.getList(channelId, queryObject);
     }
 
@@ -208,8 +214,9 @@ public class CmsFeedSearchService extends BaseViewService {
                 throw new BusinessException("Feed品牌黑免单的数据是不能设为不导入的，请重新选择状态");
             }
         }
-        String searchQuery = feedInfoService.getSearchQuery(searchValue);
-        feedInfoService.updateAllUpdFlg(channelId == null ? userInfo.getSelChannelId() : channelId, searchQuery, status, userInfo.getUserName());
+        if(channelId == null) channelId = userInfo.getSelChannelId();
+        String searchQuery = feedInfoService.getSearchQuery(channelId, searchValue);
+        feedInfoService.updateAllUpdFlg(channelId, searchQuery, status, userInfo.getUserName());
     }
 
     /**
