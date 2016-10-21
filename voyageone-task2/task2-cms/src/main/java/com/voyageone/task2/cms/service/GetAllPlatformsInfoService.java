@@ -211,12 +211,12 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
     /**
      * 京东共通类目
      */
-    protected void doJdPlatformCategoryCommon(ShopBean shopBean, int cartId) {
+    protected void doJdPlatformCategoryCommon(int cartId) {
         // 京东共通类目
         // 删除
         cmsMtPlatformCategorySchemaDao.deletePlatformCategorySchemaByCategory(cartId, "1");
         // add
-        jdSchemaService.doSetPlatformJdSchemaCommon(shopBean, cartId);
+        jdSchemaService.doSetPlatformJdSchemaCommon(cartId);
     }
 
     /**

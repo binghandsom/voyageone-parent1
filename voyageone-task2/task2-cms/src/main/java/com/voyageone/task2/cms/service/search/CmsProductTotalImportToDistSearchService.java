@@ -6,6 +6,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
+import com.voyageone.components.solr.service.CmsProductDistSearchService;
 import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelService;
@@ -20,16 +21,18 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Cms Product Data 全量导入收索服务器 Service
+ * Cms Product Data 全量导入 分销 收索服务器 Service
  *
  * @author chuanyu.liang 2016/9/30.
  * @version 2.0.0
  * @since 2.0.0
  */
 @Service
-public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
+public class CmsProductTotalImportToDistSearchService extends BaseCronTaskService {
 
     private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 1000;
+
+    private static final String CMS_CHANNEL_ID = "928";
 
     @Autowired
     private ChannelService channelService;
@@ -38,7 +41,7 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    private CmsProductSearchService cmsProductSearchService;
+    private CmsProductDistSearchService cmsProductDistSearchService;
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -47,20 +50,19 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
         if (list == null || list.isEmpty()) {
             return;
         }
-        for (OrderChannelBean bean: list) {
-            String channelId = bean.getOrder_channel_id();
-            logger.info("CmsProductSearchImportService.onStartup start channelId:{}", channelId);
-            importDataToSearchFromMongo(channelId);
-            logger.info("CmsProductSearchImportService.onStartup end channelId:{}", channelId);
-        }
+
+        logger.info("CmsProductTotalImportToDistSearchService.onStartup start channelId:{}", CMS_CHANNEL_ID);
+        importDataToSearchFromMongo(CMS_CHANNEL_ID);
+        logger.info("CmsProductTotalImportToDistSearchService.onStartup end channelId:{}", CMS_CHANNEL_ID);
     }
+
     /**
      * 全量导入
      */
     void importDataToSearchFromMongo(String channelId) {
         long currentTime = System.currentTimeMillis();
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setProjection("{'_id':1, 'channelId':1, 'common.fields.code':1, 'common.fields.model':1, 'common.skus.skuCode':1}");
+        //queryObject.setProjection("{'_id':1, 'channelId':1, 'common.fields.code':1, 'common.fields.model':1, 'common.skus.skuCode':1}");
         Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
 
         List<SolrUpdateBean> beans = new ArrayList<>();
@@ -68,31 +70,31 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
         while (it.hasNext()) {
             CmsBtProductModel cmsBtProductModel = it.next();
 
-            SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, currentTime);
+            SolrUpdateBean update = cmsProductDistSearchService.createSolrBeanForNew(cmsBtProductModel, currentTime);
             if (update == null) {
                 continue;
             }
             beans.add(update);
             // 更新数据
             if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                String response = cmsProductSearchService.saveBeans(beans);
-                logger.info("CmsProductSearchImportService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
-                cmsProductSearchService.commit();
+                String response = cmsProductDistSearchService.saveBeans(beans);
+                logger.info("CmsProductTotalImportToDistSearchService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
+                cmsProductDistSearchService.commit();
                 beans = new ArrayList<>();
             }
             index++;
         }
         // 更新数据
         if (!beans.isEmpty()) {
-            String response = cmsProductSearchService.saveBeans(beans);
-            logger.info("CmsProductSearchImportService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
-            cmsProductSearchService.commit();
+            String response = cmsProductDistSearchService.saveBeans(beans);
+            logger.info("CmsProductTotalImportToDistSearchService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
+            cmsProductDistSearchService.commit();
         }
 
         index = 1;
         List<String> removeIdList = new ArrayList<>();
         //删除数据
-        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
+        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductDistSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
         //noinspection Duplicates
         while (productSearchCursor.hasNext()) {
             CommIdSearchModel model = productSearchCursor.next();
@@ -101,16 +103,16 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             }
             // 删除数据
             if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                cmsProductSearchService.deleteByIds(removeIdList);
+                cmsProductDistSearchService.deleteByIds(removeIdList);
                 removeIdList = new ArrayList<>();
-                cmsProductSearchService.commit();
+                cmsProductDistSearchService.commit();
             }
             index++;
         }
         // 删除数据
         if (!removeIdList.isEmpty()) {
-            cmsProductSearchService.deleteByIds(removeIdList);
-            cmsProductSearchService.commit();
+            cmsProductDistSearchService.deleteByIds(removeIdList);
+            cmsProductDistSearchService.commit();
         }
     }
 
@@ -121,6 +123,6 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsProductTotalImportToSearchJob";
+        return "CmsProductTotalImportToDistSearchJob";
     }
 }

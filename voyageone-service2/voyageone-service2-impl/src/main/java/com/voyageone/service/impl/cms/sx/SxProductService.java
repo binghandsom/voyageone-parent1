@@ -36,15 +36,13 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
+import com.voyageone.service.dao.ims.ImsBtProductExceptDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.BusinessLogService;
-import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
-import com.voyageone.service.impl.cms.ImageTemplateService;
-import com.voyageone.service.impl.cms.SizeChartService;
+import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
@@ -104,11 +102,15 @@ public class SxProductService extends BaseService {
     private SizeChartService sizeChartService;
     @Autowired
     private ImageTemplateService imageTemplateService;
+    @Autowired
+    private TaobaoScItemService taobaoScItemService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
     private ImsBtProductDao imsBtProductDao;
+    @Autowired
+    private ImsBtProductExceptDao imsBtProductExceptDao;
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
@@ -829,25 +831,15 @@ public class SxProductService extends BaseService {
             }
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 END
 
-            // 2016/06/02 Update by desmond Start  分平台对应
-//            if (CartEnums.Cart.TM.getId().equals(cartId.toString())
-//                    || CartEnums.Cart.TB.getId().equals(cartId.toString())
-//                    || CartEnums.Cart.TG.getId().equals(cartId.toString())) {
-//                // 天猫(淘宝)平台的时候，从外面的Fields那里取得status判断是否已经Approved
-//                if (!productModel.getFields().getStatus().equals(CmsConstants.ProductStatus.Approved.name())) {
-//                    removeProductList.add(productModel);
-//                    continue;
-//                }
-//            } else {
-                // 天猫以外平台的时候，从外面的各个平台下面的Fields那里取得status判断是否已经Approved
-                CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
-                if (productPlatformCart == null ||
-                        !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
-                    removeProductList.add(productModel);
-                    continue;
-                }
-//            }
-            // 2016/06/02 Update by desmond end
+            // 取得status判断是否已经Approved（智能上新模式的场合， 无需approve）（但是后面锁住的判断， sku是否售卖的判断仍然是要的）
+            CmsBtProductModel_Platform_Cart productPlatformCart = productModel.getPlatform(cartId);
+            if (productPlatformCart == null) {
+                continue;
+            }
+            if (!isSmartSx(channelId, cartId) && !CmsConstants.ProductStatus.Approved.name().equals(productPlatformCart.getStatus())) {
+                removeProductList.add(productModel);
+                continue;
+            }
             // 2016/06/12 add desmond START
             if (!StringUtils.isEmpty(productModel.getLock()) && "1".equals(productModel.getLock())) {
                 removeProductList.add(productModel);
@@ -1003,6 +995,20 @@ public class SxProductService extends BaseService {
         }
         // added by morse.lu 2016/06/12 end
 
+        // 20161020 tom 判断是否是隔离库存的商品 START
+        List<String> strSqlSkuList = new ArrayList<>();
+        for (int i = 0; i < skuList.size(); i++) {
+            strSqlSkuList.add(skuList.get(i).getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
+        }
+        int cnt = imsBtProductExceptDao.selectImsBtProductExceptByChannelCartSku(channelId, cartId, strSqlSkuList);
+        if (cnt > 0) {
+            String errorMsg = "取得上新数据(SxData)失败! 库存已经被隔离， 不能执行上新程序。groupId(" + groupId + "), main code(" + mainProductCode + ")";
+            $error(errorMsg);
+            sxData.setErrorMessage(errorMsg);
+            return sxData;
+        }
+        // 20161020 tom 判断是否是隔离库存的商品 END
+
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
         Map<String, String> sizeMap = getSizeMap(
@@ -1112,6 +1118,33 @@ public class SxProductService extends BaseService {
         sxData.setSkuList(skuList);
 
         return sxData;
+    }
+
+    /**
+     * 是否为智能上新（智能上新的场合， 无需approve， 只需要sx_workload表里有这条记录就会上新）
+     * （但是被锁住的记录， 不想上新的sku， 那些内容仍然会被剔除了， 只不过无需approve而已）
+     * @param channelId channel id
+     * @param cartId cart id
+     * @return 是否为智能上新
+     */
+    public boolean isSmartSx(String channelId, int cartId) {
+        // 目前只支持京东系的上新
+        if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) { return false; }
+
+        // 获取当前channel的配置
+        CmsChannelConfigBean sxSmartConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SX_SMART, String.valueOf(cartId));
+
+        String sxSmart = null;
+        if (sxSmartConfig != null) {
+            sxSmart = org.apache.commons.lang3.StringUtils.trimToNull(sxSmartConfig.getConfigValue1());
+        }
+
+        // 如果没有配置， 那就不做智能上新。 如果不为1， 那么就不做智能上新
+        if (StringUtils.isEmpty(sxSmart) || !"1".equals(sxSmart)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1788,12 +1821,26 @@ public class SxProductService extends BaseService {
      * 直接create一个Master的RuleExpression的方式去做
      */
     public String getProductValueByMasterMapping(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        // modified by morse.lu 2016/10/18 start
+//        RuleExpression rule = new RuleExpression();
+//        // modified by morse.lu 2016/07/13 start
+//        // 把field_id中的【.】替换成【->】
+////        MasterWord masterWord = new MasterWord(field.getId());
+//        MasterWord masterWord = new MasterWord(StringUtil.replaceDot(field.getId()));
+//        // modified by morse.lu 2016/07/13 end
+//        rule.addRuleWord(masterWord);
+//        return expressionParser.parse(rule, shopBean, user, null);
+        return getProductValueByMasterMapping(StringUtil.replaceDot(field.getId()), shopBean, expressionParser, user);
+        // modified by morse.lu 2016/10/18 end
+    }
+
+    /**
+     * 取product表platform下fields里的数据
+     * 直接create一个Master的RuleExpression的方式去做
+     */
+    public String getProductValueByMasterMapping(String field_id, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
         RuleExpression rule = new RuleExpression();
-        // modified by morse.lu 2016/07/13 start
-        // 把field_id中的【.】替换成【->】
-//        MasterWord masterWord = new MasterWord(field.getId());
-        MasterWord masterWord = new MasterWord(StringUtil.replaceDot(field.getId()));
-        // modified by morse.lu 2016/07/13 end
+        MasterWord masterWord = new MasterWord(field_id);
         rule.addRuleWord(masterWord);
         return expressionParser.parse(rule, shopBean, user, null);
     }
@@ -2326,15 +2373,38 @@ public class SxProductService extends BaseService {
                         throw new BusinessException("tmall item sc_product_id's platformProps must have one prop!");
                     }
 
+                    boolean hasSku = false;
+                    for (CustomMappingType customMappingIter : mappingTypePropsMap.keySet()) {
+                        if (customMappingIter == CustomMappingType.SKU_INFO) {
+                            hasSku = true;
+                            break;
+                        }
+                    }
+                    if (hasSku) {
+                        $info("已经有sku属性，忽略外部货品id");
+                        continue;
+                    }
+
                     Field field = processFields.get(0);
                     if (field.getType() != FieldTypeEnum.INPUT) {
                         $error("tmall item sc_product_id's field(" + field.getId() + ") must be input");
                     } else {
                         InputField inputField = (InputField) field;
-                        String value = inputField.getDefaultValue();
-                        if (!StringUtils.isEmpty(value)) {
-                            inputField.setValue(value);
-                        }
+                        // modified by morse.lu 2016/10/17 start
+//                        String value = inputField.getDefaultValue();
+//                        if (!StringUtils.isEmpty(value)) {
+//                            inputField.setValue(value);
+//                        }
+                        // 外部填写的时候，只有一个code，一个sku，这个check在商品外部编码(outer_id)的逻辑里有了，这里就不再做了
+                        String skuCode = mainSxProduct.getCommon().getSkus().get(0).getSkuCode();
+                        String scProductId = updateTmScProductId(shopBean,
+                                            skuCode,
+                                            getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                            skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
+                        );
+                        inputField.setValue(scProductId);
+                        // modified by morse.lu 2016/10/17 end
+
                         retMap.put(field.getId(), inputField);
                     }
 
@@ -2701,6 +2771,27 @@ public class SxProductService extends BaseService {
             String errMsg = "是达尔文体系，上新逻辑未做成!";
             $error(errMsg);
             throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 更新天猫货品id(关联商品)
+     */
+    public String updateTmScProductId(ShopBean shopBean, String skuCode, String title, String qty) {
+        if (StringUtils.isEmpty(taobaoScItemService.doCheckNeedSetScItem(shopBean))) {
+            // 不要关联商品
+            return null;
+        }
+        try {
+            String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
+            if (StringUtils.isEmpty(scProductId)) {
+                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
+            }
+            return scProductId;
+        } catch (BusinessException be) {
+            throw be;
+        } catch (Exception e) {
+            throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生异常!skuCode:%s" + e.getMessage(), skuCode));
         }
     }
 
@@ -3282,6 +3373,9 @@ public class SxProductService extends BaseService {
 //        Map<String, Object> mapSp = mapSpAll.get(shopBean.getCart_id());
         Map<String, Object> mapSp = new HashMap<>();
 
+		// 是否智能上新
+		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
+
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
                 // 特殊字段
@@ -3314,8 +3408,77 @@ public class SxProductService extends BaseService {
                         retMap = new HashMap<>();
                     }
                     retMap.putAll(resolveField);
+                } else {
+					if (blnIsSmartSx) {
+						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData);
+						if (resolveField_smart != null) {
+							if (retMap == null) {
+								retMap = new HashMap<>();
+							}
+							retMap.putAll(resolveField_smart);
+						}
+					}
                 }
             }
+        }
+
+        return retMap;
+    }
+
+    private Map<String, Field> getValueBySmartCore(Field field, SxData sxData) {
+        Map<String, Field> retMap = new HashMap<>();
+
+        // 目前只做必填项
+        if (field.getRules() == null || field.getRuleByName("requiredRule") == null || !field.getRuleByName("requiredRule").getValue().equals("true")) {
+            return null;
+        }
+
+        // 具体逻辑
+        switch (field.getType()) {
+            case INPUT:
+                break;
+            case SINGLECHECK:
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+
+                // 先看看有没有默认值
+                String val = singleCheckField.getDefaultValue();
+
+                // 看看所有候选项里是否有"其他""其它"
+                if (StringUtils.isEmpty(val)) {
+                    for (Option option : singleCheckField.getOptions()) {
+                        if (option.getDisplayName().equals("其他") ||
+                                option.getDisplayName().equals("其它")
+                                ) {
+                            val = option.getValue();
+                            break;
+                        }
+                    }
+                }
+
+                // 还没有的话， 就用第一个候选项
+                if (StringUtils.isEmpty(val)) {
+                    if (singleCheckField.getOptions() != null && singleCheckField.getOptions().size() > 0) {
+                        val = singleCheckField.getOptions().get(0).getValue();
+                    }
+                }
+
+				if (!StringUtils.isEmpty(val)) {
+					singleCheckField.setValue(val);
+					retMap.put(field.getId(), singleCheckField);
+				}
+                break;
+            case MULTIINPUT:
+                break;
+            case MULTICHECK:
+                break;
+            case COMPLEX:
+                break;
+            case MULTICOMPLEX:
+                break;
+            case LABEL:
+                break;
+            default:
+                return null;
         }
 
         return retMap;

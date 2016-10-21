@@ -1,18 +1,15 @@
 package com.voyageone.components.solr.service;
 
-import com.voyageone.common.spring.SpringContext;
-import com.voyageone.components.ComponentBase;
+import com.voyageone.components.solr.BaseSearchService;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import org.apache.solr.client.solrj.response.UpdateResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bson.Document;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,56 +28,19 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-public class CmsProductSearchService extends ComponentBase {
+public class CmsProductSearchService extends BaseSearchService {
 
-    private SolrTemplate getSolrTemplate() {
-        return SpringContext.getBean(SolrTemplate.class);
+    private static final String SOLR_TEMPLATE_NAME = "cmsProductSolrTemplate";
+
+    @Override
+    protected String getSolrTemplateName() {
+        return SOLR_TEMPLATE_NAME;
     }
-
-    /**
-     * saveBean
-     */
-    public String saveBean(SolrUpdateBean bean) {
-        UpdateResponse response = getSolrTemplate().saveBean(bean);
-        return response.toString();
-    }
-
-    /**
-     * saveBeans
-     */
-    public String saveBeans(List<SolrUpdateBean> beans) {
-        UpdateResponse response = getSolrTemplate().saveBeans(beans);
-        return response.toString();
-    }
-
-    /**
-     * saveBean
-     */
-    public String deleteById(String id) {
-        UpdateResponse response = getSolrTemplate().deleteById(id);
-        return response.toString();
-    }
-
-    /**
-     * saveBeans
-     */
-    public String deleteByIds(List<String> ids) {
-        UpdateResponse response = getSolrTemplate().deleteById(ids);
-        return response.toString();
-    }
-
-    /**
-     * commit
-     */
-    public void commit() {
-        getSolrTemplate().commit();
-    }
-
 
     /**
      * create Update Bean
      */
-    public SolrUpdateBean createUpdate(CmsBtProductModel cmsBtProductModel, Long lastVer) {
+    public SolrUpdateBean createSolrBeanForNew(CmsBtProductModel cmsBtProductModel, Long lastVer) {
         if (cmsBtProductModel == null || cmsBtProductModel.getChannelId() == null
                 || cmsBtProductModel.getCommon() == null || cmsBtProductModel.getCommon().getFields() == null) {
             return null;
@@ -100,15 +61,128 @@ public class CmsProductSearchService extends ComponentBase {
             skuCodeList.addAll(skuList.stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
         }
 
-        return createUpdate(id, productChannel, productCode, productModel, skuCodeList, null, lastVer);
+        return createSolrBean(id, productChannel, productCode, productModel, skuCodeList, null, lastVer);
     }
 
     /**
      * create Update Bean
      */
-    public SolrUpdateBean createUpdate(String id, String productChannel,
-                                       String productCode, String productModel, List<String> skuCodeList, List<String> skuCodeAddList,
-                                       Long lastVer) {
+    public SolrUpdateBean createSolrBeanForNew(Document objectDoc, Long lastVer) {
+        if (objectDoc == null) {
+            return null;
+        }
+
+        String id = objectDoc.get("_id").toString();
+        String productChannel = (String) objectDoc.get("channelId");
+        String productCode = null;
+        String productModel = null;
+
+        Document commonDoc = (Document) objectDoc.get("common");
+        List<String> skuCodeList = new ArrayList<>();
+        //noinspection Duplicates
+        if (commonDoc != null) {
+            Document fieldsDoc = (Document) commonDoc.get("fields");
+            if (fieldsDoc != null) {
+                productCode = (String) fieldsDoc.get("code");
+                productModel = (String) fieldsDoc.get("model");
+            }
+            Object skusObj = commonDoc.get("skus");
+            if (skusObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Document> skuListDoc = (List<Document>) commonDoc.get("skus");
+                //noinspection Duplicates
+                if (skuListDoc != null) {
+                    skuListDoc.stream().filter(sku -> sku != null && sku.get("skuCode") != null).forEach(sku -> {
+                        String skuCode = (String) sku.get("skuCode");
+                        if (skuCode.length() > 0) {
+                            skuCodeList.add(skuCode);
+                        }
+                    });
+                }
+            }
+        }
+
+        return createSolrBean(id, productChannel, productCode, productModel, skuCodeList, null, null);
+    }
+
+    /**
+     * create Solr Update Bean
+     */
+    public SolrUpdateBean createSolrBeanForUpdate(Document document, Long lastVer) {
+        String id = null;
+        Document object2Doc = ((Document) document.get("o2"));
+        if (object2Doc != null) {
+            Object idObject = object2Doc.get("_id");
+            if (idObject != null) {
+                id = idObject.toString();
+            }
+        }
+        if (id == null) {
+            return null;
+        }
+
+        String productChannel = null;
+        String nsStr = ((String) document.get("ns"));
+        if (nsStr != null && nsStr.length() > 4) {
+            productChannel = nsStr.substring(nsStr.length() - 3, nsStr.length());
+        }
+        if (productChannel == null) {
+            return null;
+        }
+
+        String productCode = null;
+        String productModel = null;
+        List<String> skuCodeListTmp = new ArrayList<>();
+        List<String> skuCodeAddListTmp = new ArrayList<>();
+
+        Document objectDoc = (Document) document.get("o");
+        Document setDoc = (Document) objectDoc.get("$set");
+        if (setDoc != null) {
+            // common.fields.code
+            productCode = (String) getDataFromDocument(setDoc, "common.fields.code");
+            // common.fields.model
+            productModel = (String) getDataFromDocument(setDoc, "common.fields.model");
+
+            // common.fields.skus
+            @SuppressWarnings("unchecked")
+            List<Document> skuListDoc = (List<Document>) setDoc.get("common.skus");
+            if (skuListDoc != null) {
+                skuListDoc.stream().filter(sku -> sku != null && sku.get("skuCode") != null).forEach(sku -> {
+                    String skuCode = (String) sku.get("skuCode");
+                    if (skuCode.length() > 0) {
+                        skuCodeListTmp.add(skuCode);
+                    }
+                });
+            } else {
+                for (Map.Entry<String, Object> entry : setDoc.entrySet()) {
+                    String key = entry.getKey();
+                    if (key != null && key.startsWith("common.skus.") && key.endsWith(".skuCode")) {
+                        skuCodeAddListTmp.add(String.valueOf(entry.getValue()));
+                    }
+                }
+            }
+        }
+
+        List<String> skuCodeList = null;
+        if (!skuCodeListTmp.isEmpty()) {
+            skuCodeList = new ArrayList<>();
+            skuCodeList.addAll(skuCodeListTmp);
+        }
+
+        List<String> skuCodeAddList = null;
+        if (!skuCodeAddListTmp.isEmpty()) {
+            skuCodeAddList = new ArrayList<>();
+            skuCodeAddList.addAll(skuCodeAddListTmp);
+        }
+        return createSolrBean(id, productChannel, productCode, productModel, skuCodeList, skuCodeAddList, null);
+    }
+
+    /**
+     * create Update Bean
+     */
+    private SolrUpdateBean createSolrBean(String id, String productChannel,
+                                          String productCode, String productModel, List<String> skuCodeList, List<String> skuCodeAddList,
+                                          Long lastVer) {
         if (id == null || productChannel == null
                 || (productCode == null && productModel == null && skuCodeList == null && skuCodeAddList == null)) {
             return null;
@@ -163,8 +237,8 @@ public class CmsProductSearchService extends ComponentBase {
         return getSolrTemplate().queryForPage(query, clazz);
     }
 
-    public <T> SolrResultPage<T> queryForSolrResultPage(Query query, final Class<T> clazz) {
+    <T> SolrResultPage<T> queryForSolrResultPage(Query query, final Class<T> clazz) {
         //noinspection unchecked
-        return (SolrResultPage)getSolrTemplate().queryForPage(query, clazz);
+        return (SolrResultPage) getSolrTemplate().queryForPage(query, clazz);
     }
 }
