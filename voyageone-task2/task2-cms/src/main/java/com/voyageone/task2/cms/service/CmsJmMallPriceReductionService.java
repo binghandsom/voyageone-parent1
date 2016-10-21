@@ -11,6 +11,7 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ import static com.voyageone.ims.enums.CmsFieldEnum.CmsModelEnum.model;
  * Created by james on 2016/10/18.
  */
 @Service
-public class CmsJmMallPriceReductionService extends BaseTaskService {
+public class CmsJmMallPriceReductionService extends BaseCronTaskService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;

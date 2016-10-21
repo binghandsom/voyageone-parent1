@@ -9,6 +9,7 @@ import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * Created by jiangjusheng on 2016/10/18.
  */
 @Service
-public class JmMallPromotionPriceSyncService extends BaseTaskService {
+public class JmMallPromotionPriceSyncService extends BaseCronTaskService {
 
     @Override
     public SubSystem getSubSystem() {
