@@ -142,7 +142,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
             for (CmsBtJmPromotionProductModel model : modelList) {
                 //压缩图片的所需要的对象
                 Map<String, String> urlMap = new HashMap<>();
-                urlMap.put("url", url + model.getImage1() + suffix);
+                urlMap.put("url", url + model.getImage1());
                 urlMap.put("picturePath", model.getProductCode());
                 promotionImagesList.add(urlMap);
             }
@@ -168,13 +168,18 @@ public class CmsBtJmPromotionDownloadImageZipService {
                     URL url = new URL(urlMap.get("url"));
                     //Url
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    //压缩包内生成图片的路径以及名称
-                    zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
                     try (InputStream inputStream = conn.getInputStream()) {
+                        //压缩包内生成图片的路径以及名称
+                        zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
                         //读入需要下载的文件的内容，打包到zip文件
                         while ((len = inputStream.read(buffer)) > 0) {
                             zipOutputStream.write(buffer, 0, len);
                         }
+                        inputStream.close();
+                        zipOutputStream.closeEntry();
+                        zipOutputStream.close();
+                    }catch (Exception e){
+
                     }
                 }
                 return byteArrayOutputStream.toByteArray();
