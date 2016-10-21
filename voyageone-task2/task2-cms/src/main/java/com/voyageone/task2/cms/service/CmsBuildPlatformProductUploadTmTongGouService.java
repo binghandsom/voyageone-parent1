@@ -20,7 +20,6 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
-import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -91,8 +90,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
     @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
-    @Autowired
-    private TbSaleService tbSaleService;
 
 	@Override
     public SubSystem getSubSystem() {
