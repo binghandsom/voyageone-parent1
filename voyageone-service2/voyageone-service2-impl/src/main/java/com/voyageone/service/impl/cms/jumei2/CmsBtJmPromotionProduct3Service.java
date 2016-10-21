@@ -70,6 +70,9 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     private CmsBtPromotionDao daoCmsBtPromotion;
 
+    @Autowired
+    CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -166,6 +169,24 @@ public class CmsBtJmPromotionProduct3Service {
         daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
         return result;
     }
+
+
+    @VOTransactional
+    public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter,String userName) {
+        CallResult result = new CallResult();
+        if (parameter.getListPromotionProductId().isEmpty())
+            return result;
+
+        parameter.getListPromotionProductId().forEach(id -> {
+            cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, id,userName);
+        });
+        daoExt.updateAvgPriceByListPromotionProductId(parameter.getListPromotionProductId());//更新平均值 最大值 最小值    已上新的更新为已经变更
+        daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
+        return result;
+    }
+
+
+
 
     //批量同步价格  1. then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {

@@ -89,7 +89,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
 
-    int updateAvgPriceByListPromotionProductId(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int updateAvgPriceByListPromotionProductId(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     //获取变更数量
     int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);

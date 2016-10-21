@@ -578,7 +578,7 @@ define([
 
     cms.directive('spProductList', [function spProductListDirectiveFactory() {
         return {
-            restrict: 'E',
+            scope: {},
             controller: ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService', SProductListDirectiveController],
             templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
         }

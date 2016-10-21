@@ -220,19 +220,19 @@
                     <div class="col-sm-5 col-sm-offset-2">
                         <table class="table table-hover-new table-hover">
                             <thead>
-                            <tr class="control-label">
+                            <tr>
                                 <th>TAG</th>
-                                <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
+                                <th class="text-center" style="width: 55px;">{{'BTN_DELETE' | translate}}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="tag in ctrlEdit.editModel.tagList">
-                                <td class="mfb-xxxsm">
+                                <td>
                                     <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
                                            ng-required="true" maxlength="20" required>
                                     <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
                                 </td>
-                                <td class="mfb-xxs text-center">
+                                <td class="text-center">
                                     <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
                                             ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
                                     </button>

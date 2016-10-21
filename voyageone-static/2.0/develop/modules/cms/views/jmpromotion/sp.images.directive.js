@@ -41,6 +41,9 @@ define([
             spDataService = self.spDataService,
             imgUpEntity = self.imgUpEntity;
 
+        if(!imgUpEntity.jmPromotionId)
+            return;
+
         spDataService.getPromotionImgTpl(imgUpEntity).then(function (res) {
             self.imgUrls = res.promotionImageUrl;
             self.imgUpEntity = res.promotionImagesModel;
@@ -55,7 +58,6 @@ define([
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
-            imgUpEntity = self.imgUpEntity,
             brand = promotionInfo.brand ? promotionInfo.brand : '',
             popups = self.popups;
 
@@ -81,8 +83,8 @@ define([
         popups.openImageBatchJmUpload(_.extend(spDataService.commonUpEntity, {
             brand: brand
             , imgUpEntity: self.imgUpEntity
-        })).then(function (context) {
-
+        })).then(function () {
+            self.init();
         });
     };
 
@@ -104,7 +106,10 @@ define([
             //用于显示
             imgUrls[imageName] = res.templateUrl;
             //用于存储图片名称
-            imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName
+            imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName;
+
+            //更新
+            self.save(0);
         });
     };
 
@@ -117,7 +122,9 @@ define([
             alert = self.alert,
             counts = 0,
             spDataService = self.spDataService;
+
         spDataService.jmPromotionObj.imageStatus = 2;
+
 
         if (saveType == 1) {
             _.each(self.imgUpEntity, function (value, key) {
@@ -131,12 +138,17 @@ define([
             }
         }
 
+        self.imgUpEntity.saveType = saveType;
         spDataService.savePromotionImages({
             "promotionImages": self.imgUpEntity,
             "brand": self.promotionInfo.brand,
             "saveType": saveType
         }).then(function(){
             notify.success("更新成功!");
+            spDataService.jmPromotionObj.imageStatus = 1;
+
+            //刷新页面
+            self.init();
         });
     };
 

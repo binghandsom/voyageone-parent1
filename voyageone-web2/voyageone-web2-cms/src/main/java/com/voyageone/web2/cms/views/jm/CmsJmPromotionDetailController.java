@@ -190,7 +190,11 @@ public class CmsJmPromotionDetailController extends CmsController {
         CallResult result = service3.batchUpdateDealPrice(parameter);
         return success(result);
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchUpdateSkuDealPrice)
+    public AjaxResponse batchUpdateSkuDealPrice(@RequestBody BatchUpdateSkuPriceParameterBean parameter) {
+        CallResult result = service3.batchUpdateSkuDealPrice(parameter,getUser().getUserName());
+        return success(result);
+    }
     //批量同步价格
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchSynchPrice)
     public AjaxResponse batchSyncPrice(@RequestBody BatchSynchPriceParameter parameter) {

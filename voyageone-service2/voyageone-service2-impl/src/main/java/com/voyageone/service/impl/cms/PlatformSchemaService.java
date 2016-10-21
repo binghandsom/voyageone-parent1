@@ -104,7 +104,8 @@ public class PlatformSchemaService extends BaseService {
 //        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
 
         CmsMtPlatformCategorySchemaModel platformCatSchemaModel;
-        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId) {
+        if (CartEnums.Cart.TM.getValue() == cartId || CartEnums.Cart.TG.getValue() == cartId ||
+                CartEnums.Cart.TT.getValue() == cartId || CartEnums.Cart.USTT.getValue() == cartId) {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchemaTm(catId, channelId, cartId);
         } else {
             platformCatSchemaModel = platformCategoryService.getPlatformCatSchema(catId, cartId);
