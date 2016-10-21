@@ -466,7 +466,8 @@ public class CmsBtJmPromotionService extends BaseService {
 
         Default(0),    // 初始状态
         Success(1),  // 提交完成
-        Error(2);    // 未提交(暂存) 或 提交失败 /
+        Error(2),    // 未提交(暂存) 或 提交失败 /
+        ImgComplete(3);  // 活动图片设计完成
 
         private int type;
 
