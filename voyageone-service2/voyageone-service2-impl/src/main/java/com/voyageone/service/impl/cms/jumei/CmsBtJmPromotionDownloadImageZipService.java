@@ -83,7 +83,12 @@ public class CmsBtJmPromotionDownloadImageZipService {
                     Map<String, String> urlMap = new HashMap<>();
                     if (picNameModel.getUseTemplate()) {
                         //imageUrl
-                        String url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
+                        String url = "";
+                        try {
+                            url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
+                        } catch (Exception e) {
+
+                        }
                         urlMap.put("url", url);
                     } else {
                         urlMap.put("url", url + imageName + suffix);
@@ -178,7 +183,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                         inputStream.close();
                         zipOutputStream.closeEntry();
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
                 }
