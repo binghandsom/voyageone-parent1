@@ -86,7 +86,7 @@
 </update>
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
-        SELECT a.deal_end_time_status,ifnull(b.image1,image1) as image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
+        SELECT a.deal_end_time_status,ifnull(b.image1,a.image1) as image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
         ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
         a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark
@@ -153,6 +153,9 @@
                 </if>
                 <if test="allStatus1!=null">
                     or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                <if test="isInJm!=null">
+                    or b.id is null
                 </if>
                 )
             </if>
