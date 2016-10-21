@@ -119,12 +119,10 @@ public class CmsBtJmPromotionExportContext {
     }
 
     private String getBooleanString(Boolean value) {
-        if (value) {
-            return "是";
-        } else if (value) {
+        if (value == null || !value) {
             return "否";
-        } else {
-            return "";
+        }else {
+            return "是";
         }
     }
 }
