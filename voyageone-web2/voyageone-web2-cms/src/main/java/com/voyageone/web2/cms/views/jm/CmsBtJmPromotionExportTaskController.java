@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.CmsProperty;
@@ -12,11 +13,9 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +35,9 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
     private CmsBtJmPromotionExportTask3Service service3;
     @Autowired
     private MqSender sender;
+
+    @Autowired
+    private CmsJmPromotionExportService cmsJmPromotionExportService;
 
     ///cms/CmsBtJmPromotionExportTask/index/selectByPromotionId
     //  @RequestMapping( value = "/cms/CmsBtJmPromotionExportTask/index/selectByPromotionId", method = RequestMethod.POST)//CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.GET_BY_PROMOTIONID)
@@ -69,5 +71,11 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         message.put("id", model.getId());
         sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
         return success(result);
+    }
+    @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.EXPORT_JM_PROMOTION_INFO)
+    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam Integer type, @RequestParam String promotionName)
+            throws Exception {
+        byte[] data = cmsJmPromotionExportService.doExportJmPromotionFile(promotionId, type);
+        return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
     }
 }

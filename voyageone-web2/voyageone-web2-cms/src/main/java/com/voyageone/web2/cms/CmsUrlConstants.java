@@ -113,6 +113,7 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/CmsBtJmPromotionExportTask/index";
                 String GET_BY_PROMOTIONID = "getByPromotionId";
                 String ADDEXPORT = "addExport";
+                String EXPORT_JM_PROMOTION_INFO = "exportJmPromotionInfo";
             }
         }
     }
