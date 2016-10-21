@@ -2,8 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
-import com.taobao.api.response.ItemUpdateDelistingResponse;
-import com.taobao.api.response.ItemUpdateListingResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
@@ -315,9 +313,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 throw new BusinessException("获取cms_mt_platform_dict字典表数据（属性图片模板等）失败");
             }
 
+            // 判断新增商品还是更新商品
+            // 只要numIId不为空，则为更新商品
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                // 更新商品
+                updateWare = true;
+                // 取得更新对象商品id
+                numIId = sxData.getPlatform().getNumIId();
+            }
+
             // 编辑天猫国际官网同购共通属性
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue,
-                    skuLogicQtyMap, tmTonggouFeedAttrList, conditionMappingMap);
+                    skuLogicQtyMap, tmTonggouFeedAttrList, conditionMappingMap, updateWare);
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -336,15 +343,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 测试用输入XML内容
             $debug(productInfoXml);
-
-            // 判断新增商品还是更新商品
-            // 只要numIId不为空，则为更新商品
-            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
-                // 更新商品
-                updateWare = true;
-                // 取得更新对象商品id
-                numIId = sxData.getPlatform().getNumIId();
-            }
 
             String result;
             // 新增或更新商品主处理
@@ -371,8 +369,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
 
             // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
-            // 执行商品上架/下架操作,返回OnSale/InStock用于回写
-            CmsConstants.PlatformStatus platformStatus = updateTbWareListing(shopProp, sxData, numIId, updateWare);
+            // 回写用商品上下架状态(OnSale/InStock)
+            CmsConstants.PlatformStatus platformStatus = null;
+            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+            // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
+            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                platformStatus = CmsConstants.PlatformStatus.OnSale;   // 上架
+            } else {
+                platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
+            }
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
@@ -429,12 +434,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
      * @param tmTonggouFeedAttrList List<String> 当前渠道和平台设置的可以天猫官网同购上传的feed attribute列表
      * @param conditionMappingMap 当前渠道和平台设置的天猫同购一级类目匹配信息map
+     * @param updateWare 新增/更新flg(false:新增 true:更新)
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private BaseMongoMap<String, String> getProductInfo(SxData sxData, ShopBean shopProp, String priceConfigValue,
                                                  Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList,
-                                                 Map<String, String> conditionMappingMap) throws BusinessException {
+                                                 Map<String, String> conditionMappingMap,
+                                                 boolean updateWare) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
 
@@ -694,6 +701,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 				mainProduct.getCommon().getFields().getAppSwitch() == 1) {
 			productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
 		}
+
+        // 商品上下架
+        CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+        // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
+        if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+            productInfoMap.put("status", "0");   // 商品上架
+        } else {
+            productInfoMap.put("status", "2");   // 商品在库
+        }
 
         return productInfoMap;
     }
@@ -1039,69 +1055,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         }
 
         return pCatPath;
-    }
-
-    /**
-     * 天猫淘宝商品上架/下架处理
-     *
-     * @param shop ShopBean 店铺对象
-     * @param sxData SxData 上新数据
-     * @param numIId String 商品id
-     * @param updateFlg boolean 新增/更新商品flg  false:新增 true:更新
-     * @return CmsConstants.PlatformStatus 商品上下架状态
-     */
-    protected CmsConstants.PlatformStatus updateTbWareListing(ShopBean shop, SxData sxData, String numIId, boolean updateFlg) {
-        // 商品上架/下架结果状态(新增时默认为InStock, 更新时更新为OnSale或InStock)
-        CmsConstants.PlatformStatus platformStatus = CmsConstants.PlatformStatus.InStock;
-
-        // 商品上架/下架结果
-        boolean updateListingResult = false;
-        // 错误消息
-        String errMsg = "";
-
-        // 新增的时候不用调用上下架操作，只在更新的时候才做商品上下架处理
-        if (updateFlg) {
-            // platformActive平台上新状态类型(ToOnSale/ToInStock)
-            if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
-                // platformActive是(ToOnSale)时，做商品上架操作
-                ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shop, numIId, 1L);
-                if (response == null) {
-                    errMsg = String.format("天猫同购上新时,调用淘宝商品上架API失败 [response = null] [ProductCode:%s] " +
-                            "[NumIId:%s]", sxData.getMainProduct().getCommon().getFields().getCode(), numIId);
-                } else {
-                    if (StringUtils.isEmpty(response.getErrorCode())) {
-                        updateListingResult = true;
-                        // 商品上架
-                        platformStatus = CmsConstants.PlatformStatus.OnSale;
-                    } else {
-                        errMsg = String.format("调用淘宝商品上架API失败 [ProductCode:%s] [NumIId:%s] [errMsg:%s]",
-                                sxData.getMainProduct().getCommon().getFields().getCode(), numIId, response.getBody());
-                    }
-                }
-            } else {
-                // platformActive是(ToInStock)时，执行商品下架操作
-                ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shop, numIId);
-                if (response == null) {
-                    errMsg = String.format("天猫同购上新时,调用淘宝商品下架API失败 [response = null] [ProductCode:%s] " +
-                            "[NumIId:%s]", sxData.getMainProduct().getCommon().getFields().getCode(), numIId);
-                } else {
-                    if (StringUtils.isEmpty(response.getErrorCode())) {
-                        updateListingResult = true;
-                        // 商品下架
-                        platformStatus = CmsConstants.PlatformStatus.InStock;
-                    } else {
-                        errMsg = String.format("调用淘宝商品下架API失败 [ProductCode:%s] [NumIId:%s] [errMsg:%s]",
-                                sxData.getMainProduct().getCommon().getFields().getCode(), numIId, response.getBody());
-                    }
-                }
-            }
-        }
-
-        if (!updateListingResult) {
-            $error(errMsg);
-        }
-
-        return platformStatus;
     }
 
 }
