@@ -334,6 +334,7 @@ public class CmsBtJmPromotionProduct3Service {
         return 1;
     }
 
+    //修改单个商品tag
     @VOTransactional
     public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String userName) {
         String tagNameList = "";
@@ -363,6 +364,20 @@ public class CmsBtJmPromotionProduct3Service {
         }
         //更新mongo  product  tag
         updateCmsBtProductTags(model, modelPromotion, parameter, userName);
+        return 1;
+    }
+    //批量修改商品tag
+    @VOTransactional
+    public int updatePromotionListProductTag(UpdateListPromotionProductTagParameter parameter, String userName) {
+
+        if(parameter.getListPromotionProductId()==null||parameter.getListPromotionProductId().size()==0) return 0;
+        UpdatePromotionProductTagParameter parameterProductTag = new UpdatePromotionProductTagParameter();
+        parameterProductTag.setTagList(parameter.getTagList());
+
+        parameter.getListPromotionProductId().forEach(id -> {
+            parameterProductTag.setId(id);
+            updatePromotionProductTag(parameterProductTag, userName);
+        });
         return 1;
     }
 

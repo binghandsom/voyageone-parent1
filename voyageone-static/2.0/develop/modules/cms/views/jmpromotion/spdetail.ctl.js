@@ -21,5 +21,22 @@ define(['cms',
         });
     };
 
+    SpDetailPageController.prototype.downloadSpecialImageZip = function () {
+        var self = this,
+            spDataService = self.spDataService;
+
+        spDataService.downloadSpecialImageZip().then(function () {
+
+        });
+    };
+
+    SpDetailPageController.prototype.downloadWaresImageZip = function () {
+        var self = this,
+            spDataService = self.spDataService;
+
+        spDataService.downloadWaresImageZip().then(function () {
+
+        });
+    };
     cms.controller('SpDetailPageController', SpDetailPageController);
 });

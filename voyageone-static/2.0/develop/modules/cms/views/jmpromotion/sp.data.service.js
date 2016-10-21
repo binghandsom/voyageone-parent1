@@ -115,5 +115,25 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.downloadSpecialImageZip = function downloadSpecialImageZip() {
+        var self = this,
+            JmPromotionImagesService = self.JmPromotionImagesService;
+
+        return JmPromotionImagesService.downloadSpecialImageZip({
+            promotionId: self.jmPromotionId
+        }).then(function (resp) {
+            return resp.data;
+        });
+    };
+    SpDataService.prototype.downloadWaresImageZip = function downloadWaresImageZip() {
+        var self = this,
+            JmPromotionImagesService = self.JmPromotionImagesService;
+
+        return JmPromotionImagesService.downloadWaresImageZip({
+            promotionId: self.jmPromotionId
+        }).then(function (resp) {
+            return resp.data;
+        });
+    };
     cms.service('spDataService', SpDataService);
 });

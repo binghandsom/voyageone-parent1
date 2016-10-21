@@ -24,24 +24,26 @@ define([
         };
         $scope.ok = function () {
             if (listPromotionProduct.length == 0) {
-                alert("请选择修tag的商品!");
+                alert("请选择修改tag的商品!");
                 return;
             }
-
             var parameter = {};
             parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
             parameter.jmPromotionId = jmPromotionId;
-            parameter.tagNameList = $scope.vm.tagNameList;
-
-            jmPromotionDetailService.batchUpdateDealPrice(parameter).then(function (res) {
-                if (!res.data.result) {
-                    alert(res.data.msg);
-                    return;
-                }
+            var productTagList = [];
+            for (var i = 0; i < $scope.vm.tagNameList.length; i++) {
+                var tagName = $scope.vm.tagNameList[i];
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName});
+            }
+            parameter.tagList = productTagList;
+            jmPromotionDetailService.updatePromotionListProductTag(parameter).then(function (res) {
                 $scope.$close();
                 context.search();
             }, function (res) {
-                alert(res);
+                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.getSelectedPromotionProductIdList = function (modelList) {

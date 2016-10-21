@@ -28,16 +28,33 @@ define([
     };
 
     /**
+     * 是否套用模板,只会套用模板供页面显示,不会更新数据
+     */
+    SpImagesDirectiveController.prototype.canUseTemplate = function(){
+        var self = this,
+            spDataService = self.spDataService,
+            imgUpEntity = self.imgUpEntity;
+
+        spDataService.getPromotionImgTpl(imgUpEntity).then(function(res){
+            self.imgUrls = res.promotionImageUrl;
+            self.imgUpEntity = res.promotionImagesModel;
+        });
+
+    };
+
+    /**
      * 页面选择套图弹出框
      */
     SpImagesDirectiveController.prototype.popImageSuit = function () {
         var self = this,
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
+            imgUpEntity = self.imgUpEntity,
             brand = promotionInfo.brand ? promotionInfo.brand : '',
             popups = self.popups;
 
         popups.openImageSuit({brand:brand}).then(function (context) {
+
             spDataService.getPromotionImgTpl(context).then(function(res){
                 self.imgUrls = res.promotionImageUrl;
                 self.imgUpEntity = res.promotionImagesModel;
