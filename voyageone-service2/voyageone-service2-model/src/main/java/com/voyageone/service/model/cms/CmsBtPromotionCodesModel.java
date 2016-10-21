@@ -65,10 +65,11 @@ public class CmsBtPromotionCodesModel extends BaseModel {
     protected String property3;
 
     protected String property4;
+
     /**
-     * 库存数量
+     * 库存
      */
-    private Integer quantity;
+    protected Integer quantity;
 
     public Integer getPromotionId() {
         return promotionId;

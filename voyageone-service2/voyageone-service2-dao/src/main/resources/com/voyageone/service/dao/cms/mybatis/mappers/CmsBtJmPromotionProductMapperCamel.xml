@@ -5,7 +5,7 @@
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `cms_bt_jm_promotion_id`, `product_code`, `jm_hash_id`, `limit`, 
         `app_id`, `pc_id`, `modified`, `discount`, `error_msg`, `sku_count`, `quantity`, 
-        `activity_start`, `activity_end`, `synch_status`, `update_status`, `price_status`, 
+        `sales`, `activity_start`, `activity_end`, `synch_status`, `update_status`, `price_status`, 
         `modifier`, `promotion_tag`, `created`, `creater`, `deal_end_time_status`, `stock_status`, 
         `max_msrp_usd`, `max_msrp_rmb`, `max_retail_price`, `max_sale_price`, `min_msrp_usd`, 
         `min_msrp_rmb`, `min_retail_price`, `min_sale_price`, `max_market_price`, `min_market_price`, 
@@ -61,6 +61,9 @@
             </if>
             <if test="quantity != null" >
                 `quantity` = #{quantity,jdbcType=INTEGER},
+            </if>
+            <if test="sales != null" >
+                `sales` = #{sales,jdbcType=INTEGER},
             </if>
             <if test="activityStart != null" >
                 `activity_start` = #{activityStart,jdbcType=TIMESTAMP},
@@ -196,6 +199,9 @@
             <if test="quantity != null" >
                 and `quantity` = #{quantity,jdbcType=INTEGER}
             </if>
+            <if test="sales != null" >
+                and `sales` = #{sales,jdbcType=INTEGER}
+            </if>
             <if test="activityStart != null" >
                 and `activity_start` = #{activityStart,jdbcType=TIMESTAMP}
             </if>
@@ -325,6 +331,9 @@
             <if test="quantity != null" >
                 and `quantity` = #{quantity,jdbcType=INTEGER}
             </if>
+            <if test="sales != null" >
+                and `sales` = #{sales,jdbcType=INTEGER}
+            </if>
             <if test="activityStart != null" >
                 and `activity_start` = #{activityStart,jdbcType=TIMESTAMP}
             </if>
@@ -451,6 +460,9 @@
             <if test="quantity != null" >
                 and `quantity` = #{quantity,jdbcType=INTEGER}
             </if>
+            <if test="sales != null" >
+                and `sales` = #{sales,jdbcType=INTEGER}
+            </if>
             <if test="activityStart != null" >
                 and `activity_start` = #{activityStart,jdbcType=TIMESTAMP}
             </if>
@@ -574,6 +586,9 @@
             </if>
             <if test="quantity != null" >
                 `quantity`,
+            </if>
+            <if test="sales != null" >
+                `sales`,
             </if>
             <if test="activityStart != null" >
                 `activity_start`,
@@ -700,6 +715,9 @@
             </if>
             <if test="quantity != null" >
                 #{quantity,jdbcType=INTEGER},
+            </if>
+            <if test="sales != null" >
+                #{sales,jdbcType=INTEGER},
             </if>
             <if test="activityStart != null" >
                 #{activityStart,jdbcType=TIMESTAMP},
