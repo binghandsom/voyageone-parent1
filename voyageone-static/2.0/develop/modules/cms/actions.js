@@ -245,11 +245,13 @@ define(function () {
                     saveProductSort: 'saveProductSort'
                 },
                 "JmPromotionImagesService": {
-                    "root": "/cms/jmpromotion/images",
+                    "root": "/cms/jmPromotion/images",
                     "init": "init",
                     "save": "save",
                     "getImageForSuit": "getImageForSuit",
-                    "getImageTemplate": "getImageTemplate"
+                    "getImageTemplate": "getImageTemplate",
+                    "downloadSpecialImageZip":"downloadSpecialImageZip",
+                    "downloadWaresImageZip":"downloadWaresImageZip"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {

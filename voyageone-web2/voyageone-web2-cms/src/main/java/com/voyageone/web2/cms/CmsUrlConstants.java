@@ -90,11 +90,13 @@ public interface CmsUrlConstants {
         }
 
         interface Images{
-            String ROOT = "/cms/jmpromotion/images";
+            String ROOT = "/cms/jmPromotion/images";
             String INIT = "init";
             String SAVE = "save";
             String GET_IMAGE_FOR_SUIT = "getImageForSuit";
             String GET_IMAGE_TEMPLATE=  "getImageTemplate";
+            String DOWNLOAD_SPECIAL_IMAGE_ZIP ="downloadSpecialImageZip";
+            String DOWNLOAD_WARES_IMAGE_ZIP ="downloadWaresImageZip";
         }
     }
 
