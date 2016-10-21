@@ -30,14 +30,13 @@ public class TbSaleService extends TbBase {
      *
      * @param shopBean 店铺信息
      * @param numIid String 商品数字ID，该参数必须
-     * @param num Long 需要上架的商品的数量，该参数必须  取值范围:大于零的整数。如果商品有sku，则上架数量默认为所有sku数量总和，不可修改。否则商品数量根据设置数量调整为num
      */
-    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid, Long num) {
+    public ItemUpdateListingResponse doWareUpdateListing(ShopBean shopBean, String numIid) {
         logger.info("商品上架 " + numIid);
         ItemUpdateListingRequest request = new ItemUpdateListingRequest ();
         request.setNumIid(NumberUtils.toLong(numIid));
         // 需要上架的商品的数量。取值范围:大于零的整数。如果商品有sku，则上架数量默认为所有sku数量总和，不可修改。否则商品数量根据设置数量调整为num
-        request.setNum(num);  // 例如:1L, 2L等
+        request.setNum(1L);  // 例如:1L, 2L等,这里固定设成1L，因为不管设成多少都是一样的效果
         ItemUpdateListingResponse response = null;
 
         try {
