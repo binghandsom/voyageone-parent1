@@ -1057,7 +1057,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 商品上架/下架结果
         boolean updateListingResult = false;
         // 错误消息
-        String errMsg = "天猫同购上新时,";
+        String errMsg = "";
 
         // 新增的时候不用调用上下架操作，只在更新的时候才做商品上下架处理
         if (updateFlg) {
