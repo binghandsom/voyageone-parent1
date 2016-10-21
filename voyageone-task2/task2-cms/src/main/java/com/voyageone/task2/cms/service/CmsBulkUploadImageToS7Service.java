@@ -20,7 +20,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -46,7 +46,7 @@ import java.util.zip.ZipFile;
  * @since 2.1.0
  */
 @Service
-public class CmsBulkUploadImageToS7Service extends BaseTaskService {
+public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
 
     private final String TASK_NAME = "CmsBulkUploadImageToS7Job";
     private final String MODIFIER = getClass().getSimpleName();

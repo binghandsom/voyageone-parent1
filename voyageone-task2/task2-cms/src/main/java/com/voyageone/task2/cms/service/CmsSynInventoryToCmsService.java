@@ -12,6 +12,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
  *
  */
 @Service
-public class CmsSynInventoryToCmsService extends BaseTaskService {
+public class CmsSynInventoryToCmsService extends BaseCronTaskService {
 
     @Autowired
     private InventoryDao inventoryDao;

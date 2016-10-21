@@ -42,8 +42,15 @@ define([
          */
         function goDetail() {
             var vm = $scope.vm,
+                args,
                 url = !vm.currentImage ? vm.picInfo.mainPic : vm.currentImage;
-            window.open(url);
+
+            args = url.split("/");
+
+            if(args.length == 0)
+                return;
+
+            window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓",args[args.length-1]));
         }
 
     });

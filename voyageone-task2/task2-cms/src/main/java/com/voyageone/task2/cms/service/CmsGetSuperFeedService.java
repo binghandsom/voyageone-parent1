@@ -15,7 +15,7 @@ import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
 import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
-public class CmsGetSuperFeedService extends BaseTaskService {
+public class CmsGetSuperFeedService extends BaseCronTaskService {
 
     @Autowired
     private SuperFeedDao superfeeddao;

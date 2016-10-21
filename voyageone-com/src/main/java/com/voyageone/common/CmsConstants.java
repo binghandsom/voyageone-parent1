@@ -122,6 +122,9 @@ public class CmsConstants {
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
+        // 全链路库存管理相关
+        String SCITEM = "SCITEM"; // 后端货品 (val1: 是否使用了全链路库存管理, val2: 商家仓库编码)
+
         // 别名相关
         String ALIAS = "ALIAS";
         String COLOR_ALIAS = ".color_alias";
@@ -130,6 +133,9 @@ public class CmsConstants {
 
         // App端启用开关(用于控制所有平台的)
         String APP_SWITCH = "APP_SWITCH";
+
+        // 上新方式
+        String SX_SMART = "SX_SMART";
 
         // 发货方式
         String SHIPPING_TYPE = "SHIPPING_TYPE";

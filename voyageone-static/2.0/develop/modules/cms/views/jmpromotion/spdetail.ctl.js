@@ -20,6 +20,7 @@ define(['cms',
 
         spDataService.getPromotion().then(function (promotion) {
             self.promotion = promotion;
+            spDataService.jmPromotionObj = promotion;
         });
     };
 

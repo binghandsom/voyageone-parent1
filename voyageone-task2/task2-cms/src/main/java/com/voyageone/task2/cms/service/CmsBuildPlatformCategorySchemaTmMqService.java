@@ -3,8 +3,10 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,8 @@ public class CmsBuildPlatformCategorySchemaTmMqService extends BaseMQCmsService 
 
     @Autowired
     private GetPlatformCategorySchemaService getPlatformCategorySchemaService;
+    @Autowired
+    private PlatformCategoryService platformCategoryService;
 
     /**
      * 入口
@@ -82,13 +86,29 @@ public class CmsBuildPlatformCategorySchemaTmMqService extends BaseMQCmsService 
                 }
                 break;
             case "2":
-                if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId) || StringUtils.isEmpty(categoryId) || StringUtils.isEmpty(categoryPath)) {
+                if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId) || (StringUtils.isEmpty(categoryId) && StringUtils.isEmpty(categoryPath))) {
                     // 出错了
                     $error("天猫平台类目schema信息取得(MQ): 输入参数错误: 需要字符串形式的channelId和cartId和categoryId和categoryPath");
                     return;
                 } else {
                     ShopBean shopBean = Shops.getShop(channelId, cartId);
-                    doLogic_type2_channel_cart_category(shopBean, categoryId, categoryPath);
+                    // modified by morse.lu 2016/10/13 start
+                    // 参数categoryId和categoryPath，有一个有值就可以了，另一个去检索得到
+//                    doLogic_type2_channel_cart_category(shopBean, categoryId, categoryPath);
+                    CmsMtPlatformCategorySchemaModel schemaModel;
+                    if (!StringUtils.isEmpty(categoryId)) {
+                        schemaModel = platformCategoryService.getPlatformCatSchema(categoryId, Integer.valueOf(cartId));
+                    } else {
+                        schemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, Integer.valueOf(cartId));
+                    }
+
+                    if (schemaModel == null) {
+                        $error("环境里没有此类目,新增加的话,参数categoryId和categoryPath必须都输入!不是的话,请检查参数是否正确!");
+                        return;
+                    }
+
+                    doLogic_type2_channel_cart_category(shopBean, schemaModel.getCatId(), schemaModel.getCatFullPath());
+                    // modified by morse.lu 2016/10/13 end
                 }
                 break;
             default:

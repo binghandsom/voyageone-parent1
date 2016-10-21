@@ -116,7 +116,7 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     /**
-     * 新建聚美专场
+     * 新建聚美专场(保存活动信息)
      */
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
@@ -142,6 +142,9 @@ public class CmsBtJmPromotionService extends BaseService {
 
         if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {
             // 更新
+            if (parameter.isHasExt()) {
+                setJmPromotionStepStatus(parameter.getModel().getId(), JmPromotionStepNameEnum.PromotionDetail, JmPromotionStepStatusEnum.Error, userName);
+            }
             parameter.getModel().setModifier(userName);
             updateModel(parameter);
             saveCmsBtPromotion(parameter.getModel());
@@ -159,6 +162,9 @@ public class CmsBtJmPromotionService extends BaseService {
                     // 新建扩展信息
                     extModel.setCreater(userName);
                     jmPromotionExtensionDaoExt.insert(extModel);
+                }
+                if (parameter.getSaveType() == 1) {
+                    setJmPromotionStepStatus(parameter.getModel().getId(), JmPromotionStepNameEnum.PromotionDetail, JmPromotionStepStatusEnum.Success, userName);
                 }
             }
         } else {
@@ -436,6 +442,55 @@ public class CmsBtJmPromotionService extends BaseService {
         } else {
             sqlParams.put("codeList", null);
         }
+    }
+
+    public static enum JmPromotionStepNameEnum {
+
+        SessionsUpload("upload_status"),    // 专场上传
+        PromotionDetail("detail_status"),   // 活动信息
+        PromotionShelf("shelf_status"),    // 活动货架
+        PromotionImage("image_status"),    // 活动图片
+        PromotionBayWindow("bay_window_status");    // 活动飘窗
+
+        private String name;
+
+        JmPromotionStepNameEnum(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return name;
+        }
+    }
+    public static enum JmPromotionStepStatusEnum {
+
+        Default(0),    // 初始状态
+        Success(1),  // 提交完成
+        Error(2);    // 未提交(暂存) 或 提交失败 /
+
+        private int type;
+
+        JmPromotionStepStatusEnum(Integer type){
+            this.type = type;
+        }
+
+        public int getValue()
+        {
+            return  type;
+        }
+    }
+
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("modifier", userName);
+        param.put("jmPromotionId", jmPromId);
+        param.put("stepName", stepName.getValue());
+        param.put("stepStatus", stepStatus.getValue());
+
+        daoExt.setJmPromotionStepStatus(param);
     }
 
 }

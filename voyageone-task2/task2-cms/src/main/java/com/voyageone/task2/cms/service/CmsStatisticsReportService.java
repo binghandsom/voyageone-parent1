@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.SearchDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by james.li on 2015/10/20.
  */
 @Service
-public class CmsStatisticsReportService extends BaseTaskService {
+public class CmsStatisticsReportService extends BaseCronTaskService {
 
     @Autowired
     private SearchDao searchDao;

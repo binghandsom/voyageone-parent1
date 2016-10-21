@@ -47,4 +47,8 @@ public interface CmsBtJmPromotionDaoExt {
 
     List<Integer> selectJmPromotionBegin();
 
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    int setJmPromotionStepStatus(Map<String, Object> map);
 }

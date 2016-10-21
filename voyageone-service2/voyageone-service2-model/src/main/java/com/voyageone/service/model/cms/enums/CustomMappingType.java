@@ -22,6 +22,7 @@ public enum CustomMappingType {
     FREIGHT(14), // 运费模板
     CSPU(15), // 产品规格
     PRODUCT_ID(16), // 货品Id
+    DARWIN_SKU(17), // darwin_sku
     ;
     // added by morse.lu 2016/06/29 end
 
@@ -96,6 +97,8 @@ public enum CustomMappingType {
                 return CSPU;
             case 16:
                 return PRODUCT_ID;
+            case 17:
+                return DARWIN_SKU;
             // added by morse.lu 2016/06/29 end
             default:
                 return null;

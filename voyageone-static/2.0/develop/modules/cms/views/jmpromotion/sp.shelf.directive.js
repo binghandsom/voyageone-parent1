@@ -54,9 +54,11 @@ define([
     SpModelDirectiveController.prototype.saveAll = function () {
         var self = this,
             spDataService = self.spDataService;
+        spDataService.jmPromotionObj.shelfStatus = 2;
 
         spDataService.saveModules(self.modules).then(function () {
             self.notify.success('已保存');
+            spDataService.jmPromotionObj.shelfStatus = 1;
         });
     };
 

@@ -56,7 +56,7 @@ public class CnCategoryService extends BaseService {
         if (length > 1) {
             bean.setParentId(catIds[length - 2]); // 父类目Id
         }
-        StringBuilder catFullPath = new StringBuilder("");
+        StringBuilder catFullPath = new StringBuilder("1/2/");
         for (int i = 0; i < length; i++) {
             catFullPath.append(catIds[i]);
             if (i != length - 1) {
@@ -67,6 +67,11 @@ public class CnCategoryService extends BaseService {
         bean.setCategoryPath(catFullPath.toString()); // 类目的path
         bean.setName(name);
         bean.setHeaderTitle(description);
+        {
+            // 临时写死
+            bean.setIsSneakerheadOnly("0");
+            bean.setIsEnableFilter("1");
+        }
 
         return bean;
     }
@@ -78,8 +83,8 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, String channelId) {
-        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, channelId);
+    public boolean uploadCnCategory(CnCategoryBean bean, boolean isDelete, ShopBean shopBean) {
+        return uploadCnCategory(new ArrayList<CnCategoryBean>(){{this.add(bean);}}, isDelete, shopBean);
     }
 
     /**
@@ -89,7 +94,7 @@ public class CnCategoryService extends BaseService {
      * @param isDelete
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, String channelId) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, boolean isDelete, ShopBean shopBean) {
         for (CnCategoryBean bean : listBean) {
             if (isDelete) {
                 bean.setIsPublished("0");
@@ -100,7 +105,7 @@ public class CnCategoryService extends BaseService {
             }
         }
 
-        return uploadCnCategory(listBean, channelId);
+        return uploadCnCategory(listBean, shopBean);
     }
 
     /**
@@ -109,9 +114,8 @@ public class CnCategoryService extends BaseService {
      * @param listBean
      * @return
      */
-    public boolean uploadCnCategory(List<CnCategoryBean> listBean, String channelId) {
+    public boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
         boolean isSuccess = false;
-        ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
 
         List<List<Field>> listCatField = new ArrayList<>();
         for (CnCategoryBean bean : listBean) {
@@ -155,7 +159,7 @@ public class CnCategoryService extends BaseService {
                 isSuccess = true;
             }
         } catch (Exception e) {
-            $error("推送类目xml时发生异常!");
+            $error("推送类目xml时发生异常!" + e.getMessage());
         }
 
         return isSuccess;

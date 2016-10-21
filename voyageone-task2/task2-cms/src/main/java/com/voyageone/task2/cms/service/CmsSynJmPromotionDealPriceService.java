@@ -5,6 +5,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.collections.map.HashedMap;
@@ -18,7 +19,7 @@ import java.util.Map;
  * Created by james on 2016/10/19.
  */
 @Service
-public class CmsSynJmPromotionDealPriceService extends BaseTaskService {
+public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtJmPromotionService cmsBtJmPromotionService;

@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmMasterBean;
 import com.voyageone.task2.cms.dao.JmCategoryDao;
@@ -29,7 +29,7 @@ import java.util.List;
  * @version 2.0.0
  */
 @Service
-public class CmsGetJmMasterService extends BaseTaskService {
+public class CmsGetJmMasterService extends BaseCronTaskService {
 
     @Autowired
     private JmCategoryDao jmCategoryDao;

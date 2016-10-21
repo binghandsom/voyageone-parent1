@@ -433,6 +433,25 @@ define([
                 "controller": 'popChannelListCtl'
             }
         },
+        "maintain":{
+            "masterBrandCheck": {
+                "templateUrl": "views/pop/maintain/masterBrandCheck.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandCheck.ctl",
+                "controller": 'masterBrandCheckCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandMapDetail": {
+                "templateUrl": "views/pop/maintain/masterBrandMapDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandMapDetail.ctl",
+                "controller": 'masterBrandMapDetailCtl as ctrl',
+                "size":"lg"
+            },
+            "masterBrandEdit":{
+                "templateUrl": "views/pop/maintain/masterBrandEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/maintain/masterBrandEdit.ctl",
+                "controller": 'masterBrandEditCtl as ctrl'
+            }
+        },
         "store": {
             "listing": {
                 "sizechart": {

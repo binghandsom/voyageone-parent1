@@ -10,7 +10,7 @@ import com.voyageone.service.daoext.cms.CmsBtStockSalesQuantityDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateIncrementItemDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTasksIncrementStockDaoExt;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.*;
  * @version 0.0.1, 16/3/31
  */
 @Service
-public class StockIncrementService extends BaseTaskService {
+public class StockIncrementService extends BaseCronTaskService {
 
     @Autowired
     private StockInfoService stockInfoService;

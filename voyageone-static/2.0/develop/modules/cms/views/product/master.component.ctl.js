@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
-], function (cms,carts) {
+], function (cms, carts) {
     cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
@@ -181,7 +181,7 @@ define([
                     if (!angular.equals(_hscOde.split(",")[0], _orgHsCode.split(",")[0])) {
 
                         var _prehsCode = angular.copy(_orgHsCode),
-                            results=  [];
+                            results = [];
 
                         productDetailService.hsCodeChg({
                             prodId: scope.productInfo.productId,
@@ -205,7 +205,7 @@ define([
                                     prodId: scope.productInfo.productId,
                                     hsCodeOld: _prehsCode,
                                     hsCodeNew: _hscOde,
-                                    results:results
+                                    results: results
                                 }).then(function (context) {
                                     if (context === 'confirm') {
                                         callSaveProduct(true);
@@ -279,9 +279,15 @@ define([
                     firstError.addClass("focus-error");
                 }
 
-                function goDetail(){
-                    var url = scope.vm.currentImage;
-                    window.open(url);
+                function goDetail() {
+                    var vm = scope.vm,
+                        args = vm.currentImage.split("/");
+
+                    if (args.length == 0)
+                        return;
+
+                    window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓", args[args.length - 1]));
+
                 }
 
             }

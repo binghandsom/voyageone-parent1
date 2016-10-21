@@ -4,8 +4,10 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
+import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.CmsBtTmTonggouFeedAttrModel;
+import com.voyageone.service.model.cms.CmsMtChannelConditionMappingConfigModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
     CmsBuildPlatformProductUploadTmTongGouService uploadTmTongGouService;
     @Autowired
     private CmsBtTmTonggouFeedAttrDao cmsBtTmTonggouFeedAttrDao;
+    @Autowired
+    private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
 
     @Test
     public void testOnStartup() throws Exception {
@@ -83,7 +87,20 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
             tmTonggouFeedAttrModelList.forEach(p -> tmTonggouFeedAttrList.add(p.getFeedAttr()));
         }
 
-        uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList);
+        // 从cms_mt_channel_condition_mapping_config表中取得该渠道，平台对应的客户过来的类目id和天猫平台一级类目之间的mapping关系数据
+        Map<String, String> conditionMappingParamMap = new HashMap<>();
+        conditionMappingParamMap.put("channelId", channelId);
+        conditionMappingParamMap.put("cartId", StringUtils.toString(cartId));
+        conditionMappingParamMap.put("propName", "tt_category");   // 天猫同购一级类目匹配
+        List<CmsMtChannelConditionMappingConfigModel> conditionMappingConfigModels =
+                cmsMtChannelConditionMappingConfigDao.selectList(conditionMappingParamMap);
+        if (ListUtils.isNull(conditionMappingConfigModels)) {
+            return;
+        }
+        Map<String, String> conditionMappingMap = new HashMap<>();
+        conditionMappingConfigModels.forEach(p -> conditionMappingMap.put(p.getMapKey(), p.getMapValue()));
+
+        uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList, conditionMappingMap);
     }
 
 

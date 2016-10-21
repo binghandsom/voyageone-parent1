@@ -5,7 +5,6 @@ import com.overstock.mp.mpc.externalclient.api.Result;
 import com.overstock.mp.mpc.externalclient.model.EventStatusType;
 import com.overstock.mp.mpc.externalclient.model.EventType;
 import com.overstock.mp.mpc.externalclient.model.EventsType;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.overstock.bean.event.OverstockEventTypeUpdateRequest;
@@ -15,9 +14,7 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +28,7 @@ import java.util.List;
  * @version 2.0.0
  */
 @Service
-public class CmsOverstockPriceEventService extends BaseTaskService {
+public class CmsOverstockPriceEventService extends BaseCronTaskService {
 
     @Autowired
     private OverstockEventService overstockEventService;

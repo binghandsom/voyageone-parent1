@@ -39,6 +39,9 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     private String[] codeList;
     private String fuzzyStr;
+    // MINI MALL 店铺时查询原始CHANNEL
+    private int supplierType = 0;
+    private List<String> supplierList = null;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
@@ -59,7 +62,7 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String[] promotionTags;
     private int promotionTagType = 0;
     // 店铺内分类的查询
-    private List<String>  cidValue;
+    private List<String> cidValue;
     private int shopCatStatus = 0;
 
     // 价格变动查询用标志位
@@ -91,9 +94,6 @@ public class CmsSearchInfoBean2 implements Serializable {
     private int fileType = 0;
 
     // ** 其它未定
-    // MINI MALL 店铺时查询原始CHANNEL
-    private String orgChaId = null;
-
     private String compareType;
 
 
@@ -105,12 +105,12 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.cidValue = cidValue;
     }
 
-    public String getOrgChaId() {
-        return orgChaId;
+    public List<String> getSupplierList() {
+        return supplierList;
     }
 
-    public void setOrgChaId(String orgChaId) {
-        this.orgChaId = orgChaId;
+    public void setSupplierList(List<String> supplierList) {
+        this.supplierList = supplierList;
     }
 
     public String getTransStsFlg() {
@@ -526,4 +526,11 @@ public class CmsSearchInfoBean2 implements Serializable {
         return JsonUtil.getJsonString(this);
     }
 
+    public int getSupplierType() {
+        return supplierType;
+    }
+
+    public void setSupplierType(int supplierType) {
+        this.supplierType = supplierType;
+    }
 }

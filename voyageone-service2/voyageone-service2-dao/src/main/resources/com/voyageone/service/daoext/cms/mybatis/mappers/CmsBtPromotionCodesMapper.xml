@@ -19,10 +19,24 @@
         <result column="property_3" property="property3" jdbcType="VARCHAR"/>
         <result column="property_4" property="property4" jdbcType="VARCHAR"/>
         <result column="skuCount" property="skuCount" jdbcType="INTEGER"/>
+        <result column="maxMsrpRmb" property="maxMsrpRmb" jdbcType="DOUBLE"/>
+        <result column="minMsrpRmb" property="minMsrpRmb" jdbcType="DOUBLE"/>
+        <result column="maxRetailPrice" property="maxRetailPrice" jdbcType="DOUBLE"/>
+        <result column="minRetailPrice" property="minRetailPrice" jdbcType="DOUBLE"/>
+        <result column="maxSalePrice" property="maxSalePrice" jdbcType="DOUBLE"/>
+        <result column="minSalePrice" property="minSalePrice" jdbcType="DOUBLE"/>
+        <result column="maxPromotionPrice" property="maxPromotionPrice" jdbcType="DOUBLE"/>
+        <result column="minPromotionPrice" property="minPromotionPrice" jdbcType="DOUBLE"/>
+        <result column="maxMsrpUsd" property="maxMsrpUsd" jdbcType="DOUBLE"/>
+        <result column="minMsrpUsd" property="minMsrpUsd" jdbcType="DOUBLE"/>
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap">
         SELECT
-        t1.*, count(1) AS skuCount
+        t1.*, count(1) AS skuCount,MAX(t2.`msrp_rmb`) AS maxMsrpRmb,MIN(t2.`msrp_rmb`) AS minMsrpRmb,
+        MAX(t2.`retail_price`) AS maxRetailPrice,MIN(t2.`retail_price`) AS minRetailPrice,
+        MAX(t2.`sale_price`) AS maxSalePrice,MIN(t2.`sale_price`) AS minSalePrice,
+        MAX(t2.`promotion_price`) AS maxPromotionPrice,MIN(t2.`promotion_price`) AS minPromotionPrice,
+        MAX(t2.`msrp_usd`) AS maxMsrpUsd,MIN(t2.`msrp_usd`) AS minMsrpUsd
         FROM
         (
         SELECT
@@ -66,7 +80,7 @@
             <if test="promotionId != null">
                 a.promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="channelId != null and channelId != '' and channelId != '997'">
+            <if test="channelId != null and channelId != '' and channelId != '928'">
                 and a.org_channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null">
@@ -100,7 +114,7 @@
             <if test="promotionId != null">
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="channelId != null and channelId != '' and channelId != '997'">
+            <if test="channelId != null and channelId != '' and channelId != '928'">
                 and org_channel_id = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="modelId != null and modelId != ''">
@@ -134,11 +148,12 @@
         a.product_code,
         a.product_name,
         a.cat_path,
-        a.retail_price,
-        a.sale_price,
-        a.msrp,
+        c.retail_price,
+        c.sale_price,
+        c.msrp_rmb as msrp,
+        c.msrp_usd as msrpUS,
         a.tag_id,
-        a.promotion_price,
+        c.promotion_price,
         a.num_iid,
         a.image_url_1,
         a.image_url_2,
@@ -167,7 +182,7 @@
             <if test="promotionId != null">
                 a.promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '997'">
+            <if test="orgChannelId != null and orgChannelId != '' and orgChannelId != '928'">
                 and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
             </if>
         </where>

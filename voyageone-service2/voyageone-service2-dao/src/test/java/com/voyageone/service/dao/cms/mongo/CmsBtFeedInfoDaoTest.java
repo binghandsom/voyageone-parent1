@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Created by lewis on 2016/2/1.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:applicationContext.xml")
+@ContextConfiguration(locations = "classpath:test-context.xml")
 public class CmsBtFeedInfoDaoTest {
 
     @Autowired
@@ -19,8 +19,7 @@ public class CmsBtFeedInfoDaoTest {
     @Test
     public void testUpdateFeedInfoUpdFlg() throws Exception {
 
-        String[] models = new String[]{};
-        models[0] = "GAU-80306";
+        String[] models = new String[]{"GAU-80306"};
        int count = cmsBtFeedInfoDao.updateFeedInfoUpdFlg("013",models);
 
         System.out.println(count);

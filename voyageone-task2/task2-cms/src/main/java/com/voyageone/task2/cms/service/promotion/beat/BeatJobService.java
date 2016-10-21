@@ -24,7 +24,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -52,7 +52,7 @@ import static java.lang.String.format;
  * @since 2.0.0
  */
 @Service
-public class BeatJobService extends BaseTaskService {
+public class BeatJobService extends BaseCronTaskService {
 
     /**
      * 用于表示错误位置。用来区分判断是否需要发送错误报告。

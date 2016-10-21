@@ -7,7 +7,7 @@ import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.PromotionDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotrionService extends BaseTaskService {
+public class CmsPromotrionService extends BaseCronTaskService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -105,7 +105,7 @@ public class CmsPromotrionService extends BaseTaskService {
                             // 价格与MSRP价格不一致的sku才加特价宝
                             if (!StringUtils.isEmpty((String) map.get("promotionPrice"))) {
                                 TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
-                                tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("promotionPrice").toString()) * 100);
+                                tipSkuPromUnitDTO.setDiscount(Math.round(Double.parseDouble(map.get("promotionPrice").toString())*100));
                                 // 获取SKU对已TM的SKUID
                                 skuids.getSkus().forEach(sku -> {
                                     if (sku.getOuterId() != null) {
@@ -129,7 +129,7 @@ public class CmsPromotrionService extends BaseTaskService {
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
                     if (!StringUtils.isEmpty((String) skuList.get(0).get("promotionPrice"))) {
                         TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
-                        tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("promotionPrice").toString()) * 100);
+                        tipPromUnitDTO.setDiscount(Math.round(Double.parseDouble(skuList.get(0).get("promotionPrice").toString())*100));
                         tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
                     }
                 }

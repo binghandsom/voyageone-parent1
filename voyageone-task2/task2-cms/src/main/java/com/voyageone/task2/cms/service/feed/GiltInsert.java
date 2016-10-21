@@ -11,7 +11,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toList;
  * @version 0.0.1, 16/3/8
  */
 @Service
-public class GiltInsert extends BaseTaskService {
+public class GiltInsert extends BaseCronTaskService {
     private static final String INSERT_FLG = " UpdateFlag = 1 ";
 
     @Autowired

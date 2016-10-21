@@ -11,6 +11,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
@@ -180,7 +181,7 @@ MongoSequenceService commSequenceMongoService;
      */
     public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
         List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
-        if (isDuplicateNode(sellerCats, cName, parentCId)) {
+        if (isDuplicateNode(sellerCats, cName, parentCId, null)) {
             throw new BusinessException("重复的店铺内分类名!");
         }
         ShopBean shopBean = Shops.getShop(channelId, cartId);
@@ -194,9 +195,10 @@ MongoSequenceService commSequenceMongoService;
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+//        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName);
+          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName,shopBean);
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
@@ -211,7 +213,7 @@ MongoSequenceService commSequenceMongoService;
 
         List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
         CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
-        if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId()))
+        if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId(), cId))
         {
             throw  new BusinessException("重复的店铺内分类!");
         }
@@ -223,9 +225,10 @@ MongoSequenceService commSequenceMongoService;
             jdShopService.updateShopCategory(shopBean, cId, cName);
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
-        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+//        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-            cnSellerCatService.updateSellerCat(channelId,cId);
+            cnSellerCatService.updateSellerCat(channelId,cId, shopBean);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -257,8 +260,9 @@ MongoSequenceService commSequenceMongoService;
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
             }
-        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-            cnSellerCatService.deleteSellerCat(channelId,cId);
+//        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+            cnSellerCatService.deleteSellerCat(channelId,cId,shopBean);
         }
 
 
@@ -529,10 +533,16 @@ MongoSequenceService commSequenceMongoService;
      * @param parentCId
      * @return
      */
-    public boolean isDuplicateNode(List<CmsBtSellerCatModel>  sellerCats, String name , String parentCId)
+    public boolean isDuplicateNode(List<CmsBtSellerCatModel>  sellerCats, String name , String parentCId, String cId)
     {
         if(sellerCats != null && sellerCats.size() > 0) {
-            if (sellerCats.stream().filter(w -> w.getParentCatId().equals(parentCId) && w.getCatName().equals(name)).count() > 0) {
+            if (sellerCats.stream().filter(w -> {
+                if(StringUtil.isEmpty(cId)){
+                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name);
+                }else {
+                    return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name) && !w.getCatId().equalsIgnoreCase(cId);
+                }
+            }).count() > 0) {
                 return true;
             }
         }

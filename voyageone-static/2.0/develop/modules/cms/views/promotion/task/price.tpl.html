@@ -84,7 +84,14 @@
 				<td class="text-center">{{$index+1+((vm.pricePageOption.curr - 1) * vm.pricePageOption.size)}}</td>
 				<td>{{price.key}}</td>
 				<td><a ng-if="price.numIid" ng-href="{{'https://detail.tmall.hk/hk/item.htm?id='+price.numIid}}" target="_blank"  >{{price.numIid}}</a></td>
-				<td class="text-right">{{price.promotionPrice | number: 2}}</td>
+				<td class="text-right">
+
+					<button ng-controller="showPopoverCtrl"
+							popover-html="showInfo({{[price.skuPromotionPriceList]}})"
+							popover-title="{{'TXT_PRICE' | translate}}" type="button"
+							popover-placement="left" class="btn btn-default btn-xs">
+						{{getMinMaxPrice(price.minPromotionPrice,price.maxPromotionPrice)}}
+					</button></td>
 				<td>
 					<span ng-if="price.synFlg == 0" class="badge badge-stop" translate="TXT_STOP"></span>
 					<span ng-if="price.synFlg == 1" class="badge badge-refresh" translate="TXT_PENDING"></span>

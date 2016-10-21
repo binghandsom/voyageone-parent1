@@ -1,5 +1,6 @@
 package com.voyageone.components.jumei;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.jumei.reponse.HtProductAddResponse;
 import com.voyageone.components.jumei.reponse.HtProductUpdateResponse;
@@ -20,7 +21,16 @@ public class JumeiHtProductService extends JmBase {
 
     public HtProductAddResponse addProductAndDeal(ShopBean shopBean, HtProductAddRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
-        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length>0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
         logger.info("国际POP - 创建商品并同时创建Deal返回：" + reqResult);
         HtProductAddResponse response = new HtProductAddResponse();
         response.setBody(reqResult);
@@ -29,7 +39,16 @@ public class JumeiHtProductService extends JmBase {
 
     public HtProductUpdateResponse update(ShopBean shopBean, HtProductUpdateRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
-        String reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        String reqResult;
+        try {
+            reqResult = reqJmApi(shopBean, request.getUrl(), params);
+        } catch (BusinessException bex) {
+            if (bex.getInfo() != null && bex.getInfo().length>0) {
+                reqResult = (String) bex.getInfo()[0];
+            } else {
+                throw bex;
+            }
+        }
         logger.info("国际POP-修改商品属性返回：" + reqResult);
         HtProductUpdateResponse response = new HtProductUpdateResponse();
         response.setBody(reqResult);

@@ -130,6 +130,12 @@ public class CmsBtJmPromotionModel extends BaseModel {
      */
     protected Integer quantitySum;
 
+    private int uploadStatus;    // 专场上传
+    private int detailStatus;   // 活动信息
+    private int shelfStatus;    // 活动货架
+    private int imageStatus;    // 活动图片
+    private int bayWindowStatus;    // 活动飘窗
+
     public String getChannelId() {
         return channelId;
     }
@@ -336,5 +342,45 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setQuantitySum(Integer quantitySum) {
         this.quantitySum = quantitySum;
+    }
+
+    public int getBayWindowStatus() {
+        return bayWindowStatus;
+    }
+
+    public void setBayWindowStatus(int bayWindowStatus) {
+        this.bayWindowStatus = bayWindowStatus;
+    }
+
+    public int getImageStatus() {
+        return imageStatus;
+    }
+
+    public void setImageStatus(int imageStatus) {
+        this.imageStatus = imageStatus;
+    }
+
+    public int getShelfStatus() {
+        return shelfStatus;
+    }
+
+    public void setShelfStatus(int shelfStatus) {
+        this.shelfStatus = shelfStatus;
+    }
+
+    public int getDetailStatus() {
+        return detailStatus;
+    }
+
+    public void setDetailStatus(int detailStatus) {
+        this.detailStatus = detailStatus;
+    }
+
+    public int getUploadStatus() {
+        return uploadStatus;
+    }
+
+    public void setUploadStatus(int uploadStatus) {
+        this.uploadStatus = uploadStatus;
     }
 }

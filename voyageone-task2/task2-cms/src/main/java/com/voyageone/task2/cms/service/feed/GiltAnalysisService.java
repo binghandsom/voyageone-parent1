@@ -8,12 +8,11 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.gilt.bean.*;
-import com.voyageone.components.gilt.service.GiltInventoryService;
 import com.voyageone.components.gilt.service.GiltSalesService;
 import com.voyageone.components.gilt.service.GiltSkuService;
 import com.voyageone.service.daoext.cms.CmsZzFeedGiltInventoryDaoExt;
 import com.voyageone.service.model.cms.CmsZzFeedGiltInventoryModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -29,7 +28,6 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
 import static java.util.stream.Collectors.joining;
@@ -39,7 +37,7 @@ import static java.util.stream.Collectors.joining;
  * @version 0.0.1, 16/3/4
  */
 @Service
-public class GiltAnalysisService extends BaseTaskService {
+public class GiltAnalysisService extends BaseCronTaskService {
 
     private static int pageIndex = 40;
     //允许webSericce请求超时的连续最大次数
