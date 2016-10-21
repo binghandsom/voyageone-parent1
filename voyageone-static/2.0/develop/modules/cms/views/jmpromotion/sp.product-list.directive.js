@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, $routeParams, alert, $translate, confirm,platformMappingService)
+    function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, spDataService, $routeParams, alert, $translate, confirm, notify, platformMappingService)
     {
         $scope.datePicker = [];
         $scope.vm = {
@@ -188,8 +188,43 @@ define([
             }, function (res) {
 
             });
-        }
+        };
 
+        $scope.save = function () {
+            var errMsg = '';
+            if (spDataService.jmPromotionObj.detailStatus != 1) {
+                errMsg += '活动信息  ';
+            }
+            if (spDataService.jmPromotionObj.shelfStatus != 1) {
+                errMsg += '活动货架  ';
+            }
+            if (spDataService.jmPromotionObj.imageStatus != 1 && spDataService.jmPromotionObj.imageStatus != 3) {
+                errMsg += '活动图片  ';
+            }
+            if (spDataService.jmPromotionObj.bayWindowStatus != 1) {
+                errMsg += '活动飘窗  ';
+            }
+            if (errMsg) {
+                errMsg = "以下活动内容还未填写完整：<br>" + errMsg + "<br>请确认是否提交？";
+                confirm($translate.instant(errMsg)).then(function () {
+                    var stsParam = { 'jmPromId': parseInt($scope.vm.promotionId) };
+                    stsParam.stepName = 'SessionsUpload';
+                    stsParam.stepStatus = 'Success';
+                    jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function () {
+                        spDataService.jmPromotionObj.uploadStatus = 1;
+                        notify.success('提交成功');
+                    });
+                });
+            } else {
+                var stsParam = { 'jmPromId': parseInt($scope.vm.promotionId) };
+                stsParam.stepName = 'SessionsUpload';
+                stsParam.stepStatus = 'Success';
+                jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function () {
+                    spDataService.jmPromotionObj.uploadStatus = 1;
+                    notify.success('提交成功');
+                });
+            }
+        };
 
         function loadSearchInfo() {
             $scope.searchInfo.synchStatusList = [];
@@ -579,7 +614,7 @@ define([
     cms.directive('spProductList', [function spProductListDirectiveFactory() {
         return {
             scope: {},
-            controller: ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', '$routeParams', 'alert', '$translate', 'confirm', 'platformMappingService', SProductListDirectiveController],
+            controller: ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'spDataService', '$routeParams', 'alert', '$translate', 'confirm', 'notify', 'platformMappingService', SProductListDirectiveController],
             templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
         }
     }]);
