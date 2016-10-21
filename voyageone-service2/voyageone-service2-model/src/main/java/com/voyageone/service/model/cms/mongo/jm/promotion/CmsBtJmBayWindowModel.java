@@ -1,5 +1,6 @@
 package com.voyageone.service.model.cms.mongo.jm.promotion;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
  * @version 2.8.0
  * @since 2.8.0
  */
-public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
+public class CmsBtJmBayWindowModel extends BaseMongoModel {
 
     private Boolean fixed;
 
@@ -65,6 +66,8 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         private Integer order;
 
+        private Boolean enabled;
+
         public String getName() {
             return name;
         }
@@ -95,6 +98,14 @@ public class CmsBtJmBayWindowModel extends ChannelPartitionModel {
 
         public void setUrl(String url) {
             this.url = url;
+        }
+
+        public Boolean getEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
         }
     }
 }

@@ -1,10 +1,12 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotion3Service;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -19,13 +21,15 @@ public class CmsJmPromotionIndexController extends CmsController {
     private final CmsBtJmPromotionService service;
     private final CmsBtJmPromotion3Service service3;
     private final JmBtDealImportService serviceJmBtDealImport;
+    private final CmsBtJmBayWindowService jmBayWindowService;
 
     @Autowired
     public CmsJmPromotionIndexController(JmBtDealImportService serviceJmBtDealImport, CmsBtJmPromotionService service,
-                                         CmsBtJmPromotion3Service service3) {
+                                         CmsBtJmPromotion3Service service3, CmsBtJmBayWindowService jmBayWindowService) {
         this.serviceJmBtDealImport = serviceJmBtDealImport;
         this.service = service;
         this.service3 = service3;
+        this.jmBayWindowService = jmBayWindowService;
     }
 
     @RequestMapping(CmsUrlConstants.PROMOTION.LIST.INDEX.INIT)
@@ -108,5 +112,36 @@ public class CmsJmPromotionIndexController extends CmsController {
         // return success(service3.getTagListByPromotionId(promotionId));
         return serviceJmBtDealImport.importJM(channelId);
         // return "true";
+    }
+
+    /**
+     * 获取活动下的飘窗定义
+     * @since 2.8.0
+     */
+    @RequestMapping("getBayWindow")
+    public AjaxResponse getBayWindow(@RequestBody int jmPromotionId) {
+
+        CmsBtJmBayWindowModel jmBayWindowModel = jmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
+
+        if (jmBayWindowModel == null) {
+            // 没有的话呢，就创建一个
+            // 但不创建具体的飘窗定义
+            // 因为是否使用固定交给前台取数据并生成
+            CmsBtJmPromotionModel jmPromotionModel = service.select(jmPromotionId);
+            jmBayWindowModel = jmBayWindowService.createByPromotion(jmPromotionModel, getUser().getUserName());
+            jmBayWindowService.insert(jmBayWindowModel);
+        }
+
+        return success(jmBayWindowModel);
+    }
+
+    /**
+     * 保存飘窗信息
+     * @since 2.8.0
+     */
+    @RequestMapping("saveBayWindow")
+    public AjaxResponse saveBayWindow(@RequestBody CmsBtJmBayWindowModel bayWindowModel) {
+        jmBayWindowService.update(bayWindowModel);
+        return success(true);
     }
 }

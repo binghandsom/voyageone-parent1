@@ -73,9 +73,9 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.EXPORT_JM_PROMOTION_INFO)
-    public ResponseEntity<byte[]> doExportJmPromotionInfo(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId, @RequestParam Integer type, @RequestParam String promotionName)
+    public ResponseEntity<byte[]> doExportJmPromotionInfo(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer jmPromotionId, @RequestParam Integer type, @RequestParam String promotionName)
             throws Exception {
-        byte[] data = cmsJmPromotionExportService.doExportJmPromotionFile(promotionId, type);
+        byte[] data = cmsJmPromotionExportService.doExportJmPromotionFile(jmPromotionId, type);
         return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
     }
 }

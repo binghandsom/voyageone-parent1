@@ -45,6 +45,10 @@ define([
         spDataService.getPromotionModules().then(function (modules) {
             self.modules = modules;
         });
+
+        spDataService.getJmTemplateUrls().then(function (urls) {
+            self.barUrl = urls.separatorBar;
+        });
     };
 
     SpModelDirectiveController.prototype.saveAll = function () {
@@ -56,7 +60,7 @@ define([
         });
     };
 
-    cms.directive('spShelf', [function spModelDirectivefactory() {
+    cms.directive('spShelf', function spShelfDirectiveFactory() {
         return {
             restrict: 'E',
             controller: ['spDataService', 'notify', 'popups', '$compile', '$templateRequest', '$document', '$scope', SpModelDirectiveController],
@@ -64,5 +68,5 @@ define([
             scope: {},
             templateUrl: '/modules/cms/views/jmpromotion/sp.shelf.directive.html'
         }
-    }]);
+    });
 });

@@ -21,7 +21,10 @@
                     <th class="text-center">头图（APP端优先）</th>
                 </tr>
                 </thead>
-                <tr ng-repeat="image in ctrl.dataList">
+                <tr>
+                    <td if-no-rows="ctrl.dataList.length" colspan="6" style="padding: 0px"></td>
+                </tr>
+                <tr ng-repeat="image in ctrl.dataList" ng-if="ctrl.dataList.length > 0">
                     <td class="text-center mfb-x">
                         <label class="checkbox-inline c-checkbox">
                             <input type="checkbox" ng-model="ctrl.selected[image.promotionId]">

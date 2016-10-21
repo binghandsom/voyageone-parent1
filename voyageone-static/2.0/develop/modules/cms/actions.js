@@ -200,7 +200,9 @@ define(function () {
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
                     "delete": "delete",
-                    "getTagListByPromotionId": "getTagListByPromotionId"
+                    "getTagListByPromotionId": "getTagListByPromotionId",
+                    getBayWindow: 'getBayWindow',
+                    saveBayWindow: 'saveBayWindow'
                 },
                 "jmPromotionProductAddService": {
                     "root": "/cms/jm/promotion/product/",
@@ -243,7 +245,8 @@ define(function () {
                     getPromotionTagModules: 'getPromotionTagModules',
                     savePromotionTagModules: 'savePromotionTagModules',
                     getPromotionProducts: 'getPromotionProducts',
-                    saveProductSort: 'saveProductSort'
+                    saveProductSort: 'saveProductSort',
+                    getJmTemplateUrls: {url: 'getJmTemplateUrls', cache: CACHE.LOCAL}
                 },
                 "JmPromotionImagesService": {
                     "root": "/cms/jmPromotion/images",
@@ -265,7 +268,8 @@ define(function () {
                 "cmsBtJmPromotionExportTaskService": {
                     "root": "/cms/CmsBtJmPromotionExportTask/index",
                     "getByPromotionId": "getByPromotionId",
-                    "addExport": "addExport"
+                    "addExport": "addExport",
+                    "exportJmPromotionInfo":"exportJmPromotionInfo"
                 }
             },
             "cmsMtImageCreate": {

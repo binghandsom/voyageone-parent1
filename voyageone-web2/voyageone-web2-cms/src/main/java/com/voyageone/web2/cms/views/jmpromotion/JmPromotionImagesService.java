@@ -57,7 +57,7 @@ public class JmPromotionImagesService extends BaseViewService {
         if (imageMap != null) {
             imageMap.forEach((s, o) -> {
                 if (o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
-                    if(model.getUseTemplate())
+                    if(model.getUseTemplate() != null && model.getUseTemplate() == true)
                         promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
                     else
                         promotionImageUrl.put(s, ORIGINAL_SCENE7_IMAGE_URL.replace("✓",o.toString()));

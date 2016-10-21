@@ -89,12 +89,12 @@ define(['cms'], function (cms) {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService;
 
-        return JmPromotionImagesService.getImageTemplate(upEntity).then(function(resp){
+        return JmPromotionImagesService.getImageTemplate(upEntity).then(function (resp) {
             return resp.data;
         });
     };
 
-    SpDataService.prototype.getPromotionProducts = function (tagId) {
+    SpDataService.prototype.getPromotionProducts = function getPromotionProducts(tagId) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService;
 
@@ -115,6 +115,24 @@ define(['cms'], function (cms) {
         });
     };
 
+    SpDataService.prototype.getJmTemplateUrls = function getJmTemplateUrls() {
+        var self = this,
+            jmPromotionDetailService = self.jmPromotionDetailService;
+
+        return jmPromotionDetailService.getJmTemplateUrls().then(function (resp) {
+            return resp.data;
+        });
+    };
+
+    SpDataService.prototype.getBayWindow = function getBayWindow() {
+        var self = this,
+            jmPromotionService = self.jmPromotionService;
+
+        return jmPromotionService.getBayWindow(self.jmPromotionId).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     SpDataService.prototype.downloadSpecialImageZip = function downloadSpecialImageZip() {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService;
@@ -125,6 +143,7 @@ define(['cms'], function (cms) {
             return resp.data;
         });
     };
+
     SpDataService.prototype.downloadWaresImageZip = function downloadWaresImageZip() {
         var self = this,
             JmPromotionImagesService = self.JmPromotionImagesService;
@@ -135,5 +154,15 @@ define(['cms'], function (cms) {
             return resp.data;
         });
     };
+
+    SpDataService.prototype.saveBayWindow = function saveBayWindow(bayWindow) {
+        var self = this,
+            jmPromotionService = self.jmPromotionService;
+
+        return jmPromotionService.saveBayWindow(bayWindow).then(function (resp) {
+            return resp.data;
+        });
+    };
+
     cms.service('spDataService', SpDataService);
 });

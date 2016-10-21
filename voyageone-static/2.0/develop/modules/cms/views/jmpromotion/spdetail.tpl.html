@@ -59,8 +59,8 @@
                 </button>
                 <ul class="uib-dropdown-menu">
                     <li role="menuitem"><a href="#">按上传模板</a></li>
-                    <li role="menuitem"><a href="#">按专场模板</a></li>
-                    <li role="menuitem"><a href="#">按商城模板</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(1)>按专场模板</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(2)>按商城模板</a></li>
                     <li role="menuitem"><a href="javascript:void(0)"  ng-click=ctrl.downloadSpecialImageZip()>下载专场图片包</a></li>
                     <li role="menuitem"><a href="javascript:void(0)"  ng-click=ctrl.downloadWaresImageZip()>下载商品主图包</a></li>
                 </ul>
@@ -71,7 +71,7 @@
         </div>
     </div>
     <uib-tabset class="tab-container vo_nav-tabs">
-        <uib-tab heading="Products">
+        <uib-tab heading="Products" active="true">
            <sp-product-list></sp-product-list>
         </uib-tab>
         <uib-tab heading="Promotion Detail">
@@ -80,10 +80,10 @@
         <uib-tab heading="JM Shelf (Module)">
             <sp-shelf></sp-shelf>
         </uib-tab>
-        <uib-tab heading="Promotion Images" active="true">
+        <uib-tab heading="Promotion Images">
             <sp-images></sp-images>
         </uib-tab>
-        <uib-tab heading="Bay Windows">custom directive</uib-tab>
+        <uib-tab heading="Bay Windows"><bay-window></bay-window></uib-tab>
         <uib-tab heading="Import List"><sp-import-list></sp-import-list></uib-tab>
         <uib-tab heading="Export List"><sp-export-list></sp-export-list></uib-tab>
     </uib-tabset>
