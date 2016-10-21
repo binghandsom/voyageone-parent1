@@ -36,7 +36,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Link</th>
-                                <th><button type="button" class="btn btn-xs btn-success" ng-click="ctrl.add()"><i class="fa fa-plus"></i></button></th>
+                                <th><button type="button" class="btn btn-xs btn-success" ng-click="ctrl.addLinkWindow()"><i class="fa fa-plus"></i></button></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -49,12 +49,12 @@
                                 </td>
                                 <td ng-switch-when="0"></td>
                                 <td ng-switch-default>
-                                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-angle-up"></i></button>
-                                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-angle-double-up"></i></button>
-                                    <button type="button" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.up)"><i class="fa fa-angle-up"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.upToTop)"><i class="fa fa-angle-double-up"></i></button>
+                                    <button type="button" class="btn btn-xs btn-danger" ng-click="ctrl.removeLinkWindow(item, $index)"><i class="fa fa-trash"></i></button>
                                     <br>
-                                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-angle-down"></i></button>
-                                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-angle-double-down"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === ctrl.linkWindows.length - 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.down)"><i class="fa fa-angle-down"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === ctrl.linkWindows.length - 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.downToLast)"><i class="fa fa-angle-double-down"></i></button>
                                 </td>
                             </tr>
                             </tbody>
