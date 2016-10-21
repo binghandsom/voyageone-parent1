@@ -1,9 +1,10 @@
 define(['cms'], function (cms) {
-    function BayWindowComponentController(spDataService, confirm) {
+    function BayWindowComponentController(spDataService, confirm, notify) {
         var self = this;
         self.fixedWindows = [];
         self.linkWindows = [];
         self.confirm = confirm;
+        self.notify = notify;
         self.spDataService = spDataService;
         self.loadTemplates().then(function () {
             self.loadBayWindow();
@@ -138,12 +139,25 @@ define(['cms'], function (cms) {
         }
     };
 
+    BayWindowComponentController.prototype.saveAll = function saveAll() {
+        var self = this,
+            spDataService = self.spDataService,
+            bayWindow = self.bayWindow,
+            notify = self.notify;
+
+        bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
+
+        spDataService.saveBayWindow(bayWindow).then(function () {
+            notify.success('保存成功');
+        });
+    };
+
     cms.directive('bayWindow', function bayWindowDirectiveFactory() {
         return {
             templateUrl: '/modules/cms/views/jmpromotion/bay.window.directive.html',
             scope: {},
             controllerAs: 'ctrl',
-            controller: ['spDataService', 'confirm', BayWindowComponentController]
+            controller: ['spDataService', 'confirm', 'notify', BayWindowComponentController]
         };
     });
 });
