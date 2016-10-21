@@ -42,7 +42,9 @@ define(['cms'], function (cms) {
     SpDataService.prototype.saveModules = function saveModules(modules) {
         var self = this,
             jmPromotionDetailService = self.jmPromotionDetailService,
-            dateFilter = self.dateFilter;
+            dateFilter = self.dateFilter,
+            curJmPromotionId = self.jmPromotionId,
+            jmPromotionObj = self.jmPromotionObj;
 
         // like deep copy
         modules = modules.map(function (item) {
@@ -59,8 +61,17 @@ define(['cms'], function (cms) {
             return clone;
         });
 
-        return jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
-            return resp.data;
+        var stsParam = { 'jmPromId': curJmPromotionId };
+        stsParam.stepName = 'PromotionShelf';
+        stsParam.stepStatus = 'Error';
+        jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function (resp) {
+            jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
+                stsParam.stepStatus = 'Success';
+                jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function (resp) {
+                    jmPromotionObj.shelfStatus = 1;
+                });
+                return resp.data;
+            });
         });
     };
 
@@ -80,9 +91,16 @@ define(['cms'], function (cms) {
 
     SpDataService.prototype.savePromotionImages = function savePromotionImages(upEntity) {
         var self = this,
-            JmPromotionImagesService = self.JmPromotionImagesService;
+            JmPromotionImagesService = self.JmPromotionImagesService,
+            jmPromotionObj = self.jmPromotionObj;
+        self.jmPromotionObj.imageStatus = 2;
+        saveType = upEntity.saveType;
 
-        return JmPromotionImagesService.save(_.extend(upEntity, self.commonUpEntity));
+        return JmPromotionImagesService.save(_.extend(upEntity, self.commonUpEntity)).then(function (res) {
+            if (saveType == 1 || saveType == 2) {
+                jmPromotionObj.imageStatus = 1;
+            }
+        });
     };
 
     SpDataService.prototype.getPromotionImgTpl = function getPromotionImgTpl(upEntity) {

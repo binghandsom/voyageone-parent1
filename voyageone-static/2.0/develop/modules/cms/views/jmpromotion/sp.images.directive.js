@@ -120,11 +120,11 @@ define([
         }
 
         spDataService.savePromotionImages({
-            "promotionImages":self.imgUpEntity,
-            "brand":self.promotionInfo.brand
+            "promotionImages": self.imgUpEntity,
+            "brand": self.promotionInfo.brand,
+            "saveType": saveType
         }).then(function(){
             notify.success("更新成功!");
-            spDataService.jmPromotionObj.imageStatus = 1;
         });
     };
 
