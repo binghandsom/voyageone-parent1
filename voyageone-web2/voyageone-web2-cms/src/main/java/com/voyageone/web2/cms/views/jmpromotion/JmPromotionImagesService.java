@@ -44,6 +44,11 @@ public class JmPromotionImagesService extends BaseViewService {
         return getJmImageTemplate(promotionImagesModel);
     }
 
+    /**
+     * 通过模型中的图片名获取地址
+     * @param model 聚美图片模型
+     * @return
+     */
     public Map<String, Object> getJmImageTemplate(CmsBtJmPromotionImagesModel model) {
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(model.getJmPromotionId(), true);
 
