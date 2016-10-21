@@ -87,11 +87,6 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
     private String appArcCarousel;
 
     /**
-     * 1-app轮播-1520X622
-     */
-    private String appCarousel;
-
-    /**
      * 2-pc轮播-1920X350
      */
     private String pcCarousel;
@@ -267,14 +262,6 @@ public class CmsBtJmPromotionImagesModel extends ChannelPartitionModel {
 
     public void setAppArcCarousel(String appArcCarousel) {
         this.appArcCarousel = appArcCarousel;
-    }
-
-    public String getAppCarousel() {
-        return appCarousel;
-    }
-
-    public void setAppCarousel(String appCarousel) {
-        this.appCarousel = appCarousel;
     }
 
     public String getPcCarousel() {
