@@ -60,10 +60,16 @@ define([
     SpModelDirectiveController.prototype.saveAll = function () {
         var self = this,
             spDataService = self.spDataService;
+
+        if (self.tagsForm.$invalid) {
+            self.notify.warning('TXT_SAVE_ERROR');
+            return;
+        }
+
         spDataService.jmPromotionObj.shelfStatus = 2;
 
         spDataService.saveModules(self.modules).then(function () {
-            self.notify.success('已保存');
+            self.notify.success('TXT_SAVE_SUCCESS');
             spDataService.jmPromotionObj.shelfStatus = 1;
         });
     };
