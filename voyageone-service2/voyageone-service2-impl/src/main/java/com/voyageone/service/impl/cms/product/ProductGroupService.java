@@ -16,6 +16,7 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -477,49 +478,70 @@ public class ProductGroupService extends BaseService {
         for (String code : groupModel.getProductCodes()) {
             CmsBtProductModel productModel = productService.getProductByCode(groupModel.getChannelId(), code);
             if (productModel != null) {
-                for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
-                    // 找到对应的平台信息
-                    if (cartId.equals(platform.getValue().getCartId())) {
-                        for (Map<String, Object> sku : platform.getValue().getSkus()) {
-                            Object objSkuPriceSale = sku.get("priceSale");
-                            Double skuPriceSale = null;
-                            if (objSkuPriceSale != null) {
-                                skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
-                            }
-                            if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
-                                priceSaleSt = skuPriceSale;
-                            }
-                            if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
-                                priceSaleEd = skuPriceSale;
-                            }
-
-                            Object objSkuPriceRetail = sku.get("priceRetail");
-                            Double skuPriceRetail = null;
-                            if (objSkuPriceRetail != null) {
-                                skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
-                            }
-                            if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
-                                priceRetailSt = skuPriceRetail;
-                            }
-                            if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
-                                priceRetailEd = skuPriceRetail;
-                            }
-
-                            Object objSkuPriceMsrp = sku.get("priceMsrp");
-                            Double skuPriceMsrp = null;
-                            if (objSkuPriceMsrp != null) {
-                                skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
-                            }
-                            if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
-                                priceMsrpSt = skuPriceMsrp;
-                            }
-                            if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
-                                priceMsrpEd = skuPriceMsrp;
-                            }
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN) {
+                    priceSaleSt = 0.0;
+                    priceSaleEd = 0.0;
+                    for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+                        Double skuPriceRetail = skuModel.getPriceRetail();
+                        if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                            priceRetailSt = skuPriceRetail;
                         }
-                        break;
-                    }
+                        if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                            priceRetailEd = skuPriceRetail;
+                        }
 
+                        Double skuPriceMsrp = skuModel.getPriceMsrp();
+                        if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                            priceMsrpSt = skuPriceMsrp;
+                        }
+                        if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                            priceMsrpEd = skuPriceMsrp;
+                        }
+                    }
+                } else {
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+                        // 找到对应的平台信息
+                        if (cartId.equals(platform.getValue().getCartId())) {
+                            for (Map<String, Object> sku : platform.getValue().getSkus()) {
+                                Object objSkuPriceSale = sku.get("priceSale");
+                                Double skuPriceSale = null;
+                                if (objSkuPriceSale != null) {
+                                    skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
+                                }
+                                if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
+                                    priceSaleSt = skuPriceSale;
+                                }
+                                if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
+                                    priceSaleEd = skuPriceSale;
+                                }
+
+                                Object objSkuPriceRetail = sku.get("priceRetail");
+                                Double skuPriceRetail = null;
+                                if (objSkuPriceRetail != null) {
+                                    skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
+                                }
+                                if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                                    priceRetailSt = skuPriceRetail;
+                                }
+                                if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                                    priceRetailEd = skuPriceRetail;
+                                }
+
+                                Object objSkuPriceMsrp = sku.get("priceMsrp");
+                                Double skuPriceMsrp = null;
+                                if (objSkuPriceMsrp != null) {
+                                    skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
+                                }
+                                if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                                    priceMsrpSt = skuPriceMsrp;
+                                }
+                                if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                                    priceMsrpEd = skuPriceMsrp;
+                                }
+                            }
+                            break;
+                        }
+                    }
                 }
             }
         }

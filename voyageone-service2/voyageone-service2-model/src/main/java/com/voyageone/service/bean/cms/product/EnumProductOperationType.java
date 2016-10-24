@@ -16,7 +16,7 @@ public enum EnumProductOperationType {
     DelistinGroup(9, "Group下线"),
     BatchRefreshRetailPrice(10, "重新计算价格"),                     // 高级检索 重新计算指导售价
     MoveCode(11, "移动Code"),                     // 移动Code
-    MoveSku(11, "移动Sku");                     // 移动Sku
+    MoveSku(12, "移动Sku");                     // 移动Sku
 
     private int id;
     private String name;

@@ -295,4 +295,8 @@ public class CmsBtPriceLogService extends BaseService {
 
         return productModelList.get(0);
     }
+
+    public int updateCmsBtPriceLogForMove(String channelId, String itemCodeOld, List<String> skuList, String itemCodeNew, String modifier) {
+        return priceLogDaoExt.updateCmsBtPriceLogForMove(channelId, itemCodeOld, skuList, itemCodeNew, modifier);
+    }
 }

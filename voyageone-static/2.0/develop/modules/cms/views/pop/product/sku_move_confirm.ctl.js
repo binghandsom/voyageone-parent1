@@ -17,8 +17,13 @@ define([
         }
 
         SkuMoveConfirm.prototype.init = function () {
-
+            window.setTimeout(focusMove,300);
+            function focusMove() {
+                angular.element(document.getElementsByName('moveInput')).focus();
+            }
         };
+
+
 
         SkuMoveConfirm.prototype.confirm = function () {
             this.$uibModalInstance.close();
