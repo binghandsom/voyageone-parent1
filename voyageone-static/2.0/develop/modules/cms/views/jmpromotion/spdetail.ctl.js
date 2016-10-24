@@ -9,11 +9,11 @@ define(['cms',
     './bay.window.directive'
 ], function (cms) {
 
-    function SpDetailPageController(spDataService,cActions,cmsBtJmPromotionExportTaskService,notify) {
+    function SpDetailPageController(spDataService, cActions, cmsBtJmPromotionExportTaskService, notify, $http) {
         this.spDataService = spDataService;
         this.cActions = cActions;
         this.notify = notify;
-        this.cmsBtJmPromotionExportTaskService=cmsBtJmPromotionExportTaskService;
+        this.cmsBtJmPromotionExportTaskService = cmsBtJmPromotionExportTaskService;
     }
 
     SpDetailPageController.prototype.loadPromotion = function () {
@@ -26,10 +26,9 @@ define(['cms',
         });
     };
     SpDetailPageController.prototype.addExport = function () {
-        console.log(this.promotion);
-        var model = {templateType: 0, cmsBtJmPromotionId:this.promotion.id};
+        var model = {templateType: 0, cmsBtJmPromotionId: this.promotion.id};
         this.cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
-           // $scope.searchExport();
+            // $scope.searchExport();
         }, function (res) {
 
         });
@@ -40,11 +39,13 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.success("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器右下角！");
 
         $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
-            {"jmPromotionId": spDataService.jmPromotionId ,
-              "promotionName":self.promotion.name});
+            {
+                "jmPromotionId": spDataService.jmPromotionId,
+                "promotionName": self.promotion.name
+            });
 
     };
 
@@ -54,9 +55,12 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.success("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器右下角！");
 
-        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {"jmPromotionId": spDataService.jmPromotionId ,"promotionName":self.promotion.name});
+        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {
+            "jmPromotionId": spDataService.jmPromotionId,
+            "promotionName": self.promotion.name
+        });
     };
 
     SpDetailPageController.prototype.downloadJmPromotionInfo = function (type) {
@@ -65,9 +69,13 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.success("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器右下角！");
 
-        $.download.post(cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.root + "/" + cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.exportJmPromotionInfo, {"type":type,"jmPromotionId": spDataService.jmPromotionId,"promotionName":self.promotion.name});
+        $.download.post(cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.root + "/" + cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.exportJmPromotionInfo, {
+            "type": type,
+            "jmPromotionId": spDataService.jmPromotionId,
+            "promotionName": self.promotion.name
+        });
 
     };
 
