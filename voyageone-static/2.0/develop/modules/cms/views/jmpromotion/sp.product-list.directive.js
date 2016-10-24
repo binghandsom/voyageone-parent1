@@ -22,7 +22,6 @@ define([
         $scope.dataPageOption = {curr: 1, total: 0, fetch: goPage.bind(this)};
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
-
             jmPromotionDetailService.init({jmPromotionRowId: $routeParams.jmpromId}).then(function (res) {
                 $scope.parentModel = res.data.modelPromotion;
                 $scope.parentModel.prodSum = $scope.parentModel.prodSum || 0;
