@@ -15,6 +15,7 @@ define([
         $scope.searchExport = function () {
             cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.jmpromId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
+                console.log($scope.vm.cmsBtJmPromotionExportTaskList);
             }, function (res) {
             })
         }
