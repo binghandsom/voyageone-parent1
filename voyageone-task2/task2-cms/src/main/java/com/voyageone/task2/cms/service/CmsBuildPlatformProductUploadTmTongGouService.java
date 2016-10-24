@@ -310,9 +310,18 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 throw new BusinessException("获取cms_mt_platform_dict字典表数据（属性图片模板等）失败");
             }
 
+            // 判断新增商品还是更新商品
+            // 只要numIId不为空，则为更新商品
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                // 更新商品
+                updateWare = true;
+                // 取得更新对象商品id
+                numIId = sxData.getPlatform().getNumIId();
+            }
+
             // 编辑天猫国际官网同购共通属性
             BaseMongoMap<String, String> productInfoMap = getProductInfo(sxData, shopProp, priceConfigValue,
-                    skuLogicQtyMap, tmTonggouFeedAttrList, conditionMappingMap);
+                    skuLogicQtyMap, tmTonggouFeedAttrList, conditionMappingMap, updateWare);
 
             // 构造Field列表
             List<Field> itemFieldList = new ArrayList<>();
@@ -331,15 +340,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 测试用输入XML内容
             $debug(productInfoXml);
-
-            // 判断新增商品还是更新商品
-            // 只要numIId不为空，则为更新商品
-            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
-                // 更新商品
-                updateWare = true;
-                // 取得更新对象商品id
-                numIId = sxData.getPlatform().getNumIId();
-            }
 
             String result;
             // 新增或更新商品主处理
@@ -365,16 +365,27 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (!updateWare) numIId = result;
             }
 
+            // 调用淘宝商品上下架操作(新增的时候默认为下架，只有更新的时候才根据group里面platformActive调用上下架操作)
+            // 回写用商品上下架状态(OnSale/InStock)
+            CmsConstants.PlatformStatus platformStatus = null;
+            CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+            // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
+            if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+                platformStatus = CmsConstants.PlatformStatus.OnSale;   // 上架
+            } else {
+                platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
+            }
+
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
             if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
                 // 上新成功且成功取得平台类目信息时状态回写操作(默认为在库)
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
-                        CmsConstants.PlatformStatus.InStock, "", getTaskName(), pCatInfoMap);
+                        platformStatus, "", getTaskName(), pCatInfoMap);
             } else {
                 // 上新成功时但未取得平台类目信息状态回写操作(默认为在库)
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
-                        CmsConstants.PlatformStatus.InStock, "", getTaskName());
+                        platformStatus, "", getTaskName());
             }
 
             // 正常结束
@@ -420,12 +431,14 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
      * @param tmTonggouFeedAttrList List<String> 当前渠道和平台设置的可以天猫官网同购上传的feed attribute列表
      * @param conditionMappingMap 当前渠道和平台设置的天猫同购一级类目匹配信息map
+     * @param updateWare 新增/更新flg(false:新增 true:更新)
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
     private BaseMongoMap<String, String> getProductInfo(SxData sxData, ShopBean shopProp, String priceConfigValue,
                                                  Map<String, Integer> skuLogicQtyMap, List<String> tmTonggouFeedAttrList,
-                                                 Map<String, String> conditionMappingMap) throws BusinessException {
+                                                 Map<String, String> conditionMappingMap,
+                                                 boolean updateWare) throws BusinessException {
         // 上新产品信息保存map
         BaseMongoMap<String, String> productInfoMap = new BaseMongoMap<>();
 
@@ -685,6 +698,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 				mainProduct.getCommon().getFields().getAppSwitch() == 1) {
 			productInfoMap.put("wireless_desc", getValueByDict("天猫同购无线描述", expressionParser, shopProp));
 		}
+
+        // 商品上下架
+        CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
+        // 更新商品并且PlatformActive=ToOnSale时,执行商品上架；新增商品或PlatformActive=ToInStock时，执行下架功能
+        if (updateWare && platformActive == CmsConstants.PlatformActive.ToOnSale) {
+            productInfoMap.put("status", "0");   // 商品上架
+        } else {
+            productInfoMap.put("status", "2");   // 商品在库
+        }
 
         return productInfoMap;
     }

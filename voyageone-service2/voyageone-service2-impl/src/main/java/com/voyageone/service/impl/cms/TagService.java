@@ -1,5 +1,14 @@
 package com.voyageone.service.impl.cms;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -7,13 +16,6 @@ import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Tag Service
@@ -209,6 +211,9 @@ public class TagService extends BaseService {
                     categoryList.add(tagBean);
                 }
             }
+            // 按时间倒序排序
+            Comparator<CmsBtTagBean> comparator = (cl1, cl2) -> cl1.getModified().compareTo(cl2.getModified());
+            categoryList.sort(comparator.reversed());
             return categoryList;
         }
         return new ArrayList<>(0);

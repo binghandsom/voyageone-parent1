@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtJmProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
@@ -30,10 +31,7 @@ import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
-import com.voyageone.service.model.cms.CmsBtJmSkuModel;
-import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
-import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -98,6 +96,8 @@ public class BackDoorController extends CmsController {
     private CmsBtJmSkuDao cmsBtJmSkuDao;
     @Autowired
     private CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
+    @Autowired
+    private CmsBtJmProductDao cmsBtJmProductDao;
 
 
     /**
@@ -602,7 +602,7 @@ public class BackDoorController extends CmsController {
                         platformInfo.setMainProductCode(groupModel.getMainProductCode());
                     }
 
-                    cmsBtProductModel.getPlatforms().put("P" + cartId, platformInfo);
+                    cmsBtProductModel.getPlatforms().put(cartId, platformInfo);
                 });
 
                 cmsBtProductModel.getFeed().setOrgAtts(oldCmsBtProductModel.getFeed().getOrgAtts());
@@ -1403,6 +1403,310 @@ public class BackDoorController extends CmsController {
         builder.append("<h2>需要插入的brand 信息列表</h2>");
         builder.append("<ul>");
         notExistsBrandList.forEach(groupCheckMessage -> builder.append("<li>").append(groupCheckMessage).append("</li>"));
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+    /**
+     * check 现有的product产品表和group产品表中的数据不一致的数据
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "checkProductWithGroupError", method = RequestMethod.GET)
+    public Object checkProductWithGroupError(@RequestParam("channelId") String channelId) {
+
+        List<CmsBtProductModel> productList = cmsBtProductDao.selectAll(channelId);
+
+        // group不存在或者group存在1个以上
+        List<String> results1 = new ArrayList<>();
+        // 主商品不正确的
+        List<String> results2 = new ArrayList<>();
+        // 商品状态不正确的
+        List<String> results3 = new ArrayList<>();
+        // 商品的numIId不一致的
+        List<String> results4 = new ArrayList<>();
+        // 商品的状态和group状态不一致的
+        List<String> results5 = new ArrayList<>();
+
+        System.out.println("处理数据不正确数据:" + channelId + "==========Start");
+
+        //check
+        productList.parallelStream().forEach(productInfo -> {
+
+            String productCode = productInfo.getCommon().getFields().getCode();
+            //check P0的信息是否正确
+            Integer P0IsMasterMain = productInfo.getCommon().getFields().getIsMasterMain();
+            String P0MainProductCode = productInfo.getPlatform(0).getMainProductCode();
+
+            JongoQuery P0Query = new JongoQuery();
+            P0Query.setQuery("{\"productCodes\": #, \"cartId\": #}");
+            P0Query.setParameters(productCode, 0);
+            List<CmsBtProductGroupModel> P0GroupInfoList = cmsBtProductGroupDao.select(P0Query, channelId);
+            if (P0GroupInfoList.size() > 1) {
+                results1.add("产品code:" + productCode + "==的P0对应的group超过1个");
+//                System.out.println("产品code:" + productCode + "==的P0对应的group超过1个");
+            } else if (P0GroupInfoList.size() == 0) {
+                results1.add("产品code:" + productCode + "==的P0对应的group不存在");
+//                System.out.println("产品code:" + productCode + "==的P0对应的group不存在");
+            } else {
+
+                CmsBtProductGroupModel P0GroupInfo = P0GroupInfoList.get(0);
+                if ((P0IsMasterMain == 1 && (!productCode.equals(P0MainProductCode)))
+                        || (P0IsMasterMain == 0 && (productCode.equals(P0MainProductCode)))
+                        || (P0IsMasterMain == 1 && (!productCode.equals(P0GroupInfo.getMainProductCode())
+                        || !P0MainProductCode.equals(P0GroupInfo.getMainProductCode())))
+                        || (P0IsMasterMain == 0 && (!P0MainProductCode.equals(P0GroupInfo.getMainProductCode())))) {
+                    results2.add("P0的主商品数据不正确, 产品Code:" + productCode + "==IsMasterMain:" + P0IsMasterMain + "==产品表的主商品:" + P0MainProductCode + "==group表的主商品:" + P0GroupInfo.getMainProductCode());
+//                    System.out.println("P0的主商品数据不正确, 产品Code:" + productCode + "==IsMasterMain:" + P0IsMasterMain + "==产品表的主商品:" + P0MainProductCode + "==group表的主商品:" + P0GroupInfo.getMainProductCode());
+                }
+
+            }
+
+            // checktoherplatforms
+            productInfo.getPlatforms().forEach( (cartId, platformInfo) -> {
+
+                if (!"P0".equals(cartId)) {
+
+                    //获取group的数据
+                    Integer cart = platformInfo.getCartId();
+                    JongoQuery P0Query1 = new JongoQuery();
+                    P0Query1.setQuery("{\"productCodes\": #, \"cartId\": #}");
+                    P0Query1.setParameters(productCode, cart);
+                    List<CmsBtProductGroupModel> groupInfoList = cmsBtProductGroupDao.select(P0Query1, channelId);
+                    if (groupInfoList.size() > 1) {
+                        results1.add("产品code:" + productCode + "==的" + cartId + "对应的group超过1个");
+//                        System.out.println("产品code:" + productCode + "==的" + cartId + "对应的group超过1个");
+                    } else if (groupInfoList.size() == 0) {
+                        results1.add("产品code:" + productCode + "==的" + cartId + "对应的group不存在");
+//                        System.out.println("产品code:" + productCode + "==的" + cartId + "对应的group不存在");
+                    } else {
+
+                        CmsBtProductGroupModel groupInfo = groupInfoList.get(0);
+
+                        // check产品主商品code是否正确
+                        if ((platformInfo.getpIsMain() == 1 && (!platformInfo.getMainProductCode().equals(productCode)))
+                                || (platformInfo.getpIsMain() == 0 && (platformInfo.getMainProductCode().equals(productCode)))
+                                || (platformInfo.getpIsMain() == 1 && (!productCode.equals(groupInfo.getMainProductCode())
+                                || !platformInfo.getMainProductCode().equals(groupInfo.getMainProductCode())))
+                                || (platformInfo.getpIsMain() == 0 && (!platformInfo.getMainProductCode().equals(groupInfo.getMainProductCode())))) {
+                            results2.add(cartId + "的主商品数据不正确, 产品Code:" + productCode + "==IsMasterMain:" + platformInfo.getpIsMain() + "==产品表的主商品:" + platformInfo.getMainProductCode() + "==group表的主商品:" + groupInfo.getMainProductCode());
+//                            System.out.println(cartId + "的主商品数据不正确, 产品Code:" + productCode + "==IsMasterMain:" + platformInfo.getpIsMain() + "==产品表的主商品:" + platformInfo.getMainProductCode() + "==group表的主商品:" + groupInfo.getMainProductCode());
+                        }
+
+                        // check状态
+                        String status = platformInfo.getStatus();
+
+                        String pStatus = platformInfo.getpStatus() != null ? platformInfo.getpStatus().name() : "";
+                        String pNumIId = platformInfo.getpNumIId() == null ? "" : platformInfo.getpNumIId();
+
+                        String groupPlatFormStatus = groupInfo.getPlatformStatus() != null ? groupInfo.getPlatformStatus().name(): "";
+                        String groupNumIId = groupInfo.getNumIId() == null ? "" : groupInfo.getNumIId();
+
+                        // 状态不正确
+                        if (!"Approved".equals(status) && !StringUtils.isEmpty(pNumIId)) {
+                            results3.add(cartId + "的状态不为Approved但是numIID不为空, 产品Code:" + productCode
+                                            + "==产品表status:" + status
+                                            + "==产品表pNumIId:" + pNumIId
+                                            + "==group表NumIId:" + groupNumIId
+                            );
+                        }
+
+                        if ("Approved".equals(status) && StringUtils.isEmpty(pNumIId)) {
+                            results3.add(cartId + "的状态为Approved但是numIID为空, 产品Code:" + productCode
+                                    + "==产品表status:" + status
+                                    + "==产品表pNumIId:" + pNumIId
+                                    + "==group表NumIId:" + groupNumIId
+                            );
+                        }
+
+//                        if ()
+//
+                        if ("Approved".equals(status) && (StringUtils.isEmpty(pStatus) || StringUtils.isEmpty(groupPlatFormStatus))) {
+                            results3.add(cartId + "的产品状态为Approved,但是产品的平台状态或者group的平台状态为空的数据, 产品Code:" + productCode
+                                    + "==产品表status:" + status
+                            + "==产品表pStatus:" + pStatus
+//                            + "==产品表pNumIId:" + pNumIId
+                            + "==group表status:" + groupPlatFormStatus
+//                            + "==group表NumIId:" + groupNumIId
+                            );
+//                            System.out.println(cartId + "的状态数据不正确, 产品Code:" + productCode
+//                                    + "==产品表status:" + status
+//                                    + "==产品表pStatus:" + pStatus
+//                                    + "==产品表pNumIId:" + pNumIId
+//                                    + "==group表status:" + groupPlatFormStatus
+//                                    + "==group表NumIId:" + groupNumIId);
+                        }
+
+                        // numIID不正确的
+                        if ("Approved".equals(status) && !pNumIId.equals(groupNumIId)) {
+                            results4.add(cartId + "的numIID数据不正确, 产品Code:" + productCode
+                                    + "==产品表status:" + status
+//                                    + "==产品表pStatus:" + pStatus
+                                    + "==产品表pNumIId:" + pNumIId
+//                                    + "==group表status:" + groupPlatFormStatus
+                                    + "==group表NumIId:" + groupNumIId);
+//                            System.out.println(cartId + "的状态数据不正确, 产品Code:" + productCode
+//                                    + "==产品表status:" + status
+//                                    + "==产品表pStatus:" + pStatus
+//                                    + "==产品表pNumIId:" + pNumIId
+//                                    + "==group表status:" + groupPlatFormStatus
+//                                    + "==group表NumIId:" + groupNumIId);
+                        }
+
+                        if ("Approved".equals(status) && !pStatus.equals(groupPlatFormStatus)) {
+                            results5.add(cartId + "的状态和group的状态不一致数据, 产品Code:" + productCode
+//                                    + "==产品表status:" + status
+                                    + "==产品表pStatus:" + pStatus
+//                                    + "==产品表pNumIId:" + pNumIId
+                                    + "==group表status:" + groupPlatFormStatus
+//                                    + "==group表NumIId:" + groupNumIId
+                            );
+//                            System.out.println(cartId + "的状态数据不正确, 产品Code:" + productCode
+//                                    + "==产品表status:" + status
+////                                    + "==产品表pStatus:" + pStatus
+////                                    + "==产品表pNumIId:" + pNumIId
+//                                    + "==group表status:" + groupPlatFormStatus
+////                                    + "==group表NumIId:" + groupNumIId
+//                            );
+
+                        }
+
+                    }
+
+                }
+            });
+
+        });
+
+        System.out.println("group不存在或者group存在1个以上====Start:" + results1.size());
+        results1.forEach(value-> System.out.println(value));
+        System.out.println("group不存在或者group存在1个以上====End");
+
+        System.out.println("主商品不正确的====Start:" + results2.size());
+        results2.forEach(value-> System.out.println(value));
+        System.out.println("主商品不正确的====End");
+
+        System.out.println("商品状态不正确的====Start:" + results3.size());
+        results3.forEach(value-> System.out.println(value));
+        System.out.println("商品状态不正确的====End");
+
+        System.out.println("商品的numIId不一致的====Start:" + results4.size());
+        results4.forEach(value-> System.out.println(value));
+        System.out.println("商品的numIId不一致的====End");
+
+        System.out.println("商品的状态和group状态不一致的====Start:" + results5.size());
+        results5.forEach(value-> System.out.println(value));
+        System.out.println("商品的状态和group状态不一致的====End");
+        System.out.println("处理数据不正确数据:" + channelId + "==========End");
+
+
+        StringBuilder builder = new StringBuilder("<body>");
+//        builder.append("<h2>信息列表</h2>");
+//        builder.append("<ul>");
+//        results.forEach(groupCheckMessage -> builder.append(",").append(groupCheckMessage));
+//        builder.append("</ul>");
+//        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+    /**
+     * check jm_sku是否ok
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "checkJMSkuError", method = RequestMethod.GET)
+    public Object checkJMSkuError (@RequestParam("channelId") String channelId) {
+
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"platforms.P27.pNumIId\": {$exists: true}, \"platforms.P27.status\": \"Approved\"}");
+
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("channelId", channelId);
+        List<CmsBtJmSkuModel> jmSkuList = cmsBtJmSkuDao.selectList(map);
+
+        Map<String, String> newJmSku = new HashMap<>();
+        jmSkuList.forEach(skuModel -> newJmSku.put(skuModel.getSkuCode(), skuModel.getProductCode()));
+
+        List<CmsBtJmProductModel> jmProductList = cmsBtJmProductDao.selectList(map);
+        List<String> newJmProduct = new ArrayList<>();
+        jmProductList.forEach(proModel -> newJmProduct.add(proModel.getProductCode()));
+
+        List<String> error1 = new ArrayList<>();
+        List<String> error2 = new ArrayList<>();
+
+        productList.forEach(productInfo -> {
+            String productCode = productInfo.getCommon().getFields().getCode();
+
+            if (!newJmProduct.contains(productCode)) {
+                error1.add(productCode);
+            } else {
+                newJmProduct.remove(newJmProduct.indexOf(productCode));
+            }
+            productInfo.getPlatform(27).getSkus().forEach(skuInfo->{
+                String skuCode = skuInfo.getStringAttribute("skuCode");
+                if ("true".equals(skuInfo.getStringAttribute("isSale"))) {
+                    if (newJmSku.get(skuCode) == null) {
+                        error2.add("sku:====" + skuCode + "========" + productCode);
+                    } else {
+                        newJmSku.remove(skuCode);
+                    }
+                }
+            });
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>已经在聚美上新,但是没有插入到jm_product表中的code</h2>");
+        System.out.println("<h2>已经在聚美上新,但是没有插入到jm_product表中的code</h2>");
+        builder.append("<ul>");
+        error1.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+        });
+        builder.append("</ul>");
+        builder.append("<h2>已经在聚美上新,但是没有插入到jm_sku表中的sku及code</h2>");
+        System.out.println("<h2>已经在聚美上新,但是没有插入到jm_sku表中的sku及code</h2>");
+        builder.append("<ul>");
+        error2.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+        });
+        builder.append("</ul>");
+        builder.append("<h2>product表中未上新,但是已经插入到jm_product表</h2>");
+        System.out.println("<h2>product表中未上新,但是已经插入到jm_product表</h2>");
+        builder.append("<ul>");
+        newJmProduct.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+            Map<String, Object> error3Param = new HashMap<String, Object>();
+            error3Param.put("channelId", channelId);
+            error3Param.put("productCode", groupCheckMessage);
+            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error3Param);
+            cmsBtJmProductDao.delete(jmproductModel.getId());
+        });
+        builder.append("</ul>");
+        builder.append("<h2>sku中未上新,但是已经插入到jm_sku表</h2>");
+        System.out.println("<h2>sku中未上新,但是已经插入到jm_sku表</h2>");
+        builder.append("<ul>");
+        newJmSku.forEach((key, value) -> {
+            builder.append("<li>").append(key+"======"+value).append("</li>");
+            System.out.println(key+"======"+value);
+
+            Map<String, Object> error41Param = new HashMap<String, Object>();
+            error41Param.put("channelId", channelId);
+            error41Param.put("productCode", value);
+            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error41Param);
+            if (jmproductModel != null)
+                cmsBtJmProductDao.delete(jmproductModel.getId());
+
+            error41Param.put("skuCode", key);
+            CmsBtJmSkuModel jmSku = cmsBtJmSkuDao.selectOne(error41Param);
+            cmsBtJmSkuDao.delete(jmSku.getId());
+        });
         builder.append("</ul>");
         builder.append("</body>");
 
