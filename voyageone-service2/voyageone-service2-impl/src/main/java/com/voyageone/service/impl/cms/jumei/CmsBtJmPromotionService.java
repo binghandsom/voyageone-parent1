@@ -321,6 +321,10 @@ public class CmsBtJmPromotionService extends BaseService {
 
         tagService.insertCmsBtTagAndUpdateTagPath(tagModel,
                 consumer -> consumer.setTagPath(String.format("-%s-%s-", promotionTopTagId, consumer.getId())));
+
+        // 同时创建聚美的扩展模块
+        CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
+        tagService.addJmModule(jmModuleExtensionModel);
     }
 
     private int createPromotionTopTag(CmsBtJmPromotionModel model) {
