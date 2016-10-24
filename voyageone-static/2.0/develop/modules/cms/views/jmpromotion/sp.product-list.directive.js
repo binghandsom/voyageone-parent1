@@ -23,21 +23,22 @@ define([
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.initialize = function () {
 
-            jmPromotionDetailService.init({jmPromotionRowId:$routeParams.jmpromId}).then(function(res){
+            jmPromotionDetailService.init({jmPromotionRowId: $routeParams.jmpromId}).then(function (res) {
                 $scope.parentModel = res.data.modelPromotion;
+                $scope.parentModel.prodSum = $scope.parentModel.prodSum || 0;
+                $scope.parentModel.quantitySum = $scope.parentModel.quantitySum || 0;
                 $scope.vm.tagList = res.data.listTag;
-                $scope.vm.productCount=res.data.productCount;
-                $scope.vm.changeCount = res.data.changeCount;
-                $scope.vm.isBegin=res.data.isBegin;//活动是否开始
-                $scope.vm.isEnd=res.data.isEnd;//活动是否结束
-                $scope.vm.isUpdateJM=res.data.isUpdateJM;
+                $scope.vm.productCount = res.data.productCount || 0;
+                $scope.vm.changeCount = res.data.changeCount || 0;
+                $scope.vm.isBegin = res.data.isBegin;//活动是否开始
+                $scope.vm.isEnd = res.data.isEnd;//活动是否结束
+                $scope.vm.isUpdateJM = res.data.isUpdateJM;
                 $scope.vm.brandList = res.data.brandList;
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.jmpromId;
             $scope.modelUpdateDealEndTime.getSelectedProductIdList = getSelectedProductIdList;
             $scope.modelUpdateDealEndTime.isBatch = true;
-
         };
         $scope.clear = function () {
             $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId};
