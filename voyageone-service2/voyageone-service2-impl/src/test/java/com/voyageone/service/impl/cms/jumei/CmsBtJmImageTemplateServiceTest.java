@@ -18,7 +18,7 @@ public class CmsBtJmImageTemplateServiceTest {
     CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
     @Test
     public void getUrl() throws Exception {
-        cmsBtJmImageTemplateService.getUrl("dddd","2-移动端入口图-和app首页5号图一致-2048x1024",111);
+        cmsBtJmImageTemplateService.getUrl("dddd","appEntrance",111);
     }
 
 }

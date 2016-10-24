@@ -2,6 +2,7 @@ package com.voyageone.service.model.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
     private String imageType;
     private String name;
     private List<String> templateUrls;
-    private List<String> parameters;
+    private ArrayList<String> parameters;
 
     public String getImageType() {
         return imageType;
@@ -37,11 +38,11 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
         this.templateUrls = templateUrls;
     }
 
-    public List<String> getParameters() {
+    public ArrayList<String> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<String> parameters) {
+    public void setParameters(ArrayList<String> parameters) {
         this.parameters = parameters;
     }
 }

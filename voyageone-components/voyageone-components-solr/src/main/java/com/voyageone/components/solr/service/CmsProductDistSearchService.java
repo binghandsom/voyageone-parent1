@@ -166,7 +166,12 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 //private String brandCn;
 
 
-                Double priceRetailSt = (Double) fieldsDoc.get("priceRetailSt");
+                Double priceRetailSt = null;
+                if(fieldsDoc.get("priceRetailSt") instanceof Integer){
+                    priceRetailSt = Double.parseDouble(fieldsDoc.get("priceRetailSt").toString());
+                }else{
+                    priceRetailSt = (Double) fieldsDoc.get("priceRetailSt");
+                }
                 if (priceRetailSt != null) {
                     model.setSalePrice(priceRetailSt);
                 }

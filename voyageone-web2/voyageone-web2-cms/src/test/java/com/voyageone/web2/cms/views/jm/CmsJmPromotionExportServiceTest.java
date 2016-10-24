@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -23,7 +24,7 @@ public class CmsJmPromotionExportServiceTest {
         //cmsBtJmImageTemplateModel.setImageId(1);
         cmsBtJmImageTemplateModel.setName("2-移动端入口图-和app首页5号图一致-2048x1024");
         cmsBtJmImageTemplateModel.setTemplateUrls(Arrays.asList("http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1"));
-        cmsBtJmImageTemplateModel.setParameters(Arrays.asList("enterGuide"));
+        cmsBtJmImageTemplateModel.setParameters(new ArrayList<>(Arrays.asList("enterGuide")));
         cmsBtJmImageTemplateService.insert(cmsBtJmImageTemplateModel);
     }
 

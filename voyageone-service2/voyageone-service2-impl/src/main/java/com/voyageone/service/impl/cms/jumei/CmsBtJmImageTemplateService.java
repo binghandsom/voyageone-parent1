@@ -2,9 +2,17 @@ package com.voyageone.service.impl.cms.jumei;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmImageTemplateDao;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,12 +36,16 @@ import java.util.stream.Collectors;
 @Service
 public class CmsBtJmImageTemplateService {
     private final CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao;
-    private final CmsBtJmPromotionService cmsBtJmPromotionService;
+    private final CmsBtJmPromotionDao cmsBtJmPromotionDao;
+    private final TagService tagService;
+    private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
 
     @Autowired
-    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionService cmsBtJmPromotionService) {
+    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionDao cmsBtJmPromotionDao,TagService tagService,CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
         this.cmsBtJmImageTemplateDao = cmsBtJmImageTemplateDao;
-        this.cmsBtJmPromotionService = cmsBtJmPromotionService;
+        this.cmsBtJmPromotionDao = cmsBtJmPromotionDao;
+        this.tagService = tagService;
+        this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
     }
 
 
@@ -52,6 +64,7 @@ public class CmsBtJmImageTemplateService {
         return cmsBtJmImageTemplateDao.insert(cmsBtJmImageTemplateModel);
     }
 
+
     /**
      * 根据jmPromotionId 和图片类型 返回 带模板的url地址
      *
@@ -60,7 +73,7 @@ public class CmsBtJmImageTemplateService {
      * @param jmPromotionId 活动Id
      */
     public String getUrl(String imageName, String imageType, Integer jmPromotionId) {
-        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = cmsBtJmPromotionService.getEditModel(jmPromotionId, true);
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = getEditModel(jmPromotionId, true);
         return getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
     }
 
@@ -68,9 +81,14 @@ public class CmsBtJmImageTemplateService {
      * 根据jmPromotionId 和图片类型 返回 带模板的url地址
      */
     public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean) {
+        boolean isEnterGuide = true;
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\"" + imageName + "\"";
         if (cmsBtJmImageTemplateModel.getParameters() != null && cmsBtJmImageTemplateModel.getParameters().size() > 0) {
+            if(StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide())){
+                cmsBtJmImageTemplateModel.getParameters().remove("extModel.enterGuide");
+                isEnterGuide=false;
+            }
             paramString += "," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
         }
         ExpressionParser parser = new SpelExpressionParser();
@@ -84,10 +102,17 @@ public class CmsBtJmImageTemplateService {
             for (int i = 0; i < paramsObject.length; i++) {
                 if (paramsObject[i] instanceof Date) {
                     paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], "M.d");
+                }else if(paramsObject[i]  == null){
+                    paramsObject[i] = "";
                 }
             }
-            return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), paramsObject);
-        } catch (SpelEvaluationException ignored) {
+            if(isEnterGuide){
+                return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(1), paramsObject);
+            }else{
+                return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), paramsObject);
+            }
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
         return null;
     }
@@ -104,5 +129,33 @@ public class CmsBtJmImageTemplateService {
     public String getSeparatorBar(String modeName) {
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType("separatorBar");
         return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), modeName);
+    }
+
+    /**
+     * 取得聚美活动信息
+     *
+     * @param jmPromotionId 聚美活动ID (对照表cms_bt_jm_promotion.id)
+     * @param hasExtInfo    是否取得专场信息和促销信息
+     * @return CmsBtJmPromotionSaveBean
+     */
+    public CmsBtJmPromotionSaveBean getEditModel(int jmPromotionId, boolean hasExtInfo) {
+        CmsBtJmPromotionSaveBean info = new CmsBtJmPromotionSaveBean();
+        CmsBtJmPromotionModel model = cmsBtJmPromotionDao.select(jmPromotionId);
+        if (model == null) {
+            return info;
+        }
+        info.setModel(model);
+        if (model.getRefTagId() != null && model.getRefTagId() != 0) {
+            List<CmsBtTagModel> tagList = tagService.getListByParentTagId(model.getRefTagId());
+            info.setTagList(tagList);
+        }
+
+        // 取得扩展信息
+        if (hasExtInfo) {
+            // 活动详情编辑
+            info.setExtModel(jmPromotionExtensionDaoExt.selectOne(jmPromotionId));
+        }
+
+        return info;
     }
 }
