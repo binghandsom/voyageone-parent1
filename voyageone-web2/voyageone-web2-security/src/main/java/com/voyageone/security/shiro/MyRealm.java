@@ -117,6 +117,10 @@ public class MyRealm extends AuthorizingRealm {
 			if (userModel.getActive() == 2) {
 				throw new LockedAccountException(); // 帐号锁定
 			}
+            else if(userModel.getActive() == 0)
+            {
+                throw new UnknownAccountException();// 没找到帐号
+            }
 			// 从数据库查询出来的账号名和密码,与用户输入的账号和密码对比
 			// 当用户执行登录时,在方法处理上要实现user.login(token);
 			// 然后会自动进入这个类进行认证
@@ -127,8 +131,8 @@ public class MyRealm extends AuthorizingRealm {
 					getName() // realm name
 			);
 			// 把用户信息放在session里
-			Session session = SecurityUtils.getSubject().getSession();
-			session.setAttribute("comUserModel",userModel);
+//			Session session = SecurityUtils.getSubject().getSession();
+//			session.setAttribute("comUserModel",userModel);
 
 			return authenticationInfo;
 		} else {
