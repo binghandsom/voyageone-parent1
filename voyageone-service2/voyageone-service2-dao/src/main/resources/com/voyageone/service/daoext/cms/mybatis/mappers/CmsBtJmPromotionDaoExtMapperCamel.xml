@@ -100,4 +100,210 @@
         )
         WHERE a.id=#{id}
     </update>
+
+    <!-- 查询聚美专场一览  ！！改了本sql的查询条件时必须要修改统计个数的sql文 -->
+    <select id="getJmPromotionList" resultType="com.voyageone.service.model.util.MapModel">
+        select DISTINCT jmprom.*, prom.id as promId, jmpromext.app_page_id, jmpromext.pc_page_id, jmpromext.main_title
+        from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
+        on prom.promotion_id = jmprom.id
+        <if test="codeList != null">
+            INNER JOIN cms_bt_jm_promotion_sku as jmpromsku
+            on jmpromsku.cms_bt_jm_promotion_id = jmprom.id and jmpromsku.channel_id = #{channelId}
+        </if>
+        left JOIN cms_bt_jm_promotion_special_extension as jmpromext
+        on jmpromext.jmpromotion_id = jmprom.id
+        <if test="mainCata != null">
+            and jmpromext.main_channel = #{mainCata}
+        </if>
+        <where>
+            prom.active = 1 and jmprom.active = 1
+            and jmprom.channel_id = #{channelId}
+            <if test="jmActId != null">
+                AND ( jmprom.activity_pc_id = #{jmActId} or jmprom.activity_app_id = #{jmActId} )
+            </if>
+            <if test="jmpromName != null">
+                and jmprom.name like concat('%', #{jmpromName},'%')
+            </if>
+            <if test="jmBrandId != null">
+                and jmprom.cms_bt_jm_master_brand_Id = #{jmBrandId}
+            </if>
+            <if test="compareType == 1 and prodSum != null">
+                and jmprom.prod_sum &lt;= #{prodSum}
+            </if>
+            <if test="compareType == 2 and prodSum != null">
+                and jmprom.prod_sum &gt;= #{prodSum}
+            </if>
+            <if test="prePeriodStart == null and prePeriodEnd != null">
+                and jmprom.pre_period_start &lt;= #{prePeriodEnd}
+            </if>
+            <if test="prePeriodStart != null">
+                <if test="prePeriodEnd == null">
+                    and #{prePeriodStart} &lt;= jmprom.pre_period_start
+                </if>
+                <if test="prePeriodEnd != null">
+                    and (#{prePeriodStart} &lt;= jmprom.pre_period_start and jmprom.pre_period_start &lt;= #{prePeriodEnd})
+                </if>
+            </if>
+            <if test="activityStart == null and activityEnd != null">
+                and jmprom.activity_start &lt;= #{activityEnd}
+            </if>
+            <if test="activityStart != null">
+                <if test="activityEnd == null">
+                    and #{activityStart} &lt;= jmprom.activity_end
+                </if>
+                <if test="activityEnd != null">
+                    and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
+                </if>
+            </if>
+            <if test="codeList != null">
+                and ( jmpromsku.product_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
+            </if>
+        </where>
+        order by id desc
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 统计聚美专场个数的sql文 -->
+    <select id="getJmPromotionCount" resultType="long">
+        select count(DISTINCT jmprom.id) from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
+        on prom.promotion_id = jmprom.id
+        <if test="codeList != null">
+            INNER JOIN cms_bt_jm_promotion_sku as jmpromsku
+            on jmpromsku.cms_bt_jm_promotion_id = jmprom.id and jmpromsku.channel_id = #{channelId}
+        </if>
+        left JOIN cms_bt_jm_promotion_special_extension as jmpromext
+        on jmpromext.jmpromotion_id = jmprom.id
+        <if test="mainCata != null">
+            and jmpromext.main_channel = #{mainCata}
+        </if>
+        <where>
+            prom.active = 1 and jmprom.active = 1
+            and jmprom.channel_id = #{channelId}
+            <if test="jmActId != null">
+                AND ( jmprom.activity_pc_id = #{jmActId} or jmprom.activity_app_id = #{jmActId} )
+            </if>
+            <if test="jmpromName != null">
+                and jmprom.name like concat('%', #{jmpromName},'%')
+            </if>
+            <if test="jmBrandId != null">
+                and jmprom.cms_bt_jm_master_brand_Id = #{jmBrandId}
+            </if>
+            <if test="compareType == 1 and prodSum != null">
+                and jmprom.prod_sum &lt;= #{prodSum}
+            </if>
+            <if test="compareType == 2 and prodSum != null">
+                and jmprom.prod_sum &gt;= #{prodSum}
+            </if>
+            <if test="prePeriodStart == null and prePeriodEnd != null">
+                and jmprom.pre_period_start &lt;= #{prePeriodEnd}
+            </if>
+            <if test="prePeriodStart != null">
+                <if test="prePeriodEnd == null">
+                    and #{prePeriodStart} &lt;= jmprom.pre_period_start
+                </if>
+                <if test="prePeriodEnd != null">
+                    and (#{prePeriodStart} &lt;= jmprom.pre_period_start and jmprom.pre_period_start &lt;= #{prePeriodEnd})
+                </if>
+            </if>
+            <if test="activityStart == null and activityEnd != null">
+                and jmprom.activity_start &lt;= #{activityEnd}
+            </if>
+            <if test="activityStart != null">
+                <if test="activityEnd == null">
+                    and #{activityStart} &lt;= jmprom.activity_end
+                </if>
+                <if test="activityEnd != null">
+                    and ( jmprom.activity_start &lt;= #{activityEnd} and #{activityStart} &lt;= jmprom.activity_end )
+                </if>
+            </if>
+            <if test="codeList != null">
+                and ( jmpromsku.product_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                     or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCloseJmPromotionId" resultType="Integer">
+        SELECT
+        t2.promotion_id
+        FROM
+        (
+        SELECT
+        *
+        FROM
+        `cms_bt_jm_promotion` a
+        WHERE
+         NOW() > a.activity_end
+        ) t1,
+        cms_bt_promotion t2
+        WHERE
+        t1.id = t2.promotion_id and
+        t2.promotion_status = 1
+    </select>
+    <select id="selectEffectiveJmPromotionId" resultType="Integer">
+        SELECT
+        t2.id
+        FROM
+        cms_bt_jm_promotion t2
+        WHERE
+        t2.signup_deadline > now()
+    </select>
+    <select id="selectCloseJmPromotionSku" resultType="HashMap" parameterType="java.lang.Integer">
+    SELECT
+        t2.channel_id,
+        t2.jm_sku_no,
+        t2.sku_code,
+        t2.sale_price,
+        t1.market_price
+    FROM
+        (
+            SELECT
+                *
+            FROM
+                cms_bt_jm_promotion_sku t3
+            WHERE
+                t3.cms_bt_jm_promotion_id = #{jmPromotionId}
+        ) t1,
+        cms_bt_jm_sku t2
+    WHERE
+        t1.channel_id = t2.channel_id
+    AND t1.sku_code = t2.sku_code
+    </select>
+
+    <update id="updatePromotionStatus"  parameterType="HashMap">
+        UPDATE cms_bt_promotion set promotion_status = 0, modifier=#{modifier},modified =now() where promotion_id = #{jmPromotionId};
+    </update>
+
+    <!-- 更新活动下的有库存产品数及库存总数 注意：该语句只能用在mysql，不兼容其他数据库 -->
+    <update id="updatePromotionProdSumInfo">
+        update cms_bt_jm_promotion as a INNER JOIN ( select cms_bt_jm_promotion_id, count(product_code) as cnt, sum(quantity) as quantity_sum from
+            cms_bt_jm_promotion_product where quantity > 0 group by cms_bt_jm_promotion_id ) c
+            on c.cms_bt_jm_promotion_id = a.id
+                and a.id in ( SELECT prom.promotion_id
+                    FROM cms_bt_promotion as prom
+                    where prom.promotion_status = 1 and prom.active = 1 and prom.channel_id = #{channelId} and prom.cart_id = #{cartId}
+                    and  prom.activity_end >= now())
+        set a.prod_sum = c.cnt, a.quantity_sum = c.quantity_sum
+    </update>
+
+    <!-- 即将要开始的活动 -->
+    <select id="selectJmPromotionBegin" resultType="Integer">
+        SELECT
+        t1.id
+        FROM
+        `cms_bt_jm_promotion` t1 join cms_bt_promotion t2
+        on
+        (NOW() &lt;= t1.activity_start and t1.activity_start &lt;= DATE_ADD(NOW(), INTERVAL 5 MINUTE)) and
+        t1.id = t2.promotion_id and
+        t2.promotion_status = 1 and t2.active = 1
+    </select>
+
+    <!-- 设置聚美活动各阶段的状态 -->
+    <update id="setJmPromotionStepStatus"  parameterType="HashMap">
+        UPDATE cms_bt_jm_promotion set ${stepName} = ${stepStatus}, modifier = #{modifier} ,modified = now() where id = #{jmPromotionId}
+    </update>
+
 </mapper>

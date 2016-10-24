@@ -33,6 +33,7 @@ import java.util.Map;
 @Service
 public class GetPlatformCategorySchemaService extends BaseCronTaskService {
 
+    //【注意】这个取得淘宝类目schema信息的job不单独执行了，现在都是从GetAllPlatformsInfoService调用的，job名"CmsGetAllPlatformsInfoJob"
     private final static String JOB_NAME = "getPlatformCategorySchemaTask";
 
     // Active有效

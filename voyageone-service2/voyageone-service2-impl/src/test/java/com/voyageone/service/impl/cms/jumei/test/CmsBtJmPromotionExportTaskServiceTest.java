@@ -17,6 +17,6 @@ public class CmsBtJmPromotionExportTaskServiceTest {
     CmsBtJmPromotionExportTask3Service service;
     @Test
     public  void  test() throws IOException, ExcelException {
-        service.export(182,"/usr/web/contents/cms/jumei_sx/export");
+        service.export(199,"/usr/web/contents/cms/jumei_sx/export");
     }
 }

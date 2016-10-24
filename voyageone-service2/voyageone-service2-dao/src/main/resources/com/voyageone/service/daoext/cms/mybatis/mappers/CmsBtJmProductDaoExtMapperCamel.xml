@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt">
-<select id="selectByProductCodeChannelId"  resultType="com.voyageone.service.model.cms.CmsBtJmProductModel">
-    select  *   from cms_bt_jm_product where channel_id=#{channelId} and product_code=#{productCode} limit 1
-</select>
+    <select id="selectByProductCodeChannelId" resultType="com.voyageone.service.model.cms.CmsBtJmProductModel">
+        SELECT *
+        FROM cms_bt_jm_product
+        WHERE channel_id = #{channelId} AND product_code = #{productCode}
+        LIMIT 1
+    </select>
     <select id="existsCode" resultType="Boolean">
-        SELECT 1 FROM `cms_bt_jm_product` where channel_id=#{channelId} and product_code=#{productCode} limit 1
+        SELECT 1
+        FROM `cms_bt_jm_product`
+        WHERE channel_id = #{channelId} AND product_code = #{productCode}
+        LIMIT 1
     </select>
     <select id="selectByProductCodeListChannelId" resultType="com.voyageone.service.model.cms.CmsBtJmProductModel">
-        select  *   from cms_bt_jm_product where channel_id=#{channelId} and product_code in
+        select * from cms_bt_jm_product where channel_id=#{channelId} and product_code in
         <foreach item="item" index="index" collection="productCodes" open="("
                  separator="," close=")">
             #{item}
