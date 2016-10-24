@@ -57,11 +57,6 @@ public class CmsBtJmPromotionModel extends BaseModel {
     protected Date prePeriodStart;
 
     /**
-     * 报名截止日期
-     */
-    protected String signupDeadline;
-
-    /**
      * 预热结束时间
      */
     protected Date prePeriodEnd;
@@ -84,6 +79,11 @@ public class CmsBtJmPromotionModel extends BaseModel {
      * 0：未恢复  1:已恢复  团购价变回【中国最终售价】
      */
     protected Integer recoveryStatus;
+
+    /**
+     * 活动场景,因为可以多选,逗号分割
+     */
+    protected String promotionScene;
 
     /**
      * 活动类型 0:日常专场 1:导购团 2:大促 3长期场馆
@@ -114,6 +114,27 @@ public class CmsBtJmPromotionModel extends BaseModel {
      * 是否赠送优惠卷
      */
     protected Boolean isPromotionGiveCoupons;
+
+    /**
+     * 准备期截止时间
+     */
+    protected Date signupDeadline;
+
+    /**
+     * 有库存商品数
+     */
+    protected Integer prodSum;
+
+    /**
+     * 库存合计
+     */
+    protected Integer quantitySum;
+
+    private int uploadStatus;    // 专场上传
+    private int detailStatus;   // 活动信息
+    private int shelfStatus;    // 活动货架
+    private int imageStatus;    // 活动图片
+    private int bayWindowStatus;    // 活动飘窗
 
     public String getChannelId() {
         return channelId;
@@ -243,6 +264,14 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.recoveryStatus = recoveryStatus;
     }
 
+    public String getPromotionScene() {
+        return promotionScene;
+    }
+
+    public void setPromotionScene(String promotionScene) {
+        this.promotionScene = promotionScene == null ? null : promotionScene.trim();
+    }
+
     public Integer getPromotionType() {
         return promotionType;
     }
@@ -291,11 +320,67 @@ public class CmsBtJmPromotionModel extends BaseModel {
         this.isPromotionGiveCoupons = isPromotionGiveCoupons;
     }
 
-    public String getSignupDeadline() {
+    public Date getSignupDeadline() {
         return signupDeadline;
     }
 
-    public void setSignupDeadline(String signupDeadline) {
+    public void setSignupDeadline(Date signupDeadline) {
         this.signupDeadline = signupDeadline;
+    }
+
+    public Integer getProdSum() {
+        return prodSum;
+    }
+
+    public void setProdSum(Integer prodSum) {
+        this.prodSum = prodSum;
+    }
+
+    public Integer getQuantitySum() {
+        return quantitySum;
+    }
+
+    public void setQuantitySum(Integer quantitySum) {
+        this.quantitySum = quantitySum;
+    }
+
+    public int getBayWindowStatus() {
+        return bayWindowStatus;
+    }
+
+    public void setBayWindowStatus(int bayWindowStatus) {
+        this.bayWindowStatus = bayWindowStatus;
+    }
+
+    public int getImageStatus() {
+        return imageStatus;
+    }
+
+    public void setImageStatus(int imageStatus) {
+        this.imageStatus = imageStatus;
+    }
+
+    public int getShelfStatus() {
+        return shelfStatus;
+    }
+
+    public void setShelfStatus(int shelfStatus) {
+        this.shelfStatus = shelfStatus;
+    }
+
+    public int getDetailStatus() {
+        return detailStatus;
+    }
+
+    public void setDetailStatus(int detailStatus) {
+        this.detailStatus = detailStatus;
+    }
+
+    public int getUploadStatus() {
+        return uploadStatus;
+    }
+
+    public void setUploadStatus(int uploadStatus) {
+        this.uploadStatus = uploadStatus;
     }
 }

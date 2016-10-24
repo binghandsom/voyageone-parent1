@@ -113,7 +113,6 @@ define(function () {
         "TXT_SELECT_VALUE_1": "Category",
         "TXT_SELECT_VALUE_2": "Brand",
         "TXT_BRAND": "品牌",
-        "TXT_MASTER_BRAND": "MASTER品牌",
         "TXT_COLOR": "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
@@ -809,7 +808,7 @@ define(function () {
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
         "TXT_TASK_LIST": "任务一览",
-        "TXT_FLOATING_RATE": "价格波动",
+        "TXT_SAVE_ERROR": "请填写完整后，再尝试保存。",
 
         /**黑名单*/
         "TXT_BLACK_LIST_IN": "已加入黑名单",

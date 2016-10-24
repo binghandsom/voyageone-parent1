@@ -107,6 +107,7 @@
                 and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </where>
+        order by en_name asc
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >

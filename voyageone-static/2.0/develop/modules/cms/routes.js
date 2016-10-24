@@ -344,6 +344,18 @@ define(function () {
             "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
             "controller": "jmImageManageController as ctrl"
         },
+        // 聚美专场修改
+        "jmpromotion_list": {
+            "hash": "/jmpromotion/list",
+            "templateUrl": "views/jmpromotion/splist.tpl.html",
+            "controllerUrl": "modules/cms/views/jmpromotion/splist.ctl"
+        },
+        "jmpromotion_detail": {
+            "hash": "/jmpromotion/detail/:promId/:jmpromId",
+            "templateUrl": "views/jmpromotion/spdetail.tpl.html",
+            "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl",
+            "controller": "SpDetailPageController as ctrl"
+        },
         "image_create": {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",

@@ -12,8 +12,8 @@ import com.voyageone.common.util.JacksonUtil;
 public class HtMallSkuPriceUpdateInfo {
 
     private String jumei_sku_no; // 聚美Sku_no
-    private double market_price; // 市场价
-    private double mall_price; // 商城价
+    private Double market_price; // 市场价
+    private Double mall_price; // 商城价
 
     public String getJumei_sku_no() {
         return jumei_sku_no;
@@ -23,19 +23,19 @@ public class HtMallSkuPriceUpdateInfo {
         this.jumei_sku_no = jumei_sku_no;
     }
 
-    public double getMarket_price() {
+    public Double getMarket_price() {
         return market_price;
     }
 
-    public void setMarket_price(double market_price) {
+    public void setMarket_price(Double market_price) {
         this.market_price = market_price;
     }
 
-    public double getMall_price() {
+    public Double getMall_price() {
         return mall_price;
     }
 
-    public void setMall_price(double mall_price) {
+    public void setMall_price(Double mall_price) {
         this.mall_price = mall_price;
     }
 }
