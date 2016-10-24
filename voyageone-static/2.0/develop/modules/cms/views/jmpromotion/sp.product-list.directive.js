@@ -25,7 +25,6 @@ define([
 
             jmPromotionDetailService.init({jmPromotionRowId:$routeParams.jmpromId}).then(function(res){
                 $scope.parentModel = res.data.modelPromotion;
-                console.log(res.data);
                 $scope.vm.tagList = res.data.listTag;
                 $scope.vm.productCount=res.data.productCount;
                 $scope.vm.changeCount = res.data.changeCount;

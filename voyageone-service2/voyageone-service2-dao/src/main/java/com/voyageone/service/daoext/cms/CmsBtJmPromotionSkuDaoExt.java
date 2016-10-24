@@ -27,7 +27,7 @@ public interface CmsBtJmPromotionSkuDaoExt {
     int deleteByProductIdListInfo(ProductIdListInfo parameter);
 
     //jm2 begin                                                                                                                       cms_bt_jm_promotion_product_id
-    CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId);
+    CmsBtJmPromotionSkuModel selectBySkuCode(@Param("skuCode") String skuCode, @Param("cmsBtJmPromotionProductId") int cmsBtJmPromotionProductId,@Param("jmPromotionId") int jmPromotionId);
 
     List<Map<String, Object>> selectExportListByPromotionId(int promotionId);
    //更新的dealPrice大于market_price的记录
@@ -40,6 +40,6 @@ public interface CmsBtJmPromotionSkuDaoExt {
     int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
-    List<MapModel> selectViewListByPromotionProductId(int promotionProductId);
+    List<MapModel> selectViewListByPromotionProductId(@Param("promotionProductId") int promotionProductId,@Param("jmPromotionId") int jmPromotionId);
     //jm2 end
 }

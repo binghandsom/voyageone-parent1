@@ -6,15 +6,12 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
-import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.cms.views.jmpromotion.JmPromotionImagesService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

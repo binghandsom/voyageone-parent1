@@ -9,9 +9,10 @@ define(['cms',
     './bay.window.directive'
 ], function (cms) {
 
-    function SpDetailPageController(spDataService,cActions) {
+    function SpDetailPageController(spDataService,cActions,cmsBtJmPromotionExportTaskService) {
         this.spDataService = spDataService;
         this.cActions = cActions;
+        this.cmsBtJmPromotionExportTaskService=cmsBtJmPromotionExportTaskService;
     }
 
     SpDetailPageController.prototype.loadPromotion = function () {
@@ -23,7 +24,15 @@ define(['cms',
             spDataService.jmPromotionObj = promotion;
         });
     };
+    SpDetailPageController.prototype.addExport = function () {
+        console.log(this.promotion);
+        var model = {templateType: 0, cmsBtJmPromotionId:this.promotion.id};
+        this.cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
+           // $scope.searchExport();
+        }, function (res) {
 
+        });
+    };
     SpDetailPageController.prototype.downloadSpecialImageZip = function () {
         var self = this,
             cActions = self.cActions,

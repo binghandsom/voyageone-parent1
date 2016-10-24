@@ -36,15 +36,15 @@
     <!--jumei2  begin-->
 
     <select id="selectBySkuCode"  resultMap="ResultMap">
-        select  *   from cms_bt_jm_promotion_sku  where  cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId} and sku_code=#{skuCode} limit 1
+        select  *   from cms_bt_jm_promotion_sku  where    cms_bt_jm_promotion_id=#{jmPromotionId} and   cms_bt_jm_promotion_product_id=#{cmsBtJmPromotionProductId} and sku_code=#{skuCode} limit 1
     </select>
 
     <select id="selectExportListByPromotionId" resultType="MapModel">
        SELECT b.`channel_id`, b.`jm_spu_no`, b.`jm_sku_no`, b.`format`,
-        b.`upc`, b.`cms_size`, b.`jm_size`, a.`msrp_usd`, a.`msrp_rmb`, a.`retail_price`, a.`sale_price`,a.`deal_price`,a.`market_price`,b.jm_sku_no,c.jm_hash_id
+        b.`upc`, b.`cms_size`, b.`jm_size`,a.`product_code`,a.`sku_code`, a.`msrp_usd`, a.`msrp_rmb`, a.`retail_price`, a.`sale_price`,a.`deal_price`,a.`market_price`,b.jm_sku_no,c.jm_hash_id
         FROM `cms_bt_jm_promotion_sku` AS a
-        JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id`
-        left join  cms_bt_jm_promotion_product as c on a.cms_bt_jm_promotion_product_id=c.id
+        left JOIN `cms_bt_jm_sku` AS b ON a.`sku_code`=b.`sku_code` AND a.`channel_id`=b.`channel_id`
+         join  cms_bt_jm_promotion_product as c on a.cms_bt_jm_promotion_product_id=c.id
         WHERE a.`cms_bt_jm_promotion_id`=#{promotionId}
    ORDER by b.`product_code`,b.`jm_size`
     </select>
@@ -91,7 +91,7 @@
     ,b.`msrp_usd`,b.`msrp_rmb`,b.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
  FROM `cms_bt_jm_sku` AS a
  right JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
- where b.cms_bt_jm_promotion_product_id=#{promotionProductId}
+ where b.cms_bt_jm_promotion_product_id=#{promotionProductId} and b.cms_bt_jm_promotion_id=#{jmPromotionId}
 </select>
     <!--jumei2  end-->
 </mapper>
