@@ -6,8 +6,8 @@
         `id`, `promotion_id`, `org_channel_id`, `product_id`, `model_id`, `product_model`, 
         `product_code`, `product_name`, `cat_path`, `retail_price`, `sale_price`, `msrp`, 
         `msrpUS`, `tag_id`, `promotion_price`, `num_iid`, `image_url_1`, `image_url_2`, `image_url_3`, 
-        `property_1`, `property_2`, `property_3`, `property_4`, `created`, `creater`, `modified`, 
-        `modifier`
+        `property_1`, `property_2`, `property_3`, `property_4`, `quantity`, `created`, `creater`, 
+        `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -85,6 +85,9 @@
             </if>
             <if test="property4 != null" >
                 `property_4` = #{property4,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                `quantity` = #{quantity,jdbcType=INTEGER},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -181,6 +184,9 @@
             <if test="property4 != null" >
                 and `property_4` = #{property4,jdbcType=VARCHAR}
             </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -268,6 +274,9 @@
             <if test="property4 != null" >
                 and `property_4` = #{property4,jdbcType=VARCHAR}
             </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
+            </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
@@ -351,6 +360,9 @@
             </if>
             <if test="property4 != null" >
                 and `property_4` = #{property4,jdbcType=VARCHAR}
+            </if>
+            <if test="quantity != null" >
+                and `quantity` = #{quantity,jdbcType=INTEGER}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -436,6 +448,9 @@
             <if test="property4 != null" >
                 `property_4`,
             </if>
+            <if test="quantity != null" >
+                `quantity`,
+            </if>
             `created`,
             <if test="creater != null" >
                 `creater`,
@@ -514,6 +529,9 @@
             </if>
             <if test="property4 != null" >
                 #{property4,jdbcType=VARCHAR},
+            </if>
+            <if test="quantity != null" >
+                #{quantity,jdbcType=INTEGER},
             </if>
             <if test="created == null" >
                 now(),

@@ -69,20 +69,7 @@
         </if>
     </where>
 </select>
-<!--<select id="selectExportInfoListByPromotionId" resultType="MapModel">-->
-    <!--SELECT a.`jm_hash_id`,a.`product_code`,a.`deal_price`,a.`market_price`,a.`discount`,a.`sku_count`,a.`quantity`,b.`product_name_cn`,`app_id`,`pc_id`-->
 
-    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
-    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
-    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
-    <!--ORDER by b.`product_code`,b.`vo_category_name`-->
-<!--</select>-->
-<!--<select id="selectListCmsBtJmImportProductByPromotionId" resultType="MapModel">-->
-    <!--SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`-->
-    <!--FROM `cms_bt_jm_promotion_product`  AS a-->
-    <!--JOIN `cms_bt_jm_product`  AS b  ON a.`cms_bt_jm_product_id`=b.`id`-->
-    <!--WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}-->
-<!--</select>-->
 <delete id="deleteByPromotionId">
     DELETE FROM `cms_bt_jm_promotion_product` WHERE `cms_bt_jm_promotion_id`=#{promotionId}
 </delete>
@@ -97,21 +84,14 @@
 <update id="updateDealEndTimeAll">
     update cms_bt_jm_promotion_product set deal_end_time_status=1 where cms_bt_jm_promotion_id=#{promotionId}
 </update>
-<!--<update id="updateDealEndTime">-->
-    <!--UPDATE  `cms_bt_jm_promotion_product` set deal_end_time_state=1 WHERE `cms_bt_jm_promotion_id`=#{promotionId} and deal_end_time=#{dealEndTime} and synch_state in (2,3)-->
-    <!--and  `cms_bt_jm_product_id` in  <foreach item="item" index="i" collection="productIdList"-->
-                                             <!--open="(" separator="," close=")">-->
-    <!--#{item}-->
-<!--</foreach>-->
-<!--</update>-->
     <!--jm2 begin-->
     <select id="selectPageByWhere" resultType="MapModel">
-        SELECT a.deal_end_time_status,a.image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En as colorEn,a.deal_Price,b.attribute
+        SELECT a.deal_end_time_status,ifnull(b.image1,a.image1) as image1,ifnull(b.product_Long_Name,a.product_name_en)  AS productLongName,b.color_En AS colorEn,a.deal_Price,b.attribute
         ,a.max_retail_price,a.max_msrp_usd,a.max_msrp_rmb,a.max_sale_price,a.min_retail_price,a.min_msrp_usd,a.min_msrp_rmb,a.min_sale_price,a.market_price,a.jm_hash_id AS jmHashId,a.sku_count AS skuCount
         ,a.error_msg AS errorMsg,a.synch_status,a.update_status,a.price_status,a.id,a.promotion_tag,a.product_code,b.comment,
-        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount
+        a.max_deal_price,a.min_deal_price,a.max_market_price,a.min_market_price,a.discount,b.jumei_mall_id,a.quantity,a.remark
         FROM `cms_bt_jm_promotion_product` AS a
-       left JOIN  `cms_bt_jm_product`  AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
+        left JOIN  `cms_bt_jm_product`       AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
             <if test="cmsBtJmPromotionId!=null">
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
@@ -126,6 +106,10 @@
                         #{item}
                     </foreach> )
                 )
+            </if>
+            <if test="stockQty!=null and compareType!=null">
+
+                and a.quantity ${compareType} #{stockQty}
             </if>
             <if test="productNameCn!=null">
                 and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
@@ -169,6 +153,9 @@
                 </if>
                 <if test="allStatus1!=null">
                     or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                <if test="isInJm!=null">
+                    or b.id is null
                 </if>
                 )
             </if>
@@ -240,6 +227,10 @@
             </foreach> )
                 )
             </if>
+            <if test="stockQty!=null and compareType!=null">
+
+                and a.quantity ${compareType} #{stockQty}
+            </if>
             <if test="productNameCn!=null">
                 and   (b.product_name_cn  like CONCAT(#{productNameCn},'%')
                 or  b.product_long_name like CONCAT(#{productNameCn},'%')
@@ -269,15 +260,23 @@
             <if test="updateStatus!=null">
                 and a.update_status=#{updateStatus}
             </if>
-            <if test="synchStatusList!=null and synchStatusList.size()!=0">
-                and a.synch_status in  <foreach item="item" index="i" collection="synchStatusList"
-                                                open="(" separator="," close=")">
-                #{item}
-            </foreach>
+            <if test="hasStatus!=null">
+                and ( 1!=1
+                <if test="synchStatusList!=null and synchStatusList.size()!=0">
+                    or  a.synch_status in<foreach item="item" index="i" collection="synchStatusList"
+                                                  open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+                </if>
+                <if test="allErrorStatus!=null">
+                    or a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3 or a.stock_status=3
+                </if>
+                <if test="allStatus1!=null">
+                    or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
+                </if>
+                )
             </if>
-            <!--<if test="errorStatus!=null">-->
-            <!--and (a.synch_status=3 or a.`price_status`=3 or a.`deal_end_time_status`=3)-->
-            <!--</if>-->
+
             <if test="beginDiscount!=null">
                 and a.discount>=(#{beginDiscount}/10)
             </if>
@@ -286,26 +285,26 @@
             </if>
             <if test="priceType=='msrpRmb'">
                 <if test="beginPrice!=null">
-                    and   b.msrp_rmb>=#{beginPrice}
+                    and   a.max_msrp_rmb>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.msrp_rmb&lt;=#{endPrice}
+                    and   a.min_msrp_rmb&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='retailPrice'">
                 <if test="beginPrice!=null">
-                    and    b.retail_price>=#{beginPrice}
+                    and    a.max_retail_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and   b.retail_price&lt;=#{endPrice}
+                    and   a.min_retail_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='salePrice'">
                 <if test="beginPrice!=null">
-                    and  b.sale_price>=#{beginPrice}
+                    and a.max_sale_price>=#{beginPrice}
                 </if>
                 <if test="endPrice!=null">
-                    and  b.sale_price&lt;=#{endPrice}
+                    and  a.min_sale_price&lt;=#{endPrice}
                 </if>
             </if>
             <if test="priceType=='dealPrice'">
@@ -344,9 +343,16 @@
     </select>
 
     <select id="selectExportListByPromotionId" resultType="MapModel">
-        SELECT b.*,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id
+      SELECT b.`jumei_product_id`,b.`origin_jm_hash_id`,b.`jumei_mall_id`,b.`origin`,
+       b.`product_name_cn`,b.`vo_category_name`,b.`vo_brand_name`,b.`brand_name`,b.`product_type`,
+       b.`size_type`,b.`product_des_en`,b.`attribute`,b.`address_of_produce`,
+       b.`available_period`,b.`product_des_cn`,b.`applicable_crowd`,b.`specialNote`,b.`color_en`,
+       b.`creater`,b.`modified`,b.`modifier`,b.`created`,b.`product_long_name`,b.`product_medium_name`,
+       b.`product_short_name`,b.`search_meta_text_custom`,b.`msrp_usd`,b.`msrp_rmb`,b.`retail_price`,
+        b.`sale_price`,b.`hs_code`,b.`hs_name`,b.`hs_unit`,b.`material_en`,b.`material_cn`,b.`category_name`,
+       b.`comment`,IFNULL(b.`image1`,a.`image1`),IFNULL(b.`foreign_language_name`,a.`product_name_en`) AS foreign_language_name,a.`product_code`,a.`channel_id`,a.`app_id`,a.`pc_id`,a.`limit`,a.promotion_tag,a.jm_hash_id
         FROM `cms_bt_jm_promotion_product`  AS a
-        JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
+        Left JOIN `cms_bt_jm_product`  AS b  ON a.`channel_id`=b.`channel_id` AND  a.`product_code`=b.`product_code`
         WHERE a.`cms_bt_jm_promotion_id`= #{promotionId}
     </select>
 
@@ -471,6 +477,10 @@
         SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
 WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
     </select>
+    <select id="selectCountByPromotionId" resultType="int">
+        SELECT COUNT(*) FROM `cms_bt_jm_promotion_product`
+        WHERE   `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+    </select>
     <select id="selectNotSynchListByPromotionProductIds" resultMap="ResultMap">
         SELECT * from  cms_bt_jm_promotion_product
         WHERE synch_status!=2  and   id in
@@ -489,7 +499,48 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         </foreach>
     </update>
 
-
-
+    <select id="selectProductInfoByTagId" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel" parameterType="java.lang.Integer">
+        SELECT
+            t2.*, t3.jumei_mall_id
+        FROM
+            (
+                SELECT
+                    *
+                FROM
+                    cms_bt_jm_promotion_tag_product
+                WHERE
+                    cms_bt_tag_id = #{tagId, jdbcType=INTEGER}
+            ) t1,
+            cms_bt_jm_promotion_product t2,
+            cms_bt_jm_product t3
+        WHERE
+            t1.cms_bt_jm_promotion_product_id = t2.id
+        AND t2.channel_id = t3.channel_id
+        AND t2.product_code = t3.product_code
+        ORDER BY
+            t1.id
+    </select>
+    <update id="updateRemark">
+    UPDATE `cms_bt_jm_promotion_product` SET `remark`=#{remark} where id=#{jmPromotionProductId}
+    </update>
     <!--jm2 end-->
+
+    <!-- 取得当前有效的活动下的所有产品 -->
+    <select id="selectValidProductInfo" parameterType="Map" resultMap="ResultMap">
+        SELECT jmprod.id, jmprod.product_code
+        FROM cms_bt_jm_promotion as jmprom join cms_bt_promotion as prom
+            on prom.promotion_id = jmprom.id and prom.promotion_status = 1 and prom.active = 1 and prom.channel_id = #{channelId} and prom.cart_id = #{cartId}
+                and jmprom.active = 1 and jmprom.activity_end >= now()
+          join cms_bt_jm_promotion_product as jmprod on jmprod.cms_bt_jm_promotion_id = jmprom.id
+    </select>
+
+    <!-- 更新活动下的产品的库存数据 -->
+    <update id="updateProductStockInfo">
+        <foreach item="item" index="i" collection="jmPromotionProductList" open="" close="" separator=";">
+            update cms_bt_jm_promotion_product
+            set quantity = #{item.quantity,jdbcType=INTEGER}, sales = #{item.sales,jdbcType=INTEGER}
+            WHERE id = #{item.id}
+        </foreach>
+    </update>
+
 </mapper>

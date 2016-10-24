@@ -23,7 +23,8 @@ define([
         'angularFileUpload',
         'localytics.directives',
         'angular-md5',
-        'angular-drag'
+        'angular-drag',
+        'angular-sortable-view'
     ]).constant('cActions', actions)
         .constant('cRoutes', routes)
         .constant('cLanguageType', {
@@ -422,6 +423,7 @@ define([
             menuService.getCategoryInfo().then(function (data) {
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
                 $scope.menuInfo.isminimall = data.isminimall;
+                $scope.menuInfo.only4jumei = data.only4jumei;
             });
         }
 

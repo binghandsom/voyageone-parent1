@@ -31,7 +31,6 @@ define([
                 $scope.vm.isEnd=res.data.isEnd;//活动是否结束
                 $scope.vm.isUpdateJM=res.data.isUpdateJM;
                 $scope.vm.brandList = res.data.brandList;
-
             });
             $scope.search();
             $scope.modelUpdateDealEndTime.promotionId = $routeParams.parentId;
