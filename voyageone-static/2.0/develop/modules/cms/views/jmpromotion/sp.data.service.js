@@ -2,18 +2,35 @@ define(['cms'], function (cms) {
 
     function SpDataService(jmPromotionService, jmPromotionDetailService, JmPromotionImagesService, $routeParams, $q, $filter) {
         var self = this;
-        self.promotionId = parseInt($routeParams['promId']);
-        self.jmPromotionId = parseInt($routeParams['jmpromId']);
-        self.commonUpEntity = {
-            promotionId: self.promotionId,
-            jmPromotionId: self.jmPromotionId
-        };
+
+        self.$routeParams = $routeParams;
         self.$q = $q;
         self.jmPromotionService = jmPromotionService;
         self.jmPromotionDetailService = jmPromotionDetailService;
         self.JmPromotionImagesService = JmPromotionImagesService;
         self.dateFilter = $filter('date');
     }
+
+    Object.defineProperty(SpDataService.prototype, 'promotionId', {
+        get: function () {
+            return parseInt(this.$routeParams['promId']);
+        }
+    });
+
+    Object.defineProperty(SpDataService.prototype, 'jmPromotionId', {
+        get: function () {
+            return parseInt(this.$routeParams['jmpromId']);
+        }
+    });
+
+    Object.defineProperty(SpDataService.prototype, 'commonUpEntity', {
+        get: function () {
+            return {
+                promotionId: this.promotionId,
+                jmPromotionId: this.jmPromotionId
+            };
+        }
+    });
 
     SpDataService.prototype.getPromotion = function getPromotion() {
         var self = this,
