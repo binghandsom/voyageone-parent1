@@ -31,10 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -844,16 +841,33 @@ public class CmsProductMoveService extends BaseViewService {
             newPlatformModel.setAttribute("pStatus", null);
             newPlatformModel.setpReallyStatus(null);
 
-            // 去除没有选择的Sku
+            // 去除没有选择的Sku(platforms.skus)
             List<BaseMongoMap<String, Object>> platformSkusModel = newPlatformModel.getSkus();
             List<BaseMongoMap<String, Object>> newPlatformSkusModel = new ArrayList<>();
-            //
-            for (BaseMongoMap<String, Object> platformSkus : platformSkusModel) {
-                if (skuList.contains(platformSkus.get("skuCode"))) {
-                    newPlatformSkusModel.add(platformSkus);
+            for (BaseMongoMap<String, Object> platformSku : platformSkusModel) {
+                if (skuList.contains(platformSku.get("skuCode"))) {
+                    newPlatformSkusModel.add(platformSku);
                 }
             }
             newPlatformModel.setSkus(newPlatformSkusModel);
+
+            // 去除没有选择的Sku(platforms.fields.sku)
+            if (newPlatformModel.getFields() != null && newPlatformModel.getFields().get("sku") != null) {
+                if (newPlatformModel.getFields().get("sku") instanceof List) {
+                    List platformFieldsSkusModel = (List) newPlatformModel.getFields().get("sku");
+                    List<Map<String, Object>> newPlatformFieldsSkusModel = new ArrayList<>();
+                    for (Object platformFieldSku : platformFieldsSkusModel) {
+                        if (platformFieldSku instanceof  Map) {
+                            if (((Map)platformFieldSku).get("sku_outerId") != null) {
+                                if (skuList.contains(String.valueOf(((Map)platformFieldSku).get("sku_outerId")))) {
+                                    newPlatformFieldsSkusModel.add((Map)platformFieldSku);
+                                }
+                            }
+                        }
+                    }
+                    newPlatformModel.getFields().put("sku", newPlatformFieldsSkusModel);
+                }
+            }
 
             // 设置主商品
             if ("new".equals(destGroupType)) {
@@ -909,12 +923,13 @@ public class CmsProductMoveService extends BaseViewService {
         sourceProductModel.getCommon().setModified(now);
         sourceProductModel.getCommon().setModifier(modifier);
 
-        // platforms.skus中去除移动的sku
+        // 去除移动的sku
         for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : sourceProductModel.getPlatforms().entrySet()) {
             // 跳过P0（主数据）
             if (platform.getValue().getCartId().equals(0)) {
                 continue;
             }
+            // platforms.skus中去除移动的sku
             List<BaseMongoMap<String, Object>> platformSkusNew = new ArrayList<>();
             for (BaseMongoMap<String, Object> platformSku : platform.getValue().getSkus()) {
                 if (!skuList.contains((String) platformSku.get("skuCode"))) {
@@ -922,6 +937,25 @@ public class CmsProductMoveService extends BaseViewService {
                 }
             }
             platform.getValue().setSkus(platformSkusNew);
+
+            // 去除没有选择的Sku(platforms.fields.sku)
+            if (platform.getValue().getFields() != null && platform.getValue().getFields().get("sku") != null) {
+                if (platform.getValue().getFields().get("sku") instanceof List) {
+                    List platformFieldsSkusModel = (List) platform.getValue().getFields().get("sku");
+                    List<Map<String, Object>> newPlatformFieldsSkusModel = new ArrayList<>();
+                    for (Object platformFieldSku : platformFieldsSkusModel) {
+                        if (platformFieldSku instanceof  Map) {
+                            if (((Map)platformFieldSku).get("sku_outerId") != null) {
+                                if (!skuList.contains(String.valueOf(((Map)platformFieldSku).get("sku_outerId")))) {
+                                    newPlatformFieldsSkusModel.add((Map)platformFieldSku);
+                                }
+                            }
+                        }
+                    }
+                    platform.getValue().getFields().put("sku", newPlatformFieldsSkusModel);
+                }
+            }
+
             platform.getValue().setModified(now);
         }
 
