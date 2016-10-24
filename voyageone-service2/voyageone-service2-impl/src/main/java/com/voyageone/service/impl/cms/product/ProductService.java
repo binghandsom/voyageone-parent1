@@ -32,11 +32,13 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
@@ -110,6 +112,9 @@ public class ProductService extends BaseService {
     @Autowired
     private ProductLogService productLogService;
 
+    @Autowired
+    private CmsMtEtkHsCodeService cmsMtEtkHsCodeService;
+
 
     /**
      * 获取商品 根据ID获
@@ -123,10 +128,11 @@ public class ProductService extends BaseService {
      * 获取商品 根据ID获
      */
     public List<CmsBtProductModel> getProductByNumIid(String channelId, String numIid, Integer cartId) {
-        String temp = "platforms.P"+cartId+".pNumIId";
-        String query = String.format("{\"%s\":\"%s\"}",temp,numIid);
+        String temp = "platforms.P" + cartId + ".pNumIId";
+        String query = String.format("{\"%s\":\"%s\"}", temp, numIid);
         return cmsBtProductDao.select(query, channelId);
     }
+
     /**
      * 获取商品 根据Code
      */
@@ -626,6 +632,18 @@ public class ProductService extends BaseService {
                 resultInfo.setUnitPu(hsCodePu[2]);
 //                }
             }
+
+            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
+                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeLikeCatPath(entry.getValue().getCartId(),  entry.getValue().getpCatPath());
+                    if(cmsMtEtkHsCodeModel != null){
+                        resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+                        resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+                        resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+                        break;
+                    }
+                }
+            }
         }
         return resultInfo;
     }
@@ -696,11 +714,11 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(skuIncludes)) {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-                } else if(skuList != null && !skuList.isEmpty()){
+                } else if (skuList != null && !skuList.isEmpty()) {
                     System.out.print(product.getCommon().getFields().getCode());
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
-                }else{
+                } else {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus();
                 }
             }
