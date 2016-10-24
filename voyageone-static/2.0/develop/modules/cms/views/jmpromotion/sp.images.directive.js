@@ -78,12 +78,13 @@ define([
             promotionInfo = self.promotionInfo,
             spDataService = self.spDataService,
             brand = promotionInfo ? promotionInfo.brand : '',
-            popups = self.popups;
+            popups = self.popups,
+            common = angular.copy(spDataService.commonUpEntity);
 
-        popups.openImageBatchJmUpload(_.extend(spDataService.commonUpEntity, {
+        popups.openImageBatchJmUpload(_.extend(common, {
             brand: brand
             , imgUpEntity: self.imgUpEntity
-        })).then(function () {
+        })).then(function (res) {
             self.init();
         });
     };
@@ -132,7 +133,7 @@ define([
                     counts++;
             });
 
-            if (counts != IMG_CONFIG) {
+            if (counts != IMG_CONFIG.counts) {
                 alert("聚美活动图片没有上传完整！");
                 return;
             }
