@@ -149,6 +149,11 @@ define(['cms'], function (cms) {
             bayWindow = self.bayWindow,
             notify = self.notify;
 
+        if (self.bayWindowForm.$invalid) {
+            notify.warning('TXT_SAVE_ERROR');
+            return;
+        }
+
         bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
 
         spDataService.saveBayWindow(bayWindow).then(function () {
