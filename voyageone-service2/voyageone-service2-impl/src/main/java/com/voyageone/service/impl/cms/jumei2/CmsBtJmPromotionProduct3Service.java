@@ -338,7 +338,7 @@ public class CmsBtJmPromotionProduct3Service {
         CmsBtJmProductModel modelProduct = daoExtCmsBtJmProductDaoExt.selectByProductCodeChannelId(modelPromotionProduct.getProductCode(), modelPromotionProduct.getChannelId());
         productViewBean.setModelJmPromotionProduct(modelPromotionProduct);
         productViewBean.setModelJmProduct(modelProduct);
-        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId);
+        List<MapModel> mapModelList = daoExtCmsBtJmPromotionSku.selectViewListByPromotionProductId(promotionProductId,modelPromotionProduct.getCmsBtJmPromotionId());
         productViewBean.setSkuList(mapModelList);
         return productViewBean;
     }

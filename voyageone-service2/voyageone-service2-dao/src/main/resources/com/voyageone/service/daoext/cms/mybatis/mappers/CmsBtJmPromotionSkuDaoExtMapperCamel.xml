@@ -91,7 +91,7 @@
     ,b.`msrp_usd`,b.`msrp_rmb`,b.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
  FROM `cms_bt_jm_sku` AS a
  right JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
- where b.cms_bt_jm_promotion_product_id=#{promotionProductId}
+ where b.cms_bt_jm_promotion_product_id=#{promotionProductId} and b.cms_bt_jm_promotion_id=#{jmPromotionId}
 </select>
     <!--jumei2  end-->
 </mapper>
