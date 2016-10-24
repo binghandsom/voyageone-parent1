@@ -241,10 +241,11 @@ define([
         var self = this,
             alert = self.alert,
             jmPromotionService = self.jmPromotionService,
-            spDataService = self.spDataService;
+            spDataService = self.spDataService,
+            editModel = self.editModel;
 
-        var model = self.editModel.model;
-        var extModel = self.editModel.extModel;
+        var model = editModel.model;
+        var extModel = editModel.extModel;
         if (saveType) {
             // 在'提交'时检查输入项目
             var start = new Date(model.activityStart);
@@ -275,11 +276,11 @@ define([
                 return;
             }
 
-            if (self.editModel.tagList.length === 0) {
+            if (editModel.tagList.length === 0) {
                 alert("请至少添加一个标签");
                 return;
             }
-            var hasTag = _.every(self.editModel.tagList, function (element) {
+            var hasTag = _.every(editModel.tagList, function (element) {
                 return element.tagName;
             });
             if (!hasTag)
@@ -306,7 +307,7 @@ define([
         }
 
         var param = {};
-        param.tagList= _.filter( self.editModel.tagList, function(tag){ return tag.tagName != "";});
+        param.tagList= _.filter( editModel.tagList, function(tag){ return tag.tagName != "";});
         param.model = angular.copy(model);
         param.extModel = angular.copy(extModel);
 
@@ -392,15 +393,19 @@ define([
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
         spDataService.jmPromotionObj.detailStatus = 2;
 
-        jmPromotionService.saveModel(param).then(function(modelBean) {
+        jmPromotionService.saveModel(param).then(function() {
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
             }
-            // 不论是暂存还是提交
-            // 成功之后都重新刷新数据
-            self.init();
-            // 在暂存或提交之后，触发事件，促使模块刷新
-            self.$fire('detail.saved');
+            // 保存之后如果标签被修改过就需要重新刷新标签缓存
+            spDataService.getPromotionModules(true).then(function (tagModels) {
+                // 刷新标签编辑部分
+                editModel.tagList = tagModels.map(function (tagModelItem) {
+                    return tagModelItem.tag;
+                });
+                // 之后触发事件，促使模块刷新
+                self.$fire('detail.saved');
+            });
         });
     };
 
