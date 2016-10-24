@@ -89,7 +89,7 @@ ORDER by b.`product_code`,b.`jm_size`
 <select id="selectViewListByPromotionProductId" resultType="MapModel">
     SELECT a.`jm_sku_no`,a.`upc`,a.`format`,a.`cms_size`,a.`sku_code`,b.`msrp_usd`,b.`msrp_rmb`,b.`sale_price`,b.`market_price`,b.`deal_price`,b.`id`
  FROM `cms_bt_jm_sku` AS a
- JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
+ right JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
  where b.cms_bt_jm_promotion_product_id=#{promotionProductId}
 </select>
     <!--jumei2  end-->
