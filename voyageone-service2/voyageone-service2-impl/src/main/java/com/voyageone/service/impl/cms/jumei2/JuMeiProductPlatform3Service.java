@@ -75,13 +75,15 @@ public class JuMeiProductPlatform3Service extends BaseService {
     public void updateJmByPromotionId(int promotionId) throws Exception {
         HashMap<String,Boolean> mapMasterBrand =new HashMap<>();//
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(promotionId);
+        long activityBeginTime = DateTimeUtilBeijing.toLocalTime(modelCmsBtJmPromotion.getActivityStart());//北京时间转本地时区时间戳
+        boolean isBegin=activityBeginTime < new Date().getTime();//活动是否看开始
         ShopBean shopBean = serviceJMShopBean.getShopBean(modelCmsBtJmPromotion.getChannelId());
         LOG.info(promotionId + " 聚美上新开始");
         List<CmsBtJmPromotionProductModel> listCmsBtJmPromotionProductModel = daoExtCmsBtJmPromotionProduct.selectJMCopyList(promotionId);
         try {
             for (CmsBtJmPromotionProductModel model : listCmsBtJmPromotionProductModel) {
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新begin");
-                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand);
+                updateJm(modelCmsBtJmPromotion, model, shopBean,mapMasterBrand,isBegin);
                 LOG.info(promotionId + " code:" + model.getProductCode() + "上新end");
             }
         } catch (Exception ex) {
@@ -104,9 +106,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
        if(parameter.platform==null){throw new  BusinessException("CmsBtProduct商品聚美信息不存在.");}
        return parameter;
    }
-    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand) throws Exception {
+    public void updateJm(CmsBtJmPromotionModel modelCmsBtJmPromotion,CmsBtJmPromotionProductModel cmsBtJmPromotionProductModel, ShopBean shopBean,HashMap<String,Boolean> mapMasterBrand,boolean isBegin) throws Exception {
         try {
             UpdateJmParameter parameter = getUpdateJmParameter(modelCmsBtJmPromotion, cmsBtJmPromotionProductModel, shopBean);
+            parameter.setBegin(isBegin);//活动是否开始
             api_beforeCheck(parameter,mapMasterBrand);//api调用前check
             if (parameter.cmsBtJmPromotionProductModel.getSynchStatus() != 2) {
                 // 再售
@@ -272,7 +275,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         ShopBean shopBean=parameter.shopBean;
         List<SkuPriceBean> listSkuPrice = daoExtCmsBtJmPromotionSku.selectJmSkuPriceInfoListByPromotionProductId(model.getId());
         jmHtDealUpdateDealPriceBatch(model, shopBean, listSkuPrice);//更新deal价格
-        jmhtMall_UpdateMallPriceBatch(model,shopBean,listSkuPrice);//更新商城价格
+        if(parameter.isBegin) {
+            //活动开始 更新mallPrice 价格
+            jmhtMall_UpdateMallPriceBatch(model, shopBean, listSkuPrice);//更新商城价格
+        }
         //
         String jmSkuNoList = getjmSkuNo(listSkuPrice);
         jmHtDealUpdate(model, shopBean, jmSkuNoList);//更新deal信息   limit   jmSkuNo
