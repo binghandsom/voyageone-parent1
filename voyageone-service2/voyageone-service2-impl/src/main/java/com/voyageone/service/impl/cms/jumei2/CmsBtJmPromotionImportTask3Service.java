@@ -576,7 +576,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 continue;
             }
             if (saveInfo.jmProductModel.getId() != null && saveInfo.jmProductModel.getId() > 0) {
-                skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(skuImportBean.getSkuCode(), saveInfo.jmProductModel.getId());
+                skuModel = daoExtCmsBtJmPromotionSku.selectBySkuCode(skuImportBean.getSkuCode(), saveInfo.jmProductModel.getId(),saveInfo.jmProductModel.getCmsBtJmPromotionId());
             }
             if (skuModel == null) {
                 skuModel = new CmsBtJmPromotionSkuModel();
