@@ -6,14 +6,16 @@
             </h4>
         </div>
         <div class="panel-body">
-            <div class="form-horizontal">
+            <form class="form-horizontal" novalidate name="ctrl.bayWindowForm">
                 <div class="form-group">
                     <label class="control-label col-sm-2">Bay Window Type:</label>
                     <div class="col-sm-4" ng-switch="ctrl.bayWindow.fixed">
                         <div class="radio">
-                            <label><input type="radio" name="bay-window-type" ng-model="ctrl.bayWindow.fixed" ng-value="true" ng-change="ctrl.switchPreview()"> 定位飘窗</label>
+                            <label><input type="radio" name="bay-window-type" ng-model="ctrl.bayWindow.fixed"
+                                          ng-value="true" ng-change="ctrl.switchPreview()"> 定位飘窗</label>
                             <span>&nbsp; </span>
-                            <label><input type="radio" name="bay-window-type" ng-model="ctrl.bayWindow.fixed" ng-value="false" ng-change="ctrl.switchPreview()"> 链接飘窗</label>
+                            <label><input type="radio" name="bay-window-type" ng-model="ctrl.bayWindow.fixed"
+                                          ng-value="false" ng-change="ctrl.switchPreview()"> 链接飘窗</label>
                         </div>
                         <hr>
                         <!--定位飘窗-->
@@ -24,8 +26,12 @@
                                         <input type="checkbox" ng-model="item.enabled" ng-switch-default>
                                     </div>
                                     <div class="col-sm-11">
-                                        <input class="form-control" ng-switch-when="0" ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)">
+                                        <input class="form-control" name="header" ng-switch-when="0"
+                                               ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)" required>
                                         <span ng-switch-default>{{item.name}}</span>
+                                    </div>
+                                    <div class="col-sm-11 col-sm-offset-1">
+                                        <vo-message target="ctrl.bayWindowForm.header"></vo-message>
                                     </div>
                                 </div>
                             </li>
@@ -36,25 +42,46 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Link</th>
-                                <th><button type="button" class="btn btn-xs btn-success" ng-click="ctrl.addLinkWindow()"><i class="fa fa-plus"></i></button></th>
+                                <th>
+                                    <button type="button" class="btn btn-xs btn-success"
+                                            ng-click="ctrl.addLinkWindow()"><i class="fa fa-plus"></i></button>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr ng-repeat="item in ctrl.linkWindows" ng-switch="$index">
                                 <td>
-                                    <input class="form-control" ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)">
+                                    <input name="{{'name' + $index}}" type="text" required class="form-control"
+                                           ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)">
+                                    <vo-message target="ctrl.bayWindowForm['name' + $index]"></vo-message>
                                 </td>
                                 <td>
-                                    <input class="form-control" ng-model="item.link" ng-change="ctrl.updateUrl(item, $index)">
+                                    <input name="{{'link' + $index}}" type="text" required
+                                           ng-pattern="/^http:\/\/hd.jumeiglobal.com\//"
+                                           class="form-control" ng-model="item.link"
+                                           ng-change="ctrl.updateUrl(item, $index)">
+                                    <vo-message target="ctrl.bayWindowForm['link' + $index]"></vo-message>
                                 </td>
                                 <td ng-switch-when="0"></td>
                                 <td ng-switch-default>
-                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.up)"><i class="fa fa-angle-up"></i></button>
-                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.upToTop)"><i class="fa fa-angle-double-up"></i></button>
-                                    <button type="button" class="btn btn-xs btn-danger" ng-click="ctrl.removeLinkWindow(item, $index)"><i class="fa fa-trash"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1"
+                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.up)"><i
+                                            class="fa fa-angle-up"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1"
+                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.upToTop)"><i
+                                            class="fa fa-angle-double-up"></i></button>
+                                    <button type="button" class="btn btn-xs btn-danger"
+                                            ng-click="ctrl.removeLinkWindow(item, $index)"><i class="fa fa-trash"></i>
+                                    </button>
                                     <br>
-                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === ctrl.linkWindows.length - 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.down)"><i class="fa fa-angle-down"></i></button>
-                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === ctrl.linkWindows.length - 1" ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.downToLast)"><i class="fa fa-angle-double-down"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default"
+                                            ng-disabled="$index === ctrl.linkWindows.length - 1"
+                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.down)"><i
+                                            class="fa fa-angle-down"></i></button>
+                                    <button type="button" class="btn btn-xs btn-default"
+                                            ng-disabled="$index === ctrl.linkWindows.length - 1"
+                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.downToLast)"><i
+                                            class="fa fa-angle-double-down"></i></button>
                                 </td>
                             </tr>
                             </tbody>
@@ -66,7 +93,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
     <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">

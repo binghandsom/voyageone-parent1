@@ -102,7 +102,7 @@ define(['cms'], function (cms) {
         var self = this,
             linkWindows = self.linkWindows;
 
-        self.confirm('确定要删除么？').then(function () {
+        self.confirm('TXT_MSG_DELETE_ITEM').then(function () {
             linkWindows.splice(index, 1);
         });
     };
@@ -149,10 +149,15 @@ define(['cms'], function (cms) {
             bayWindow = self.bayWindow,
             notify = self.notify;
 
+        if (self.bayWindowForm.$invalid) {
+            notify.warning('TXT_SAVE_ERROR');
+            return;
+        }
+
         bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
 
         spDataService.saveBayWindow(bayWindow).then(function () {
-            notify.success('保存成功');
+            notify.success('TXT_SAVE_SUCCESS');
         });
     };
 

@@ -1,100 +1,128 @@
 <section ng-init="ctrl.loadModules()" style="position: relative;">
-    <div id="{{::'jm-tag' + $index}}" class="panel panel-vo" ng-repeat="tagModule in ctrl.modules">
-        <div class="panel-heading">
-            <h4 class="panel-title">
-                布局标签：<span>{{::tagModule.tag.tagName}}</span>（有库存商品数：<span>{{::tagModule.productCountInStock}}</span>；商品总库存：<span>{{::tagModule.totalStock}}</span>）
-            </h4>
-        </div>
-        <div class="panel-body">
-            <div class="form-horizontal">
-                <div class="form-group">
-                    <div class="col-sm-2">
-                        <button type="button" class="btn btn-default" ng-click="ctrl.openProductSortPopup(tagModule.tag.id)">调整货架商品排序</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">模块标题</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" ng-model="tagModule.module.moduleTitle">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">模块标题图片预览</label>
-                    <div class="col-sm-6">
-                        <div class="jm-module-bar-preview" style="background-image: url({{::ctrl.barUrl}})">{{tagModule.module.moduleTitle}}</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">模块名称</label>
-                    <div class="col-sm-6">
-                        <input type="text" class="form-control" ng-model="tagModule.tag.tagName">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">模块是否隐藏</label>
-                    <div class="col-sm-6">
-                        <div class="radio">
-                            <label><input name="{{::'jm-module-show' + $index}}" type="radio" ng-model="tagModule.module.hideFlag" ng-value="1"> 不隐藏</label>
-                            <span>&nbsp;&nbsp;</span>
-                            <label><input name="{{::'jm-module-show' + $index}}" type="radio" ng-model="tagModule.module.hideFlag" ng-value="2"> 预热时隐藏</label>
-                            <span>&nbsp;&nbsp;</span>
-                            <label><input name="{{::'jm-module-show' + $index}}" type="radio" ng-model="tagModule.module.hideFlag" ng-value="3"> 正式时隐藏</label>
-                            <span>&nbsp;&nbsp;</span>
-                            <label><input name="{{::'jm-module-show' + $index}}" type="radio" ng-model="tagModule.module.hideFlag" ng-value="0"> 自定义显示</label>
-                        </div>
-                        <div class="form-inline" ng-if="tagModule.module.hideFlag === 0">
-                            <input class="form-control" type="datetime-local" ng-model="tagModule.module.displayStartTime">
-                            <span>&nbsp;~&nbsp;</span>
-                            <input class="form-control" type="datetime-local" ng-model="tagModule.module.displayEndTime">
-                            <span>&nbsp; &nbsp;(此处为北京时间，即东八区时间)</span>
+    <form novalidate name="ctrl.tagsForm">
+        <div id="{{::'jm-tag' + $index}}" class="panel panel-vo" ng-repeat="tagModule in ctrl.modules">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    布局标签：<span>{{::tagModule.tag.tagName}}</span>（有库存商品数：<span>{{::tagModule.productCountInStock}}</span>；商品总库存：<span>{{::tagModule.totalStock}}</span>）
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-default"
+                                    ng-click="ctrl.openProductSortPopup(tagModule.tag.id)">调整货架商品排序
+                            </button>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">货架类型</label>
-                    <div class="col-sm-6">
-                        <div class="radio">
-                            <label><input name="{{'jm-module-shelf' + $index}}" type="radio" ng-model="tagModule.module.shelfType" ng-value="1"> 普通货架</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">模块标题</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="{{'moduleTitle' + $index}}" class="form-control"
+                                   ng-model="tagModule.module.moduleTitle"
+                                   required>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2">
+                            <vo-message target="ctrl.tagsForm['moduleTitle' + $index]"></vo-message>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">图片类型</label>
-                    <div class="col-sm-6">
-                        <div class="radio">
-                            <label><input name="{{'jm-module-image' + $index}}" type="radio" ng-model="tagModule.module.imageType" ng-value="1"> 方图</label>
-                            <span>&nbsp;&nbsp;</span>
-                            <label><input name="{{'jm-module-image' + $index}}" type="radio" ng-model="tagModule.module.imageType" ng-value="2"> 竖图</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">模块标题图片预览</label>
+                        <div class="col-sm-6">
+                            <div class="jm-module-bar-preview" style="background-image: url({{::ctrl.barUrl}})">
+                                {{tagModule.module.moduleTitle}}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">商品排序</label>
-                    <div class="col-sm-4">
-                        <select class="form-control" ng-model="tagModule.module.productsSortBy"
-                                ng-options="value as key for (key,value) in ctrl.productsSortBy">
-                        </select>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">模块名称</label>
+                        <div class="col-sm-6">
+                            <input type="text" name="{{'tagName' + $index}}" class="form-control"
+                                   ng-model="tagModule.tag.tagName"
+                                   required>
+                        </div>
+                        <div class="col-sm-6 col-sm-offset-2">
+                            <vo-message target="ctrl.tagsForm['tagName' + $index]"></vo-message>
+                        </div>
                     </div>
-                    <div class="col-sm-2">
-                        <div class="checkbox">
-                            <label><input type="checkbox" ng-model="tagModule.module.noStockToLast"> 无库存的自动排至最后</label>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">模块是否隐藏</label>
+                        <div class="col-sm-6">
+                            <div class="radio">
+                                <label><input name="{{::'jm-module-show' + $index}}" type="radio"
+                                              ng-model="tagModule.module.hideFlag" ng-value="1"> 不隐藏</label>
+                                <span>&nbsp;&nbsp;</span>
+                                <label><input name="{{::'jm-module-show' + $index}}" type="radio"
+                                              ng-model="tagModule.module.hideFlag" ng-value="2"> 预热时隐藏</label>
+                                <span>&nbsp;&nbsp;</span>
+                                <label><input name="{{::'jm-module-show' + $index}}" type="radio"
+                                              ng-model="tagModule.module.hideFlag" ng-value="3"> 正式时隐藏</label>
+                                <span>&nbsp;&nbsp;</span>
+                                <label><input name="{{::'jm-module-show' + $index}}" type="radio"
+                                              ng-model="tagModule.module.hideFlag" ng-value="0"> 自定义显示</label>
+                            </div>
+                            <div class="form-inline" ng-if="tagModule.module.hideFlag === 0">
+                                <input class="form-control" type="datetime-local"
+                                       ng-model="tagModule.module.displayStartTime">
+                                <span>&nbsp;~&nbsp;</span>
+                                <input class="form-control" type="datetime-local"
+                                       ng-model="tagModule.module.displayEndTime">
+                                <span>&nbsp; &nbsp;(此处为北京时间，即东八区时间)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">货架类型</label>
+                        <div class="col-sm-6">
+                            <div class="radio">
+                                <label><input name="{{'jm-module-shelf' + $index}}" type="radio"
+                                              ng-model="tagModule.module.shelfType" ng-value="1"> 普通货架</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">图片类型</label>
+                        <div class="col-sm-6">
+                            <div class="radio">
+                                <label><input name="{{'jm-module-image' + $index}}" type="radio"
+                                              ng-model="tagModule.module.imageType" ng-value="1"> 方图</label>
+                                <span>&nbsp;&nbsp;</span>
+                                <label><input name="{{'jm-module-image' + $index}}" type="radio"
+                                              ng-model="tagModule.module.imageType" ng-value="2"> 竖图</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">商品排序</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" ng-model="tagModule.module.productsSortBy"
+                                    ng-options="value as key for (key,value) in ctrl.productsSortBy">
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="checkbox">
+                                <label><input type="checkbox" ng-model="tagModule.module.noStockToLast">
+                                    无库存的自动排至最后</label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
-        <ul class="nav nav-pills nav-stacked">
-            <li ng-repeat="tagModule in ctrl.modules">
-                <button type="button" class="btn btn-default" scroll-to="{{::'#jm-tag'+$index+',,-60'}}">{{::tagModule.tag.tagName}}</button>
-            </li>
-            <li>
-                <hr>
-            </li>
-            <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.saveAll()">保存</button>
-            </li>
-        </ul>
-    </sticky>
+        <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
+            <ul class="nav nav-pills nav-stacked">
+                <li ng-repeat="tagModule in ctrl.modules">
+                    <button type="button" class="btn btn-default" scroll-to="{{::'#jm-tag'+$index+',,-60'}}">
+                        {{::tagModule.tag.tagName}}
+                    </button>
+                </li>
+                <li>
+                    <hr>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-success" ng-click="ctrl.saveAll()">保存</button>
+                </li>
+            </ul>
+        </sticky>
+    </form>
 </section>

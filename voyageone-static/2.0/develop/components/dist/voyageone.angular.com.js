@@ -557,7 +557,8 @@ angular.module("voyageone.angular.directives")
 
                         // 如果是长度类的检查, 那么为翻译提供长度参数
                         if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
-                            translateParam.value = targetElement.attr(error);
+                            if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
+                                translateParam.value = targetElement.attr('ng-pattern');
                         }
 
                         // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
