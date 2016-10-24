@@ -808,12 +808,35 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             ((InputField) field).setValue(((SingleCheckField) fieldsMap.get("Status")).getValue().getValue());
         }
         {
+            // Id
+            String field_id = "Id";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(Long.toString(product.getProdId()));
+        }
+        {
+            // ShGender 性别
+            String field_id = "ShGender";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(product.getCommon().getFields().getSizeType());
+        }
+        {
             // Name 标题
             String field_id = "Name";
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getOriginalTitleCn());
+            String name = product.getCommon().getFields().getOriginalTitleCn();
+            if (StringUtils.isEmpty(name)) {
+                name = product.getCommon().getFields().getProductNameEn();
+            }
+            if (StringUtils.isEmpty(name)) {
+                throw new BusinessException(String.format("商品[code:]商品标题为空!", product.getCommon().getFields().getCode()));
+            }
+            ((InputField) field).setValue(name);
         }
         {
             // Abstract 同Name
@@ -917,7 +940,12 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(product.getCommon().getFields().getMaterialCn());
+            String material = product.getCommon().getFields().getMaterialCn();
+            if (StringUtils.isEmpty(material)) {
+                material = product.getCommon().getFields().getMaterialEn();
+            }
+
+            ((InputField) field).setValue(material);
         }
         {
             // PrimaryCategoryId 主类目id
@@ -977,7 +1005,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
 //            setDescriptionValue(expressionParser, shopBean, modifier, field, true);
-            ((InputField) field).setValue(product.getCommon().getFields().getLongDesCn());
+            String longDes = product.getCommon().getFields().getLongDesCn();
+            if (StringUtils.isEmpty(longDes)) {
+                longDes = product.getCommon().getFields().getLongDesEn();
+            }
+            if (StringUtils.isEmpty(longDes)) {
+                throw new BusinessException(String.format("商品[code:]商品长描述为空!", product.getCommon().getFields().getCode()));
+            }
+            ((InputField) field).setValue(longDes);
         }
         {
             // ShortDescription 商品简短说明
@@ -986,7 +1021,11 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
 //            setDescriptionValue(expressionParser, shopBean, modifier, field, false);
-            ((InputField) field).setValue(product.getCommon().getFields().getShortDesCn());
+            String shortDes = product.getCommon().getFields().getShortDesCn();
+            if (StringUtils.isEmpty(shortDes)) {
+                shortDes = product.getCommon().getFields().getShortDesEn();
+            }
+            ((InputField) field).setValue(shortDes);
         }
         {
             // MainImageList 商品主图  逗号分隔
@@ -1014,6 +1053,15 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 //            ((InputField) field).setValue(strImageNames);
 //            ((InputField) field).setValue(imageKey.stream().collect(Collectors.joining(",")));
             ((InputField) field).setValue(imageNames.stream().collect(Collectors.joining(",")));
+
+            {
+                // ImageCount
+                String field_id_ImageCount = "ImageCount";
+                listSp.add(field_id_ImageCount);
+                Field field_ImageCount = fieldsMap.get(field_id_ImageCount);
+
+                ((InputField) field_ImageCount).setValue(String.valueOf(imageCnt));
+            }
         }
         {
             // CreatedAt 上市日期
@@ -1021,14 +1069,15 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            String propValue = sxProductService.getProductValueByMasterMapping(field, shopBean, expressionParser, modifier);
-            if (!StringUtils.isEmpty(propValue)) {
-                Date date = DateTimeUtil.parse(propValue, DateTimeUtil.DEFAULT_DATE_FORMAT);
-                if (date == null) {
-                    throw new BusinessException(field.getName() + "格式转换失败!");
-                }
-                ((InputField) field).setValue(DateTimeUtil.format(date, DateTimeUtil.DATE_TIME_FORMAT_11));
-            }
+//            String propValue = sxProductService.getProductValueByMasterMapping(field, shopBean, expressionParser, modifier);
+//            if (!StringUtils.isEmpty(propValue)) {
+//                Date date = DateTimeUtil.parse(propValue, DateTimeUtil.DEFAULT_DATE_FORMAT);
+//                if (date == null) {
+//                    throw new BusinessException(field.getName() + "格式转换失败!");
+//                }
+//                ((InputField) field).setValue(DateTimeUtil.format(date, DateTimeUtil.DATE_TIME_FORMAT_11));
+//            }
+            ((InputField) field).setValue("10/08/2016");
         }
         {
             // Model 款号
@@ -1077,6 +1126,14 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             Field field = fieldsMap.get(field_id);
 
             calcPrice(product, sxData, field, CmsBtProductConstants.Platform_SKU_COM.priceSale.name());
+        }
+        {
+            // Price
+            String field_id = "Price";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(((InputField) fieldsMap.get("SalePrice")).getValue());
         }
 
     }

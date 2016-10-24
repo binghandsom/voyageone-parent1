@@ -55,6 +55,8 @@ public class CnCategoryService extends BaseService {
         bean.setUrlKey(catIds[length - 1]); // 唯一（暂定用类目Id）
         if (length > 1) {
             bean.setParentId(catIds[length - 2]); // 父类目Id
+        } else {
+            bean.setParentId("2");
         }
         StringBuilder catFullPath = new StringBuilder("1/2/");
         for (int i = 0; i < length; i++) {
@@ -117,6 +119,10 @@ public class CnCategoryService extends BaseService {
     public boolean uploadCnCategory(List<CnCategoryBean> listBean, ShopBean shopBean) {
         boolean isSuccess = false;
 
+        // Default Category
+        CnCategoryBean categoryIdTwo = createCnBeanForCategoryIdTwo();
+        listBean.add(0, categoryIdTwo);
+
         List<List<Field>> listCatField = new ArrayList<>();
         for (CnCategoryBean bean : listBean) {
             Map<String, Object> mapBean;
@@ -163,6 +169,24 @@ public class CnCategoryService extends BaseService {
         }
 
         return isSuccess;
+    }
+
+    /**
+     * 创建"2"这个共通类目id
+     */
+    private CnCategoryBean createCnBeanForCategoryIdTwo() {
+        CnCategoryBean bean = new CnCategoryBean();
+        bean.setId("2");
+        bean.setParentId("1");
+        bean.setCategoryPath("1/2");
+        bean.setDisplayOrder(1);
+        bean.setName("Default Category");
+        bean.setIsSneakerheadOnly("0");
+        bean.setIsPublished("1");
+        bean.setIsVisibleOnMenu("1");
+        bean.setIsEnableFilter("0");
+
+        return bean;
     }
 
     /**
