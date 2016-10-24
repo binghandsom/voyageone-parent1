@@ -631,9 +631,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 }
 
                 List<CmsBtPromotionSkuBean> skus = new ArrayList<>();
-                for (CmsBtProductModel_Sku sku : sxProductModel.getCommon().getSkus()) {
+                for (BaseMongoMap<String, Object> sku : sxProductModel.getPlatform(sxData.getCartId()).getSkus()) {
                     CmsBtPromotionSkuBean skuBean = new CmsBtPromotionSkuBean();
-                    skuBean.setProductSku(sku.getSkuCode());
+                    skuBean.setProductSku(sku.getAttribute("skuCode"));
                     Double dblPriceSku = Double.parseDouble(sku.getAttribute(tejiabaoPricePropName).toString());
                     skuBean.setPromotionPrice(new BigDecimal(dblPriceSku));
                     skus.add(skuBean);
