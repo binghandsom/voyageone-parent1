@@ -1,6 +1,6 @@
 <div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
         <h4 class="modal-title">
@@ -30,7 +30,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' |  translate}}</button>
         <button class="btn btn-vo" ng-click="ctrl.upload()" ng-disabled="ctrl.uploader.queue.length == 0">
             <i class="glyphicon glyphicon-share-alt"></i>&nbsp;
             <span ng-if="!ctrl.vm.reUpload">{{'BTN_UPLOAD_FILE' | translate}}</span>

@@ -5,13 +5,19 @@ define([
 ], function (cms, _) {
 
     function SpModelDirectiveController(spDataService, notify, popups, $compile, $templateRequest, $document, $scope) {
-        this.spDataService = spDataService;
-        this.notify = notify;
-        this.popups = popups;
-        this.$compile = $compile;
-        this.$templateRequest = $templateRequest;
-        this.$document = $document;
-        this.$scope = $scope;
+        var self = this;
+
+        self.spDataService = spDataService;
+        self.notify = notify;
+        self.popups = popups;
+        self.$compile = $compile;
+        self.$templateRequest = $templateRequest;
+        self.$document = $document;
+        self.$scope = $scope;
+
+        $scope.$on('detail.saved', function (event, context) {
+            self.loadModules();
+        });
     }
 
     SpModelDirectiveController.prototype.productsSortBy = {

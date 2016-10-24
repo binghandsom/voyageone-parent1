@@ -15,6 +15,10 @@ define([
         this.editModel = {model: {}};
         this.datePicker = [];
 
+        this.$fire = function (eventName, context) {
+            $scope.$parent.$broadcast(eventName, context);
+        };
+
         $scope.$watch('ctrlEdit.editModel.model.activityEnd', function (newValue, oldValue, scope) {
             if (newValue && scope.ctrlEdit.vm.isFromBox) {
                 scope.ctrlEdit.vm.isFromBox = false;
@@ -301,10 +305,12 @@ define([
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
         spDataService.jmPromotionObj.detailStatus = 2;
 
-        jmPromotionService.saveModel(param).then(function(res) {
+        jmPromotionService.saveModel(param).then(function() {
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
             }
+            // 在暂存或提交之后，触发事件，促使模块刷新
+            self.$fire('detail.saved');
         });
     };
 
@@ -370,12 +376,13 @@ define([
         }
     };
 
-    cms.directive('spEdit', [function spEditDirectiveFactory() {
+    cms.directive('spEdit', function spEditDirectiveFactory() {
         return {
             restrict: 'E',
+            scope: {},
             controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
             controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }
-    }]);
+    });
 });

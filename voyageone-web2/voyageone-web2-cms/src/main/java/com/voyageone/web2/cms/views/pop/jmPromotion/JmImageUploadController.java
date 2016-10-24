@@ -1,14 +1,12 @@
 package com.voyageone.web2.cms.views.pop.jmPromotion;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.jmpromotion.JmPromotionImagesService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

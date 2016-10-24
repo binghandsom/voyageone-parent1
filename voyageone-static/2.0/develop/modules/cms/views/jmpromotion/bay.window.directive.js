@@ -1,5 +1,5 @@
 define(['cms'], function (cms) {
-    function BayWindowComponentController(spDataService, confirm, notify) {
+    function BayWindowComponentController(spDataService, confirm, notify, $scope) {
         var self = this;
         self.fixedWindows = [];
         self.linkWindows = [];
@@ -8,7 +8,11 @@ define(['cms'], function (cms) {
         self.spDataService = spDataService;
         self.loadTemplates().then(function () {
             self.loadBayWindow();
-        })
+        });
+
+        $scope.$on('detail.saved', function () {
+            self.loadBayWindow();
+        });
     }
 
     BayWindowComponentController.prototype.moveKeys = {
@@ -157,7 +161,7 @@ define(['cms'], function (cms) {
             templateUrl: '/modules/cms/views/jmpromotion/bay.window.directive.html',
             scope: {},
             controllerAs: 'ctrl',
-            controller: ['spDataService', 'confirm', 'notify', BayWindowComponentController]
+            controller: ['spDataService', 'confirm', 'notify', '$scope', BayWindowComponentController]
         };
     });
 });

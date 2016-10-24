@@ -33,18 +33,18 @@ define([
             padCard: ''
         };
 
-        function ImageBatchUploadCtl($uibModalInstance, FileUploader, blockUI, context) {
+        function ImageBatchUploadCtl($uibModalInstance, FileUploader, blockUI, context,alert) {
             this.$uibModalInstance = $uibModalInstance;
             this.FileUploader = FileUploader;
             this.blockUI = blockUI.instances.get('imgUpload');
             this.context = context;
-            this.files = [];
+            this.alert = alert;
+            this.files = 0;
             this.totols = 0;
         }
 
         ImageBatchUploadCtl.prototype.init = function () {
             var self = this,
-                blockUI = self.blockUI,
                 $uibModalInstance = self.$uibModalInstance,
                 uploader = new self.FileUploader({
                     url: '/cms/pop/jmPromotion/batchUpload'
@@ -53,14 +53,11 @@ define([
 
             uploader.onSuccessItem = function (fileItem, response) {
 
-                if(response.data){
-                    self.files.push(response.data);
-                }else
-                    self.blockUI.stop();
+                self.files++;
 
-                if(self.files.length == self.totols){
+                if(self.files == self.totols){
                     self.blockUI.stop();
-                    $uibModalInstance.close();
+                    $uibModalInstance.close("success");
                 }
 
             };
@@ -73,6 +70,7 @@ define([
                 context = self.context,
                 blockUI = self.blockUI,
                 data,
+                alert = self.alert,
                 commonData = {
                     promotionId: context.promotionId,
                     jmPromotionId: context.jmPromotionId,
@@ -87,32 +85,42 @@ define([
                 _.extend(data,commonData);
             }
 
-            angular.forEach(self.uploader.queue, function (item, index) {
-                var filename = item.file.name.split(".")[0];
+            angular.forEach(self.uploader.queue, function (item) {
+                var filename = item.file.name.split(".")[0],
+                    imageType ;
 
-                var imageType = JmPromotionImage.getImageType(filename).attrName;
+                try{
+                    imageType = JmPromotionImage.getImageType(filename).attrName;
+                }catch(e){
+                    alert("请您检查图片名称是否正确！");
+                    throw "不正确的图片名称。";
+                }
+
                 data[imageType] = context.jmPromotionId + "-" + imageType;
 
             });
 
             blockUI.start("图片上传中。。。请耐心等待！");
 
+            self.files = 0;
             self.totols = self.uploader.queue.length;
 
             angular.forEach(self.uploader.queue, function (item, index) {
-                var filename = item.file.name.split(".")[0];
+                var filename = item.file.name.split(".")[0],
+                    imageType = JmPromotionImage.getImageType(filename).attrName;
+
                 if ((index + 1) == self.uploader.queue.length) {
                     item.formData = [{
                         "promotionImages":JSON.stringify(data),
                         "promotionId": +commonData.jmPromotionId,
-                        "imageType": JmPromotionImage.getImageType(filename).attrName
+                        "imageType": imageType
                     }];
                     item.upload();
                 } else {
                     item.formData = [{
                         "promotionImages":null,
                         "promotionId": +commonData.jmPromotionId,
-                        "imageType": JmPromotionImage.getImageType(filename).attrName
+                        "imageType": imageType
                     }];
                     item.upload();
                 }
