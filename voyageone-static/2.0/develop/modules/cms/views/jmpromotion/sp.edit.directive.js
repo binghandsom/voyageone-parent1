@@ -138,14 +138,17 @@ define([
         }
     };
 
-    SpEditDirectiveController.prototype.delTag = function () {
+    SpEditDirectiveController.prototype.delTag = function (tag, index) {
         var self = this,
             confirm = self.confirm,
-            translate = self.$translate;
+            translate = self.$translate,
+            editModel = self.editModel;
 
         confirm(translate.instant('TXT_MSG_DELETE_ITEM'))
             .then(function () {
-                tag.active=0;
+                tag.active = 0;
+                if (!tag.id)
+                    editModel.tagList.splice(index, 1);
             });
     };
 

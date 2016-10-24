@@ -226,7 +226,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList">
+                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList" ng-if="tag.active !== 0">
                                 <td>
                                     <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}"
                                            ng-required="true" maxlength="20" required>
@@ -234,7 +234,7 @@
                                 </td>
                                 <td class="text-center">
                                     <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"
-                                            ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag)"><i class="fa fa-trash-o"></i>
+                                            ng-disabled="tag.id != ''" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
                             </tr>
