@@ -9,9 +9,10 @@ define(['cms',
     './bay.window.directive'
 ], function (cms) {
 
-    function SpDetailPageController(spDataService,cActions,cmsBtJmPromotionExportTaskService) {
+    function SpDetailPageController(spDataService,cActions,cmsBtJmPromotionExportTaskService,notify) {
         this.spDataService = spDataService;
         this.cActions = cActions;
+        this.notify = notify;
         this.cmsBtJmPromotionExportTaskService=cmsBtJmPromotionExportTaskService;
     }
 
@@ -36,22 +37,35 @@ define(['cms',
     SpDetailPageController.prototype.downloadSpecialImageZip = function () {
         var self = this,
             cActions = self.cActions,
+            notify = self.notify,
             spDataService = self.spDataService;
-        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip, {"jmPromotionId": spDataService.jmPromotionId ,"promotionName":self.promotion.name});
+
+        notify.success("准备图片下载中，请留意浏览器右下角！");
+
+        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
+            {"jmPromotionId": spDataService.jmPromotionId ,
+              "promotionName":self.promotion.name});
 
     };
 
     SpDetailPageController.prototype.downloadWaresImageZip = function () {
         var self = this,
             cActions = self.cActions,
+            notify = self.notify,
             spDataService = self.spDataService;
+
+        notify.success("准备图片下载中，请留意浏览器右下角！");
+
         $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {"jmPromotionId": spDataService.jmPromotionId ,"promotionName":self.promotion.name});
     };
 
     SpDetailPageController.prototype.downloadJmPromotionInfo = function (type) {
         var self = this,
             cActions = self.cActions,
+            notify = self.notify,
             spDataService = self.spDataService;
+
+        notify.success("准备图片下载中，请留意浏览器右下角！");
 
         $.download.post(cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.root + "/" + cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.exportJmPromotionInfo, {"type":type,"jmPromotionId": spDataService.jmPromotionId,"promotionName":self.promotion.name});
 
