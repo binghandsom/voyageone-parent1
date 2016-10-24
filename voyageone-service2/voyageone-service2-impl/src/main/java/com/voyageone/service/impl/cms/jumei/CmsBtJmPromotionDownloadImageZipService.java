@@ -86,15 +86,20 @@ public class CmsBtJmPromotionDownloadImageZipService {
                         String url = "";
                         try {
                             url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
+                            if(url!=null){
+                                urlMap.put("url", url);
+                                urlMap.put("picturePath", imagePath);
+                                promotionImagesList.add(urlMap);
+                            }
                         } catch (Exception e) {
-
+                            e.printStackTrace();
+                            System.out.println(imageType);
                         }
-                        urlMap.put("url", url);
                     } else {
                         urlMap.put("url", url + imageName + suffix);
+                        urlMap.put("picturePath", imagePath);
+                        promotionImagesList.add(urlMap);
                     }
-                    urlMap.put("picturePath", imagePath);
-                    promotionImagesList.add(urlMap);
                 }
             }
         });
