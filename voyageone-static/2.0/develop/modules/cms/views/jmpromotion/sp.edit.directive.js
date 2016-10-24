@@ -392,10 +392,13 @@ define([
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
         spDataService.jmPromotionObj.detailStatus = 2;
 
-        jmPromotionService.saveModel(param).then(function() {
+        jmPromotionService.saveModel(param).then(function(modelBean) {
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
             }
+            // 不论是暂存还是提交
+            // 成功之后都重新刷新数据
+            self.init();
             // 在暂存或提交之后，触发事件，促使模块刷新
             self.$fire('detail.saved');
         });
