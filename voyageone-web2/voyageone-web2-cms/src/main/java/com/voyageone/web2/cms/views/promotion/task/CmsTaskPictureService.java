@@ -4,7 +4,6 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.service.impl.cms.BeatInfoService;
@@ -13,6 +12,7 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.CmsBtPromotionGroupsModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
@@ -283,11 +283,8 @@ class CmsTaskPictureService extends BaseViewService {
         return promotionModelService.getPromotionModelDetailList(taskModel.getPromotionId(), taskModel.getChannelId());
     }
 
-    List<CmsBtPromotionCodesBean> getCodes(int promotionId, String productModel) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("promotionId", promotionId);
-        map.put("productModel", productModel);
-        return promotionCodeService.getPromotionCodeList(map);
+    List<CmsBtPromotionCodesModel> getCodes(int promotionId, String productModel) {
+        return promotionCodeService.getPromotionCodeList(promotionId, productModel);
     }
 
     List<CmsBtBeatInfoBean> addCheck(int task_id, String num_iid) {
