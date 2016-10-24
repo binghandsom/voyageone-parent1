@@ -465,6 +465,7 @@ public class CmsProductMoveService extends BaseViewService {
         } else {
             // 移动Code如果不是源Group的最后一个Code，那么把这个Code从源Group信息中移除，然后重算源group价格区间。
             sourceGroupModel.setProductCodes(sourceGroupModel.getProductCodes().stream().filter(code->!code.equals(productCode)).collect(Collectors.toList()));
+            sourceGroupModel.setModifier(modifier);
             productGroupService.calculatePriceRange(sourceGroupModel);
             productGroupService.update(sourceGroupModel);
         }
@@ -940,7 +941,7 @@ public class CmsProductMoveService extends BaseViewService {
         // 更新源Code
         productService.updateProductForMove(channelId, sourceProductModel, modifier);
 
-        // 处理Group
+        // 处理目标Group
         for (TypeChannelBean shop : typeChannelBeanListDisplay) {
             // 新建Group(选择新Group或者聚美平台或者独立官网平台)
             if ("new".equals(destGroupType)
@@ -957,11 +958,24 @@ public class CmsProductMoveService extends BaseViewService {
                 }
                 if (groupModel != null) {
                     groupModel.getProductCodes().add(newFieldModel.getCode());
+                    groupModel.setModifier(modifier);
                     // 计算Group价格区间
                     productGroupService.calculatePriceRange(groupModel);
                     // 更新Group
                     productGroupService.update(groupModel);
                 }
+            }
+        }
+
+        // 处理源Group（如果是移动到新Group或者选择的Group，那么源Group下面的价格区间需要进行重新计算一下）
+        if ("new".equals(destGroupType) || "select".equals(destGroupType)) {
+            List<CmsBtProductGroupModel> sourceGroups = productGroupService.selectProductGroupListByCode(channelId, sourceCode);
+            for (CmsBtProductGroupModel sourceGroup : sourceGroups) {
+                sourceGroup.setModifier(modifier);
+                // 计算Group价格区间
+                productGroupService.calculatePriceRange(sourceGroup);
+                // 更新Group
+                productGroupService.update(sourceGroup);
             }
         }
 
