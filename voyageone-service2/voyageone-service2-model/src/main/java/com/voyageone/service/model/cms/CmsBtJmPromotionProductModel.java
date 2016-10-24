@@ -65,6 +65,11 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
     protected Integer quantity;
 
     /**
+     * 销量
+     */
+    protected Integer sales;
+
+    /**
      * 活动开始时间
      */
     protected Date activityStart;
@@ -172,6 +177,8 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     protected String productNameEn;
 
+    protected String remark;
+
     public String getChannelId() {
         return channelId;
     }
@@ -258,6 +265,14 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getSales() {
+        return sales;
+    }
+
+    public void setSales(Integer sales) {
+        this.sales = sales;
     }
 
     public Date getActivityStart() {
@@ -450,5 +465,13 @@ public class CmsBtJmPromotionProductModel extends BaseModel {
 
     public void setProductNameEn(String productNameEn) {
         this.productNameEn = productNameEn == null ? null : productNameEn.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

@@ -1,8 +1,9 @@
 package com.voyageone.service.daoext.cms;
-import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -88,11 +89,11 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int updateAvgPriceByPromotionProductId(long cmsBtJmPromotionProductId);
 
-    int updateAvgPriceByListPromotionProductId(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int updateAvgPriceByListPromotionProductId(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     //获取变更数量
     int selectChangeCountByPromotionId(long cmsBtJmPromotionProductId);
-
+    int selectCountByPromotionId(long cmsBtJmPromotionProductId);
     //获取本活动商品在其他活动处于在售状态的商品
     CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("nowDate") Date nowDate);
 
@@ -101,5 +102,20 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     //更新synch_status==2 的errorMsg
     int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("errorMsg") String errorMsg);
+
+    List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
+
+    int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
+
     //jm2 end
+
+    /**
+     * 取得当前有效的活动下的所有产品
+     */
+    List<CmsBtJmPromotionProductModel> selectValidProductInfo(@Param("channelId") String channelId, @Param("cartId") int cartId);
+
+    /**
+     * 更新活动下的产品的库存数据
+     */
+    int updateProductStockInfo(@Param("jmPromotionProductList") List<CmsBtJmPromotionProductModel> productList);
 }

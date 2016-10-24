@@ -4,8 +4,10 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -23,11 +26,16 @@ import java.util.stream.Collectors;
  */
 @Service
 public class TagService extends BaseService {
+    private final CmsBtTagDaoExt cmsBtTagDaoExt;
+    private final CmsBtTagDao cmsBtTagDao;
+    private final CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
 
     @Autowired
-    private CmsBtTagDaoExt cmsBtTagDaoExt;
-    @Autowired
-    private CmsBtTagDao cmsBtTagDao;
+    public TagService(CmsBtTagDaoExt cmsBtTagDaoExt, CmsBtTagDao cmsBtTagDao, CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
+        this.cmsBtTagDaoExt = cmsBtTagDaoExt;
+        this.cmsBtTagDao = cmsBtTagDao;
+        this.tagJmModuleExtensionDao = tagJmModuleExtensionDao;
+    }
 
     /**
      * Tag追加
@@ -56,6 +64,143 @@ public class TagService extends BaseService {
         }
 
         return tag.getId();
+    }
+
+    public void addJmModule(CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel) {
+        tagJmModuleExtensionDao.insert(tagJmModuleExtensionModel);
+    }
+
+    /**
+     * 通过原始（核心）tag 获取聚美模块的扩展配置数据模型
+     *
+     * @param tagModel 原始 tag
+     * @return CmsBtTagJmModuleExtensionModel
+     */
+    public CmsBtTagJmModuleExtensionModel getJmModule(CmsBtTagModel tagModel) {
+        return tagJmModuleExtensionDao.select(tagModel.getId());
+    }
+
+    /**
+     * 是否有主推模块
+     */
+    public boolean hasFeaturedJmModuleByTopTagId(int promotionTopTagId) {
+        return getListByParentTagId(promotionTopTagId)
+                .stream()
+                .anyMatch(tagModel -> {
+                    CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = getJmModule(tagModel);
+                    return tagJmModuleExtensionModel != null && tagJmModuleExtensionModel.getFeatured();
+                });
+    }
+
+    /**
+     * ParentTagId检索Tags
+     */
+    public List<CmsBtTagModel> getListByParentTagId(int parentTagId) {
+        return cmsBtTagDaoExt.selectListByParentTagId(parentTagId);
+    }
+
+    /**
+     * 根据ChannelId 和 tagType 检索Tags
+     */
+    public List<CmsBtTagBean> getListByChannelIdAndTagType(Map params) {
+        //标签类型
+        String tagType = (String) params.get("tagTypeSelectValue");
+        if ("4".equals(tagType)) {
+            // 查询自由标签
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
+        } else if ("2".equals(tagType)) {
+            // 查询Promotion标签
+            List<CmsBtTagBean> categoryList = null;
+            Integer orgFlg = (Integer) params.get("orgFlg");
+            if (orgFlg != null && orgFlg == 1) {
+                // 从高级检索画面(查询条件)而来
+                categoryList = cmsBtTagDaoExt.selectListByChannelId4AdvSearch(params);
+            } else {
+                categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(params);
+            }
+            if (categoryList == null || categoryList.isEmpty()) {
+                return categoryList;
+            }
+            // 再查询一遍，检查是否有子节点
+            params.put("tagList", categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
+            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(params);
+            if (categoryList2 != null && !categoryList2.isEmpty()) {
+                for (CmsBtTagBean tagBean : categoryList2) {
+                    if (categoryList.indexOf(tagBean) >= 0) {
+                        continue;
+                    }
+                    categoryList.add(tagBean);
+                }
+            }
+            return categoryList;
+        }
+        return new ArrayList<>(0);
+    }
+
+    public List<CmsBtTagModel> getListByChannelIdAndParentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
+        return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
+    }
+
+    @VOTransactional
+    public int updateTagModel(CmsBtTagModel cmsBtTagModel) {
+        return cmsBtTagDao.update(cmsBtTagModel);
+    }
+
+    public void updateTagModel(CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel) {
+        tagJmModuleExtensionDao.update(tagJmModuleExtensionModel);
+    }
+
+    @VOTransactional
+    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, final boolean firstTag) {
+        insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, modelConsumer -> {
+            if (firstTag) {
+                modelConsumer.setTagPath("-" + modelConsumer.getId() + "-");
+            } else {
+                //对tagPath进行二次组装
+                modelConsumer.setTagPath(modelConsumer.getTagPath() + modelConsumer.getId() + "-");
+            }
+        });
+    }
+
+    public void insertCmsBtTagAndUpdateTagPath(CmsBtTagModel cmsBtTagModel, Consumer<CmsBtTagModel> tagPathSetter) {
+        //将取得的数据插入到数据库
+        cmsBtTagDao.insert(cmsBtTagModel);
+
+        tagPathSetter.accept(cmsBtTagModel);
+
+        updateTagModel(cmsBtTagModel);
+    }
+
+    public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
+        return cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
+    }
+
+    public CmsBtTagModel getTagByTagId(int tagId) {
+        return cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
+    }
+
+    /**
+     * 查询同级别的tag信息
+     */
+    public List<CmsBtTagModel> getListBySameLevel(String channelId, int parentTagId, int tagId) {
+        return cmsBtTagDaoExt.selectListBySameLevel(channelId, parentTagId, tagId);
+    }
+
+    public CmsBtTagJmModuleExtensionModel createJmModuleExtension(CmsBtTagModel tagModel) {
+        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = new CmsBtTagJmModuleExtensionModel();
+
+        tagJmModuleExtensionModel.setTagId(tagModel.getId());
+        tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
+        tagJmModuleExtensionModel.setFeatured(false);
+        tagJmModuleExtensionModel.setHideFlag(0);
+        tagJmModuleExtensionModel.setDisplayStartTime(null);
+        tagJmModuleExtensionModel.setDisplayEndTime(null);
+        tagJmModuleExtensionModel.setShelfType(1);
+        tagJmModuleExtensionModel.setImageType(1);
+        tagJmModuleExtensionModel.setProductsSortBy(1);
+        tagJmModuleExtensionModel.setNoStockToLast(false);
+
+        return tagJmModuleExtensionModel;
     }
 
     /**
@@ -167,92 +312,5 @@ public class TagService extends BaseService {
         }
 
         return ret;
-    }
-
-    /**
-     * ParentTagId检索Tags
-     */
-    public List<CmsBtTagModel> getListByParentTagId(int parentTagId) {
-        return cmsBtTagDaoExt.selectListByParentTagId(parentTagId);
-    }
-
-    /**
-     * 根据ChannelId 和 tagType 检索Tags
-     */
-    public List<CmsBtTagBean> getListByChannelIdAndTagType(Map params) {
-        //标签类型
-        String tagType = (String) params.get("tagTypeSelectValue");
-        if ("4".equals(tagType)) {
-            // 查询自由标签
-            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
-        } else if ("2".equals(tagType)) {
-            // 查询Promotion标签
-            List<CmsBtTagBean> categoryList = null;
-            Integer orgFlg = (Integer) params.get("orgFlg");
-            if (orgFlg != null && orgFlg == 1) {
-                // 从高级检索画面(查询条件)而来
-                categoryList = cmsBtTagDaoExt.selectListByChannelId4AdvSearch(params);
-            } else {
-                categoryList = cmsBtTagDaoExt.selectListByChannelIdAndTagType2(params);
-            }
-            if (categoryList == null || categoryList.isEmpty()) {
-                return categoryList;
-            }
-            // 再查询一遍，检查是否有子节点
-            params.put("tagList", categoryList.stream().map(tagBean -> tagBean.getId()).collect(Collectors.toList()));
-            List<CmsBtTagBean> categoryList2 = cmsBtTagDaoExt.selectListByChannelIdAndParentTag(params);
-            if (categoryList2 != null && !categoryList2.isEmpty()) {
-                for (CmsBtTagBean tagBean : categoryList2) {
-                    if (categoryList.indexOf(tagBean) >= 0) {
-                        continue;
-                    }
-                    categoryList.add(tagBean);
-                }
-            }
-            return categoryList;
-        }
-        return new ArrayList<>(0);
-    }
-
-    public List<CmsBtTagModel> getListByChannelIdAndparentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
-        return cmsBtTagDaoExt.selectCmsBtTagByTagInfo(channelId, parentTagId, tagTypeValue);
-    }
-
-    @VOTransactional
-    public int updateTagModel(CmsBtTagModel cmsBtTagModel) {
-        return cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
-    }
-
-    @VOTransactional
-    public void insertCmsBtTagAndUpdateTagePath(CmsBtTagModel cmsBtTagModel, boolean firstTag) {
-        //将取得的数据插入到数据库
-        cmsBtTagDaoExt.insertCmsBtTag(cmsBtTagModel);
-
-        //对tagPath进行二次组装
-        //一级标签
-        if (firstTag) {
-            cmsBtTagModel.setTagPath("-" + cmsBtTagModel.getId() + "-");
-        } else {
-            //对tagPath进行二次组装
-            cmsBtTagModel.setTagPath(cmsBtTagModel.getTagPath() + cmsBtTagModel.getId() + "-");
-
-        }
-        //更新数据cms_bt_tag
-        cmsBtTagDaoExt.updateCmsBtTag(cmsBtTagModel);
-    }
-
-    public List<CmsBtTagBean> getTagPathNameByTagPath(String channelId, List<String> tagPathList) {
-        return cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
-    }
-
-    public CmsBtTagModel getTagByTagId(int tagId) {
-        return cmsBtTagDaoExt.selectCmsBtTagByTagId(tagId);
-    }
-
-    /**
-     * 查询同级别的tag信息
-     */
-    public List<CmsBtTagModel> getListBySameLevel(String channelId, int parentTagId, int tagId) {
-        return cmsBtTagDaoExt.selectListBySameLevel(channelId, parentTagId, tagId);
     }
 }

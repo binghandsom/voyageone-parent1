@@ -113,9 +113,9 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm:"priceConfirm",
+                    priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice:"updateSkuPrice"
+                    updateSkuPrice: "updateSkuPrice"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -186,7 +186,7 @@ define(function () {
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
-                    "saveSkuPromotionPrices":"saveSkuPromotionPrices"
+                    "saveSkuPromotionPrices": "saveSkuPromotionPrices"
                 }
             },
             "jmpromotion": {
@@ -194,11 +194,16 @@ define(function () {
                     "root": "/cms/jmpromotion/index",
                     "init": "init",
                     "get": "get",
+                    "getJmPromList": "getJmPromList",
+                    "getJmPromCount": "getJmPromCount",
                     "getListByWhere": "getListByWhere",
                     "getEditModel": "getEditModel",
+                    "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
                     "delete": "delete",
-                    "getTagListByPromotionId": "getTagListByPromotionId"
+                    "getTagListByPromotionId": "getTagListByPromotionId",
+                    getBayWindow: 'getBayWindow',
+                    saveBayWindow: 'saveBayWindow'
                 },
                 "jmPromotionProductAddService": {
                     "root": "/cms/jm/promotion/product/",
@@ -233,8 +238,27 @@ define(function () {
                     "deleteAllProduct": "deleteAllProduct",
                     "getProductView": "getProductView",
                     "updateDealPrice": "updateDealPrice",
+                    "refreshPrice":"refreshPrice",
+                    "updateRemark":"updateRemark",
+                    "updatePromotionListProductTag":"updatePromotionListProductTag",
+                    "batchUpdateSkuDealPrice":"batchUpdateSkuDealPrice",
                     updatePromotionProduct: "updatePromotionProduct",
-                    updatePromotionProductTag: "updatePromotionProductTag"
+                    updatePromotionProductTag: "updatePromotionProductTag",
+                    getPromotionTagModules: 'getPromotionTagModules',
+                    savePromotionTagModules: 'savePromotionTagModules',
+                    getPromotionProducts: 'getPromotionProducts',
+                    saveProductSort: 'saveProductSort',
+                    "setJmPromotionStepStatus": 'setJmPromotionStepStatus',
+                    getJmTemplateUrls: {url: 'getJmTemplateUrls', cache: CACHE.LOCAL}
+                },
+                "JmPromotionImagesService": {
+                    "root": "/cms/jmPromotion/images",
+                    "init": "init",
+                    "save": "save",
+                    "getImageForSuit": "getImageForSuit",
+                    "getImageTemplate": "getImageTemplate",
+                    "downloadSpecialImageZip":"downloadSpecialImageZip",
+                    "downloadWaresImageZip":"downloadWaresImageZip"
                 },
                 "cmsBtJmPromotionImportTask": {
                     "cmsBtJmPromotionImportTaskService": {
@@ -247,7 +271,8 @@ define(function () {
                 "cmsBtJmPromotionExportTaskService": {
                     "root": "/cms/CmsBtJmPromotionExportTask/index",
                     "getByPromotionId": "getByPromotionId",
-                    "addExport": "addExport"
+                    "addExport": "addExport",
+                    "exportJmPromotionInfo":"exportJmPromotionInfo"
                 }
             },
             "cmsMtImageCreate": {
@@ -390,9 +415,6 @@ define(function () {
                 "$addToPromotionService": {
                     "root": "/cms/pop/add_to_promotion",
                     "getPromotionTags": "getPromotionTags",
-
-
-
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
@@ -442,7 +464,6 @@ define(function () {
                     "search": "search",
                     "get": "get",
                     "submit": "submit"
-
                 }
             },
             "channel": {
@@ -511,7 +532,7 @@ define(function () {
                     "search": "search",
                     "save": "save",
                     "delete": "delete",
-                    "getNoMatchSizeImageGroupList":"getNoMatchSizeImageGroupList"
+                    "getNoMatchSizeImageGroupList": "getNoMatchSizeImageGroupList"
                 },
                 "imageGroupDetailService": {
                     "root": "/cms/channel/image_group_detail",
@@ -531,8 +552,8 @@ define(function () {
                         "search": "sizeChartSearch",
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
-                        "getNoMatchList":"getNoMatchList",
-                        "getListImageGroupBySizeChartId":"getListImageGroupBySizeChartId"
+                        "getNoMatchList": "getNoMatchList",
+                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId"
                     }
                 },
                 "sizeChartDetail": {

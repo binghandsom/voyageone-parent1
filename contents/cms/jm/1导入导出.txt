@@ -37,7 +37,7 @@
                if(其它满减专场有时间重叠&&synchStatus==2)//   满减专场时间重叠&&已经上新
                {errorMsg="该商品已于相关时间段内，在其它满减专场中完成上传，为避免财务结算问题，请放弃导入"; }
             }
-    1.1.5  if(cms_bt_jm_promotion.promotionType==2)//大促专场
+    1.1.5  if(cms_bt_jm_promotion.promotionType==2)//大促专场 // todo 20161017 删除该逻辑处理
            {
                   /*1.5.1其它专场有时间重叠  查询sql   存在多个专场时间重叠取最新的
                     SELECT a.* FROM `cms_bt_jm_promotion_product` AS a JOIN cms_bt_jm_promotion AS b ON a.cms_bt_jm_promotion_id=b.id
