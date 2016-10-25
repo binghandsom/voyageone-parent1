@@ -123,18 +123,6 @@ public class CmsBtJmPromotionService extends BaseService {
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
-        if (parameter.getModel().getActivityAppId() == null) {
-            parameter.getModel().setActivityAppId(0L);
-        }
-        if (parameter.getModel().getActivityPcId() == null) {
-            parameter.getModel().setActivityPcId(0L);
-        }
-        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getBrand())) {
-            parameter.getModel().setBrand("");
-        }
-        if (com.voyageone.common.util.StringUtils.isEmpty(parameter.getModel().getCategory())) {
-            parameter.getModel().setCategory("");
-        }
 
         // 设置品牌名
         CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.select(parameter.getModel().getCmsBtJmMasterBrandId());
@@ -247,7 +235,14 @@ public class CmsBtJmPromotionService extends BaseService {
             promotionModel.setRefTagId(refTagId);
         }
 
-        int result = dao.update(promotionModel);
+        int result = -1;
+        if (parameter.isHasExt()) {
+            // 聚美专场详细画面中的活动详情子画面来的更新
+            daoExt.updateByInput(promotionModel);
+        } else {
+            // 活动一览画面来的更新
+            dao.update(promotionModel);
+        }
 
         setHasFeaturedModule(parameter);
 
@@ -326,6 +321,10 @@ public class CmsBtJmPromotionService extends BaseService {
 
         tagService.insertCmsBtTagAndUpdateTagPath(tagModel,
                 consumer -> consumer.setTagPath(String.format("-%s-%s-", promotionTopTagId, consumer.getId())));
+
+        // 同时创建聚美的扩展模块
+        CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
+        tagService.addJmModule(jmModuleExtensionModel);
     }
 
     private int createPromotionTopTag(CmsBtJmPromotionModel model) {

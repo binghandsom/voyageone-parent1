@@ -45,22 +45,22 @@ define([
             editModel.model.signupDeadline = formatToDate(editModel.model.signupDeadline);
             // 准备期是否结束
             vm.isDeadline = false;
-            if (editModel.model.signupDeadline < vm.currentTime) {
+            if (editModel.model.signupDeadline && editModel.model.signupDeadline < vm.currentTime) {
                 vm.isDeadline = true;
             }
             // 预热是否开始
             vm.isBeginPre = false;
-            if (editModel.model.prePeriodStart < vm.currentTime) {
+            if (editModel.model.prePeriodStart && editModel.model.prePeriodStart < vm.currentTime) {
                 vm.isBeginPre = true;
             }
             // 活动是否开始
             vm.isBegin = false;
-            if (editModel.model.activityStart < vm.currentTime) {
+            if (editModel.model.activityStart && editModel.model.activityStart < vm.currentTime) {
                 vm.isBegin = true;
             }
             // 活动是否结束
             vm.isEnd = false;
-            if (editModel.model.activityEnd < vm.currentTime) {
+            if (editModel.model.activityEnd && editModel.model.activityEnd < vm.currentTime) {
                 vm.isEnd = true;
             }
 
@@ -72,6 +72,48 @@ define([
             }
             if (editModel.extModel.directmailType == undefined || editModel.extModel.directmailType == null || editModel.extModel.directmailType == '') {
                 editModel.extModel.directmailType = '1';
+            }
+
+            // 转换并设置checkbox
+            if (editModel.extModel.syncMobile == '1') {
+                editModel.extModel.syncMobile = true;
+            } else {
+                editModel.extModel.syncMobile = false;
+            }
+            if (editModel.extModel.showHiddenDeal == '1') {
+                editModel.extModel.showHiddenDeal = true;
+            } else {
+                editModel.extModel.showHiddenDeal = false;
+            }
+            if (editModel.extModel.showSoldOutDeal == '1') {
+                editModel.extModel.showSoldOutDeal = true;
+            } else {
+                editModel.extModel.showSoldOutDeal = false;
+            }
+            if (editModel.extModel.showMobile == '1') {
+                editModel.extModel.showMobile = true;
+            } else {
+                editModel.extModel.showMobile = false;
+            }
+            if (editModel.extModel.isPromotionFullMinus == '1') {
+                editModel.extModel.isPromotionFullMinus = true;
+            } else {
+                editModel.extModel.isPromotionFullMinus = false;
+            }
+            if (editModel.extModel.isPromotionEachfullMinus == '1') {
+                editModel.extModel.isPromotionEachfullMinus = true;
+            } else {
+                editModel.extModel.isPromotionEachfullMinus = false;
+            }
+            if (editModel.extModel.jmCoupons == '1') {
+                editModel.extModel.jmCoupons = true;
+            } else {
+                editModel.extModel.jmCoupons = false;
+            }
+            if (editModel.extModel.voCoupons == '1') {
+                editModel.extModel.voCoupons = true;
+            } else {
+                editModel.extModel.voCoupons = false;
             }
 
             // 转换活动场景的值
@@ -199,10 +241,11 @@ define([
         var self = this,
             alert = self.alert,
             jmPromotionService = self.jmPromotionService,
-            spDataService = self.spDataService;
+            spDataService = self.spDataService,
+            editModel = self.editModel;
 
-        var model = self.editModel.model;
-        var extModel = self.editModel.extModel;
+        var model = editModel.model;
+        var extModel = editModel.extModel;
         if (saveType) {
             // 在'提交'时检查输入项目
             var start = new Date(model.activityStart);
@@ -233,11 +276,11 @@ define([
                 return;
             }
 
-            if (self.editModel.tagList.length === 0) {
+            if (editModel.tagList.length === 0) {
                 alert("请至少添加一个标签");
                 return;
             }
-            var hasTag = _.every(self.editModel.tagList, function (element) {
+            var hasTag = _.every(editModel.tagList, function (element) {
                 return element.tagName;
             });
             if (!hasTag)
@@ -264,7 +307,7 @@ define([
         }
 
         var param = {};
-        param.tagList= _.filter( self.editModel.tagList, function(tag){ return tag.tagName != "";});
+        param.tagList= _.filter( editModel.tagList, function(tag){ return tag.tagName != "";});
         param.model = angular.copy(model);
         param.extModel = angular.copy(extModel);
 
@@ -285,6 +328,48 @@ define([
         }
         if (!param.extModel.voCoupons) {
             param.extModel.voCouponsMoney = null;
+        }
+
+        // 转换并设置checkbox
+        if (param.extModel.syncMobile) {
+            param.extModel.syncMobile = 1;
+        } else {
+            param.extModel.syncMobile = 0;
+        }
+        if (param.extModel.showHiddenDeal) {
+            param.extModel.showHiddenDeal = 1;
+        } else {
+            param.extModel.showHiddenDeal = 0;
+        }
+        if (param.extModel.showSoldOutDeal) {
+            param.extModel.showSoldOutDeal = 1;
+        } else {
+            param.extModel.showSoldOutDeal = 0;
+        }
+        if (param.extModel.showMobile) {
+            param.extModel.showMobile = 1;
+        } else {
+            param.extModel.showMobile = 0;
+        }
+        if (param.extModel.isPromotionFullMinus) {
+            param.extModel.isPromotionFullMinus = 1;
+        } else {
+            param.extModel.isPromotionFullMinus = 0;
+        }
+        if (param.extModel.isPromotionEachfullMinus) {
+            param.extModel.isPromotionEachfullMinus = 1;
+        } else {
+            param.extModel.isPromotionEachfullMinus = 0;
+        }
+        if (param.extModel.jmCoupons) {
+            param.extModel.jmCoupons = 1;
+        } else {
+            param.extModel.jmCoupons = 0;
+        }
+        if (param.extModel.voCoupons) {
+            param.extModel.voCoupons = 1;
+        } else {
+            param.extModel.voCoupons = 0;
         }
 
         param.model.activityStart = formatToStr(param.model.activityStart, self.$filter);
@@ -312,8 +397,15 @@ define([
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
             }
-            // 在暂存或提交之后，触发事件，促使模块刷新
-            self.$fire('detail.saved');
+            // 保存之后如果标签被修改过就需要重新刷新标签缓存
+            spDataService.getPromotionModules(true).then(function (tagModels) {
+                // 刷新标签编辑部分
+                editModel.tagList = tagModels.map(function (tagModelItem) {
+                    return tagModelItem.tag;
+                });
+                // 之后触发事件，促使模块刷新
+                self.$fire('detail.saved');
+            });
         });
     };
 
@@ -323,11 +415,19 @@ define([
      */
     function formatToDate(date) {
         //$filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
-        return new Date(date);
+        if (date) {
+            return new Date(date);
+        } else {
+            return null;
+        }
     }
 
-    function formatToStr(date,filter){
-        return filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+    function formatToStr(date, filter) {
+        if (date) {
+            return filter("date")(new Date(date),"yyyy-MM-dd HH:mm:ss");
+        } else {
+            return null;
+        }
     }
 
     /**

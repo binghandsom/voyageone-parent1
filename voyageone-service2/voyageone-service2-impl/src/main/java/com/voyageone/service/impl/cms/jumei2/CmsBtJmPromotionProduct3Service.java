@@ -89,17 +89,22 @@ public class CmsBtJmPromotionProduct3Service {
         result.setListTag(service3CmsBtJmPromotion.getTagListByPromotionId(parameter.getJmPromotionRowId()));//聚美活动的所有tag
         result.setChangeCount(selectChangeCountByPromotionId(parameter.getJmPromotionRowId()));//获取变更数量
         result.setProductCount(selectCountByPromotionId(parameter.getJmPromotionRowId()));
-        long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
-        long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
-        result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
-        result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
-        // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
-        result.setIsUpdateJM(true);
-        // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
-        boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 10).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
-        if (isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
-        {
-            result.setIsUpdateJM(false);
+
+        if (result.getModelPromotion().getActivityEnd() != null) {
+            long activityEndTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getActivityEnd());//北京时间转本地时区时间戳
+            result.setIsEnd(activityEndTime < new Date().getTime());//活动是否结束            用活动时间
+        }
+        if (result.getModelPromotion().getPrePeriodStart() != null) {
+            long preStartLocalTime = DateTimeUtilBeijing.toLocalTime(result.getModelPromotion().getPrePeriodStart());//北京时间转本地时区时间戳
+            result.setIsBegin(preStartLocalTime < new Date().getTime());//活动是否看开始     用预热时间
+            // int hour = DateTimeUtil.getDateHour(DateTimeUtilBeijing.getCurrentBeiJingDate());
+            result.setIsUpdateJM(true);
+            // result.setIsUpdateJM(!(hour == 10));//是否可以更新聚美  10到11点一小时之内不允许更新聚美平台
+            boolean isBefore5DaysBeforePreBegin = DateTimeUtil.addDays(new Date(), 10).getTime() < preStartLocalTime;//是否是预热开始前5天之前  预热开始前5天之前不让更新聚美
+            if (isBefore5DaysBeforePreBegin)// 预热开始前5天之前不让更新聚美
+            {
+                result.setIsUpdateJM(false);
+            }
         }
         // // ODO: 2016/8/10  测试完 取消注释  spt begin
         // result.setIsUpdateJM(true);

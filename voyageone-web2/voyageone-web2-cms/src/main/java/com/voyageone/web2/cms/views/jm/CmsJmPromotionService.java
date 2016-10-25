@@ -172,9 +172,12 @@ class CmsJmPromotionService extends BaseViewService {
 
             CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.getJmModule(tagModel);
 
+            CmsJmTagModules jmTagModules = new CmsJmTagModules();
+            jmTagModules.setModule(jmModuleExtensionModel);
+
+            // 如果数据有问题，直接返回空
             if (jmModuleExtensionModel == null) {
-                jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
-                tagService.addJmModule(jmModuleExtensionModel);
+                return jmTagModules;
             }
 
             List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = jmPromotionProduct3Service.getPromotionProductInTag(tagModel.getId());
@@ -187,10 +190,7 @@ class CmsJmPromotionService extends BaseViewService {
                     .mapToLong(CmsBtJmPromotionProductModel::getQuantity)
                     .sum();
 
-            CmsJmTagModules jmTagModules = new CmsJmTagModules();
-
             jmTagModules.setTag(tagModel);
-            jmTagModules.setModule(jmModuleExtensionModel);
             jmTagModules.setProductCountInStock(countProductHasStockInJmModule);
             jmTagModules.setTotalStock(totalStock);
 

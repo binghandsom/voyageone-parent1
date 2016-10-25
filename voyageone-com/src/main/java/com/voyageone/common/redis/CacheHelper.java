@@ -23,11 +23,20 @@ public class CacheHelper {
     private final static String RELAOD = "reload";
 
     @SuppressWarnings("unchecked")
-    public static RedisTemplate<String, Map<String, Object>> getCacheTemplate() {
+    public static RedisTemplate getCacheTemplate() {
         return SpringContext.getBean(RedisTemplate.class);
     }
 
     public static HashOperations getHashOperation() {
+        return getCacheTemplate().opsForHash();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static HashOperations getHashOperation(boolean isLocal) {
+        RedisTemplate template = getCacheTemplate();
+        if (template instanceof VoCacheTemplate) {
+            return ((VoCacheTemplate)template).opsForHash(isLocal);
+        }
         return getCacheTemplate().opsForHash();
     }
 
@@ -83,8 +92,16 @@ public class CacheHelper {
         callCache(key, refreshMap);
     }
 
+    /* SSB表示缓存数据类型为<String,String,bean>  */
+    public static void reFreshSSB(String key, Map refreshMap, boolean isLocal) {
+        if (StringUtil.isEmpty(key)|| MapUtils.isEmpty(refreshMap)) return;
+        //noinspection unchecked
+        getHashOperation(isLocal).putAll(key, refreshMap);
+    }
+
     /* 删除RedisKey */
     public static void delete(String key) {
+        //noinspection unchecked
         getCacheTemplate().delete(key);
     }
 

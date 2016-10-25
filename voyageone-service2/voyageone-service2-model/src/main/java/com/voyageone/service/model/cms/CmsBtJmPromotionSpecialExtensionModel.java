@@ -87,22 +87,22 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 同步移动专场
      */
-    protected Boolean syncMobile;
+    protected Integer syncMobile;
 
     /**
      * 货架显示隐藏deal
      */
-    protected Boolean showHiddenDeal;
+    protected Integer showHiddenDeal;
 
     /**
      * 显示0库存deal
      */
-    protected Boolean showSoldOutDeal;
+    protected Integer showSoldOutDeal;
 
     /**
      * 移动端显示
      */
-    protected Boolean showMobile;
+    protected Integer showMobile;
 
     /**
      * app端页面标识
@@ -132,7 +132,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 是否满减
      */
-    protected Boolean isPromotionFullMinus;
+    protected Integer isPromotionFullMinus;
 
     /**
      * 满减活动-满金额
@@ -147,7 +147,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 是否每满减
      */
-    protected Boolean isPromotionEachfullMinus;
+    protected Integer isPromotionEachfullMinus;
 
     /**
      * 每满减活动-每满金额
@@ -162,7 +162,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 是否聚美承担优惠券
      */
-    protected Boolean jmCoupons;
+    protected Integer jmCoupons;
 
     /**
      * 聚美优惠券金额
@@ -172,7 +172,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     /**
      * 是否vo承担优惠券
      */
-    protected Boolean voCoupons;
+    protected Integer voCoupons;
 
     /**
      * vo优惠券金额
@@ -291,35 +291,35 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.promotionalCopy = promotionalCopy == null ? null : promotionalCopy.trim();
     }
 
-    public Boolean getSyncMobile() {
+    public Integer getSyncMobile() {
         return syncMobile;
     }
 
-    public void setSyncMobile(Boolean syncMobile) {
+    public void setSyncMobile(Integer syncMobile) {
         this.syncMobile = syncMobile;
     }
 
-    public Boolean getShowHiddenDeal() {
+    public Integer getShowHiddenDeal() {
         return showHiddenDeal;
     }
 
-    public void setShowHiddenDeal(Boolean showHiddenDeal) {
+    public void setShowHiddenDeal(Integer showHiddenDeal) {
         this.showHiddenDeal = showHiddenDeal;
     }
 
-    public Boolean getShowSoldOutDeal() {
+    public Integer getShowSoldOutDeal() {
         return showSoldOutDeal;
     }
 
-    public void setShowSoldOutDeal(Boolean showSoldOutDeal) {
+    public void setShowSoldOutDeal(Integer showSoldOutDeal) {
         this.showSoldOutDeal = showSoldOutDeal;
     }
 
-    public Boolean getShowMobile() {
+    public Integer getShowMobile() {
         return showMobile;
     }
 
-    public void setShowMobile(Boolean showMobile) {
+    public void setShowMobile(Integer showMobile) {
         this.showMobile = showMobile;
     }
 
@@ -355,11 +355,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.shareContent = shareContent == null ? null : shareContent.trim();
     }
 
-    public Boolean getIsPromotionFullMinus() {
+    public Integer getIsPromotionFullMinus() {
         return isPromotionFullMinus;
     }
 
-    public void setIsPromotionFullMinus(Boolean isPromotionFullMinus) {
+    public void setIsPromotionFullMinus(Integer isPromotionFullMinus) {
         this.isPromotionFullMinus = isPromotionFullMinus;
     }
 
@@ -379,11 +379,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.promotionMinusAmount = promotionMinusAmount;
     }
 
-    public Boolean getIsPromotionEachfullMinus() {
+    public Integer getIsPromotionEachfullMinus() {
         return isPromotionEachfullMinus;
     }
 
-    public void setIsPromotionEachfullMinus(Boolean isPromotionEachfullMinus) {
+    public void setIsPromotionEachfullMinus(Integer isPromotionEachfullMinus) {
         this.isPromotionEachfullMinus = isPromotionEachfullMinus;
     }
 
@@ -403,11 +403,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.promotionEachminusAmount = promotionEachminusAmount;
     }
 
-    public Boolean getJmCoupons() {
+    public Integer getJmCoupons() {
         return jmCoupons;
     }
 
-    public void setJmCoupons(Boolean jmCoupons) {
+    public void setJmCoupons(Integer jmCoupons) {
         this.jmCoupons = jmCoupons;
     }
 
@@ -419,11 +419,11 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.jmCouponsMoney = jmCouponsMoney;
     }
 
-    public Boolean getVoCoupons() {
+    public Integer getVoCoupons() {
         return voCoupons;
     }
 
-    public void setVoCoupons(Boolean voCoupons) {
+    public void setVoCoupons(Integer voCoupons) {
         this.voCoupons = voCoupons;
     }
 

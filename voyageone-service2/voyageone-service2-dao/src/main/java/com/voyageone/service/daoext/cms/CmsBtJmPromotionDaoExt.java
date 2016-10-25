@@ -51,4 +51,9 @@ public interface CmsBtJmPromotionDaoExt {
      * 设置聚美活动各阶段的状态
      */
     int setJmPromotionStepStatus(Map<String, Object> map);
+
+    /**
+     * 更新活动基本信息(根据画面输入，可以有空值，注意：这里指更新画面可以输入的项目)
+     */
+    int updateByInput(CmsBtJmPromotionModel record);
 }
