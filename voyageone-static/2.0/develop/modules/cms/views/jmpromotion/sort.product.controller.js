@@ -100,7 +100,7 @@ define(['cms'], function (cms) {
 
     JmSortProductPopupController.prototype.moveProduct = function moveProduct(i, moveKey) {
         var self = this,
-            source = self.linkWindows,
+            source = self.productList,
             moveKeys = self.moveKeys,
             temp;
 
