@@ -55,8 +55,8 @@
                         <i class="fa fa-plus"></i></button>
                 </div>
                 <div class="category_drag_list_dp">
-                    <ul>
-                        <li ng-repeat="tag1 in ctrl.tree[0]">
+                    <ul sv-root sv-part="ctrl.tree[0]">
+                        <li ng-repeat="tag1 in ctrl.tree[0]" sv-element="opts">
                             <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);"
                                ng-class="{indexSelected:ctrl.selected[0] == tag1}">
                                 <span ng-if="tag1.value == null">{{tag1.catName}}</span>
