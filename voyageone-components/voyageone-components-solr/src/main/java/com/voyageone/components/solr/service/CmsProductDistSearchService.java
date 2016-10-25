@@ -34,29 +34,6 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
     private static final Pattern stringFormatP = Pattern.compile("\t|\r|\n");
 
-    private String replaceBlank(String str) {
-        if (str != null) {
-            Matcher m = stringFormatP.matcher(str);
-            return m.replaceAll(" ");
-        }
-        return null;
-    }
-
-    private Double convertToDouble(Object data) {
-        if (data != null) {
-            if (data instanceof Double) {
-                return (Double) data;
-            } else {
-                try {
-                    return Double.parseDouble(String.valueOf(data));
-                } catch (Exception ex) {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     protected String getSolrTemplateName() {
         return SOLR_TEMPLATE_NAME;
@@ -456,4 +433,27 @@ public class CmsProductDistSearchService extends BaseSearchService {
 //        //noinspection unchecked
 //        return (SolrResultPage) getSolrTemplate().queryForPage(query, clazz);
 //    }
+
+    private String replaceBlank(String str) {
+        if (str != null) {
+            Matcher m = stringFormatP.matcher(str);
+            return m.replaceAll(" ");
+        }
+        return null;
+    }
+
+    private Double convertToDouble(Object data) {
+        if (data != null) {
+            if (data instanceof Double) {
+                return (Double) data;
+            } else {
+                try {
+                    return Double.parseDouble(String.valueOf(data));
+                } catch (Exception ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 }
