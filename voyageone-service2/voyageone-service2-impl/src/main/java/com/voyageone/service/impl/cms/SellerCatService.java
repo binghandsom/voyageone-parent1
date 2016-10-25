@@ -389,6 +389,60 @@ MongoSequenceService commSequenceMongoService;
 
     }
 
+    /**
+     * 重新设置店铺内分类的顺序
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    public boolean doResetPlatformSellerCatIndex(String channelId, int cartId) {
+
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        // 获取店铺内分类的列表
+        List<CmsBtSellerCatModel> sellerCatList = getSellerCatsByChannelCart(channelId, cartId);
+
+        return doResetPlatformSellerCatIndex_sub(shopBean, sellerCatList);
+    }
+
+    /**
+     * 重新设置店铺内分类的顺序（指定一个列表）
+     * @param shopBean
+     * @param sellerCatList
+     * @return
+     */
+    private boolean doResetPlatformSellerCatIndex_sub(ShopBean shopBean, List<CmsBtSellerCatModel> sellerCatList) {
+
+        // 检查一下是否需要做
+        if (sellerCatList == null || sellerCatList.size() == 0) {
+            return true;
+        }
+
+        // 先处理一下当前的列表的当前的那一级
+        for (int i = 0; i < sellerCatList.size(); i++) {
+            CmsBtSellerCatModel subSellerCat = sellerCatList.get(i);
+
+            String shopCartId = shopBean.getCart_id();
+            if (isJDPlatform(shopBean)) {
+                // 京东API不支持， 以后京东如果支持之后再做
+            } else if (isTMPlatform(shopCartId)) {
+                tbSellerCatService.updateSellerCatSortOrder(shopBean, subSellerCat.getCatId(), i + 1);
+            } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+                ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+//                cnSellerCatService.updateSellerCat(channelId, subSellerCat.getCatId(), shopBean);
+            }
+
+        }
+
+        // 循环遍历递归children
+        for (CmsBtSellerCatModel subSellerCat : sellerCatList) {
+            if (!doResetPlatformSellerCatIndex_sub(shopBean, subSellerCat.getChildren())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * 将TM店铺自定义分类Model转换成CmsBtSellerCatModel
