@@ -306,4 +306,27 @@
         UPDATE cms_bt_jm_promotion set ${stepName} = ${stepStatus}, modifier = #{modifier} ,modified = now() where id = #{jmPromotionId}
     </update>
 
+
+    <!-- 更新活动基本信息(根据画面输入，可以有空值，注意：这里指更新画面可以输入的项目) -->
+    <update id="updateByInput" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionModel" >
+        update cms_bt_jm_promotion
+        <set>
+            `name` = #{name,jdbcType=VARCHAR},
+            `activity_pc_id` = #{activityPcId,jdbcType=BIGINT},
+            `activity_app_id` = #{activityAppId,jdbcType=BIGINT},
+            `promotion_scene` = #{promotionScene,jdbcType=VARCHAR},
+            `promotion_type` = #{promotionType,jdbcType=INTEGER},
+            `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
+            `brand` = #{brand,jdbcType=VARCHAR},
+            `activity_start` = #{activityStart,jdbcType=TIMESTAMP},
+            `activity_end` = #{activityEnd,jdbcType=TIMESTAMP},
+            `pre_period_start` = #{prePeriodStart,jdbcType=TIMESTAMP},
+            `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
+            `comment` = #{comment,jdbcType=VARCHAR},
+            `modified` = now(),
+            `modifier` = #{modifier,jdbcType=VARCHAR}
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
 </mapper>

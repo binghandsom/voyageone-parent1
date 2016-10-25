@@ -4,122 +4,40 @@
 
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionSpecialExtensionModel" >
         update cms_bt_jm_promotion_special_extension
-        <set >
-            <if test="promotionProductType != null" >
-                `promotion_product_type` = #{promotionProductType,jdbcType=VARCHAR},
-            </if>
-            <if test="displayPlatform != null" >
-                `display_platform` = #{displayPlatform,jdbcType=VARCHAR},
-            </if>
-            <if test="mainChannel != null" >
-                `main_channel` = #{mainChannel,jdbcType=VARCHAR},
-            </if>
-            <if test="sessionType != null" >
-                `session_type` = #{sessionType,jdbcType=VARCHAR},
-            </if>
-            <if test="sessionCategory != null" >
-                `session_category` = #{sessionCategory,jdbcType=VARCHAR},
-            </if>
-            <if test="preDisplayChannel != null" >
-                `pre_display_channel` = #{preDisplayChannel,jdbcType=VARCHAR},
-            </if>
-            <if test="mainTitle != null" >
-                `main_title` = #{mainTitle,jdbcType=VARCHAR},
-            </if>
-            <if test="subtitle != null" >
-                `subtitle` = #{subtitle,jdbcType=VARCHAR},
-            </if>
-            <if test="enterGuide != null" >
-                `enter_guide` = #{enterGuide,jdbcType=VARCHAR},
-            </if>
-            <if test="marketingTitle != null" >
-                `marketing_title` = #{marketingTitle,jdbcType=VARCHAR},
-            </if>
-            <if test="marketingCopywriter != null" >
-                `marketing_copywriter` = #{marketingCopywriter,jdbcType=VARCHAR},
-            </if>
-            <if test="promotionalCopy != null" >
-                `promotional_copy` = #{promotionalCopy,jdbcType=VARCHAR},
-            </if>
-            <if test="syncMobile == true" >
-                `sync_mobile` = 1,
-            </if>
-            <if test="showHiddenDeal == true" >
-                `show_hidden_deal` = 1,
-            </if>
-            <if test="showSoldOutDeal == true" >
-                `show_sold_out_deal` = 1,
-            </if>
-            <if test="showMobile == true" >
-                `show_mobile` = 1,
-            </if>
-            <if test="syncMobile == null || syncMobile == false" >
-                `sync_mobile` = 0,
-            </if>
-            <if test="showHiddenDeal == null || showHiddenDeal == false" >
-                `show_hidden_deal` = 0,
-            </if>
-            <if test="showSoldOutDeal == null || showSoldOutDeal == false" >
-                `show_sold_out_deal` = 0,
-            </if>
-            <if test="showMobile == null || showMobile == false" >
-                `show_mobile` = 0,
-            </if>
-            <if test="appPageId != null" >
-                `app_page_id` = #{appPageId,jdbcType=VARCHAR},
-            </if>
-            <if test="pcPageId != null" >
-                `pc_page_id` = #{pcPageId,jdbcType=VARCHAR},
-            </if>
-            <if test="shareTitle != null" >
-                `share_title` = #{shareTitle,jdbcType=VARCHAR},
-            </if>
-            <if test="shareContent != null" >
-                `share_content` = #{shareContent,jdbcType=VARCHAR},
-            </if>
-            <if test="directmailType != null" >
-                `directmail_type` = #{directmailType,jdbcType=VARCHAR},
-            </if>
-
-            <if test="isPromotionFullMinus == true" >
-                `is_promotion_full_minus` = 1,
-            </if>
-            <if test="isPromotionFullMinus == null || isPromotionFullMinus == false" >
-                `is_promotion_full_minus` = 0,
-            </if>
+        <set>
+            `promotion_product_type` = #{promotionProductType,jdbcType=VARCHAR},
+            `display_platform` = #{displayPlatform,jdbcType=VARCHAR},
+            `main_channel` = #{mainChannel,jdbcType=VARCHAR},
+            `session_type` = #{sessionType,jdbcType=VARCHAR},
+            `session_category` = #{sessionCategory,jdbcType=VARCHAR},
+            `pre_display_channel` = #{preDisplayChannel,jdbcType=VARCHAR},
+            `main_title` = #{mainTitle,jdbcType=VARCHAR},
+            `subtitle` = #{subtitle,jdbcType=VARCHAR},
+            `enter_guide` = #{enterGuide,jdbcType=VARCHAR},
+            `marketing_title` = #{marketingTitle,jdbcType=VARCHAR},
+            `marketing_copywriter` = #{marketingCopywriter,jdbcType=VARCHAR},
+            `promotional_copy` = #{promotionalCopy,jdbcType=VARCHAR},
+            `sync_mobile` = #{syncMobile,jdbcType=INTEGER},
+            `show_hidden_deal` = #{showHiddenDeal,jdbcType=INTEGER},
+            `show_sold_out_deal` = #{showSoldOutDeal,jdbcType=INTEGER},
+            `show_mobile` = #{showMobile,jdbcType=INTEGER},
+            `app_page_id` = #{appPageId,jdbcType=VARCHAR},
+            `pc_page_id` = #{pcPageId,jdbcType=VARCHAR},
+            `share_title` = #{shareTitle,jdbcType=VARCHAR},
+            `share_content` = #{shareContent,jdbcType=VARCHAR},
+            `directmail_type` = #{directmailType,jdbcType=VARCHAR},
+            `is_promotion_full_minus` = #{isPromotionFullMinus,jdbcType=INTEGER},
             `promotion_full_amount` = #{promotionFullAmount,jdbcType=DECIMAL},
             `promotion_minus_amount` = #{promotionMinusAmount,jdbcType=DECIMAL},
-
-            <if test="isPromotionEachfullMinus == true" >
-                `is_promotion_eachfull_minus` = 1,
-            </if>
-            <if test="isPromotionEachfullMinus == null || isPromotionEachfullMinus == false" >
-                `is_promotion_eachfull_minus` = 0,
-            </if>
+            `is_promotion_eachfull_minus` = #{isPromotionEachfullMinus,jdbcType=INTEGER},
             `promotion_eachfull_amount` = #{promotionEachfullAmount,jdbcType=DECIMAL},
             `promotion_eachminus_amount` = #{promotionEachminusAmount,jdbcType=DECIMAL},
-
-            <if test="jmCoupons == true" >
-                `jm_coupons` = 1,
-            </if>
-            <if test="jmCoupons == null || jmCoupons == false" >
-                `jm_coupons` = 0,
-            </if>
+            `jm_coupons` = #{jmCoupons,jdbcType=INTEGER},
             `jm_coupons_money` = #{jmCouponsMoney,jdbcType=DECIMAL},
-            <if test="voCoupons == true" >
-                `vo_coupons` = 1,
-            </if>
-            <if test="voCoupons == null || voCoupons == false" >
-                `vo_coupons` = 0,
-            </if>
+            `vo_coupons` = #{voCoupons,jdbcType=INTEGER},
             `vo_coupons_money` = #{voCouponsMoney,jdbcType=DECIMAL},
-
-            <if test="modified == null" >
-                `modified` = now(),
-            </if>
-            <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
-            </if>
+            `modified` = now(),
+            `modifier` = #{modifier,jdbcType=VARCHAR}
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
@@ -279,30 +197,19 @@
                 #{promotionalCopy,jdbcType=VARCHAR},
             </if>
 
-            <if test="syncMobile == true" >
-                1,
+            <if test="syncMobile != null" >
+                #{syncMobile,jdbcType=INTEGER},
             </if>
-            <if test="syncMobile == false" >
-                0,
+            <if test="showHiddenDeal != null" >
+                #{showHiddenDeal,jdbcType=INTEGER},
             </if>
-            <if test="showHiddenDeal == true" >
-                1,
+            <if test="showSoldOutDeal != null" >
+                #{showSoldOutDeal,jdbcType=INTEGER},
             </if>
-            <if test="showHiddenDeal == false" >
-                0,
+            <if test="showMobile != null" >
+                #{showMobile,jdbcType=INTEGER},
             </if>
-            <if test="showSoldOutDeal == true" >
-                1,
-            </if>
-            <if test="showSoldOutDeal == false" >
-                0,
-            </if>
-            <if test="showMobile == true" >
-                1,
-            </if>
-            <if test="showMobile == false" >
-                0,
-            </if>
+
             <if test="appPageId != null" >
                 #{appPageId,jdbcType=VARCHAR},
             </if>
@@ -318,11 +225,8 @@
             <if test="directmailType != null" >
                 #{directmailType,jdbcType=VARCHAR},
             </if>
-            <if test="isPromotionFullMinus == true" >
-                1,
-            </if>
-            <if test="isPromotionFullMinus == false" >
-                0,
+            <if test="isPromotionFullMinus != null" >
+                #{isPromotionFullMinus,jdbcType=INTEGER},
             </if>
             <if test="promotionFullAmount != null" >
                 #{promotionFullAmount,jdbcType=DECIMAL},
@@ -330,11 +234,8 @@
             <if test="promotionMinusAmount != null" >
                 #{promotionMinusAmount,jdbcType=DECIMAL},
             </if>
-            <if test="isPromotionEachfullMinus == true" >
-                1,
-            </if>
-            <if test="isPromotionEachfullMinus == false" >
-                0,
+            <if test="isPromotionEachfullMinus != null" >
+                #{isPromotionEachfullMinus,jdbcType=INTEGER},
             </if>
             <if test="promotionEachfullAmount != null" >
                 #{promotionEachfullAmount,jdbcType=DECIMAL},
@@ -342,25 +243,19 @@
             <if test="promotionEachminusAmount != null" >
                 #{promotionEachminusAmount,jdbcType=DECIMAL},
             </if>
-            <if test="jmCoupons == true" >
-                1,
-            </if>
-            <if test="jmCoupons == false" >
-                0,
+            <if test="jmCoupons != null" >
+                #{jmCoupons,jdbcType=INTEGER},
             </if>
             <if test="jmCouponsMoney != null" >
                 #{jmCouponsMoney,jdbcType=DECIMAL},
             </if>
-            <if test="voCoupons == true" >
-                1,
-            </if>
-            <if test="voCoupons == false" >
-                0,
+            <if test="voCoupons != null" >
+                #{voCoupons,jdbcType=INTEGER},
             </if>
             <if test="voCouponsMoney != null" >
                 #{voCouponsMoney,jdbcType=DECIMAL},
             </if>
-            #{creater,jdbcType=TIMESTAMP},
+            #{creater,jdbcType=VARCHAR},
             now(),
         </trim>
     </insert>

@@ -118,10 +118,10 @@ public class CmsBtJmPromotionExportContext {
         return getBooleanString(this.extModel.getShowSoldOutDeal());
     }
 
-    private String getBooleanString(Boolean value) {
-        if (value == null || !value) {
+    private String getBooleanString(Integer value) {
+        if (value == null || value == 0) {
             return "否";
-        }else {
+        } else {
             return "是";
         }
     }
