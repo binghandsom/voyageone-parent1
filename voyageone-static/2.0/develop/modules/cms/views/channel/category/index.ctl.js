@@ -78,17 +78,19 @@ define([
         };
 
         CategoryController.prototype.search = function (index) {
-            var tree = this.tree;
-            var source = this.source;
-            var selected = this.selected;
-            var prev;
-            for (; index < this.cartInfo.level; index++) {
+            var self = this,
+                tree = self.tree,
+                source = self.source,
+                selected = self.selected,
+                prev;
+
+            for (; index < self.cartInfo.level; index++) {
                 if (!index) {
-                    tree[index] = this.byTagChildrenName(source, index);
+                    tree[index] = self.byTagChildrenName(source, index);
                 } else {
                     prev = selected[index - 1];
                     if (prev)
-                        tree[index] = this.byTagChildrenName(prev.children, index);
+                        tree[index] = self.byTagChildrenName(prev.children, index);
                     else {
                         tree[index] = [];
                         continue;
@@ -124,6 +126,7 @@ define([
 
         CategoryController.prototype.save = function (parentCatId, catName) {
             var self = this;
+
             this.selected[this.newIndex.value] = catName;
             self.sellerCatService.addCat({
                 "cartId": +this.cartInfo.cart,
@@ -137,6 +140,7 @@ define([
 
         CategoryController.prototype.delete = function (node) {
             var self = this;
+
             self.confirm("TXT_MSG_DELETE_ITEM").then(function () {
                 self.sellerCatService.delCat({
                     "cartId": +self.cartInfo.cart,
@@ -151,6 +155,7 @@ define([
 
         CategoryController.prototype.updateCat = function (node) {
             var self = this;
+
             if (node.value == null) {
                 node.value = 1;
                 node.newCatName = node.catName;
@@ -167,6 +172,13 @@ define([
                     self.search(0);
                 });
             }
+        };
+
+        CategoryController.prototype.catSort = function ($item, level) {
+            var self = this;
+
+            self.selected[0] = $item;
+            self.search(level + 1);
         };
 
         return CategoryController;
