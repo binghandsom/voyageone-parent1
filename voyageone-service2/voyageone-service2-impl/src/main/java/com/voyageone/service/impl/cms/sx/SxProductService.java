@@ -564,7 +564,7 @@ public class SxProductService extends BaseService {
         return retUrls;
     }
 
-    private Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
+    public Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         int TIMEOUT_TIME = 10*1000;
