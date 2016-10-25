@@ -39,6 +39,7 @@ define([
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;
             editModel.tagList = res.data.tagList;
+            editModel.tagListOrg = angular.copy(res.data.tagList);
             editModel.model.activityStart = formatToDate(editModel.model.activityStart);
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
             editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
@@ -189,8 +190,12 @@ define([
         confirm(translate.instant('TXT_MSG_DELETE_ITEM'))
             .then(function () {
                 tag.active = 0;
-                if (!tag.id)
-                    editModel.tagList.splice(index, 1);
+                editModel.tagList.splice(index, 1);
+                if (tag.id) {
+                    // 找到原始保存的taglist,将其'active'设为0
+                    var tagObj = _.find(editModel.tagListOrg, function(item) { return item.id == tag.id; });
+                    tagObj.active = 0;
+                }
             });
     };
 
@@ -307,7 +312,14 @@ define([
         }
 
         var param = {};
-        param.tagList= _.filter( editModel.tagList, function(tag){ return tag.tagName != "";});
+        param.tagList = _.filter( editModel.tagList, function(tag){ return tag.tagName != "";});
+        // 活动标签设置，找出已被删除的tag，添加到现有taglist的最后
+        _.each(editModel.tagListOrg, function(element) {
+            if (element.active == 0) {
+                param.tagList.push(element);
+            }
+        });
+
         param.model = angular.copy(model);
         param.extModel = angular.copy(extModel);
 

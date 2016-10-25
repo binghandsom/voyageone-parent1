@@ -26,6 +26,7 @@ define([
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
+                    $scope.editModel.tagListOrg = angular.copy(res.data.tagList);
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
@@ -86,10 +87,16 @@ define([
             }
         };
 
-        $scope.delTag = function (tag) {
+        $scope.delTag = function (tag, index) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
-                  tag.active=0;
+                    tag.active = 0;
+                    $scope.editModel.tagList.splice(index, 1);
+                    if (tag.id) {
+                        // 找到原始保存的taglist,将其'active'设为0
+                        var tagObj = _.find($scope.editModel.tagListOrg, function(item) { return item.id == tag.id; });
+                        tagObj.active = 0;
+                    }
                 });
         };
 
@@ -135,6 +142,13 @@ define([
             var _upEntity = angular.copy($scope.editModel);
 
             _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
+            // 活动标签设置，找出已被删除的tag，添加到现有taglist的最后
+            _.each($scope.editModel.tagListOrg, function(element) {
+                if (element.active == 0) {
+                    _upEntity.tagList.push(element);
+                }
+            });
+
             _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
             _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);

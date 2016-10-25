@@ -251,6 +251,7 @@ public class CmsBtJmPromotionService extends BaseService {
             cmsBtTagModel.setModifier(promotionModel.getModifier());
 
             if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
+                // 要判断tag被删除的情况 tag.active == -1 表示该tag已被删除
                 tagService.updateTagModel(cmsBtTagModel);
             } else {
                 addChildTag(cmsBtTagModel, promotionModel);
