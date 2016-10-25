@@ -7,7 +7,7 @@
                         translate}}</h4>
                 </div>
                 <div class="container-fluid">
-                    <div class="col-sm-12" ng-controller="popupCtrl">
+                    <div class="col-sm-12">
                         <div class="col-xs-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    <div class="box" ng-controller="popupCtrl">
+    <div class="box">
         <!---------------------------------------Level 1-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 1">
             <div class="category_drag_main">
@@ -51,7 +51,7 @@
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(0)"><i
                             class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 0;ctrl.newCategory(true,0,openNewCategory)">
+                            ng-click="ctrl.newIndex.value = 0;ctrl.newCategory(true,0)">
                         <i class="fa fa-plus"></i></button>
                 </div>
                 <div class="category_drag_list_dp">
@@ -90,7 +90,7 @@
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(1)"><i
                             class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 1;ctrl.newCategory(false,0,openNewCategory)">
+                            ng-click="ctrl.newIndex.value = 1;ctrl.newCategory(false,0)">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(2)"><i
                             class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 2;ctrl.newCategory(false,1,openNewCategory)">
+                            ng-click="ctrl.newIndex.value = 2;ctrl.newCategory(false,1)">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(3)"><i
                             class="fa fa-search"></i></button>
                     <button type="submit" class="btn btn-success btn-xxs"
-                            ng-click="ctrl.newIndex.value = 3;ctrl.newCategory(false,2,openNewCategory)">
+                            ng-click="ctrl.newIndex.value = 3;ctrl.newCategory(false,2)">
                         <i class="fa fa-plus"></i></button>
                 </div>
             </div>

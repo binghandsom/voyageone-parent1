@@ -10,13 +10,14 @@ define([
     "use strict";
     return cms.controller('categoryController', (function () {
 
-        function CategoryController(platformMappingService, sellerCatService, alert, confirm, $translate) {
+        function CategoryController(platformMappingService, sellerCatService, alert, confirm, $translate,popups) {
 
             this.platformMappingService = platformMappingService;
             this.sellerCatService = sellerCatService;
             this.alert = alert;
             this.confirm = confirm;
             this.translate = $translate;
+            this.popups = popups;
             this.carts = [];
             this.tree = [];
             this.source = [];
@@ -116,12 +117,19 @@ define([
             }
         };
 
-        CategoryController.prototype.newCategory = function (root, level, openNewCategory) {
+        /**
+         * @param root boolean 判断是否为根节点
+         * @param level        父节点level值
+         */
+        CategoryController.prototype.newCategory = function (root, level) {
+            var self = this,
+                popups = self.popups;
+
             if (this.cartInfo.cart == null) {
                 this.alert(this.translate.instant("TXT_STORE_CATEGORY_SELECT"));
                 return;
             }
-            openNewCategory({root: root, selectObject: this.selected[level], save: this.save, ctrl: this});
+            popups.openNewCategory({root: root, selectObject: this.selected[level], save: this.save, ctrl: this});
         };
 
         CategoryController.prototype.save = function (parentCatId, catName) {
@@ -174,11 +182,10 @@ define([
             }
         };
 
-        CategoryController.prototype.catSort = function ($item, level) {
+        CategoryController.prototype.catSort = function($item,level){
             var self = this;
 
-            self.selected[0] = $item;
-            self.search(level + 1);
+            self.selected[0] = tag1;self.search(1);
         };
 
         return CategoryController;
