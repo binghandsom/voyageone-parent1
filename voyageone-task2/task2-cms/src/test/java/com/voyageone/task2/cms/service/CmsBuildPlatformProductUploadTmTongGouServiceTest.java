@@ -70,8 +70,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
         shopProp.setAppKey("23239809");
-        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
-        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
         shopProp.setPlatform_id("1");
         // for test only==============================================================
@@ -117,8 +117,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
         shopProp.setAppKey("23239809");
-        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
-        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
         shopProp.setPlatform_id("1");
         // for test only==============================================================
@@ -140,8 +140,8 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
         shopProp.setAppKey("23239809");
-        shopProp.setAppSecret("34fb2f57498bc6b00384da175021e587");
-        shopProp.setSessionKey("6100330f76a107e76570295d6a3f2d7295f98415d0d2b1e2640015666");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey("");
         // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
         shopProp.setPlatform_id("1");
         // for test only==============================================================
