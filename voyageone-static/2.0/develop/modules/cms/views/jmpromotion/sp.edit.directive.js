@@ -120,9 +120,9 @@ define([
                 vm.metaData = res.data;
                 // 记住主品牌初始值
                 _getJmBrandEnName(self, editModel.model.cmsBtJmMasterBrandId);
+                // 记住主频道英文缩写
+                _getJmMainChannelAb(self, editModel.extModel.mainChannel);
             });
-            // 记住主频道英文缩写
-            _getJmMainChannelAb(self, editModel.extModel.mainChannel);
         });
     };
 
