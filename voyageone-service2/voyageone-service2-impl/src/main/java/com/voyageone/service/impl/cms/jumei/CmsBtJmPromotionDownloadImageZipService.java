@@ -188,7 +188,9 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                         //读入需要下载的文件的内容，打包到zip文件
                         while ((len = inputStream.read(buffer)) > 0) {
                             zipOutputStream.write(buffer, 0, len);
+                            $info(len+"");
                         }
+                        $info("finish");
                         inputStream.close();
                         zipOutputStream.closeEntry();
 
