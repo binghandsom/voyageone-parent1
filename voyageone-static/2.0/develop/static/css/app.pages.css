@@ -884,6 +884,12 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
 }
 
+.jm-sortable-product-modal .arrow-button button{
+    background: #fff;
+    border: none;
+    padding: 0px;
+}
+
 .jm-sortable-product {
     width: 220px;
 }
