@@ -184,6 +184,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                     try (InputStream inputStream = conn.getInputStream()) {
                         //压缩包内生成图片的路径以及名称
                         zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
+                        $info(urlMap.get("picturePath") + ".jpg");
                         //读入需要下载的文件的内容，打包到zip文件
                         while ((len = inputStream.read(buffer)) > 0) {
                             zipOutputStream.write(buffer, 0, len);
@@ -192,7 +193,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                         zipOutputStream.closeEntry();
 
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                 }
                 zipOutputStream.close();
