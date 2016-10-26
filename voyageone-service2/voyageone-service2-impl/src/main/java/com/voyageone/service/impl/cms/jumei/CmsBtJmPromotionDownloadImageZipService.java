@@ -176,6 +176,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 for (Map<String, String> urlMap : promotionImagesList) {
                     int len;
                     URL url = new URL(urlMap.get("url"));
+                    System.out.print(urlMap.get("url"));
                     //Url
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     try (InputStream inputStream = conn.getInputStream()) {
