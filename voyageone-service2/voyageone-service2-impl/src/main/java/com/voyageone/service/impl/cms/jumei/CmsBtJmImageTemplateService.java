@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -84,7 +85,8 @@ public class CmsBtJmImageTemplateService {
     /**
      * 根据jmPromotionId 和图片类型 返回 带模板的url地址
      */
-    public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean) {
+    public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean orgCmsBtJmPromotionSaveBean) {
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = JacksonUtil.json2Bean(JacksonUtil.bean2Json(orgCmsBtJmPromotionSaveBean),CmsBtJmPromotionSaveBean.class);
         boolean isEnterGuide = true;
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\"" + imageName + "\"";
