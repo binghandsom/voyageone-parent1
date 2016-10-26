@@ -52,4 +52,28 @@ public class CmsBuildPlatformProductUploadTmServiceTest {
 
         uploadTmService.uploadProduct(workload, shopProp);
     }
+
+    @Test
+    public void testUploadProduct2() throws Exception {
+
+        CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
+        workload.setId(247);
+        workload.setChannelId("010");
+        workload.setCartId(23);
+        workload.setGroupId(Long.parseLong("27725"));
+        workload.setPublishStatus(0);
+
+        // 测试用PortAmerican海外专营店
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id("010");
+        shop.setCart_id("23");
+        shop.setApp_url("http://gw.api.taobao.com/router/rest");
+        shop.setAppKey("21008948");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
+        // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
+        shop.setPlatform_id("1");
+
+        uploadTmService.uploadProduct(workload, shop);
+    }
 }
