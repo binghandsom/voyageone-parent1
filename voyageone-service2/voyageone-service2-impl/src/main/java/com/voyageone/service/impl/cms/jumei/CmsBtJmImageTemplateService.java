@@ -25,6 +25,8 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -118,9 +120,11 @@ public class CmsBtJmImageTemplateService {
                 if (paramsObject[i] instanceof Date) {
                     String dateFormat = StringUtil.isEmpty(cmsBtJmImageTemplateModel.getDateFormat())?"M.dd":cmsBtJmImageTemplateModel.getDateFormat();
                     paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], dateFormat);
+
                 }else if(paramsObject[i]  == null){
                     paramsObject[i] = "";
                 }
+                paramsObject[i] = URLEncoder.encode(paramsObject[i].toString(),"UTF-8");
             }
             if(isEnterGuide){
                 return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(1), paramsObject);
