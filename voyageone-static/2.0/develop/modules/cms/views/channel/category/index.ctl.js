@@ -182,10 +182,16 @@ define([
             }
         };
 
-        CategoryController.prototype.catSort = function($item,level){
+        CategoryController.prototype.catSort = function($item, $indexTo,level){
             var self = this;
 
-            self.selected[0] = tag1;self.search(1);
+            if($indexTo == 0){
+                self.selected[0] = $item;
+                self.search(level);
+            }
+
+            console.log("final",$indexTo);
+
         };
 
         return CategoryController;

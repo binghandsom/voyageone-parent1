@@ -19,20 +19,13 @@
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         </select>
                                     </div>
-                                    <label class="col-sm-2 control-label" style="width: 150px;">{{'MAX_SELLER_CAT_DEPTH'
-                                        | translate}}：{{ctrl.cartInfo.level}}</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <div class="col-sm-6 control-label">
+                                    <label class="col-sm-2 control-label" style="width: 150px;">{{'MAX_SELLER_CAT_DEPTH' | translate}}：{{ctrl.cartInfo.level}}</label>
+                                    <div class="col-sm-2 text-right">
+                                        <button class="btn btn-success"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -44,9 +37,7 @@
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 1">
             <div class="category_drag_main">
                 <p class="text-center text-vo font-bold"><i class="glyphicon glyphicon-align-left"></i>&emsp;Level 1</p>
-
                 <div class="form-inline m-l-xs">
-
                     <input type="text" placeholder="快速检索" class="form-control" ng-model="ctrl.key[0]">
                     <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(0)"><i
                             class="fa fa-search"></i></button>
@@ -55,17 +46,32 @@
                         <i class="fa fa-plus"></i></button>
                 </div>
                 <div class="category_drag_list_dp">
-                    <ul sv-root sv-part="ctrl.tree[0]" sv-on-sort="ctrl.catSort($item,0)">
+                    <ul sv-root sv-part="ctrl.tree[0]" sv-on-sort="ctrl.catSort($item, $indexTo,1)">
                         <li ng-repeat="tag1 in ctrl.tree[0]" sv-element="opts">
-                            <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);"
-                               ng-class="{indexSelected:ctrl.selected[0] == tag1}">
+                            <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
                                 <span ng-if="tag1.value == null">{{tag1.catName}}</span>
                                 <input ng-if="tag1.value == 1" type="text" ng-model="tag1.newCatName">
                                 <span ng-if="tag1.isSpecial != '1'">
-                                    <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
-                                            ng-if="tag1.children.length == 0" ng-click="ctrl.delete(tag1)"
-                                            style="margin-left: 7px;">
+                                    <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right" ng-if="tag1.children.length == 0" ng-click="ctrl.delete(tag1)" style="margin-left: 7px;"></button>
+                                    <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag1)">
+                                        <span ng-if="tag1.value == null" translate="BTN_EDIT"></span>
+                                        <span ng-if="tag1.value == 1" translate="BTN_SAVE"></span>
                                     </button>
+                                </span>
+                                <span ng-if="tag1.isSpecial == '1'">
+                                    <span class="label label-default btn-xs pull-right" title="{{'TXT_BANNER'|translate}}"><i class="fa fa-ban"></i></span>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!--除了天猫和官网同构  其他店不允许拖动-->
+                    <ul ng-if="false">
+                        <li ng-repeat="tag1 in ctrl.tree[0]">
+                            <a href="javascript:void(0)" ng-click="ctrl.selected[0] = tag1;ctrl.search(1);" ng-class="{indexSelected:ctrl.selected[0] == tag1}">
+                                <span ng-if="tag1.value == null">{{tag1.catName}}</span>
+                                <input ng-if="tag1.value == 1" type="text" ng-model="tag1.newCatName">
+                                <span ng-if="tag1.isSpecial != '1'">
+                                    <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right" ng-if="tag1.children.length == 0" ng-click="ctrl.delete(tag1)" style="margin-left: 7px;"></button>
                                     <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag1)">
                                         <span ng-if="tag1.value == null" translate="BTN_EDIT"></span>
                                         <span ng-if="tag1.value == 1" translate="BTN_SAVE"></span>
@@ -80,6 +86,7 @@
                 </div>
             </div>
         </div>
+
         <!---------------------------------------Level 2-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 2">
             <div class="category_drag_main">
@@ -95,7 +102,30 @@
                 </div>
             </div>
             <div class="category_drag_list_dp">
-                <ul>
+                <ul sv-root sv-part="ctrl.tree[1]" sv-on-sort="ctrl.catSort($item, $indexTo,2)">
+                    <li ng-repeat="tag2 in ctrl.tree[1]" sv-element="opts">
+                        <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"
+                           ng-class="{indexSelected:ctrl.selected[1] == tag2}">
+                            <span ng-if="tag2.value == null">{{tag2.catName}}</span>
+                            <input ng-if="tag2.value == 1" type="text" ng-model="tag2.newCatName">
+                            <span ng-if="tag2.isSpecial != '1'">
+                                <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
+                                        ng-if="tag2.children.length == 0" ng-click="ctrl.delete(tag2)"
+                                        style="margin-left: 7px;">
+                                </button>
+                                <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag2)">
+                                    <span ng-if="tag2.value == null" translate="BTN_EDIT"></span>
+                                    <span ng-if="tag2.value == 1" translate="BTN_SAVE"></span>
+                                </button>
+                            </span>
+                            <span ng-if="tag2.isSpecial == '1'">
+                                <span class="label label-default btn-xs pull-right" title="{{'TXT_BANNER'|translate}}"><i class="fa fa-ban"></i></span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <!--------------------除了天猫和官网同构    其他不允许拖拽------------------------>
+                <ul ng-if="false">
                     <li ng-repeat="tag2 in ctrl.tree[1]">
                         <a href="javascript:void(0)" ng-click="ctrl.selected[1] = tag2;ctrl.search(2)"
                            ng-class="{indexSelected:ctrl.selected[1] == tag2}">
@@ -119,6 +149,7 @@
                 </ul>
             </div>
         </div>
+
         <!---------------------------------------Level 3-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 3">
             <div class="category_drag_main">
@@ -134,7 +165,30 @@
                 </div>
             </div>
             <div class="category_drag_list_dp">
-                <ul>
+                <ul sv-root sv-part="ctrl.tree[2]" sv-on-sort="ctrl.catSort($item, $indexTo,3)">
+                    <li ng-repeat="tag3 in ctrl.tree[2]" sv-element="opts">
+                        <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"
+                           ng-class="{indexSelected:ctrl.selected[2] == tag3}">
+                            <span ng-if="tag3.value == null">{{tag3.catName}}</span>
+                            <input ng-if="tag3.value == 1" type="text" ng-model="tag3.newCatName">
+                            <span ng-if="tag3.isSpecial != '1'">
+                                <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
+                                        ng-if="tag3.children.length == 0" ng-click="ctrl.delete(tag3)"
+                                        style="margin-left: 7px;">
+                                </button>
+                                <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag3)">
+                                    <span ng-if="tag3.value == null" translate="BTN_EDIT"></span>
+                                    <span ng-if="tag3.value == 1" translate="BTN_SAVE"></span>
+                                </button>
+                            </span>
+                            <span ng-if="tag3.isSpecial == '1'">
+                                <span class="label label-default btn-xs pull-right" title="{{'TXT_BANNER'|translate}}"><i class="fa fa-ban"></i></span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <!-------------------除了天猫和官网同构，其他店铺不允许拖拽--------------------->
+                <ul ng-if="false">
                     <li ng-repeat="tag3 in ctrl.tree[2]">
                         <a href="javascript:void(0)" ng-click="ctrl.selected[2] = tag3;ctrl.search(3)"
                            ng-class="{indexSelected:ctrl.selected[2] == tag3}">
@@ -155,10 +209,10 @@
                             </span>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
+
         <!---------------------------------------Level 4 (最大不会超过4层)-------------------------------------->
         <div class="category_drag col-sm-3 category-drag-minWidth" ng-if="ctrl.cartInfo.level >= 4">
             <div class="category_drag_main">
@@ -174,7 +228,30 @@
                 </div>
             </div>
             <div class="category_drag_list_dp">
-                <ul>
+                <ul sv-root sv-part="ctrl.tree[3]">
+                    <li ng-repeat="tag4 in ctrl.tree[3]" sv-element="opts">
+                        <a href="javascript:void(0)" ng-click="ctrl.selected[3] = tag4"
+                           ng-class="{indexSelected:ctrl.selected[3] == tag4}">
+                            <span ng-if="tag4.value == null">{{tag4.catName}}</span>
+                            <input ng-if="tag4.value == 1" type="text" ng-model="tag4.newCatName">
+                            <span ng-if="tag4.isSpecial != '1'">
+                                <button translate="BTN_DELETE" class="btn btn-danger btn-xs pull-right"
+                                        ng-if="tag4.children.length == 0" ng-click="ctrl.delete(tag4)"
+                                        style="margin-left: 7px;">
+                                </button>
+                                <button class="btn btn-success btn-xs pull-right" ng-click="ctrl.updateCat(tag4)">
+                                    <span ng-if="tag4.value == null" translate="BTN_EDIT"></span>
+                                    <span ng-if="tag4.value == 1" translate="BTN_SAVE"></span>
+                                </button>
+                            </span>
+                            <span ng-if="tag4.isSpecial == '1'">
+                                <span class="label label-default btn-xs pull-right" title="{{'TXT_BANNER'|translate}}"><i class="fa fa-ban"></i></span>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+                <!------------------除了天猫和官网同构，其他店铺不允许拖拽------------------>
+                <ul ng-if="false">
                     <li ng-repeat="tag4 in ctrl.tree[3]">
                         <a href="javascript:void(0)" ng-click="ctrl.selected[3] = tag4"
                            ng-class="{indexSelected:ctrl.selected[3] == tag4}">
@@ -195,7 +272,6 @@
                             </span>
                         </a>
                     </li>
-
                 </ul>
             </div>
         </div>
