@@ -146,7 +146,8 @@ define([
             "saveType": saveType
         }).then(function(){
             notify.success("更新成功!");
-            spDataService.jmPromotionObj.imageStatus = 1;
+            if(saveType == 1)
+                spDataService.jmPromotionObj.imageStatus = 1;
 
             //刷新页面
             self.init();

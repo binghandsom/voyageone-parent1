@@ -106,17 +106,17 @@ define(['cms'], function (cms) {
 
         switch (moveKey) {
             case moveKeys.up:
-                if (i === 1)
+                if (i === 0)
                     return;
                 temp = source[i];
                 source[i] = source[i - 1];
                 source[i - 1] = temp;
                 return;
             case moveKeys.upToTop:
-                if (i === 1)
+                if (i === 0)
                     return;
                 temp = source.splice(i, 1);
-                source.splice(1, 0, temp[0]);
+                source.splice(0, 0, temp[0]);
                 return;
             case moveKeys.down:
                 if (i === source.length - 1)
