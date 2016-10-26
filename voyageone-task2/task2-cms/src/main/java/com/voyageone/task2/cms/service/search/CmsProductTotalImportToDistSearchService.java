@@ -3,11 +3,12 @@ package com.voyageone.task2.cms.service.search;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.components.solr.bean.CmsProductDistSearchModel;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
 import com.voyageone.components.solr.service.CmsProductDistSearchService;
-import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -16,9 +17,7 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Cms Product Data 全量导入 分销 收索服务器 Service
@@ -34,6 +33,8 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
 
     private static final String CMS_CHANNEL_ID = "928";
 
+    private static final String CMS_PRODUCT_DIST_BRAND_CATS_KEY = "DIST_cmsProductSearchBrandCatsCnt";
+
     @Autowired
     private ChannelService channelService;
 
@@ -42,6 +43,8 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
 
     @Autowired
     private CmsProductDistSearchService cmsProductDistSearchService;
+
+    public Map<String, Integer> brandCatsCntSumMap = new HashMap<>();
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -52,7 +55,12 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
         }
 
         logger.info("CmsProductTotalImportToDistSearchService.onStartup start channelId:{}", CMS_CHANNEL_ID);
+        brandCatsCntSumMap = new HashMap<>();
+        // import data to search from mongo
         importDataToSearchFromMongo(CMS_CHANNEL_ID);
+        // import data to brand_cats cnt Sum
+        importDataToBrandCatsCntSum();
+
         logger.info("CmsProductTotalImportToDistSearchService.onStartup end channelId:{}", CMS_CHANNEL_ID);
     }
 
@@ -69,8 +77,12 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
         int index = 1;
         while (it.hasNext()) {
             CmsBtProductModel cmsBtProductModel = it.next();
-
-            SolrUpdateBean update = cmsProductDistSearchService.createSolrBeanForNew(cmsBtProductModel, currentTime);
+            // create CmsProductDistSearchModel
+            CmsProductDistSearchModel model = cmsProductDistSearchService.createSolrSearchModelForNew(cmsBtProductModel, currentTime);
+            // brandCatsCnt Sum
+            brandCatsCntSum(model);
+            // create SolrUpdateBean
+            SolrUpdateBean update = cmsProductDistSearchService.createSolrBean(model, cmsBtProductModel.get_id(), true);
             if (update == null) {
                 continue;
             }
@@ -114,6 +126,30 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
             cmsProductDistSearchService.deleteByIds(removeIdList);
             cmsProductDistSearchService.commit();
         }
+    }
+
+    private void brandCatsCntSum(CmsProductDistSearchModel model) {
+        if (model != null && model.getBrandCats() != null && !model.getBrandCats().isEmpty()) {
+            for (String keyWord: model.getBrandCats()) {
+                if (brandCatsCntSumMap.containsKey(keyWord)) {
+                    brandCatsCntSumMap.put(keyWord, (int)brandCatsCntSumMap.get(keyWord) + 1);
+                } else {
+                    brandCatsCntSumMap.put(keyWord, 1);
+                }
+            }
+        }
+    }
+
+    private void importDataToBrandCatsCntSum() {
+        for (Map.Entry<String, Integer> entry : brandCatsCntSumMap.entrySet()) {
+            System.out.println(entry.getKey() + ":" +  entry.getValue());
+        }
+        if (brandCatsCntSumMap != null && !brandCatsCntSumMap.isEmpty()) {
+            //noinspection
+            CacheHelper.reFreshSSB(CMS_PRODUCT_DIST_BRAND_CATS_KEY, brandCatsCntSumMap, false);
+            brandCatsCntSumMap.clear();
+        }
+        brandCatsCntSumMap = null;
     }
 
     @Override

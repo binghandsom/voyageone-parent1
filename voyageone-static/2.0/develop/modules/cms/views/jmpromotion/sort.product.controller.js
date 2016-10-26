@@ -91,5 +91,48 @@ define(['cms'], function (cms) {
         });
     };
 
+    JmSortProductPopupController.prototype.moveKeys = {
+        up: 'up',
+        upToTop: 'upToTop',
+        down: 'down',
+        downToLast: 'downToLast'
+    };
+
+    JmSortProductPopupController.prototype.moveProduct = function moveProduct(i, moveKey) {
+        var self = this,
+            source = self.productList,
+            moveKeys = self.moveKeys,
+            temp;
+
+        switch (moveKey) {
+            case moveKeys.up:
+                if (i === 1)
+                    return;
+                temp = source[i];
+                source[i] = source[i - 1];
+                source[i - 1] = temp;
+                return;
+            case moveKeys.upToTop:
+                if (i === 1)
+                    return;
+                temp = source.splice(i, 1);
+                source.splice(1, 0, temp[0]);
+                return;
+            case moveKeys.down:
+                if (i === source.length - 1)
+                    return;
+                temp = source[i];
+                source[i] = source[i + 1];
+                source[i + 1] = temp;
+                return;
+            case moveKeys.downToLast:
+                if (i === source.length - 1)
+                    return;
+                temp = source.splice(i, 1);
+                source.push(temp[0]);
+                return;
+        }
+    };
+
     cms.controller('JmSortProductPopupController', ['spDataService', '$scope', '$element', 'notify', JmSortProductPopupController]);
 });

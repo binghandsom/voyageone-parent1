@@ -16,8 +16,9 @@ import org.springframework.data.solr.core.query.Query;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Cms Product Distribution Search Service
@@ -31,6 +32,31 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
     private static final String SOLR_TEMPLATE_NAME = "cmsProductSolrDistTemplate";
 
+    private static final Pattern stringFormatP = Pattern.compile("\t|\r|\n");
+
+    private String replaceBlank(String str) {
+        if (str != null) {
+            Matcher m = stringFormatP.matcher(str);
+            return m.replaceAll(" ");
+        }
+        return null;
+    }
+
+    private Double convertToDouble(Object data) {
+        if (data != null) {
+            if (data instanceof Double) {
+                return (Double) data;
+            } else {
+                try {
+                    return Double.parseDouble(String.valueOf(data));
+                } catch (Exception ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     protected String getSolrTemplateName() {
         return SOLR_TEMPLATE_NAME;
@@ -40,6 +66,14 @@ public class CmsProductDistSearchService extends BaseSearchService {
      * create Update Bean
      */
     public SolrUpdateBean createSolrBeanForNew(CmsBtProductModel cmsBtProductModel, Long lastVer) {
+        CmsProductDistSearchModel model = createSolrSearchModelForNew(cmsBtProductModel, lastVer);
+        return createSolrBean(model, cmsBtProductModel.get_id(), true);
+    }
+
+    /**
+     * create Solr Search Model For New
+     */
+    public CmsProductDistSearchModel createSolrSearchModelForNew(CmsBtProductModel cmsBtProductModel, Long lastVer) {
         if (cmsBtProductModel == null) {
             return null;
         }
@@ -61,24 +95,40 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 //product code
                 model.setCode(fields.getCode());
                 if (!StringUtils.isEmpty(fields.getProductNameEn())) {
-                    model.setNameEn(fields.getProductNameEn());
+                    model.setNameEn(replaceBlank(fields.getProductNameEn()));
                 }
                 if (!StringUtils.isEmpty(fields.getOriginalTitleCn())) {
-                    model.setNameCn(fields.getOriginalTitleCn());
+                    model.setNameCn(replaceBlank(fields.getOriginalTitleCn()));
                 }
                 if (!StringUtils.isEmpty(fields.getLongDesEn())) {
-                    model.setDescEn(fields.getLongDesEn());
+                    model.setDescEn(replaceBlank(fields.getLongDesEn()));
                 }
                 if (!StringUtils.isEmpty(fields.getLongDesCn())) {
-                    model.setDescCn(fields.getLongDesCn());
+                    model.setDescCn(replaceBlank(fields.getLongDesCn()));
                 }
                 if (!StringUtils.isEmpty(fields.getColor())) {
-                    model.setColor(fields.getColor());
+                    model.setColor(replaceBlank(fields.getColor()));
                 }
                 if (!StringUtils.isEmpty(fields.getBrand())) {
-                    model.setBrandEn(fields.getBrand());
+                    model.setBrandEn(replaceBlank(fields.getBrand()));
                 }
+
                 //private String brandCn;
+                //private String catEn;
+
+                //String catCode = null;
+                String catCn = "其他";
+                String hsCodePrivate = fields.getHsCodePrivate();
+                //noinspection Duplicates
+                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                    String[] hsCodePrivateArr = hsCodePrivate.split(",");
+                    if (hsCodePrivateArr.length > 2) {
+                        //catCode = hsCodePrivateArr[0];
+                        catCn = hsCodePrivateArr[1];
+                    }
+                }
+                model.addCatCn(replaceBlank(catCn));
+
                 model.setSalePrice(fields.getPriceRetailSt());
                 List<CmsBtProductModel_Field_Image> productImageList = fields.getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
                 if (productImageList != null && !productImageList.isEmpty()) {
@@ -89,23 +139,14 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 //private Integer uv;
                 //private Integer saleCount;
             }
-
-//            CmsBtProductModel_Platform_Cart tgPlatformCart = cmsBtProductModel.getPlatform(CartEnums.Cart.TG);
-//            if (tgPlatformCart != null) {
-//                BaseMongoMap<String, Object> fields = tgPlatformCart.getFields();
-//                if (fields != null) {
-//                    //private String catEn;
-//                    //private String catCn;
-//                }
-//            }
-
         }
 
         if (lastVer != null) {
             model.setLastVer(lastVer);
         }
 
-        return createSolrBean(model, cmsBtProductModel.get_id());
+        reorganizeModel(model);
+        return model;
     }
 
     /**
@@ -135,43 +176,51 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
                 String productNameEn = (String) fieldsDoc.get("productNameEn");
                 if (!StringUtils.isEmpty(productNameEn)) {
-                    model.setNameEn(productNameEn);
+                    model.setNameEn(replaceBlank(productNameEn));
                 }
 
                 String originalTitleCn = (String) fieldsDoc.get("originalTitleCn");
                 if (!StringUtils.isEmpty(originalTitleCn)) {
-                    model.setNameCn(originalTitleCn);
+                    model.setNameCn(replaceBlank(originalTitleCn));
                 }
 
                 String longDesEn = (String) fieldsDoc.get("longDesEn");
                 if (!StringUtils.isEmpty(longDesEn)) {
-                    model.setDescEn(longDesEn);
+                    model.setDescEn(replaceBlank(longDesEn));
                 }
 
                 String longDesCn = (String) fieldsDoc.get("longDesCn");
                 if (!StringUtils.isEmpty(longDesCn)) {
-                    model.setDescCn(longDesCn);
+                    model.setDescCn(replaceBlank(longDesCn));
                 }
 
                 String color = (String) fieldsDoc.get("color");
                 if (!StringUtils.isEmpty(color)) {
-                    model.setColor(color);
+                    model.setColor(replaceBlank(color));
                 }
 
                 String brand = (String) fieldsDoc.get("brand");
                 if (!StringUtils.isEmpty(brand)) {
-                    model.setBrandEn(brand);
+                    model.setBrandEn(replaceBlank(brand));
                 }
 
                 //private String brandCn;
+                //private String catEn;
 
-
-                Double priceRetailSt = null;
-                if(fieldsDoc.get("priceRetailSt") instanceof Integer){
-                    priceRetailSt = Double.parseDouble(fieldsDoc.get("priceRetailSt").toString());
-                }else{
-                    priceRetailSt = (Double) fieldsDoc.get("priceRetailSt");
+                //String catCode = null;
+                String catCn = "其他";
+                String hsCodePrivate = (String) fieldsDoc.get("hsCodePrivate");
+                //noinspection Duplicates
+                if (!StringUtils.isEmpty(hsCodePrivate)) {
+                    String[] hsCodePrivateArr = hsCodePrivate.split(",");
+                    if (hsCodePrivateArr.length > 2) {
+                        //catCode = hsCodePrivateArr[0];
+                        catCn = hsCodePrivateArr[1];
+                    }
                 }
+                model.addCatCn(replaceBlank(catCn));
+
+                Double priceRetailSt = convertToDouble(fieldsDoc.get("priceRetailSt"));
                 if (priceRetailSt != null) {
                     model.setSalePrice(priceRetailSt);
                 }
@@ -189,19 +238,12 @@ public class CmsProductDistSearchService extends BaseSearchService {
             }
         }
 
-//            CmsBtProductModel_Platform_Cart tgPlatformCart = cmsBtProductModel.getPlatform(CartEnums.Cart.TG);
-//            if (tgPlatformCart != null) {
-//                BaseMongoMap<String, Object> fields = tgPlatformCart.getFields();
-//                if (fields != null) {
-//                    //private String catEn;
-//                    //private String catCn;
-//                }
-//            }
         if (lastVer != null) {
             model.setLastVer(lastVer);
         }
 
-        return createSolrBean(model, id);
+        reorganizeModel(model);
+        return createSolrBean(model, id, false);
     }
 
     /**
@@ -253,35 +295,49 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
             String productNameEn = (String) getDataFromDocument(setDoc, "common.fields.productNameEn");
             if (!StringUtils.isEmpty(productNameEn)) {
-                model.setNameEn(productNameEn);
+                model.setNameEn(replaceBlank(productNameEn));
             }
 
             String originalTitleCn = (String) getDataFromDocument(setDoc, "common.fields.originalTitleCn");
             if (!StringUtils.isEmpty(originalTitleCn)) {
-                model.setNameCn(originalTitleCn);
+                model.setNameCn(replaceBlank(originalTitleCn));
             }
 
             String longDesEn = (String) getDataFromDocument(setDoc, "common.fields.longDesEn");
             if (!StringUtils.isEmpty(longDesEn)) {
-                model.setDescEn(longDesEn);
+                model.setDescEn(replaceBlank(longDesEn));
             }
 
             String longDesCn = (String) getDataFromDocument(setDoc, "common.fields.longDesCn");
             if (!StringUtils.isEmpty(longDesCn)) {
-                model.setDescCn(longDesCn);
+                model.setDescCn(replaceBlank(longDesCn));
             }
 
             String color = (String) getDataFromDocument(setDoc, "common.fields.color");
             if (!StringUtils.isEmpty(color)) {
-                model.setColor(color);
+                model.setColor(replaceBlank(color));
             }
 
             String brand = (String) getDataFromDocument(setDoc, "common.fields.brand");
             if (!StringUtils.isEmpty(brand)) {
-                model.setBrandEn(brand);
+                model.setBrandEn(replaceBlank(brand));
             }
 
             //private String brandCn;
+            //private String catEn;
+
+            //String catCode = null;
+            String catCn = "其他";
+            String hsCodePrivate = (String) getDataFromDocument(setDoc, "common.fields.hsCodePrivate");
+            //noinspection Duplicates
+            if (!StringUtils.isEmpty(hsCodePrivate)) {
+                String[] hsCodePrivateArr = hsCodePrivate.split(",");
+                if (hsCodePrivateArr.length > 2) {
+                    //catCode = hsCodePrivateArr[0];
+                    catCn = hsCodePrivateArr[1];
+                }
+            }
+            model.addCatCn(replaceBlank(catCn));
 
             Double priceRetailSt = (Double) getDataFromDocument(setDoc, "common.fields.priceRetailSt");
             if (priceRetailSt != null) {
@@ -289,7 +345,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
             }
 
             @SuppressWarnings("unchecked")
-            List<Document> productImageList = (List<Document>)getDataFromDocument(setDoc, "common.fields.images1");
+            List<Document> productImageList = (List<Document>) getDataFromDocument(setDoc, "common.fields.images1");
             if (productImageList != null && !productImageList.isEmpty()) {
                 Document productImage = productImageList.get(0);
                 model.setImageLink((String) productImage.get("image1"));
@@ -311,14 +367,15 @@ public class CmsProductDistSearchService extends BaseSearchService {
             model.setLastVer(lastVer);
         }
 
-        return createSolrBean(model, id);
+        reorganizeModel(model);
+        return createSolrBean(model, id, false);
     }
 
 
     /**
      * create Update Bean
      */
-    private SolrUpdateBean createSolrBean(CmsProductDistSearchModel model, String id) {
+    public SolrUpdateBean createSolrBean(CmsProductDistSearchModel model, String id, boolean isNew) {
         if (model == null || id == null) {
             return null;
         }
@@ -327,10 +384,51 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
         SolrUpdateBean update = new SolrUpdateBean("id", id);
         modelMap.entrySet().stream().filter(entry -> entry.getValue() != null).forEach(entry -> {
-            update.add(entry.getKey(), entry.getValue());
+            if (!isNew && entry.getValue() instanceof Collection) {
+                for (Object coll : (Collection) entry.getValue()) {
+                    update.addValueToField(entry.getKey(), coll);
+                }
+            } else {
+                update.add(entry.getKey(), entry.getValue());
+            }
         });
 
         return update;
+    }
+
+    private void reorganizeModel(CmsProductDistSearchModel model) {
+        Set<String> brandCatSet = new HashSet<>();
+        List<String> brands = new ArrayList<>();
+        if (model.getBrandEn() != null) {
+            brandCatSet.add(model.getBrandEn());
+            brands.add(model.getBrandEn());
+        }
+        if (model.getBrandCn() != null) {
+            brandCatSet.add(model.getBrandCn());
+            brands.add(model.getBrandCn());
+        }
+
+        List<String> cats = new ArrayList<>();
+        if (model.getCatEns() != null && !model.getCatEns().isEmpty()) {
+            brandCatSet.addAll(model.getCatEns());
+            cats.addAll(model.getCatEns());
+        }
+        if (model.getCatCns() != null && !model.getCatCns().isEmpty()) {
+            brandCatSet.addAll(model.getCatCns());
+            cats.addAll(model.getCatCns());
+        }
+
+        for (String brand : brands) {
+            for (String cat : cats) {
+                brandCatSet.add(brand + cat);
+                brandCatSet.add(cat + brand);
+            }
+        }
+
+        if (!brandCatSet.isEmpty()) {
+            model.setBrandCats(brandCatSet);
+        }
+
     }
 
     /**

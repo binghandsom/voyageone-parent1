@@ -1,5 +1,8 @@
 package com.voyageone.components.solr.bean;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * Cms Product distribution Search Model
  *
@@ -18,8 +21,9 @@ public class CmsProductDistSearchModel {
     private Integer onDate;
     private String brandEn;
     private String brandCn;
-    private String catEn;
-    private String catCn;
+    private Set<String> catEns;
+    private Set<String> catCns;
+    private Set<String> brandCats;
     private Double salePrice;
     private String ImageLink;
     private String channelId;
@@ -100,20 +104,49 @@ public class CmsProductDistSearchModel {
         this.brandCn = brandCn;
     }
 
-    public String getCatEn() {
-        return catEn;
+    public void addCatEn(String catEn) {
+        if (catEns == null) {
+            catEns = new LinkedHashSet<>();
+        }
+        catEns.add(catEn);
     }
 
-    public void setCatEn(String catEn) {
-        this.catEn = catEn;
+    public Set<String> getCatEns() {
+        return catEns;
     }
 
-    public String getCatCn() {
-        return catCn;
+    public void setCatEns(Set<String> catEns) {
+        this.catEns = catEns;
     }
 
-    public void setCatCn(String catCn) {
-        this.catCn = catCn;
+    public void addCatCn(String catCn) {
+        if (catCns == null) {
+            catCns = new LinkedHashSet<>();
+        }
+        catCns.add(catCn);
+    }
+
+    public Set<String> getCatCns() {
+        return catCns;
+    }
+
+    public void setCatCns(Set<String> catCns) {
+        this.catCns = catCns;
+    }
+
+    public void addBrandCats(String brandCat) {
+        if (brandCats == null) {
+            brandCats = new LinkedHashSet<>();
+        }
+        brandCats.add(brandCat);
+    }
+
+    public Set<String> getBrandCats() {
+        return brandCats;
+    }
+
+    public void setBrandCats(Set<String> brandCats) {
+        this.brandCats = brandCats;
     }
 
     public Double getSalePrice() {

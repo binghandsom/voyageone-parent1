@@ -381,9 +381,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 //如果上新成功之后没取到jmHashId,spuno,skuno，或者JM中已经有该商品了，则调用一次聚美获取商品的API取得商品信息，补全本地库的内容
                 else if(jmApiErrorNoHashId ||
 //                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_NAME) ||
-                        htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)||
+                        (!StringUtils.isEmpty(htProductAddResponse.getError_code()) && htProductAddResponse.getError_code().contains(DUPLICATE_PRODUCT_DRAFT_NAME)) ||
 //                        htProductAddResponse.getError_code().contains(DUPLICATE_SPU_BARCODE) ||  // 不需要这个逻辑，有些就是要分成2个商品，只能手动修改，先把老的product1更新一下去掉SKU(其实是把该SKU的商家编码前面都加上了ERROR_)，再上出错的product2就不会报商家编码已存在的错误了
-                        htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS))
+                        (!StringUtils.isEmpty(htProductAddResponse.getBody()) && htProductAddResponse.getBody().contains(INVALID_PRODUCT_STATUS)))
                 {
                     // 上新成功但没取到jmHashId等值得时候，不需要重新上新
                     if (!jmApiErrorNoHashId) {
@@ -493,7 +493,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 {
                     String errMsg = "";
                     // 如果是错误代码是"109902"(HTML解析错误)的时候
-                    if (htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
+                    if (!StringUtils.isEmpty(htProductAddResponse.getError_code()) && htProductAddResponse.getError_code().contains(INVALID_HTML_CONTENT)) {
                         errMsg = "Master产品详情中的简短描述,详情描述或聚美使用方法等中英文项目的HTML内容语法解析错误！";
                     }
                     String msg = String.format("聚美新增产品上新失败！%s [ProductId:%s], [Message:%s]", errMsg, product.getProdId(), htProductAddResponse.getErrorMsg());
@@ -821,7 +821,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         //更新Deal失败
                         else
                         {
-                            if (htDealUpdateResponse != null && htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
+                            if (htDealUpdateResponse != null && !StringUtils.isEmpty(htDealUpdateResponse.getErrorMsg()) && htDealUpdateResponse.getErrorMsg().contains("没有可用的sku")) {
                                 String msg = String.format("聚美更新Deal失败,该Deal中没有可用的sku，请检查sku是否在该deal中存在，" +
                                         "不存在请添加sku或将该sku变成有效后再试！[ProductId:%s] [HashId:] [Message:%s] [skuNo:%s]",
                                         product.getProdId(), hashId, htDealUpdateResponse.getErrorMsg(), htDealUpdateRequest.getUpdate_data().getJumei_sku_no());

@@ -1,5 +1,14 @@
 package com.voyageone.service.impl.cms;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -132,6 +141,9 @@ public class TagService extends BaseService {
                     categoryList.add(tagBean);
                 }
             }
+            // 按时间倒序排序
+            Comparator<CmsBtTagBean> comparator = (cl1, cl2) -> cl1.getModified().compareTo(cl2.getModified());
+            categoryList.sort(comparator.reversed());
             return categoryList;
         }
         return new ArrayList<>(0);
@@ -192,7 +204,7 @@ public class TagService extends BaseService {
         tagJmModuleExtensionModel.setTagId(tagModel.getId());
         tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
         tagJmModuleExtensionModel.setFeatured(false);
-        tagJmModuleExtensionModel.setHideFlag(0);
+        tagJmModuleExtensionModel.setHideFlag(1);
         tagJmModuleExtensionModel.setDisplayStartTime(null);
         tagJmModuleExtensionModel.setDisplayEndTime(null);
         tagJmModuleExtensionModel.setShelfType(1);

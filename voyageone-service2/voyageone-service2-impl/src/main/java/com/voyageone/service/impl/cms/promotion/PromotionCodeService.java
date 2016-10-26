@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,14 +14,20 @@ import java.util.Map;
 
 /**
  * @author aooer 2016/2/18.
- * @version 2.0.0
+ * @author jonas
+ * @version 2.7.1
  * @since 2.0.0
  */
 @Service
 public class PromotionCodeService extends BaseService {
+    private final CmsBtPromotionCodesDao cmsBtPromotionCodesDao;
+    private final CmsBtPromotionCodesDaoExt cmsBtPromotionCodesDaoExt;
 
     @Autowired
-    private CmsBtPromotionCodesDaoExt cmsBtPromotionCodesDaoExt;
+    public PromotionCodeService(CmsBtPromotionCodesDaoExt cmsBtPromotionCodesDaoExt, CmsBtPromotionCodesDao cmsBtPromotionCodesDao) {
+        this.cmsBtPromotionCodesDaoExt = cmsBtPromotionCodesDaoExt;
+        this.cmsBtPromotionCodesDao = cmsBtPromotionCodesDao;
+    }
 
     public List<CmsBtPromotionCodesBean> getPromotionCodeList(Map<String, Object> param) {
         return cmsBtPromotionCodesDaoExt.selectPromotionCodeList(param);
@@ -40,4 +48,13 @@ public class PromotionCodeService extends BaseService {
         return cmsBtPromotionCodesDaoExt.selectCmsBtPromotionAllCodeByPromotionIdS(promotionIdList);
     }
 
+    /**
+     * @since 2.7.1
+     */
+    public List<CmsBtPromotionCodesModel> getPromotionCodeList(int promotionId, String productModel) {
+        CmsBtPromotionCodesModel parameter = new CmsBtPromotionCodesModel();
+        parameter.setPromotionId(promotionId);
+        parameter.setProductModel(productModel);
+        return cmsBtPromotionCodesDao.selectList(parameter);
+    }
 }
