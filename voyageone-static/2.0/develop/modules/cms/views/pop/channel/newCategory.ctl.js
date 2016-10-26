@@ -7,8 +7,9 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     "use strict";
-    angularAMD.controller('newCategoryCtl', (function(){
-        function NewCategoryCtl($scope,context,alert){
+    angularAMD.controller('newCategoryCtl', (function () {
+
+        function NewCategoryCtl($scope, context, alert) {
             this.scope = $scope;
             this.context = context;
             this.selectObject = context.selectObject;
@@ -16,31 +17,42 @@ define([
             this.catName = "";
             this.catPath = "";
         }
-        NewCategoryCtl.prototype = {
-            init:function(){
-                if(this.selectObject){
-                    //页面有数据的情况
-                    if(this.context.root == true){
-                        this.catPath = "";
-                    }else{
-                        this.catPath  = this.selectObject.catPath;
-                    }
-                }else{
-                    //页面没有数据的情况
-                    if(this.context.root  == true){
-                        this.catPath = "";
-                    }else{
-                        this.scope.$dismiss();
-                        this.alert('TXT_MSG_TAG');
-                    }
+
+        NewCategoryCtl.prototype.init = function () {
+            var self = this,
+                selectObject = self.selectObject,
+                context = self.context;
+
+            if (selectObject) {
+                //页面有数据的情况
+                if (context.root == true) {
+                    self.catPath = "";
+                } else {
+                    self.catPath = selectObject.catPath;
                 }
-            },
-            save:function(){
-                var parentCatId = this.context.root ? "0" : this.selectObject.catId;
-                this.context.ctrl.save(parentCatId,this.catName);
-                this.scope.$dismiss();
+            } else {
+                //页面没有数据的情况
+                if (context.root == true) {
+                    self.catPath = "";
+                } else {
+                    self.scope.$dismiss();
+                    self.alert('TXT_MSG_TAG');
+                }
             }
         };
+
+        NewCategoryCtl.prototype.save = function () {
+            var self = this,
+                selectObject = self.selectObject,
+                parentCatId,
+                context = self.context;
+
+            parentCatId = context.root ? "0" : selectObject.catId;
+
+            self.context.ctrl.save(selectObject, parentCatId, self.catName);
+            self.scope.$dismiss();
+        };
+
 
         return NewCategoryCtl;
     })());

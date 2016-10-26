@@ -1,8 +1,3 @@
-/**
- * Created by tony-piao on 2016/5/20.
- * 店铺分类controller
- */
-
 define([
     'cms',
     'modules/cms/controller/popup.ctl'
@@ -10,7 +5,7 @@ define([
     "use strict";
     return cms.controller('categoryController', (function () {
 
-        function CategoryController(platformMappingService, sellerCatService, alert, confirm, $translate,popups) {
+        function CategoryController(platformMappingService, sellerCatService, alert, confirm, $translate, popups) {
 
             this.platformMappingService = platformMappingService;
             this.sellerCatService = sellerCatService;
@@ -132,7 +127,13 @@ define([
             popups.openNewCategory({root: root, selectObject: this.selected[level], save: this.save, ctrl: this});
         };
 
-        CategoryController.prototype.save = function (parentCatId, catName) {
+        /**
+         *
+         * @param parentNode    父节点
+         * @param parentCatId   父节点catId
+         * @param catName
+         */
+        CategoryController.prototype.save = function (parentNode, parentCatId, catName) {
             var self = this;
 
             this.selected[this.newIndex.value] = catName;
@@ -144,6 +145,12 @@ define([
                 self.source = res.data.catTree;
                 self.search(0);
             });
+        };
+
+        CategoryController.prototype.saveSorts = function () {
+            var self = this;
+
+            console.log("save sorts");
         };
 
         CategoryController.prototype.delete = function (node) {
@@ -182,15 +189,15 @@ define([
             }
         };
 
-        CategoryController.prototype.catSort = function($item, $indexTo,level){
+        CategoryController.prototype.catSort = function ($item, $indexTo, level) {
             var self = this;
 
-            if($indexTo == 0){
+            if ($indexTo == 0) {
                 self.selected[0] = $item;
                 self.search(level);
             }
 
-            console.log("final",$indexTo);
+            console.log("final", $indexTo);
 
         };
 
