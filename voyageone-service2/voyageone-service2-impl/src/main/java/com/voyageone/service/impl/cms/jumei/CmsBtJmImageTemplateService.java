@@ -115,10 +115,21 @@ public class CmsBtJmImageTemplateService {
         StandardEvaluationContext context = new StandardEvaluationContext(cmsBtJmPromotionSaveBean);
 
         try {
+            Integer activityEnd = cmsBtJmImageTemplateModel.getParameters().indexOf("model.activityEnd");
             Object[] paramsObject = expression.getValue(context, Object[].class);
             for (int i = 0; i < paramsObject.length; i++) {
                 if (paramsObject[i] instanceof Date) {
                     String dateFormat = StringUtil.isEmpty(cmsBtJmImageTemplateModel.getDateFormat())?"M.dd":cmsBtJmImageTemplateModel.getDateFormat();
+                    if(i-1 == activityEnd && dateFormat.indexOf("H") == -1){
+
+                        Date temp =(Date) paramsObject[i];
+                        String date = DateTimeUtil.format(temp, null);
+
+                        if(date.indexOf("9:59:59")> -1 || date.indexOf("10:00:00") > -1){
+                            temp.setTime(temp.getTime()-(24*3600*1000));
+                            paramsObject[i] = temp;
+                        }
+                    }
                     paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], dateFormat);
 
                 }else if(paramsObject[i]  == null){
