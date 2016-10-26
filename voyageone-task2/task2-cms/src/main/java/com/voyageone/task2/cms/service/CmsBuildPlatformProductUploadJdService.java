@@ -287,6 +287,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //            // added by morse.lu 2016/06/28 end
             // delete by desmond 2016/07/08 end
 
+            // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
+            // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
+            {
+                // 京东默认补满image1的5张图片
+                if (ListUtils.notNull(sxData.getMainProduct().getCommon().getFields().getImages1())) {
+                    int cnt = sxData.getMainProduct().getCommon().getFields().getImages1().size();
+                    for (int i = cnt; i < 5; i++) {
+                        sxData.getMainProduct().getCommon().getFields().getImages1().add(sxData.getMainProduct().getCommon().getFields().getImages1().get(0));
+                    }
+                }
+                // 补满每个产品image1的5张图片
+                for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+                    if (ListUtils.notNull(cmsBtProduct.getCommon().getFields().getImages1())) {
+                        int cnt = cmsBtProduct.getCommon().getFields().getImages1().size();
+                        for (int i = cnt; i < 5; i++) {
+                            cmsBtProduct.getCommon().getFields().getImages1().add(cmsBtProduct.getCommon().getFields().getImages1().get(0));
+                        }
+                    }
+                }
+            }
+
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
@@ -1729,7 +1750,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
 
                 // 删除剩余的图片
-                for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+                for (int i = delImageCnt; i < intOldImageCnt; i++) {
                     // 调用删除图片API（指定删除第一张）
                     // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
                     try {
