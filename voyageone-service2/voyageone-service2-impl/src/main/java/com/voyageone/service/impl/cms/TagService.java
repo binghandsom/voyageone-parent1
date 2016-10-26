@@ -204,7 +204,7 @@ public class TagService extends BaseService {
         tagJmModuleExtensionModel.setTagId(tagModel.getId());
         tagJmModuleExtensionModel.setModuleTitle(tagModel.getTagName()); // 创建时，默认使用标签名称
         tagJmModuleExtensionModel.setFeatured(false);
-        tagJmModuleExtensionModel.setHideFlag(0);
+        tagJmModuleExtensionModel.setHideFlag(1);
         tagJmModuleExtensionModel.setDisplayStartTime(null);
         tagJmModuleExtensionModel.setDisplayEndTime(null);
         tagJmModuleExtensionModel.setShelfType(1);
