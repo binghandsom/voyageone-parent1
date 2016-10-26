@@ -40,11 +40,12 @@ define(['cms'], function (cms) {
             self.bayWindow = bayWindow;
 
             self.initBayWindows().then(function (_bayWindows) {
-                self.fixedWindows = (!bayWindows || !bayWindows.length) ? _bayWindows : _bayWindows.map(function (_bayWindowItem) {
-                    return angular.merge(_bayWindowItem, bayWindows.find(function (bayWindowItem) {
+                self.fixedWindows = (!bayWindow.fixed || (!bayWindows || !bayWindows.length)) ? _bayWindows : _bayWindows.map(function (_bayWindowItem, index) {
+                    return (index === 0) ? bayWindows[0] : angular.merge(_bayWindowItem, bayWindows.find(function (bayWindowItem) {
                         return bayWindowItem.name === _bayWindowItem.name;
                     }));
                 });
+
                 self.linkWindows = (!bayWindows || !bayWindows.length) ? _bayWindows.map(function (item) {
                     return angular.copy(item);
                 }) : bayWindows;
