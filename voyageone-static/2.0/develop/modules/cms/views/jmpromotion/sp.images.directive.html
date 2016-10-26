@@ -72,7 +72,7 @@
                                 </label>
                             </div>
                             <!---------------模板宽高固定    仅供用户查看确认   --------------->
-                            <div class="row">
+                            <div class="row" ng-if="ctrlImages.imgUpEntity['channelFrontCover']">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
                                     <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245" target="_blank">
@@ -113,7 +113,7 @@
                                 </label>
                             </div>
                             <!---------------模板宽高固定    仅供用户查看确认   --------------->
-                            <div class="row">
+                            <div class="row" ng-if="ctrlImages.imgUpEntity['channelMiddleImage']">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
                                     <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210" target="_blank">
@@ -181,7 +181,7 @@
                                         </div>
                                     </div>
                                     <!---------------模板宽高固定    仅供用户查看确认   --------------->
-                                    <div class="row">
+                                    <div class="row" ng-if="ctrlImages.imgUpEntity['pcEntrance']">
                                         <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240" target="_blank">
                                             http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240
                                         </a>
@@ -189,7 +189,7 @@
                                             <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row" ng-if="ctrlImages.imgUpEntity['pcEntrance']">
                                         <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184" target="_blank">
                                             http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184
                                         </a>
