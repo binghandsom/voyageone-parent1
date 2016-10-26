@@ -179,6 +179,12 @@ public class CmsBtJmImageTemplateService {
 
     public String getSeparatorBar(String modeName) {
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType("separatorBar");
+        try{
+            modeName = URLEncoder.encode(modeName,"UTF-8");
+        }catch (Exception e){
+
+        }
+
         return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), modeName);
     }
 
