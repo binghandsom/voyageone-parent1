@@ -106,5 +106,9 @@ public class CmsChannelCategoryController extends CmsController {
         return success(sellerCatService.getSellerCatConfig(cartId));
     }
 
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.SORTABLE_CART)
+    public  AjaxResponse sortableCat(@RequestBody Map param){
+        return null;
+    }
 
 }
