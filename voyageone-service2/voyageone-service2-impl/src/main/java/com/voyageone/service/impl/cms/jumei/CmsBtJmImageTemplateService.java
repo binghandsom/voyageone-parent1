@@ -14,6 +14,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.expression.Expression;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -39,13 +41,15 @@ public class CmsBtJmImageTemplateService {
     private final CmsBtJmPromotionDao cmsBtJmPromotionDao;
     private final TagService tagService;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
+    private final CmsMtJmConfigService cmsMtJmConfigService;
 
     @Autowired
-    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionDao cmsBtJmPromotionDao,TagService tagService,CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
+    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionDao cmsBtJmPromotionDao,TagService tagService,CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,CmsMtJmConfigService cmsMtJmConfigService) {
         this.cmsBtJmImageTemplateDao = cmsBtJmImageTemplateDao;
         this.cmsBtJmPromotionDao = cmsBtJmPromotionDao;
         this.tagService = tagService;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
+        this.cmsMtJmConfigService = cmsMtJmConfigService;
     }
 
 
@@ -85,6 +89,15 @@ public class CmsBtJmImageTemplateService {
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\"" + imageName + "\"";
         if (cmsBtJmImageTemplateModel.getParameters() != null && cmsBtJmImageTemplateModel.getParameters().size() > 0) {
+
+            if(cmsBtJmImageTemplateModel.getParameters().contains("extModel.directmailType")) {
+                CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);
+                Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value").toString().equalsIgnoreCase(cmsBtJmPromotionSaveBean.getExtModel().getDirectmailType())).findFirst().orElse(null);
+                if (value != null) {
+                    cmsBtJmPromotionSaveBean.getExtModel().setDirectmailType(value.get("name").toString());
+                }
+            }
+
             if(StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide())){
                 cmsBtJmImageTemplateModel.getParameters().remove("extModel.enterGuide");
                 isEnterGuide=false;
@@ -101,7 +114,8 @@ public class CmsBtJmImageTemplateService {
             Object[] paramsObject = expression.getValue(context, Object[].class);
             for (int i = 0; i < paramsObject.length; i++) {
                 if (paramsObject[i] instanceof Date) {
-                    paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], "M.d");
+                    String dateFormat = StringUtil.isEmpty(cmsBtJmImageTemplateModel.getDateFormat())?"M.dd":cmsBtJmImageTemplateModel.getDateFormat();
+                    paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], dateFormat);
                 }else if(paramsObject[i]  == null){
                     paramsObject[i] = "";
                 }

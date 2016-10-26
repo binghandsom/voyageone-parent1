@@ -13,6 +13,15 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
     private String name;
     private List<String> templateUrls;
     private ArrayList<String> parameters;
+    private String dateFormat;
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
 
     public String getImageType() {
         return imageType;
