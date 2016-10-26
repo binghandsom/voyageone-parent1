@@ -90,6 +90,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                             if(url!=null){
                                 urlMap.put("url", url);
                                 urlMap.put("picturePath", imagePath);
+                                $info("geturl:" +url);
                                 promotionImagesList.add(urlMap);
                             }
                         } catch (Exception e) {
