@@ -148,9 +148,12 @@ define([
         };
 
         CategoryController.prototype.saveSorts = function () {
-            var self = this;
+            var self = this,
+                sellerCatService = self.sellerCatService;
 
-            console.log("save sorts");
+            sellerCatService.sortableCat({tree:self.tree[0]}).then(function(res){
+                console.log("res",res.data);
+            });
         };
 
         CategoryController.prototype.delete = function (node) {
@@ -196,8 +199,6 @@ define([
                 self.selected[0] = $item;
                 self.search(level);
             }
-
-            console.log("final", $indexTo);
 
         };
 
