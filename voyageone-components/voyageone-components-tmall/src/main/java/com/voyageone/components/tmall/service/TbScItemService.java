@@ -102,6 +102,27 @@ public class TbScItemService extends TbBase {
 	}
 
 	/**
+	 * taobao.scitem.map.delete (失效指定用户的商品与后端商品的映射关系)
+	 * @param shopBean shopBean
+	 * @param sc_item_id 	后台商品ID
+	 * @return
+	 * @throws ApiException
+	 */
+	public void deleteScItemMap(ShopBean shopBean, long sc_item_id) throws ApiException {
+
+		ScitemMapDeleteRequest request = new ScitemMapDeleteRequest();
+
+		request.setScItemId(sc_item_id);
+
+		ScitemMapDeleteResponse res = reqTaobaoApi(shopBean, request);
+
+		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+			throw new BusinessException(res.getSubCode() + ":" + res.getSubMsg());
+		}
+
+	}
+
+	/**
 	 * taobao.inventory.initial (库存初始化)
 	 * @param shopBean shopBean
 	 * @param store_code 商家仓库编码
