@@ -425,15 +425,13 @@ define([
 
     // 取得主频道英文缩写
     function _getJmMainChannelAb(self, mainChannelName) {
+        self.vm.mainChannelAb = '';
         if (mainChannelName == undefined || mainChannelName == null) {
-            self.vm.mainChannelAb = '';
             return;
         }
-        // TODO 这里数据先固定，将来要改从数据库取
-        if ('luxuryglobal' == mainChannelName) {
-            self.vm.mainChannelAb = 'ppt';
-        } else if ('food' == mainChannelName) {
-            self.vm.mainChannelAb = 'vtm';
+        var channelObj = _.find(self.vm.metaData.mainChannelList, function(item) { return item.value == mainChannelName; });
+        if (channelObj) {
+            self.vm.mainChannelAb = channelObj.abbr;
         }
     };
 
