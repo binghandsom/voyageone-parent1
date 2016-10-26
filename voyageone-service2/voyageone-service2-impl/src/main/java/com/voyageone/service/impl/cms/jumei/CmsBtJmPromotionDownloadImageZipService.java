@@ -4,6 +4,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
+import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
@@ -30,7 +31,7 @@ import static java.util.stream.Collectors.toList;
  * Created by gjl on 2016/10/18.
  */
 @Service
-public class CmsBtJmPromotionDownloadImageZipService {
+public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
     @Autowired
     CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
     @Autowired
@@ -176,7 +177,7 @@ public class CmsBtJmPromotionDownloadImageZipService {
                 for (Map<String, String> urlMap : promotionImagesList) {
                     int len;
                     URL url = new URL(urlMap.get("url"));
-                    System.out.print(urlMap.get("url"));
+                    $info(urlMap.get("url"));
                     //Url
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     try (InputStream inputStream = conn.getInputStream()) {
