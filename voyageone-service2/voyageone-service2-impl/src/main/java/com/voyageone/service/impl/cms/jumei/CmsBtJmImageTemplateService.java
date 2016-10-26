@@ -27,9 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -90,10 +88,10 @@ public class CmsBtJmImageTemplateService {
     public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean orgCmsBtJmPromotionSaveBean) {
         CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = JacksonUtil.json2Bean(JacksonUtil.bean2Json(orgCmsBtJmPromotionSaveBean),CmsBtJmPromotionSaveBean.class);
         boolean isEnterGuide = true;
+        String isLogo = null;
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\"" + imageName + "\"";
         if (cmsBtJmImageTemplateModel.getParameters() != null && cmsBtJmImageTemplateModel.getParameters().size() > 0) {
-
             if(cmsBtJmImageTemplateModel.getParameters().contains("extModel.directmailType")) {
                 CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);
                 Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value").toString().equalsIgnoreCase(cmsBtJmPromotionSaveBean.getExtModel().getDirectmailType())).findFirst().orElse(null);
@@ -101,10 +99,21 @@ public class CmsBtJmImageTemplateService {
                     cmsBtJmPromotionSaveBean.getExtModel().setDirectmailType(value.get("name").toString());
                 }
             }
-
             if(StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide())){
-                cmsBtJmImageTemplateModel.getParameters().remove("extModel.enterGuide");
+                cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
                 isEnterGuide=false;
+            }else{
+                if(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide().indexOf(".png") > -1){
+                    if( imageType.equalsIgnoreCase("pcHeader") || imageType.equalsIgnoreCase("appHeader")){
+                        cmsBtJmPromotionSaveBean.getExtModel().setEnterGuide(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide().replace(".png",""));
+                        isLogo = cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide();
+                        cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
+                        isEnterGuide = false;
+                    }else{
+                        cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
+                        isEnterGuide = false;
+                    }
+                }
             }
             paramString += "," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
         }
@@ -141,7 +150,16 @@ public class CmsBtJmImageTemplateService {
             }
             if(isEnterGuide){
                 return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(1), paramsObject);
+
             }else{
+                if(!StringUtil.isEmpty(isLogo)) {
+
+                    List<Object> a = new ArrayList<>();
+                    Collections.addAll(a, paramsObject);
+                    a.add(isLogo);
+                    paramsObject = a.toArray();
+                    return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(2), paramsObject);
+                }
                 return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), paramsObject);
             }
         } catch (Exception ignored) {

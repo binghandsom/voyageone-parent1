@@ -12,7 +12,7 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
     private String imageType;
     private String name;
     private List<String> templateUrls;
-    private ArrayList<String> parameters;
+    private List<String> parameters;
     private String dateFormat;
 
     public String getDateFormat() {
@@ -47,11 +47,11 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
         this.templateUrls = templateUrls;
     }
 
-    public ArrayList<String> getParameters() {
+    public List<String> getParameters() {
         return parameters;
     }
 
-    public void setParameters(ArrayList<String> parameters) {
+    public void setParameters(List<String> parameters) {
         this.parameters = parameters;
     }
 }
