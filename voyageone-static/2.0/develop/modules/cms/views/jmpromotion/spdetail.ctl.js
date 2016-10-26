@@ -39,7 +39,7 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器左下角！");
 
         $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
             {
@@ -55,7 +55,7 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器左下角！");
 
         $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {
             "jmPromotionId": spDataService.jmPromotionId,
@@ -69,7 +69,7 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器左下角！");
 
         $.download.post(cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.root + "/" + cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.exportJmPromotionInfo, {
             "type": type,
