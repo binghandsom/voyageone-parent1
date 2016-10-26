@@ -3481,11 +3481,13 @@ public class SxProductService extends BaseService {
                 // 先看看有没有默认值
                 String val = singleCheckField.getDefaultValue();
 
-                // 看看所有候选项里是否有"其他""其它"
+                // 看看所有候选项里是否有比较模糊的选项
                 if (StringUtils.isEmpty(val)) {
                     for (Option option : singleCheckField.getOptions()) {
                         if (option.getDisplayName().equals("其他") ||
-                                option.getDisplayName().equals("其它")
+                                option.getDisplayName().equals("其它") ||
+                                option.getDisplayName().equals("混合") ||
+                                option.getDisplayName().equals("通用")
                                 ) {
                             val = option.getValue();
                             break;
