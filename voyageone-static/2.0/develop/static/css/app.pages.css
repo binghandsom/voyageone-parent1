@@ -928,5 +928,7 @@ schema .ng-invalid.focus-error {
     font-size: 24px;
     background-repeat: no-repeat;
 }
-
+.clear-margin-bottom{
+    margin-bottom:0;
+}
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
