@@ -220,7 +220,7 @@
                         <th class="text-center">折扣</th>
                         <th class="text-center">SKU数</th>
                         <th class="text-left">错误消息</th>
-                        <th class="text-left">库存数</th>
+                        <th class="text-center">库存数</th>
                         <th class="text-left">备注</th>
                         <th class="text-left">Status</th>
                         <th class="text-center" style="width: 100px;">Action</th>
@@ -234,10 +234,10 @@
                                                                                                        ng-model="model.isChecked"><span
                                 class="fa fa-check"></span></label></td>
                         <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                        <td>{{model.productCode}}</td>
-                        <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
-                            {{model.productLongName}}  </a>
+                        <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
+                            {{model.productCode}}  </a>
                         </td>
+                        <td>{{model.productLongName}}</td>
                         <td>
                             <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model)" ng-model="model.tagNameList"
                                     ng-options="m.tagName as m.tagName for m in vm.tagList">
@@ -286,7 +286,7 @@
                                 </div>
                             </a>
                         </td>
-                        <td>{{model.quantity}}</td>
+                        <td class="text-center">{{model.quantity}}</td>
                         <td><textarea ng-model="model.remark" ng-blur="updateRemark(model)" class="form-control"></textarea></td>
                         <td >{{getStatus(model)}}</td>
                         <td class="text-center">
