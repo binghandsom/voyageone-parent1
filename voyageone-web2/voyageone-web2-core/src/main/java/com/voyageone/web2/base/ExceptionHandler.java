@@ -16,6 +16,7 @@ import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @version 2.4.0
  * @since 2.0.0
  */
-public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionResolver {
+public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionResolver, Ordered {
 
     @Autowired
     private LogService logService;
@@ -229,6 +230,11 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
                 httpServletResponse.getWriter().write(json);
             }
         });
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }
 

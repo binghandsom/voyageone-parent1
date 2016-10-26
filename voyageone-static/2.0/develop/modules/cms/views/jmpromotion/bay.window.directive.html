@@ -97,9 +97,12 @@
         </div>
     </div>
     <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
-        <ul class="nav nav-pills nav-stacked">
+        <ul class="nav nav-pills nav-stacked" id="bay-window-btns">
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.saveAll()">保存</button>
+                <button type="button" class="btn btn-success" ng-click="ctrl.save()">暂存</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary" ng-click="ctrl.submit()">提交</button>
             </li>
         </ul>
     </sticky>
