@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
@@ -603,5 +604,22 @@ MongoSequenceService commSequenceMongoService;
         return false;
     }
 
-
+    /**
+     * 保存整组分类树
+     * @param allCats
+     * @param channelId
+     * @param cartId
+     */
+    public void saveSortableCat(List<Map> allCats, String channelId, Integer cartId) {
+        //根据channelId和cartId去删除数据库对应的树
+        cmsBtSellerCatDao.deleteSortableCat(cartId,channelId);
+        //保存整组分类树
+        for (Map model : allCats) {
+            CmsBtSellerCatModel modelCat = new CmsBtSellerCatModel();
+            //将树转换成CmsBtSellerCatModel
+            BeanUtils.copyProperties(model, modelCat);
+            //将整组树插入数据库
+            cmsBtSellerCatDao.insert(modelCat);
+        }
+    }
 }

@@ -108,7 +108,11 @@ public class CmsChannelCategoryController extends CmsController {
 
     @RequestMapping(value = CmsUrlConstants.CHANNEL.SELLER_CAT.SORTABLE_CART)
     public  AjaxResponse sortableCat(@RequestBody Map param){
-        return null;
+        //取得整颗树
+        List<Map> result = (List<Map>) param.get("tree");
+        String channelId = this.getUser().getSelChannelId();
+        Integer cartId = Integer.valueOf(param.get("cartId").toString());
+        sellerCatService.saveSortableCat(result,channelId,cartId);
+        return success(param);
     }
-
 }

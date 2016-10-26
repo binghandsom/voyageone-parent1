@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.cms.mongo;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -258,4 +259,15 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
         }
         return  result;
     }
-}
+
+    /**
+     *
+     * @param cartId
+     * @param channelId
+     * @return
+     */
+    public WriteResult deleteSortableCat(Integer cartId,String channelId){
+        String queryStr = "{'cartId':"+cartId+",'channelId':'"+channelId+"'}";
+        return deleteWithQuery(queryStr);
+    }
+    }

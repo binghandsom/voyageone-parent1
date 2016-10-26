@@ -151,7 +151,7 @@ define([
             var self = this,
                 sellerCatService = self.sellerCatService;
 
-            sellerCatService.sortableCat({tree:self.tree[0]}).then(function(res){
+            sellerCatService.sortableCat({tree:self.tree[0],"cartId": +self.cartInfo.cart}).then(function(res){
                 console.log("res",res.data);
             });
         };
