@@ -1,5 +1,5 @@
 <section ng-init="ctrlImages.init()" style="position: relative">
-    <form role="form" class="form-horizontal" novalidate>
+    <form role="form" class="form-horizontal" name="ctrlImages.imgChkForm" novalidate>
         <div id="jm-sp-images-base" class="panel panel-vo">
             <div class="panel-heading">
                 <h4 class="panel-title">快捷设置</h4>
@@ -61,6 +61,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['channelFrontCover']" required>
                             <div class="row">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
@@ -101,6 +102,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['channelMiddleImage']" required>
                             <div class="row">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
@@ -142,6 +144,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['channelComingSoon']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <a ng-href="{{ctrlImages.imgUrls['channelComingSoon']}}" target="_blank">{{ctrlImages.imgUrls['channelComingSoon']}}</a>
@@ -216,6 +219,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['mobileFocus']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <a ng-href="{{ctrlImages.imgUrls['mobileFocus']}}" target="_blank">{{ctrlImages.imgUrls['mobileFocus']}}</a>
@@ -242,6 +246,7 @@
                                                         </div>-->
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['pcHeader']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <a ng-href="{{ctrlImages.imgUrls['pcHeader']}}" target="_blank">{{ctrlImages.imgUrls['pcHeader']}}</a>
@@ -280,6 +285,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['appEntrance']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <a ng-href="{{ctrlImages.imgUrls['appEntrance']}}" target="_blank">{{ctrlImages.imgUrls['appEntrance']}}</a>
@@ -307,6 +313,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['appChannelEntrance']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <a ng-href="{{ctrlImages.imgUrls['appChannelEntrance']}}" target="_blank">{{ctrlImages.imgUrls['appChannelEntrance']}}</a>
@@ -363,6 +370,7 @@
                             </div>
                         </div>
                         <div class="row">
+                            <input type="hidden" ng-model="ctrlImages.imgUrls['appHeader']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <div class="row">

@@ -3,10 +3,6 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    var IMG_CONFIG = {
-        counts: 21
-    };
-
     function SpImagesDirectiveController(spDataService, popups, notify, alert) {
         this.spDataService = spDataService;
         this.popups = popups;
@@ -84,7 +80,7 @@ define([
         popups.openImageBatchJmUpload(_.extend(common, {
             brand: brand
             , imgUpEntity: self.imgUpEntity
-        })).then(function (res) {
+        })).then(function () {
             self.init();
         });
     };
@@ -110,32 +106,30 @@ define([
             imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName;
 
             //更新
-            self.save(0);
+            self.save();
         });
     };
 
     /**
-     * @param saveType    0:暂存    1：提交    2：发布任务
+     * @param saveType    0:暂存    1：提交    2：发布任务      {{ctrlImages.imgChkForm.$valid}}
      */
     SpImagesDirectiveController.prototype.save = function (saveType) {
         var self = this,
             notify = self.notify,
             alert = self.alert,
-            counts = 0,
             spDataService = self.spDataService;
 
         spDataService.jmPromotionObj.imageStatus = 2;
 
-
-        if (saveType == 1) {
-            _.each(self.imgUpEntity, function (value, key) {
-                if (value && typeof value == 'string' && value.indexOf(key) >= 0)
-                    counts++;
-            });
-
-            if (counts != IMG_CONFIG.counts) {
-                alert("聚美活动图片没有上传完整！");
-                return;
+        if(self.imgChkForm.$invalid){
+            switch(saveType){
+                case 0:
+                    alert("聚美专场必传图片没有上传完整！");
+                    break;
+                case 1:
+                    alert("聚美专场必传图片没有上传完整！");
+                    return;
+                    break;
             }
         }
 
