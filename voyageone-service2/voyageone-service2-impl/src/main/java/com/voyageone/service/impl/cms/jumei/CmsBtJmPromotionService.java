@@ -16,13 +16,16 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by "some one" on 2016/3/18.
@@ -42,6 +45,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
     @Autowired
     private CmsBtJmImageTemplateService jmImageTemplateService;
+    @Autowired
+    private CmsMtJmConfigService jmConfigService;
 
     private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
 
@@ -61,10 +66,104 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmPromotionImagesDao = jmPromotionImagesDao;
     }
 
-    public Map<String, Object> init() {
+    /**
+     * 取得画面上的初始数据
+     */
+    public Map<String, Object> init(boolean hasExt) {
         Map<String, Object> map = new HashMap<>();
+        // 专场主品牌
         List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
         map.put("jmMasterBrandList", jmMasterBrandList);
+
+        // 活动场景
+        CmsMtJmConfigModel configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.promotionScene);
+        List<Map<String, Object>> valList = null;
+        if (configModel != null) {
+            valList = configModel.getValues();
+        }
+        if (valList == null) {
+            valList = new ArrayList<>(0);
+        }
+        map.put("promotionSceneList", valList);
+
+        // 活动类型
+        configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.promotionType);
+        valList = null;
+        if (configModel != null) {
+            valList = configModel.getValues();
+        }
+        if (valList == null) {
+            valList = new ArrayList<>(0);
+        }
+        map.put("promotionTypeList", valList);
+
+        if (hasExt) {
+            // 展示平台
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.displayPlatform);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("displayPlatformList", valList);
+
+            // 主频道
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.mainChannel);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("mainChannelList", valList);
+
+            // 专场类型
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionType);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("sessionTypelList", valList);
+
+            // 关联品类，有两级类目，不必作特殊处理，ng-options能整理好数据层次
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionCategory);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("sessionCategoryList", valList);
+
+            // 预展示频道
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.preDisplayChannel);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("preDisplayChannelList", valList);
+
+            // 直邮信息
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("directmailTypelList", valList);
+        }
         return map;
     }
 

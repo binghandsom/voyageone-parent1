@@ -11,7 +11,7 @@ define([
         this.confirm = confirm;
         this.$translate = $translate;
         this.$filter = $filter;
-        this.vm = {"jmMasterBrandList": [], "brandEnName": '', "mainChannelAb": '', "isFromBox": false};
+        this.vm = { "brandEnName": '', "mainChannelAb": '', "isFromBox": false };
         this.editModel = {model: {}};
         this.datePicker = [];
 
@@ -76,46 +76,14 @@ define([
             }
 
             // 转换并设置checkbox
-            if (editModel.extModel.syncMobile == '1') {
-                editModel.extModel.syncMobile = true;
-            } else {
-                editModel.extModel.syncMobile = false;
-            }
-            if (editModel.extModel.showHiddenDeal == '1') {
-                editModel.extModel.showHiddenDeal = true;
-            } else {
-                editModel.extModel.showHiddenDeal = false;
-            }
-            if (editModel.extModel.showSoldOutDeal == '1') {
-                editModel.extModel.showSoldOutDeal = true;
-            } else {
-                editModel.extModel.showSoldOutDeal = false;
-            }
-            if (editModel.extModel.showMobile == '1') {
-                editModel.extModel.showMobile = true;
-            } else {
-                editModel.extModel.showMobile = false;
-            }
-            if (editModel.extModel.isPromotionFullMinus == '1') {
-                editModel.extModel.isPromotionFullMinus = true;
-            } else {
-                editModel.extModel.isPromotionFullMinus = false;
-            }
-            if (editModel.extModel.isPromotionEachfullMinus == '1') {
-                editModel.extModel.isPromotionEachfullMinus = true;
-            } else {
-                editModel.extModel.isPromotionEachfullMinus = false;
-            }
-            if (editModel.extModel.jmCoupons == '1') {
-                editModel.extModel.jmCoupons = true;
-            } else {
-                editModel.extModel.jmCoupons = false;
-            }
-            if (editModel.extModel.voCoupons == '1') {
-                editModel.extModel.voCoupons = true;
-            } else {
-                editModel.extModel.voCoupons = false;
-            }
+            editModel.extModel.syncMobile = editModel.extModel.syncMobile == '1' ? true : false;
+            editModel.extModel.showHiddenDeal = editModel.extModel.showHiddenDeal == '1' ? true : false;
+            editModel.extModel.showSoldOutDeal = editModel.extModel.showSoldOutDeal == '1' ? true : false;
+            editModel.extModel.showMobile = editModel.extModel.showMobile == '1' ? true : false;
+            editModel.extModel.isPromotionFullMinus = editModel.extModel.isPromotionFullMinus == '1' ? true : false;
+            editModel.extModel.isPromotionEachfullMinus = editModel.extModel.isPromotionEachfullMinus == '1' ? true : false;
+            editModel.extModel.jmCoupons = editModel.extModel.jmCoupons == '1' ? true : false;
+            editModel.extModel.voCoupons = editModel.extModel.voCoupons == '1' ? true : false;
 
             // 转换活动场景的值
             if (editModel.model.promotionScene) {
@@ -148,8 +116,8 @@ define([
                 editModel.extModel.preDisplayChannel = [];
             }
 
-            jmPromotionService.init().then(function (res) {
-                vm.jmMasterBrandList = res.data.jmMasterBrandList;
+            jmPromotionService.init({hasExt:true}).then(function (res) {
+                vm.metaData = res.data;
                 // 记住主品牌初始值
                 _getJmBrandEnName(self, editModel.model.cmsBtJmMasterBrandId);
             });
@@ -169,18 +137,6 @@ define([
         }
     };
 
-    // 只用于监控活动结束时间发生变化
-    SpEditDirectiveController.prototype.onDateChange = function () {
-        var self = this;
-        self.vm.isFromBox = true;
-
-        if (self.vm.datePicker2) {
-            self.vm.datePicker2 = false;
-        } else {
-            self.vm.datePicker2 = true;
-        }
-    };
-
     SpEditDirectiveController.prototype.delTag = function (tag, index) {
         var self = this,
             confirm = self.confirm,
@@ -197,6 +153,28 @@ define([
                     tagObj.active = 0;
                 }
             });
+    };
+
+    // 检查checkbox是否有输入
+    SpEditDirectiveController.prototype.checkboxVal = function (inputArr) {
+        var inputObj = _.find(inputArr, function(item) { return item == true; });
+        if (inputObj) {
+            return false;
+        } else {
+            return true;
+        }
+    };
+
+    // 只用于监控活动结束时间发生变化
+    SpEditDirectiveController.prototype.onDateChange = function () {
+        var self = this;
+        self.vm.isFromBox = true;
+
+        if (self.vm.datePicker2) {
+            self.vm.datePicker2 = false;
+        } else {
+            self.vm.datePicker2 = true;
+        }
     };
 
     // 当专场主品牌改变时，记住所选值，用于创建页面标识(主要是品牌英文名，并且要简单处理，去空格和特殊符号)
@@ -343,46 +321,14 @@ define([
         }
 
         // 转换并设置checkbox
-        if (param.extModel.syncMobile) {
-            param.extModel.syncMobile = 1;
-        } else {
-            param.extModel.syncMobile = 0;
-        }
-        if (param.extModel.showHiddenDeal) {
-            param.extModel.showHiddenDeal = 1;
-        } else {
-            param.extModel.showHiddenDeal = 0;
-        }
-        if (param.extModel.showSoldOutDeal) {
-            param.extModel.showSoldOutDeal = 1;
-        } else {
-            param.extModel.showSoldOutDeal = 0;
-        }
-        if (param.extModel.showMobile) {
-            param.extModel.showMobile = 1;
-        } else {
-            param.extModel.showMobile = 0;
-        }
-        if (param.extModel.isPromotionFullMinus) {
-            param.extModel.isPromotionFullMinus = 1;
-        } else {
-            param.extModel.isPromotionFullMinus = 0;
-        }
-        if (param.extModel.isPromotionEachfullMinus) {
-            param.extModel.isPromotionEachfullMinus = 1;
-        } else {
-            param.extModel.isPromotionEachfullMinus = 0;
-        }
-        if (param.extModel.jmCoupons) {
-            param.extModel.jmCoupons = 1;
-        } else {
-            param.extModel.jmCoupons = 0;
-        }
-        if (param.extModel.voCoupons) {
-            param.extModel.voCoupons = 1;
-        } else {
-            param.extModel.voCoupons = 0;
-        }
+        param.extModel.syncMobile = param.extModel.syncMobile ? 1 : 0;
+        param.extModel.showHiddenDeal = param.extModel.showHiddenDeal ? 1 : 0;
+        param.extModel.showSoldOutDeal = param.extModel.showSoldOutDeal ? 1 : 0;
+        param.extModel.showMobile = param.extModel.showMobile ? 1 : 0;
+        param.extModel.isPromotionFullMinus = param.extModel.isPromotionFullMinus ? 1 : 0;
+        param.extModel.isPromotionEachfullMinus = param.extModel.isPromotionEachfullMinus ? 1 : 0;
+        param.extModel.jmCoupons = param.extModel.jmCoupons ? 1 : 0;
+        param.extModel.voCoupons = param.extModel.voCoupons ? 1 : 0;
 
         param.model.activityStart = formatToStr(param.model.activityStart, self.$filter);
         param.model.activityEnd = formatToStr(param.model.activityEnd, self.$filter);
@@ -457,7 +403,7 @@ define([
 
     // 取得专场主品牌的品牌英文名，并且要简单处理，去空格和特殊符号
     function _getJmBrandEnName(self, jmBrandId) {
-        var brandObj = _.find(self.vm.jmMasterBrandList, function(item) { return item.id == jmBrandId; });
+        var brandObj = _.find(self.vm.metaData.jmMasterBrandList, function(item) { return item.id == jmBrandId; });
         if (brandObj == null || brandObj == undefined) {
             self.vm.brandEnName = "";
             return;

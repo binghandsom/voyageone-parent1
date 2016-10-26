@@ -33,8 +33,12 @@ public class CmsJmPromotionIndexController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.PROMOTION.LIST.INDEX.INIT)
-    public AjaxResponse init() {
-        return success(service.init());
+    public AjaxResponse init(@RequestBody Map<String, Object> params) {
+        Boolean hasExt = (Boolean) params.get("hasExt");
+        if (hasExt == null) {
+            hasExt = false;
+        }
+        return success(service.init(hasExt));
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET_LIST_BY_WHERE)
