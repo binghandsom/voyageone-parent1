@@ -1305,10 +1305,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                         if (productColorMap.containsKey(productCode)) {
                             sbSkuProperties.append(productColorMap.get(productCode));
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (skuSizeMap.containsKey(sizeSx)) {
                             sbSkuProperties.append(Separtor_Xor);        // "^"
                             sbSkuProperties.append(skuSizeMap.get(sizeSx));
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                    "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                    "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (productColorMap.containsKey(productCode)
                                 || skuSizeMap.containsKey(sizeSx)) {
@@ -1331,6 +1348,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                             sbPropertyAlias.append(Separtor_Colon);         // ":"
                             sbPropertyAlias.append(color);
                             sbPropertyAlias.append(Separtor_Xor);           // "^"
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     } else if ("3".equals(salePropStatus)) {
                         // 如果平台类目没有颜色只有尺寸信息时，skuSizeMap中的key为productCode_sizeSx
@@ -1339,6 +1364,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         if (skuSizeMap.containsKey(sizeKey)) {
                             sbSkuProperties.append(skuSizeMap.get(sizeKey));
                             sbSkuProperties.append(Separtor_Vertical);   // "|"
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                            "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                            "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     }
 
