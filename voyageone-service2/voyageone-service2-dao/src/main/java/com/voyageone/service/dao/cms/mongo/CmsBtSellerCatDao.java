@@ -270,4 +270,5 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
         String queryStr = "{'cartId':"+cartId+",'channelId':'"+channelId+"'}";
         return deleteWithQuery(queryStr);
     }
-    }
+
+}
