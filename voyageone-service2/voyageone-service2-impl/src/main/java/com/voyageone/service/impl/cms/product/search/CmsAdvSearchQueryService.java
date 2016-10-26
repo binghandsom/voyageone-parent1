@@ -384,6 +384,24 @@ public class CmsAdvSearchQueryService extends BaseService {
                 queryObject.addQuery("{'common.fields.hsCodeStatus':{$in:[null,'','0']}}");
             }
         }
+        
+        // 获取产品类型设置状态
+        if (StringUtils.isNotBlank(searchValue.getProductTypeStatus())) {
+        	if ("1".equals(searchValue.getProductTypeStatus())) {
+        		queryObject.addQuery("{'common.fields.productType':{$nin: [null, '']}}");
+        	} else {
+        		queryObject.addQuery("{'common.fields.productType':{$in: [null, '']}}");
+        	}
+        }
+        
+        // 获取尺寸类型设置状态
+        if (StringUtils.isNotBlank(searchValue.getSizeTypeStatus())) {
+        	if ("1".equals(searchValue.getSizeTypeStatus())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$nin: [null, '']}}");
+        	} else {
+        		queryObject.addQuery("{'common.fields.sizeType':{$in: [null, '']}}");
+        	}
+        }
 
         // 获取商品锁定状态
         if (StringUtils.isNotEmpty(searchValue.getLockFlg())) {

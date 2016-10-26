@@ -42,6 +42,9 @@ public class CmsSearchInfoBean2 implements Serializable {
     // MINI MALL 店铺时查询原始CHANNEL
     private int supplierType = 0;
     private List<String> supplierList = null;
+    
+    private String productTypeStatus;
+    private String sizeTypeStatus;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
@@ -520,8 +523,24 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setLockFlg(String lockFlg) {
         this.lockFlg = lockFlg;
     }
+    
+    public String getProductTypeStatus() {
+		return productTypeStatus;
+	}
 
-    @Override
+	public void setProductTypeStatus(String productTypeStatus) {
+		this.productTypeStatus = productTypeStatus;
+	}
+
+	public String getSizeTypeStatus() {
+		return sizeTypeStatus;
+	}
+
+	public void setSizeTypeStatus(String sizeTypeStatus) {
+		this.sizeTypeStatus = sizeTypeStatus;
+	}
+
+	@Override
     public String toString() {
         return JsonUtil.getJsonString(this);
     }

@@ -28,7 +28,9 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 supplierType: 1,
-                brandSelType: 1
+                brandSelType: 1,
+                productTypeStatus: '',
+                sizeTypeStatus: ''
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
