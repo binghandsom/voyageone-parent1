@@ -96,15 +96,15 @@ var publish = {
     },
     release: {
         static: {
-            path: 'publish/release/' + versions.publish + '/static',
-            fonts: 'publish/release/' + versions.publish + '/static/fonts',
-            img: 'publish/release/' + versions.publish + '/static/img',
-            css: 'publish/release/' + versions.publish + '/static/css'
+            path: 'publish/release/static',
+            fonts: 'publish/release/static/fonts',
+            img: 'publish/release/static/img',
+            css: 'publish/release/static/css'
         },
-        components: 'publish/release/' + versions.publish + '/components/dist',
-        libs: 'publish/release/' + versions.publish + '/libs',
-        modules: 'publish/release/' + versions.publish + '/modules',
-        loginAndChannel: 'publish/release/' + versions.publish
+        components: 'publish/release/components/dist',
+        libs: 'publish/release/libs',
+        modules: 'publish/release/modules',
+        loginAndChannel: 'publish/release/'
     },
     replace_value: {
         voyageone_angular_com: 'components/dist/voyageone.angular.com',
