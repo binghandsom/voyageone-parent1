@@ -147,7 +147,7 @@ define(['cms'], function (cms) {
         }
     };
 
-    BayWindowComponentController.prototype.saveAll = function saveAll() {
+    BayWindowComponentController.prototype.save = function save(isSubmit) {
         var self = this,
             spDataService = self.spDataService,
             bayWindow = self.bayWindow,
@@ -160,9 +160,13 @@ define(['cms'], function (cms) {
 
         bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
 
-        spDataService.saveBayWindow(bayWindow).then(function () {
+        spDataService.saveBayWindow(bayWindow, (isSubmit === true)).then(function () {
             notify.success('TXT_SAVE_SUCCESS');
         });
+    };
+
+    BayWindowComponentController.prototype.submit = function submit() {
+        this.save(true);
     };
 
     cms.directive('bayWindow', function bayWindowDirectiveFactory() {

@@ -207,14 +207,13 @@ define(['cms'], function (cms) {
             });
         },
 
-        saveBayWindow: function saveBayWindow(bayWindow) {
+        saveBayWindow: function saveBayWindow(bayWindow, isSubmit) {
             var self = this,
                 jmPromotionService = self.jmPromotionService,
                 jmPromotionObj = self.jmPromotionObj;
-            jmPromotionObj.bayWindowStatus = 2;
 
             return jmPromotionService.saveBayWindow(bayWindow).then(function (resp) {
-                jmPromotionObj.bayWindowStatus = 1;
+                jmPromotionObj.bayWindowStatus = (isSubmit ? 1 : 2);
                 return resp.data;
             });
         }
