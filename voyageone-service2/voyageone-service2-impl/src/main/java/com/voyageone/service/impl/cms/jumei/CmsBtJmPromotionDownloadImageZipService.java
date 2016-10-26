@@ -172,7 +172,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
     public byte[] imageToZip(List<Map<String, String>> promotionImagesList) {
         //如果promotionImagesList为空的时，不做处理
         if (promotionImagesList.size() > 0 || promotionImagesList != null) {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024*10];
             try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                  ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
                 for (Map<String, String> urlMap : promotionImagesList) {
