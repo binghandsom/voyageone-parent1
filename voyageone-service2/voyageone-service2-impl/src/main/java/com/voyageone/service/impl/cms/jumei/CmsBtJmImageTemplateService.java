@@ -119,6 +119,8 @@ public class CmsBtJmImageTemplateService {
             Object[] paramsObject = expression.getValue(context, Object[].class);
             for (int i = 0; i < paramsObject.length; i++) {
                 if (paramsObject[i] instanceof Date) {
+
+                    // 结束时期如果是 10:00:00 或者是9:59:59 的场合图片模板里面的日期不带小时的场合 日期减一天
                     String dateFormat = StringUtil.isEmpty(cmsBtJmImageTemplateModel.getDateFormat())?"M.dd":cmsBtJmImageTemplateModel.getDateFormat();
                     if(i-1 == activityEnd && dateFormat.indexOf("H") == -1){
 
