@@ -621,5 +621,7 @@ MongoSequenceService commSequenceMongoService;
             //将整组树插入数据库
             cmsBtSellerCatDao.insert(modelCat);
         }
+        //重新设置店铺内分类的顺序
+//        doResetPlatformSellerCatIndex(channelId, cartId);
     }
 }
