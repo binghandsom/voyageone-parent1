@@ -337,6 +337,9 @@ public class CmsBtJmPromotionService extends BaseService {
         int result = -1;
         if (parameter.isHasExt()) {
             // 聚美专场详细画面中的活动详情子画面来的更新
+            if (parameter.getSaveType() == 1) {
+                promotionModel.setIsFstSave(1);
+            }
             daoExt.updateByInput(promotionModel);
         } else {
             // 活动一览画面来的更新

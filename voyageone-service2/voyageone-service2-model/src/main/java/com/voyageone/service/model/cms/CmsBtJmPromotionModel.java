@@ -132,6 +132,7 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     private int uploadStatus;    // 专场上传
     private int detailStatus;   // 活动信息
+    private int isFstSave;
     private int shelfStatus;    // 活动货架
     private int imageStatus;    // 活动图片
     private int bayWindowStatus;    // 活动飘窗
@@ -382,5 +383,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setUploadStatus(int uploadStatus) {
         this.uploadStatus = uploadStatus;
+    }
+
+    public int getIsFstSave() {
+        return isFstSave;
+    }
+
+    public void setIsFstSave(int isFstSave) {
+        this.isFstSave = isFstSave;
     }
 }
