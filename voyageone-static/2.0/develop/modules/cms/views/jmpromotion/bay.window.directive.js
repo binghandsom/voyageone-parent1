@@ -69,7 +69,7 @@ define(['cms'], function (cms) {
             return modulesList.map(function (modules, index) {
                 var name = modules.module.moduleTitle;
                 return {
-                    name: name,
+                    name: index ? name : '聚美专场',
                     link: '',
                     url: self.getImage(name, index),
                     order: index,
