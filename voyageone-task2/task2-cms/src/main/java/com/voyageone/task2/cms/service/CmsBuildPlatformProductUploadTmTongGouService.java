@@ -346,38 +346,44 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (!updateWare) {
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
-
-                if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
-                    // 用simple的那个sku， 覆盖到原来的那个sku上
-                    int idxOrg = -1;
-					String strSimpleSkuValue = null;
-                    for (int i = 0; i < itemFieldList.size(); i++) {
-                        Field field = itemFieldList.get(i);
-                        if (field.getId().equals("skus_simple")) {
-							InputField inputField = (InputField) field;
-							if (!StringUtils.isEmpty(inputField.getValue())) {
-								strSimpleSkuValue = inputField.getValue();
-							}
-                        } else if (field.getId().equals("skus")) {
-                            idxOrg = i;
-                        }
-                    }
-					if (!StringUtils.isEmpty(strSimpleSkuValue) && idxOrg != -1) {
-						// 找到如果设置过值的话， 再给一次机会尝试一下
-						// 如果没设置过值的话， 就说明前面已经判断过， 这个商品有多个sku， 没办法使用这种方式
-						((InputField)itemFieldList.get(idxOrg)).setValue(strSimpleSkuValue);
-
-						productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
-
-						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
-					}
-                }
-            } else {
+			} else {
                 // 更新商品的时候
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
 
-            if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
+			if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
+				// 用simple的那个sku， 覆盖到原来的那个sku上
+				int idxOrg = -1;
+				String strSimpleSkuValue = null;
+				for (int i = 0; i < itemFieldList.size(); i++) {
+					Field field = itemFieldList.get(i);
+					if (field.getId().equals("skus_simple")) {
+						InputField inputField = (InputField) field;
+						if (!StringUtils.isEmpty(inputField.getValue())) {
+							strSimpleSkuValue = inputField.getValue();
+						}
+					} else if (field.getId().equals("skus")) {
+						idxOrg = i;
+					}
+				}
+				if (!StringUtils.isEmpty(strSimpleSkuValue) && idxOrg != -1) {
+					// 找到如果设置过值的话， 再给一次机会尝试一下
+					// 如果没设置过值的话， 就说明前面已经判断过， 这个商品有多个sku， 没办法使用这种方式
+					((InputField)itemFieldList.get(idxOrg)).setValue(strSimpleSkuValue);
+
+					productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
+
+					if (!updateWare) {
+						// 新增商品的时候
+						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
+					} else {
+						// 更新商品的时候
+						result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
+					}
+				}
+			}
+
+			if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
                 // 天猫官网同购新增/更新商品失败时
                 String errMsg = "天猫官网同购新增商品时出现错误! ";
                 if (updateWare) {
