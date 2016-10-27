@@ -1,14 +1,17 @@
 package com.voyageone.web2.cms.views.pop.history;
 
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.core.bean.UserSessionBean;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.web2.base.BaseViewService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 
 /**
  * @author gubuchun 15/12/21
@@ -29,6 +32,12 @@ public class CmsPromotionHistoryService extends BaseViewService {
         // 获取cart list
         result.put("cartList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(),Constants.comMtTypeChannel.SKU_CARTS_53_D,  language));
         return result;
+    }
+    
+    public Map<String, List<CmsBtPromotionHistoryBean>> getUnduePromotion(Map<String, Object> params, UserSessionBean userInfo, String language) {
+        params.put("channelId", userInfo.getSelChannelId());
+        params.put("lang", language);
+        return promotionService.getUnduePromotion(params);
     }
 
 }

@@ -4,16 +4,25 @@
 
 package com.voyageone.service.impl.cms.promotion;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.CallResult;
-import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
-import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionHistoryBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
+import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -26,12 +35,6 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -281,6 +284,30 @@ public class PromotionService extends BaseService {
         result.put("list", promotionList);
         result.put("total", count);
         return result;
+    }
+    
+    /**
+     * 取得按Cart进行分类的活动详情
+     * @param params 查询参数
+     * @return 活动详情列表
+     */
+    public Map<String, List<CmsBtPromotionHistoryBean>> getUnduePromotion(Map<String, Object> params) {
+    	Map<String, List<CmsBtPromotionHistoryBean>> result = new HashMap<String, List<CmsBtPromotionHistoryBean>>();
+    	List<CmsBtPromotionHistoryBean> promotionList = cmsBtPromotionDaoExt.selectUnduePromotion(params);
+    	if (CollectionUtils.isNotEmpty(promotionList)) {
+    		// 把全部的检索结果按不同的Cart进行分类
+    		for (CmsBtPromotionHistoryBean promotion : promotionList) {
+    			if (result.get(promotion.getShortName()) == null) {
+    				List<CmsBtPromotionHistoryBean> cartPromotionList = new ArrayList<CmsBtPromotionHistoryBean>();
+    				cartPromotionList.add(promotion);
+    				result.put(promotion.getShortName(), cartPromotionList);
+    			} else {
+    				result.get(promotion.getShortName()).add(promotion);
+    			}
+    		}
+    	}
+    	
+    	return result;
     }
 
     /**

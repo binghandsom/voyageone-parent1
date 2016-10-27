@@ -511,6 +511,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
+
+			String GET_UNDUE_PROMOTION = "getUnduePromotion";
         }
 
         interface IMAGE_SETTING {
