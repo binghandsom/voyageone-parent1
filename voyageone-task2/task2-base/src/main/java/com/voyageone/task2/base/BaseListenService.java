@@ -3,6 +3,7 @@ package com.voyageone.task2.base;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -15,6 +16,8 @@ import java.util.List;
  */
 public abstract class BaseListenService extends BaseTaskService implements ApplicationListener {
 
+    private boolean running = false;
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         startup();
@@ -22,6 +25,15 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
 
     @Override
     public void startup() {
+        if (running) {
+            $info(getTaskName() + "正在运行，忽略");
+            return;
+        }
+
+        running = true;
+
+        $info(getTaskName() + "任务开始");
+
         // 先获取配置
         List<TaskControlBean> taskControlList = getControls();
 
@@ -42,7 +54,9 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
 
         } catch (BusinessException be) {
             logIssue(be, be.getInfo());
-            $info("出现业务异常，任务退出");
+            $error("出现业务异常，任务退出");
+        } catch (BeanCreationException bce) {
+            $error("出现业务异常，任务退出");
         } catch (Exception e) {
             logIssue(e);
             $error("出现异常，任务退出", e);
@@ -71,8 +85,11 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
                 doEvent(taskControlList, eventObj);
             } catch (BusinessException be) {
                 logIssue(be, be.getInfo());
-                $info("出现业务异常，任务退出");
+                $error("出现业务异常，任务退出");
                 throw be;
+            } catch (BeanCreationException bce) {
+                $error("出现业务异常，任务退出 " + bce.getMessage());
+                throw bce;
             } catch (Exception e) {
                 logIssue(e);
                 $error("出现异常，任务退出", e);
@@ -81,8 +98,7 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
         }
     }
 
-    protected void initStartup(List<TaskControlBean> taskControlList) {
-    }
+    protected void initStartup(List<TaskControlBean> taskControlList) {}
 
     protected abstract Object onListen(List<TaskControlBean> taskControlList);
 

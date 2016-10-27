@@ -159,7 +159,7 @@ public class CmsFeedSearchController extends CmsController {
         if(searchValue != null){
             channelId = searchValue.get("orgChaId")==null?getUser().getSelChannelId():searchValue.get("orgChaId").toString();
         }
-        if(!isAll) {
+        if(isAll == null || !isAll) {
             List selList = (List) params.get("selList");
             if (selList == null || selList.isEmpty()) {
                 throw new BusinessException("请至少选择一个Feed.");

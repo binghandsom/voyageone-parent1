@@ -34,29 +34,6 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
     private static final Pattern stringFormatP = Pattern.compile("\t|\r|\n");
 
-    private String replaceBlank(String str) {
-        if (str != null) {
-            Matcher m = stringFormatP.matcher(str);
-            return m.replaceAll(" ");
-        }
-        return null;
-    }
-
-    private Double convertToDouble(Object data) {
-        if (data != null) {
-            if (data instanceof Double) {
-                return (Double) data;
-            } else {
-                try {
-                    return Double.parseDouble(String.valueOf(data));
-                } catch (Exception ex) {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     protected String getSolrTemplateName() {
         return SOLR_TEMPLATE_NAME;
@@ -66,6 +43,14 @@ public class CmsProductDistSearchService extends BaseSearchService {
      * create Update Bean
      */
     public SolrUpdateBean createSolrBeanForNew(CmsBtProductModel cmsBtProductModel, Long lastVer) {
+        CmsProductDistSearchModel model = createSolrSearchModelForNew(cmsBtProductModel, lastVer);
+        return createSolrBean(model, cmsBtProductModel.get_id(), true);
+    }
+
+    /**
+     * create Solr Search Model For New
+     */
+    public CmsProductDistSearchModel createSolrSearchModelForNew(CmsBtProductModel cmsBtProductModel, Long lastVer) {
         if (cmsBtProductModel == null) {
             return null;
         }
@@ -137,7 +122,8 @@ public class CmsProductDistSearchService extends BaseSearchService {
             model.setLastVer(lastVer);
         }
 
-        return createSolrBean(model, cmsBtProductModel.get_id(), true);
+        reorganizeModel(model);
+        return model;
     }
 
     /**
@@ -229,18 +215,11 @@ public class CmsProductDistSearchService extends BaseSearchService {
             }
         }
 
-//            CmsBtProductModel_Platform_Cart tgPlatformCart = cmsBtProductModel.getPlatform(CartEnums.Cart.TG);
-//            if (tgPlatformCart != null) {
-//                BaseMongoMap<String, Object> fields = tgPlatformCart.getFields();
-//                if (fields != null) {
-//                    //private String catEn;
-//                    //private String catCn;
-//                }
-//            }
         if (lastVer != null) {
             model.setLastVer(lastVer);
         }
 
+        reorganizeModel(model);
         return createSolrBean(model, id, false);
     }
 
@@ -365,6 +344,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
             model.setLastVer(lastVer);
         }
 
+        reorganizeModel(model);
         return createSolrBean(model, id, false);
     }
 
@@ -372,11 +352,11 @@ public class CmsProductDistSearchService extends BaseSearchService {
     /**
      * create Update Bean
      */
-    private SolrUpdateBean createSolrBean(CmsProductDistSearchModel model, String id, boolean isNew) {
+    public SolrUpdateBean createSolrBean(CmsProductDistSearchModel model, String id, boolean isNew) {
         if (model == null || id == null) {
             return null;
         }
-        reorganizeModel(model);
+
         Map<String, Object> modelMap = BeanUtils.toMap(model);
 
         SolrUpdateBean update = new SolrUpdateBean("id", id);
@@ -453,4 +433,27 @@ public class CmsProductDistSearchService extends BaseSearchService {
 //        //noinspection unchecked
 //        return (SolrResultPage) getSolrTemplate().queryForPage(query, clazz);
 //    }
+
+    private String replaceBlank(String str) {
+        if (str != null) {
+            Matcher m = stringFormatP.matcher(str);
+            return m.replaceAll(" ");
+        }
+        return null;
+    }
+
+    private Double convertToDouble(Object data) {
+        if (data != null) {
+            if (data instanceof Double) {
+                return (Double) data;
+            } else {
+                try {
+                    return Double.parseDouble(String.valueOf(data));
+                } catch (Exception ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -346,12 +346,44 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (!updateWare) {
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
-            } else {
+			} else {
                 // 更新商品的时候
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
 
-            if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
+			if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
+				// 用simple的那个sku， 覆盖到原来的那个sku上
+				int idxOrg = -1;
+				String strSimpleSkuValue = null;
+				for (int i = 0; i < itemFieldList.size(); i++) {
+					Field field = itemFieldList.get(i);
+					if (field.getId().equals("skus_simple")) {
+						InputField inputField = (InputField) field;
+						if (!StringUtils.isEmpty(inputField.getValue())) {
+							strSimpleSkuValue = inputField.getValue();
+						}
+					} else if (field.getId().equals("skus")) {
+						idxOrg = i;
+					}
+				}
+				if (!StringUtils.isEmpty(strSimpleSkuValue) && idxOrg != -1) {
+					// 找到如果设置过值的话， 再给一次机会尝试一下
+					// 如果没设置过值的话， 就说明前面已经判断过， 这个商品有多个sku， 没办法使用这种方式
+					((InputField)itemFieldList.get(idxOrg)).setValue(strSimpleSkuValue);
+
+					productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
+
+					if (!updateWare) {
+						// 新增商品的时候
+						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
+					} else {
+						// 更新商品的时候
+						result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
+					}
+				}
+			}
+
+			if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
                 // 天猫官网同购新增/更新商品失败时
                 String errMsg = "天猫官网同购新增商品时出现错误! ";
                 if (updateWare) {
@@ -614,10 +646,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
         // 根据配置取得商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
         String color = getValueFromPageOrCondition("color_code_codediff", mainProduct.getCommon().getFields().getCode(), mainProductPlatformCart, sxData, shopProp);
-        List<BaseMongoMap<String, Object>> targetSkuList = getSkus(sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
-        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList));
 
+        List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
+                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
+
+        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
+		if (skuList.size() == 1) {
+			// 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
+			List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
+					priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
+			productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
+		} else {
+			// 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
+			productInfoMap.put("skus_simple", null);
+		}
 
         // 扩展(部分必填)
         // 该字段主要控制商品的部分备注信息等，其中部分字段是必须填写的，非必填的字段部分可以完全不用填写。
@@ -896,6 +938,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     /**
      * 从cms_mt_channel_config表中取得价格对应的配置项目值
      *
+     * @param type 0: 适合颜色尺码都有的类目， 1：适合单sku的类目
      * @param cartId String 平台id
      * @param productList List<BaseMongoMap<String, Object>> 上新产品列表
      * @param skuList List<BaseMongoMap<String, Object>> 上新合并后sku列表
@@ -907,7 +950,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param color 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
      * @return List<BaseMongoMap<String, Object>> 天猫同购上新用skus列表
      */
-    private List<BaseMongoMap<String, Object>> getSkus(Integer cartId, List<CmsBtProductModel> productList,
+    private List<BaseMongoMap<String, Object>> getSkus(int type, Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
@@ -943,8 +986,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 销售属性map(颜色，尺寸)
                 BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
                 // 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
-//                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
-//                saleProp.put("color", product.getCommon().getFields().getCode());
                 saleProp.put("color", color);
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
                 BaseMongoMap<String, Object> mergedSku = skuList.stream()
@@ -954,7 +995,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 尺寸
                 saleProp.put("size", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
                 // 追加销售属性
-                skuMap.put("sale_prop", saleProp);
+				if (type == 0) { // 只有在type是0的场合（有多个颜色尺码的场合）才需要sale_prop这个属性
+					skuMap.put("sale_prop", saleProp);
+				}
 
                 // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
                 skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));

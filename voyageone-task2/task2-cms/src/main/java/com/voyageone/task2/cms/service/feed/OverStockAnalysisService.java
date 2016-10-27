@@ -104,7 +104,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(200);
+            request.setLimit(50);
             String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
@@ -352,7 +352,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
                                     count++;
-                                    $debug("SKU:" + count + "---" + sku);
+                                    $info("SKU:" + count + "---" + sku);
                                     if (superfeed.size() > 1000) {
                                         transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                                         superfeed.clear();
@@ -366,7 +366,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 200;
+                offset = offset + 50;
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
