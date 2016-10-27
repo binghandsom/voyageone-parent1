@@ -84,6 +84,13 @@ define([
             editModel.extModel.isPromotionEachfullMinus = editModel.extModel.isPromotionEachfullMinus == '1' ? true : false;
             editModel.extModel.jmCoupons = editModel.extModel.jmCoupons == '1' ? true : false;
             editModel.extModel.voCoupons = editModel.extModel.voCoupons == '1' ? true : false;
+            // 设置默认值
+            if (editModel.model.detailStatus == 0) {
+                // 表示第一次进入详情画面，未保存过
+                editModel.extModel.syncMobile = true;
+                editModel.extModel.showHiddenDeal = true;
+                editModel.extModel.showMobile = true;
+            }
 
             // 转换活动场景的值
             if (editModel.model.promotionScene) {
