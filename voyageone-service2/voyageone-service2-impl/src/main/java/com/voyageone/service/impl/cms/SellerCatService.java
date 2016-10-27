@@ -192,7 +192,11 @@ MongoSequenceService commSequenceMongoService;
         String cId = "";
         String shopCartId = shopBean.getCart_id();
 
-        if (isJDPlatform(shopBean)) {
+        /**
+         * 测试保存
+         * 跳过了调用api的步骤
+         * */
+/*        if (isJDPlatform(shopBean)) {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
@@ -200,7 +204,9 @@ MongoSequenceService commSequenceMongoService;
         } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
           cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName,shopBean);
-        }
+        }*/
+
+        cId = UUID.randomUUID().toString();
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
         }

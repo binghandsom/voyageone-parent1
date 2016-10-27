@@ -49,7 +49,7 @@ define([
 
             parentCatId = context.root ? "0" : selectObject.catId;
 
-            self.context.ctrl.save(selectObject, parentCatId, self.catName);
+            self.context.ctrl.save(context.root,selectObject, parentCatId, self.catName);
             self.scope.$dismiss();
         };
 

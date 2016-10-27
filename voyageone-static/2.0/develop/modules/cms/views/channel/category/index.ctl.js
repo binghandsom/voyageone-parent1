@@ -2,7 +2,38 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    "use strict";
+
+    var Drag_Carts = [23, 30, 32];
+
+    /**
+     *
+     * @param catName  叶子节点的类目名称
+     * @param tree   树形结构data
+     */
+    function getNodeByName(catName, tree) {
+
+        if (tree == null)
+            return null;
+
+        var result = null;
+
+        _.find(tree, function (element) {
+            if (element.catName && element.catName == catName) {
+                result = element;
+                return true;
+            }
+
+            if (element.children && element.children.length) {
+                result = getNodeByName(catName, element.children);
+                if (result)
+                    return true;
+            }
+
+        });
+
+        return result;
+    }
+
     return cms.controller('categoryController', (function () {
 
         function CategoryController(platformMappingService, sellerCatService, alert, confirm, $translate, popups) {
@@ -133,7 +164,7 @@ define([
          * @param parentCatId   父节点catId
          * @param catName
          */
-        CategoryController.prototype.save = function (parentNode, parentCatId, catName) {
+        CategoryController.prototype.save = function (root, parentNode, parentCatId, catName) {
             var self = this;
 
             this.selected[this.newIndex.value] = catName;
@@ -142,17 +173,23 @@ define([
                 "catName": catName,
                 "parentCatId": parentCatId
             }).then(function (res) {
-                self.source = res.data.catTree;
+                var newNode = getNodeByName(catName, res.data.catTree);
+                //self.source = res.data.catTree;
+                if (root)
+                    self.tree[0].push(newNode);
+                else
+                    parentNode.children.push(newNode);
                 self.search(0);
             });
         };
 
         CategoryController.prototype.saveSorts = function () {
             var self = this,
+                alert = self.alert,
                 sellerCatService = self.sellerCatService;
 
-            sellerCatService.sortableCat({tree:self.tree[0],"cartId": +self.cartInfo.cart}).then(function(res){
-                console.log("res",res.data);
+            sellerCatService.sortableCat({tree: self.tree[0], "cartId": +self.cartInfo.cart}).then(function (res) {
+                alert("店铺内分类，排序成功！");
             });
         };
 
@@ -200,6 +237,11 @@ define([
                 self.search(level);
             }
 
+        };
+
+        CategoryController.prototype.canDrag = function (cartId) {
+
+            return Drag_Carts.indexOf(+cartId) >= 0;
         };
 
         return CategoryController;
