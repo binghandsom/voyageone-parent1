@@ -113,6 +113,7 @@ public class CmsChannelCategoryController extends CmsController {
         String channelId = this.getUser().getSelChannelId();
         Integer cartId = Integer.valueOf(param.get("cartId").toString());
         sellerCatService.saveSortableCat(result,channelId,cartId);
-        return null;
+
+        return success(null);
     }
 }
