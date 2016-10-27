@@ -199,11 +199,10 @@ define([
     };
 
     // 创建页面标识
-    SpEditDirectiveController.prototype.createActId = function () {
+    SpEditDirectiveController.prototype.createActId = function (fieldName) {
         var self = this;
         var idDate = self.$filter("date")(new Date(),"yyyyMMdd");
-        var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-        idTime = parseInt(idTime).toString(36);
+
         var jmBrandId = self.editModel.model.cmsBtJmMasterBrandId;
 
         var mainChannel = self.editModel.extModel.mainChannel;
@@ -215,10 +214,18 @@ define([
             if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
                 self.editModel.extModel.promotionProductType = '';
             }
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+            idTime = parseInt(idTime).toString(36);
             var pageId = idDate + mainChannel + '_' + self.editModel.extModel.promotionProductType + '_' + jmBrandId + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         } else {
+            if (fieldName == 'promotionProductType') {
+                // 其他专场时，活动主要商品品类的输入无效
+                return;
+            }
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+            idTime = parseInt(idTime).toString(36);
             var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + '_' + idDate + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
@@ -361,6 +368,7 @@ define([
         jmPromotionService.saveModel(param).then(function() {
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
+                model.isFstSave = 1;
             }
             // 保存之后如果标签被修改过就需要重新刷新标签缓存
             spDataService.getPromotionModules(true).then(function (tagModels) {

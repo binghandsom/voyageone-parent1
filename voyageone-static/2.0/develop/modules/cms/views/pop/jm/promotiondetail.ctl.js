@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
-        $scope.vm = {"jmMasterBrandList":[], "isFromBox": false};
+        $scope.vm = { "isFromBox": false };
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
 
@@ -75,7 +75,7 @@ define([
             }
 
             jmPromotionService.init().then(function (res) {
-                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
+                $scope.vm.metaData = res.data;
             });
         };
 
@@ -163,6 +163,16 @@ define([
                 context = $scope.editModel.model;
                 $scope.$close();
             })
+        };
+
+        // 检查checkbox是否有输入
+        $scope.checkboxVal = function (inputArr) {
+            var inputObj = _.find(inputArr, function(item) { return item == true; });
+            if (inputObj) {
+                return false;
+            } else {
+                return true;
+            }
         };
 
         /**禁用日期*/

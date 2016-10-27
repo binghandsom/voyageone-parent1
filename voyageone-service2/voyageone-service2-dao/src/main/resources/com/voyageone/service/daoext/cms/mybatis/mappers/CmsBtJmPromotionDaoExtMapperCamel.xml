@@ -323,6 +323,7 @@
             `pre_period_start` = #{prePeriodStart,jdbcType=TIMESTAMP},
             `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
             `comment` = #{comment,jdbcType=VARCHAR},
+            `is_fst_save` = #{isFstSave,jdbcType=INTEGER},
             `modified` = now(),
             `modifier` = #{modifier,jdbcType=VARCHAR}
         </set>
