@@ -110,30 +110,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="form-group"><!-- 产品类型设置状态 -->
-                                                <label class="col-sm-3 control-label">产品类型状态</label>
-                                                <div class="col-sm-8">
-                                                    <div class="col-sm-10">
-                                                        <select class="form-control" ng-model="vm.searchInfo.productTypeStatus">
-                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                            <option value="0">未设置</option>
-                                                            <option value="1">已设置</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group"><!-- 尺寸类型设置状态 -->
-                                                <label class="col-sm-3 control-label">尺寸类型状态</label>
-                                                <div class="col-sm-8">
-                                                    <div class="col-sm-10">
-                                                        <select class="form-control" ng-model="vm.searchInfo.sizeTypeStatus">
-                                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                            <option value="0">未设置</option>
-                                                            <option value="1">已设置</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </div>
                                             <div class="form-group"><!-- 查询库存状态 -->
                                                 <label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
                                                 <div class="col-sm-8" style="padding-left:0px">
@@ -145,6 +121,30 @@
                                                     </div>
                                                     <div class="col-sm-5" style="margin-left:1px">
                                                         <input type="number" class="form-control" ng-model="vm.searchInfo.inventory" onkeypress="return (/[\d]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="9">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0px"><!-- 产品类型 -->
+                                                <label class="col-sm-3 control-label">产品类型</label>
+                                                <div class="col-sm-8">
+                                                	<div class="col-sm-10">
+	                                                    <label class="checkbox-inline c-radio">
+	                                                        <input type="radio" name="radProductyType" value="1" ng-model="vm.searchInfo.productSelType"><span class="fa fa-check"></span> 包含
+	                                                    </label>
+	                                                    <label class="checkbox-inline c-radio">
+	                                                        <input type="radio" name="radProductyType" value="2" ng-model="vm.searchInfo.productSelType"><span class="fa fa-check"></span> 不包含
+	                                                    </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3"></div>
+                                                <div class="col-sm-8">
+                                                	<div class="col-sm-10">
+	                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.productTypeList"
+	                                                            ng-options="productType.value as productType.name for productType in vm.masterData.productTypeList">
+	                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+	                                                    </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -245,6 +245,26 @@
                                                     <label class="label label-default m-r-xxs" ng-repeat="freeTag in vm._freeTags" style="display: inline-block;">{{freeTag.tagPathName}}</label>
                                                 </div>
                                                 <button class="btn btn-default btn-md" style="margin-left:-1px" type="button" translate="BTN_RESET" ng-click="dismiss('freeTag')"></button>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0px"><!-- 尺寸类型 -->
+                                                <label class="col-sm-3 control-label">尺寸类型</label>
+                                                <div class="col-sm-8">
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="radSizeType" value="1" ng-model="vm.searchInfo.sizeSelType"><span class="fa fa-check"></span> 包含
+                                                    </label>
+                                                    <label class="checkbox-inline c-radio">
+                                                        <input type="radio" name="radSizeType" value="2" ng-model="vm.searchInfo.sizeSelType"><span class="fa fa-check"></span> 不包含
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-sm-3"></div>
+                                                <div class="col-sm-8">
+                                                    <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.sizeTypeList"
+                                                            ng-options="sizeType.value as sizeType.name for sizeType in vm.masterData.sizeTypeList">
+                                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

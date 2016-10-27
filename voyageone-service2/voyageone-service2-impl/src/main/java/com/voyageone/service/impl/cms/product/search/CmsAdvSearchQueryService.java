@@ -1,20 +1,25 @@
 package com.voyageone.service.impl.cms.product.search;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -386,20 +391,26 @@ public class CmsAdvSearchQueryService extends BaseService {
         }
         
         // 获取产品类型设置状态
-        if (StringUtils.isNotBlank(searchValue.getProductTypeStatus())) {
-        	if ("1".equals(searchValue.getProductTypeStatus())) {
-        		queryObject.addQuery("{'common.fields.productType':{$nin: [null, '']}}");
-        	} else {
-        		queryObject.addQuery("{'common.fields.productType':{$in: [null, '']}}");
+        if (StringUtils.isNotEmpty(searchValue.getProductSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getProductTypeList())) {
+        	if ("1".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$in: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
+        	} else if ("2".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
         	}
         }
         
         // 获取尺寸类型设置状态
-        if (StringUtils.isNotBlank(searchValue.getSizeTypeStatus())) {
-        	if ("1".equals(searchValue.getSizeTypeStatus())) {
-        		queryObject.addQuery("{'common.fields.sizeType':{$nin: [null, '']}}");
-        	} else {
-        		queryObject.addQuery("{'common.fields.sizeType':{$in: [null, '']}}");
+        if (StringUtils.isNotEmpty(searchValue.getSizeSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getSizeTypeList())) {
+        	if ("1".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$in: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
+        	} else if ("2".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
         	}
         }
 

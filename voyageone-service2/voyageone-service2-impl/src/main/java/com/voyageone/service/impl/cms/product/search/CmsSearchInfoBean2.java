@@ -43,8 +43,10 @@ public class CmsSearchInfoBean2 implements Serializable {
     private int supplierType = 0;
     private List<String> supplierList = null;
     
-    private String productTypeStatus;
-    private String sizeTypeStatus;
+    private String productSelType;
+    private String sizeSelType;
+    private List<String> productTypeList;
+    private List<String> sizeTypeList;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
@@ -523,21 +525,37 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setLockFlg(String lockFlg) {
         this.lockFlg = lockFlg;
     }
-    
-    public String getProductTypeStatus() {
-		return productTypeStatus;
+
+	public String getProductSelType() {
+		return productSelType;
 	}
 
-	public void setProductTypeStatus(String productTypeStatus) {
-		this.productTypeStatus = productTypeStatus;
+	public void setProductSelType(String productSelType) {
+		this.productSelType = productSelType;
 	}
 
-	public String getSizeTypeStatus() {
-		return sizeTypeStatus;
+	public String getSizeSelType() {
+		return sizeSelType;
 	}
 
-	public void setSizeTypeStatus(String sizeTypeStatus) {
-		this.sizeTypeStatus = sizeTypeStatus;
+	public void setSizeSelType(String sizeSelType) {
+		this.sizeSelType = sizeSelType;
+	}
+	
+	public List<String> getProductTypeList() {
+		return productTypeList;
+	}
+
+	public void setProductTypeList(List<String> productTypeList) {
+		this.productTypeList = productTypeList;
+	}
+
+	public List<String> getSizeTypeList() {
+		return sizeTypeList;
+	}
+
+	public void setSizeTypeList(List<String> sizeTypeList) {
+		this.sizeTypeList = sizeTypeList;
 	}
 
 	@Override
