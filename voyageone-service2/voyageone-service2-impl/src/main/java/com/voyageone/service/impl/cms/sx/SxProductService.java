@@ -29,6 +29,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -104,6 +105,8 @@ public class SxProductService extends BaseService {
     private ImageTemplateService imageTemplateService;
     @Autowired
     private TaobaoScItemService taobaoScItemService;
+    @Autowired
+    private CmsMtBrandService cmsMtBrandService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -781,14 +784,21 @@ public class SxProductService extends BaseService {
                 // modified by morse.lu 2016/06/07 end
                 sxData.setCmsBtFeedInfoModel(feedInfo);
 
-                Map<String, Object> searchParam = new HashMap<>();
-                searchParam.put("channelId", channelId);
-                searchParam.put("cartId", cartId);
-                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
-                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
-                if (cmsMtBrandsMappingModel != null) {
-                    sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
+                // modified by morse.lu 2016/10/27 start
+//                Map<String, Object> searchParam = new HashMap<>();
+//                searchParam.put("channelId", channelId);
+//                searchParam.put("cartId", cartId);
+//                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
+//                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
+//                if (cmsMtBrandsMappingModel != null) {
+//                    sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
+//                }
+                CmsMtBrandsMappingBean brandsMappingBean = cmsMtBrandService.getModelByCart(productModel.getCommon().getFields().getBrand(), String.valueOf(cartId), channelId);
+                if (brandsMappingBean != null) {
+                    sxData.setBrandCode(brandsMappingBean.getBrandId());
+                    sxData.setpBrandName(brandsMappingBean.getpBrand());
                 }
+                // modified by morse.lu 2016/10/27 end
             }
 
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
@@ -1075,7 +1085,11 @@ public class SxProductService extends BaseService {
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
             String sizeNick = sku.getStringAttribute("sizeNick");
-            if (!StringUtils.isEmpty(sizeNick)) {
+            // modified by morse.lu 2016/10/26 start
+            // liking 不允许手动填写别名
+//            if (!StringUtils.isEmpty(sizeNick)) {
+            if (cartId != CartEnums.Cart.LIKING.getValue() && !StringUtils.isEmpty(sizeNick)) {
+                // modified by morse.lu 2016/10/26 end
                 // 直接用Nick
                 sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
 			} else {
