@@ -503,9 +503,9 @@ define([
             }
             popups.openJMTagModify({search: $scope.search,tagList:$scope.vm.tagList,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
         }
-        $scope.openProductDetailWin = function (object) {
+        $scope.openProductDetailWin = function (model) {
 
-            popups.openJmProductDetail(object).then(function () {
+            popups.openJmProductDetail({promotionProduct: model}).then(function () {
                 $scope.search();
             });
         }
