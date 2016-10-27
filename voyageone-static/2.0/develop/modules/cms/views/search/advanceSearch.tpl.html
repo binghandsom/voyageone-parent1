@@ -740,8 +740,8 @@
                                         <td colspan="9" class="control-label text-left form-inline"
                                             style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                             <!--Todo 活动详情pop的数据取得-->
-                                            <button ng-controller="showPopoverCtrl" popover-html="showInfo({value:{{productInfo.priceSale}},isUseComplexTemplate:true,type:'1Columns'})"
-                                                    uib-popover-template="dynamicPopover.templateUrl"
+                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail()"
+                                                    uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>&nbsp;
                                             <!--Todo 商品IID的数据取得-->
@@ -816,8 +816,8 @@
                                         <!--show SKU length -->
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
-                                                    popover-html="showInfo({value:{{productInfo.skuDetail}},value2:{{productInfo.skuDetail}},value3:{{productInfo.skuDetail}},isUseComplexTemplate:true,type:'3Columns'})"
-                                                    uib-popover-template="dynamicPopover.templateUrl"
+                                                    popover-html="popoverAdvanceSku()"
+                                                    uib-popover-template="templateAction.advanceSkuPopover.templateUrl"
                                                     popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
                                                     type="button" popover-placement="left" class="btn btn-default btn-xs">
                                                 {{productInfo.common.skus.length}}
@@ -1054,9 +1054,9 @@
         </div>
     </div><!-- tabs ng-controller -->
 </div><!-- .col-lg-12 -->
-<script type="text/ng-template" id="dynamicPopoverTemplate.html">
-    <div ng-if="dynamicPopover.type=='1Columns'" class="row" style="min-width: 241px;">
-        <div class="row" ng-repeat="li in dynamicPopover.value1">
+<script type="text/ng-template" id="promotionDetailTemplate.html">
+    <div class="row" style="min-width: 280px;">
+        <div class="row">
             <div class="col-sm-4">
                 <label class="control-label"> TG: </label>
             </div>
@@ -1067,36 +1067,22 @@
             </ul>
         </div>
     </div>
-    <div ng-if="dynamicPopover.type=='3Columns'" class="row" style="min-width: 262px;">
-        <div class="col-sm-7">
-            <div class="form-group">
-                <label class="control-label"> {{'TXT_SKU'|translate}} </label>
-            </div>
-            <div class="form-group">
-                <ul class="list-unstyled">
-                    <li ng-repeat="li in dynamicPopover.value1">{{li}}</li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-sm-2">
-            <div class="form-group">
-                <label class="control-label"> {{'TXT_SIZE'|translate}} </label>
-            </div>
-            <div class="form-group">
-                <ul class="list-unstyled">
-                    <li>10</li>
-                </ul>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="form-group">
-                <label class="control-label"> {{'TXT_INVENTORY'|translate}} </label>
-            </div>
-            <div class="form-group">
-                <ul class="list-unstyled">
-                    <li>10</li>
-                </ul>
-            </div>
-        </div>
+</script>
+<script type="text/ng-template" id="advanceSkuTemplate.html">
+    <div class="row" style="min-width: 262px;">
+        <table style="width: 100%;border: none;">
+            <thead>
+                <th class="mfb-xxxs text-center">sku</th>
+                <th class="mfb-xxxs text-center">尺码</th>
+                <th class="mfb-xxxs text-center">库存</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="mfb-xxxs text-center">xxx-xxx-xxxxx</td>
+                    <td class="mfb-xxxs text-center">L</td>
+                    <td class="mfb-xxxs text-center">23</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </script>
