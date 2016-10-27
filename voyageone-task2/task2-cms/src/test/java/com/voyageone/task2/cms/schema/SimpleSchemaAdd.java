@@ -29,7 +29,7 @@ public class SimpleSchemaAdd {
 	private static void doCreateProduct() {
 		List<Field> fieldList = new ArrayList<>();
 
-		fieldList.add(createInputField("title", "标题", true, null));
+		fieldList.add(createInputField("title", "标题", false, null));
 
 		fieldList.add(createInputField("logistics_weight", "物流重量", false, "单位:千克"));
 		fieldList.add(createInputField("logistics_volume", "物流体积", false, "运费是基于重量, 所以这里可以随意填写"));

@@ -19,6 +19,8 @@ public abstract class BaseListenService extends BaseTaskService implements Appli
 
     private boolean running = false;
 
+    private boolean running = false;
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         startup();

@@ -70,6 +70,36 @@ public class ProductForWmsBean {
 
     private String clientPriceUnit = "";
 
+    private String etkHsCode = "";
+
+    private String etkDescription = "";
+
+    private String etkUnit = "";
+
+    public String getEtkHsCode() {
+        return etkHsCode;
+    }
+
+    public void setEtkHsCode(String etkHsCode) {
+        this.etkHsCode = etkHsCode;
+    }
+
+    public String getEtkDescription() {
+        return etkDescription;
+    }
+
+    public void setEtkDescription(String etkDescription) {
+        this.etkDescription = etkDescription;
+    }
+
+    public String getEtkUnit() {
+        return etkUnit;
+    }
+
+    public void setEtkUnit(String etkUnit) {
+        this.etkUnit = etkUnit;
+    }
+
     public String getChannelId() {
         return channelId;
     }
