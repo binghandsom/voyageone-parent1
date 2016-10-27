@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    var Drag_Carts = [23, 30, 32];
+    var Drag_Carts = [20,23,25,30,31,32];
 
     /**
      *
