@@ -275,7 +275,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 
         // added by morse.lu 2016/08/08 start
         String[] status = new String[]{"", ""}; // status[0] 状态 status[1] error的场合error信息
-        String[] errorKeys = {"不完整", "不规范", "不正确", "错误", "需", "未"}; // 以后视情况追加修正
+        String[] errorKeys = {"不完整", "不规范", "不正确", "错误", "需", "未", "不一致", "缺少"}; // 以后视情况追加修正
         List<String> listBarcode = new ArrayList<>();
         // added by morse.lu 2016/08/08 end
         // 调用天猫API获取产品信息获取schema(tmall.product.schema.get )
@@ -340,6 +340,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                                     }
                                 }
                             }
+                            // added by morse.lu 2016/10/27 start
+                            // bug修正
+                        } else {
+                            // 允许更新话，说明IT审核过错误已经修正了，在允许更新表里添加了，那么直接把状态改成true
+                            status[0] = "true";
+                            status[1] = "";
+                            return status;
+                            // added by morse.lu 2016/10/27 start
                         }
                     }
                 }
