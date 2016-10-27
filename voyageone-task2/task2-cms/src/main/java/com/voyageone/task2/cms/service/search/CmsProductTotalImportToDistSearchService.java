@@ -29,7 +29,7 @@ import java.util.*;
 @Service
 public class CmsProductTotalImportToDistSearchService extends BaseCronTaskService {
 
-    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 1000;
+    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 100;
 
     private static final String CMS_CHANNEL_ID = "928";
     @Autowired
@@ -68,7 +68,7 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
     void importDataToSearchFromMongo(String channelId, Map<String, Integer> brandCatsCntSumMap) {
         long currentTime = System.currentTimeMillis();
         JongoQuery queryObject = new JongoQuery();
-        //queryObject.setProjection("{'_id':1, 'channelId':1, 'common.fields.code':1, 'common.fields.model':1, 'common.skus.skuCode':1}");
+        queryObject.setProjection("{'_id':1, 'channelId':1, 'created':1, 'common.fields':1}");
         Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
 
         List<SolrUpdateBean> beans = new ArrayList<>();
@@ -128,7 +128,7 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
 
     private void brandCatsCntSum(CmsProductDistSearchModel model, Map<String, Integer> brandCatsCntSumMap) {
         if (model != null && model.getBrandCats() != null && !model.getBrandCats().isEmpty()) {
-            for (String keyWord: model.getBrandCats()) {
+            for (String keyWord : model.getBrandCats()) {
                 if (brandCatsCntSumMap.containsKey(keyWord)) {
                     brandCatsCntSumMap.put(keyWord, brandCatsCntSumMap.get(keyWord) + 1);
                 } else {
@@ -139,16 +139,28 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
     }
 
     private void importDataToBrandCatsCntSum(Map<String, Integer> brandCatsCntSumMap) {
-        for (Map.Entry<String, Integer> entry : brandCatsCntSumMap.entrySet()) {
-            System.out.println(entry.getKey() + ":" +  entry.getValue());
-        }
         long currentTime = System.currentTimeMillis();
         if (!brandCatsCntSumMap.isEmpty()) {
             //noinspection
             List<SolrUpdateBean> beans = cmsBrandCatsDistSearchService.createSolrBeanForNew(brandCatsCntSumMap, CMS_CHANNEL_ID, currentTime);
             if (!beans.isEmpty()) {
-                String response = cmsBrandCatsDistSearchService.saveBeans(beans);
-                logger.info("CmsProductTotalImportToDistSearchService.importDataToBrandCatsCntSum commit count:{}; response:{}", brandCatsCntSumMap.size(), response);
+                if (beans.size() > IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE) {
+                    int i = 0;
+                    for (; i < beans.size() / IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE; i++) {
+                        List<SolrUpdateBean> subBeans = beans.subList(i * IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE, (i + 1) * IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE);
+                        String response = cmsBrandCatsDistSearchService.saveBeans(subBeans);
+                        logger.info("CmsProductTotalImportToDistSearchService.importDataToBrandCatsCntSum commit count:{}; response:{}", (i + 1) * IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE, response);
+                    }
+                    if (beans.size() % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE > 0) {
+                        List<SolrUpdateBean> subBeans = beans.subList(i * IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE, beans.size());
+                        String response = cmsBrandCatsDistSearchService.saveBeans(subBeans);
+                        logger.info("CmsProductTotalImportToDistSearchService.importDataToBrandCatsCntSum commit count:{}; response:{}", beans.size(), response);
+                    }
+
+                } else {
+                    String response = cmsBrandCatsDistSearchService.saveBeans(beans);
+                    logger.info("CmsProductTotalImportToDistSearchService.importDataToBrandCatsCntSum commit count:{}; response:{}", brandCatsCntSumMap.size(), response);
+                }
                 cmsBrandCatsDistSearchService.commit();
                 brandCatsCntSumMap.clear();
 
