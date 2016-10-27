@@ -281,6 +281,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         // 调用天猫API获取产品信息获取schema(tmall.product.schema.get )
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         List<Field> fields = SchemaReader.readXmlForList(schema);
+        boolean hasAllowUpdate = false;
 
         for (Field field : fields)
         {
@@ -314,8 +315,11 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                     if (sxDarwinSkuProps != null) {
                         // 是这次要上的barcode
                         sxDarwinSkuProps.setCspuId(((InputField) mapFields.get("id")).getDefaultValue()); // 规格编号
-                        if (!sxDarwinSkuProps.isAllowUpdate()) {
-                            // 不允许更新，那么有错，就需要把错报出来
+                        // deleted by morse.lu 2016/10/27 start
+                        // 即使允许更新也要判断先原先是否有错(sxDarwinSkuProps.setErr(true)要执行)，为了之后代码来判断
+//                        if (!sxDarwinSkuProps.isAllowUpdate()) {
+//                            // 不允许更新，那么有错，就需要把错报出来
+                        // deleted by morse.lu 2016/10/27 end
                             if (cspuField.getRules() != null) {
                                 boolean isFirstErr = true;
                                 for (Rule rule : cspuField.getRules()) {
@@ -341,12 +345,9 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                                 }
                             }
                             // added by morse.lu 2016/10/27 start
-                            // bug修正
-                        } else {
-                            // 允许更新话，说明IT审核过错误已经修正了，在允许更新表里添加了，那么直接把状态改成true
-                            status[0] = "true";
-                            status[1] = "";
-                            return status;
+                        if (sxDarwinSkuProps.isAllowUpdate()) {
+                            // 允许更新
+                            hasAllowUpdate = true;
                             // added by morse.lu 2016/10/27 start
                         }
                     }
@@ -354,6 +355,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             }
             // added by morse.lu 2016/08/08 end
         }
+
+        // added by morse.lu 2016/10/27 start
+        if (hasAllowUpdate) {
+            // 允许更新话，说明IT审核过错误已经修正了，在允许更新表里添加了，那么直接把状态改成true
+            status[0] = "true";
+            status[1] = "";
+        }
+        // added by morse.lu 2016/10/27 start
 
         return status;
     }
