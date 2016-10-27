@@ -22,6 +22,7 @@ public class DefaultCustomRuleModules {
         customWordModules.add(new CustomWordModuleConditionNeq());
         customWordModules.add(new CustomWordModuleConditionLike());
         customWordModules.add(new CustomWordModuleGetCommonImages());
+        customWordModules.add(new CustomWordModuleTranslateBaidu());
     }
 
     public Set<CustomWordModule> customWordModules;
