@@ -27,14 +27,16 @@
                 <td class="text-left">{{model.beginTime}}</td>
                 <td class="text-left">{{model.endTime}}</td>
                 <td class="text-left">
-                    <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                       popover-placement="left" class="ng-scope">
-                        <div class="table_main">
-                            <ul>
-                                <li>{{getErrorMsg(model.errorMsg)}}</li>
-                            </ul>
-                        </div>
-                    </a>
+                    <span ng-if="model.errorMsg.length > 50"><popover-text content="model.errorMsg" direct="left" size="50"></popover-text></span>
+                    <span ng-if="model.errorMsg.length <= 50">{{model.errorMsg}}</span>
+                    <!--<a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"-->
+                       <!--popover-placement="left" class="ng-scope">-->
+                        <!--<div class="table_main">-->
+                            <!--<ul>-->
+                                <!--<li>{{getErrorMsg(model.errorMsg)}}</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</a>-->
                 </td>
                 <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
                 <td class="text-center">
