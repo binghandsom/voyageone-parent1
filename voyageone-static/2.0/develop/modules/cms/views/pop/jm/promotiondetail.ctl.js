@@ -191,6 +191,19 @@ define([
             }
         };
 
+        $scope.onJmBrandChange = function () {
+            $scope.editModel.model.brand = '';
+            $scope.editModel.model.cmsBtJmMasterBrandId = '';
+
+            if ($scope.editModel.model.masterBrandName) {
+                var inputObj = _.find($scope.vm.metaData.jmMasterBrandList, function(item) { return item.value == $scope.editModel.model.masterBrandName; });
+                if (inputObj) {
+                    $scope.editModel.model.brand = inputObj.value;
+                    $scope.editModel.model.cmsBtJmMasterBrandId = inputObj.name;
+                }
+            }
+        };
+
         /**
          *
          * @param date 字符串格式为yyyy-MM-dd ss:ss:ss

@@ -58,17 +58,18 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场主品牌</label>
                     <div class="col-sm-3">
-                        <select chosen ng-model="ctrlEdit.editModel.model.cmsBtJmMasterBrandId" required ng-disabled="ctrlEdit.editModel.model.isFstSave==1"
-                                ng-options="brand.id as brand.name for brand in ctrlEdit.vm.metaData.jmMasterBrandList"
-                                name="cmsBtJmMasterBrandId" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
+                        <select chosen ng-model="ctrlEdit.editModel.model.masterBrandName" required ng-disabled="ctrlEdit.editModel.model.isFstSave==1"
+                                ng-options="brand.value as brand.value for brand in ctrlEdit.vm.metaData.jmMasterBrandList"
+                                name="masterBrandName" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
-                    <label class="col-sm-3 control-label text-left" style="margin-left:40px">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{ctrlEdit.editModel.model.cmsBtJmMasterBrandId}}</label>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{ctrlEdit.editModel.model.cmsBtJmMasterBrandId}}</label>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="!ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌未匹配</label>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="ctrlEdit.promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                        <vo-message target="ctrlEdit.promotionForm.masterBrandName"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
