@@ -38,7 +38,7 @@ public class CmsJmPromotionIndexController extends CmsController {
         if (hasExt == null) {
             hasExt = false;
         }
-        return success(service.init(hasExt));
+        return success(service.init(getUser().getSelChannelId(), getLang(), hasExt));
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET_LIST_BY_WHERE)

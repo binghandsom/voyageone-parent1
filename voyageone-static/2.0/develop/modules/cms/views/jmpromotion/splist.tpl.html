@@ -20,7 +20,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">主品牌</label>
 								<div class="col-sm-7">
-									<select class="form-control" chosen ng-model="searchInfo.jmBrandId" ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList">
+									<select class="form-control" chosen ng-model="searchInfo.jmBrandName" ng-options="brand.value as brand.value for brand in vm.jmMasterBrandList">
 										<option value="" translate="TXT_SELECT_NO_VALUE"></option>
 									</select>
 								</div>
@@ -170,7 +170,7 @@
 						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)" ng-if="promotion.entryImg"><img src="{{promotion.entryImg}}" alt="" style="max-width:180px;max-height:100px"/></a>
 					</td>
 					<td class="text-left yellowLink"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
-					<td class="text-left">{{promotion.brand}}</td>
+					<td class="text-left">{{promotion.masterBrandName}}</td>
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
 					<td class="text-left">{{promotion.prePeriodStart}}</td>
 					<td class="text-left">{{promotion.signupDeadline}}</td>

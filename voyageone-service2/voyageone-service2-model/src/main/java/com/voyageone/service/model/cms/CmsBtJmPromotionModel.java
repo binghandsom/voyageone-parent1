@@ -35,7 +35,10 @@ public class CmsBtJmPromotionModel extends BaseModel {
      * 专场涉及品牌 明细汇总 顿号、分隔
      */
     protected String brand;
-
+    /**
+     * 主品牌名
+     */
+    protected String masterBrandName;
     /**
      * 专场涉及品类
      */
@@ -391,5 +394,13 @@ public class CmsBtJmPromotionModel extends BaseModel {
 
     public void setIsFstSave(int isFstSave) {
         this.isFstSave = isFstSave;
+    }
+
+    public String getMasterBrandName() {
+        return masterBrandName;
+    }
+
+    public void setMasterBrandName(String masterBrandName) {
+        this.masterBrandName = masterBrandName;
     }
 }
