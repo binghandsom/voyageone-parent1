@@ -4,7 +4,7 @@ define([
 
     cms.controller('imageUploadCtl', (function () {
 
-        function ImageUploadCtl($uibModalInstance, FileUploader,blockUI, context) {
+        function ImageUploadCtl($uibModalInstance, FileUploader, blockUI, context) {
             this.$uibModalInstance = $uibModalInstance;
             this.FileUploader = FileUploader;
             this.blockUI = blockUI.instances.get('imgUpload');
@@ -40,7 +40,8 @@ define([
 
             imgRequest.formData = [{
                 promotionId: context.promotionId,
-                imageType: context.imageType
+                imageType: context.imageType,
+                useTemplate: context.useTemplate
             }];
             imgRequest.upload();
 
