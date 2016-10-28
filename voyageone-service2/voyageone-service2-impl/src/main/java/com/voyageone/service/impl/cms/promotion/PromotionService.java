@@ -291,18 +291,22 @@ public class PromotionService extends BaseService {
      * @param params 查询参数
      * @return 活动详情列表
      */
-    public Map<String, List<CmsBtPromotionHistoryBean>> getUnduePromotion(Map<String, Object> params) {
-    	Map<String, List<CmsBtPromotionHistoryBean>> result = new HashMap<String, List<CmsBtPromotionHistoryBean>>();
+    public Map<String, List<Map<String, Object>>> getUnduePromotion(Map<String, Object> params) {
+    	Map<String, List<Map<String, Object>>> result = new HashMap<String, List<Map<String, Object>>>();
     	List<CmsBtPromotionHistoryBean> promotionList = cmsBtPromotionDaoExt.selectUnduePromotion(params);
     	if (CollectionUtils.isNotEmpty(promotionList)) {
     		// 把全部的检索结果按不同的Cart进行分类
     		for (CmsBtPromotionHistoryBean promotion : promotionList) {
+    			Map<String, Object> promotionMap = new HashMap<String, Object>();
+    			promotionMap.put("activityStart", promotion.getActivityStart());
+    			promotionMap.put("activityEnd", promotion.getActivityEnd());
+    			promotionMap.put("promotionName", promotion.getPromotionName());
     			if (result.get(promotion.getShortName()) == null) {
-    				List<CmsBtPromotionHistoryBean> cartPromotionList = new ArrayList<CmsBtPromotionHistoryBean>();
-    				cartPromotionList.add(promotion);
+    				List<Map<String, Object>> cartPromotionList = new ArrayList<Map<String, Object>>();
+    				cartPromotionList.add(promotionMap);
     				result.put(promotion.getShortName(), cartPromotionList);
     			} else {
-    				result.get(promotion.getShortName()).add(promotion);
+    				result.get(promotion.getShortName()).add(promotionMap);
     			}
     		}
     	}

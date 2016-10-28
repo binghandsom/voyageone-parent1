@@ -35,7 +35,7 @@ public class CmsPromotionHistoryController extends CmsController {
     
     @RequestMapping(CmsUrlConstants.POP.PROMOTION.GET_UNDUE_PROMOTION)
     public AjaxResponse getUnduePromotion(@RequestBody Map<String, Object> params) {
-    	Map<String, List<CmsBtPromotionHistoryBean>> promotions = cmsPromotionHistoryService.getUnduePromotion(params,
+    	Map<String, List<Map<String, Object>>> promotions = cmsPromotionHistoryService.getUnduePromotion(params,
     			getUser(), getLang());
     	return success(promotions);
     }

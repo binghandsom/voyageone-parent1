@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, $promotionHistoryService) {
 
         $scope.vm = {
             searchInfo: {
@@ -1148,9 +1148,43 @@ define([
                 });
             }
         }
+        
+        // 取得产品的活动详情
+        $scope.getUnduePromotions = function(code) {
+        	$promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+        		var promotions = resp.data;
+        		// TODO
+        		alert(JSON.stringify(promotions));
+        	});
+        };
+        
+        // 取得SKU的详细信息
+        $scope.getSkuDetails = function(code, skus) {
+        	$searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+            	var skuDetails = [];
+        		var skuInventories = resp.data;
+        		_.forEach(skus, function(sku) {
+        			var inventory = null;
+        			_.forEach(skuInventories, function(skuInventory) {
+        				if (skuInventory.sku == sku.skuCode) {
+        					inventory = skuInventory.qtyChina;
+        					return false;
+        				}
+        			});
+        			skuDetails.push({
+        				skuCode: sku.skuCode,
+        				size: sku.size,
+        				inventory: inventory
+        			});
+        		});
+        		
+        		// TODO skuDetails
+        		alert(JSON.stringify(skuDetails));
+        	});
+        };
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', '$promotionHistoryService'];
     return searchIndex;
 });

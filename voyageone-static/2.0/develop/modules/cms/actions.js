@@ -67,7 +67,8 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList"
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
@@ -426,7 +427,8 @@ define(function () {
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
-                    "getPromotionHistory": "getPromotionHistory"
+                    "getPromotionHistory": "getPromotionHistory",
+                    "getUnduePromotion": "getUnduePromotion"
                 },
                 priceLogService: {
                     root: '/cms/price/log',

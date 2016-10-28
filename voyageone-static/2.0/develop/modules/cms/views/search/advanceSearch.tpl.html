@@ -744,6 +744,7 @@
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>&nbsp;
+                                            <button type="button" ng-click="getUnduePromotions(productInfo.common.fields.code)">Test</button>
                                             <!--Todo 商品IID的数据取得-->
                                             <span class="m-r-sm">{{'TXT_GROUP_NUMIID' | translate}}&nbsp;
                                                 <a target="_blank">{{productInfo.common.fields.code}}</a>
@@ -822,6 +823,7 @@
                                                     type="button" popover-placement="left" class="btn btn-default btn-xs">
                                                 {{productInfo.common.skus.length}}
                                             </button>
+                                            <button type="button" ng-click="getSkuDetails(productInfo.common.fields.code, productInfo.common.skus)">Test</button>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:165px;">
                                             <small ng-controller="showPopoverCtrl"

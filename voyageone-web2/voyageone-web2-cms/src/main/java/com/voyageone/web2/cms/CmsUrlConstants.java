@@ -340,6 +340,8 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
+
+			String GET_SKU_INVENTORY = "getSkuInventory";
         }
 
         interface FEED {

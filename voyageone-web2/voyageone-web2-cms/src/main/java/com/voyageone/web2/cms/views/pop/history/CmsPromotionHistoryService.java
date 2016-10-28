@@ -34,7 +34,7 @@ public class CmsPromotionHistoryService extends BaseViewService {
         return result;
     }
     
-    public Map<String, List<CmsBtPromotionHistoryBean>> getUnduePromotion(Map<String, Object> params, UserSessionBean userInfo, String language) {
+    public Map<String, List<Map<String, Object>>> getUnduePromotion(Map<String, Object> params, UserSessionBean userInfo, String language) {
         params.put("channelId", userInfo.getSelChannelId());
         params.put("lang", language);
         return promotionService.getUnduePromotion(params);
