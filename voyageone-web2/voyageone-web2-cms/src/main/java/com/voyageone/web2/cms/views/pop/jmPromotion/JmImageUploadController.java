@@ -37,11 +37,8 @@ public class JmImageUploadController extends CmsController {
         MultipartFile file = multipartRequest.getFile("file");
 
         InputStream input = file.getInputStream();
-        Map<String, Object> response = jmImageUploadService.uploadImage(file, promotionId, imageType, getUser());
-
-        if (response == null) {
-            throw new BusinessException("图片上传失败");
-        }
+        boolean useTemplate = Boolean.parseBoolean(request.getParameter("useTemplate"));
+        Map<String, Object> response = jmImageUploadService.uploadImage(file, promotionId, imageType, getUser(),useTemplate);
 
         input.close();
 

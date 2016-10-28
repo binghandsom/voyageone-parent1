@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpImagesDirectiveController(spDataService, popups, notify, alert,$scope) {
+    function SpImagesDirectiveController(spDataService, popups, notify, alert, $scope) {
         var self = this;
         self.spDataService = spDataService;
         self.popups = popups;
@@ -28,7 +28,7 @@ define([
                 self.imgUpEntity = res.data.promotionImagesModel;
 
             //设置父页面标志位
-            if(self.imgUpEntity.saveType == 1 || self.imgUpEntity.saveType == 2)
+            if (self.imgUpEntity.saveType == 1 || self.imgUpEntity.saveType == 2)
                 spDataService.jmPromotionObj.imageStatus = 1;
         });
 
@@ -108,8 +108,15 @@ define([
 
         popups.openImageJmUpload({
             promotionId: +spDataService.jmPromotionId,
-            imageType: imageType
+            imageType: imageType,
+            useTemplate: imgUpEntity.useTemplate
         }).then(function (res) {
+
+            if(!res.templateUrl){
+                alert("请在【promotion detail】 tab上标记好活动信息后再行上传");
+                return;
+            }
+
             //用于显示
             imgUrls[imageType] = res.templateUrl;
             //用于存储图片名称
@@ -131,7 +138,7 @@ define([
             alert = self.alert,
             spDataService = self.spDataService;
 
-        if(saveType != 0)
+        if (saveType != 0)
             spDataService.jmPromotionObj.imageStatus = 2;
 
         if (self.imgChkForm.$invalid) {
@@ -146,7 +153,7 @@ define([
             }
         }
 
-        if(saveType == 1 || saveType == 2)
+        if (saveType == 1 || saveType == 2)
             self.imgUpEntity.saveType = saveType;
 
         spDataService.savePromotionImages({
@@ -173,7 +180,7 @@ define([
         return "&timeStamp=" + new Date(imgUpEntity.modified).getTime();
     };
 
-    SpImagesDirectiveController.prototype.refreshImg = function(){
+    SpImagesDirectiveController.prototype.refreshImg = function () {
         var self = this;
 
         self.init();
@@ -182,7 +189,7 @@ define([
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['spDataService', 'popups', 'notify', 'alert', '$scope',SpImagesDirectiveController],
+            controller: ['spDataService', 'popups', 'notify', 'alert', '$scope', SpImagesDirectiveController],
             controllerAs: 'ctrlImages',
             templateUrl: '/modules/cms/views/jmpromotion/sp.images.directive.html'
         }
