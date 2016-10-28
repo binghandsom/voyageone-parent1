@@ -96,7 +96,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 && cartId != CartEnums.Cart.USJGY.getValue()
                 && cartId != CartEnums.Cart.USJGT.getValue()) {
             // 非主商品的平台类目跟这个主商品走
-            if (platformCart.getpIsMain() != 1 && (cartId != CartEnums.Cart.JM.getValue() || !CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(cartId+"")))) {
+            if (platformCart.getpIsMain() != 1 && (cartId != CartEnums.Cart.JM.getValue() && !CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(cartId+"")))) {
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
                 if (cmsBtProductGroup == null) {
                     throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
