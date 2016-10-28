@@ -1851,7 +1851,7 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
                 weightCalc = round(Double.parseDouble(weightOrg) / 0.4535924).toString();
             } else {
-                weightCalc = weightOrg;
+                weightCalc = round(Double.parseDouble(weightOrg)).toString();
             }
 
             skuInfo.setWeightOrg(weightOrg);
@@ -1888,6 +1888,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             // 根据公式计算价格
             try {
+                // 向上取整
+                weight = String.valueOf(Math.ceil(new Double(weight)));
                 // 价格说明：
                 // price_client_msrp:美金专柜价
                 // price_client_retail:美金指导价
