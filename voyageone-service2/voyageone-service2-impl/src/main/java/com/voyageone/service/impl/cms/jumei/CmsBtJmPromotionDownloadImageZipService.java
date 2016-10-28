@@ -215,7 +215,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             try {
                 ExecutorService es  = Executors.newFixedThreadPool(5);
                 promotionImagesList.forEach(stringStringMap -> {
-                    imageBytes.add(downImageThread(stringStringMap));
+                    es.execute(() -> downImageThread(stringStringMap, imageBytes));
                 });
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
@@ -232,7 +232,6 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                         //读入需要下载的文件的内容，打包到zip文件
                         byte[] imageTemp = (byte[]) imageByte.get("byte");
                         zipOutputStream.write(imageTemp , 0, imageTemp.length);
-                        $info("finish");
                         zipOutputStream.closeEntry();
                     }
 
@@ -247,36 +246,38 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
         return null;
     }
 
-    public Map<String,Object> downImageThread(Map<String, String> promotionImage){
+    public void downImageThread(Map<String, String> promotionImage, List<Map<String, Object>> imageBytes){
         Map<String,Object> imageByte = new HashedMap();
         imageByte.put("picturePath",promotionImage.get("picturePath"));
         imageByte.put("byte",downImage(promotionImage.get("url")));
-        return imageByte;
+        imageBytes.add(imageByte);
     }
 
     public byte[] downImage(String imageUrl) {
+        long threadNo =  Thread.currentThread().getId();
         //如果promotionImagesList为空的时，不做处理
         byte[] buffer = new byte[1024 * 10];
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
             int len;
             URL url = new URL(imageUrl);
-            $info(imageUrl + "下载开始");
+            $info("threadNo:"+ threadNo + " url:" + imageUrl + "下载开始");
             //Url
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             try (InputStream inputStream = conn.getInputStream()) {
                 //读入需要下载的文件的内容，打包到zip文件
                 while ((len = inputStream.read(buffer)) > 0) {
                     byteArrayOutputStream.write(buffer, 0, len);
+//                    $info("threadNo:"+ threadNo + " len:" + len);
                 }
                 inputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            $info(imageUrl + "下载结束");
+            $info("threadNo:"+ threadNo + " url:" + imageUrl + "下载结束");
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            $error(e);
         }
         return null;
     }
