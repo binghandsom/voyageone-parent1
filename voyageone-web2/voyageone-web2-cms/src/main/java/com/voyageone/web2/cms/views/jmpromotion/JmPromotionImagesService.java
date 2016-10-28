@@ -36,12 +36,13 @@ public class JmPromotionImagesService extends BaseViewService {
     public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
-        //更新时间戳
-        promotionImagesModel.setModified(DateTimeUtil.getNowTimeStamp());
 
         if (promotionImagesModel == null) {
             return new HashMap<>(0);
         }
+
+        //更新时间戳
+        promotionImagesModel.setModified(DateTimeUtil.getNowTimeStamp());
 
         return getJmImageTemplate(promotionImagesModel);
     }
