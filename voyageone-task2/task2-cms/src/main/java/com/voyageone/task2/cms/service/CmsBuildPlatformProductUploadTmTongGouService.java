@@ -643,18 +643,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 设置成true跨境申报后，商品的每个SKU必须带有HSCODE才可以上架，
         // 如果设置成false邮关申报后，商品不需要设置HSCODE
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
-        // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
-        // 根据配置取得商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
-        String color = getValueFromPageOrCondition("color_code_codediff", mainProduct.getCommon().getFields().getCode(), mainProductPlatformCart, sxData, shopProp);
-
+        // 取得天猫同购上新用skus列表
         List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
+                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
 
         productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
 		if (skuList.size() == 1) {
 			// 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
 			List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
-					priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
+					priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
 			productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
 		} else {
 			// 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
@@ -936,7 +933,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     }
 
     /**
-     * 从cms_mt_channel_config表中取得价格对应的配置项目值
+     * 取得天猫同购上新用skus列表
      *
      * @param type 0: 适合颜色尺码都有的类目， 1：适合单sku的类目
      * @param cartId String 平台id
@@ -947,14 +944,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param expressionParser 解析子
      * @param shopProp ShopBean 店铺信息
      * @param crossBorderRreportFlg String 入关方式(true表示跨境申报，false表示邮关申报)
-     * @param color 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
      * @return List<BaseMongoMap<String, Object>> 天猫同购上新用skus列表
      */
     private List<BaseMongoMap<String, Object>> getSkus(int type, Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg, String color) {
+                                                       ShopBean shopProp, String crossBorderRreportFlg) {
         List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
         // 循环productList设置颜色和尺码等信息到sku列表
         for (CmsBtProductModel product : productList) {
@@ -978,6 +974,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                 }
             }
+
+            // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
+            // 根据配置取得当前product对应的商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
+            String color = getValueFromPageOrCondition("color_code_codediff", product.getCommon().getFields().getCode(),
+                    product.getPlatform(cartId), expressionParser.getSxData(), shopProp);
 
             // 在根据skuCode循环
             for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
