@@ -3,13 +3,18 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpImagesDirectiveController(spDataService, popups, notify, alert) {
-        this.spDataService = spDataService;
-        this.popups = popups;
-        this.notify = notify;
-        this.alert = alert;
-        this.imgUpEntity = {};
-        this.imgUrls = {};
+    function SpImagesDirectiveController(spDataService, popups, notify, alert,$scope) {
+        var self = this;
+        self.spDataService = spDataService;
+        self.popups = popups;
+        self.notify = notify;
+        self.alert = alert;
+        self.imgUpEntity = {};
+        self.imgUrls = {};
+
+        $scope.$on('detail.saved', function () {
+            self.init();
+        });
     }
 
     SpImagesDirectiveController.prototype.init = function () {
@@ -109,7 +114,7 @@ define([
             //更新
             self.save();
 
-            notify.warn("因为图片服务器的延时，如果图片没有显示，请不要慌张，请手动刷新！");
+            notify.warning("因为图片服务器的延时，如果图片没有显示，请不要慌张，请手动刷新！");
         });
     };
 
@@ -122,7 +127,8 @@ define([
             alert = self.alert,
             spDataService = self.spDataService;
 
-        spDataService.jmPromotionObj.imageStatus = 2;
+        if(saveType != 0)
+            spDataService.jmPromotionObj.imageStatus = 2;
 
         if (self.imgChkForm.$invalid) {
             switch (saveType) {
@@ -136,7 +142,7 @@ define([
             }
         }
 
-        if(self.imgUpEntity.saveType != 0)
+        if(saveType == 1 || saveType == 2)
             self.imgUpEntity.saveType = saveType;
 
         spDataService.savePromotionImages({
@@ -145,7 +151,7 @@ define([
             "saveType": saveType
         }).then(function () {
             notify.success("更新成功!");
-            if (saveType == 1)
+            if (self.imgUpEntity.saveType == 1)
                 spDataService.jmPromotionObj.imageStatus = 1;
 
             //刷新页面
@@ -154,19 +160,25 @@ define([
     };
 
     SpImagesDirectiveController.prototype.getImageTimeStamp = function () {
-        var imgUpEntity = this.imgUpEntity;
+        var self = this,
+            imgUpEntity = this.imgUpEntity;
 
         if (!imgUpEntity.modified)
             return "";
 
-        //return "";
-        return "&timeStamp=" + new Date(imgUpEntity.modified).getTime() + 1;
+        return "&timeStamp=" + new Date(imgUpEntity.modified).getTime();
+    };
+
+    SpImagesDirectiveController.prototype.refreshImg = function(){
+        var self = this;
+
+        self.init();
     };
 
     cms.directive('spImages', [function spImagesDirectiveFactory() {
         return {
             restrict: 'E',
-            controller: ['spDataService', 'popups', 'notify', 'alert', SpImagesDirectiveController],
+            controller: ['spDataService', 'popups', 'notify', 'alert', '$scope',SpImagesDirectiveController],
             controllerAs: 'ctrlImages',
             templateUrl: '/modules/cms/views/jmpromotion/sp.images.directive.html'
         }
