@@ -192,7 +192,11 @@ MongoSequenceService commSequenceMongoService;
         String cId = "";
         String shopCartId = shopBean.getCart_id();
 
-        if (isJDPlatform(shopBean)) {
+        /**
+         * 测试保存
+         * 跳过了调用api的步骤
+         * */
+/*        if (isJDPlatform(shopBean)) {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
@@ -622,6 +626,6 @@ MongoSequenceService commSequenceMongoService;
             cmsBtSellerCatDao.insert(modelCat);
         }
         //重新设置店铺内分类的顺序
-        doResetPlatformSellerCatIndex(channelId, cartId);
+//        doResetPlatformSellerCatIndex(channelId, cartId);
     }
 }
