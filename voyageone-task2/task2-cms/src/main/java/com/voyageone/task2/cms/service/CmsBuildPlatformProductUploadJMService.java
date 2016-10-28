@@ -1051,9 +1051,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
             newSku.setStringAttribute("property", sku.getStringAttribute("property"));
-            newSku.setStringAttribute("originalPriceMsrp", sku.getStringAttribute("originalPriceMsrp"));
+            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
             newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
-            newSku.setStringAttribute("confPriceRetail", sku.getStringAttribute("confPriceRetail"));
+            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
             newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
             newJmSkus.add(newSku);
         }
