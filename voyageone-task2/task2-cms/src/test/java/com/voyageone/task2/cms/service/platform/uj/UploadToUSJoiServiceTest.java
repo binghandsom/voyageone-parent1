@@ -56,7 +56,7 @@ public class UploadToUSJoiServiceTest {
 //        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
 //        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
-        String usjoiChannelId = "929";
+        String usjoiChannelId = "928";   // Liking
 
         // --------------------------------------------------------------------------------------------
         // 品牌mapping表
@@ -149,14 +149,19 @@ public class UploadToUSJoiServiceTest {
         sxWorkLoadBean.setChannelId("017");
         sxWorkLoadBean.setGroupId(662793L);
         sxWorkLoadBean.setModifier("james");
-        sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "929"
+        sxWorkLoadBean.setCartId(Integer.parseInt(usjoiChannelId)); // "928"
 
         int totalCnt = 1;
-        int currentIndex = 0;
+        int currentIndex = 1;
         long startTime = System.currentTimeMillis();
 
+        // 从cms_mt_channel_config配置表中取得渠道级别配置项的值集合,2016/10/24以后在这个表里面新加的配置项都可以在这个里面取得
+        Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
+        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
+        uploadToUSJoiService.doChannelConfigInit(usjoiChannelId, channelConfigValueMap);
+
         uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
-                cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime);
+                cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime, channelConfigValueMap);
     }
 
     @Test

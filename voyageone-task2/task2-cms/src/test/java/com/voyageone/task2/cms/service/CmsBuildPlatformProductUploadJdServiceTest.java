@@ -41,13 +41,13 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
     public void testUploadProduct() throws Exception {
 
         String likingChannelId = "928";
-        int cartId = 29;
+        int cartId = 28;
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(762584);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "29","28","27"
-        workload.setGroupId(Long.parseLong("919460"));
+        workload.setGroupId(Long.parseLong("1314060"));
         workload.setPublishStatus(0);
 
         ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"

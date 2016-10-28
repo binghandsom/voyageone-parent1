@@ -151,7 +151,7 @@
     #{modelReturnpolicy,jdbcType=LONGVARCHAR}, #{salepoint,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedOverStockBean" >
-    insert into cms_zz_feed_overstock_product_temp
+    insert IGNORE into cms_zz_feed_overstock_product_temp
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="sku != null" >
         sku,
