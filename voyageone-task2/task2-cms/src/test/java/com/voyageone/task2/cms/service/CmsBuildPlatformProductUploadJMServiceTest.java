@@ -15,6 +15,7 @@ import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -63,6 +64,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     JumeiProductService jumeiProductService;
+
+    @Autowired
+    ProductService productService;
 
     @Test
     public void TestPrice() throws Exception {
@@ -499,6 +503,27 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             }
         }
 
+    }
+
+    @Test
+    public void testSaveProductPlatform() {
+        String channelId = "028";
+        int cartId = 27;
+        String productCode = "028-ps4716508";
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
+        if (cmsBtProductModel == null) {
+            System.out.print(String.format("没找到对应的产品信息 [ProductCode:%s]", productCode));
+        }
+
+        List<BaseMongoMap<String, Object>> jmSkus = cmsBtProductModel.getPlatform(cartId).getSkus();
+        int i = 1;
+        for (BaseMongoMap<String, Object> sku : jmSkus) {
+            sku.setStringAttribute("sizeNick", "39."+i);
+            i++;
+        }
+
+        cmsBuildPlatformProductUploadJMService.saveProductPlatform(channelId, cmsBtProductModel);
     }
 
 
