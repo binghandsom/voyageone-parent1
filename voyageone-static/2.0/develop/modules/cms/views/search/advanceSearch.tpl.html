@@ -740,11 +740,11 @@
                                         <td colspan="9" class="control-label text-left form-inline"
                                             style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                             <!--Todo 活动详情pop的数据取得-->
-                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail()"
+                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>&nbsp;
-                                            <button type="button" ng-click="getUnduePromotions(productInfo.common.fields.code)">Test</button>
+                                            <!--<button type="button" ng-click="getUnduePromotions(productInfo.common.fields.code)">Test</button>-->
                                             <!--Todo 商品IID的数据取得-->
                                             <span class="m-r-sm">{{'TXT_GROUP_NUMIID' | translate}}&nbsp;
                                                 <a target="_blank">{{productInfo.common.fields.code}}</a>
@@ -817,13 +817,12 @@
                                         <!--show SKU length -->
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
-                                                    popover-html="popoverAdvanceSku()"
+                                                    popover-html="popoverAdvanceSku(productInfo.common.fields.code, productInfo.common.skus)"
                                                     uib-popover-template="templateAction.advanceSkuPopover.templateUrl"
                                                     popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
                                                     type="button" popover-placement="left" class="btn btn-default btn-xs">
                                                 {{productInfo.common.skus.length}}
                                             </button>
-                                            <button type="button" ng-click="getSkuDetails(productInfo.common.fields.code, productInfo.common.skus)">Test</button>
                                         </td>
                                         <td class="text-left" style="display:inline-block;width:165px;">
                                             <small ng-controller="showPopoverCtrl"
@@ -1079,10 +1078,10 @@
                 <th class="mfb-xxxs text-center">库存</th>
             </thead>
             <tbody>
-                <tr>
-                    <td class="mfb-xxxs text-center">xxx-xxx-xxxxx</td>
-                    <td class="mfb-xxxs text-center">L</td>
-                    <td class="mfb-xxxs text-center">23</td>
+                <tr ng-repeat="entity in advanceSku">
+                    <td class="mfb-xxxs text-center">{{entity.skuCode}}</td>
+                    <td class="mfb-xxxs text-center">{{entity.size}}</td>
+                    <td class="mfb-xxxs text-center">{{entity.inventory}}</td>
                 </tr>
             </tbody>
         </table>

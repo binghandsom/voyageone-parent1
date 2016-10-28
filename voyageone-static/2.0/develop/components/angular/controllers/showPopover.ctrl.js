@@ -4,7 +4,7 @@
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
 
     $scope.templateAction = {
         "promotionDetailPopover":{
@@ -42,21 +42,39 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(){
-        var advanceSku = {};
+    function popoverAdvanceSku(code, skus){
 
+        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+            var skuDetails = [],
+                skuInventories = resp.data;
+            _.forEach(skus, function(sku) {
+                var inventory = null;
+                _.forEach(skuInventories, function(skuInventory) {
+                    if (skuInventory.sku == sku.skuCode) {
+                        inventory = skuInventory.qtyChina;
+                        return false;
+                    }
+                });
+                skuDetails.push({
+                    skuCode: sku.skuCode,
+                    size: sku.size,
+                    inventory: inventory
+                });
+            });
 
-       // advanceSku.test = "young king young boss";
+            $scope.advanceSku = skuDetails;
+        });
 
-        $scope.advanceSku = advanceSku;
     }
 
     /**
      * 高级线索   显示活动详情
      */
     function popoverPromotionDetail(){
-        var promotionDetail = {};
 
-        $scope.promotionDetail = promotionDetail;
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+            $scope.promotionDetail = resp.data;
+        });
+
     }
 });
