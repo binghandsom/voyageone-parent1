@@ -980,6 +980,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             SxData sxData = expressionParser.getSxData();
             // 由于字典解析方式只能取得mainProduct里面字段的值，但color需要取得每个product里面字段的值，所以另加一个新的方法取得color值
             String color = getColorCondition(sxData.getChannelId(), sxData.getCartId(), product, "color_code_codediff", shopProp);
+            // 如果根据配置(code或者codeDiff)取出来的值大于30位，则采用color字段的值
+            if (!StringUtils.isEmpty(color) && color.length() > 30) {
+                color = product.getCommon().getFields().getColor();
+            }
 
             // 在根据skuCode循环
             for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
