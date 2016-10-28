@@ -96,7 +96,7 @@ define([
                     throw "不正确的图片名称。";
                 }
 
-                data[imageType] = context.jmPromotionId + "-" + imageType;
+                data[imageType] = context.jmPromotionId + "-" + imageType + "-" + new Date().getTime();
 
             });
 
@@ -112,15 +112,13 @@ define([
                 if ((index + 1) == self.uploader.queue.length) {
                     item.formData = [{
                         "promotionImages":JSON.stringify(data),
-                        "promotionId": +commonData.jmPromotionId,
-                        "imageType": imageType
+                        "imageName": data[imageType]
                     }];
                     item.upload();
                 } else {
                     item.formData = [{
                         "promotionImages":null,
-                        "promotionId": +commonData.jmPromotionId,
-                        "imageType": imageType
+                        "imageName": data[imageType]
                     }];
                     item.upload();
                 }

@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.pop.jmPromotion;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
@@ -26,25 +27,25 @@ public class JmImageUploadService extends BaseViewService {
     @Autowired
     CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
-    public Map<String, Object> uploadImage(MultipartFile file, Long promotionId, String imageName, UserSessionBean user) throws Exception {
+    public Map<String, Object> uploadImage(MultipartFile file, Long promotionId, String imageType, UserSessionBean user) throws Exception {
 
         Map<String, Object> response = new HashMap<>();
 
         String orderChannelId = user.getSelChannelId(),
-                upLoadName = promotionId + "-" + imageName;
+                upLoadName = promotionId + "-" + imageType + "-" + DateTimeUtil.getNowTimeStampLong();
 
         uploadToServer(orderChannelId, upLoadName, file);
 
-        response.put("templateUrl", cmsBtJmImageTemplateService.getUrl(upLoadName, imageName, Integer.parseInt(String.valueOf(promotionId))));
+        response.put("templateUrl", cmsBtJmImageTemplateService.getUrl(upLoadName, imageType, Integer.parseInt(String.valueOf(promotionId))));
+        response.put("imageName",upLoadName);
 
         return response;
     }
 
-    public Map<String, Object> batchUploadImage(MultipartFile file, int promotionId, String imageType, UserSessionBean user) {
+    public Map<String, Object> batchUploadImage(MultipartFile file, String upLoadName, UserSessionBean user) {
 
         Map<String, Object> response = new HashMap<>();
-        String orderChannelId = user.getSelChannelId(),
-                upLoadName = promotionId + "-" + imageType;
+        String orderChannelId = user.getSelChannelId();
 
         try {
             uploadToServer(orderChannelId, upLoadName, file);

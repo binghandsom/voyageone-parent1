@@ -40,7 +40,7 @@ define([
 
             imgRequest.formData = [{
                 promotionId: context.promotionId,
-                imageName: context.imageName
+                imageType: context.imageType
             }];
             imgRequest.upload();
 
