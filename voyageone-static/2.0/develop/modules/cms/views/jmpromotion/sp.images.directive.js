@@ -136,8 +136,9 @@ define([
             }
         }
 
-        if(self.imgUpEntity.saveType == 0)
+        if(self.imgUpEntity.saveType != 0)
             self.imgUpEntity.saveType = saveType;
+
         spDataService.savePromotionImages({
             "promotionImages": self.imgUpEntity,
             "brand": self.promotionInfo.brand,
