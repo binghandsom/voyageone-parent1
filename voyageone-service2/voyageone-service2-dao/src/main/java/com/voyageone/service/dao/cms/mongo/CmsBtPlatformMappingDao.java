@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 查询平台类目的属性匹配
@@ -46,7 +47,7 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         return countByQuery(query.getQuery(), fieldMapsModel.getChannelId()) > 0;
     }
 
-    public List<CmsBtPlatformMappingModel> selectPage(String channelId, Integer categoryType, Integer cartId, String categoryPath, int offset, int limit) {
+    public List<CmsBtPlatformMappingModel> selectPage(String channelId, Integer categoryType, Integer cartId, String categoryPathPrefix, int offset, int limit) {
 
         Criteria criteria = new Criteria("channelId").is(channelId);
 
@@ -56,8 +57,8 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         if (cartId != null)
             criteria.and("cartId").is(cartId);
 
-        if (!StringUtils.isEmpty(categoryPath))
-            criteria.and("categoryPath").is(categoryPath);
+        if (!StringUtils.isEmpty(categoryPathPrefix))
+            criteria.and("categoryPath").regex(Pattern.quote(categoryPathPrefix) + ".*");
 
         return select(new JongoQuery(criteria)
                 .setProjection("{\"mappings\":0}")

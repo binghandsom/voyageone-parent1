@@ -59,7 +59,8 @@ define(['cms', 'underscore', 'modules/cms/controller/popup.ctl'], function (cms,
                 self.popups.popupNewCategory({
                     from: "",
                     categories: categoryList,
-                    divType: ">"
+                    divType: ">",
+                    canSelectParent: true
                 }).then(function (context) {
                     self.searchInfo.categoryPath = context.selected.catPath;
                     self.searchInfo.categoryId = context.selected.catId;
