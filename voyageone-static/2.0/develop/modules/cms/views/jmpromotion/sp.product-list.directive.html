@@ -222,6 +222,7 @@
                         <th class="text-left">错误消息</th>
                         <th class="text-center">库存数</th>
                         <th class="text-left">备注</th>
+                        <th class="text-left">变更情况</th>
                         <th class="text-left">Status</th>
                         <th class="text-center" style="width: 100px;">Action</th>
                     </tr>
@@ -288,6 +289,7 @@
                         </td>
                         <td class="text-center">{{model.quantity}}</td>
                         <td><textarea ng-model="model.remark" ng-blur="updateRemark(model)" class="form-control"></textarea></td>
+                        <td >{{getUpdateStatus(model)}}</td>
                         <td >{{getStatus(model)}}</td>
                         <td class="text-center">
                             <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>
