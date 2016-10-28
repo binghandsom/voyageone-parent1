@@ -58,7 +58,7 @@ define(['cms'], function (cms) {
     BayWindowComponentController.prototype.getImage = function getImage(name, index) {
         var self = this,
             bayWindowTemplateUrls = self.bayWindowTemplateUrls;
-        return bayWindowTemplateUrls[index && 1].replace('%s', name);
+        return bayWindowTemplateUrls[index && 1].replace('%s', encodeURIComponent(name));
     };
 
     BayWindowComponentController.prototype.initBayWindows = function initBayWindows() {

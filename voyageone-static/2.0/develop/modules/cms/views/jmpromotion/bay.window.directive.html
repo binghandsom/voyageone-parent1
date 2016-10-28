@@ -40,7 +40,7 @@
                                                ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)" required>
                                         <span ng-switch-default>{{item.name}}</span>
                                     </div>
-                                    <div class="col-sm-11 col-sm-offset-1">
+                                    <div class="col-sm-11 col-sm-offset-1" ng-switch-when="0">
                                         <vo-message target="ctrl.bayWindowForm.header"></vo-message>
                                     </div>
                                 </div>
@@ -68,8 +68,7 @@
                                 <td>
                                     <input name="{{'link' + $index}}" type="text" required
                                            ng-pattern="/^http:\/\/hd.jumeiglobal.com\//"
-                                           class="form-control" ng-model="item.link"
-                                           ng-change="ctrl.updateUrl(item, $index)">
+                                           class="form-control" ng-model="item.link">
                                     <vo-message target="ctrl.bayWindowForm['link' + $index]" pattern="输入的地址必须以 http://hd.jumeiglobal.com/ 开头"></vo-message>
                                 </td>
                                 <td ng-switch-when="0"></td>
