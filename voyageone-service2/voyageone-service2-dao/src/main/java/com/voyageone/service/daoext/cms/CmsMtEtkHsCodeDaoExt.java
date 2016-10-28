@@ -16,6 +16,6 @@ import java.util.List;
 @Repository
 public interface CmsMtEtkHsCodeDaoExt {
 
-    CmsMtEtkHsCodeModel selectOneLikeCatPath(@Param("cartId") Integer cartId, @Param("catPath") String catPath);
+    CmsMtEtkHsCodeModel selectOneByHsCode(@Param("hsCode") String hsCode);
 
 }
