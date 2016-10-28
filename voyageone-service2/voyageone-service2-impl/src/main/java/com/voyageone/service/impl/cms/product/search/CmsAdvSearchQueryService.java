@@ -279,6 +279,12 @@ public class CmsAdvSearchQueryService extends BaseService {
                     }
                 }
             }
+            
+            // NumIID多项查询
+            if (StringUtils.isNoneEmpty(searchValue.getNumIIds())) {
+                queryObject.addQuery("{'platforms.P#.pNumIId': {$in: #}}");
+                queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
+            }
         }
 
         // 获取其他检索条件

@@ -95,7 +95,8 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // ** 其它未定
     private String compareType;
-
+    // NumIID
+    private String numIIds;
 
     public List<String> getCidValue() {
         return cidValue;
@@ -533,4 +534,13 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setSupplierType(int supplierType) {
         this.supplierType = supplierType;
     }
+
+	public String getNumIIds() {
+		return numIIds;
+	}
+
+	public void setNumIIds(String numIIds) {
+		this.numIIds = numIIds;
+	}
+    
 }

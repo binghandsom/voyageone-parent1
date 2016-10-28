@@ -386,6 +386,15 @@
                                             </div>
                                             <button class="btn btn-default" style="margin-left:-1px;margin-top:8px" type="button" translate="BTN_RESET" ng-click="dismiss('promotionTag')"></button>
                                         </div>
+                                        <!-- NumIID多项查询 -->
+                                        <div class="form-group" ng-if="vm._cart_display">
+                                        	<div class="col-sm-4 text-right">
+                                        		<label class="control-label">NumIID</label>
+                                        	</div>
+                                        	<div class="col-sm-7">
+                                        		<textarea class="form-control" ng-model="vm.searchInfo.numIIds" placeholder="多项查询，精确查询，NumIID(多项换行分割)"></textarea>
+                                        	</div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
