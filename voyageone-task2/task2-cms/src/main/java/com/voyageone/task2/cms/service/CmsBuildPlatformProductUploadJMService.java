@@ -1479,7 +1479,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 jmSku.put("clientRetailPrice", CommonSku.getClientRetailPrice());
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), CommonSku.getSize());
                 // add by desmond 2016/07/08 start
-                jmSku.put("sizeNick", CommonSku.getSizeNick());
+                // delete by desmond 2016/10/28 start
+                // 由于现在画面上输入的"容量/尺码"直接更新到分平台P27.skus.sizeNick里面，不更新到common.skus.sizeNick里面了，所以删除
+//                jmSku.put("sizeNick", CommonSku.getSizeNick());
+                // delete by desmond 2016/10/28 end
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), CommonSku.getSizeSx());
                 // add by desmond 2016/07/08 end
             }
@@ -1542,7 +1545,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
 					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
 						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
 							// 不是新追加的
 							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
 							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
@@ -1578,7 +1584,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
 					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
 						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
 							// 不是新追加的
 							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
 							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
@@ -2053,6 +2062,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         for (BaseMongoMap<String, Object> sku : skuList) {
             // 如果该sku的聚美Sku_no为空,则跳过
             if (StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) continue;
+
+            // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+            // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+            if (!Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) continue;
 
             HtDeal_UpdateDealPriceBatch_UpdateData skuUpdate = new HtDeal_UpdateDealPriceBatch_UpdateData();
             // 聚美Deal唯一值(jmHashId)
