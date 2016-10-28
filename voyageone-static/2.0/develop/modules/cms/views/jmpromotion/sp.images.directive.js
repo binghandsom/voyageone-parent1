@@ -37,7 +37,7 @@ define([
             spDataService = self.spDataService,
             imgUpEntity = self.imgUpEntity;
 
-        if(!imgUpEntity.jmPromotionId)
+        if (!imgUpEntity.jmPromotionId)
             return;
 
         spDataService.getPromotionImgTpl(imgUpEntity).then(function (res) {
@@ -89,24 +89,27 @@ define([
      * 页面单个图片上传弹出框
      * @param imageName  图片类型
      */
-    SpImagesDirectiveController.prototype.popImageJmUpload = function (imageName) {
+    SpImagesDirectiveController.prototype.popImageJmUpload = function (imageType) {
         var self = this,
             spDataService = self.spDataService,
             imgUpEntity = self.imgUpEntity,
             imgUrls = self.imgUrls,
+            notify = self.notify,
             popups = self.popups;
 
         popups.openImageJmUpload({
             promotionId: +spDataService.jmPromotionId,
-            imageName: imageName
+            imageType: imageType
         }).then(function (res) {
             //用于显示
-            imgUrls[imageName] = res.templateUrl;
+            imgUrls[imageType] = res.templateUrl;
             //用于存储图片名称
-            imgUpEntity[imageName] = spDataService.jmPromotionId + "-" + imageName;
+            imgUpEntity[imageType] = res.imageName;
 
             //更新
             self.save();
+
+            notify.warn("因为图片服务器的延时，如果图片没有显示，请不要慌张，请手动刷新！");
         });
     };
 
@@ -121,8 +124,8 @@ define([
 
         spDataService.jmPromotionObj.imageStatus = 2;
 
-        if(self.imgChkForm.$invalid){
-            switch(saveType){
+        if (self.imgChkForm.$invalid) {
+            switch (saveType) {
                 case 0:
                     alert("聚美专场必传图片没有上传完整！");
                     break;
@@ -133,19 +136,30 @@ define([
             }
         }
 
-        self.imgUpEntity.saveType = saveType;
+        if(self.imgUpEntity.saveType == 0)
+            self.imgUpEntity.saveType = saveType;
         spDataService.savePromotionImages({
             "promotionImages": self.imgUpEntity,
             "brand": self.promotionInfo.brand,
             "saveType": saveType
-        }).then(function(){
+        }).then(function () {
             notify.success("更新成功!");
-            if(saveType == 1)
+            if (saveType == 1)
                 spDataService.jmPromotionObj.imageStatus = 1;
 
             //刷新页面
             self.init();
         });
+    };
+
+    SpImagesDirectiveController.prototype.getImageTimeStamp = function () {
+        var imgUpEntity = this.imgUpEntity;
+
+        if (!imgUpEntity.modified)
+            return "";
+
+        //return "";
+        return "&timeStamp=" + new Date(imgUpEntity.modified).getTime() + 1;
     };
 
     cms.directive('spImages', [function spImagesDirectiveFactory() {

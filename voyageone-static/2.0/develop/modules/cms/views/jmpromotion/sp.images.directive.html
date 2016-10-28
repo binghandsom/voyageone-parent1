@@ -1,3 +1,11 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- HTTP 1.1 -->
+<meta http-equiv="pragma" content="no-cache">
+<!-- HTTP 1.0 -->
+<meta http-equiv="cache-control" content="no-cache">
+<!-- Prevent caching at the proxy server -->
+<meta http-equiv="expires" content="0">
+
 <section ng-init="ctrlImages.init()" style="position: relative">
     <form role="form" class="form-horizontal" name="ctrlImages.imgChkForm" novalidate>
         <div id="jm-sp-images-base" class="panel panel-vo">
@@ -65,9 +73,9 @@
                             <div class="row">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
-                                    <a ng-href="{{ctrlImages.imgUrls['channelFrontCover']}}" target="_blank">{{ctrlImages.imgUrls['channelFrontCover']}}</a>
+                                    <a ng-href="{{ctrlImages.imgUrls['channelFrontCover']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['channelFrontCover']}}{{ctrlImages.getImageTimeStamp()}}</a>
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['channelFrontCover']}}" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
+                                        <img ng-src="{{ctrlImages.imgUrls['channelFrontCover']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
                                     </div>
                                 </label>
                             </div>
@@ -75,11 +83,11 @@
                             <div class="row" ng-if="ctrlImages.imgUpEntity['channelFrontCover']">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
-                                    <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245" target="_blank">
+                                    <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245{{ctrlImages.getImageTimeStamp()}}" target="_blank">
                                         http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245
                                     </a>
                                     <div class="col-sm-12">
-                                        <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
+                                        <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelFrontCover']}}?wid=500&hei=245{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
                                     </div>
                                 </label>
                             </div>
@@ -106,9 +114,9 @@
                             <div class="row">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
-                                    <a ng-href="{{ctrlImages.imgUrls['channelMiddleImage']}}" target="_blank">{{ctrlImages.imgUrls['channelMiddleImage']}}</a>
+                                    <a ng-href="{{ctrlImages.imgUrls['channelMiddleImage']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['channelMiddleImage']}}</a>
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['channelMiddleImage']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['channelMiddleImage']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </label>
                             </div>
@@ -116,11 +124,11 @@
                             <div class="row" ng-if="ctrlImages.imgUpEntity['channelMiddleImage']">
                                 <label class="col-sm-3 control-label text-left">图片地址：</label>
                                 <label class="col-sm-9">
-                                    <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210" target="_blank">
+                                    <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210{{ctrlImages.getImageTimeStamp()}}" target="_blank">
                                         http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210
                                     </a>
                                     <div class="col-sm-12">
-                                        <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
+                                        <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['channelMiddleImage']}}?wid=320&hei=210{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" style="max-width: 500px;max-height: 250px;" alt="暂无图片">
                                     </div>
                                 </label>
                             </div>
@@ -147,9 +155,9 @@
                             <input type="hidden" ng-model="ctrlImages.imgUrls['channelComingSoon']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a ng-href="{{ctrlImages.imgUrls['channelComingSoon']}}" target="_blank">{{ctrlImages.imgUrls['channelComingSoon']}}</a>
+                                <a ng-href="{{ctrlImages.imgUrls['channelComingSoon']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['channelComingSoon']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['channelComingSoon']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['channelComingSoon']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>
@@ -175,26 +183,26 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="row">
-                                        <a ng-href="{{ctrlImages.imgUrls['pcEntrance']}}" target="_blank">{{ctrlImages.imgUrls['pcEntrance']}}</a>
+                                        <a ng-href="{{ctrlImages.imgUrls['pcEntrance']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['pcEntrance']}}</a>
                                         <div class="col-sm-12">
-                                            <img ng-src="{{ctrlImages.imgUrls['pcEntrance']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                            <img ng-src="{{ctrlImages.imgUrls['pcEntrance']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                         </div>
                                     </div>
                                     <!---------------模板宽高固定    仅供用户查看确认   --------------->
                                     <div class="row" ng-if="ctrlImages.imgUpEntity['pcEntrance']">
-                                        <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240" target="_blank">
+                                        <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240{{ctrlImages.getImageTimeStamp()}}" target="_blank">
                                             http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240
                                         </a>
                                         <div class="col-sm-12">
-                                            <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                            <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=450&hei=240{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                         </div>
                                     </div>
                                     <div class="row" ng-if="ctrlImages.imgUpEntity['pcEntrance']">
-                                        <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184" target="_blank">
+                                        <a ng-href="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184{{ctrlImages.getImageTimeStamp()}}" target="_blank">
                                             http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184
                                         </a>
                                         <div class="col-sm-12">
-                                            <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                            <img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{ctrlImages.imgUpEntity['pcEntrance']}}?wid=345&hei=184{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                         </div>
                                     </div>
                                 </div>
@@ -222,9 +230,9 @@
                             <input type="hidden" ng-model="ctrlImages.imgUrls['mobileFocus']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a ng-href="{{ctrlImages.imgUrls['mobileFocus']}}" target="_blank">{{ctrlImages.imgUrls['mobileFocus']}}</a>
+                                <a ng-href="{{ctrlImages.imgUrls['mobileFocus']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['mobileFocus']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['mobileFocus']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['mobileFocus']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>
@@ -249,9 +257,9 @@
                             <input type="hidden" ng-model="ctrlImages.imgUrls['pcHeader']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a ng-href="{{ctrlImages.imgUrls['pcHeader']}}" target="_blank">{{ctrlImages.imgUrls['pcHeader']}}</a>
+                                <a ng-href="{{ctrlImages.imgUrls['pcHeader']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['pcHeader']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['pcHeader']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['pcHeader']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>
@@ -288,9 +296,9 @@
                             <input type="hidden" ng-model="ctrlImages.imgUrls['appEntrance']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a ng-href="{{ctrlImages.imgUrls['appEntrance']}}" target="_blank">{{ctrlImages.imgUrls['appEntrance']}}</a>
+                                <a ng-href="{{ctrlImages.imgUrls['appEntrance']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['appEntrance']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['appEntrance']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['appEntrance']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>
@@ -316,9 +324,9 @@
                             <input type="hidden" ng-model="ctrlImages.imgUrls['appChannelEntrance']" required>
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
-                                <a ng-href="{{ctrlImages.imgUrls['appChannelEntrance']}}" target="_blank">{{ctrlImages.imgUrls['appChannelEntrance']}}</a>
+                                <a ng-href="{{ctrlImages.imgUrls['appChannelEntrance']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['appChannelEntrance']}}</a>
                                 <div class="col-sm-12">
-                                    <img ng-src="{{ctrlImages.imgUrls['appChannelEntrance']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                    <img ng-src="{{ctrlImages.imgUrls['appChannelEntrance']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                 </div>
                             </label>
                         </div>
@@ -343,9 +351,9 @@
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <div class="row">
-                                    <a ng-href="{{ctrlImages.imgUrls['wxShare']}}" target="_blank">{{ctrlImages.imgUrls['wxShare']}}</a>
+                                    <a ng-href="{{ctrlImages.imgUrls['wxShare']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['wxShare']}}</a>
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['wxShare']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['wxShare']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -366,7 +374,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-2">
-                                <a ng-href="{{ctrlImages.imgUrls['appHeader']}}" target="_blank">打开热区工具</a>
+                                <a ng-href="{{ctrlImages.imgUrls['appHeader']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">打开热区工具</a>
                             </div>
                         </div>
                         <div class="row">
@@ -374,9 +382,9 @@
                             <label class="col-sm-3 control-label text-left">图片地址：</label>
                             <label class="col-sm-9">
                                 <div class="row">
-                                    <a ng-href="{{ctrlImages.imgUrls['appHeader']}}" target="_blank">{{ctrlImages.imgUrls['appHeader']}}</a>
+                                    <a ng-href="{{ctrlImages.imgUrls['appHeader']}}{{ctrlImages.getImageTimeStamp()}}" target="_blank">{{ctrlImages.imgUrls['appHeader']}}</a>
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['appHeader']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['appHeader']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -410,7 +418,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['appArcCarousel']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['appArcCarousel']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -436,7 +444,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['pcCarousel']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['pcCarousel']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -462,7 +470,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['pcRow1Cell2']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['pcRow1Cell2']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -488,7 +496,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['appRightBigCard']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['appRightBigCard']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -514,7 +522,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['appLeftBigCard']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片"  style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['appLeftBigCard']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片"  style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -540,7 +548,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['appSmallCard']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['appSmallCard']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -574,7 +582,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['pcIndexPreheat']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['pcIndexPreheat']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -600,7 +608,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['pcIndex']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['pcIndex']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -626,7 +634,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['padCarousel']}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['padCarousel']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -652,7 +660,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['padPreheat']}}" class="img-thumbnail dropdown-menu_text"  alt="暂无图片" style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['padPreheat']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text"  alt="暂无图片" style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
@@ -678,7 +686,7 @@
                             <label class="col-sm-9">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <img ng-src="{{ctrlImages.imgUrls['padCard']}}"class="img-thumbnail dropdown-menu_text" alt="暂无图片"  style="max-width: 500px;max-height: 250px">
+                                        <img ng-src="{{ctrlImages.imgUrls['padCard']}}{{ctrlImages.getImageTimeStamp()}}" class="img-thumbnail dropdown-menu_text" alt="暂无图片"  style="max-width: 500px;max-height: 250px">
                                     </div>
                                 </div>
                             </label>
