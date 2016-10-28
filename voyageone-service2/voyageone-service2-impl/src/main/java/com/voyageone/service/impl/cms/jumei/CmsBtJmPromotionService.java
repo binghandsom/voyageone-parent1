@@ -12,6 +12,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSpecialExtensionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
@@ -32,7 +33,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by "some one" on 2016/3/18.
@@ -41,24 +44,25 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
+    private final static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
     private final CmsBtJmPromotionDao dao;
+    private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
     private final TagService tagService;
     private final CmsBtPromotionDao daoCmsBtPromotion;
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
     private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
-    @Autowired
-    private CmsBtJmImageTemplateService jmImageTemplateService;
-    @Autowired
-    private CmsMtJmConfigService jmConfigService;
+    private final CmsBtJmImageTemplateService jmImageTemplateService;
+    private final CmsMtJmConfigService jmConfigService;
+    private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
-    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
-
     @Autowired
-    public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion, CmsBtJmPromotionDao dao, CmsBtJmPromotionDaoExt daoExt,
+    public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
+                                   CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
+                                   CmsBtJmPromotionDaoExt daoExt,
                                    TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
                                    CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,
                                    CmsBtJmPromotionImagesDao jmPromotionImagesDao,
@@ -68,6 +72,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
+        this.daoCmsBtJmMasterBrand = daoCmsBtJmMasterBrand;
         this.daoExt = daoExt;
         this.jmPromotionExtensionDao = jmPromotionExtensionDao;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
@@ -363,7 +368,7 @@ public class CmsBtJmPromotionService extends BaseService {
             daoExt.updateByInput(jmPromotionModel);
         } else {
             // 活动一览画面来的更新
-            daoExt.updateByInput(promotionModel);
+            daoExt.updateByInput(jmPromotionModel);
         }
 
         setHasFeaturedModule(parameter);
@@ -614,6 +619,19 @@ public class CmsBtJmPromotionService extends BaseService {
         }
     }
 
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("modifier", userName);
+        param.put("jmPromotionId", jmPromId);
+        param.put("stepName", stepName.getValue());
+        param.put("stepStatus", stepStatus.getValue());
+
+        daoExt.setJmPromotionStepStatus(param);
+    }
+
     public static enum JmPromotionStepNameEnum {
 
         SessionsUpload("upload_status"),    // 专场上传
@@ -649,19 +667,6 @@ public class CmsBtJmPromotionService extends BaseService {
         public int getValue() {
             return type;
         }
-    }
-
-    /**
-     * 设置聚美活动各阶段的状态
-     */
-    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("modifier", userName);
-        param.put("jmPromotionId", jmPromId);
-        param.put("stepName", stepName.getValue());
-        param.put("stepStatus", stepStatus.getValue());
-
-        daoExt.setJmPromotionStepStatus(param);
     }
 
 }
