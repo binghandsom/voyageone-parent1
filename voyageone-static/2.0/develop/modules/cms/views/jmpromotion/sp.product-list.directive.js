@@ -1,7 +1,8 @@
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, carts) {
 
     function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, spDataService, $routeParams, alert, $translate, confirm, notify, platformMappingService)
     {
@@ -13,7 +14,8 @@ define([
             cmsBtJmPromotionExportTaskList: [],
             tagList: [],
             changeCount:0,
-            productCount:0
+            productCount:0,
+            productUrl:carts.valueOf(27).pUrl
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
