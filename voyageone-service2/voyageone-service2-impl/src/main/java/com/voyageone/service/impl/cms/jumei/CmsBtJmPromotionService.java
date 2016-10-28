@@ -421,13 +421,15 @@ public class CmsBtJmPromotionService extends BaseService {
         return result;
     }
 
-    private int insertModel(CmsBtJmPromotionSaveBean parameter) {
+    private void insertModel(CmsBtJmPromotionSaveBean parameter) {
         CmsBtJmPromotionModel model = parameter.getModel();
         if (StringUtil.isEmpty(model.getCategory())) {
             model.setCategory("");
         }
         int refTagId = createPromotionTopTag(model);
         model.setRefTagId(refTagId);
+
+        dao.insert(model);
 
         setHasFeaturedModule(parameter);
 
@@ -449,8 +451,6 @@ public class CmsBtJmPromotionService extends BaseService {
         List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
         jmBayWindowModel.setBayWindows(bayWindowList);
         cmsBtJmBayWindowService.insert(jmBayWindowModel);
-
-        return dao.insert(model);
     }
 
     private void ifNoFeaturedModuleThenUseThis(CmsBtJmPromotionSaveBean parameter, CmsBtTagModel tagModel) {
