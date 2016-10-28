@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
@@ -35,10 +36,13 @@ public class JmPromotionImagesService extends BaseViewService {
     public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
+        //更新时间戳
+        promotionImagesModel.setModified(DateTimeUtil.getNowTimeStamp());
 
         if (promotionImagesModel == null) {
             return new HashMap<>(0);
         }
+
         return getJmImageTemplate(promotionImagesModel);
     }
 
