@@ -124,19 +124,7 @@ public class CmsJmPromotionIndexController extends CmsController {
      */
     @RequestMapping("getBayWindow")
     public AjaxResponse getBayWindow(@RequestBody int jmPromotionId) {
-
-        CmsBtJmBayWindowModel jmBayWindowModel = jmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
-
-        if (jmBayWindowModel == null) {
-            // 没有的话呢，就创建一个
-            // 但不创建具体的飘窗定义
-            // 因为是否使用固定交给前台取数据并生成
-            CmsBtJmPromotionModel jmPromotionModel = service.select(jmPromotionId);
-            jmBayWindowModel = jmBayWindowService.createByPromotion(jmPromotionModel, getUser().getUserName());
-            jmBayWindowService.insert(jmBayWindowModel);
-        }
-
-        return success(jmBayWindowModel);
+        return success(jmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId));
     }
 
     /**

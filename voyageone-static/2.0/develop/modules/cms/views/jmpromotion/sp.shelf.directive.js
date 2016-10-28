@@ -18,6 +18,10 @@ define([
         $scope.$on('detail.saved', function () {
             self.loadModules();
         });
+
+        self.$fire = function (eventName, context) {
+            $scope.$parent.$broadcast(eventName, context);
+        };
     }
 
     SpModelDirectiveController.prototype.productsSortBy = {
@@ -68,6 +72,7 @@ define([
 
         spDataService.saveModules(self.modules, isSubmit).then(function () {
             self.notify.success('TXT_SAVE_SUCCESS');
+            self.$fire('module.saved');
         });
     };
 

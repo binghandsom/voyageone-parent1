@@ -7,7 +7,9 @@ import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
@@ -45,13 +47,17 @@ class CmsJmPromotionService extends BaseViewService {
     private final TagService tagService;
     private final CmsBtJmPromotionService jmPromotionService;
     private final CmsBtJmPromotionProduct3Service jmPromotionProduct3Service;
+    private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    private final CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
     @Autowired
     public CmsJmPromotionService(CmsBtProductDao productDao, CmsAdvanceSearchService advanceSearchService,
                                  CmsBtJmProductDaoExt cmsBtJmProductDaoExt,
                                  CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service,
                                  TagService tagService, CmsBtJmPromotionService jmPromotionService,
-                                 CmsBtJmPromotionProduct3Service jmPromotionProduct3Service) {
+                                 CmsBtJmPromotionProduct3Service jmPromotionProduct3Service,
+                                 CmsBtJmBayWindowService cmsBtJmBayWindowService,
+                                 CmsBtJmImageTemplateService cmsBtJmImageTemplateService) {
         this.productDao = productDao;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtJmProductDaoExt = cmsBtJmProductDaoExt;
@@ -59,6 +65,8 @@ class CmsJmPromotionService extends BaseViewService {
         this.tagService = tagService;
         this.jmPromotionService = jmPromotionService;
         this.jmPromotionProduct3Service = jmPromotionProduct3Service;
+        this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
+        this.cmsBtJmImageTemplateService = cmsBtJmImageTemplateService;
     }
 
     /**
@@ -212,18 +220,25 @@ class CmsJmPromotionService extends BaseViewService {
         }).collect(toList());
     }
 
-    void savePromotionTagModules(List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
+    void savePromotionTagModules(int jmPromotionId, List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
 
-        for (CmsJmTagModules jmTagModule : jmTagModulesList) {
+        List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList = jmTagModulesList.stream()
+                .map(jmTagModule -> {
+                    CmsBtTagModel tagModel = jmTagModule.getTag();
+                    tagModel.setModifier(user.getUserName());
 
-            CmsBtTagModel tagModel = jmTagModule.getTag();
-            tagModel.setModifier(user.getUserName());
+                    CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = jmTagModule.getModule();
 
-            CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = jmTagModule.getModule();
+                    tagService.updateTagModel(tagModel);
+                    tagService.updateTagModel(tagJmModuleExtensionModel);
 
-            tagService.updateTagModel(tagModel);
-            tagService.updateTagModel(tagJmModuleExtensionModel);
-        }
+                    return tagJmModuleExtensionModel;
+                })
+                .collect(toList());
+
+        List<String> bayWindowTemplateUrls = cmsBtJmImageTemplateService.getBayWindowTemplateUrls();
+
+        cmsBtJmBayWindowService.updateBayWindows(jmPromotionId, tagJmModuleExtensionModelList, bayWindowTemplateUrls);
     }
 
     private ProductImportBean buildProductFrom(CmsBtProductModel model, CmsBtJmPromotionModel promotion) {
