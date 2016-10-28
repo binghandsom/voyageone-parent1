@@ -1797,8 +1797,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                                      List<BaseMongoMap<String, Object>> jmSkus) throws Exception{
         if (ListUtils.isNull(remoteSpus)) return;
 
-        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
-        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
+//        // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
+//        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
 
         for (JmGetProductInfo_Spus spu : remoteSpus) {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
@@ -1825,9 +1825,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // P27.sku.isSale = false的时候
-                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
-                if (ListUtils.notNull(remoteSkuList)
-                        && "1".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+//                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
+//                if (ListUtils.notNull(remoteSkuList)
+//                        && "1".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
                     // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                     // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
                     // 把Deal的库存修改成0
@@ -1840,15 +1840,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     if (!StringUtils.isEmpty(spu.getSku_no())) {
                         updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
                     }
-                }
+//                }
             } else {
                 // P27.sku.isSale = true的时候
                 // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=1)"
-                if (ListUtils.notNull(remoteSkuList)
-                        && "0".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+//                if (ListUtils.notNull(remoteSkuList)
+//                        && "0".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
                     // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
                     updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
-                }
+//                }
             }
         }
     }
