@@ -13,8 +13,8 @@ public class CmsMtEtkHsCodeService {
     @Autowired
     private CmsMtEtkHsCodeDaoExt cmsMtEtkHsCodeDaoExt;
 
-    public CmsMtEtkHsCodeModel getEdcHsCodeLikeCatPath(Integer cartId, String catPath){
-        return cmsMtEtkHsCodeDaoExt.selectOneLikeCatPath(cartId,catPath);
+    public CmsMtEtkHsCodeModel getEdcHsCodeByHsCode(String hsCode){
+        return cmsMtEtkHsCodeDaoExt.selectOneByHsCode(hsCode);
     }
 
 }
