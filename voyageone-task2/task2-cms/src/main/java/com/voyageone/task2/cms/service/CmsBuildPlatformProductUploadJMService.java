@@ -184,6 +184,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         for (CmsBtSxWorkloadModel work : groupList) {
             updateProduct(work);
             $info("本次聚美上新已完成[%d/%d]条上新任务，感谢您的耐心等待！", currentNo, totalCnt);
+            currentNo++;
         }
     }
 
