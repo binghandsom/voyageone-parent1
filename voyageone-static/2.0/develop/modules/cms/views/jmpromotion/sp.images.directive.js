@@ -26,6 +26,10 @@ define([
                 self.imgUrls = res.data.promotionImageUrl;
             if (res.data.promotionImagesModel)
                 self.imgUpEntity = res.data.promotionImagesModel;
+
+            //设置父页面标志位
+            if(self.imgUpEntity.saveType == 1 || self.imgUpEntity.saveType == 2)
+                spDataService.jmPromotionObj.imageStatus = 1;
         });
 
         spDataService.getPromotion().then(function (res) {
