@@ -24,6 +24,8 @@ import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
@@ -31,6 +33,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -53,6 +56,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,6 +94,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
     @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
+    @Autowired
+    private PromotionDetailService promotionDetailService;
 
 	@Override
     public SubSystem getSubSystem() {
@@ -408,6 +414,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
             }
 
+            // 更新特价宝
+            updateTeJiaBaoPromotion(sxData);
+
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
             if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
@@ -691,7 +700,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 官网商品地址(必填)  商品在海外网址的地址，如果无法确保一一对应，可以先填写网站url
         paramExtends.put("website_url", getValueFromPageOrCondition("extends_website_url", "", mainProductPlatformCart, sxData, shopProp));
         // 参考价格(非必填)    商品的参考价格，如果大于现在的价格，则填写
-        paramExtends.put("foreign_origin_price", getValueFromPageOrCondition("extends_foreign_origin_price", "", mainProductPlatformCart, sxData, shopProp));
+//        paramExtends.put("foreign_origin_price", getValueFromPageOrCondition("extends_foreign_origin_price", "", mainProductPlatformCart, sxData, shopProp));
         // 是否使用原标题(false自动插入商品关键词）(非必填)  填写true表示使用原始标题，false表示需要插入关键词，不填写默认为不需要插入关键词
         paramExtends.put("original_title", getValueFromPageOrCondition("extends_original_title", "", mainProductPlatformCart, sxData, shopProp));
         // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
@@ -1152,4 +1161,70 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         return pCatPath;
     }
 
+    /**
+     * 特价宝的调用
+     *
+     * @param sxData            SxData 上新数据
+     */
+    private void updateTeJiaBaoPromotion(SxData sxData) {
+        // 特价宝的调用
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+        CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
+
+        // 检查一下
+        String tejiabaoOpenFlag = null;
+        String tejiabaoPricePropName = null;
+
+        if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
+            if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
+                tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
+            }
+        }
+        if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
+            tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
+        }
+
+        if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+            for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
+                // 获取价格
+                if (sxProductModel.getCommon().getSkus() == null || sxProductModel.getCommon().getSkus().size() == 0) {
+                    // 没有sku的code, 跳过
+                    continue;
+                }
+
+                List<CmsBtPromotionSkuBean> skus = new ArrayList<>();
+                for (BaseMongoMap<String, Object> sku : sxProductModel.getPlatform(sxData.getCartId()).getSkus()) {
+                    CmsBtPromotionSkuBean skuBean = new CmsBtPromotionSkuBean();
+                    skuBean.setProductSku(sku.getAttribute("skuCode"));
+                    Double dblPriceSku = Double.parseDouble(sku.getAttribute(tejiabaoPricePropName).toString());
+                    skuBean.setPromotionPrice(new BigDecimal(dblPriceSku));
+                    skus.add(skuBean);
+                }
+
+                Double dblPrice = Double.parseDouble(sxProductModel.getPlatform(sxData.getCartId()).getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+
+                // 设置特价宝
+                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+                cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
+                cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
+                // product表结构变化
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
+                cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
+                cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+                cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
+                cmsBtPromotionCodesBean.setModifier(getTaskName());
+                cmsBtPromotionCodesBean.setSkus(skus);
+                // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+
+            }
+        }
+
+    }
 }
