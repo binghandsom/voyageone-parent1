@@ -12,16 +12,17 @@ import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -132,7 +133,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             }
         }
         //返回压缩流
-        return imageToZip(promotionImagesList);
+        return imageToZipThread(promotionImagesList);
     }
 
     /**
@@ -203,6 +204,79 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    public byte[] imageToZipThread(List<Map<String, String>> promotionImagesList) {
+        //如果promotionImagesList为空的时，不做处理
+        List<Map<String,Object>> imageBytes = Collections.synchronizedList(new ArrayList<>());
+        if (promotionImagesList.size() > 0 || promotionImagesList != null) {
+            try {
+                ExecutorService es  = Executors.newFixedThreadPool(5);
+                promotionImagesList.forEach(stringStringMap -> {
+                    imageBytes.add(downImageThread(stringStringMap));
+                });
+                es.shutdown();
+                es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                 ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
+                for (Map<String,Object> imageByte: imageBytes) {
+                    if(imageByte.get("byte") != null) {
+                        //压缩包内生成图片的路径以及名称
+                        zipOutputStream.putNextEntry(new ZipEntry(imageByte.get("picturePath") + ".jpg"));
+                        //读入需要下载的文件的内容，打包到zip文件
+                        byte[] imageTemp = (byte[]) imageByte.get("byte");
+                        zipOutputStream.write(imageTemp , 0, imageTemp.length);
+                        $info("finish");
+                        zipOutputStream.closeEntry();
+                    }
+
+                }
+                zipOutputStream.close();
+                return byteArrayOutputStream.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return null;
+    }
+
+    public Map<String,Object> downImageThread(Map<String, String> promotionImage){
+        Map<String,Object> imageByte = new HashedMap();
+        imageByte.put("picturePath",promotionImage.get("picturePath"));
+        imageByte.put("byte",downImage(promotionImage.get("url")));
+        return imageByte;
+    }
+
+    public byte[] downImage(String imageUrl) {
+        //如果promotionImagesList为空的时，不做处理
+        byte[] buffer = new byte[1024 * 10];
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
+            int len;
+            URL url = new URL(imageUrl);
+            $info(imageUrl + "下载开始");
+            //Url
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            try (InputStream inputStream = conn.getInputStream()) {
+                //读入需要下载的文件的内容，打包到zip文件
+                while ((len = inputStream.read(buffer)) > 0) {
+                    byteArrayOutputStream.write(buffer, 0, len);
+                }
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            $info(imageUrl + "下载结束");
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }
