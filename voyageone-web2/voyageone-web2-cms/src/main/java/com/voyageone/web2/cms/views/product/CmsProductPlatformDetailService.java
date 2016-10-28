@@ -482,4 +482,14 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
     }
+
+    /**
+     * 重置group的platformPid
+     */
+    public void resetProductGroupPlatformPid(String channelId, int cartId, String code) {
+
+        productGroupService.resetProductGroupPlatformPid(channelId, cartId, code);
+
+    }
+
 }
