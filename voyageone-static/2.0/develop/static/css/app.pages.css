@@ -945,3 +945,8 @@ schema .ng-invalid.focus-error {
 }
 
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
+
+/* 高级检索附加样式 */
+#advanceSearch td .popover{
+    max-width: 350px;
+}
