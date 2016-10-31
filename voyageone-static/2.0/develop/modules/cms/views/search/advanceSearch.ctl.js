@@ -28,7 +28,8 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 supplierType: 1,
-                brandSelType: 1
+                brandSelType: 1,
+                salesType: 'All'
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -586,7 +587,7 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
 
-            $scope.vm.searchInfo.salesType = null;
+            $scope.vm.searchInfo.salesType = 'All';
             $scope.vm.searchInfo.salesSortType = null;
             $scope.vm.searchInfo.salesStart = null;
             $scope.vm.searchInfo.salesEnd = null;
