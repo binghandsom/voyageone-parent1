@@ -70,7 +70,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(){
+    function popoverPromotionDetail(code){
 
         $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
             $scope.promotionDetail = resp.data;

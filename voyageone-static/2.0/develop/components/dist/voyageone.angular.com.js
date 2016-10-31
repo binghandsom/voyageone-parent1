@@ -124,7 +124,7 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
 
     $scope.templateAction = {
         "promotionDetailPopover":{
@@ -190,10 +190,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(){
-        var promotionDetail = {};
+    function popoverPromotionDetail(code){
 
-        $scope.promotionDetail = promotionDetail;
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+            $scope.promotionDetail = resp.data;
+            console.log($scope.promotionDetail);
+        });
+
     }
 });
 

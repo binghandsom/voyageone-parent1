@@ -1057,14 +1057,14 @@
 </div><!-- .col-lg-12 -->
 <script type="text/ng-template" id="promotionDetailTemplate.html">
     <div class="row" style="min-width: 280px;">
-        <div class="row">
+        <div class="row" ng-repeat="(key, value) in promotionDetail">
             <div class="col-sm-4">
-                <label class="control-label"> TG: </label>
+                <label class="control-label"> {{key}}: </label>
             </div>
             <ul class="col-sm-12 list-unstyled">
-                <li>2016-08-24 ~ 2016-08-27【0824运动鞋混场 】</li>
-                <li>2016-08-24 ~ 2016-08-27【0824运动鞋混场 】</li>
-                <li>2016-08-24 ~ 2016-08-27【0824运动鞋混场 】</li>
+                <li ng-repeat="promotion in value">
+                    {{promotion.activityStart}} ~ {{promotion.activityEnd}}【{{promotion.promotionName}}】
+                </li>
             </ul>
         </div>
     </div>
