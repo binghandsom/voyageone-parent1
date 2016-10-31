@@ -910,17 +910,8 @@
                                                 <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
                                                 <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.numIId}}.html" target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId==27"></a>
                                             </span>&nbsp;
-                                            <span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
-                                                <a ng-if="groupInfo.common.fields.originalTitleCn"
-                                                   ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                                   title="{{groupInfo.common.fields.originalTitleCn}}"
-                                                   target="_blank">{{groupInfo.common.fields.originalTitleCn | limitTo: 30}}{{groupInfo.common.fields.originalTitleCn.length > 30 ? '...' : ''}}
-                                                </a>
-                                                <a ng-if="!groupInfo.common.fields.originalTitleCn"
-                                                   ng-href="#/group/detail/{{groupInfo.groupBean.groupId}}"
-                                                   title="{{groupInfo.common.fields.productNameEn}}"
-                                                   target="_blank">{{groupInfo.common.fields.productNameEn | limitTo: 30}}{{groupInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}
-                                                </a>
+                                            <span>产品Code&nbsp;
+                                                <a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.common.fields.code" target="_blank"></a>
                                             </span>&nbsp;
                                             <span class="form-inline" ng-if="groupInfo.grpImgList.length > 0">
                                                 <a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-r-xs" image="{{prop2.value}}" /></a>
@@ -932,8 +923,6 @@
                                         <td class="text-left" style="display:inline-block;width:290px;">
                                             <div class="table_main" style="width:100%">
                                                 <ul style="max-height: 68px; overflow: auto;word-break: break-all; border-bottom: 1px solid #EFEFEF;">
-                                                    <li><a ng-href="#/product/detail/{{groupInfo.prodId}}"
-                                                           ng-bind="groupInfo.common.fields.code" target="_blank"></a></li>
                                                     <li><a ng-href="#/product/detail/{{groupInfo.prodId}}"
                                                            ng-bind="groupInfo.common.fields.originalTitleCn || groupInfo.common.fields.productNameEn"
                                                            target="_blank"></a></li>
