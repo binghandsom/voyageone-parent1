@@ -22,7 +22,7 @@ import java.util.Map;
  * Created by jonas on 8/13/16.
  *
  * @author jonas
- * @version 2.4.0
+ * @version 2.9.0
  * @since 2.4.0
  */
 @RestController

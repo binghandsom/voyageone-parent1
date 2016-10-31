@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.toList;
  * Created by jonas on 8/15/16.
  *
  * @author jonas
- * @version 2.4.0
+ * @version 2.9.0
  * @since 2.4.0
  */
 @Service

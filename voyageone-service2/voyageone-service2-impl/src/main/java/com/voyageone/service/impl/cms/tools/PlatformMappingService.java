@@ -25,24 +25,19 @@ import static java.util.stream.Collectors.toMap;
  * Created by jonas on 8/13/16.
  *
  * @author jonas
- * @version 2.5.2
+ * @version 2.9.0
  * @since 2.4.0
  */
 @Service
 public class PlatformMappingService extends BaseService {
-
     public final static int CATEGORY_TYPE_COMMON = 1;
-
     public final static int CATEGORY_TYPE_SPECIFIC = 2;
 
     private final static String EXPRESSION_TYPE_FEED_CN = "FEED_CN";
-
     private final static String EXPRESSION_TYPE_FEED_ORG = "FEED_ORG";
-
     private final static String EXPRESSION_TYPE_MASTER = "MASTER";
 
     private final ProductService productService;
-
     private final CmsBtPlatformMappingDao platformMappingDao;
 
     @Autowired
