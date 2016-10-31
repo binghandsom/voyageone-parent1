@@ -884,7 +884,7 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
 }
 
-.jm-sortable-product-modal .arrow-button button{
+.jm-sortable-product-modal .arrow-button button {
     background: #fff;
     border: none;
     padding: 0px;
@@ -947,6 +947,11 @@ schema .ng-invalid.focus-error {
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
 
 /* 高级检索附加样式 */
-#advanceSearch td .popover{
+#advanceSearch td .popover {
     max-width: 350px;
+}
+
+#advanceSearch td .mainPrd {
+    color: white;
+    font-weight: bold;
 }

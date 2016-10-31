@@ -16,9 +16,9 @@ define(['underscore'], function (_) {
 
     return {
 
-        OnSale: new PlatformStatus('OnSale', '在售'),
-        InStock: new PlatformStatus('InStock', '在库'),
-        WaitingPublish: new PlatformStatus('WaitingPublish', '等待上新'),
+        OnSale: new PlatformStatus('OnSale', '售'),
+        InStock: new PlatformStatus('InStock', '库'),
+        WaitingPublish: new PlatformStatus('WaitingPublish', '待'),
 
         /**
          * 显示商品上下架状态
