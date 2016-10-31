@@ -1,14 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
@@ -22,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -209,8 +201,8 @@ public class TagService extends BaseService {
         tagJmModuleExtensionModel.setDisplayEndTime(null);
         tagJmModuleExtensionModel.setShelfType(1);
         tagJmModuleExtensionModel.setImageType(1);
-        tagJmModuleExtensionModel.setProductsSortBy(1);
-        tagJmModuleExtensionModel.setNoStockToLast(false);
+        tagJmModuleExtensionModel.setProductsSortBy(2);
+        tagJmModuleExtensionModel.setNoStockToLast(true);
 
         return tagJmModuleExtensionModel;
     }

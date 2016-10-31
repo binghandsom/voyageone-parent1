@@ -45,7 +45,7 @@
                     <label class="col-sm-2 control-label s-required">活动类型</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.model.promotionType" ng-options="typeObj.value as typeObj.name for typeObj in ctrlEdit.vm.metaData.promotionTypeList"
-                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd" ng-change="ctrlEdit.createActId()" required>
+                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd||ctrlEdit.editModel.model.isFstSave==1" ng-change="ctrlEdit.createActId()" required>
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
@@ -57,17 +57,19 @@
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label s-required">专场主品牌</label>
-                    <div class="col-sm-5">
-                        <select chosen ng-model="ctrlEdit.editModel.model.cmsBtJmMasterBrandId" required
-                                ng-options="brand.id as brand.name for brand in ctrlEdit.vm.metaData.jmMasterBrandList"
-                                name="cmsBtJmMasterBrandId" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
+                    <div class="col-sm-3">
+                        <select chosen ng-model="ctrlEdit.editModel.model.masterBrandName" required ng-disabled="ctrlEdit.editModel.model.isFstSave==1"
+                                ng-options="brand.value as brand.value for brand in ctrlEdit.vm.metaData.jmMasterBrandList"
+                                name="masterBrandName" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{ctrlEdit.editModel.model.cmsBtJmMasterBrandId}}</label>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="!ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌未匹配</label>
                 </div>
                 <div class="row form-group">
                     <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="ctrlEdit.promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                        <vo-message target="ctrlEdit.promotionForm.masterBrandName"></vo-message>
                     </div>
                 </div>
                 <div class="form-group">
@@ -237,7 +239,8 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Promotion Product Type</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionProductType" ng-change="ctrlEdit.createActId()">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionProductType" ng-change="ctrlEdit.createActId('promotionProductType')"
+                               ng-readonly="ctrlEdit.editModel.model.isFstSave==1&&ctrlEdit.editModel.model.promotionType=='3'">
                     </div>
                 </div>
                 <div class="form-group">
@@ -260,7 +263,7 @@
                     <label class="col-sm-2 control-label s-required">主频道</label>
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.onMainChannelChange()"
-                                ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.mainChannelList">
+                                ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.mainChannelList" ng-disabled="ctrlEdit.editModel.model.isFstSave==1">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
@@ -331,14 +334,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label s-required">入口图专场导向文案</label>
+                    <label class="col-sm-2 control-label">入口图专场导向文案</label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" maxlength="100" name="enterGuide" required>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-7 col-sm-offset-2">
-                        <vo-message target="ctrlEdit.promotionForm.enterGuide"></vo-message>
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" maxlength="8" name="enterGuide">
                     </div>
                 </div>
                 <div class="form-group">

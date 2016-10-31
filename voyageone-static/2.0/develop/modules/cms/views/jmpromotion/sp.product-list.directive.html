@@ -200,7 +200,7 @@
                 </div>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover-new table-hover" style="width: 1850px">
+                <table class="table table-hover-new table-hover" style="table-layout: fixed; width: 1850px">
                     <thead>
                     <tr>
                         <th class="mfb-xt3 text-left">
@@ -222,6 +222,7 @@
                         <th class="text-left">错误消息</th>
                         <th class="text-center">库存数</th>
                         <th class="text-left">备注</th>
+                        <th class="text-left">变更情况</th>
                         <th class="text-left">Status</th>
                         <th class="text-center" style="width: 100px;">Action</th>
                     </tr>
@@ -234,7 +235,7 @@
                                                                                                        ng-model="model.isChecked"><span
                                 class="fa fa-check"></span></label></td>
                         <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
-                        <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
+                        <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openProductDetailWin(model)">
                             {{model.productCode}}  </a>
                         </td>
                         <td>{{model.productLongName}}</td>
@@ -270,8 +271,11 @@
                                 </ul>
                             </div>
                         </td>
-                        <td class="text-left">{{model.jumeiMallId}}</td>
-                        <td class="text-left">{{model.jmHashId}}</td>
+                        <td class="text-left yellowLink" style="word-break: break-all">
+                            <a ng-if="model.jumeiMallId" ng-href="{{vm.productUrl}}{{model.jumeiMallId}}.html" target="_blank" ng-bind="model.jumeiMallId"></a>
+                        </td>
+                        <td class="text-left yellowLink" style="word-break: break-all">
+                            <a ng-if="model.jmHashId" ng-href="{{vm.productUrl}}{{model.jmHashId}}.html" target="_blank" ng-bind="model.jmHashId"></a></td>
                         <td class="text-center">{{model.discount == 0 || model.discount == undefined ? '0折' : (model.discount*10).toFixed(2) + '折'}}</td>
                         <td class="text-center">
                             {{model.skuCount}}
@@ -288,6 +292,7 @@
                         </td>
                         <td class="text-center">{{model.quantity}}</td>
                         <td><textarea ng-model="model.remark" ng-blur="updateRemark(model)" class="form-control"></textarea></td>
+                        <td >{{getUpdateStatus(model)}}</td>
                         <td >{{getStatus(model)}}</td>
                         <td class="text-center">
                             <button title="重刷" class="btn btn-success btn-xs" ng-click="updateJM(model.id)"><i class="fa fa-refresh"></i>

@@ -13,6 +13,10 @@ define(['cms'], function (cms) {
         $scope.$on('detail.saved', function () {
             self.loadBayWindow();
         });
+
+        $scope.$on('module.saved', function () {
+            self.loadBayWindow();
+        });
     }
 
     BayWindowComponentController.prototype.moveKeys = {
@@ -40,15 +44,8 @@ define(['cms'], function (cms) {
             self.bayWindow = bayWindow;
 
             self.initBayWindows().then(function (_bayWindows) {
-                self.fixedWindows = (!bayWindow.fixed || (!bayWindows || !bayWindows.length)) ? _bayWindows : _bayWindows.map(function (_bayWindowItem, index) {
-                    return (index === 0) ? bayWindows[0] : angular.merge(_bayWindowItem, bayWindows.find(function (bayWindowItem) {
-                        return bayWindowItem.name === _bayWindowItem.name;
-                    }));
-                });
-
-                self.linkWindows = (!bayWindows || !bayWindows.length) ? _bayWindows.map(function (item) {
-                    return angular.copy(item);
-                }) : bayWindows;
+                self.fixedWindows = bayWindow.fixed ? bayWindows : _bayWindows;
+                self.linkWindows = !bayWindow.fixed ? bayWindows : _bayWindows;
 
                 self.switchPreview();
             });
@@ -58,7 +55,7 @@ define(['cms'], function (cms) {
     BayWindowComponentController.prototype.getImage = function getImage(name, index) {
         var self = this,
             bayWindowTemplateUrls = self.bayWindowTemplateUrls;
-        return bayWindowTemplateUrls[index && 1].replace('%s', name);
+        return bayWindowTemplateUrls[index && 1].replace('%s', encodeURIComponent(name));
     };
 
     BayWindowComponentController.prototype.initBayWindows = function initBayWindows() {
@@ -69,7 +66,7 @@ define(['cms'], function (cms) {
             return modulesList.map(function (modules, index) {
                 var name = modules.module.moduleTitle;
                 return {
-                    name: name,
+                    name: index ? name : '聚美专场',
                     link: '',
                     url: self.getImage(name, index),
                     order: index,

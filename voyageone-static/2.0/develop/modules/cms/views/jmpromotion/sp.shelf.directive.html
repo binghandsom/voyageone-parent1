@@ -19,7 +19,7 @@
                         <label class="col-sm-2 control-label">模块标题</label>
                         <div class="col-sm-6">
                             <input type="text" name="{{'moduleTitle' + $index}}" class="form-control"
-                                   ng-model="tagModule.module.moduleTitle"
+                                   ng-model="tagModule.module.moduleTitle" ng-readonly="tagModule.module.featured"
                                    required>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2">
@@ -38,7 +38,7 @@
                         <label class="col-sm-2 control-label">模块名称</label>
                         <div class="col-sm-6">
                             <input type="text" name="{{'tagName' + $index}}" class="form-control"
-                                   ng-model="tagModule.tag.tagName"
+                                   ng-model="tagModule.tag.tagName" ng-readonly="tagModule.module.featured"
                                    required>
                         </div>
                         <div class="col-sm-6 col-sm-offset-2">

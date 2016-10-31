@@ -126,7 +126,7 @@ define([
             jmPromotionService.init({hasExt:true}).then(function (res) {
                 vm.metaData = res.data;
                 // 记住主品牌初始值
-                _getJmBrandEnName(self, editModel.model.cmsBtJmMasterBrandId);
+                _getJmBrandEnName(self, editModel.model.masterBrandName);
                 // 记住主频道英文缩写
                 _getJmMainChannelAb(self, editModel.extModel.mainChannel);
             });
@@ -187,8 +187,19 @@ define([
     // 当专场主品牌改变时，记住所选值，用于创建页面标识(主要是品牌英文名，并且要简单处理，去空格和特殊符号)
     SpEditDirectiveController.prototype.onJmBrandChange = function () {
         var self = this;
-        _getJmBrandEnName(self, self.editModel.model.cmsBtJmMasterBrandId);
+        _getJmBrandEnName(self, self.editModel.model.masterBrandName);
         self.createActId();
+
+        self.editModel.model.brand = '';
+        self.editModel.model.cmsBtJmMasterBrandId = '';
+
+        if (self.editModel.model.masterBrandName) {
+            var inputObj = _.find(self.vm.metaData.jmMasterBrandList, function(item) { return item.value == self.editModel.model.masterBrandName; });
+            if (inputObj) {
+                self.editModel.model.brand = inputObj.value;
+                self.editModel.model.cmsBtJmMasterBrandId = inputObj.name;
+            }
+        }
     };
 
     // 当主频道改变时，记住所选值（缩写），用于创建页面标识
@@ -199,11 +210,10 @@ define([
     };
 
     // 创建页面标识
-    SpEditDirectiveController.prototype.createActId = function () {
+    SpEditDirectiveController.prototype.createActId = function (fieldName) {
         var self = this;
         var idDate = self.$filter("date")(new Date(),"yyyyMMdd");
-        var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-        idTime = parseInt(idTime).toString(36);
+
         var jmBrandId = self.editModel.model.cmsBtJmMasterBrandId;
 
         var mainChannel = self.editModel.extModel.mainChannel;
@@ -215,10 +225,18 @@ define([
             if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
                 self.editModel.extModel.promotionProductType = '';
             }
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+            idTime = parseInt(idTime).toString(36);
             var pageId = idDate + mainChannel + '_' + self.editModel.extModel.promotionProductType + '_' + jmBrandId + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         } else {
+            if (fieldName == 'promotionProductType') {
+                // 其他专场时，活动主要商品品类的输入无效
+                return;
+            }
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+            idTime = parseInt(idTime).toString(36);
             var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + '_' + idDate + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
@@ -238,6 +256,11 @@ define([
         var extModel = editModel.extModel;
         if (saveType) {
             // 在'提交'时检查输入项目
+            if (model.cmsBtJmMasterBrandId == undefined || model.cmsBtJmMasterBrandId == null || model.cmsBtJmMasterBrandId == '') {
+                alert("聚美品牌未匹配，请重新选择。");
+                return;
+            }
+
             var start = new Date(model.activityStart);
             var end = new Date(model.activityEnd);
 
@@ -361,6 +384,7 @@ define([
         jmPromotionService.saveModel(param).then(function() {
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
+                model.isFstSave = 1;
             }
             // 保存之后如果标签被修改过就需要重新刷新标签缓存
             spDataService.getPromotionModules(true).then(function (tagModels) {
@@ -409,20 +433,14 @@ define([
     }
 
     // 取得专场主品牌的品牌英文名，并且要简单处理，去空格和特殊符号
-    function _getJmBrandEnName(self, jmBrandId) {
-        var brandObj = _.find(self.vm.metaData.jmMasterBrandList, function(item) { return item.id == jmBrandId; });
-        if (brandObj == null || brandObj == undefined) {
-            self.vm.brandEnName = "";
-            return;
-        }
-        var enName = brandObj.enName;
-        if (enName == null || enName == undefined || enName == '') {
+    function _getJmBrandEnName(self, jmBrandName) {
+        if (jmBrandName == null || jmBrandName == undefined || jmBrandName == '') {
             self.vm.brandEnName = "";
             return;
         }
         var nameVal = '';
-        for (var i = 0; i < enName.length; i ++) {
-            var charVal = enName.charAt(i);
+        for (var i = 0; i < jmBrandName.length; i ++) {
+            var charVal = jmBrandName.charAt(i);
             if (('0' <= charVal && charVal <= '9') || ('a' <= charVal && charVal <= 'z') || ('A' <= charVal && charVal <= 'Z')) {
                 nameVal = nameVal.concat(charVal);
             }

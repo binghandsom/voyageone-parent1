@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
 import com.voyageone.common.asserts.Assert;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -66,13 +67,17 @@ public class JmPromotionImagesController extends CmsController {
         Assert.notNull(params.getBrand()).elseThrowDefaultWithTitle("brand");
         imageEntity.setBrand(params.getBrand());
 
+        String current = DateTimeUtil.getNowTimeStamp();
+        imageEntity.setModified(current);
+
         jmPromotionImagesService.saveJmPromotionImages(imageEntity);
+
         if (params.getSaveType() != null && (params.getSaveType() == 1 || params.getSaveType() == 2)) {
             // 1：提交  2：发布任务
             btJmPromotionService.setJmPromotionStepStatus(params.getJmPromotionId(),
                     CmsBtJmPromotionService.JmPromotionStepNameEnum.PromotionImage, CmsBtJmPromotionService.JmPromotionStepStatusEnum.Success, getUser().getUserName());
         }
-        return success(null);
+        return success(current);
     }
 
     /**

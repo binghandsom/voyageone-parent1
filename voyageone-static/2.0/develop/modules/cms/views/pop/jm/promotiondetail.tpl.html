@@ -28,39 +28,26 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动场景</label>
                 <div class="col-sm-8">
-                    <label class="checkbox-inline c-checkbox">
-                        <input type="checkbox" name="promotionScene_1" style="margin: 0" value="1" ng-model="editModel.model.promotionScene['1']"
-                               ng-required="!editModel.model.promotionScene['1']&&!editModel.model.promotionScene['2']" ng-disabled="vm.isEnd">
-                        <span class="fa fa-check"></span> 专场特卖
-                    </label>&nbsp;&nbsp;&nbsp;&nbsp;
-                    <label class="checkbox-inline c-checkbox">
-                        <input type="checkbox" name="promotionScene_2" style="margin: 0" value="2" ng-model="editModel.model.promotionScene['2']"
-                               ng-required="!editModel.model.promotionScene['1']&&!editModel.model.promotionScene['2']" ng-disabled="vm.isEnd">
-                        <span class="fa fa-check"></span> 商城铺货
+                    <label class="checkbox-inline c-checkbox" style="margin-right:40px" ng-repeat="sceneValObj in vm.metaData.promotionSceneList">
+                        <input type="checkbox" name="promotionScene" style="margin: 0" ng-value="sceneValObj.value" ng-disabled="vm.isEnd"
+                               ng-model="editModel.model.promotionScene[sceneValObj.value]"
+                               ng-required="checkboxVal(editModel.model.promotionScene)" >
+                        <span class="fa fa-check"></span> {{sceneValObj.name}}
                     </label>
                 </div>
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionScene_1 && promotionForm.promotionScene_2"></vo-message>
+                    <vo-message target="promotionForm.promotionScene"></vo-message>
                 </div>
             </div>
 
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
                 <div class="col-sm-8" >
-                    <select class="form-control m-r-xs" ng-model="editModel.model.promotionType" required name="promotionType" width="'100%'" ng-disabled="vm.isEnd">
+                    <select class="form-control m-r-xs" ng-model="editModel.model.promotionType" required name="promotionType" width="'100%'" ng-disabled="vm.isEnd||editModel.model.isFstSave==1"
+                            ng-options="typeObj.value as typeObj.name for typeObj in vm.metaData.promotionTypeList">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                        <option value="1">日常专场</option>
-                        <option value="2">资源位日常专场</option>
-                        <option value="3">大促专场</option>
-                        <option value="4">资源位大促专场</option>
-                        <option value="5">导购团专场</option>
-                        <option value="6">首焦专场</option>
-                        <option value="7">商城导购</option>
-                        <option value="8">商城伪店铺</option>
-                        <option value="9">商城主推</option>
-                        <option value="10">其他平台促销活动</option>
                     </select>
                 </div>
             </div>
@@ -70,18 +57,20 @@
                 </div>
             </div>
 
-            <div class="row form-group">
+            <div class="row form-group" style="margin-bottom:15px">
                 <label class="col-sm-3 control-label vo_reqfield">专场主品牌</label>
-                <div class="col-sm-8" >
-                    <select chosen ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId"
-                            ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList" width="'100%'">
+                <div class="col-sm-4" >
+                    <select chosen ng-model="editModel.model.masterBrandName" required name="masterBrandName" ng-disabled="editModel.model.isFstSave==1"
+                            ng-options="brand.value as brand.value for brand in vm.metaData.jmMasterBrandList" width="'100%'" ng-change="onJmBrandChange()">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
+                <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="editModel.model.cmsBtJmMasterBrandId">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{editModel.model.cmsBtJmMasterBrandId}}</label>
+                <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="!editModel.model.cmsBtJmMasterBrandId">聚美品牌未匹配</label>
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                    <vo-message target="promotionForm.masterBrandName"></vo-message>
                 </div>
             </div>
 

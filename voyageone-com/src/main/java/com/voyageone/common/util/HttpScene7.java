@@ -7,6 +7,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.HttpClients;
@@ -73,6 +74,28 @@ public class HttpScene7 {
                     "<unCompressOptions><process>None</process></unCompressOptions>" +
                     "</uploadParams>" +
                     "</uploadPostParam>\"";
+
+    private final static String VALUE_NO_CDNAVLUD =
+            "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+                    "  <SOAP-ENV:Header>\n" +
+                    "    <authHeader xmlns=\"http://www.scene7.com/IpsApi/xsd/2016-01-14-beta\">\n" +
+                    "      <user>admin@voyageone.com</user>\n" +
+                    "      <password>2016Dirzh#1</password>\n" +
+                    "      <locale>en-US</locale>\n" +
+                    "      <appName>Adobe.Scene7.SPS</appName>\n" +
+                    "      <appVersion>6.10-194940</appVersion>\n" +
+                    "      <faultHttpStatusCode>200</faultHttpStatusCode>\n" +
+                    "    </authHeader>\n" +
+                    "  </SOAP-ENV:Header>\n" +
+                    "  <SOAP-ENV:Body>\n" +
+                    "    <cdnCacheInvalidationParam xmlns=\"http://www.scene7.com/IpsApi/xsd/2016-01-14-beta\">\n" +
+                    "      <companyHandle>c|8553</companyHandle>\n" +
+                    "      <urlArray>\n" +
+                    "        <items>%s</items>\n" +
+                    "      </urlArray>\n" +
+                    "    </cdnCacheInvalidationParam>\n" +
+                    "  </SOAP-ENV:Body>\n" +
+                    "</SOAP-ENV:Envelope>";
 
     private final static String SUBMIT_QUERY = "Submit Query";
 
@@ -212,5 +235,87 @@ public class HttpScene7 {
             }
         }
 
+    }
+
+    /**
+     * 清除 Scene7 Server Image CND Cache
+     *
+     * @param url 清除的URL
+     */
+    public static void cleanImageClearCDN(String url) {
+        String serverUrl = "https://s7sps1apissl.scene7.com/scene7/services/IpsApiService";//Codes.getCodeName(S7HTTP_CONFIG, "Url");
+        if (StringUtils.isEmpty(serverUrl)) {
+            throw new RuntimeException("send serverUrl not found.");
+        }
+
+        if (StringUtils.isEmpty(url)) {
+            throw new RuntimeException("send url not found.");
+        }
+
+        HttpPost post = new HttpPost(serverUrl);
+
+        String userName = Codes.getCodeName(S7HTTP_CONFIG, "UserName");
+        if (StringUtils.isEmpty(userName)) {
+            throw new RuntimeException("send UserName not found.");
+        }
+        String password = Codes.getCodeName(S7HTTP_CONFIG, "Password");
+        if (StringUtils.isEmpty(password)) {
+            throw new RuntimeException("send Password not found.");
+        }
+        String urlEncoded = String.format(VALUE_NO_CDNAVLUD, encodeString(url));
+        StringEntity entity = new StringEntity(urlEncoded, "UTF-8");
+
+        post.addHeader("Content-Type", "text/xml");
+        post.addHeader("Pragma", "no-cache");
+        post.addHeader("SOAPAction", "\"cdnCacheInvalidation\"");
+
+        post.setEntity(entity);
+
+        // send https
+        HttpClient httpclient = HttpClients.createDefault();
+        try {
+            HttpResponse response = httpclient.execute(post);
+            if (HttpStatus.SC_OK == response.getStatusLine().getStatusCode()) {
+                logger.info("cleanImageClearFromS7 OK " + url);
+            } else {
+                throw new RuntimeException(response.toString());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 替换字符串中特殊字符
+     */
+    private static String encodeString(String strData) {
+        if (strData == null) {
+            return "";
+        }
+        strData = replaceString(strData, "&", "&amp;");
+        strData = replaceString(strData, "<", "&lt;");
+        strData = replaceString(strData, ">", "&gt;");
+        strData = replaceString(strData, "&apos;", "&apos;");
+        strData = replaceString(strData, "\"", "&quot;");
+        return strData;
+    }
+
+    public static String replaceString(String strData, String regex, String replacement) {
+        if (strData == null) {
+            return null;
+        }
+        int index;
+        index = strData.indexOf(regex);
+        String strNew = "";
+        if (index >= 0) {
+            while (index >= 0) {
+                strNew += strData.substring(0, index) + replacement;
+                strData = strData.substring(index + regex.length());
+                index = strData.indexOf(regex);
+            }
+            strNew += strData;
+            return strNew;
+        }
+        return strData;
     }
 }

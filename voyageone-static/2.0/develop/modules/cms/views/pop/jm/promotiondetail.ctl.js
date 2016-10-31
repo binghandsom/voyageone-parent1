@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
-        $scope.vm = {"jmMasterBrandList":[], "isFromBox": false};
+        $scope.vm = { "isFromBox": false };
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
 
@@ -75,7 +75,7 @@ define([
             }
 
             jmPromotionService.init().then(function (res) {
-                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
+                $scope.vm.metaData = res.data;
             });
         };
 
@@ -165,6 +165,16 @@ define([
             })
         };
 
+        // 检查checkbox是否有输入
+        $scope.checkboxVal = function (inputArr) {
+            var inputObj = _.find(inputArr, function(item) { return item == true; });
+            if (inputObj) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+
         /**禁用日期*/
         $scope.disabled = function(date, mode) {
             return ( mode === 'day' && $scope.vm.isBeginPre );
@@ -178,6 +188,19 @@ define([
                 $scope.vm.datePicker2 = false;
             } else {
                 $scope.vm.datePicker2 = true;
+            }
+        };
+
+        $scope.onJmBrandChange = function () {
+            $scope.editModel.model.brand = '';
+            $scope.editModel.model.cmsBtJmMasterBrandId = '';
+
+            if ($scope.editModel.model.masterBrandName) {
+                var inputObj = _.find($scope.vm.metaData.jmMasterBrandList, function(item) { return item.value == $scope.editModel.model.masterBrandName; });
+                if (inputObj) {
+                    $scope.editModel.model.brand = inputObj.value;
+                    $scope.editModel.model.cmsBtJmMasterBrandId = inputObj.name;
+                }
             }
         };
 

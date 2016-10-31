@@ -555,14 +555,21 @@ angular.module("voyageone.angular.directives")
                             return;
                         }
 
-                        // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
-                            if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
-                                translateParam.value = targetElement.attr('ng-pattern');
-                        }
+                        // 尝试获取用户定义的错误提示信息
+                        if (attrs[error]) {
+                            // 如果用户自定义了相关错误的信息
+                            // 就显示自定义信息
+                            show(attrs[error]);
+                        } else {
+                            // 如果用户没有设定提示信息，那么就自己根据参数生成
+                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                                if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
+                                    translateParam.value = targetElement.attr('ng-pattern');
+                            }
 
-                        // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                        $translate(errorTypes[error], translateParam).then(show, show);
+                            // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
+                            $translate(errorTypes[error], translateParam).then(show, show);
+                        }
 
                     }, true);
 

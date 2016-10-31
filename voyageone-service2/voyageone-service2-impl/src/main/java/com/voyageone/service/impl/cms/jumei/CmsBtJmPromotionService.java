@@ -3,29 +3,39 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
-import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
+import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionSpecialExtensionDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
+import com.voyageone.service.daoext.cms.CmsMtBrandsMappingDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by "some one" on 2016/3/18.
@@ -34,7 +44,7 @@ import java.util.stream.Stream;
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
-
+    private final static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
     private final CmsBtJmPromotionDao dao;
     private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
@@ -43,19 +53,22 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
     private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
+    private final CmsBtJmImageTemplateService jmImageTemplateService;
+    private final CmsMtJmConfigService jmConfigService;
+    private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
     @Autowired
-    private CmsBtJmImageTemplateService jmImageTemplateService;
-    @Autowired
-    private CmsMtJmConfigService jmConfigService;
-
-    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
+    private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
                                    TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
-                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt, CmsBtJmPromotionImagesDao jmPromotionImagesDao) {
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,
+                                   CmsBtJmPromotionImagesDao jmPromotionImagesDao,
+                                   CmsBtJmImageTemplateService jmImageTemplateService,
+                                   CmsMtJmConfigService jmConfigService,
+                                   CmsBtJmBayWindowService cmsBtJmBayWindowService) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -64,16 +77,34 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmPromotionExtensionDao = jmPromotionExtensionDao;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
         this.jmPromotionImagesDao = jmPromotionImagesDao;
+        this.jmImageTemplateService = jmImageTemplateService;
+        this.jmConfigService = jmConfigService;
+        this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
     }
 
     /**
      * 取得画面上的初始数据
      */
-    public Map<String, Object> init(boolean hasExt) {
+    public Map<String, Object> init(String channelId, String langId, boolean hasExt) {
         Map<String, Object> map = new HashMap<>();
         // 专场主品牌
-        List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
-        map.put("jmMasterBrandList", jmMasterBrandList);
+        List<TypeChannelBean> brandList = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, langId);
+        if (brandList == null) {
+            brandList = new ArrayList<>(0);
+        }
+        Map<String, Object> selMap = new HashMap<>();
+        selMap.put("channelId", channelId);
+        selMap.put("cartId", CartEnums.Cart.JM.getValue());
+        for (TypeChannelBean brandObj : brandList) {
+            selMap.put("cmsBrand", brandObj.getValue());
+            List<CmsMtBrandsMappingBean> mBrandList = brandsMappingDaoExt.selectList(selMap);
+            if (mBrandList != null && mBrandList.size() > 0) {
+                brandObj.setName(mBrandList.get(0).getBrandId());
+            } else {
+                brandObj.setName("");
+            }
+        }
+        map.put("jmMasterBrandList", brandList);
 
         // 活动场景
         CmsMtJmConfigModel configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.promotionScene);
@@ -223,12 +254,6 @@ public class CmsBtJmPromotionService extends BaseService {
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
 
-        // 设置品牌名
-        CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.select(parameter.getModel().getCmsBtJmMasterBrandId());
-        if (jmMasterBrand != null) {
-            parameter.getModel().setBrand(jmMasterBrand.getName());
-        }
-
         if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {
             // 更新
             if (parameter.isHasExt()) {
@@ -327,41 +352,76 @@ public class CmsBtJmPromotionService extends BaseService {
     }
 
     private int updateModel(CmsBtJmPromotionSaveBean parameter) {
-        CmsBtJmPromotionModel promotionModel = parameter.getModel();
+        CmsBtJmPromotionModel jmPromotionModel = parameter.getModel();
 
-        if (promotionModel.getRefTagId() == 0) {
-            int refTagId = createPromotionTopTag(promotionModel);
-            promotionModel.setRefTagId(refTagId);
+        if (jmPromotionModel.getRefTagId() == 0) {
+            int refTagId = createPromotionTopTag(jmPromotionModel);
+            jmPromotionModel.setRefTagId(refTagId);
         }
 
         int result = -1;
         if (parameter.isHasExt()) {
             // 聚美专场详细画面中的活动详情子画面来的更新
-            daoExt.updateByInput(promotionModel);
+            if (parameter.getSaveType() == 1) {
+                jmPromotionModel.setIsFstSave(1);
+            }
+            daoExt.updateByInput(jmPromotionModel);
         } else {
             // 活动一览画面来的更新
-            dao.update(promotionModel);
+            daoExt.updateByInput(jmPromotionModel);
         }
 
         setHasFeaturedModule(parameter);
 
-        parameter.getTagList().forEach(cmsBtTagModel -> {
+        List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
+                .stream()
+                .map(tag -> {
+                    tag.setModifier(jmPromotionModel.getModifier());
+                    CmsBtTagJmModuleExtensionModel module;
+                    if (tag.getId() != null && tag.getId() > 0) {
+                        tagService.updateTagModel(tag);
+                        module = tagService.getJmModule(tag);
+                    } else {
+                        addChildTag(tag, jmPromotionModel);
+                        module = tagService.createJmModuleExtension(tag);
+                        tagService.addJmModule(module);
+                    }
 
-            cmsBtTagModel.setModifier(promotionModel.getModifier());
+                    ifNoFeaturedModuleThenUseThis(parameter, tag);
 
-            if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
-                // 要判断tag被删除的情况 tag.active == -1 表示该tag已被删除
-                tagService.updateTagModel(cmsBtTagModel);
-            } else {
-                addChildTag(cmsBtTagModel, promotionModel);
+                    return module;
+                })
+                .collect(toList());
+
+        // 更新飘窗
+        CmsBtJmBayWindowModel jmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionModel.getId());
+        if (jmBayWindowModel.getFixed()) {
+            List<String> bayWindowTemplateUrls = jmImageTemplateService.getBayWindowTemplateUrls();
+            List<CmsBtJmBayWindowModel.BayWindow> lastBayWindows = jmBayWindowModel.getBayWindows();
+            List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
+            jmBayWindowModel.setBayWindows(bayWindowList);
+
+            if (lastBayWindows != null && !lastBayWindows.isEmpty()) {
+                // 如果之前某些飘窗是配置过启用或禁用的
+                // 这里需要同步过来
+                Map<String, CmsBtJmBayWindowModel.BayWindow> lastBayWindowMap = lastBayWindows.stream()
+                        .collect(toMap(CmsBtJmBayWindowModel.BayWindow::getName, i -> i));
+                bayWindowList.forEach(i -> {
+                    if (lastBayWindowMap.containsKey(i.getName()))
+                        i.setEnabled(lastBayWindowMap.get(i.getName()).getEnabled());
+                });
+                // 上一次保存的飘窗头标题也要同步过来
+                bayWindowList.get(0).setName(lastBayWindows.get(0).getName());
+                bayWindowList.get(0).setUrl(lastBayWindows.get(0).getUrl());
             }
 
-            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
-        });
+            cmsBtJmBayWindowService.update(jmBayWindowModel);
+        }
+
         return result;
     }
 
-    private int insertModel(CmsBtJmPromotionSaveBean parameter) {
+    private void insertModel(CmsBtJmPromotionSaveBean parameter) {
         CmsBtJmPromotionModel model = parameter.getModel();
         if (StringUtil.isEmpty(model.getCategory())) {
             model.setCategory("");
@@ -369,16 +429,28 @@ public class CmsBtJmPromotionService extends BaseService {
         int refTagId = createPromotionTopTag(model);
         model.setRefTagId(refTagId);
 
+        dao.insert(model);
+
         setHasFeaturedModule(parameter);
 
-        // 子TAG追加
-        parameter.getTagList().forEach(cmsBtTagModel -> {
-            addChildTag(cmsBtTagModel, model);
+        // 根据 tag 创建模块
+        List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
+                .stream()
+                .map(tag -> {
+                    addChildTag(tag, model);
+                    CmsBtTagJmModuleExtensionModel module = tagService.createJmModuleExtension(tag);
+                    tagService.addJmModule(module);
+                    ifNoFeaturedModuleThenUseThis(parameter, tag);
+                    return module;
+                })
+                .collect(toList());
 
-            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
-        });
-
-        return dao.insert(model);
+        // 创建飘窗
+        List<String> bayWindowTemplateUrls = jmImageTemplateService.getBayWindowTemplateUrls();
+        CmsBtJmBayWindowModel jmBayWindowModel = cmsBtJmBayWindowService.createByPromotion(model, model.getModifier());
+        List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
+        jmBayWindowModel.setBayWindows(bayWindowList);
+        cmsBtJmBayWindowService.insert(jmBayWindowModel);
     }
 
     private void ifNoFeaturedModuleThenUseThis(CmsBtJmPromotionSaveBean parameter, CmsBtTagModel tagModel) {
@@ -421,10 +493,6 @@ public class CmsBtJmPromotionService extends BaseService {
 
         tagService.insertCmsBtTagAndUpdateTagPath(tagModel,
                 consumer -> consumer.setTagPath(String.format("-%s-%s-", promotionTopTagId, consumer.getId())));
-
-        // 同时创建聚美的扩展模块
-        CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
-        tagService.addJmModule(jmModuleExtensionModel);
     }
 
     private int createPromotionTopTag(CmsBtJmPromotionModel model) {
@@ -519,20 +587,20 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.getJmPromotionCount(sqlParams);
     }
 
-    public List<Integer> selectCloseJmPromotionId(){
+    public List<Integer> selectCloseJmPromotionId() {
         return daoExt.selectCloseJmPromotionId();
     }
 
-    public List<Integer> selectEffectiveJmPromotionId(){
+    public List<Integer> selectEffectiveJmPromotionId() {
         return daoExt.selectEffectiveJmPromotionId();
     }
 
-    public List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId){
+    public List<Map<String, Object>> selectCloseJmPromotionSku(Integer jmPromotionId) {
         return daoExt.selectCloseJmPromotionSku(jmPromotionId);
     }
 
-    public int updatePromotionStatus(Integer jmPromotionId, String modifier){
-        return daoExt.updatePromotionStatus(jmPromotionId,modifier);
+    public int updatePromotionStatus(Integer jmPromotionId, String modifier) {
+        return daoExt.updatePromotionStatus(jmPromotionId, modifier);
     }
 
     private void convertParams(Map sqlParams) {
@@ -544,11 +612,24 @@ public class CmsBtJmPromotionService extends BaseService {
         String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
         if (codeListStr != null) {
             List<String> codeList = Arrays.asList(codeListStr.split("\n"));
-            codeList = codeList.stream().map(pCode -> StringUtils.trimToNull(pCode)).filter(pCode -> pCode != null).distinct().collect(Collectors.toList());
+            codeList = codeList.stream().map(pCode -> StringUtils.trimToNull(pCode)).filter(pCode -> pCode != null).distinct().collect(toList());
             sqlParams.put("codeList", codeList);
         } else {
             sqlParams.put("codeList", null);
         }
+    }
+
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("modifier", userName);
+        param.put("jmPromotionId", jmPromId);
+        param.put("stepName", stepName.getValue());
+        param.put("stepStatus", stepStatus.getValue());
+
+        daoExt.setJmPromotionStepStatus(param);
     }
 
     public static enum JmPromotionStepNameEnum {
@@ -569,6 +650,7 @@ public class CmsBtJmPromotionService extends BaseService {
             return name;
         }
     }
+
     public static enum JmPromotionStepStatusEnum {
 
         Default(0),    // 初始状态
@@ -578,27 +660,13 @@ public class CmsBtJmPromotionService extends BaseService {
 
         private int type;
 
-        JmPromotionStepStatusEnum(Integer type){
+        JmPromotionStepStatusEnum(Integer type) {
             this.type = type;
         }
 
-        public int getValue()
-        {
-            return  type;
+        public int getValue() {
+            return type;
         }
-    }
-
-    /**
-     * 设置聚美活动各阶段的状态
-     */
-    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("modifier", userName);
-        param.put("jmPromotionId", jmPromId);
-        param.put("stepName", stepName.getValue());
-        param.put("stepStatus", stepStatus.getValue());
-
-        daoExt.setJmPromotionStepStatus(param);
     }
 
 }

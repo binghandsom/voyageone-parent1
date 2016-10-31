@@ -100,7 +100,10 @@ define(['cms'], function (cms) {
             stsParam.stepStatus = (isSubmit === true) ? 'Success' : 'Error';
             jmPromotionObj.shelfStatus = ((isSubmit === true) ? 1 : 2);
 
-            return jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
+            return jmPromotionDetailService.savePromotionTagModules({
+                jmPromotionId: self.jmPromotionId,
+                tagModulesList: modules
+            }).then(function (resp) {
                 jmPromotionDetailService.setJmPromotionStepStatus(stsParam);
                 return resp.data;
             });

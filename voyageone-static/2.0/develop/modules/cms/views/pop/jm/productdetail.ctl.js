@@ -23,7 +23,7 @@ define([
         JmProductDetailController.prototype = {
             initialize: function () {
                 var self = this;
-                self.jmPromotionDetailService.getProductView(self.context.promotionProductId).then(function(res){
+                self.jmPromotionDetailService.getProductView(self.context.promotionProduct.id).then(function(res){
                     self.model=res.data;
                 });
                 //self.jmPromotionDetailService.getProductMasterData().then(function (res) {
@@ -74,6 +74,8 @@ define([
                 self.jmPromotionDetailService.updateDealPrice(parameter).then(function (res) {
                     skuInfo.isSave=false;
                     self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    self.context.promotionProduct.maxDealPrice = skuInfo.dealPrice;
+                    self.context.promotionProduct.minDealPrice = skuInfo.dealPrice;
                 })
             },
             deleteSku: function (promotionSkuInfo, index) {
