@@ -39,7 +39,6 @@ define([
             editModel.model = res.data.model;
             editModel.extModel = res.data.extModel;
             editModel.tagList = res.data.tagList;
-            editModel.tagListOrg = angular.copy(res.data.tagList);
             editModel.model.activityStart = formatToDate(editModel.model.activityStart);
             editModel.model.activityEnd = formatToDate(editModel.model.activityEnd);
             editModel.model.prePeriodStart = formatToDate(editModel.model.prePeriodStart);
@@ -124,35 +123,38 @@ define([
         });
     };
 
-    SpEditDirectiveController.prototype.addTag = function () {
+    SpEditDirectiveController.prototype.addTag = function (tag) {
         var self = this,
-            editModel = self.editModel;
+            tagList = self.editModel.tagList,
+            newTag;
 
-        if (editModel.tagList) {
-            editModel.tagList.push({"id": "", "channelId": "", "tagName": "", active: 1});
-        } else {
-            editModel.tagList = [{"id": "", "channelId": "", "tagName": "", active: 1}];
-        }
+        if (!tagList)
+            self.editModel.tagList = tagList = [];
+
+        newTag = {
+            model: {id: "", channelId: "", tagName: "", active: 1},
+            featured: false
+        };
+
+        if (tag)
+            newTag = angular.merge(newTag, tag);
+
+        tagList.push(newTag);
+
+        return newTag;
     };
 
     SpEditDirectiveController.prototype.delTag = function (tag, index) {
         var self = this,
             confirm = self.confirm,
-            translate = self.$translate,
             editModel = self.editModel;
 
-        confirm(translate.instant('TXT_MSG_DELETE_ITEM'))
-            .then(function () {
-                tag.active = 0;
+        confirm('TXT_MSG_DELETE_ITEM').then(function () {
+            tag.model.active = 0;
+            // 没有数据，说明后台不存在，就物理删除
+            if (!tag.model.id)
                 editModel.tagList.splice(index, 1);
-                if (tag.id) {
-                    // 找到原始保存的taglist,将其'active'设为0
-                    var tagObj = _.find(editModel.tagListOrg, function (item) {
-                        return item.id == tag.id;
-                    });
-                    tagObj.active = 0;
-                }
-            });
+        });
     };
 
     // 检查checkbox是否有输入
@@ -284,7 +286,7 @@ define([
                 return;
             }
             var hasTag = _.every(editModel.tagList, function (element) {
-                return element.tagName;
+                return element.model.tagName;
             });
             if (!hasTag)
                 return;
@@ -311,13 +313,7 @@ define([
 
         var param = {};
         param.tagList = _.filter(editModel.tagList, function (tag) {
-            return tag.tagName != "";
-        });
-        // 活动标签设置，找出已被删除的tag，添加到现有taglist的最后
-        _.each(editModel.tagListOrg, function (element) {
-            if (element.active == 0) {
-                param.tagList.push(element);
-            }
+            return tag.model.tagName != "";
         });
 
         param.model = angular.copy(model);
@@ -382,7 +378,10 @@ define([
             spDataService.getPromotionModules(true).then(function (tagModels) {
                 // 刷新标签编辑部分
                 editModel.tagList = tagModels.map(function (tagModelItem) {
-                    return tagModelItem.tag;
+                    return {
+                        model: tagModelItem.tag,
+                        featured: tagModelItem.module.featured
+                    };
                 });
                 // 之后触发事件，促使模块刷新
                 self.$fire('detail.saved');

@@ -145,7 +145,7 @@ define([
             var _upEntity = angular.copy($scope.editModel);
 
             _upEntity.tagList = _.filter(_upEntity.tagList, function (tag) {
-                return tag.tagName != "";
+                return tag.model.tagName != "";
             });
 
             _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
