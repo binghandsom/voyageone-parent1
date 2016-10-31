@@ -64,7 +64,7 @@ class PlatformMappingViewService extends BaseViewService {
         this.platformCategoryService = platformCategoryService;
     }
 
-    public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
+    Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
 
         ChannelConfigEnums.Channel channel = userSessionBean.getSelChannel();
 
@@ -89,7 +89,7 @@ class PlatformMappingViewService extends BaseViewService {
         return result;
     }
 
-    public PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId, String lang) {
+    PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId, String lang) {
 
         CmsBtPlatformMappingModel _platformMappingModel = platformMappingService.get(platformMappingModel, channelId);
 
@@ -158,7 +158,7 @@ class PlatformMappingViewService extends BaseViewService {
         return platformMappingGetBean;
     }
 
-    public String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
+    String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
 
         String username = user.getUserName();
 
@@ -233,7 +233,7 @@ class PlatformMappingViewService extends BaseViewService {
         return platformMappingModel.getModified();
     }
 
-    public List<Map<String, Object>> getCommonSchema() {
+    List<Map<String, Object>> getCommonSchema() {
 
         CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
 
@@ -259,7 +259,7 @@ class PlatformMappingViewService extends BaseViewService {
         }).collect(toList());
     }
 
-    public List<Map<String, Object>> getFeedCustomProps(String channelId) {
+    List<Map<String, Object>> getFeedCustomProps(String channelId) {
 
         CmsMtFeedCustomPropModel feedCustomPropModel = new CmsMtFeedCustomPropModel();
 
