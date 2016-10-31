@@ -18,6 +18,15 @@ public class InitResult {
     boolean isEnd;//活动是否结束
     boolean isUpdateJM;//9：00 12：00 是否更新聚美
     //boolean isBefore5DaysBeforePreBegin;//是否是预热开始前5天之前
+    int productCount;
+
+    public int getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(int productCount) {
+        this.productCount = productCount;
+    }
 
     public boolean isBegin() {
         return isBegin;

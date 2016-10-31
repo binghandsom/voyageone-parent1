@@ -50,4 +50,16 @@ public class UpdateJmParameter {
     //聚美平台信息
     public CmsBtProductModel_Platform_Cart platform;
     public ShopBean shopBean;
+
+    public boolean isBegin() {
+        return isBegin;
+    }
+
+    public void setBegin(boolean begin) {
+        isBegin = begin;
+    }
+
+    //聚美活动是否开始
+    public  boolean isBegin;
+
 }

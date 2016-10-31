@@ -59,11 +59,11 @@ define([
                             self.alert("选择商品的不存在，请重新选择。");
                             return;
                         }
-                        if (res.data.ecd == 3) {
-                            // 没有更新
-                            self.alert("选择的商品都没有在聚美上新过，不能加入聚美活动。");
-                            return;
-                        }
+                        //if (res.data.ecd == 3) {
+                        //    // 没有更新
+                        //    self.alert("选择的商品都没有在聚美上新过，不能加入聚美活动。");
+                        //    return;
+                        //}
                         if (res.data.ecd == 4) {
                             self.alert("添加商品到聚美活动失败,请联系IT处理。");
                             return;

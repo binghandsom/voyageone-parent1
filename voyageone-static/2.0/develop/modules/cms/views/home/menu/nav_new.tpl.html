@@ -3,7 +3,7 @@
     <!-- 类目管理 -->
     <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
     <!-- Feed管理 -->
-    <li  ng-if="!$root.isTranslator">
+    <li ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -58,7 +58,7 @@
                     <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
-            <li  ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
+            <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
                 <a class="auto" ng-if="item.isParent == 1">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
@@ -77,7 +77,7 @@
     </li>
 
     <!-- 活动管理 -->
-    <li  ng-if="!$root.isTranslator">
+    <li ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -103,11 +103,18 @@
                     <span TRANSLATE="TXT_PROMOTION_LIST"></span>
                 </a>
                 <ul class="nav nav-sub dk" style="padding-left:10px" >
-                    <!-- 总活动一览 -->
-                    <li ui-sref-active="active">
+                    <!-- 总活动一览 当该渠道只有一个聚美平台销售时此项不显示 -->
+                    <li ng-if="menuInfo.only4jumei==0||menuInfo.only4jumei==2" ui-sref-active="active">
                         <a ng-href="#/promotion/list">
                             <i class="fa fa-minus icon text-vo"></i>
                             <span TRANSLATE="TXT_PROMOTION_LIST_ALL"></span>
+                        </a>
+                    </li>
+                    <!-- 当该渠道在聚美平台销售时此项显示 -->
+                    <li ng-if="menuInfo.only4jumei>0" ui-sref-active="active">
+                        <a ng-href="#/jmpromotion/list">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span>聚美国际活动</span>
                         </a>
                     </li>
                     <!-- 平台活动一览 todo:暂时不支持 -->

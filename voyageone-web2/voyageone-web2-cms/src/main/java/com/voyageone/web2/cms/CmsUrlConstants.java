@@ -43,9 +43,9 @@ public interface CmsUrlConstants {
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel = "getEditModel";
+                String GetEditModelExt = "getEditModelExt";
                 String GetTagListByPromotionId = "getTagListByPromotionId";
                 String ImportJM = "importJM";
-
             }
 
             interface DETAIL {
@@ -73,6 +73,7 @@ public interface CmsUrlConstants {
                 String GET_PRODUCT_MASTER_DATA = "getProductMasterData";
                 String UpdateJM = "updateJM";
                 String BatchUpdateDealPrice = "batchUpdateDealPrice";
+                String BatchUpdateSkuDealPrice="batchUpdateSkuDealPrice";
                 String BatchSynchPrice = "batchSynchPrice";
                 String SynchAllPrice = "synchAllPrice";
                 String BatchCopyDeal = "batchCopyDeal";
@@ -83,8 +84,21 @@ public interface CmsUrlConstants {
                 String UpdateDealPrice = "updateDealPrice";
                 String UpdatePromotionProduct = "updatePromotionProduct";
                 String UpdatePromotionProductTag = "updatePromotionProductTag";
+                String UpdatePromotionListProductTag="updatePromotionListProductTag";
                 String SelectChangeCountByPromotionId = "selectChangeCountByPromotionId";
+                String UpdateRemark="updateRemark";
+                String RefreshPrice="refreshPrice";
             }
+        }
+
+        interface Images{
+            String ROOT = "/cms/jmPromotion/images";
+            String INIT = "init";
+            String SAVE = "save";
+            String GET_IMAGE_FOR_SUIT = "getImageForSuit";
+            String GET_IMAGE_TEMPLATE=  "getImageTemplate";
+            String DOWNLOAD_SPECIAL_IMAGE_ZIP ="downloadSpecialImageZip";
+            String DOWNLOAD_WARES_IMAGE_ZIP ="downloadWaresImageZip";
         }
     }
 
@@ -103,6 +117,7 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/CmsBtJmPromotionExportTask/index";
                 String GET_BY_PROMOTIONID = "getByPromotionId";
                 String ADDEXPORT = "addExport";
+                String EXPORT_JM_PROMOTION_INFO = "exportJmPromotionInfo";
             }
         }
     }
@@ -511,6 +526,15 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/add_to_channel_category";
             String GET_CHANNEL_CATEGORY_INFO = "getChannelCategory";
             String SAVE_CHANNEL_CATEGORY_INFO = "saveChannelCategory";
+        }
+
+        interface JM_IMAGE_UPLOAD{
+
+            String ROOT = "/cms/pop/jmPromotion/";
+
+            String UPLOAD = "upload";
+
+            String BATCH_UPLOAD = "batchUpload";
         }
     }
 

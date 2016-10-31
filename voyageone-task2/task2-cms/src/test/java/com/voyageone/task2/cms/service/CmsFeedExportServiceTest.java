@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -27,6 +29,8 @@ public class CmsFeedExportServiceTest {
     CmsBtExportTaskService cmsBtExportTaskService;
     @Test
     public void testOnStartup() throws Exception {
+        List<String> s = new ArrayList<>(Arrays.asList("aa","bb","cc"));
+        s.remove("bb");
         List<CmsBtExportTaskModel> cmsBtExportTaskModels = cmsBtExportTaskService.getExportTaskByUser("010", CmsBtExportTaskService.FEED, "james", 0, 10);
 
         cmsFeedExportService.onStartup(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModels.get(0))));

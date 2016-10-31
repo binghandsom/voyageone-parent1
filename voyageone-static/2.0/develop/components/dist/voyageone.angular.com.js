@@ -301,28 +301,6 @@ angular.module("voyageone.angular.directives").directive("fileStyle", function (
 
 /**
  * @Description:
- * 返回页面顶部
- * @example: <a href="javascript:void(0)" go-top = "200">xxx</a>
- * @User:    tony-piao
- * @Version: 0.1.0, 2016-5-24
- */
-angular.module("voyageone.angular.directives").directive("goTop", function() {
-    return {
-        restrict: "A",
-        link: function(scope, element,attrs) {
-            var speed = +attrs.goTop;
-            $(element).on("click",function(){
-                $("body").animate({ scrollTop: 0 }, speed);
-                return false;
-            });
-        }
-    };
-});
-
-/*****************************/
-
-/**
- * @Description:
  * table中无数据范围的数据
  * @User: linanbin
  * @Version: 2.0.0, 15/12/11
@@ -577,13 +555,21 @@ angular.module("voyageone.angular.directives")
                             return;
                         }
 
-                        // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
-                            translateParam.value = targetElement.attr(error);
-                        }
+                        // 尝试获取用户定义的错误提示信息
+                        if (attrs[error]) {
+                            // 如果用户自定义了相关错误的信息
+                            // 就显示自定义信息
+                            show(attrs[error]);
+                        } else {
+                            // 如果用户没有设定提示信息，那么就自己根据参数生成
+                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                                if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
+                                    translateParam.value = targetElement.attr('ng-pattern');
+                            }
 
-                        // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                        $translate(errorTypes[error], translateParam).then(show, show);
+                            // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
+                            $translate(errorTypes[error], translateParam).then(show, show);
+                        }
 
                     }, true);
 
@@ -2258,6 +2244,97 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             };
         });
 }());
+
+/*****************************/
+
+/**
+ * @description:
+ * 提供"滚动到"和"滚动到顶部"功能
+ *
+ * @example: <some-element scroll-to="#cssSelector">something</>
+ * @example: <some-element scroll-to="#cssSelector, 200">something</>
+ * @example: <some-element scroll-to="300, 200">something</>
+ * @example: <some-element scroll-to="#cssSelector, 200, -35">something</>
+ * @example: <a href="javascript:void(0)" go-top="200">xxx</a>
+ * @user:    tony-piao, jonas
+ * @version: 0.2.8
+ * @since    0.2.0
+ */
+angular.module("voyageone.angular.directives")
+    .directive("scrollTo", function () {
+        return {
+            restrict: "A",
+            scope: false,
+            link: function (scope, element, attr) {
+                var option = attr.scrollTo;
+                if (!option)
+                    return;
+                option = option.split(',');
+                option[1] = parseInt(option[1]) || 200;
+                option[2] = parseInt(option[2]) || 0;
+
+                element.on("click", function () {
+                    var option0;
+                    if (option[0]) {
+                        option0 = $(option[0]);
+                        if (option0.length) {
+                            option0 = option0.offset().top;
+                        } else {
+                            option0 = parseInt(option[0]) || 0;
+                        }
+                    } else {
+                        option0 = 0;
+                    }
+                    $("body").animate({scrollTop: option0 + option[2]}, option[1]);
+                    return false;
+                });
+            }
+        };
+    })
+    .directive("goTop", function () {
+        return {
+            restrict: "A",
+            scope: false,
+            link: function (scope, element, attrs) {
+                var speed = +attrs.goTop;
+                $(element).on("click", function () {
+                    $("body").animate({scrollTop: 0}, speed);
+                    return false;
+                });
+            }
+        };
+    });
+
+/*****************************/
+
+/**
+ * @description:
+ * 为 jQuery 的插件 stickUp 提供 angular 风格包装
+ *
+ * @example: <sticky>....</sticky>
+ * @user:    jonas
+ * @version: 0.2.8
+ */
+angular.module("voyageone.angular.directives").directive("sticky", function () {
+    return {
+        restrict: "E",
+        scope: false,
+        link: function stickyPostLink(scope, element, attr) {
+            var $document = $(document);
+            var top = parseInt(element.css('top'));
+            var topFix = parseInt(attr.topFix) || 0;
+            $document.on('scroll', function () {
+                var scrollTop = parseInt($document.scrollTop());
+                if (scrollTop > top + topFix) {
+                    element.css('top', scrollTop - topFix + 'px');
+                } else {
+                    element.css('top', top + 'px');
+                }
+            });
+        }
+    };
+});
+
 
 /*****************************/
 

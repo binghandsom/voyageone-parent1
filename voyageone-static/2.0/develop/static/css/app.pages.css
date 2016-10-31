@@ -861,11 +861,88 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav{
+.default-attr .nav {
     position: fixed;
     width: 100px;
-    margin-left:25px;
+    margin-left: 25px;
     cursor: pointer;
     border-width: 2px;
     border-style: dotted;
 }
+
+/* 聚美专场v2模块画面，商品排序弹出框样式 */
+
+.jm-sortable-product-modal {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1050;
+    background: white;
+    right: 10px;
+    bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.jm-sortable-product-modal .arrow-button button{
+    background: #fff;
+    border: none;
+    padding: 0px;
+}
+
+.jm-sortable-product {
+    width: 220px;
+}
+
+.jm-sortable-product-handle {
+    border: 1px solid #CCCCCC;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 5px;
+    background: white;
+    height: 118px;
+}
+
+.jm-sortable-product .close {
+    font-size: 12px
+}
+
+.jm-sortable-product img {
+    width: 100%;
+    height: 100%;
+}
+
+.jm-sortable-product-price {
+    padding: 3px 5px;
+    background: #e6e6e6;
+    color: red;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.jm-sortable-product .list-inline {
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.jm-module-bar-preview {
+    width: 960px;
+    height: 40px;
+    text-align: center;
+    color: white;
+    line-height: 40px;
+    font-size: 24px;
+    background-repeat: no-repeat;
+}
+
+#jm-promotion2-detail .nav-stacked {
+    min-width: 150px;
+}
+
+#jm-promotion2-detail sticky .btn-success,
+#jm-promotion2-detail sticky .btn-primary {
+    width: 90px;
+}
+
+/* 聚美专场v2模块画面，商品排序弹出框样式 END */

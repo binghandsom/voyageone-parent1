@@ -1,0 +1,60 @@
+<div class="jm-sortable-product-modal" ng-controller="JmSortProductPopupController as ctrl">
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.stock)">库存 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.stock)}}"></i></button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.sales)">销量 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.sales)}}"></i></button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.sortBy(ctrl.sortFields.price)">价格 <i class="fa {{'fa-sort' + ctrl.getSortName(ctrl.sortFields.price)}}"></i></button>
+            <span>（按住鼠标拖拽更改排序，按住 ctrl 可多选）</span>
+        </div>
+        <div class="col-sm-6 text-right">
+            <button type="button" class="btn btn-primary" ng-click="ctrl.save()">保存</button>
+            <button type="button" class="btn btn-default" ng-click="ctrl.destroy()">取消</button>
+        </div>
+    </div>
+    <hr>
+    <ul class="list-inline sortable-container" sv-root sv-part="ctrl.productList">
+        <li class="jm-sortable-product" ng-repeat="product in ctrl.productList" sv-element="opts">
+            <div class="jm-sortable-product-handle" sv-handle>
+                <div class="row">
+                    <div class="col-sm-8">
+                        Mall ID: <span>{{::product.jmProduct.jumeiMallId}}</span>
+                    </div>
+                    <div class="col-sm-4">
+                        <button type="button" class="close" ng-click="ctrl.remove($index, product)"><i class="fa fa-close"></i></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img image="{{::(product.jmPromotionProduct.image1 || product.jmProduct.image1)}}" title="{{::product.jmProduct.image1}}" alt="{{::product.jmPromotionProduct.image1}}">
+                    </div>
+                    <div class="col-sm-8">
+                        <div><a title="{{product.jmProduct.productShortName}}" target="_blank">{{product.jmProduct.productShortName | limitTo: 15}}{{product.jmProduct.productShortName.length > 15 ? '...' : ''}}</a></div>
+                        <div>库存 <span>{{::product.jmPromotionProduct.quantity}}</span></div>
+                        <div>销售 <span>{{::product.jmPromotionProduct.sales}}</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="jm-sortable-product-price">
+                            ¥ <span>{{::product.jmPromotionProduct.dealPrice}}</span>
+                        </div>
+                    </div>
+                    <ul class="col-sm-8 list-inline text-right arrow-button">
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first"><i class="fa fa-fast-backward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.up)" ng-disabled="$first"><i class="fa fa-backward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.down)" ng-disabled="$last"><i class="fa fa-forward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.downToLast)" ng-disabled="$last"><i class="fa fa-fast-forward"></i></button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

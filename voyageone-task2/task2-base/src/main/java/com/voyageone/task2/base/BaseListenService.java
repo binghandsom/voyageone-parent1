@@ -15,6 +15,7 @@ import java.util.List;
  * Created by jonas on 15/6/6.
  */
 public abstract class BaseListenService extends BaseTaskService implements ApplicationListener {
+//public abstract class BaseListenService extends BaseTaskService {
 
     private boolean running = false;
 
