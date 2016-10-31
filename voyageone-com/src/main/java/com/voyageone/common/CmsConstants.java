@@ -129,6 +129,10 @@ public class CmsConstants {
         String ALIAS = "ALIAS";
         String COLOR_ALIAS = ".color_alias";
 
+        // 子店到LIKING主店的产品品牌方商品图(images1)以外的图片复制方式(0:不复制原图以外的图片 1:以UNION方式复制图片
+        // 2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店)
+        String LIKING_IMAGE_COPY_FLG = "LIKING_IMAGE_COPY_FLG";
+
         String FEED_SEARCH_SORT = "FEED_SEARCH_SORT";
 
         // App端启用开关(用于控制所有平台的)

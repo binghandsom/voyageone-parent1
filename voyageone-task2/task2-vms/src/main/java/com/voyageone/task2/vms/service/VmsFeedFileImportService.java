@@ -7,6 +7,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.VmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
@@ -28,6 +29,8 @@ import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.vms.VmsConstants;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -180,6 +183,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
         private String fileName;
         private String uploadType;
         private String errorFileName = "";
+        private String priceMsrpFormula = "";
+        private String priceRetailFormula = "";
 
         public ImportFeedFile(String orderChannelId, String fileName, String uploadType) {
             this.channel = Channels.getChannel(orderChannelId);
@@ -191,6 +196,10 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
 
             try {
                 $info(channel.getFull_name() + "产品 Feed文件导入开始");
+
+                // 取得Feed计算公式
+                priceMsrpFormula = Feeds.getVal1(channel.getOrder_channel_id(), FeedEnums.Name.price_msrp);
+                priceRetailFormula = Feeds.getVal1(channel.getOrder_channel_id(), FeedEnums.Name.price_current);
 
                 // 取得Feed文件上传路径
                 String feedFilePath = "";
@@ -671,8 +680,8 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                     }
                     skuModel.setPriceClientRetail(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
                     skuModel.setPriceNet(new BigDecimal(codeModel.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                    skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
-                    skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
+                    skuModel.setPriceMsrp(calculatePriceByFormula(skuModel, priceMsrpFormula));
+                    skuModel.setPriceCurrent(calculatePriceByFormula(skuModel, priceRetailFormula));
                     Map<String, String> skuAttributeMap = new HashMap<>();
                     makeAttributeMap(skuAttributeMap, codeModel, "sku");
                     skuModel.setAttribute(skuAttributeMap);
@@ -703,9 +712,9 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
                         }
 
                         skuModel.setPriceClientRetail(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                        skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-                        skuModel.setPriceMsrp(skuModel.getPriceClientMsrp());
-                        skuModel.setPriceCurrent(skuModel.getPriceClientRetail());
+                        skuModel.setPriceNet(new BigDecimal(skuTemp.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());//
+                        skuModel.setPriceMsrp(calculatePriceByFormula(skuModel, priceMsrpFormula));
+                        skuModel.setPriceCurrent(calculatePriceByFormula(skuModel, priceRetailFormula));
                         Map<String, String> skuAttributeMap = new HashMap<>();
                         makeAttributeMap(skuAttributeMap, skuTemp, "sku");
                         skuModel.setAttribute(skuAttributeMap);
@@ -1835,15 +1844,15 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             }
 
             // 按lbs的单位进行转换
-//            if ("oz".equals(weightOrgUnit.toLowerCase())) {
-//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(16), 3, BigDecimal.ROUND_HALF_UP).toString();
-//            } else if ("g".equals(weightOrgUnit.toLowerCase())) {
-//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(453.59237), 3, BigDecimal.ROUND_HALF_UP).toString();
-//            } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
-//                weightCalc = new BigDecimal(weightOrg).divide(new BigDecimal(0.4535924), 3, BigDecimal.ROUND_HALF_UP).toString();
-//            } else {
-//                weightCalc = weightOrg;
-//            }
+            if ("oz".equals(weightOrgUnit.toLowerCase())) {
+                weightCalc = round(Double.parseDouble(weightOrg) / 16.0).toString();
+            } else if ("g".equals(weightOrgUnit.toLowerCase())) {
+                weightCalc = round(Double.parseDouble(weightOrg) / 453.59237).toString();
+            } else if ("kg".equals(weightOrgUnit.toLowerCase())) {
+                weightCalc = round(Double.parseDouble(weightOrg) / 0.4535924).toString();
+            } else {
+                weightCalc = round(Double.parseDouble(weightOrg)).toString();
+            }
 
             skuInfo.setWeightOrg(weightOrg);
             skuInfo.setWeightOrgUnit(weightOrgUnit);
@@ -1854,7 +1863,50 @@ public class VmsFeedFileImportService extends BaseMQCmsService {
             }
         }
 
+        private Double round(Double value){
+            BigDecimal b = new BigDecimal(value);
+            return b.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+        }
 
+        /**
+         * calculatePriceByFormula 根据公式计算价格
+         *
+         * @param feedSkuInfo CmsBtFeedInfoModel_Sku Feed的SKU信息
+         * @param formula     String   计算公式
+         * @return 计算后价格
+         */
+        private Double calculatePriceByFormula(CmsBtFeedInfoModel_Sku feedSkuInfo, String formula) {
+
+            Double priceClientMsrp = feedSkuInfo.getPriceClientMsrp();
+            Double priceClientRetail = feedSkuInfo.getPriceClientRetail();
+            Double priceNet = feedSkuInfo.getPriceNet();
+            String weight = feedSkuInfo.getWeightCalc();
+
+            if (StringUtils.isEmpty(formula)) {
+                return 0.0;
+            }
+
+            // 根据公式计算价格
+            try {
+                // 向上取整
+                weight = String.valueOf(Math.ceil(new Double(weight)));
+                // 价格说明：
+                // price_client_msrp:美金专柜价
+                // price_client_retail:美金指导价
+                // price_net:美金成本价
+                // weight:磅单位的重量
+                ExpressionParser parser = new SpelExpressionParser();
+                formula = formula.replaceAll("price_client_msrp", String.valueOf(priceClientMsrp))
+                        .replaceAll("price_client_retail", String.valueOf(priceClientRetail))
+                        .replaceAll("price_net", String.valueOf(priceNet))
+                        .replaceAll("weight", String.valueOf(weight));
+                double valueDouble = parser.parseExpression(formula).getValue(Double.class);
+                return new BigDecimal(String.valueOf(valueDouble)).setScale(0, BigDecimal.ROUND_UP).doubleValue();
+            } catch (Exception ex) {
+                $error("计算价格发生错误:" + ex.getMessage());
+                return 0.0;
+            }
+        }
     }
 
     public class MapComparator implements Comparator<Map<String, Object>> {

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.asserts.Assert;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
@@ -245,6 +246,34 @@ public class CmsProductDetailController extends CmsController {
         cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
 
         productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
+
+        return success(null);
+    }
+
+    /**
+     * 清除product_group表里， 指定channel， cart， code的platformPid
+     *
+     * @return
+     * @params cartId：平台Id  code：产品code
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.RESET_TM_PRODUCT)
+    public AjaxResponse resetTmProduct(@RequestBody Map params) {
+
+        String channelId = getUser().getSelChannelId();
+        Assert.notNull(channelId).elseThrowDefaultWithTitle("channelId");
+
+        int cartId = Integer.parseInt(String.valueOf(params.get("cartId")));
+        Assert.notNull(cartId).elseThrowDefaultWithTitle("cartId");
+
+        String productCode = String.valueOf(params.get("productCode"));
+        Assert.notNull(productCode).elseThrowDefaultWithTitle("productCode");
+
+        // 只有天猫， 天猫国际有这个需要
+		if ("010".equals(channelId)) { // 暂时只给jewelry开放这个功能
+			if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
+				cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
+			}
+		}
 
         return success(null);
     }

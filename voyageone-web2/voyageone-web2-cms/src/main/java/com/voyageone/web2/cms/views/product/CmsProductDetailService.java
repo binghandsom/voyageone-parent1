@@ -1354,18 +1354,20 @@ public class CmsProductDetailService extends BaseViewService {
 
     private void delistingCode(DelistingParameter paramr, String modifier, String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(paramr.getChannelId(), code);
-        CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
-        platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
-        platForm.setpProductId("");
-        platForm.setpNumIId("");
-        platForm.remove("pStatus");
-        productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        String comment = paramr.getComment();
-        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
-        if (imsBtProductModel != null) {
-            imsBtProductModel.setNumIid("");
-            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+        if(cmsBtProductModel != null) {
+            CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
+            platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
+            platForm.setpProductId("");
+            platForm.setpNumIId("");
+            platForm.remove("pStatus");
+            productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+            String comment = paramr.getComment();
+            productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
+            if (imsBtProductModel != null) {
+                imsBtProductModel.setNumIid("");
+                imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+            }
         }
     }
 
