@@ -340,6 +340,8 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
+
+			String GET_SKU_INVENTORY = "getSkuInventory";
         }
 
         interface FEED {
@@ -511,6 +513,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
+
+			String GET_UNDUE_PROMOTION = "getUnduePromotion";
         }
 
         interface IMAGE_SETTING {
