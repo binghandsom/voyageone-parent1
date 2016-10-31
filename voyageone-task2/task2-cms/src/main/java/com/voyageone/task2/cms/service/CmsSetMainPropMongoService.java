@@ -1099,9 +1099,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 } else {
                     // 生成productGroup数据
                     doSetGroup(feed);
+                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    $info("doCreateCmsBtProductModel:" +  (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1126,24 +1128,27 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+                    $info("doSaveItemDetails:" +  (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-
+                    $info("doSetPrice:" +  (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
+                    $info("setSellerCats:" +  (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
-
+                    $info("weightCalculate:" +  (System.currentTimeMillis() - startTime));
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+                    $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 
                 }
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-
+                $info("insertCmsBtFeedImportSize:" +  (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -1156,6 +1161,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
                 insertWorkload(cmsProduct);
+                $info("insertWorkload:" +  (System.currentTimeMillis() - startTime));
 //                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
 //                    // 遍历主数据product里的sku,看看有没有
 //                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
