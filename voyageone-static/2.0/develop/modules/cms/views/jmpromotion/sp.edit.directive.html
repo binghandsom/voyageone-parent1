@@ -210,13 +210,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList" ng-if="tag.active !== 0">
+                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList" ng-if="tag.model.active!=0">
                                 <td>
-                                    <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required ng-readonly="$index==0">
-                                    <vo-message target="ctrlEdit.promotionForm['tagName' + $index]"></vo-message>
+                                    <input class="form-control" ng-model="tag.model.tagName" name="tagName{{$index}}" maxlength="20" required ng-readonly="tag.featured">
+                                    <vo-message target="ctrlEdit.promotionForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
                                 </td>
                                 <td class="text-center">
-                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="$index>0" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
+                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="!tag.featured" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
                             </tr>

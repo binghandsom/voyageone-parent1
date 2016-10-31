@@ -218,10 +218,10 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="tag in editModel.tagList">
+                <tr ng-repeat="tag in editModel.tagList" ng-if="tag.model.active">
                     <td class="mfb-xxxsm">
-                        <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required ng-readonly="$index==0">
-                        <vo-message target="tagListForm['tagName' + $index]"></vo-message>
+                        <input class="form-control" ng-model="tag.model.tagName" name="tagName{{$index}}" required maxlength="20" ng-readonly="tag.featured">
+                        <vo-message target="tagListForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
                     </td>
                     <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="$index>0" ng-click="delTag(tag, $index)"><i class="fa fa-trash-o"></i></button></td>
                 </tr>
