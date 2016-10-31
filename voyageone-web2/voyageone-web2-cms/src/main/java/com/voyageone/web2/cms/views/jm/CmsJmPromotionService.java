@@ -205,7 +205,9 @@ class CmsJmPromotionService extends BaseViewService {
             List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = jmPromotionProduct3Service.getPromotionProductInTag(tagModel.getId());
 
             long countProductHasStockInJmModule = jmPromotionProductModelList.stream()
-                    .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() > 0)
+                    .filter(jmPromotionProductModel ->
+                            jmPromotionProductModel.getQuantity() != null && jmPromotionProductModel.getQuantity() > 0
+                    )
                     .count();
 
             long totalStock = jmPromotionProductModelList.stream()
