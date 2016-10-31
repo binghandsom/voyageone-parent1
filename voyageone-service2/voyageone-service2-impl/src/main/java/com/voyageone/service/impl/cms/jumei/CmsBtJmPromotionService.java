@@ -243,6 +243,7 @@ public class CmsBtJmPromotionService extends BaseService {
                         tag.setFeatured(tagJmModuleExtensionModel.getFeatured());
                         return tag;
                     })
+                    .sorted((a, b) -> (a.isFeatured() ? 0 : 1) - (b.isFeatured() ? 0 : 1))
                     .collect(toList());
             info.setTagList(tagList);
         }

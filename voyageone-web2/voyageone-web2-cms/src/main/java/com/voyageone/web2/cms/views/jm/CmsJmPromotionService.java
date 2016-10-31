@@ -219,7 +219,7 @@ class CmsJmPromotionService extends BaseViewService {
             jmTagModules.setTotalStock(totalStock);
 
             return jmTagModules;
-        }).collect(toList());
+        }).sorted((a, b) -> (a.getModule().getFeatured() ? 0 : 1) - (b.getModule().getFeatured() ? 0 : 1)).collect(toList());
     }
 
     void savePromotionTagModules(int jmPromotionId, List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
