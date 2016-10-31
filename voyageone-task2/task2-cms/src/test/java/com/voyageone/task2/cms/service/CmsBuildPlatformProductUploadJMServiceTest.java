@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ethan Shi on 2016/6/13.
@@ -138,8 +139,8 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         CmsBtSxWorkloadModel work = new CmsBtSxWorkloadModel();
         work.setCartId(27);
-        work.setChannelId("010");
-        work.setGroupId(30222L);
+        work.setChannelId("028");
+        work.setGroupId(1091269L);
         work.setPublishStatus(0);
 
         cmsBuildPlatformProductUploadJMService.updateProduct(work);
@@ -421,9 +422,12 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
                 remoteSpus = new ArrayList<>();
             }
 
+            //取库存
+            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+
             // 测试
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
-            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(cartId).getSkus());
+            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(cartId).getSkus(), skuLogicQtyMap);
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在聚美商城上隐藏该商品编码并把库存改为0
 //        if (!StringUtils.isEmpty(product.getPlatform(CART_ID).getpPlatformMallId()))
             cmsBuildPlatformProductUploadJMService.doHideNotExistSkuMall(shop, remoteSpus, product.getPlatform(cartId).getSkus());
