@@ -667,7 +667,7 @@ public class CmsProductMoveService extends BaseViewService {
         previewInfo.put("sourceSkuInfoAfter", sourceSkuListAfter);
 
         // 移动后-目标Code信息
-        previewInfo.put("destCodeInfoAfter", skuList.get(0));
+        previewInfo.put("destCodeInfoAfter", this.makeNewCode(skuList, channelId));
 
         // 移动后-目标Sku信息
         List<Map<String, Object>> destSkuListAfter = new ArrayList<>();
@@ -789,7 +789,7 @@ public class CmsProductMoveService extends BaseViewService {
 
         // 处理common.fields
         CmsBtProductModel_Field newFieldModel = newCommonModel.getFields();
-        newFieldModel.setCode(skuList.get(0));
+        newFieldModel.setCode(this.makeNewCode(skuList, channelId));
         newFieldModel.setIsMasterMain(0);
 
         // 处理common.sku
@@ -1200,5 +1200,23 @@ public class CmsProductMoveService extends BaseViewService {
         productGroupService.calculatePriceRange(group);
 
         return group;
+    }
+
+    /**
+     * 新建一个新的Code。
+     */
+    private String makeNewCode(List<String> skuList, String channelId) {
+        int i = 0;
+        while (true) {
+            String suffixName = "";
+            if (i > 0) {
+                suffixName = "-" + String.format("%03d", i);
+            }
+            CmsBtProductModel productModel = productService.getProductByCode(channelId, skuList.get(0) + suffixName);
+            if (productModel == null) {
+                return skuList.get(0) + suffixName;
+            }
+            i++;
+        }
     }
 }
