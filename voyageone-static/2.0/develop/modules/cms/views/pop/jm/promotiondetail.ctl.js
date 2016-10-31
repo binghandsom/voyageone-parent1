@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
     angularAMD.controller('popJMPromotionDetailCtl', function ($scope,jmPromotionService,alert,context,confirm,$translate,$filter) {
-        $scope.vm = {"jmMasterBrandList":[], "isFromBox": false};
+        $scope.vm = { "isFromBox": false };
         $scope.editModel = {model:{}};
         $scope.datePicker = [];
 
@@ -26,6 +26,7 @@ define([
                 jmPromotionService.getEditModel(context.id).then(function (res) {
                     $scope.editModel.model = res.data.model;
                     $scope.editModel.tagList = res.data.tagList;
+                    $scope.editModel.tagListOrg = angular.copy(res.data.tagList);
                     $scope.editModel.model.activityStart = formatToDate($scope.editModel.model.activityStart);
                     $scope.editModel.model.activityEnd = formatToDate($scope.editModel.model.activityEnd);
                     $scope.editModel.model.prePeriodStart = formatToDate($scope.editModel.model.prePeriodStart);
@@ -74,7 +75,7 @@ define([
             }
 
             jmPromotionService.init().then(function (res) {
-                $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
+                $scope.vm.metaData = res.data;
             });
         };
 
@@ -86,10 +87,16 @@ define([
             }
         };
 
-        $scope.delTag = function (tag) {
+        $scope.delTag = function (tag, index) {
             confirm($translate.instant('TXT_MSG_DELETE_ITEM'))
                 .then(function () {
-                  tag.active=0;
+                    tag.active = 0;
+                    $scope.editModel.tagList.splice(index, 1);
+                    if (tag.id) {
+                        // 找到原始保存的taglist,将其'active'设为0
+                        var tagObj = _.find($scope.editModel.tagListOrg, function(item) { return item.id == tag.id; });
+                        tagObj.active = 0;
+                    }
                 });
         };
 
@@ -135,6 +142,13 @@ define([
             var _upEntity = angular.copy($scope.editModel);
 
             _upEntity.tagList= _.filter( _upEntity.tagList, function(tag){ return tag.tagName != "";});
+            // 活动标签设置，找出已被删除的tag，添加到现有taglist的最后
+            _.each($scope.editModel.tagListOrg, function(element) {
+                if (element.active == 0) {
+                    _upEntity.tagList.push(element);
+                }
+            });
+
             _upEntity.model.activityStart = formatToStr(_upEntity.model.activityStart);
             _upEntity.model.activityEnd = formatToStr(_upEntity.model.activityEnd);
             _upEntity.model.prePeriodStart = formatToStr(_upEntity.model.prePeriodStart);
@@ -151,6 +165,16 @@ define([
             })
         };
 
+        // 检查checkbox是否有输入
+        $scope.checkboxVal = function (inputArr) {
+            var inputObj = _.find(inputArr, function(item) { return item == true; });
+            if (inputObj) {
+                return false;
+            } else {
+                return true;
+            }
+        };
+
         /**禁用日期*/
         $scope.disabled = function(date, mode) {
             return ( mode === 'day' && $scope.vm.isBeginPre );
@@ -164,6 +188,19 @@ define([
                 $scope.vm.datePicker2 = false;
             } else {
                 $scope.vm.datePicker2 = true;
+            }
+        };
+
+        $scope.onJmBrandChange = function () {
+            $scope.editModel.model.brand = '';
+            $scope.editModel.model.cmsBtJmMasterBrandId = '';
+
+            if ($scope.editModel.model.masterBrandName) {
+                var inputObj = _.find($scope.vm.metaData.jmMasterBrandList, function(item) { return item.value == $scope.editModel.model.masterBrandName; });
+                if (inputObj) {
+                    $scope.editModel.model.brand = inputObj.value;
+                    $scope.editModel.model.cmsBtJmMasterBrandId = inputObj.name;
+                }
             }
         };
 

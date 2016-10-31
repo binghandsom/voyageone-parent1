@@ -7,17 +7,23 @@ import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmProductDaoExt;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
-import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
+import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,13 +47,17 @@ class CmsJmPromotionService extends BaseViewService {
     private final TagService tagService;
     private final CmsBtJmPromotionService jmPromotionService;
     private final CmsBtJmPromotionProduct3Service jmPromotionProduct3Service;
+    private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    private final CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
     @Autowired
     public CmsJmPromotionService(CmsBtProductDao productDao, CmsAdvanceSearchService advanceSearchService,
                                  CmsBtJmProductDaoExt cmsBtJmProductDaoExt,
                                  CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service,
                                  TagService tagService, CmsBtJmPromotionService jmPromotionService,
-                                 CmsBtJmPromotionProduct3Service jmPromotionProduct3Service) {
+                                 CmsBtJmPromotionProduct3Service jmPromotionProduct3Service,
+                                 CmsBtJmBayWindowService cmsBtJmBayWindowService,
+                                 CmsBtJmImageTemplateService cmsBtJmImageTemplateService) {
         this.productDao = productDao;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtJmProductDaoExt = cmsBtJmProductDaoExt;
@@ -55,6 +65,8 @@ class CmsJmPromotionService extends BaseViewService {
         this.tagService = tagService;
         this.jmPromotionService = jmPromotionService;
         this.jmPromotionProduct3Service = jmPromotionProduct3Service;
+        this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
+        this.cmsBtJmImageTemplateService = cmsBtJmImageTemplateService;
     }
 
     /**
@@ -87,39 +99,49 @@ class CmsJmPromotionService extends BaseViewService {
         // 检查之前有没有上新到聚美上面
         List<String> errCodes = new ArrayList<>();
         List<String> productCodes = new ArrayList<>();
-        orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
-        List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
-        if (cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size()) {
-            for (CmsBtProductModel orginProduct : orginProducts) {
-                if (orginProduct.getCommon() == null || orginProduct.getCommon().getFields() == null || orginProduct.getCommon().getFields().getCode() == null) {
-                    $warn("addJMPromotion 商品数据不完整 " + orginProduct.toString());
-                    continue;
-                }
-
-                boolean flg = false;
-                if (cmsBtJmProductModels != null) {
-                    for (CmsBtJmProductModel cmsBtJmProductModel : cmsBtJmProductModels) {
-                        if (orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())) {
-                            flg = true;
-                            products.add(orginProduct);
-                            break;
-                        }
-                    }
-                }
-                if (!flg) {
-                    errCodes.add(orginProduct.getCommon().getFields().getCode());
-                }
+        for (CmsBtProductModel prodObj :orginProducts) {
+            String pCd = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+            if (pCd == null) {
+                $error("addJMPromotion 所选商品数据错误 " + prodObj.toString());
+                continue;
             }
-        } else {
-            products = orginProducts;
+            productCodes.add(pCd);
         }
-
-        if (products.size() == 0) {
-            $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
-            rsMap.put("ecd", 3);
-            rsMap.put("errlist", errCodes);
-            return rsMap;
-        }
+//        List<String> errCodes = new ArrayList<>();
+//        List<String> productCodes = new ArrayList<>();
+//        orginProducts.forEach(item -> productCodes.add(item.getCommon().getFields().getCode()));
+//        List<CmsBtJmProductModel> cmsBtJmProductModels = cmsBtJmProductDaoExt.selectByProductCodeListChannelId(productCodes, channelId);
+//        if (cmsBtJmProductModels == null || orginProducts.size() != cmsBtJmProductModels.size()) {
+//            for (CmsBtProductModel orginProduct : orginProducts) {
+//                if (orginProduct.getCommon() == null || orginProduct.getCommon().getFields() == null || orginProduct.getCommon().getFields().getCode() == null) {
+//                    $warn("addJMPromotion 商品数据不完整 " + orginProduct.toString());
+//                    continue;
+//                }
+//
+//                boolean flg = false;
+//                if (cmsBtJmProductModels != null) {
+//                    for (CmsBtJmProductModel cmsBtJmProductModel : cmsBtJmProductModels) {
+//                        if (orginProduct.getCommon().getFields().getCode().equalsIgnoreCase(cmsBtJmProductModel.getProductCode())) {
+//                            flg = true;
+//                            products.add(orginProduct);
+//                            break;
+//                        }
+//                    }
+//                }
+//                if (!flg) {
+//                    errCodes.add(orginProduct.getCommon().getFields().getCode());
+//                }
+//            }
+//        } else {
+//            products = orginProducts;
+//        }
+//
+//        if (products.size() == 0) {
+//            $warn(String.format("addJMPromotion 没有商品可以加入活动 channelId=%s, prodids=%s", channelId, productIds.toString()));
+//            rsMap.put("ecd", 3);
+//            rsMap.put("errlist", errCodes);
+//            return rsMap;
+//        }
 
         List<ProductImportBean> listProductImport = new ArrayList<>();
         List<SkuImportBean> listSkuImport = new ArrayList<>();
@@ -127,7 +149,7 @@ class CmsJmPromotionService extends BaseViewService {
         // 设置批量更新product的tag
         List<BulkUpdateModel> bulkList = new ArrayList<>();
 
-        products.forEach(product -> { //pal
+        orginProducts.forEach(product -> { //pal
             ProductImportBean productImportBean = buildProductFrom(product, promotion);
             productImportBean.setPromotionTag(tagName);
             productImportBean.setDiscount(discount);
@@ -154,7 +176,7 @@ class CmsJmPromotionService extends BaseViewService {
             $debug("addJMPromotion 批量更新结果 " + rs.toString());
         }
         rsMap.put("ecd", 0);
-        rsMap.put("cnt", products.size());
+        rsMap.put("cnt", orginProducts.size());
         rsMap.put("errlist", errCodes);
         return rsMap;
     }
@@ -198,18 +220,25 @@ class CmsJmPromotionService extends BaseViewService {
         }).collect(toList());
     }
 
-    void savePromotionTagModules(List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
+    void savePromotionTagModules(int jmPromotionId, List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {
 
-        for (CmsJmTagModules jmTagModule : jmTagModulesList) {
+        List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList = jmTagModulesList.stream()
+                .map(jmTagModule -> {
+                    CmsBtTagModel tagModel = jmTagModule.getTag();
+                    tagModel.setModifier(user.getUserName());
 
-            CmsBtTagModel tagModel = jmTagModule.getTag();
-            tagModel.setModifier(user.getUserName());
+                    CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = jmTagModule.getModule();
 
-            CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = jmTagModule.getModule();
+                    tagService.updateTagModel(tagModel);
+                    tagService.updateTagModel(tagJmModuleExtensionModel);
 
-            tagService.updateTagModel(tagModel);
-            tagService.updateTagModel(tagJmModuleExtensionModel);
-        }
+                    return tagJmModuleExtensionModel;
+                })
+                .collect(toList());
+
+        List<String> bayWindowTemplateUrls = cmsBtJmImageTemplateService.getBayWindowTemplateUrls();
+
+        cmsBtJmBayWindowService.updateBayWindows(jmPromotionId, tagJmModuleExtensionModelList, bayWindowTemplateUrls);
     }
 
     private ProductImportBean buildProductFrom(CmsBtProductModel model, CmsBtJmPromotionModel promotion) {

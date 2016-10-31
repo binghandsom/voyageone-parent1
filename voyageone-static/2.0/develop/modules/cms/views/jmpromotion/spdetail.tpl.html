@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.loadPromotion()">
+<div class="wrapper-md" ng-init="ctrl.loadPromotion()" id="jm-promotion2-detail">
     <uib-accordion class="vo_accordion vo_attr">
         <uib-accordion-group heading="聚美专场" is-open="true">
             <div class="row">
@@ -26,12 +26,11 @@
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-sm-2">活动时间：</label>
-                            <label class="control-label col-sm-1">从</label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <p class="form-control-static">{{ctrl.promotion.activityStart}}</p>
                             </div>
-                            <label class="control-label col-sm-1">到</label>
-                            <div class="col-sm-4">
+                            <label class="col-sm-1 text-center m-t-xs"><strong>~</strong></label>
+                            <div class="col-sm-3">
                                 <p class="form-control-static">{{ctrl.promotion.activityEnd}}</p>
                             </div>
                         </div>

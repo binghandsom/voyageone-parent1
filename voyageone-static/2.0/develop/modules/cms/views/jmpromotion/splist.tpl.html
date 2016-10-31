@@ -20,7 +20,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">主品牌</label>
 								<div class="col-sm-7">
-									<select class="form-control" ng-model="searchInfo.jmBrandId" ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList">
+									<select class="form-control" chosen ng-model="searchInfo.jmBrandName" ng-options="brand.value as brand.value for brand in vm.jmMasterBrandList">
 										<option value="" translate="TXT_SELECT_NO_VALUE"></option>
 									</select>
 								</div>
@@ -139,22 +139,22 @@
 
 	<!-- .accordion -->
 	<div class="box">
-		<div class="box-body-new">
-			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
+		<div class="box-body-new table-responsive">
+			<table class="table table-hover-new text-center" ng-controller="popupCtrl" style="table-layout: fixed;min-width: 1670px">
 				<thead>
 				<tr>
 					<th class="text-left mfb-xt3"></th>
-					<th class="text-center" translate="TXT_SEQ"></th>
-					<th class="text-center">频道页入口图</th>
-					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
-					<th class="text-left">主品牌名称</th>
-					<th class="text-left" translate="TXT_PROMOTION_TIME"></th>
-					<th class="text-left" translate="TXT_PREHEATING_TIME"></th>
-					<th class="text-left">准备期截止时间</th>
-					<th class="text-center">活动标记</th>
-					<th class="text-center">活动标题</th>
-					<th class="text-center">有库存商品数</th>
-					<th class="text-center" translate="TXT_ACTION"></th>
+					<th class="text-center mfb-xxt" translate="TXT_SEQ"></th>
+					<th class="text-center mfb-xxt">频道页入口图</th>
+					<th class="text-left mfb-xxt" translate="TXT_PROMOTION_NAME"></th>
+					<th class="text-left mfb-xxt">主品牌名称</th>
+					<th class="text-left mfb-xxt" translate="TXT_PROMOTION_TIME"></th>
+					<th class="text-left mfb-xxt" translate="TXT_PREHEATING_TIME"></th>
+					<th class="text-left mfb-xxt">准备期截止时间</th>
+					<th class="text-center mfb-xxt">活动标记</th>
+					<th class="text-center mfb-xxt">活动标题</th>
+					<th class="text-center mfb-xxt">有库存商品数</th>
+					<th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
 				</tr>
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
@@ -165,19 +165,23 @@
 							<span class="fa fa-check"></span>
 						</label>
 					</td>
-					<td class="text-center">{{promotion.id}}</td>
-					<td class="text-center">
-						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)" ng-if="promotion.entryImg"><img src="{{promotion.entryImg}}" alt="" style="max-width:180px;max-height:100px"/></a>
+					<td class="text-center mfb-xxt">{{promotion.id}}</td>
+					<td class="text-center mfb-xxt">
+						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)" ng-if="promotion.entryImg">
+							<img src="{{promotion.entryImg}}" class="thumb-sm-search m-r ng-isolate-scope" alt="暂无图片"/>
+						</a>
 					</td>
-					<td class="text-left yellowLink"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
-					<td class="text-left">{{promotion.brand}}</td>
-					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
-					<td class="text-left">{{promotion.prePeriodStart}}</td>
-					<td class="text-left">{{promotion.signupDeadline}}</td>
-					<td class="text-center"><span ng-show="promotion.appPageId||promotion.pcPageId">APP：{{promotion.appPageId}}<br>PC : {{promotion.pcPageId}}</span></td>
-					<td class="text-left">{{promotion.mainTitle}}</td>
-					<td class="text-center">{{promotion.prodSum}}</td>
-					<td class="text-center" ng-controller="popupCtrl">
+					<td class="text-left yellowLink mfb-xxt"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
+					<td class="text-left mfb-xxt">{{promotion.masterBrandName}}</td>
+					<td class="text-left mfb-xxt">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
+					<td class="text-left mfb-xxt">{{promotion.prePeriodStart}}</td>
+					<td class="text-left mfb-xxt">{{promotion.signupDeadline}}</td>
+					<td class="text-center mfb-xxt">
+						<span ng-show="promotion.appPageId||promotion.pcPageId" style="word-break: break-all;">APP：{{promotion.appPageId}}<br>PC : {{promotion.pcPageId}}</span>
+					</td>
+					<td class="text-left mfb-xxt">{{promotion.mainTitle}}</td>
+					<td class="text-center mfb-xxt">{{promotion.prodSum}}</td>
+					<td class="text-center mfb-xxt" ng-controller="popupCtrl">
 						<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail({id:promotion.id,search:search},search)"><i class="fa fa-pencil"></i></button>
 						<button ng-disabled="promotion.promotionStatus == '0'" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 					</td>

@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
@@ -14,6 +15,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.expression.Expression;
@@ -23,8 +25,9 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,13 +42,15 @@ public class CmsBtJmImageTemplateService {
     private final CmsBtJmPromotionDao cmsBtJmPromotionDao;
     private final TagService tagService;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
+    private final CmsMtJmConfigService cmsMtJmConfigService;
 
     @Autowired
-    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionDao cmsBtJmPromotionDao,TagService tagService,CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt) {
+    public CmsBtJmImageTemplateService(CmsBtJmImageTemplateDao cmsBtJmImageTemplateDao, CmsBtJmPromotionDao cmsBtJmPromotionDao,TagService tagService,CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,CmsMtJmConfigService cmsMtJmConfigService) {
         this.cmsBtJmImageTemplateDao = cmsBtJmImageTemplateDao;
         this.cmsBtJmPromotionDao = cmsBtJmPromotionDao;
         this.tagService = tagService;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
+        this.cmsMtJmConfigService = cmsMtJmConfigService;
     }
 
 
@@ -80,14 +85,35 @@ public class CmsBtJmImageTemplateService {
     /**
      * 根据jmPromotionId 和图片类型 返回 带模板的url地址
      */
-    public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean) {
+    public String getUrl(String imageName, String imageType, CmsBtJmPromotionSaveBean orgCmsBtJmPromotionSaveBean) {
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = JacksonUtil.json2Bean(JacksonUtil.bean2Json(orgCmsBtJmPromotionSaveBean),CmsBtJmPromotionSaveBean.class);
         boolean isEnterGuide = true;
+        String isLogo = null;
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         String paramString = "\"" + imageName + "\"";
         if (cmsBtJmImageTemplateModel.getParameters() != null && cmsBtJmImageTemplateModel.getParameters().size() > 0) {
+            if(cmsBtJmImageTemplateModel.getParameters().contains("extModel.directmailType")) {
+                CmsMtJmConfigModel cmsMtJmConfigModel = cmsMtJmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);
+                Map<String, Object> value = cmsMtJmConfigModel.getValues().stream().filter(objectObjectMap -> objectObjectMap.get("value").toString().equalsIgnoreCase(cmsBtJmPromotionSaveBean.getExtModel().getDirectmailType())).findFirst().orElse(null);
+                if (value != null) {
+                    cmsBtJmPromotionSaveBean.getExtModel().setDirectmailType(value.get("name").toString());
+                }
+            }
             if(StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide())){
-                cmsBtJmImageTemplateModel.getParameters().remove("extModel.enterGuide");
+                cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
                 isEnterGuide=false;
+            }else{
+                if(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide().indexOf(".png") > -1){
+                    if( imageType.equalsIgnoreCase("pcHeader") || imageType.equalsIgnoreCase("appHeader")){
+                        cmsBtJmPromotionSaveBean.getExtModel().setEnterGuide(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide().replace(".png",""));
+                        isLogo = cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide();
+                        cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
+                        isEnterGuide = false;
+                    }else{
+                        cmsBtJmImageTemplateModel.setParameters(cmsBtJmImageTemplateModel.getParameters().stream().filter(s -> !s.equalsIgnoreCase("extModel.enterGuide")).collect(Collectors.toList()));
+                        isEnterGuide = false;
+                    }
+                }
             }
             paramString += "," + cmsBtJmImageTemplateModel.getParameters().stream().collect(Collectors.joining(","));
         }
@@ -98,17 +124,42 @@ public class CmsBtJmImageTemplateService {
         StandardEvaluationContext context = new StandardEvaluationContext(cmsBtJmPromotionSaveBean);
 
         try {
+            Integer activityEnd = cmsBtJmImageTemplateModel.getParameters().indexOf("model.activityEnd");
             Object[] paramsObject = expression.getValue(context, Object[].class);
             for (int i = 0; i < paramsObject.length; i++) {
                 if (paramsObject[i] instanceof Date) {
-                    paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], "M.d");
+
+                    // 结束时期如果是 10:00:00 或者是9:59:59 的场合图片模板里面的日期不带小时的场合 日期减一天
+                    String dateFormat = StringUtil.isEmpty(cmsBtJmImageTemplateModel.getDateFormat())?"M.dd":cmsBtJmImageTemplateModel.getDateFormat();
+                    if(i-1 == activityEnd && dateFormat.indexOf("H") == -1){
+
+                        Date temp =(Date) paramsObject[i];
+                        String date = DateTimeUtil.format(temp, null);
+
+                        if(date.indexOf("9:59:59")> -1 || date.indexOf("10:00:00") > -1){
+                            temp.setTime(temp.getTime()-(24*3600*1000));
+                            paramsObject[i] = temp;
+                        }
+                    }
+                    paramsObject[i] = DateTimeUtil.format((Date) paramsObject[i], dateFormat);
+
                 }else if(paramsObject[i]  == null){
                     paramsObject[i] = "";
                 }
+                paramsObject[i] = URLEncoder.encode(paramsObject[i].toString(),"UTF-8");
             }
             if(isEnterGuide){
                 return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(1), paramsObject);
+
             }else{
+                if(!StringUtil.isEmpty(isLogo)) {
+
+                    List<Object> a = new ArrayList<>();
+                    Collections.addAll(a, paramsObject);
+                    a.add(isLogo);
+                    paramsObject = a.toArray();
+                    return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(2), paramsObject);
+                }
                 return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), paramsObject);
             }
         } catch (Exception ignored) {
@@ -128,6 +179,12 @@ public class CmsBtJmImageTemplateService {
 
     public String getSeparatorBar(String modeName) {
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType("separatorBar");
+        try{
+            modeName = URLEncoder.encode(modeName,"UTF-8");
+        }catch (Exception e){
+
+        }
+
         return String.format(cmsBtJmImageTemplateModel.getTemplateUrls().get(0), modeName);
     }
 

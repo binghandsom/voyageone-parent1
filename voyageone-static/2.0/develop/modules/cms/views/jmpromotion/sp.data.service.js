@@ -73,7 +73,7 @@ define(['cms'], function (cms) {
             return $lastGetPromotionModules.promise;
         },
 
-        saveModules: function saveModules(modules) {
+        saveModules: function saveModules(modules, isSubmit) {
             var self = this,
                 jmPromotionDetailService = self.jmPromotionDetailService,
                 dateFilter = self.dateFilter,
@@ -97,15 +97,15 @@ define(['cms'], function (cms) {
 
             var stsParam = {'jmPromId': curJmPromotionId};
             stsParam.stepName = 'PromotionShelf';
-            stsParam.stepStatus = 'Error';
-            jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function (resp) {
-                jmPromotionDetailService.savePromotionTagModules(modules).then(function (resp) {
-                    stsParam.stepStatus = 'Success';
-                    jmPromotionDetailService.setJmPromotionStepStatus(stsParam).then(function (resp) {
-                        jmPromotionObj.shelfStatus = 1;
-                    });
-                    return resp.data;
-                });
+            stsParam.stepStatus = (isSubmit === true) ? 'Success' : 'Error';
+            jmPromotionObj.shelfStatus = ((isSubmit === true) ? 1 : 2);
+
+            return jmPromotionDetailService.savePromotionTagModules({
+                jmPromotionId: self.jmPromotionId,
+                tagModulesList: modules
+            }).then(function (resp) {
+                jmPromotionDetailService.setJmPromotionStepStatus(stsParam);
+                return resp.data;
             });
         },
 
@@ -207,14 +207,13 @@ define(['cms'], function (cms) {
             });
         },
 
-        saveBayWindow: function saveBayWindow(bayWindow) {
+        saveBayWindow: function saveBayWindow(bayWindow, isSubmit) {
             var self = this,
                 jmPromotionService = self.jmPromotionService,
                 jmPromotionObj = self.jmPromotionObj;
-            jmPromotionObj.bayWindowStatus = 2;
 
             return jmPromotionService.saveBayWindow(bayWindow).then(function (resp) {
-                jmPromotionObj.bayWindowStatus = 1;
+                jmPromotionObj.bayWindowStatus = (isSubmit ? 1 : 2);
                 return resp.data;
             });
         }

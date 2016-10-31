@@ -9,10 +9,11 @@ define(['cms',
     './bay.window.directive'
 ], function (cms) {
 
-    function SpDetailPageController(spDataService, cActions, cmsBtJmPromotionExportTaskService, notify, $http) {
+    function SpDetailPageController(spDataService, cActions, cmsBtJmPromotionExportTaskService, notify, confirm) {
         this.spDataService = spDataService;
         this.cActions = cActions;
         this.notify = notify;
+        this.confirm = confirm;
         this.cmsBtJmPromotionExportTaskService = cmsBtJmPromotionExportTaskService;
     }
 
@@ -36,31 +37,33 @@ define(['cms',
     SpDetailPageController.prototype.downloadSpecialImageZip = function () {
         var self = this,
             cActions = self.cActions,
-            notify = self.notify,
+            confirm = self.confirm,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
+        confirm("请确认活动图片效果后，再行导出。").then(function(){
+            $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
+                {
+                    "jmPromotionId": spDataService.jmPromotionId,
+                    "promotionName": self.promotion.name
+                });
 
-        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
-            {
-                "jmPromotionId": spDataService.jmPromotionId,
-                "promotionName": self.promotion.name
-            });
+        });
 
     };
 
     SpDetailPageController.prototype.downloadWaresImageZip = function () {
         var self = this,
             cActions = self.cActions,
-            notify = self.notify,
+            confirm = self.confirm,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
-
-        $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {
-            "jmPromotionId": spDataService.jmPromotionId,
-            "promotionName": self.promotion.name
+        confirm("请确认活动图片效果后，再行导出。").then(function(){
+            $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {
+                "jmPromotionId": spDataService.jmPromotionId,
+                "promotionName": self.promotion.name
+            });
         });
+
     };
 
     SpDetailPageController.prototype.downloadJmPromotionInfo = function (type) {
@@ -69,7 +72,7 @@ define(['cms',
             notify = self.notify,
             spDataService = self.spDataService;
 
-        notify.warning("准备图片下载中，请留意浏览器右下角！");
+        notify.warning("准备图片下载中，请留意浏览器左下角！");
 
         $.download.post(cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.root + "/" + cActions.cms.cmsBtJmPromotionExportTask.cmsBtJmPromotionExportTaskService.exportJmPromotionInfo, {
             "type": type,

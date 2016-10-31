@@ -15,9 +15,13 @@ define([
         self.$document = $document;
         self.$scope = $scope;
 
-        $scope.$on('detail.saved', function (event, context) {
+        $scope.$on('detail.saved', function () {
             self.loadModules();
         });
+
+        self.$fire = function (eventName, context) {
+            $scope.$parent.$broadcast(eventName, context);
+        };
     }
 
     SpModelDirectiveController.prototype.productsSortBy = {
@@ -57,7 +61,7 @@ define([
         });
     };
 
-    SpModelDirectiveController.prototype.saveAll = function () {
+    SpModelDirectiveController.prototype.save = function save(isSubmit) {
         var self = this,
             spDataService = self.spDataService;
 
@@ -66,12 +70,14 @@ define([
             return;
         }
 
-        spDataService.jmPromotionObj.shelfStatus = 2;
-
-        spDataService.saveModules(self.modules).then(function () {
+        spDataService.saveModules(self.modules, isSubmit).then(function () {
             self.notify.success('TXT_SAVE_SUCCESS');
-            spDataService.jmPromotionObj.shelfStatus = 1;
+            self.$fire('module.saved');
         });
+    };
+
+    SpModelDirectiveController.prototype.submit = function submit() {
+        this.save(true);
     };
 
     cms.directive('spShelf', function spShelfDirectiveFactory() {

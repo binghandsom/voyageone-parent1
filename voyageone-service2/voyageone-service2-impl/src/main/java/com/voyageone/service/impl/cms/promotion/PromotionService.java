@@ -41,26 +41,22 @@ import java.util.Map;
 @Service
 public class PromotionService extends BaseService {
 
-    @Autowired
-    private CmsBtPromotionDaoExt cmsBtPromotionDaoExt;
-
-    @Autowired
-    private CmsBtTagDaoExt cmsBtTagDaoExt;
-
-    @Autowired
-    private TagService tagService;
-
-    @Autowired
-    private CmsBtTagDao cmsBtTagDao;
-
-    @Autowired
-    private CmsBtPromotionDao promotionDao;
-    @Autowired
-    private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
 @Autowired
     CmsBtPromotionDao dao;
     @Autowired
     CmsBtJmPromotionDao daoCmsBtJMPromotion;
+    @Autowired
+    private CmsBtPromotionDaoExt cmsBtPromotionDaoExt;
+    @Autowired
+    private CmsBtTagDaoExt cmsBtTagDaoExt;
+    @Autowired
+    private TagService tagService;
+    @Autowired
+    private CmsBtTagDao cmsBtTagDao;
+    @Autowired
+    private CmsBtPromotionDao promotionDao;
+    @Autowired
+    private CmsBtPromotionDaoExtCamel daoExtCamelCmsBtPromotionDaoExtCamel;
     @Autowired
     private TagService serviceTag;
     //分页 begin
@@ -177,6 +173,9 @@ public class PromotionService extends BaseService {
                 result.setResult(false);
                 result.setMsg("已有商品上新,不允许删除！");
                 return  result;
+            } else {
+                jmModel.setActive(0);
+                daoCmsBtJMPromotion.update(jmModel);
             }
         }
         Map<String, Object> param = new HashMap<>();

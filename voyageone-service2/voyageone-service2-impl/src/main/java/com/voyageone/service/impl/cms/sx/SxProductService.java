@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx;
 
+import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
@@ -564,7 +565,7 @@ public class SxProductService extends BaseService {
         return retUrls;
     }
 
-    private Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
+    public Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         int TIMEOUT_TIME = 10*1000;
@@ -1102,6 +1103,43 @@ public class SxProductService extends BaseService {
                 sku.setSizeSx(sizeSxMap.get(sku.getSkuCode()));
             }
         }
+
+        // add by desmond 2016/20/26 start
+        // 判断每个Product中是否有重复的sizeSx(有2个以上的sku用同一个sizeSx),如果有的话，上传到天猫/京东等平台会会报"销售属性重复"的错误，
+        // 在这里直接报出异常，让运营到CMS画面去改尺码
+        // sizeSx(设置优先顺序为CMS中的 容量/尺码 > platform size > size)
+        StringBuilder duplicatedSizeSxErrMsg = new StringBuilder();
+        for (CmsBtProductModel productModel : productModelList) {
+            List<String> duplicatedSizeSxList = new ArrayList<>();
+            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                String currentSizeSx = sku.getSizeSx();
+                // 如果已经知道是有重复的sku就跳过
+                if (duplicatedSizeSxList.contains(currentSizeSx)) {
+                    continue;
+                }
+
+                // 如果当前sku.sizeSx在整个产品的skus中有重复的，则加入到重复duplicatedSizeSxList中
+                if (productModel.getCommon().getSkus().stream().filter(s -> currentSizeSx.equals(s.getSizeSx())).count() > 1) {
+                    duplicatedSizeSxList.add(currentSizeSx);
+                }
+            }
+
+            // 如果有重复sizeSx的时候，报出异常，后面的上新不做了
+            if (ListUtils.notNull(duplicatedSizeSxList)) {
+                // Joiner如果对象列表中有null值的话，就会报Preconditions.checkNotNull的nullpointexception
+                duplicatedSizeSxErrMsg.append( String.format("产品(%s)的多个sku的上新用尺码sizeSx(CMS系统中的" +
+                        "\"容量/尺码\">\"platform size\">\"size\")都是重复值(\"%s\"), 同一个产品中" +
+                        "如果多个sku使用同一个上新用尺码时，上新时会报\"销售属性重复\"的错误,请修改成不同的尺码值; ",
+                        productModel.getCommon().getFields().getCode(), Joiner.on(",").join(duplicatedSizeSxList)));
+            }
+        }
+        // 如果有重复的上新用尺码值，则报错,后面的上新不做了
+        if (!StringUtils.isEmpty(duplicatedSizeSxErrMsg.toString())) {
+            $error(duplicatedSizeSxErrMsg.toString());
+            sxData.setErrorMessage(duplicatedSizeSxErrMsg.toString());
+            return sxData;
+        }
+        // add by desmond 2016/20/26 end
 
         // 排序 (根据SizeSx来进行排序)
         for (CmsBtProductModel productModel : productModelList) {
@@ -3443,11 +3481,13 @@ public class SxProductService extends BaseService {
                 // 先看看有没有默认值
                 String val = singleCheckField.getDefaultValue();
 
-                // 看看所有候选项里是否有"其他""其它"
+                // 看看所有候选项里是否有比较模糊的选项
                 if (StringUtils.isEmpty(val)) {
                     for (Option option : singleCheckField.getOptions()) {
                         if (option.getDisplayName().equals("其他") ||
-                                option.getDisplayName().equals("其它")
+                                option.getDisplayName().equals("其它") ||
+                                option.getDisplayName().equals("混合") ||
+                                option.getDisplayName().equals("通用")
                                 ) {
                             val = option.getValue();
                             break;

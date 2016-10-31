@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
@@ -39,11 +40,16 @@ public class JmPromotionImagesService extends BaseViewService {
         if (promotionImagesModel == null) {
             return new HashMap<>(0);
         }
+
+        //更新时间戳
+        promotionImagesModel.setModified(DateTimeUtil.getNowTimeStamp());
+
         return getJmImageTemplate(promotionImagesModel);
     }
 
     /**
      * 通过模型中的图片名获取地址
+     *
      * @param model 聚美图片模型
      * @return
      */
@@ -56,7 +62,7 @@ public class JmPromotionImagesService extends BaseViewService {
             imageMap.forEach((s, o) -> {
                 if (s != null && o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
                     if (model.getUseTemplate() != null && model.getUseTemplate())
-                        promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(model.getJmPromotionId() + "-" + s.toString(), s, cmsBtJmPromotionSaveBean));
+                        promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(o.toString(), s, cmsBtJmPromotionSaveBean));
                     else
                         promotionImageUrl.put(s, ORIGINAL_SCENE7_IMAGE_URL.replace("✓", o.toString()));
                 }

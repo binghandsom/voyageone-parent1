@@ -72,15 +72,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     @Autowired
     CmsBtJmPromotionExportTask3Service serviceCmsBtJmPromotionExportTask3Service;
     @Autowired
-    private ProductService productService;
-    @Autowired
-    private ProductGroupService productGroupService;
-    @Autowired
     CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
-    @Autowired
-    private  CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
-    @Autowired
-    private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtPromotionDao daoCmsBtPromotion;
     @Autowired
@@ -93,6 +85,15 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     TransactionRunner transactionRunner;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
+    private  CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
+    @Autowired
+    private  CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
+
     public void importFile(int JmBtPromotionImportTaskId, String importPath) throws Exception {
         String errorMsg = "";
         boolean isError = false;
@@ -146,7 +147,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         Sheet productSheet = book.getSheet("Product");
         if (productSheet == null) {
             result.setResult(false);
-            result.setMsg("导入模板不对,请检查");
+            result.setMsg("导入模板格式不对,请检查");
             return  result;
             // throw new Exception("导入模板不对,请检查");
         }
@@ -159,7 +160,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         Sheet skuSheet = book.getSheet("Sku");
         if (skuSheet == null) {
             result.setResult(false);
-            result.setMsg("导入模板不对,请检查");
+            result.setMsg("导入模板格式不对,请检查");
             return  result;
         }
         List<SkuImportBean> listSkuImport = new ArrayList<>();

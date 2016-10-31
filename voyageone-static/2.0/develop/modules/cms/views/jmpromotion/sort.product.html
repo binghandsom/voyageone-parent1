@@ -28,7 +28,7 @@
                         <img image="{{::(product.jmPromotionProduct.image1 || product.jmProduct.image1)}}" title="{{::product.jmProduct.image1}}" alt="{{::product.jmPromotionProduct.image1}}">
                     </div>
                     <div class="col-sm-8">
-                        <div>{{::product.jmProduct.productShortName}}</div>
+                        <div><a title="{{product.jmProduct.productShortName}}" target="_blank">{{product.jmProduct.productShortName | limitTo: 15}}{{product.jmProduct.productShortName.length > 15 ? '...' : ''}}</a></div>
                         <div>库存 <span>{{::product.jmPromotionProduct.quantity}}</span></div>
                         <div>销售 <span>{{::product.jmPromotionProduct.sales}}</span></div>
                     </div>
@@ -39,11 +39,19 @@
                             ¥ <span>{{::product.jmPromotionProduct.dealPrice}}</span>
                         </div>
                     </div>
-                    <ul class="col-sm-8 list-inline text-right">
-                        <li><i class="fa fa-fast-backward"></i></li>
-                        <li><i class="fa fa-backward"></i></li>
-                        <li><i class="fa fa-forward"></i></li>
-                        <li><i class="fa fa-fast-forward"></i></li>
+                    <ul class="col-sm-8 list-inline text-right arrow-button">
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first"><i class="fa fa-fast-backward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.up)" ng-disabled="$first"><i class="fa fa-backward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.down)" ng-disabled="$last"><i class="fa fa-forward"></i></button>
+                        </li>
+                        <li>
+                            <button ng-click="ctrl.moveProduct($index, ctrl.moveKeys.downToLast)" ng-disabled="$last"><i class="fa fa-fast-forward"></i></button>
+                        </li>
                     </ul>
                 </div>
             </div>

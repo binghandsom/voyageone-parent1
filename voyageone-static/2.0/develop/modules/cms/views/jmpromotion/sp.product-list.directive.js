@@ -1,7 +1,8 @@
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, carts) {
 
     function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, spDataService, $routeParams, alert, $translate, confirm, notify, platformMappingService)
     {
@@ -13,7 +14,8 @@ define([
             cmsBtJmPromotionExportTaskList: [],
             tagList: [],
             changeCount:0,
-            productCount:0
+            productCount:0,
+            productUrl:carts.valueOf(27).pUrl
         };
         $scope.searchInfo = {cmsBtJmPromotionId: $routeParams.jmpromId, pCatPath: null, pCatId: null};
         $scope.parentModel = {};
@@ -271,6 +273,20 @@ define([
             }
             return "上传成功";
         }
+        $scope.getUpdateStatus = function (model) {
+           //0:未更新 1：待更新  2：已经更新 3：更新失败',
+
+            if (model.updateStatus == 1) {
+                return "有变更";
+            }
+            else if (model.updateStatus== 2) {//model.priceStatus == 1 ||
+                return "已变更";
+            }
+            else if (model.updateStatus == 0) {
+                return "无变更";
+            }
+            return "无变更";
+        }
         $scope.getSelectedPromotionProductIdList = function () {
             var listPromotionProductId = [];
             for (var i = 0; i < $scope.vm.modelList.length; i++) {
@@ -503,9 +519,9 @@ define([
             }
             popups.openJMTagModify({search: $scope.search,tagList:$scope.vm.tagList,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
         }
-        $scope.openProductDetailWin = function (object) {
+        $scope.openProductDetailWin = function (model) {
 
-            popups.openJmProductDetail(object).then(function () {
+            popups.openJmProductDetail({promotionProduct: model}).then(function () {
                 $scope.search();
             });
         }

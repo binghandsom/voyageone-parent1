@@ -124,8 +124,8 @@
             <if test="jmpromName != null">
                 and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
-            <if test="jmBrandId != null">
-                and jmprom.cms_bt_jm_master_brand_Id = #{jmBrandId}
+            <if test="jmBrandName != null">
+                and jmprom.master_brand_name = #{jmBrandName}
             </if>
             <if test="compareType == 1 and prodSum != null">
                 and jmprom.prod_sum &lt;= #{prodSum}
@@ -187,8 +187,8 @@
             <if test="jmpromName != null">
                 and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
-            <if test="jmBrandId != null">
-                and jmprom.cms_bt_jm_master_brand_Id = #{jmBrandId}
+            <if test="jmBrandName != null">
+                and jmprom.master_brand_name = #{jmBrandName}
             </if>
             <if test="compareType == 1 and prodSum != null">
                 and jmprom.prod_sum &lt;= #{prodSum}
@@ -318,11 +318,13 @@
             `promotion_type` = #{promotionType,jdbcType=INTEGER},
             `cms_bt_jm_master_brand_Id` = #{cmsBtJmMasterBrandId,jdbcType=INTEGER},
             `brand` = #{brand,jdbcType=VARCHAR},
+            `master_brand_name` = #{masterBrandName,jdbcType=VARCHAR},
             `activity_start` = #{activityStart,jdbcType=TIMESTAMP},
             `activity_end` = #{activityEnd,jdbcType=TIMESTAMP},
             `pre_period_start` = #{prePeriodStart,jdbcType=TIMESTAMP},
             `signup_deadline` = #{signupDeadline,jdbcType=TIMESTAMP},
             `comment` = #{comment,jdbcType=VARCHAR},
+            `is_fst_save` = #{isFstSave,jdbcType=INTEGER},
             `modified` = now(),
             `modifier` = #{modifier,jdbcType=VARCHAR}
         </set>

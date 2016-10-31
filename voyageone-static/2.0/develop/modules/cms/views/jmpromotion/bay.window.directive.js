@@ -13,6 +13,10 @@ define(['cms'], function (cms) {
         $scope.$on('detail.saved', function () {
             self.loadBayWindow();
         });
+
+        $scope.$on('module.saved', function () {
+            self.loadBayWindow();
+        });
     }
 
     BayWindowComponentController.prototype.moveKeys = {
@@ -40,14 +44,8 @@ define(['cms'], function (cms) {
             self.bayWindow = bayWindow;
 
             self.initBayWindows().then(function (_bayWindows) {
-                self.fixedWindows = (!bayWindows || !bayWindows.length) ? _bayWindows : _bayWindows.map(function (_bayWindowItem) {
-                    return angular.merge(_bayWindowItem, bayWindows.find(function (bayWindowItem) {
-                        return bayWindowItem.name === _bayWindowItem.name;
-                    }));
-                });
-                self.linkWindows = (!bayWindows || !bayWindows.length) ? _bayWindows.map(function (item) {
-                    return angular.copy(item);
-                }) : bayWindows;
+                self.fixedWindows = bayWindow.fixed ? bayWindows : _bayWindows;
+                self.linkWindows = !bayWindow.fixed ? bayWindows : _bayWindows;
 
                 self.switchPreview();
             });
@@ -57,7 +55,7 @@ define(['cms'], function (cms) {
     BayWindowComponentController.prototype.getImage = function getImage(name, index) {
         var self = this,
             bayWindowTemplateUrls = self.bayWindowTemplateUrls;
-        return bayWindowTemplateUrls[index && 1].replace('%s', name);
+        return bayWindowTemplateUrls[index && 1].replace('%s', encodeURIComponent(name));
     };
 
     BayWindowComponentController.prototype.initBayWindows = function initBayWindows() {
@@ -68,7 +66,7 @@ define(['cms'], function (cms) {
             return modulesList.map(function (modules, index) {
                 var name = modules.module.moduleTitle;
                 return {
-                    name: name,
+                    name: index ? name : '聚美专场',
                     link: '',
                     url: self.getImage(name, index),
                     order: index,
@@ -146,7 +144,7 @@ define(['cms'], function (cms) {
         }
     };
 
-    BayWindowComponentController.prototype.saveAll = function saveAll() {
+    BayWindowComponentController.prototype.save = function save(isSubmit) {
         var self = this,
             spDataService = self.spDataService,
             bayWindow = self.bayWindow,
@@ -159,9 +157,13 @@ define(['cms'], function (cms) {
 
         bayWindow.bayWindows = bayWindow.fixed ? self.fixedWindows : self.linkWindows;
 
-        spDataService.saveBayWindow(bayWindow).then(function () {
+        spDataService.saveBayWindow(bayWindow, (isSubmit === true)).then(function () {
             notify.success('TXT_SAVE_SUCCESS');
         });
+    };
+
+    BayWindowComponentController.prototype.submit = function submit() {
+        this.save(true);
     };
 
     cms.directive('bayWindow', function bayWindowDirectiveFactory() {

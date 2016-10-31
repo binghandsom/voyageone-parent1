@@ -78,8 +78,7 @@
         c.parent_tag_id
         from voyageone_cms2.cms_bt_promotion a left join Synship.ct_cart b on a.cart_id = b.cart_id
         left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
-        where a.active = 1
-        and a.id = #{promotionId}
+        where a.id = #{promotionId}
     </select>
 
     <!-- 根据条件查询多条记录 -->
