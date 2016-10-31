@@ -602,11 +602,6 @@
                                 </li>
                             </ul>
                         </div>
-                        <!--图片下载，暂时不做-->
-                        <!--&nbsp;-->
-                        <!--<button type="button" class="btn btn-default">-->
-                        <!--<i class="fa fa-download"></i>&nbsp;{{'TXT_IMAGE_DOWNLOAD' | translate}}-->
-                        <!--</button>-->
                         &nbsp;
                         <div class="btn-group">
                             <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
@@ -645,7 +640,9 @@
             </div>
             <div class="container-fluid m-t-xs m-b-xs">
                 <uib-tabset class="tab-container vo_nav-tabs">
-                    <!--right-btn-->
+
+                    <!----------------------------- Todo 表格上方右侧批量处理按钮 ----------------------------->
+
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px" ng-controller="popupCtrl">
                         <label class="checkbox-inline c-checkbox" style="margin-top:12px">
                             <input type="checkbox" value="1" ng-model="vm._selall">
