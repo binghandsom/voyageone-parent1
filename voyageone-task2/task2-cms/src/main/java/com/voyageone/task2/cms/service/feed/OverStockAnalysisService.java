@@ -69,7 +69,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
-        zzWorkClear();
+//        zzWorkClear();
 //        int cnt = 0;
 //        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
 //            cnt = fullCopyTemp();
