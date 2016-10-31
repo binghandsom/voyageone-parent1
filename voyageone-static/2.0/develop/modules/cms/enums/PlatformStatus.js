@@ -34,9 +34,9 @@ define(['underscore'], function (_) {
             var stsItem = this[val];
             var stsTxt = (stsItem instanceof PlatformStatus) ? stsItem.name : '';
             if (val2 == 'OnSale' && val2 != val) {
-                return stsTxt + '-已上架';
+                return stsTxt + '-已';
             } else if (val2 == 'InStock' && val2 != val) {
-                return stsTxt + '-未上架';
+                return stsTxt + '-未';
             } else {
                 return stsTxt;
             }
