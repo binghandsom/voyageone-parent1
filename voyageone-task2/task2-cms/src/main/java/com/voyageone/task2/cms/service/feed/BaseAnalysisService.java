@@ -242,6 +242,7 @@ public abstract class BaseAnalysisService  extends BaseCronTaskService {
                 }
             }catch (Exception e){
                 e.printStackTrace();
+                $error(e);
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             }
         }
