@@ -9,7 +9,7 @@ define([
     'modules/cms/service/product.detail.service',
     'modules/cms/directives/defaultAttr.directive'
 ], function (cms) {
-    cms.controller('attributeDetailController', (function () {
+    cms.controller('AttributeDetailController', (function () {
 
         function AttributeDetailController($scope, $routeParams, alert, notify, popups, confirm, menuService,
                                            $productDetailService, platformMappingService) {
@@ -114,7 +114,7 @@ define([
             self.confirm('切换类目, 会清空您<strong>未保存</strong>的所有内容。确认要切换么?').then(function () {
                 self.tryGet();
 
-                if(searchInfo.categoryType == 1)
+                if (searchInfo.categoryType == 1)
                     searchInfo.categoryPath = null;
             }, function () {
                 searchInfo.categoryType = self.lastCategoryType;
@@ -178,7 +178,8 @@ define([
                 self.popups.popupNewCategory({
                     from: "",
                     categories: categoryList,
-                    divType: ">"
+                    divType: ">",
+                    canSelectParent: true
                 }).then(function (context) {
 
                     var selected = context.selected;

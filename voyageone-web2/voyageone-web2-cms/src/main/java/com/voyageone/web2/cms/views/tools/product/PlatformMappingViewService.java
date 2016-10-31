@@ -11,6 +11,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
@@ -42,28 +43,25 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 class PlatformMappingViewService extends BaseViewService {
-
     private final PlatformMappingService platformMappingService;
-
     private final PlatformSchemaService platformSchemaService;
-
     private final CmsMtPlatformCommonSchemaService platformCommonSchemaService;
-
     private final CommonSchemaService commonSchemaService;
-
     private final CmsMtFeedCustomPropDao feedCustomPropDao;
+    private final PlatformCategoryService platformCategoryService;
 
     @Autowired
     public PlatformMappingViewService(PlatformMappingService platformMappingService,
                                       PlatformSchemaService platformSchemaService,
                                       CmsMtPlatformCommonSchemaService platformCommonSchemaService,
                                       CommonSchemaService commonSchemaService,
-                                      CmsMtFeedCustomPropDao feedCustomPropDao) {
+                                      CmsMtFeedCustomPropDao feedCustomPropDao, PlatformCategoryService platformCategoryService) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
         this.platformCommonSchemaService = platformCommonSchemaService;
         this.commonSchemaService = commonSchemaService;
         this.feedCustomPropDao = feedCustomPropDao;
+        this.platformCategoryService = platformCategoryService;
     }
 
     public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
@@ -120,7 +118,9 @@ class PlatformMappingViewService extends BaseViewService {
 
         List<Field> item = null, product = null;
 
-        if (type == 1) {
+        // 如果类型不是"通用类目"，或者不是"叶子类目"
+        // 那么统统使用通用 Schema
+        if (type == 1 || !platformCategoryService.isLeafCategory(categoryPath, channelId, cartId)) {
             CmsMtPlatformCommonSchemaModel commonSchemaModel = platformCommonSchemaService.get(cartId);
 
             if (commonSchemaModel == null)
