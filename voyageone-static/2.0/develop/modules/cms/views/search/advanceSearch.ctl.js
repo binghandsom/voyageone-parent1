@@ -1,9 +1,3 @@
-/**
- * Created by sofia on 6/8/2016.
- */
-/**
- * Created by linanbin on 15/12/7.
- */
 define([
     'underscore',
     'modules/cms/controller/popup.ctl',
@@ -12,7 +6,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, $promotionHistoryService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {
 
         $scope.vm = {
             searchInfo: {
@@ -958,7 +952,7 @@ define([
                     });
                     res.productIds = productIds;
                     res.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(res).then(function (context) {
+                    $addChannelCategoryService.save(res).then(function () {
                         notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
                     });
@@ -975,13 +969,13 @@ define([
                 if (isPromoTag) {
                     // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
-                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 } else {
                     // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
-                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 }
@@ -1100,7 +1094,7 @@ define([
                     });
                 });
             }
-        }
+        };
 
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
@@ -1148,19 +1142,10 @@ define([
                 });
             }
         };
-        
-        // 取得产品的活动详情
-        $scope.getUnduePromotions = function(code) {
-        	$promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
-        		var promotions = resp.data;
-        		// TODO
-        		alert(JSON.stringify(promotions));
-        	});
-        };
 
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', '$promotionHistoryService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];
     return searchIndex;
 });
