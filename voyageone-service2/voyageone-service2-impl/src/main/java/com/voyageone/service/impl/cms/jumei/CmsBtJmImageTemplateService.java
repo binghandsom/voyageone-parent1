@@ -199,7 +199,8 @@ public class CmsBtJmImageTemplateService {
         }
         info.setModel(model);
         if (model.getRefTagId() != null && model.getRefTagId() != 0) {
-            List<CmsBtTagModel> tagList = tagService.getListByParentTagId(model.getRefTagId());
+            List<CmsBtTagModel> tagModelList = tagService.getListByParentTagId(model.getRefTagId());
+            List<CmsBtJmPromotionSaveBean.Tag> tagList = tagModelList.stream().map(CmsBtJmPromotionSaveBean.Tag::new).collect(Collectors.toList());
             info.setTagList(tagList);
         }
 
