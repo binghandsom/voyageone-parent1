@@ -744,6 +744,8 @@ public interface CmsUrlConstants {
             String UPDATE_SELLER_CAT = "updateSellerCat";
 
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
+
+            String SORTABLE_CART =  "sortableCat";
         }
 
         interface BLACK_BRAND {

@@ -240,6 +240,10 @@ s-field textarea.s-html {
     list-style-type: none;
 }
 
+.category_drag_list_dp ul li{
+    height: 30px;
+}
+
 .category_drag_list_dp li a:link {
     float: left;
     width: 100%;
