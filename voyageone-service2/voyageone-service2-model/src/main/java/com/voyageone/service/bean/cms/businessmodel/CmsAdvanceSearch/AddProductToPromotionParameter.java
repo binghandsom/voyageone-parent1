@@ -9,7 +9,7 @@ public class AddProductToPromotionParameter {
 
     int cartId;
     int isSelAll;
-
+    List<String> codeList;
     public int getIsSelAll() {
         return isSelAll;
     }
@@ -17,9 +17,6 @@ public class AddProductToPromotionParameter {
     public void setIsSelAll(int isSelAll) {
         this.isSelAll = isSelAll;
     }
-
-    List<String> codeList;
-
     public int getCartId() {
         return cartId;
     }
