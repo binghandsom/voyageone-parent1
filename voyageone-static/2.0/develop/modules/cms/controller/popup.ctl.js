@@ -408,6 +408,13 @@ define([
                 "controller": 'popCodeDetailCtl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "joinPromotion": {
+                "templateUrl": "views/pop/search/joinPromotion.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/joinPromotion.ctl",
+                "controller": 'joinPromotionCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'md'
             }
 
         },
@@ -1267,6 +1274,14 @@ define([
         $scope.openImageBatchJmUpload = function openImageBatchJmUpload(context) {
             return openModal(popActions.jumei.promotion.imageBatchUpload, context)
         };
+
+        /**
+         * 高级检索加入活动
+         */
+        $scope.openJoinPromotion = function openJoinPromotion(context) {
+            return openModal(popActions.search.joinPromotion, context)
+        };
+
 
     }).factory('popups', function ($controller, $rootScope) {
 
