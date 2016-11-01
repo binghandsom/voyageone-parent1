@@ -865,6 +865,8 @@ define(function () {
         "TXT_TARGET_CODE_INFO": "目标Code信息",
         "TXT_TARGET_SKU_INFO": "目标Sku信息",
         "TXT_MOVE_CONFIRM": "确定移动",
+        "TXT_NO_CHECK_SKU": "请选择要移动的Sku",
+        "TXT_CHECK_ALL_SKU": "不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行\"移动到其他Group\"操作",
         "TXT_CODE": "Code",
         "TXT_GROUP_NUMIID": "NumIID"
     };
