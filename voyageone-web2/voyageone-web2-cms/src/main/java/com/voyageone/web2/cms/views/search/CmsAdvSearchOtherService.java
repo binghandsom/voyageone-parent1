@@ -1,11 +1,21 @@
 package com.voyageone.web2.cms.views.search;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
@@ -15,18 +25,12 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward
@@ -44,19 +48,26 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     @Autowired
     private TagService tagService;
     
-    private static final String[] sortItems = new String[] { "1", "7", "30", "Year" };
+    private static final String[] biSortItems = { "1", "7", "30" };
     
-    private static final String[][] sortItemKeys = new String[][] {
+    private static final String[][] biSortItemKeys = {
     	{ "bi.sum%s.pv.cartId", "%s浏览量" },
     	{ "bi.sum%s.uv.cartId", "%s访客数" },
     	{ "bi.sum%s.gwc.cartId", "%s加购件数" },
     	{ "bi.sum%s.scs.cartId", "%s收藏人数" }
     };
     
-    private static final String[][] cnPriceTypes = new String[][] {
-    	{ "bi.cap.cartId", "中国建议售价" },
-    	{ "bi.cgp.cartId", "中国指导售价" },
-    	{ "bi.cfp.cartId", "中国最终售价" }
+    private static final String[][] saleSortItems = {
+    	{ "sales.codeSum7.cartId%s", "7天销量" },
+    	{ "sales.codeSum30.cartId%s", "30天销量"},
+    	{ "sales.codeSumYear.cartId%s", "年销量" },
+    	{ "sales.codeSumAll.cartId%s", "全部销量" }
+    };
+    
+    private static final String[][] priceTypesSortItems = {
+    	{ "platforms.P%s.pPriceMsrpEd", "中国建议售价" },
+    	{ "platforms.P%s.pPriceRetailSt", "中国指导售价" },
+    	{ "platforms.P%s.pPriceSaleEd", "中国最终售价" }
     };
 
     /**
@@ -285,27 +296,29 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 continue;
             }
             
-            // 添加各平台的排序关键字
-            for (String sortItem : sortItems) {
-            	String displayText = null;
-            	if (StringUtils.isNumeric(sortItem)) {
-            		displayText = sortItem + "天"; 
-            	} else {
-            		displayText = "年";
-            	}
-            	for (String[] sortItemKey : sortItemKeys) {
+            // 添加各平台的排序字段
+            for (String biSortItem : biSortItems) {
+            	for (String[] biSortItemKey : biSortItemKeys) {
             		Map<String, String> keySumMap = new HashMap<>();
-                    keySumMap.put("name", cartObj.getName() + String.format(sortItemKey[1], displayText));
-                    keySumMap.put("value", String.format(sortItemKey[0], sortItem) + cartId);
+                    keySumMap.put("name", cartObj.getName() + String.format(biSortItemKey[1], biSortItem));
+                    keySumMap.put("value", String.format(biSortItemKey[0], biSortItem) + cartId);
                     dataSumList.add(keySumMap);
             	}
             }
             
-            // 添加中国售价排序关键字
-            for (String[] cnPriceType : cnPriceTypes) {
+            // 添加销量的排序字段
+            for (String[] saleSortItem : saleSortItems) {
+            	Map<String, String> keySumMap = new HashMap<>();
+                keySumMap.put("name", cartObj.getName() + saleSortItem[1]);
+                keySumMap.put("value", String.format(saleSortItem[0], cartId));
+                dataSumList.add(keySumMap);
+            }
+            
+            // 添加中国售价排序字段
+            for (String[] cnPriceType : priceTypesSortItems) {
         		Map<String, String> keySumMap = new HashMap<>();
                 keySumMap.put("name", cartObj.getName() + cnPriceType[1]);
-                keySumMap.put("value", cnPriceType[0] + cartId);
+                keySumMap.put("value", String.format(cnPriceType[0], cartId));
                 dataSumList.add(keySumMap);
             }
         }
