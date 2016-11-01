@@ -7,6 +7,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.businessmodel.CmsAdvanceSearch.AddProductToPromotionParameter;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;

@@ -342,6 +342,7 @@ public interface CmsUrlConstants {
             String EXPORT_DOWNLOAD = "exportDownload";
 
 			String GET_SKU_INVENTORY = "getSkuInventory";
+
         }
 
         interface FEED {
@@ -490,6 +491,12 @@ public interface CmsUrlConstants {
             String GET_PROM_TAGS = "getPromotionTags";
             String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
+        }
+        interface  AddProductToPromotion
+        {
+            String ROOT = "/cms/pop/add_product_to_promotion/";
+            String AddProductToPromotion = "addProductToPromotion";
+            String Init="init";
         }
 
         interface PRICE_LOG {

@@ -68,4 +68,12 @@
             </if>
         </where>
     </select>
+    <select id="selectAddPromotionList" resultType="CmsBtPromotionModel">
+        select * from voyageone_cms2.cms_bt_promotion a
+        where a.active = 1
+              and a.activity_end >= now()
+              and a.promotion_status = 1
+              and a.channel_id=#{channelId}
+              and a.cart_id=#{cartId}
+    </select>
 </mapper>

@@ -419,6 +419,10 @@ define(function () {
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
+                "$addProductToPromotionService":{
+                    "root": "/cms/pop/add_product_to_promotion",
+                    "init": "init"
+                },
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
