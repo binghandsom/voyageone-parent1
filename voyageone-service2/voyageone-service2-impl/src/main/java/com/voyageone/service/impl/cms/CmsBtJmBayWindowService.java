@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
-import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -52,25 +51,19 @@ public class CmsBtJmBayWindowService extends BaseService {
     }
 
     public List<CmsBtJmBayWindowModel.BayWindow> createBayWindows(List<CmsBtTagJmModuleExtensionModel> tagJmModuleExtensionModelList, List<String> bayWindowTemplateUrls) {
-        return IntStream.range(0, tagJmModuleExtensionModelList.size())
-                .mapToObj(index -> {
-                    CmsBtTagJmModuleExtensionModel module = tagJmModuleExtensionModelList.get(index);
-                    String name = index == 0 ? "聚美专场" : module.getModuleTitle();
-
-                    CmsBtJmBayWindowModel.BayWindow bayWindow = new CmsBtJmBayWindowModel.BayWindow();
-                    bayWindow.setName(name);
-                    try {
-                        bayWindow.setUrl(String.format(bayWindowTemplateUrls.get(index == 0 ? 0 : 1), URLEncoder.encode(name, "UTF-8")));
-                    } catch (UnsupportedEncodingException e) {
-                        throw new BusinessException("创建固定飘窗信息时出现错误", e);
-                    }
-                    bayWindow.setLink("");
-                    bayWindow.setEnabled(true);
-                    bayWindow.setOrder(index);
-
-                    return bayWindow;
-                })
+        List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = tagJmModuleExtensionModelList
+                .stream()
+                .filter(tagModule -> !tagModule.getFeatured())
+                .map(tagModule -> createBayWindow(tagModule.getModuleTitle(), bayWindowTemplateUrls.get(1)))
                 .collect(toList());
+
+        bayWindowList.add(0, createBayWindow("聚美专场", bayWindowTemplateUrls.get(0)));
+
+        for (int i = 0; i < bayWindowList.size(); i++) {
+            bayWindowList.get(i).setOrder(i);
+        }
+
+        return bayWindowList;
     }
 
     public void update(CmsBtJmBayWindowModel bayWindowModel) {
@@ -86,5 +79,20 @@ public class CmsBtJmBayWindowService extends BaseService {
         cmsBtJmBayWindowModel.setBayWindows(bayWindowList);
 
         update(cmsBtJmBayWindowModel);
+    }
+
+    private CmsBtJmBayWindowModel.BayWindow createBayWindow(String name, String templateUrl) {
+        CmsBtJmBayWindowModel.BayWindow bayWindow = new CmsBtJmBayWindowModel.BayWindow();
+        bayWindow.setName(name);
+
+        try {
+            bayWindow.setUrl(String.format(templateUrl, URLEncoder.encode(name, "UTF-8")));
+        } catch (UnsupportedEncodingException e) {
+            throw new BusinessException("创建固定飘窗信息时出现错误", e);
+        }
+
+        bayWindow.setLink("");
+        bayWindow.setEnabled(true);
+        return bayWindow;
     }
 }

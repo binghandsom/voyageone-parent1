@@ -205,10 +205,12 @@ class CmsJmPromotionService extends BaseViewService {
             List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = jmPromotionProduct3Service.getPromotionProductInTag(tagModel.getId());
 
             long countProductHasStockInJmModule = jmPromotionProductModelList.stream()
+                    .filter(jmPromotionProductModel -> jmPromotionProductModel != null && jmPromotionProductModel.getQuantity() != null)
                     .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() > 0)
                     .count();
 
             long totalStock = jmPromotionProductModelList.stream()
+                    .filter(jmPromotionProductModel -> jmPromotionProductModel != null && jmPromotionProductModel.getQuantity() != null)
                     .mapToLong(CmsBtJmPromotionProductModel::getQuantity)
                     .sum();
 
@@ -217,7 +219,7 @@ class CmsJmPromotionService extends BaseViewService {
             jmTagModules.setTotalStock(totalStock);
 
             return jmTagModules;
-        }).collect(toList());
+        }).sorted((a, b) -> (a.getModule().getFeatured() ? 0 : 1) - (b.getModule().getFeatured() ? 0 : 1)).collect(toList());
     }
 
     void savePromotionTagModules(int jmPromotionId, List<CmsJmTagModules> jmTagModulesList, UserSessionBean user) {

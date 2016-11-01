@@ -14,25 +14,12 @@ public class CmsBtJmPromotionSaveBean {
 
     private CmsBtJmPromotionModel model;
     private CmsBtJmPromotionSpecialExtensionModel extModel;
-    private List<CmsBtTagModel> tagList;
+    private List<Tag> tagList;
 
     // 是否要处理扩展信息
     private boolean hasExt;
     // 操作类型 1:提交/保存 0:暂存
     private int saveType;
-
-    /**
-     * 是否有主推模块
-     */
-    private boolean hasFeaturedModule;
-
-    public boolean isHasFeaturedModule() {
-        return hasFeaturedModule;
-    }
-
-    public void setHasFeaturedModule(boolean hasFeaturedModule) {
-        this.hasFeaturedModule = hasFeaturedModule;
-    }
 
     public CmsBtJmPromotionModel getModel() {
         return model;
@@ -42,11 +29,11 @@ public class CmsBtJmPromotionSaveBean {
         this.model = model;
     }
 
-    public List<CmsBtTagModel> getTagList() {
+    public List<Tag> getTagList() {
         return tagList;
     }
 
-    public void setTagList(List<CmsBtTagModel> tagList) {
+    public void setTagList(List<Tag> tagList) {
         this.tagList = tagList;
     }
 
@@ -72,5 +59,33 @@ public class CmsBtJmPromotionSaveBean {
 
     public void setSaveType(int saveType) {
         this.saveType = saveType;
+    }
+
+    public static class Tag {
+        private CmsBtTagModel model;
+        private boolean featured;
+
+        public Tag() {
+        }
+
+        public Tag(CmsBtTagModel model) {
+            this.model = model;
+        }
+
+        public CmsBtTagModel getModel() {
+            return model;
+        }
+
+        public void setModel(CmsBtTagModel model) {
+            this.model = model;
+        }
+
+        public boolean isFeatured() {
+            return featured;
+        }
+
+        public void setFeatured(boolean featured) {
+            this.featured = featured;
+        }
     }
 }

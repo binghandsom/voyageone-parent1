@@ -70,21 +70,21 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
-//        zzWorkClear();
-//        int cnt = 0;
-//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-//            cnt = fullCopyTemp();
-//        }else {
-//            $info("产品信息插入开始");
-//            cnt = superFeedImport();
-//        }
-//        $info("产品信息插入完成 共" + cnt + "条数据");
-//        if (cnt > 0) {
-//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//                transformer.new Context(channel, this).transform();
-//            }
+        zzWorkClear();
+        int cnt = 0;
+        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+            cnt = fullCopyTemp();
+        }else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
+        $info("产品信息插入完成 共" + cnt + "条数据");
+        if (cnt > 0) {
+            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+                transformer.new Context(channel, this).transform();
+            }
             postNewProduct();
-//        }
+        }
     }
     @Override
     public int fullCopyTemp(){
@@ -407,8 +407,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             List<CmsBtFeedInfoModel> product;
             try{
                 while (true) {
+                    int cnt = 0;
                     product = getFeedInfoByCategory(categorPath);
-
+                    cnt = product == null?0:product.size();
                     $info("每棵树的信息取得结束");
 
                     String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
@@ -422,7 +423,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     if (productAll.size() > 500) {
                         executeMongoDB(productAll, productSucceeList, productFailAllList);
                     }
-                    if(product == null || product.size() < 500 ) break;
+                    if(cnt < 500 ) break;
                 }
             }catch (Exception e){
                 e.printStackTrace();
