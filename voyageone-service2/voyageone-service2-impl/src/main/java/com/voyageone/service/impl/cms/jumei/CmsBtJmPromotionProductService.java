@@ -65,11 +65,7 @@ public class CmsBtJmPromotionProductService {
     }
 
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        if (map.containsKey("code")) {
-            String code = map.get("code").toString();
-            String[] codeList = code.split("\r\n|\n|\\s+");//split("\r\n");
-            map.put("codeList", codeList);
-        }
+        loadWhere(map);
         List<MapModel> list = daoExt.selectPageByWhere(map);
         list.forEach(this::setTagNames);
         return list;
@@ -93,7 +89,16 @@ public class CmsBtJmPromotionProductService {
         map.put("tagNameList",tagNameList);
     }
 
+    public  void  loadWhere(Map<String, Object> map)
+    {
+        if (map.containsKey("code")) {
+            String code = map.get("code").toString();
+            String[] codeList = code.split("\r\n|\n|\\s+");//split("\r\n");
+            map.put("codeList", codeList);
+        }
+    }
     public int getCountByWhere(Map<String, Object> map) {
+        loadWhere(map);
         return daoExt.selectCountByWhere(map);
     }
 
