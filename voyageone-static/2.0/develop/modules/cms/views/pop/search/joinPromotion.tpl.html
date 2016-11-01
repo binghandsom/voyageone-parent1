@@ -1,0 +1,129 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"> 加入活动 </h5>
+    </div>
+    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg ng-pristine ng-valid" name="addPromotionForm" novalidate>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">platform:</label>
+            <div class="col-sm-6">
+                <input class="form-control" ng-model="ctrl.promotion.cartName">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Promotion Time:</label>
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-md-5">
+                        <input class="form-control" ng-model="ctrl.promotion.name">
+                    </div>
+                    <div class="col-md-2 text-center">~</div>
+                    <div class="col-md-5">
+                        <input class="form-control" ng-model="ctrl.promotion.name">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button class="btn btn-success"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Promotion Tag</label>
+            <div class="col-sm-6">
+                <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden">
+                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.catId">
+                        <div class="m-t-xs" ng-if="category.isParent == 1">
+                            <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
+                            <label class=" ">{{category.catName}}</label>
+                        </div>
+                        <div class="m-t-xs" ng-if="category.isParent == 0">
+                            <label>
+                                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
+                                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
+                                &nbsp;{{category.catName}}
+                            </label>
+                        </div>
+                        <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
+                             ng-init="categoryContainer = category.children">
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-center" ng-show="ctrl.cartIdValid">
+                        <h5 style="color: red;line-height: 160px;"><i class="fa fa-warning"></i> {{'INVALID_OPERATION_IN_CURRENT_CART_PATH' | translate}}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Base Price</label>
+            <div class="col-sm-6">
+                <div class="form-group" style="margin-left: 5px;">
+                    <label>
+                        <input type="radio" name="BasePrice" value="0">中国建议售价
+                    </label>&emsp;
+                    <label>
+                        <input type="radio" name="BasePrice" value="1">中国最终售价
+                    </label>&emsp;
+                    <label>
+                        <input type="radio" name="BasePrice" value="2">中国指导售价
+                    </label>&emsp;
+                    <label>
+                        <input type="radio" name="BasePrice" value="3">无
+                    </label>&emsp;
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">表达式</label>
+            <div class="col-sm-6">
+                <div class="row m-t-xs">
+                    <div class="col-md-6">
+                        <select class="form-control"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="row m-t-xs">
+                    <div class="form-group" style="margin-left: 5px;">
+                        <label>
+                            <input type="radio">小数点向上取整
+                        </label>&emsp;
+                        <label>
+                            <input type="radio">个位向下取整
+                        </label>&emsp;
+                        <label>
+                            <input type="radio">个位向上取整
+                        </label>&emsp;&emsp;
+                        <label>
+                            <input type="radio">无特殊处理
+                        </label>&emsp;
+                    </div>
+                </div>
+                <div class="row m-t-xs">
+                    活动价 = 最终售价 * 0.01
+                </div>
+                <div class="row m-t-xs">
+                    <div class="form-group" style="margin-left: 5px;">
+                        <label>
+                            <input type="radio">商品内，SKU统一最高价
+                        </label>
+                        <label>
+                            <input type="radio">商品内，SKU统一最低价
+                        </label>
+                        <label>
+                            <input type="radio">商品内，SKU价格不统一
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+    <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div>

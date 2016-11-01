@@ -6,24 +6,10 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups) {
 
         $scope.vm = {
-            searchInfo: {
-                compareType: null,
-                brand: null,
-                tags: [],
-                priceChgFlg: '',
-                priceDiffFlg: '',
-                tagTypeSelectValue: '0',
-                promotionList: [],
-                catgoryList: [],
-                cidValue: [],
-                promotionTagType: 1,
-                freeTagType: 1,
-                supplierType: 1,
-                brandSelType: 1
-            },
+            searchInfo: {compareType: null,brand: null,tags: [],priceChgFlg: '',priceDiffFlg: '',tagTypeSelectValue: '0',promotionList: [],catgoryList: [],cidValue: [],promotionTagType: 1,freeTagType: 1,supplierType: 1,brandSelType: 1},
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -31,9 +17,7 @@ define([
             groupList: [],
             productList: [],
             currTab: "product",
-            status: {
-                open: true
-            },
+            status: { open: true},
             groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
@@ -45,11 +29,9 @@ define([
             _cart_tab_act: false
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
-
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function () {
-            //$scope.vm.status.open = false;//收缩搜索栏
             search();
             $scope.vm._selall = false;
         };
@@ -74,9 +56,7 @@ define([
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
-        /**
-         * 初始化数据.
-         */
+
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
             if ($routeParams.type == "1") {
@@ -1143,9 +1123,18 @@ define([
             }
         };
 
+        /**
+         * 高级检索加入活动
+         */
+        $scope.popJoinPromotion = function(){
+
+            popups.openJoinPromotion({}).then(function(context){
+
+            });
+        }
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups'];
     return searchIndex;
 });
