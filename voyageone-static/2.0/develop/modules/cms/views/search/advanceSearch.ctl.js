@@ -1108,40 +1108,37 @@ define([
          * @param popupNewCategory popup实例
          */
         function jdCategoryMapping(cartId) {
-
-            var selList=[];
-            _chkProductSel(null, _openAddPromotion, selList);
+            _chkProductSel(null, _openAddPromotion, {"cartId":cartId,"selList":[]});
 
             function _openAddPromotion(cartId, selList, context) {
-                if(selList.length > 0){
+                if(selList && selList.length > 0){
                     selList.forEach(function (item) {
-                        context.push(item.code);
+                        context.selList.push(item.code);
                     })
                 }
-            }
+                productDetailService.getPlatformCategories({"cartId": context.cartId})
+                    .then(function (res) {
+                        return $q(function (resolve, reject) {
+                            if (!res.data || !res.data.length) {
+                                notify.danger("数据还未准备完毕");
+                                reject("数据还未准备完毕");
+                            } else {
+                                resolve(popups.popupNewCategory({
+                                    //' from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
+                                    categories: res.data,
+                                    divType: ">",
+                                    plateSchema: true
+                                }));
+                            }
+                        });
+                    }).then(function (data) {
 
-            productDetailService.getPlatformCategories({cartId: cartId})
-                .then(function (res) {
-                    return $q(function (resolve, reject) {
-                        if (!res.data || !res.data.length) {
-                            notify.danger("数据还未准备完毕");
-                            reject("数据还未准备完毕");
-                        } else {
-                            resolve(popups.popupNewCategory({
-                               //' from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
-                                categories: res.data,
-                                divType: ">",
-                                plateSchema: true
-                            }));
-                        }
-                    });
-                }).then(function (context) {
-
-                    $fieldEditService.bulkSetCategory({"productIds":selList, "cartId":+cartId,"pCatPath":context.selected.catPath,"pCatId":context.selected.catId}).then(function (data){
+                    $fieldEditService.bulkSetCategory({'isSelAll': $scope.vm._selall ? 1 : 0, "productIds":context.selList, "cartId":+context.cartId,"pCatPath":data.selected.catPath,"pCatId":data.selected.catId}).then(function (data){
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         search();
                     })
-            });
+                });
+            }
         }
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
