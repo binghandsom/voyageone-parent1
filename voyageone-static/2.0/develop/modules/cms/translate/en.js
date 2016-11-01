@@ -738,6 +738,8 @@ define(function () {
         "TXT_NO_OPPERATION": "没有设置上下架操作，请选择后重试",
         "TXT_CONFIRM_ALL_STORE_PUT_ON": "您确认要进行全平台的[{{optName}}]操作吗？",
         "TXT_CONFIRM_NOW_STORE_PUT_ON": "您确认要进行[{{cartName}}]的[{{optName}}]操作吗？",
+        "TXT_CONFIRM_MOVE_CODE": "您确定要移动选择的Sku到新的Code吗？",
+        "TXT_CONFIRM_MOVE_SKU": "您确定要在{{cartName}}平台,移动Code:{{productCode}}到其他Group吗？",
         "TXT_ITEM_CODE": "商品Code",
 
         /** 翻译页面相关 **/
@@ -792,7 +794,6 @@ define(function () {
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配情况",
         "TXT_FEED_BRAND": "Feed品牌",
         "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
-        "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_PLATFORM_BRAND": "平台品牌",
         "TXT_REGET_PLATFORM_BRANDS": "重新获取平台品牌",
@@ -810,6 +811,7 @@ define(function () {
         "TXT_CONFIRM_PRICE": "确认指导价",
         "TXT_FLOATING_RATE": "价格波动",
         "TXT_TASK_LIST": "任务一览",
+        "TXT_FLOATING_RATE": "价格波动",
 
         /**黑名单*/
         "TXT_BLACK_LIST_IN": "已加入黑名单",
@@ -823,7 +825,46 @@ define(function () {
         "TXT_MAIN_BRAND_MAPPING": "主品牌匹配",
         "TXT_INCOMPLETE_REJECT": "待匹配（审核驳回）",
         /**sku价格设置popup*/
-        "TXT_SKU_PRICE_SETTING": "SKU价格设置"
-
+        "TXT_SKU_PRICE_SETTING": "SKU价格设置",
+        "TXT_SKU_CODE": "skuCode",
+        "TXT_SIZE": "size",
+        "TXT_BARCODE": "Barcode",
+        "TXT_MOVE_TO_NEW_CODE": "移动到新的Code",
+        "TXT_SKU_MOVE": "移动Sku",
+        "TXT_CODE_MOVE": "移动Code",
+        "TXT_TYPE_OF_OPERATION": "操作类型",
+        "TXT_MOVED_SKU": "移动的Sku",
+        "TXT_MOVED_CODE": "移动的Code",
+        "TXT_MODIFIED_CART": "操作平台",
+        "TXT_MOVED_SOURCE_CODE": "移动源Code",
+        "TXT_REMOVED_SOURCE_GROUP": "移动源Group",
+        "TXT_CHOOSE_THE_MOVE_TYPE": "请选择移动方式",
+        "TXT_SELECT_TARGET_GROUP": "请选择移动目的Group",
+        "TXT_MOVE_TO_NEW_GROUP": "移动到新的Group",
+        "TXT_MOVE_TO_SELECTED_GROUP": "移动到下面选择的Group",
+        "TXT_MOVE_CODE_TO_OTHER_GROUP": "Code移动到其他Group",
+        "TXT_MOVE_SKU_TO_NEW_CODE": "Sku移动到新Code",
+        "TXT_NEW_CODE_UNDER_NEW_GROUP": "新Group下新建Code",
+        "TXT_NEW_CODE_UNDER_OLD_GROUP": "原Group下新建Code ",
+        "TXT_NEW_CODE_CHOOSED_GROUP": "下面选择的Code对应的Group下新建Code",
+        "TXT_NEW_CODE_JUMEI_ALERT": "(聚美和独立官网平台因为1个Group下只能存在一个Code,所以还是新Group)",
+        "TXT_GROUP_SEARCH": "Group 检索",
+        "TXT_CODE_SEARCH": "Code 检索",
+        "TXT_SALE_STATUS": "售卖状态",
+        "TXT_PREVIEW_AFTER_MOVE": "移动后预览",
+        "TXT_BUILD_PREVIEW": "生成预览",
+        "TXT_MOVED_BEFORE": "移动前",
+        "TXT_MOVED_AFTER": "移动后",
+        "TXT_SOURCE_INFO": "源信息",
+        "TXT_TARGET_INFO": "目标信息",
+        "TXT_SOURCE_GROUP_INFO": "源Group信息",
+        "TXT_SOURCE_CODE_INFO": "源Code信息",
+        "TXT_SOURCE_SKU_INFO": "源Sku信息",
+        "TXT_TARGET_GROUP_INFO": "目标Group信息",
+        "TXT_TARGET_CODE_INFO": "目标Code信息",
+        "TXT_TARGET_SKU_INFO": "目标Sku信息",
+        "TXT_MOVE_CONFIRM": "确定移动",
+        "TXT_CODE": "Code",
+        "TXT_GROUP_NUMIID": "NumIID"
     };
 });

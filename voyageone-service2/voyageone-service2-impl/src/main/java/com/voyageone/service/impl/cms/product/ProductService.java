@@ -1247,4 +1247,136 @@ public class ProductService extends BaseService {
 //            });
 //        }
     }
+
+    public void updateProductPlatformIsMain(Integer isMain, String mainProductCode, String channelId, String productCode, Integer cartId, String modifier) {
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", productCode);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        updateMap.put("platforms.P" + cartId + ".pIsMain", isMain);
+        updateMap.put("platforms.P" + cartId + ".mainProductCode", mainProductCode);
+        updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
+    public void updateProductForMove(String channelId, CmsBtProductModel productMode, String modifier) {
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", productMode.getCommon().getFields().getCode());
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+//        updateMap.put("common.fields.priceMsrpSt", productMode.getCommon().getFields().getPriceMsrpSt());
+//        updateMap.put("common.fields.priceMsrpEd", productMode.getCommon().getFields().getPriceMsrpEd());
+//        updateMap.put("common.fields.priceRetailSt", productMode.getCommon().getFields().getPriceRetailSt());
+//        updateMap.put("common.fields.priceRetailEd", productMode.getCommon().getFields().getPriceRetailEd());
+//        updateMap.put("common.modifier", productMode.getCommon().getModifier());
+//        updateMap.put("common.modified", productMode.getCommon().getModified());
+//        updateMap.put("common.skus", productMode.getCommon().getSkus());
+        updateMap.put("common", productMode.getCommon());
+        updateMap.put("platforms", productMode.getPlatforms());
+        updateMap.put("sales", productMode.getSales());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
+    /**
+     * 计算group的价格区间
+     */
+    public void calculatePriceRange (CmsBtProductModel productModel) {
+        // Common.fields下的价格区间
+        Double commonPriceRetailSt = null;
+        Double commonPriceRetailEd = null;
+        Double commonPriceMsrpSt = null;
+        Double commonPriceMsrpEd = null;
+        for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+            Double skuPriceRetail = skuModel.getPriceRetail();
+            if (commonPriceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < commonPriceRetailSt)) {
+                commonPriceRetailSt = skuPriceRetail;
+            }
+            if (commonPriceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > commonPriceRetailEd)) {
+                commonPriceRetailEd = skuPriceRetail;
+            }
+
+            Double skuPriceMsrp = skuModel.getPriceMsrp();
+            if (commonPriceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < commonPriceMsrpSt)) {
+                commonPriceMsrpSt = skuPriceMsrp;
+            }
+            if (commonPriceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > commonPriceMsrpEd)) {
+                commonPriceMsrpEd = skuPriceMsrp;
+            }
+        }
+        productModel.getCommon().getFields().setPriceRetailSt(commonPriceRetailSt);
+        productModel.getCommon().getFields().setPriceRetailEd(commonPriceRetailEd);
+        productModel.getCommon().getFields().setPriceMsrpSt(commonPriceMsrpSt);
+        productModel.getCommon().getFields().setPriceMsrpEd(commonPriceMsrpEd);
+
+        // Platforms下的价格区间
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+            // 跳过P0（主数据）
+            if (platform.getValue().getCartId().equals(0)) {
+                continue;
+            }
+            Double priceSaleSt = null;
+            Double priceSaleEd = null;
+            Double priceRetailSt = null;
+            Double priceRetailEd = null;
+            Double priceMsrpSt = null;
+            Double priceMsrpEd = null;
+            for (Map<String, Object> sku : platform.getValue().getSkus()) {
+                Object objSkuPriceSale = sku.get("priceSale");
+                Double skuPriceSale = null;
+                if (objSkuPriceSale != null) {
+                    skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
+                }
+                if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
+                    priceSaleSt = skuPriceSale;
+                }
+                if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
+                    priceSaleEd = skuPriceSale;
+                }
+
+                Object objSkuPriceRetail = sku.get("priceRetail");
+                Double skuPriceRetail = null;
+                if (objSkuPriceRetail != null) {
+                    skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
+                }
+                if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                    priceRetailSt = skuPriceRetail;
+                }
+                if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                    priceRetailEd = skuPriceRetail;
+                }
+
+                Object objSkuPriceMsrp = sku.get("priceMsrp");
+                Double skuPriceMsrp = null;
+                if (objSkuPriceMsrp != null) {
+                    skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
+                }
+                if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                    priceMsrpSt = skuPriceMsrp;
+                }
+                if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                    priceMsrpEd = skuPriceMsrp;
+                }
+            }
+            platform.getValue().setpPriceSaleSt(priceSaleSt);
+            platform.getValue().setpPriceSaleEd(priceSaleEd);
+            platform.getValue().setpPriceRetailSt(priceRetailSt);
+            platform.getValue().setpPriceRetailEd(priceRetailEd);
+            platform.getValue().setpPriceMsrpSt(priceMsrpSt);
+            platform.getValue().setpPriceMsrpEd(priceMsrpEd);
+        }
+    }
 }

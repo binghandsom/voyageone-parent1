@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtPriceConfirmLogDaoExt" >
+
+    <update id="updateCodeForMove">
+        update cms_bt_price_confirm_log
+        set code=#{itemCodeNew},
+        modified = now(),
+        modifier =#{modifier}
+        where code=#{itemCodeOld}
+        and channel_id=#{channelId}
+        and (sku_code in
+        <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+        )
+    </update>
+</mapper>
