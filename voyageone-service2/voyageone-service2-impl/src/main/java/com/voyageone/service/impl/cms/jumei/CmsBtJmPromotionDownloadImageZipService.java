@@ -110,7 +110,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
         List<String> moduleTitleList = cmsBtJmPromotionSaveBean
                 .getTagList()
                 .stream()
-                .map(cmsBtTagModel -> tagService.getJmModule(cmsBtTagModel))
+                .map(tag -> tagService.getJmModule(tag.getModel()))
                 .map(CmsBtTagJmModuleExtensionModel::getModuleTitle)
                 .collect(toList());
         if (moduleTitleList.size() > 0) {
