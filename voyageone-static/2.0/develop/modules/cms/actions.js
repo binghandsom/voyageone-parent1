@@ -423,7 +423,8 @@ define(function () {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
                     "setProductFields": "setProductFields",
-                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
+                    "bulkSetCategory":"bulkSetCategory"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",

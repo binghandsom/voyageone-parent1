@@ -111,4 +111,11 @@ public class CmsFieldEditController extends CmsController {
         return genResponseEntityFromBytes(MediaType.valueOf("application/csv"), fileName, byteData);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_CATEGORY)
+    public AjaxResponse bulkSetCategory(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetCategory(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
 }

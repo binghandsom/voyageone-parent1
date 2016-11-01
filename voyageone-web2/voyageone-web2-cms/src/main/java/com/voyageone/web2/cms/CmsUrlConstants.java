@@ -479,6 +479,7 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
             String SET_PRODUCT_FIELDS = "setProductFields";
             String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
+            String BULK_SET_CATEGORY = "bulkSetCategory";
         }
 
         interface ADD_TO_PROMOTION {

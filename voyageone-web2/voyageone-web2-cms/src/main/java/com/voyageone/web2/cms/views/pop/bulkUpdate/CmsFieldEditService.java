@@ -1126,7 +1126,9 @@ public class CmsFieldEditService extends BaseViewService {
             updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", productCode);
-            queryMap.put("platforms.P" + cartId + ".pCatPath", "{$nin:[null,'']}");
+            HashMap<String, Object> queryMap2 = new HashMap<>();
+            queryMap2.put("$in",new String[]{null,""});
+            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
             BulkUpdateModel model = new BulkUpdateModel();
             model.setUpdateMap(updateMap);
             model.setQueryMap(queryMap);

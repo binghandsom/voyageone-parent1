@@ -12,7 +12,7 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q) {
 
         $scope.vm = {
             searchInfo: {
@@ -80,6 +80,7 @@ define([
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
+        $scope.jdCategoryMapping = jdCategoryMapping;
         /**
          * 初始化数据.
          */
@@ -1101,7 +1102,47 @@ define([
                 });
             }
         }
+        /**
+         @description 类目popup
+         * @param productInfo
+         * @param popupNewCategory popup实例
+         */
+        function jdCategoryMapping(cartId) {
 
+            var selList=[];
+            _chkProductSel(null, _openAddPromotion, selList);
+
+            function _openAddPromotion(cartId, selList, context) {
+                if(selList.length > 0){
+                    selList.forEach(function (item) {
+                        context.push(item.code);
+                    })
+                }
+            }
+
+            productDetailService.getPlatformCategories({cartId: cartId})
+                .then(function (res) {
+                    return $q(function (resolve, reject) {
+                        if (!res.data || !res.data.length) {
+                            notify.danger("数据还未准备完毕");
+                            reject("数据还未准备完毕");
+                        } else {
+                            resolve(popups.popupNewCategory({
+                               //' from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
+                                categories: res.data,
+                                divType: ">",
+                                plateSchema: true
+                            }));
+                        }
+                    });
+                }).then(function (context) {
+
+                    $fieldEditService.bulkSetCategory({"productIds":selList, "cartId":+cartId,"pCatPath":context.selected.catPath,"pCatId":context.selected.catId}).then(function (data){
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        search();
+                    })
+            });
+        }
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
             var cartIdVal = 0;
@@ -1151,6 +1192,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q'];
     return searchIndex;
 });
