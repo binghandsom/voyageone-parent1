@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -1088,4 +1089,50 @@ public class CmsFieldEditService extends BaseViewService {
         return rsMap;
     }
 
+    /**
+     * 批量设置类目
+     */
+    public void bulkSetCategory(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession){
+        $debug("批量修改商品价格 开始处理");
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+
+            new BusinessException("批量修改商品价格 没有code条件 params=" + params.toString());
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        if (cartId == null || cartId == 0) {
+            new BusinessException("批量修改商品价格 没有cartId条件 params=" + params.toString());
+        }
+        String pCatPath = (String) params.get("pCatPath");
+        String pCatId = (String) params.get("pCatId");
+        if(StringUtil.isEmpty(pCatPath) || StringUtil.isEmpty(pCatId)){
+            new BusinessException("类目不能为空");
+        }
+        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+        for (String productCode : productCodes) {
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
+            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
+            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", productCode);
+            queryMap.put("platforms.P" + cartId + ".pCatPath", "{$nin:[null,'']}");
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+
+        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
+    }
 }
