@@ -83,7 +83,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                     String imagePath = cmsBtJmImageTemplateModel.getName();
                     //压缩图片的所需要的对象
                     Map<String, String> urlMap = new HashMap<>();
-                    if (picNameModel.getUseTemplate()) {
+                    if (picNameModel.getUseTemplate() != null && picNameModel.getUseTemplate()) {
                         //imageUrl
                         String url = "";
                         try {

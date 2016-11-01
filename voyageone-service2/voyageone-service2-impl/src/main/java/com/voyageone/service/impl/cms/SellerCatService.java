@@ -18,12 +18,10 @@ import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
-import com.voyageone.service.bean.cms.cn.CnCategoryBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -32,7 +30,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -228,7 +229,7 @@ MongoSequenceService commSequenceMongoService;
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-            cnSellerCatService.updateSellerCat(channelId,cId, shopBean);
+            cnSellerCatService.updateSellerCat(currentNode, shopBean);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);

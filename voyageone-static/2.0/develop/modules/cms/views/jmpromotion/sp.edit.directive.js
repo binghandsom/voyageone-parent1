@@ -202,7 +202,7 @@ define([
     // 创建页面标识
     SpEditDirectiveController.prototype.createActId = function (fieldName) {
         var self = this;
-        var idDate = self.$filter("date")(new Date(), "yyyyMMdd");
+        var idDate = self.$filter("date")(new Date(self.editModel.model.activityStart),"yyyyMMdd");
 
         var jmBrandId = self.editModel.model.cmsBtJmMasterBrandId;
 
@@ -211,25 +211,28 @@ define([
             mainChannel = '';
         }
 
-        var idTime, pageId;
+        var tempPromotionProductType = '';
+        if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
+            self.editModel.extModel.promotionProductType = '';
+            tempPromotionProductType = '';
+        } else {
+            tempPromotionProductType = "_" + self.editModel.extModel.promotionProductType
+        }
 
         if (self.editModel.model.promotionType == '3') {
-            if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
-                self.editModel.extModel.promotionProductType = '';
-            }
-            idTime = self.$filter("date")(new Date(), "HH-mm-ss-sss").replace(/-/g, "");
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
             idTime = parseInt(idTime).toString(36);
-            pageId = idDate + mainChannel + '_' + self.editModel.extModel.promotionProductType + '_' + jmBrandId + '_' + idTime;
+            var pageId = idDate + mainChannel + tempPromotionProductType + '_' + jmBrandId + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         } else {
-            if (fieldName == 'promotionProductType') {
-                // 其他专场时，活动主要商品品类的输入无效
-                return;
-            }
-            idTime = self.$filter("date")(new Date(), "HH-mm-ss-sss").replace(/-/g, "");
+            //if (fieldName == 'promotionProductType') {
+            //    // 其他专场时，活动主要商品品类的输入无效
+            //    return;
+            //}
+            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
             idTime = parseInt(idTime).toString(36);
-            pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + '_' + idDate + '_' + idTime;
+            var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + tempPromotionProductType + '_' + idDate + '_' + idTime;
             self.editModel.extModel.pcPageId = pageId + '_pc';
             self.editModel.extModel.appPageId = pageId + '_app';
         }

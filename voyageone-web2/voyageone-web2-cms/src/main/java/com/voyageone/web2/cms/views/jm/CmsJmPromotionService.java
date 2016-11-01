@@ -205,12 +205,12 @@ class CmsJmPromotionService extends BaseViewService {
             List<CmsBtJmPromotionProductModel> jmPromotionProductModelList = jmPromotionProduct3Service.getPromotionProductInTag(tagModel.getId());
 
             long countProductHasStockInJmModule = jmPromotionProductModelList.stream()
-                    .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() != null)
+                    .filter(jmPromotionProductModel -> jmPromotionProductModel != null && jmPromotionProductModel.getQuantity() != null)
                     .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() > 0)
                     .count();
 
             long totalStock = jmPromotionProductModelList.stream()
-                    .filter(jmPromotionProductModel -> jmPromotionProductModel.getQuantity() != null)
+                    .filter(jmPromotionProductModel -> jmPromotionProductModel != null && jmPromotionProductModel.getQuantity() != null)
                     .mapToLong(CmsBtJmPromotionProductModel::getQuantity)
                     .sum();
 
