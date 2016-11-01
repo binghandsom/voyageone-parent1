@@ -13,9 +13,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 
  */
 public class CmsMtEtkHsCodeModel extends BaseModel {
-    protected Integer cartId;
-
-    protected String catPath;
+    protected String hsCode;
 
     protected String etkHsCode;
 
@@ -23,20 +21,12 @@ public class CmsMtEtkHsCodeModel extends BaseModel {
 
     protected String etkUnit;
 
-    public Integer getCartId() {
-        return cartId;
+    public String getHsCode() {
+        return hsCode;
     }
 
-    public void setCartId(Integer cartId) {
-        this.cartId = cartId;
-    }
-
-    public String getCatPath() {
-        return catPath;
-    }
-
-    public void setCatPath(String catPath) {
-        this.catPath = catPath == null ? null : catPath.trim();
+    public void setHsCode(String hsCode) {
+        this.hsCode = hsCode == null ? null : hsCode.trim();
     }
 
     public String getEtkHsCode() {

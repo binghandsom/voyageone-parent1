@@ -9,7 +9,6 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.JmPromotionImagesService = JmPromotionImagesService;
             this.alert = alert;
-            this.selected = {};
         }
 
         ImageSuitCtl.prototype.init = function(){
@@ -26,17 +25,15 @@ define([
             var self  = this,
                 alert = self.alert,
                 $uibModalInstance = self.$uibModalInstance,
-                selectedImg,
-                selectList = _.map(self.selected,function(value,key){
-                    if(value)
-                        return key;
-                });
+                selectedImg;
 
-            if(selectList.length != 1)
-                alert("请选择一个套图，且只能选择一个");
+            if(!self.selected){
+                alert("请选择一个套图!");
+                return;
+            }
 
             selectedImg = _.find(self.dataList,function(item){
-                return item.promotionId = selectList[0];
+                return item.promotionId == self.selected;
             });
 
             $uibModalInstance.close(selectedImg);

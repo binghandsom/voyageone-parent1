@@ -593,6 +593,8 @@ public interface CmsUrlConstants {
             String PriceConfirm = "priceConfirm";
 
             String UPDATE_SKUPRICE = "updateSkuPrice";
+
+            String RESET_TM_PRODUCT = "resetTmProduct";
         }
 
         interface HISTORY {

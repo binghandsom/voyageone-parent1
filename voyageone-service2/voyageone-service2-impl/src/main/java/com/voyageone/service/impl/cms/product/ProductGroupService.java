@@ -413,6 +413,21 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 重置group的platformPid
+     */
+    public WriteResult resetProductGroupPlatformPid (String channelId, int cartId, String code) {
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("cartId", cartId);
+        queryMap.put("productCodes", code);
+
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platformPid", "");
+
+        return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+    }
+
+    /**
      * 获取聚美下面的所有group的codes大于1的数据,然后将其对应的group按一个code一个group做拆分,并删除以前的group.
      * @param channelId 渠道Id
      */

@@ -42,10 +42,8 @@ import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -632,18 +630,25 @@ public class ProductService extends BaseService {
                 resultInfo.setUnitPu(hsCodePu[2]);
 //                }
             }
-
-            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
-                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
-                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeLikeCatPath(entry.getValue().getCartId(),  entry.getValue().getpCatPath());
-                    if(cmsMtEtkHsCodeModel != null){
-                        resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
-                        resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
-                        resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
-                        break;
-                    }
+            if(!StringUtil.isEmpty(hsCodePrivate)) {
+                CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
+                if (cmsMtEtkHsCodeModel != null) {
+                    resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+                    resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+                    resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
                 }
             }
+//            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+//                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
+//                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(entry.getValue().getCartId(),  entry.getValue().getpCatPath());
+//                    if(cmsMtEtkHsCodeModel != null){
+//                        resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+//                        resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+//                        resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+//                        break;
+//                    }
+//                }
+//            }
         }
         return resultInfo;
     }
