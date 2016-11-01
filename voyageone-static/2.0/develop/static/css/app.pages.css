@@ -499,8 +499,8 @@ s-field textarea.s-html {
 }
 
 .product-shema-detail .thumbnail {
-    /*max-width: 100px;*/
-    height: 108px;
+    max-width: 100px;
+    max-height: 110px;
 }
 
 .product-shema-detail .thumbnail.current {
@@ -875,6 +875,11 @@ schema .ng-invalid.focus-error {
     border-style: dotted;
 }
 
+/*clear margin*/
+.clear-margin-bottom {
+    margin-bottom: 0;
+}
+
 /* 聚美专场v2模块画面，商品排序弹出框样式 */
 
 .jm-sortable-product-modal {
@@ -954,3 +959,8 @@ schema .ng-invalid.focus-error {
     margin-bottom:0;
 }
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
+
+/*clear margin*/
+.clear-margin-bottom {
+    margin-bottom: 0;
+}

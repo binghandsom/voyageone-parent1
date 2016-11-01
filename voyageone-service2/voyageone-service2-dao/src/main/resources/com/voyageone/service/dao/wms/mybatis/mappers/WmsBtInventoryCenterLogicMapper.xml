@@ -42,4 +42,13 @@
         and sku = #{sku}
     </select>
 
+    <update id="wms_bt_inventory_center_logic_updateCodeForMove" parameterType="HashMap">
+        update wms_bt_inventory_center_logic set code=#{itemCodeNew},modified = now(),modifier =#{modifier}  where code=#{itemCodeOld} and order_channel_id=#{channelId}
+        and (sku in
+        <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+        )
+    </update>
+
 </mapper>

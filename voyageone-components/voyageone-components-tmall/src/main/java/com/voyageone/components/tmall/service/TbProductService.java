@@ -5,6 +5,7 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
 
@@ -162,5 +163,37 @@ public class TbProductService extends TbBase {
             throw new BusinessException("天猫删除商品失败:" + response.getSubMsg() + "  错误码：" + response.getErrorCode());
         }
         return true;
+    }
+
+    /**
+     * 天猫增量更新商品规则获取(tmall.item.increment.update.schema.get)
+     * http://open.taobao.com/docs/api.htm?apiId=23781
+     *
+     * @param numId    商品id(必须)
+     * @param xmlData 更新的字段(可选) 如果入参xml_data指定了更新的字段，则只返回指定字段的规则（ISV如果功能性很强，如明确更新Title，请拼装好此字段以提升API整体性能）
+     */
+    public TmallItemIncrementUpdateSchemaGetResponse getItemIncrementUpdateSchema(String numId, String xmlData, ShopBean config) throws ApiException
+    {
+        TmallItemIncrementUpdateSchemaGetRequest request = new TmallItemIncrementUpdateSchemaGetRequest();
+        request.setItemId(Long.parseLong(numId));
+        if (!StringUtils.isEmpty(xmlData)) request.setXmlData(xmlData);
+
+        return reqTaobaoApi(config, request);
+    }
+
+    /**
+     * 天猫根据规则增量更新商品(tmall.item.schema.increment.update)
+     * http://open.taobao.com/docs/api.htm?apiId=23782
+     *
+     * @param numId    需要编辑的商品ID(必须)
+     * @param xmlData  更新的字段(必须) 如果入参xml_data指定了更新的字段，则只返回指定字段的规则（ISV如果功能性很强，如明确更新Title，请拼装好此字段以提升API整体性能）
+     */
+    public TmallItemSchemaIncrementUpdateResponse updateItemSchemaIncrement(String numId, String xmlData, ShopBean config) throws ApiException
+    {
+        TmallItemSchemaIncrementUpdateRequest request = new TmallItemSchemaIncrementUpdateRequest();
+        request.setItemId(Long.parseLong(numId));
+        request.setXmlData(xmlData);
+
+        return reqTaobaoApi(config, request);
     }
 }

@@ -171,4 +171,18 @@
                 and sku = #{sku}
             </if>
     </select>
+
+    <update id="updateCodeForMove" parameterType="HashMap">
+        update voyageone_cms2.cms_bt_price_log
+        set code=#{itemCodeNew},
+        modified = now(),
+        modifier =#{modifier}
+        where code=#{itemCodeOld}
+        and channel_id=#{channelId}
+        and (sku in
+        <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+        )
+    </update>
 </mapper>
