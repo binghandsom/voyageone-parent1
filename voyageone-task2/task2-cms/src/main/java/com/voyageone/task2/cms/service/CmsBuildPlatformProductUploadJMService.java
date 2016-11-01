@@ -886,6 +886,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 //保存product到MongoDB
                 saveProductPlatform(channelId, product);
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                if (sxData.getPlatform().getPlatformStatus() == null
+                        || "WaitingPublish".equalsIgnoreCase(sxData.getPlatform().getPlatformStatus().name())) {
+                    sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                    sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
+                }
                 sxData.getPlatform().setModifier(getTaskName());
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
