@@ -71,6 +71,7 @@ define([
             spDataService.getPromotionImgTpl(context).then(function (res) {
                 self.imgUrls = res.promotionImageUrl;
                 self.imgUpEntity = res.promotionImagesModel;
+
             });
         });
     };

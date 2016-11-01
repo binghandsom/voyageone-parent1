@@ -39,6 +39,8 @@ define([
 		this.getPlatformCategories = getPlatformCategories;
 		this.priceConfirm = priceConfirm;
 		this.updateSkuPrice = updateSkuPrice;
+		this.resetTmProduct = resetTmProduct;
+
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -510,6 +512,23 @@ define([
 			var defer = $q.defer();
 
 			$productDetailService.updateSkuPrice(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+        /**
+         *  重置天猫产品id
+         * @param req
+         * @returns {Promise}
+         */
+		function resetTmProduct(req){
+			var defer = $q.defer();
+
+			$productDetailService.resetTmProduct(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){

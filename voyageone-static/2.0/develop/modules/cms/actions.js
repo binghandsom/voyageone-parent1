@@ -113,7 +113,8 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm: "priceConfirm",
+                    "resetTmProduct": "resetTmProduct",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
                     updateSkuPrice: "updateSkuPrice"
                 },
