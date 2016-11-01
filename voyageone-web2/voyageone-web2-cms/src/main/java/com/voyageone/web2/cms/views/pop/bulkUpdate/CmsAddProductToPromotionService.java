@@ -80,6 +80,12 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         TagTreeNode tagTreeNode = new TagTreeNode();
         tagTreeNode.setId(model.getId());
         tagTreeNode.setName(model.getPromotionName());
+
+//        SELECT c.`id`,c.`tag_name`,SUM(CASE WHEN a.`id` IS NULL THEN 0 ELSE 1 END )    FROM `cms_bt_promotion_codes`  AS a
+//        JOIN `cms_bt_promotion_codes_tag` AS b ON a.`id`=b.`cms_bt_promotion_codes_id` AND a.`promotion_id`=1  AND a.`product_code` IN ('aa')
+//        RIGHT JOIN `cms_bt_tag` AS c ON b.`cms_bt_tag_id`=c.`id`
+//        WHERE c.`parent_tag_id`=3
+//        GROUP BY c.`id`
         return tagTreeNode;
     }
 }
