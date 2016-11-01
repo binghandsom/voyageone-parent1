@@ -274,6 +274,9 @@
                 <if test="allStatus1!=null">
                     or a.synch_status=1 or a.`price_status`=1 or a.`deal_end_time_status`=1 or a.stock_status=1
                 </if>
+                <if test="isInJm!=null">
+                    or b.id is null
+                </if>
                 )
             </if>
 
