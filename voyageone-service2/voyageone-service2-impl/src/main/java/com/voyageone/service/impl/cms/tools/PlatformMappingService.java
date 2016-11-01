@@ -3,19 +3,17 @@ package com.voyageone.service.impl.cms.tools;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -83,21 +81,34 @@ public class PlatformMappingService extends BaseService {
             categoryPath = cart.getpCatPath();
         }
 
-        CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, categoryPath, channelId);
+        // 计算多级类目
+        Stack<String> categoryPathStack = new Stack<>();
+        categoryPathStack.push(categoryPath);
+        String separator = ">";
+        int index = categoryPath.lastIndexOf(separator);
+        while (index > -1) {
+            String part = categoryPath.substring(0, index);
+            categoryPathStack.push(part);
+            index = part.lastIndexOf(separator);
+        }
 
-        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
-
+        // 创建配置计算基础数据
         List<CustomPropBean> customPropBeanList = productService.getCustomProp(product);
-
         Map<String, Object> valueMap = new HashMap<>();
-
         ValueMapFiller filler = new ValueMapFiller(product, customPropBeanList);
 
+        // 执行通用配置
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
         if (commonFieldMapsModel != null)
             fillValueMap(valueMap, filler, commonFieldMapsModel);
 
-        if (fieldMapsModel != null)
-            fillValueMap(valueMap, filler, fieldMapsModel);
+        // 执行多级目录配置
+        while (!categoryPathStack.isEmpty()) {
+            String targetCategoryPath = categoryPathStack.pop();
+            CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, targetCategoryPath, channelId);
+            if (fieldMapsModel != null)
+                fillValueMap(valueMap, filler, fieldMapsModel);
+        }
 
         return valueMap;
     }
