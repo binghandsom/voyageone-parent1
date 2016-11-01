@@ -29,7 +29,8 @@ define([
                 freeTagType: 1,
                 supplierType: 1,
                 brandSelType: 1,
-                salesType: 'All'
+                salesType: 'All',
+                custGroupType: '1'
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -482,10 +483,8 @@ define([
 
         // 删除自定义查询选项
         function delCustAttribute(idx) {
-            if ($scope.vm.custAttrList.length > 1) {
+            if ($scope.vm.custAttrList.length > 0) {
                 $scope.vm.custAttrList.splice(idx, 1);
-            } else {
-                alert("最少保留一项")
             }
         }
 

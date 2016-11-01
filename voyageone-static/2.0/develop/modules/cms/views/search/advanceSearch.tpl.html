@@ -494,10 +494,25 @@
                         <div class="table-responsive">
                             <div class="col-sm-12">
                                 <div class="col-sm-4">
+                                	<div class="form-horizontal">
+                                       <div class="form-group">
+                                           <label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
+	                                       <div class="col-sm-8">
+	                                       		<label class="checkbox-inline c-radio">
+												    <input type="radio" name="rdoConditionGroup" value="1" ng-model="vm.searchInfo.custGroupType" class="ng-pristine ng-untouched ng-valid ng-not-empty">
+												    	<span class="fa fa-check"></span> 满足以下所有条件
+												</label>
+	                                       		<label class="checkbox-inline c-radio">
+												    <input type="radio" name="rdoConditionGroup" value="2" ng-model="vm.searchInfo.custGroupType" class="ng-pristine ng-untouched ng-valid ng-not-empty">
+												    	<span class="fa fa-check"></span> 满足以下任意条件
+												</label>
+                                           		<button id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:5px" ng-click="add()"><i class="fa fa-plus"></i></button>
+	                                       </div>
+                                       </div>
+                                	</div>
                                     <div class="form-horizontal">
                                         <div class="form-group" ng-repeat="option in vm.custAttrList">
-                                            <label class="col-sm-3 control-label" ng-if="$index == 0" translate="TXT_CUST_QUERY_ATTR"></label>
-                                            <label class="col-sm-3 control-label" ng-if="$index != 0"></label>
+                                        	<label class="col-sm-3 control-label"></label>
                                             <div class="col-sm-3">
                                                 <select class="form-control" ng-model="curSelAtts" ng-change="setSelValue(option, curSelAtts)" title="{{curSelAtts.configValue1}}"
                                                         ng-options="custAtts as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
@@ -513,8 +528,7 @@
                                             <div class="col-sm-2" ng-if="option.display==1">
                                                 <input type="text" class="form-control" ng-model="option.inputVal" ng-disabled="option.inputOpts==4||option.inputOpts==5||option.inputOpts==''||option.inputOpts==null">
                                             </div>
-                                            <button ng-if="$index > 0" id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
-                                            <button ng-if="$last && $index < 4" id="addCustDiv" class="btn btn-success btn-xs" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
+                                            <button id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
                                         </div>
                                     </div>
                                 </div>

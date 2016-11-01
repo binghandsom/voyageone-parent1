@@ -456,7 +456,14 @@ public class CmsAdvSearchQueryService extends BaseService {
                 }
             }
             if (inputList.size() > 0) {
-                queryObject.addQuery("{'$and':[" + inputList.stream().collect(Collectors.joining(",")) + "]}");
+            	String custQueryConditions = inputList.stream().collect(Collectors.joining(","));
+            	if ("1".equals(searchValue.getCustGroupType())) {
+            		// 满足所有条件 
+            		queryObject.addQuery("{'$and':[" + custQueryConditions + "]}");
+            	} else {
+            		// 满足任意条件
+            		queryObject.addQuery("{'$or':[" + custQueryConditions + "]}");
+            	}
             }
         }
     }

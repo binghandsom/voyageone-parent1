@@ -43,6 +43,21 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsChannelTagService cmsChannelTagService;
     @Autowired
     private TagService tagService;
+    
+    private static final String[] sortItems = new String[] { "1", "7", "30", "Year" };
+    
+    private static final String[][] sortItemKeys = new String[][] {
+    	{ "bi.sum%s.pv.cartId", "%s浏览量" },
+    	{ "bi.sum%s.uv.cartId", "%s访客数" },
+    	{ "bi.sum%s.gwc.cartId", "%s加购件数" },
+    	{ "bi.sum%s.scs.cartId", "%s收藏人数" }
+    };
+    
+    private static final String[][] cnPriceTypes = new String[][] {
+    	{ "bi.cap.cartId", "中国建议售价" },
+    	{ "bi.cgp.cartId", "中国指导售价" },
+    	{ "bi.cfp.cartId", "中国最终售价" }
+    };
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -257,7 +272,6 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             if (cartId == 0 || cartId == 1 || cartId == -1) {
                 continue;
             }
-            Map<String, String> keySumMap = new HashMap<>();
 
             // 目前只有淘宝和京东有bi数据，其他平台都忽略
             // 目前暂不计算平台相加总数
@@ -270,55 +284,30 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 $info("CmsAdvSearchOtherService 目前只有淘宝和京东有bi数据，其他平台都忽略 [ChannelId:%s] [CartId:%s]", channelId, cartId);
                 continue;
             }
-            keySumMap.put("name", cartObj.getName() + "1天浏览量");
-            keySumMap.put("value", "bi.sum1.pv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "1天访客数");
-            keySumMap.put("value", "bi.sum1.uv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "1天加购件数");
-            keySumMap.put("value", "bi.sum1.gwc.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "1天收藏人数");
-            keySumMap.put("value", "bi.sum1.scs.cartId" + cartId);
-            dataSumList.add(keySumMap);
-
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "7天浏览量");
-            keySumMap.put("value", "bi.sum7.pv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "7天访客数");
-            keySumMap.put("value", "bi.sum7.uv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "7天加购件数");
-            keySumMap.put("value", "bi.sum7.gwc.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "7天收藏人数");
-            keySumMap.put("value", "bi.sum7.scs.cartId" + cartId);
-            dataSumList.add(keySumMap);
-
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "30天浏览量");
-            keySumMap.put("value", "bi.sum30.pv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "30天访客数");
-            keySumMap.put("value", "bi.sum30.uv.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "30天加购件数");
-            keySumMap.put("value", "bi.sum30.gwc.cartId" + cartId);
-            dataSumList.add(keySumMap);
-            keySumMap = new HashMap<>();
-            keySumMap.put("name", cartObj.getName() + "30天收藏人数");
-            keySumMap.put("value", "bi.sum30.scs.cartId" + cartId);
-            dataSumList.add(keySumMap);
+            
+            // 添加各平台的排序关键字
+            for (String sortItem : sortItems) {
+            	String displayText = null;
+            	if (StringUtils.isNumeric(sortItem)) {
+            		displayText = sortItem + "天"; 
+            	} else {
+            		displayText = "年";
+            	}
+            	for (String[] sortItemKey : sortItemKeys) {
+            		Map<String, String> keySumMap = new HashMap<>();
+                    keySumMap.put("name", cartObj.getName() + String.format(sortItemKey[1], displayText));
+                    keySumMap.put("value", String.format(sortItemKey[0], sortItem) + cartId);
+                    dataSumList.add(keySumMap);
+            	}
+            }
+            
+            // 添加中国售价排序关键字
+            for (String[] cnPriceType : cnPriceTypes) {
+        		Map<String, String> keySumMap = new HashMap<>();
+                keySumMap.put("name", cartObj.getName() + cnPriceType[1]);
+                keySumMap.put("value", cnPriceType[0] + cartId);
+                dataSumList.add(keySumMap);
+            }
         }
 
         if (filterList != null) {

@@ -97,6 +97,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     private String compareType;
     // NumIID
     private String numIIds;
+    // 自定义条件组合类型
+    private String custGroupType;
 
     public List<String> getCidValue() {
         return cidValue;
@@ -542,5 +544,13 @@ public class CmsSearchInfoBean2 implements Serializable {
 	public void setNumIIds(String numIIds) {
 		this.numIIds = numIIds;
 	}
-    
+
+	public String getCustGroupType() {
+		return custGroupType;
+	}
+
+	public void setCustGroupType(String custGroupType) {
+		this.custGroupType = custGroupType;
+	}
+	
 }
