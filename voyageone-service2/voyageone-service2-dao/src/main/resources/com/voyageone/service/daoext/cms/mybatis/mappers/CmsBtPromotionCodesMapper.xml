@@ -188,6 +188,18 @@
         </where>
 
     </select>
+    <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultType="HashMap" parameterType="HashMap">
+        SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1
+        INNER JOIN voyageone_cms2.cms_bt_promotion t2 on  t1.promotion_id = t2.id
+        WHERE t2.channel_id = #{channelId,jdbcType=VARCHAR}
+        <if test="cartId != null">
+            AND t2.cart_id = #{cartId,jdbcType=INTEGER}
+        </if>
+        AND t1.product_code = #{productCode,jdbcType=VARCHAR}
+        AND IF(LENGTH(t2.activity_end) = 10,CONCAT(t2.activity_end," 23:59:59"),t2.activity_end) >= #{now,jdbcType=VARCHAR}
+        AND t2.active = 1
+        AND t2.is_all_promotion = 0
+    </select>
     <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
         insert into voyageone_cms2.cms_bt_promotion_codes
         <trim prefix="(" suffix=")" suffixOverrides=",">

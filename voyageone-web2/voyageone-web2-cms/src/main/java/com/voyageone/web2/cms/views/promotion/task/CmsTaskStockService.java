@@ -17,7 +17,7 @@ import com.voyageone.service.impl.cms.StockSeparateService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
-import com.voyageone.service.impl.wms.InventoryCenterService;
+import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -201,7 +201,7 @@ public class CmsTaskStockService extends BaseViewService {
     @Autowired
     private StockSeparateService stockSeparateService;
     @Autowired
-    private InventoryCenterService inventoryCenterService;
+    private InventoryCenterLogicService inventoryCenterLogicService;
     @Autowired
     private PromotionService promotionService;
     @Autowired
@@ -1074,7 +1074,7 @@ public class CmsTaskStockService extends BaseViewService {
         //取得逻辑库存
         Map<String, Integer> skuLogicStockAll = new HashMap<>();
         sqlParam.put("channelId", channelId);
-        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterLogicService.getInventoryItemDetail(sqlParam);
         if (listLogicInventory != null && listLogicInventory.size() > 0) {
             for (WmsBtInventoryCenterLogicModel logicInventory : listLogicInventory) {
                 String sku = logicInventory.getSku();
@@ -2052,7 +2052,7 @@ public class CmsTaskStockService extends BaseViewService {
         Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("sku", sku);
         sqlParam.put("channelId", channelId);
-        Integer logicInventoryCnt = inventoryCenterService.getLogicInventoryCnt(sqlParam);
+        Integer logicInventoryCnt = inventoryCenterLogicService.getLogicInventoryCnt(sqlParam);
         if (logicInventoryCnt != null) {
             logicStock = logicInventoryCnt;
         }
@@ -2224,7 +2224,7 @@ public class CmsTaskStockService extends BaseViewService {
         Map<String, Object> sqlParam1 = new HashMap<>();
         sqlParam1.put("channelId", (String) param.get("channelId"));
         sqlParam1.put("sku", sku);
-        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+        List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterLogicService.getInventoryItemDetail(sqlParam1);
         if (listLogicInventory.size() == 0) {
             // 不能新建不正确的Sku
             throw new BusinessException("7000076");
@@ -2757,7 +2757,7 @@ public class CmsTaskStockService extends BaseViewService {
         if (EXCEL_IMPORT_ADD.equals(importMode)) {
             Map<String, Object> sqlParam1 = new HashMap<>();
             sqlParam1.put("channelId", (String) param.get("channelId"));
-            List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterService.getInventoryItemDetail(sqlParam1);
+            List<WmsBtInventoryCenterLogicModel> listLogicInventory = inventoryCenterLogicService.getInventoryItemDetail(sqlParam1);
             if (listLogicInventory.size() > 0) {
                 skuInLogicInventory = listLogicInventory.stream().map(WmsBtInventoryCenterLogicModel::getSku).collect(Collectors.toList());
             }

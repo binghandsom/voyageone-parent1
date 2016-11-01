@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.dao.ServiceBaseDao;
 import org.springframework.stereotype.Repository;
@@ -47,5 +48,18 @@ public class CmsBtPromotionCodesDaoExt extends ServiceBaseDao {
 
     public List<Map<String, Object>> selectCmsBtPromotionAllCodeByPromotionIdS(List<String> promotionIdList) {
         return selectList("select_cms_bt_promotion_code_pro_promotionIds", promotionIdList);
+    }
+
+    public String selectCodeInActivePromotionName(Map<String, Object> params) {
+        String promotionNames = "";
+        List<Map<String, Object>> promotionList = selectList("select_cms_bt_promotion_code_in_active_promotion_name", params);
+        // 拼接PromotionName
+        for (Map<String, Object> promotion : promotionList) {
+            promotionNames += promotion.get("promotion_name") + ",";
+        }
+        if (!StringUtils.isEmpty(promotionNames)) {
+            promotionNames = promotionNames.substring(0,promotionNames.length() - 1);
+        }
+        return promotionNames;
     }
 }

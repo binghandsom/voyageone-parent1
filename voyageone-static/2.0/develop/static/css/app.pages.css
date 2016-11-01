@@ -496,6 +496,7 @@ s-field textarea.s-html {
 
 .product-shema-detail .thumbnail {
     max-width: 100px;
+    max-height: 110px;
 }
 
 .product-shema-detail .thumbnail.current {
@@ -868,6 +869,11 @@ schema .ng-invalid.focus-error {
     cursor: pointer;
     border-width: 2px;
     border-style: dotted;
+}
+
+/*clear margin*/
+.clear-margin-bottom {
+    margin-bottom: 0;
 }
 
 /* 聚美专场v2模块画面，商品排序弹出框样式 */
