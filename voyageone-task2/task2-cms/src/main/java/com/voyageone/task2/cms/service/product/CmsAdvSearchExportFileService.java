@@ -70,8 +70,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     // 各平台固定输出列
     private final static String[] _DynCol = { "URL", "Numiid", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
     private final static String[] _DynColCN = { "URL", "Numiid", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
-    private final static String[] _DynColJM = { "MallURL", "MallId", "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
-    private final static String[] _DynColCNJM = { "MallURL", "MallId", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
+    private final static String[] _DynColJM = { "URL", "HashID", "Name", "Category", "MSRP", "RetailPrice", "SalePrice" };
+    private final static String[] _DynColCNJM = { "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
     private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color" };
