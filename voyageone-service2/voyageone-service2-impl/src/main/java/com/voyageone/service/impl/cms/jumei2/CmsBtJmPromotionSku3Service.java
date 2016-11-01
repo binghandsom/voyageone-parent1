@@ -124,7 +124,7 @@ public class CmsBtJmPromotionSku3Service {
                 price *= parameter.getPriceValue();
                 break;
             case "=":
-                price = parameter.getPriceValue();
+               // price = parameter.getPriceValue();
                 break;
             default:
                 break;
