@@ -351,9 +351,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         HtProductAddResponse_Spu spu = spus.stream().filter(w -> w.getPartner_sku_no().equals(jmsku.getSkuCode())).findFirst().get();
                         jmsku.setJmSkuNo(spu.getJumei_sku_no());
                         jmsku.setJmSpuNo(spu.getJumei_spu_no());
-                        cmsBtJmSkuDao.insert(jmsku);
+//                        cmsBtJmSkuDao.insert(jmsku);
                         // 插入或更新MySql的cms_bt_jm_sku表(以前无条件插入的话，如果有脏数据存在就会报MySql表主键冲突的错误)
-                        insertOrUpdateCmsBtJmSku(jmsku, currentCmsBtJmSkuList);
+                        insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
                         // update by desmond 2016/10/31 end
                         $info("新增CmsBtJmSku成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
                     }
@@ -461,7 +461,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 JmGetProductInfo_Spus spu = spus.stream().filter(w -> w.getBusinessman_code().equals(jmsku.getSkuCode())).findFirst().get();
                                 jmsku.setJmSkuNo(spu.getSku_no());
                                 jmsku.setJmSpuNo(spu.getSpu_no());
-                                cmsBtJmSkuDao.update(jmsku);
+//                                cmsBtJmSkuDao.update(jmsku);
+                                insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
                                 $info("保存聚美SKU成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getSpu_no(), product.getProdId(), channelId, CART_ID);
                             }
                         }
@@ -659,7 +660,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     mySku.setCmsSize(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
                                     mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                     mySku.setModifier(getTaskName());
-                                    cmsBtJmSkuDao.update(mySku);
+//                                    cmsBtJmSkuDao.update(mySku);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                 }
                                 else
                                 {
@@ -669,7 +671,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
                                     mySku.setModified(new Date());
-                                    cmsBtJmSkuDao.insert(mySku);
+//                                    cmsBtJmSkuDao.insert(mySku);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                     // 这里不追加的话，后面还以为这个sku还是不存在，再insert就会出错
                                     skuList.add(mySku);
                                 }
@@ -723,13 +726,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                         mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
                                         mySku.setModifier(getTaskName());
                                         mySku.setModified(new Date());
-                                        cmsBtJmSkuDao.update(mySku);
+//                                        cmsBtJmSkuDao.update(mySku);
+                                        insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                     } else
                                     {
                                         CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                         cmsBtJmSkuModel.setJmSpuNo(oldSku.getSpu_no());
                                         cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
 
                                         skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                     }
@@ -813,7 +818,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
                                     cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
 
                                     skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                 }
@@ -1128,6 +1134,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             skuList = new ArrayList<>();
         }
         return skuList;
+    }
+
+    /**
+     * 查询单个CmsBtJmSkuModel
+     *
+     * @param channelId
+     * @param productCode
+     * @return
+     */
+    private CmsBtJmSkuModel getCmsBtJmSkuModel(String channelId, String productCode, String skuCode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("channelId", channelId);
+        map.put("productCode", productCode);
+        map.put("skuCode", skuCode);
+
+        CmsBtJmSkuModel skuModel = cmsBtJmSkuDao.selectOne(map);
+
+        return skuModel;
     }
 
     /**
@@ -1744,7 +1768,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
                         cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
                         cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
-                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode());
 
                         sku.setStringAttribute("jmSkuNo", jumeiSkuNo);
                         saveProductPlatform(product.getChannelId(), product);
@@ -2272,19 +2297,25 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * 插入或更新MySql的cms_bt_jm_sku表
      *
      * @param jmsku 聚美sku对象
-     * @param currentCmsBtJmSkuList cms_bt_jm_sku表中存在的sku列表
+     * @param channelId 渠道id
+     * @param channelId 产品code
      */
-    protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, List<CmsBtJmSkuModel> currentCmsBtJmSkuList) {
-        if (jmsku == null || StringUtils.isEmpty(jmsku.getSkuCode()) || currentCmsBtJmSkuList == null) return;
+    protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, String channelId, String productCode) {
+        if (jmsku == null || StringUtils.isEmpty(jmsku.getSkuCode())) return;
 
-        if (currentCmsBtJmSkuList.stream().filter(w -> jmsku.getSkuCode().equals(w.getSkuCode())).count() == 0) {
+        // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
+        CmsBtJmSkuModel currentCmsBtJmSku = getCmsBtJmSkuModel(channelId, productCode, jmsku.getSkuCode());
+
+        if (currentCmsBtJmSku == null) {
             // 不存在，新增
+            $info("新增cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
             cmsBtJmSkuDao.insert(jmsku);
-            // 新增成功之后，也加入到列表中，防止后面再次插入报异常
-            currentCmsBtJmSkuList.add(jmsku);
+            $info("新增cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         } else {
             // 存在，更新
+            $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
             cmsBtJmSkuDao.update(jmsku);
+            $info("更新cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
         }
     }
 
