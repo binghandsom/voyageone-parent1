@@ -44,9 +44,8 @@ public class CnSellerCatService {
 
         return catId;
     }
-    public void  updateSellerCat(String channelId,String catId, ShopBean shopBean)
+    public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
-        CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
         if (!ret) {
