@@ -419,7 +419,7 @@ define(function () {
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
-                "$addProductToPromotionService":{
+                "addProductToPromotionService":{
                     "root": "/cms/pop/add_product_to_promotion",
                     "init": "init"
                 },

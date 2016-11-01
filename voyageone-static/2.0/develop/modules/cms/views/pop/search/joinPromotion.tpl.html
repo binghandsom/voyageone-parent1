@@ -5,7 +5,7 @@
         </button>
         <h5 class="modal-title"> 加入活动 </h5>
     </div>
-    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg ng-pristine ng-valid" name="addPromotionForm" novalidate>
+    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg" novalidate>
         <div class="form-group">
             <label class="col-sm-3 control-label">platform:</label>
             <div class="col-sm-6">
@@ -14,16 +14,24 @@
         </div>
         <div class="form-group">
             <label class="col-sm-3 control-label">Promotion Time:</label>
-            <div class="col-sm-6">
-                <div class="row">
-                    <div class="col-md-5">
-                        <input class="form-control" ng-model="ctrl.promotion.name">
+            <div class="col-sm-7 form-inline">
+                <!--<div class="row ">-->
+                    <div class="col-md-5 input-group">
+                        <input class="form-control" ng-model="ctrl.promotion.name1" uib-datepicker-popup
+                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close">
+                        <span class="input-group-btn">
+                          <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
                     </div>
-                    <div class="col-md-2 text-center">~</div>
-                    <div class="col-md-5">
-                        <input class="form-control" ng-model="ctrl.promotion.name">
+                    &nbsp;~&nbsp;
+                    <div class="col-md-5 input-group">
+                        <input class="form-control" ng-model="ctrl.promotion.name2" uib-datepicker-popup
+                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker2" close-text="Close">
+                        <span class="input-group-btn">
+                           <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
                     </div>
-                </div>
+               <!-- </div>-->
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-success"><i class="fa fa-search"></i></button>
