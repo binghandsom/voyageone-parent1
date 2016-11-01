@@ -11,6 +11,7 @@ define([
     'modules/cms/service/product.detail.service',
     './jd.component.ctl',
     './feed.component.ctl',
+    './sku.component.ctl',
     './master.component.ctl',
     './jgj.component.ctl',
     './gw.component.ctl',
