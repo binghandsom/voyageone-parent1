@@ -27,7 +27,7 @@ public class ProductServiceTest {
 
         List<String> listCode=new ArrayList<>();
         listCode.add("DMC015700");
-        productService.removeTagByCodes("010",listCode,"196");
+        productService.removeTagByCodes("010",listCode,196);
 
     }
 

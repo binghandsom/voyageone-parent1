@@ -126,7 +126,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CallResult result=new CallResult();
         boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
-        modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
+        modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //"/usr/JMImport/"
         String filePath = importPath + "/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
         File excelFile = new File(filePath);
