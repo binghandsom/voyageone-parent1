@@ -108,6 +108,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
 
+    List<String> selectCodesByJmPromotionId(int jmPromotionId);
     //jm2 end
 
     /**

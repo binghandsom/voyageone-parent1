@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CmsBtJmPromotionTagProductDaoExt {
     int deleteByCmsBtJmPromotionProductId(int cmsBtJmPromotionProductId);
+    int batchDeleteTag(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+
 
     int deleteByTagId(int tagId);
 

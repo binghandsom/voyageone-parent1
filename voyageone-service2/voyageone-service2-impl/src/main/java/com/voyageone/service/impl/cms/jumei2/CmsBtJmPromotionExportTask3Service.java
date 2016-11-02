@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
@@ -49,7 +50,7 @@ public class CmsBtJmPromotionExportTask3Service {
         String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
         //"/usr/JMExport/"
         String filePath = exportPath + "/" + fileName;
-        model.setBeginTime(new Date());
+        model.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //int TemplateType = model.getTemplateType();
         try {
             dao.update(model);
@@ -67,7 +68,7 @@ public class CmsBtJmPromotionExportTask3Service {
             ex.printStackTrace();
         }
         model.setIsExport(true);
-        model.setEndTime(new Date());
+        model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
     }
 

@@ -630,7 +630,7 @@ public class ProductService extends BaseService {
                 resultInfo.setUnitPu(hsCodePu[2]);
 //                }
             }
-            if(!StringUtil.isEmpty(hsCodePrivate)) {
+            if (!StringUtil.isEmpty(hsCodePrivate)) {
                 CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
                 if (cmsMtEtkHsCodeModel != null) {
                     resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
@@ -1294,7 +1294,7 @@ public class ProductService extends BaseService {
     /**
      * 计算group的价格区间
      */
-    public void calculatePriceRange (CmsBtProductModel productModel) {
+    public void calculatePriceRange(CmsBtProductModel productModel) {
         // Common.fields下的价格区间
         Double commonPriceRetailSt = null;
         Double commonPriceRetailEd = null;
@@ -1378,5 +1378,9 @@ public class ProductService extends BaseService {
             platform.getValue().setpPriceMsrpSt(priceMsrpSt);
             platform.getValue().setpPriceMsrpEd(priceMsrpEd);
         }
+    }
+
+    public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
+        cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
     }
 }

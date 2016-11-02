@@ -50,8 +50,12 @@ define([
             upEntity = _.map(self.dataList, function (item) {
                 return {'id': item.id, 'promotionPrice': item.promotionPrice};
             });
+           var  context = self.context;
+            var p={ productCode: context.productCode,
+                promotionId: context.promotionId};
+            p.listSkuPromotionPriceInfo=upEntity;
 
-            promotionDetailService.saveSkuPromotionPrices(upEntity).then(function () {
+            promotionDetailService.saveSkuPromotionPrices(p).then(function () {
                 notify.success("TXT_SAVE_SUCCESS");
                 $uibModalInstance.close();
             });
