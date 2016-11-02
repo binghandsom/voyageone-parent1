@@ -386,7 +386,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
-                    CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(sxWorkLoadBean.getCartId());
+                    CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
+                    CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+                    platform.putAll(fromPlatform);
+
                     platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
                     platform.setpCatId(null);
                     platform.setpCatPath(null);
