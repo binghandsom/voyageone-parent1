@@ -98,7 +98,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         String errorMsg = "";
         boolean isError = false;
         CmsBtJmPromotionImportTaskModel modelCmsBtJmPromotionImportTask = cmsBtJmPromotionImportTaskDao.select(JmBtPromotionImportTaskId);
-        modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
+        modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         try {
             cmsBtJmPromotionImportTaskDao.update(modelCmsBtJmPromotionImportTask);
             CallResult result= importExcel(modelCmsBtJmPromotionImportTask, importPath);
@@ -118,7 +118,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
         }
         modelCmsBtJmPromotionImportTask.setIsImport(true);
-        modelCmsBtJmPromotionImportTask.setEndTime(new Date());
+        modelCmsBtJmPromotionImportTask.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         cmsBtJmPromotionImportTaskDao.update(modelCmsBtJmPromotionImportTask);
     }
 
@@ -126,7 +126,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         CallResult result=new CallResult();
         boolean isError;
         CmsBtJmPromotionModel modelCmsBtJmPromotion = daoCmsBtJmPromotion.select(modelCmsBtJmPromotionImportTask.getCmsBtJmPromotionId());
-        modelCmsBtJmPromotionImportTask.setBeginTime(new Date());
+        modelCmsBtJmPromotionImportTask.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //"/usr/JMImport/"
         String filePath = importPath + "/" + modelCmsBtJmPromotionImportTask.getFileName().trim();//"/Product20160324164706.xls";
         File excelFile = new File(filePath);

@@ -739,7 +739,7 @@ define(function () {
         "TXT_CONFIRM_ALL_STORE_PUT_ON": "您确认要进行全平台的[{{optName}}]操作吗？",
         "TXT_CONFIRM_NOW_STORE_PUT_ON": "您确认要进行[{{cartName}}]的[{{optName}}]操作吗？",
         "TXT_CONFIRM_MOVE_CODE": "您确定要移动选择的Sku到新的Code吗？",
-        "TXT_CONFIRM_MOVE_SKU": "您确定要在{{cartName}}平台,移动Code:{{productCode}}到其他Group吗？",
+        "TXT_CONFIRM_MOVE_SKU": "您确定要在{{cartName}}平台,移动当前商品到其他Group吗？",
         "TXT_ITEM_CODE": "商品Code",
 
         /** 翻译页面相关 **/
