@@ -22,6 +22,14 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class ProductServiceTest {
+    @Test
+    public void removeTagByCodes() throws Exception {
+
+        List<String> listCode=new ArrayList<>();
+        listCode.add("DMC015700");
+        productService.removeTagByCodes("010",listCode,"196");
+
+    }
 
     @Autowired
     ProductService productService;
