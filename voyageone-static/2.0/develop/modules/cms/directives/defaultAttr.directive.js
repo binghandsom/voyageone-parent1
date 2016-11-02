@@ -7,7 +7,7 @@
 
 define([
     'cms'
-],function(cms){
+], function (cms) {
 
     var FIELD_TYPES = {
         "INPUT": "INPUT",
@@ -623,7 +623,7 @@ define([
             return;
 
         //过滤掉input[type='url']
-        if(getInputType(type) === "url")
+        if (getInputType(type) === "url")
             return;
 
         fieldElement = angular.element('<d-field>');
@@ -683,28 +683,28 @@ define([
 
     cms.directive('defaultAttr', function ($compile) {
 
-            function SchemaController($scope) {
-                this.$scope = $scope;
-            }
+        function SchemaController($scope) {
+            this.$scope = $scope;
+        }
 
-            SchemaController.prototype.getSchema = function () {
-                return this.schema;
-            };
+        SchemaController.prototype = {
+            get schema() {
+                return this._schema;
+            },
 
-            SchemaController.prototype.$setSchema = function (data) {
-                this.schema = data;
-            };
+            set schema(schema) {
+                this._schema = schema;
+            },
 
-            SchemaController.prototype.$render = function ($element) {
-
-                var controller = this,
-                    $scope = controller.$scope,
-                    schema = controller.getSchema(),
-                    fieldRepeater = controller.fieldRepeater;
+            $render: function schemaRender($element) {
+                var self = this,
+                    $scope = self.$scope,
+                    schema = self.schema,
+                    fieldRepeater = self.fieldRepeater;
 
                 if (fieldRepeater) {
                     fieldRepeater.destroy();
-                    controller.fieldRepeater = null;
+                    self.fieldRepeater = null;
                 }
 
                 if (!schema || !schema.length)
@@ -712,25 +712,25 @@ define([
 
                 fieldRepeater = new FieldRepeater(schema, schema, $scope, $element, $compile);
 
-                controller.fieldRepeater = fieldRepeater;
+                self.fieldRepeater = fieldRepeater;
 
                 fieldRepeater.renderList();
-            };
-
-            return {
-                restrict: 'E',
-                scope: true,
-                controllerAs: 'schemaController',
-                link: function ($scope, $element, $attrs) {
-                    $scope.$watch($attrs.data, function (data) {
-                        var schemaController = $scope.schemaController;
-                        schemaController.$setSchema(data);
-                        schemaController.$render($element);
-                    });
-                },
-                controller: SchemaController
             }
-        })
+        };
+
+        return {
+            restrict: 'E',
+            scope: true,
+            require: 'defaultAttr',
+            link: function ($scope, $element, $attrs, schemaController) {
+                $scope.$watch($attrs.data, function (data) {
+                    schemaController.schema = data;
+                    schemaController.$render($element);
+                });
+            },
+            controller: SchemaController
+        }
+    })
 
         .directive('dField', function ($compile) {
 
@@ -768,15 +768,18 @@ define([
                     container.append(angular.element('<d-header>'));
 
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="s-wrapper">');
+                innerElement = angular.element('<div class="d-wrapper">');
                 container.append(innerElement);
                 container = innerElement;
 
                 innerElement = angular.element('<d-container>');
                 container.append(innerElement);
 
+                innerElement = angular.element('<d-toolbox>');
+                container.append(innerElement);
+
                 //不去解析multicomplex类型
-                if(!field.type === FIELD_TYPES.MULTI_COMPLEX){
+                if (!field.type === FIELD_TYPES.MULTI_COMPLEX) {
                     bindDefaultValueTip(container, field);
                     bindTipRule(container, rules);
 
@@ -903,7 +906,7 @@ define([
 
                     var schemaFieldController = requiredControllers[0];
 
-                    var innerElement , toolbox;
+                    var innerElement;
 
                     var field = schemaFieldController.getField(),
                         rules = getRules(field), name = field.$name;
@@ -962,13 +965,6 @@ define([
 
                                     innerElement = inputGroup;
                                 }
-
-                                /**属性匹配按钮*/
-                                if (type === 'text' || type === 'textarea'){
-                                    innerElement.addClass("d-col-content");
-                                    toolbox = angular.element("<d-toolbox class='d-col-box'>");
-                                }
-
                             })();
                             break;
                         case FIELD_TYPES.SINGLE_CHECK:
@@ -1027,7 +1023,7 @@ define([
                         case FIELD_TYPES.MULTI_CHECK:
                             (function createCheckboxElements() {
 
-                                var selected,valueStringList;
+                                var selected, valueStringList;
 
                                 innerElement = [];
 
@@ -1120,14 +1116,12 @@ define([
                             break;
                     }
 
-                    if (innerElement instanceof Array){
+                    if (innerElement instanceof Array) {
                         each(innerElement, function (childElement) {
                             element.append(childElement);
-                            element.append(toolbox);
                         });
-                    }else{
+                    } else {
                         element.append(innerElement);
-                        element.append(toolbox);
                     }
 
                     $compile(element.contents())(scope);
@@ -1194,16 +1188,22 @@ define([
                 require: ['^^dField'],
                 scope: true,
                 link: function ($scope, $element, $attrs, requiredControllers) {
-
                     var schemaFieldController = requiredControllers[0];
+                    var field = schemaFieldController.getField();
+                    var rules = getRules(field);
+                    var valueTypeRule = rules.valueTypeRule;
+                    var valueType = getInputType(valueTypeRule);
 
-                    $scope.fieldMapping = schemaFieldController.getField();
+                    console.log(valueType);
 
-                    var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping(fieldMapping,ctrl.searchInfo)" ng-controller="popupCtrl">'
-                                                +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
-                                                +'</button>');
-                    $element.append(button);
+                    if (field.type === FIELD_TYPES.INPUT) {
+                        var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping($f,ctrl.searchInfo)" ng-controller="popupCtrl">'
+                            + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
+                            + '</button>');
+                        $element.append(button);
+                    }
 
+                    $scope.$f = field;
                     $compile($element.contents())($scope);
                 }
             };
