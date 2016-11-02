@@ -6,9 +6,9 @@
                 <div class="row">
                     <div class="col-sm-5">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-pop btn-info" ng-click="moveSku()">
-                                <i class="fa fa-refresh"></i>&nbsp;{{'TXT_MOVE_TO_NEW_CODE'|translate}}
-                            </button>
+                            <!--<button type="button" class="btn btn-pop btn-info" ng-click="moveSku()" ng-if="skuList.length > 1">-->
+                                <!--<i class="fa fa-refresh"></i>&nbsp;{{'TXT_MOVE_TO_NEW_CODE'|translate}}-->
+                            <!--</button>-->
                         </div>
                     </div>
                 </div>
@@ -26,13 +26,6 @@
                                 <th class="text-center mfb-xx" translate="TXT_BARCODE"></th>
                             </tr>
                             </thead>
-                            <tbody ng-if="ctrl.hsCodeList.length == 0">
-                            <tr style="padding-left:0">
-                                <td colspan="7">
-                                    <div if-no-rows="ctrl.hsCodeList.length"></div>
-                                </td>
-                            </tr>
-                            </tbody>
                             <tbody>
                             <tr ng-repeat="skuInfo in skuList">
                                 <td class="control-label text-left v-middle form-inline">

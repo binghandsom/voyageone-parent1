@@ -30,18 +30,42 @@ define([
                  * 移动Sku到其他Code
                  * */
                 function moveSku() {
+                    var checkAll = true;
+                    var noCheck = true;
+                    _.each(scope.skuList, function (sku) {
+                        if(sku.isChecked) {
+                            noCheck = false;
+                        } else {
+                            checkAll = false;
+                        }
+                    });
+
+                    if (noCheck) {
+                        alert($translate.instant('TXT_NO_CHECK_SKU'));
+                        return;
+                    }
+
+                    if (checkAll) {
+                        alert($translate.instant('TXT_CHECK_ALL_SKU'));
+                        return;
+                    }
+
                     confirm($translate.instant('TXT_CONFIRM_MOVE_CODE')).then(function () {
+                        var moveSkuInfo = {
+                            skuList: scope.skuList,
+                            sourceCode : scope.productInfo.masterField.code
+                        };
+                        window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
+                        var newTab = window.open('about:blank');
                         productDetailService.moveSkuInitCheck({
                             skuList: scope.skuList,
                             sourceCode : scope.productInfo.masterField.code
                         }).then(function (resp) {
-                            var moveSkuInfo = {
-                                skuList: scope.skuList,
-                                sourceCode : scope.productInfo.masterField.code
-                            };
-                            window.sessionStorage.setItem('moveSkuInfo', JSON.stringify(moveSkuInfo));
-                            window.open("#/product/sku_move","_blank");
+                            newTab.location.href = "#/product/sku_move";
+                        }, function (err) {
+                            newTab.close();
                         });
+
                     });
                 }
             }
