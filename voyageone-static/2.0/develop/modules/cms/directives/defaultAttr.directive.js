@@ -745,84 +745,86 @@ define([
                 this.$element = $element;
             }
 
-            FieldController.prototype.render = function () {
+            FieldController.prototype = {
+                getField: function () {
+                    return this.field;
+                },
 
-                var controller = this,
-                    $element, showName,
-                    parentScope, $scope,
-                    field, container,
-                    rules, innerElement;
+                setField: function (field) {
+                    if (field)
+                        field.$name = 'f' + random();
+                    this.field = field;
+                },
 
-                controller.destroy();
+                render: function () {
 
-                parentScope = controller.originScope;
+                    var controller = this,
+                        $element, showName,
+                        parentScope, $scope,
+                        field, container,
+                        rules, innerElement;
 
-                $scope = parentScope.$new();
+                    controller.destroy();
 
-                controller.$scope = $scope;
+                    parentScope = controller.originScope;
 
-                $element = controller.$element;
-                showName = controller.showName;
+                    $scope = parentScope.$new();
 
-                field = controller.field;
+                    controller.$scope = $scope;
 
-                container = $element;
+                    $element = controller.$element;
+                    showName = controller.showName;
 
-                rules = getRules(field);
+                    field = controller.field;
 
-                if (showName)
-                    container.append(angular.element('<d-header>'));
+                    container = $element;
 
-                // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="d-wrapper">');
-                container.append(innerElement);
-                container = innerElement;
+                    rules = getRules(field);
 
-                innerElement = angular.element('<d-container>');
-                container.append(innerElement);
+                    if (showName)
+                        container.append(angular.element('<d-header>'));
 
-                innerElement = angular.element('<d-toolbox>');
-                container.append(innerElement);
+                    // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
+                    innerElement = angular.element('<div class="d-wrapper">');
+                    container.append(innerElement);
+                    container = innerElement;
 
-                //不去解析multicomplex类型
-                if (!field.type === FIELD_TYPES.MULTI_COMPLEX) {
-                    bindDefaultValueTip(container, field);
-                    bindTipRule(container, rules);
+                    innerElement = angular.element('<d-container>');
+                    container.append(innerElement);
 
-                }
-                // 最终编译
-                $compile($element.contents())($scope);
-            };
+                    innerElement = angular.element('<d-toolbox>');
+                    container.append(innerElement);
 
-            FieldController.prototype.remove = function (complexValue) {
-                var $scope = this.$scope;
-                var list = $scope.$complexValues;
-                var index = list.indexOf(complexValue);
-                list.splice(index, 1);
-            };
+                    //不去解析multicomplex类型
+                    if (!field.type === FIELD_TYPES.MULTI_COMPLEX) {
+                        bindDefaultValueTip(container, field);
+                        bindTipRule(container, rules);
 
-            FieldController.prototype.getField = function () {
-                return this.field;
-            };
+                    }
+                    // 最终编译
+                    $compile($element.contents())($scope);
+                },
 
-            FieldController.prototype.setField = function (field) {
-                if (field)
-                    field.$name = 'f' + random();
-                this.field = field;
-            };
+                remove: function (complexValue) {
+                    var $scope = this.$scope;
+                    var list = $scope.$complexValues;
+                    var index = list.indexOf(complexValue);
+                    list.splice(index, 1);
+                },
 
-            FieldController.prototype.destroy = function () {
+                destroy: function () {
 
-                var controller = this,
-                    $element = controller.$element,
-                    $scope = controller.$scope;
+                    var controller = this;
+                    var $element = controller.$element;
+                    var $scope = controller.$scope;
 
-                if ($element)
-                    $element.empty();
+                    if ($element)
+                        $element.empty();
 
-                if ($scope) {
-                    $scope.$destroy();
-                    controller.$scope = null;
+                    if ($scope) {
+                        $scope.$destroy();
+                        controller.$scope = null;
+                    }
                 }
             };
 
