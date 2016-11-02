@@ -1215,7 +1215,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         if (!"1".equals(likingImageCopyFlg) && !"2".equals(likingImageCopyFlg)) return;
         if (productModel == null || pr == null) return;
 
-        String imageKey = "images" + imagesNo;
+        String imageKey = "image" + imagesNo;
         CmsBtProductConstants.FieldImageType imageTypeNo = getImageTypeByNo(imagesNo);
         if (imageTypeNo == null) return;
 
