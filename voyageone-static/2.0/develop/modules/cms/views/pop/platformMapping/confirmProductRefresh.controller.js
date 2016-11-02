@@ -1,13 +1,5 @@
-define(['cms',
-        'underscore',
-        'modules/cms/enums/RuleTypes',
-        'modules/cms/enums/ValueTypes',
-        'modules/cms/enums/Carts'],
-    function (cms,
-              _,
-              ruleTypes,
-              valueTypes,
-              carts) {
+define(['cms'],
+    function (cms) {
         'use strict';
         function ConfirmProductRefreshController($uibModalInstance, platformMappingService, notify, context) {
             this.$uibModalInstance = $uibModalInstance;
@@ -27,7 +19,7 @@ define(['cms',
                     categoryPath: mappingInfo.categoryPath,
                     categoryType: mappingInfo.categoryType,
                     channelId: mappingInfo.channelId,
-                    fieldId: field.id,
+                    fieldId: field ? field.id : null,
                     allProduct: isAll
                 }).then(function () {
                     modal.close();
