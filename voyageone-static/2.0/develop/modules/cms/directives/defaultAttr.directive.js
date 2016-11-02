@@ -860,13 +860,10 @@ define([
         .directive('dHeader', function () {
             return {
                 restrict: 'E',
-                require: ['^^dField'],
+                require: '^^dField',
                 scope: false,
-                link: function (scope, element, attrs, requiredControllers) {
-
-                    var schemaFieldController = requiredControllers[0];
-
-                    var field = schemaFieldController.getField(),
+                link: function (scope, element, attrs, fieldController) {
+                    var field = fieldController.getField(),
                         rules = getRules(field),
                         required = rules.requiredRule,
                         requiredClass = 's-required';
@@ -1181,7 +1178,7 @@ define([
                     }
 
                     if (field.$top) {
-                        button = angular.element('<button class="btn btn-schema" ng-click="openPropertyMapping($f,ctrl.searchInfo)">'
+                        button = angular.element('<button class="btn btn-schema btn-default" ng-click="openPropertyMapping($f,ctrl.searchInfo)">'
                             + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_REFRESH_PRODUCT_FIELD"></span>'
                             + '</button>');
                         $element.append(button);
