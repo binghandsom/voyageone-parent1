@@ -1727,9 +1727,9 @@ public class BackDoorController extends CmsController {
     public Object updateSkuUpcToUnique (@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId) {
 
         JongoQuery query = new JongoQuery();
-//        query.setQuery("{$where: \"this.common.skus.length > 1\" }");
+        query.setQuery("{$where: \"this.common.skus.length > 1\" }");
 
-        query.setQuery("{\"common.skus.skuCode\": \"028-3569272\"}");
+//        query.setQuery("{\"common.skus.skuCode\": \"028-3569272\"}");
 
         List<String> updateList = new ArrayList<>();
 
