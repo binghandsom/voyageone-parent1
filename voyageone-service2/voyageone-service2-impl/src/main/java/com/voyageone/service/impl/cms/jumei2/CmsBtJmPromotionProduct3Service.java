@@ -12,6 +12,7 @@ import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.JMPromotionProduct.UpdateRemarkParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
+import com.voyageone.service.bean.cms.jumei2.JmProduct;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionTagProductDao;
@@ -497,35 +498,6 @@ public class CmsBtJmPromotionProduct3Service {
                 .stream()
                 .map(jmPromotionTagProductModel -> dao.select(jmPromotionTagProductModel.getCmsBtJmPromotionProductId()))
                 .collect(toList());
-    }
-
-    public static class JmProduct {
-        CmsBtJmProductModel jmProduct;
-        CmsBtJmPromotionProductModel jmPromotionProduct;
-
-        public JmProduct() {
-        }
-
-        JmProduct(CmsBtJmProductModel jmProduct, CmsBtJmPromotionProductModel jmPromotionProduct) {
-            this.jmProduct = jmProduct;
-            this.jmPromotionProduct = jmPromotionProduct;
-        }
-
-        public CmsBtJmProductModel getJmProduct() {
-            return jmProduct;
-        }
-
-        public void setJmProduct(CmsBtJmProductModel jmProduct) {
-            this.jmProduct = jmProduct;
-        }
-
-        public CmsBtJmPromotionProductModel getJmPromotionProduct() {
-            return jmPromotionProduct;
-        }
-
-        public void setJmPromotionProduct(CmsBtJmPromotionProductModel jmPromotionProduct) {
-            this.jmPromotionProduct = jmPromotionProduct;
-        }
     }
 }
 

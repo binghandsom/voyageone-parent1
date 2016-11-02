@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
+import com.voyageone.service.bean.cms.jumei2.JmProduct;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -369,7 +369,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     private static class SaveProductSort {
         Integer tagId;
-        List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList;
+        List<JmProduct> jmProductList;
 
         public Integer getTagId() {
             return tagId;
@@ -379,11 +379,11 @@ public class CmsJmPromotionDetailController extends CmsController {
             this.tagId = tagId;
         }
 
-        public List<CmsBtJmPromotionProduct3Service.JmProduct> getJmProductList() {
+        public List<JmProduct> getJmProductList() {
             return jmProductList;
         }
 
-        public void setJmProductList(List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList) {
+        public void setJmProductList(List<JmProduct> jmProductList) {
             this.jmProductList = jmProductList;
         }
     }
