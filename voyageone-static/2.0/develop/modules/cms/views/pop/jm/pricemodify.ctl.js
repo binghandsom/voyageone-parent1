@@ -61,21 +61,22 @@ define([
                     return;
                 }
             }
-
             //  if(预热已开始&&synch_status==2)//包含已上新的商品 提示
-
-            if(isBegin) {
+            var isSynchStatus2 = false
+            if (isBegin) {
                 for (var i = 0; i < listPromotionProduct.length; i++) {
                     if (listPromotionProduct[i].synchStatus == 2) {
-                        confirm("专场已上线，变更价格一旦同步至平台将引起客诉，点击确认继续操作。").then(function () {
-                            $scope.update();
-                        });
+                        isSynchStatus2 = true;
                         break;
                     }
                 }
             }
-            else
-            {
+            if (isSynchStatus2) {
+                confirm("专场已上线，变更价格一旦同步至平台将引起客诉，点击确认继续操作。").then(function () {
+                    $scope.update();
+                });
+            }
+            else {
                 $scope.update();
             }
 
