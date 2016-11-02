@@ -155,7 +155,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             for (CmsBtJmPromotionProductModel model : modelList) {
                 //压缩图片的所需要的对象
                 Map<String, String> urlMap = new HashMap<>();
-                urlMap.put("url", url + model.getImage1());
+                urlMap.put("url", url + model.getImage1() + "?wid=2000&hei=2000");
                 urlMap.put("picturePath", model.getProductCode());
                 promotionImagesList.add(urlMap);
             }
