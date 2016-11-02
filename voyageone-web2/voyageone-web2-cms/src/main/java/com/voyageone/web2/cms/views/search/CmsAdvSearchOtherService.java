@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,55 +191,55 @@ public class CmsAdvSearchOtherService extends BaseViewService {
      * 取得销量数据显示列
      */
     public List<Map<String, String>> getSalesTypeList(String channelId, String language, List<String> filterList) {
-        List<Map<String, String>> salseSum7List = new ArrayList<>();
-        List<Map<String, String>> salseSum30List = new ArrayList<>();
-        List<Map<String, String>> salseSumAllList = new ArrayList<>();
-
         // 设置按销量排序的选择列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
         if (cartList == null) {
-            return salseSumAllList;
+            return Collections.emptyList();
         }
+        
+        List<Map<String, String>> salseSumList = new ArrayList<>(0);
+
         for (TypeChannelBean cartObj : cartList) {
             int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
             if (cartId == 1 || cartId == -1) {
                 continue;
             }
-            Map<String, String> keySum7Map = new HashMap<>();
-            Map<String, String> keySum30Map = new HashMap<>();
-            Map<String, String> keySumAllMap = new HashMap<>();
+            String cartName = cartObj.getName();
             if (cartId == 0) {
-                keySum7Map.put("name", "7Days总销量");
-                keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
-                keySum30Map.put("name", "30Days总销量");
-                keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
-                keySumAllMap.put("name", "总销量");
-                keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
-            } else {
-                keySum7Map.put("name", cartObj.getName() + "7Days销量");
-                keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
-                keySum30Map.put("name", cartObj.getName() + "30Days销量");
-                keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
-                keySumAllMap.put("name", cartObj.getName() + "总销量");
-                keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            	cartName = "";
             }
-            salseSum7List.add(keySum7Map);
-            salseSum30List.add(keySum30Map);
-            salseSumAllList.add(keySumAllMap);
+            
+            Map<String, String> keySum7Map = new HashMap<>(2);
+            keySum7Map.put("name", cartName + "7天销量");
+            keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            salseSumList.add(keySum7Map);
+            
+            Map<String, String> keySum30Map = new HashMap<>(2);
+            keySum30Map.put("name", cartName + "30天销量");
+            keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            salseSumList.add(keySum30Map);
+            
+            Map<String, String> keySumYearMap = new HashMap<>(2);
+            keySumYearMap.put("name", cartName + "年销量");
+            keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            salseSumList.add(keySumYearMap);
+            
+            Map<String, String> keySumAllMap = new HashMap<>(2);
+            keySumAllMap.put("name", cartName + "总销量");
+            keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            salseSumList.add(keySumAllMap);
         }
-        salseSumAllList.addAll(salseSum30List);
-        salseSumAllList.addAll(salseSum7List);
 
         if (filterList != null) {
             List<Map<String, String>> sumAllList = new ArrayList<>();
-            for (Map<String, String> sumObj : salseSumAllList) {
+            for (Map<String, String> sumObj : salseSumList) {
                 if (filterList.contains(sumObj.get("value"))) {
                     sumAllList.add(sumObj);
                 }
             }
             return sumAllList;
         }
-        return salseSumAllList;
+        return salseSumList;
     }
 
     /**
