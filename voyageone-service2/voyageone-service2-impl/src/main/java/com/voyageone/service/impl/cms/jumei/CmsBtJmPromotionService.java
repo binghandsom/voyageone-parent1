@@ -647,8 +647,8 @@ public class CmsBtJmPromotionService extends BaseService {
         srcTag.forEach(srcTagMode -> {
             CmsBtTagModel desTag = desTags.stream().filter(desTagMode -> desTagMode.getTagName().equalsIgnoreCase(srcTagMode.getTagName())).findFirst().orElse(null);
             if (desTag != null) {
-                List<CmsBtJmPromotionProductExtModel> srcProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(srcTagMode.getId());
-                List<CmsBtJmPromotionProductExtModel> desProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(desTag.getId());
+                List<CmsBtJmPromotionProductExtModel> srcProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId2(srcTagMode.getId());
+                List<CmsBtJmPromotionProductExtModel> desProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId2(desTag.getId());
                 List<CmsBtJmPromotionProductExtModel> newProducts = new ArrayList<CmsBtJmPromotionProductExtModel>(desProducts.size());
                 srcProducts.forEach(srcJmPromotionProductExtModel -> {
                     CmsBtJmPromotionProductExtModel cmsBtJmPromotionProductExtModel = desProducts.stream().filter(desJmPromotionProductExtModel -> desJmPromotionProductExtModel.getProductCode().equalsIgnoreCase(srcJmPromotionProductExtModel.getProductCode())).findFirst().orElse(null);

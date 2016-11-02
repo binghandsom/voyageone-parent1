@@ -1,6 +1,9 @@
 package com.voyageone.service.daoext.cms;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by dell on 2016/6/27.

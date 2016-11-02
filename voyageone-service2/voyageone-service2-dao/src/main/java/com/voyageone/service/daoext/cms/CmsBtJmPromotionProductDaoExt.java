@@ -106,6 +106,8 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
 
+    List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId2(Integer tagId);
+
     int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
 
     List<String> selectCodesByJmPromotionId(int jmPromotionId);
