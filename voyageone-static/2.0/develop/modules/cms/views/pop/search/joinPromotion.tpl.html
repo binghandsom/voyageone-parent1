@@ -64,64 +64,74 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">基础价格</label>
+            <label class="col-sm-3 control-label">{{'TXT_BASE_PRICE' |translate}}</label>
             <div class="col-sm-6">
                 <div class="form-group" style="margin-left: 5px;">
-                    <label>
-                        <input type="radio" name="BasePrice" value="0">&nbsp;中国建议售价
-                    </label>&emsp;
-                    <label>
-                        <input type="radio" name="BasePrice" value="1">&nbsp;中国最终售价
-                    </label>&emsp;
-                    <label>
-                        <input type="radio" name="BasePrice" value="2">&nbsp;中国指导售价
-                    </label>&emsp;
-                    <label>
-                        <input type="radio" name="BasePrice" value="3">&nbsp;无
-                    </label>&emsp;
+                    <div class="row">
+                        <label class="col-md-5">
+                            <input type="radio" name="BasePrice" value="priceMsrp" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('1','TXT_MSRP_PRICE')">&nbsp;{{'TXT_MSRP_PRICE'|translate}}
+                        </label>&emsp;
+                        <label class="col-md-5">
+                            <input type="radio" name="BasePrice" value="priceRetail" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('2','TXT_RETAIL_PRICE_WITH_COLON')">&nbsp;{{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
+                        </label>&emsp;
+                        </div>
+                    <div class="row">
+                        <label class="col-md-5">
+                            <input type="radio" name="BasePrice" value="priceSale" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('3','TXT_SALE_PRICE')">&nbsp;{{'TXT_SALE_PRICE'|translate}}
+                        </label>&emsp;
+                        <label class="col-md-5">
+                            <input type="radio" name="BasePrice" value="" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('4','')">&nbsp;{{'TXT_NONE'|translate}}
+                        </label>&emsp;
+                    </div>
                 </div>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">表达式</label>
+            <label class="col-sm-3 control-label">{{'TXT_EXPRESSION' | translate}}</label>
             <div class="col-sm-6">
                 <div class="row m-t-xs">
                     <div class="col-md-6">
-                        <select class="form-control"></select>
+                        <select class="form-control" ng-model="ctrl.groupInfo.optType" ng-disabled="ctrl.groupInfo._optStatus" ng-change="ctrl.chkOptionType()">
+                            <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="*">*</option>
+                            <option value="+">+</option>
+                            <option value="-">-</option>
+                            <option value="=">=</option>
+                        </select>
                     </div>
                     <div class="col-md-6">
-                        <input type="text" class="form-control">
+                        <input type="number" class="form-control" ng-if="ctrl.groupInfo.priceInputFlg" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0">
                     </div>
                 </div>
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio">&nbsp;小数点向上取整
+                            <input type="radio" value="1" ng-model="ctrl.groupInfo.roundType">&nbsp;小数点向上取整
                         </label>&emsp;
                         <label>
-                            <input type="radio">&nbsp;个位向下取整
+                            <input type="radio" value="2" ng-model="ctrl.groupInfo.roundType">&nbsp;个位向下取整
                         </label>&emsp;
                         <label>
-                            <input type="radio">&nbsp;个位向上取整
+                            <input type="radio" value="3" ng-model="ctrl.groupInfo.roundType">&nbsp;个位向上取整
                         </label>&emsp;&emsp;
                         <label>
-                            <input type="radio">&nbsp;无特殊处理
+                            <input type="radio" value="4" ng-model="ctrl.groupInfo.roundType">&nbsp;无特殊处理
                         </label>&emsp;
                     </div>
                 </div>
                 <div class="row m-t-xs">
-                    <span class="label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">最终售价</span>&emsp;&times;&emsp;<span class="label label-primary">0.01</span>&emsp;
+                    <span class="label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">{{ctrl.groupInfo._typeText}}</span>&emsp;{{ctrl.groupInfo._opeText}}&emsp;<span class="label label-primary">{{ctrl.groupInfo.priceValue}}</span>&emsp;
                 </div>
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio">&nbsp;商品内，SKU统一最高价
+                            <input type="radio" value="1" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU统一最高价
                         </label>
                         <label>
-                            <input type="radio">&nbsp;商品内，SKU统一最低价
+                            <input type="radio" value="2" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU统一最低价
                         </label>
                         <label>
-                            <input type="radio">&nbsp;商品内，SKU价格不统一
+                            <input type="radio" value="3" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU价格不统一
                         </label>
                     </div>
                 </div>
