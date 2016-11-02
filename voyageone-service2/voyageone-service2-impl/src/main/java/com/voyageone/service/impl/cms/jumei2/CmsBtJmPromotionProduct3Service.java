@@ -306,6 +306,8 @@ public class CmsBtJmPromotionProduct3Service {
             result.setResult(false);
             result.setMsg("该专场内存在商品已完成上传，禁止删除!");
         }
+        List<String> codes=daoExt.selectCodesByJmPromotionId(jmPromotionId);
+        productService.removeTagByCodes(model.getChannelId(),codes,model.getRefTagId());
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);
