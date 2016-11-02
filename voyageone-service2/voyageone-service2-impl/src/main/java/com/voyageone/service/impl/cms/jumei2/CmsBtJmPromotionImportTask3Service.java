@@ -368,15 +368,16 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 }
             }
         } else {
-            if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
-                product.setErrorMsg("该商品预热已开始,不能导入");
-                listProducctErrorMap.add(BeanUtils.toMap(product));
-                for (SkuImportBean skuImport : listProductSkuImport) {
-                    skuImport.setErrorMsg("预热已开始,不能导入");
-                    listSkuErrorMap.add(BeanUtils.toMap(skuImport));
-                }
-                return;
-            }
+            //2016/11/2
+//            if (model.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime() && saveInfo.jmProductModel.getSynchStatus() == 2) {
+//                product.setErrorMsg("该商品预热已开始,不能导入");
+//                listProducctErrorMap.add(BeanUtils.toMap(product));
+//                for (SkuImportBean skuImport : listProductSkuImport) {
+//                    skuImport.setErrorMsg("预热已开始,不能导入");
+//                    listSkuErrorMap.add(BeanUtils.toMap(skuImport));
+//                }
+//                return;
+//            }
         }
         saveInfo.jmProductModel.setAppId(product.getAppId());
         saveInfo.jmProductModel.setPcId(product.getPcId());
