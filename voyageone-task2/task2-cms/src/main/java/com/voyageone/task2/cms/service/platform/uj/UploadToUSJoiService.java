@@ -387,19 +387,18 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
                     CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
-                    CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
-                    platform.putAll(fromPlatform);
-
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-                    platform.setpCatId(null);
-                    platform.setpCatPath(null);
-                    platform.setpBrandId(null);
-                    platform.setpBrandName(null);
                     productModel.platformsClear();
                     // 下面几个cartId都设成同一个platform
-                    if (platform != null) {
+                    if (fromPlatform != null) {
                         final CmsBtProductModel finalProductModel = productModel;
                         for (Integer cartId : cartIds) {
+                            CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+                            platform.putAll(fromPlatform);
+                            platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                            platform.setpCatId(null);
+                            platform.setpCatPath(null);
+                            platform.setpBrandId(null);
+                            platform.setpBrandName(null);
                             // 重新设置P28平台的mainProductCode和pIsMain
                             CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
                             if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
