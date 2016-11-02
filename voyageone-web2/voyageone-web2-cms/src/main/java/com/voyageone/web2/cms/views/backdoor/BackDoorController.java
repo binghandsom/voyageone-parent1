@@ -31,6 +31,7 @@ import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -98,6 +99,8 @@ public class BackDoorController extends CmsController {
     private CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
     @Autowired
     private CmsBtJmProductDao cmsBtJmProductDao;
+    @Autowired
+    private SxProductService sxProductService;
 
 
     /**
@@ -1711,5 +1714,128 @@ public class BackDoorController extends CmsController {
         builder.append("</body>");
 
         return builder.toString();
+    }
+
+
+    /**
+     * 将每个平台的sku,如果存在UPC重复的数据的SKU对应的platformSize设置成
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    @RequestMapping(value = "updateSkuUpcToUnique", method = RequestMethod.GET)
+    public Object updateSkuUpcToUnique (@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId) {
+
+        JongoQuery query = new JongoQuery();
+//        query.setQuery("{$where: \"this.common.skus.length > 1\" }");
+
+        query.setQuery("{\"common.skus.skuCode\": \"028-3569272\"}");
+
+        List<String> updateList = new ArrayList<>();
+
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+
+        productList.parallelStream().forEach(productInfo -> {
+
+            Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(), productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+
+            String skuChannelId = StringUtils.isEmpty(productInfo.getOrgChannelId()) ? channelId : productInfo.getOrgChannelId();
+            Map<String, Integer> skuInventoryList = productService.getProductSkuQty(skuChannelId, productInfo.getCommon().getFields().getCode());
+
+
+            Map<String, skuPlatformSizeAndQty> tempInfo = new HashMap<>();
+            Map<String, String> tempSkuInfo = new HashMap<String, String>();
+            if (sizeMap != null && sizeMap.size() > 0) {
+                productInfo.getCommon().getSkus().forEach(sku -> {
+
+                    skuPlatformSizeAndQty tempQtyAndPlatformSize = new skuPlatformSizeAndQty();
+                    tempQtyAndPlatformSize.setSkuCode(sku.getSkuCode());
+                    tempQtyAndPlatformSize.setPlatformSize(sizeMap.get(sku.getSize()));
+                    tempQtyAndPlatformSize.setQty(skuInventoryList.get(sku.getSkuCode()) == null ? 0 : skuInventoryList.get(sku.getSkuCode()));
+
+                    if (tempInfo.containsKey(sku.getBarcode()) && !StringUtils.isEmpty(sizeMap.get(sku.getSize()))) {
+
+                        skuPlatformSizeAndQty oldSkuPlatformSizeAndQty = tempInfo.get(sku.getBarcode());
+                        if (oldSkuPlatformSizeAndQty.getQty() > tempQtyAndPlatformSize.getQty()) {
+                            tempQtyAndPlatformSize.setPlatformSize(oldSkuPlatformSizeAndQty.getPlatformSize() + "+");
+                            tempInfo.put(sku.getBarcode(), tempQtyAndPlatformSize);
+                            tempSkuInfo.put(sku.getSkuCode(), oldSkuPlatformSizeAndQty.getPlatformSize() + "+");
+                        } else {
+                            tempSkuInfo.put(oldSkuPlatformSizeAndQty.getSkuCode(), oldSkuPlatformSizeAndQty.getPlatformSize() + "+");
+                        }
+                    } else {
+
+                        tempInfo.put(sku.getBarcode(), tempQtyAndPlatformSize);
+                    }
+                });
+            }
+
+            if (tempSkuInfo.size() > 0) {
+
+                productInfo.getPlatform(cartId).getSkus().forEach(skuInfo -> {
+
+                    String skuCode = skuInfo.getStringAttribute("skuCode");
+                    if (tempSkuInfo.get(skuCode) != null) {
+                        updateList.add("skuCode:" + skuCode + "=====platformSize:" + tempSkuInfo.get(skuCode));
+                        skuInfo.setAttribute("platformSize", tempSkuInfo.get(skuCode));
+                    }
+
+                });
+
+                productService.updateProductPlatform(channelId, productInfo.getProdId(), productInfo.getPlatform(cartId), "updateSkuUpcToUnique");
+            }
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>修改的skuCode</h2>");
+        System.out.println("<h2>修改的skuCode</h2>");
+        builder.append("<ul>");
+        updateList.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+        });
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+    public class skuPlatformSizeAndQty {
+        String skuCode;
+        String platformSize;
+        Integer qty;
+        Boolean isUpdate;
+
+        public String getSkuCode() {
+            return skuCode;
+        }
+
+        public void setSkuCode(String skuCode) {
+            this.skuCode = skuCode;
+        }
+
+        public String getPlatformSize() {
+            return platformSize;
+        }
+
+        public void setPlatformSize(String platformSize) {
+            this.platformSize = platformSize;
+        }
+
+        public Integer getQty() {
+            return qty;
+        }
+
+        public void setQty(Integer qty) {
+            this.qty = qty;
+        }
+
+        public Boolean getUpdate() {
+            return isUpdate;
+        }
+
+        public void setUpdate(Boolean update) {
+            isUpdate = update;
+        }
     }
 }
