@@ -232,7 +232,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     cartIds.add(NumberUtils.toInt(p.getValue()));
             });
         }
-        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(approveCartList)) {
+        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(cartIds)) {
             String errMsg = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) + " com_mt_value_channel表中没有usJoiChannel(" +
                     usjoiChannelId + ")对应的可售卖平台(53 A en)mapping信息,不能生成Product.PXX分平台信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
             $info(errMsg);
@@ -548,8 +548,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     final CmsBtProductModel finalProductModel1 = productModel;
                     for (Integer cartId : cartIds) {
                         CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cartId);
-                        CmsBtProductModel_Platform_Cart newPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
+                        CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
                         if (platformCart == null) {
+                            CmsBtProductModel_Platform_Cart newPlatform = new CmsBtProductModel_Platform_Cart();
+                            newPlatform.putAll(fromPlatform);
                             // 如果主店商品里面没有这个cartId的platform,则新加
                             newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
                             newPlatform.setpCatId(null);
@@ -580,9 +582,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             if (platformCart.getSkus() == null) {
-                                platformCart.setSkus(newPlatform.getSkus());
+                                platformCart.setSkus(fromPlatform.getSkus());
                             } else {
-                                for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
+                                for (BaseMongoMap<String, Object> newSku : fromPlatform.getSkus()) {
                                     boolean updateFlg = false;
                                     if (platformCart.getSkus() != null) {
                                         for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
