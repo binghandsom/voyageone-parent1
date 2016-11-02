@@ -29,4 +29,6 @@ public interface CmsBtPromotionCodesDaoExtCamel {
      * 更新活动下的产品的库存数据
      */
     int updateProductStockInfo(@Param("promotionProductList") List<CmsBtPromotionCodesModel> productList);
+
+    int updatePromotionPrice(@Param("promotionId") int promotionId,@Param("productCode") String productCode);
 }
