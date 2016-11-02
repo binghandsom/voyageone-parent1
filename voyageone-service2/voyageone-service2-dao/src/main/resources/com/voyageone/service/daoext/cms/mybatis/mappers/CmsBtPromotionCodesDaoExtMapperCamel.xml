@@ -46,5 +46,11 @@
             WHERE id = #{item.id}
         </foreach>
     </update>
+    
+    <update id="updatePromotionPrice">
+        UPDATE `cms_bt_promotion_codes`
+SET `promotion_price`=(SELECT MAX(`promotion_price`) FROM `cms_bt_promotion_skus` WHERE `promotion_id`=#{promotionId} AND `product_code`=#{productCode})
+WHERE `promotion_id`=#{promotionId} AND `product_code`=#{productCode}
+    </update>
 
 </mapper>
