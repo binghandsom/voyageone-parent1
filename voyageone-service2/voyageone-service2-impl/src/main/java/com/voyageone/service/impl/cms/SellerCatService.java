@@ -263,7 +263,9 @@ MongoSequenceService commSequenceMongoService;
             }
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
-            cnSellerCatService.deleteSellerCat(channelId,cId,shopBean);
+            List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+            CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
+            cnSellerCatService.deleteSellerCat(currentNode,shopBean);
         }
 
 

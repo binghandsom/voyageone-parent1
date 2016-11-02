@@ -566,6 +566,8 @@ public interface CmsUrlConstants {
 
             String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
 
+            String GET_COMMON_PRODUCT_SKU_INFO = "getCommonProductSkuInfo";
+
             String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
 
             String UPDATE_LOCK = "updateLock";
@@ -595,6 +597,26 @@ public interface CmsUrlConstants {
             String UPDATE_SKUPRICE = "updateSkuPrice";
 
             String RESET_TM_PRODUCT = "resetTmProduct";
+
+            String MOVE_CODE_INIT_CHECK = "moveCodeInitCheck";
+
+            String MOVE_CODE_INIT = "moveCodeInit";
+
+            String MOVE_CODE_SEARCH = "moveCodeSearch";
+
+            String MOVE_CODE_PREVIEW = "moveCodePreview";
+
+            String MOVE_CODE = "moveCode";
+
+            String MOVE_SKU_INIT_CHECK = "moveSkuInitCheck";
+
+            String MOVE_SKU_INIT = "moveSkuInit";
+
+            String MOVE_SKU_SEARCH = "moveSkuSearch";
+
+            String MOVE_SKU_PREVIEW = "moveSkuPreview";
+
+            String MOVE_SKU = "moveSku";
         }
 
         interface HISTORY {

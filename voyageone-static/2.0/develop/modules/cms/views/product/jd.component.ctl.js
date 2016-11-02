@@ -45,8 +45,9 @@ define([
                 scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
                 scope.refreshPrice = refreshPrice;
+                scope.moveToGroup = moveToGroup;
                 scope.doResetTmProduct = doResetTmProduct;
-                
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -248,6 +249,33 @@ define([
                             cartId: +scope.cartInfo.value
                         }).then(function (res) {
                             scope.vm.platform = res.data.platform;
+                        });
+                    });
+                }
+
+                /**
+                 * 移动Code到其他Group
+                 * */
+                function moveToGroup() {
+                    if (scope.vm.mastData == null)  return;
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name,'productCode' : scope.vm.mastData.productCode});
+                    var moveCodeInfo = {
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        prodId: scope.productInfo.productId,
+                        productCode : scope.vm.mastData.productCode
+                    };
+                    window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
+                    confirm(template).then(function () {
+                        var newTab = window.open('about:blank');
+                        productDetailService.moveCodeInitCheck({
+                            cartId: scope.cartInfo.value,
+                            cartName: scope.cartInfo.name,
+                            productCode : scope.vm.mastData.productCode
+                        }).then(function (resp) {
+                            newTab.location.href = "#/product/code_move";
+                        }, function (err) {
+                            newTab.close();
                         });
                     });
                 }

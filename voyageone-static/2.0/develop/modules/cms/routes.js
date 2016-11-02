@@ -373,6 +373,18 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
         },
+        "sku-move": {
+            "hash": "/product/sku_move",
+            "templateUrl": "views/product/skumove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/skumove.ctl",
+            "controller": "SkuMoveController as ctrl"
+        },
+        "code-move": {
+            "hash": "/product/code_move",
+            "templateUrl": "views/product/codemove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/codemove.ctl",
+            "controller": "CodeMoveController as ctrl"
+        },
         "maintain_common_master_brand_application": {
             "hash": "/maintain/common/masterBrandApplication/",
             "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
