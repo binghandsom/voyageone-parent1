@@ -1,0 +1,14 @@
+<div class="vo_modal vo-dialogs">
+    <div class="modal-header">
+        <h4><i class="fa fa-exclamation-triangle"></i>&nbsp;<span>是否需要强制重刷？</span></h4>
+    </div>
+    <div class="modal-body">
+        <p>选择<strong>待编辑商品重刷</strong>，重刷所有状态为<strong>“待编辑”</strong>的商品</p>
+        <p>选择<strong>全商品重刷</strong>，重刷<strong>所有</strong>主数据中的商品</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-vo" ng-click="$ctrl.refresh(false)">待编辑商品重刷</button>
+        <button type="button" class="btn btn-vo" ng-click="$ctrl.refresh(true)">全商品重刷</button>
+        <button type="button" class="btn btn-default" ng-click="$ctrl.close()" translate="BTN_CANCEL"></button>
+    </div>
+</div>

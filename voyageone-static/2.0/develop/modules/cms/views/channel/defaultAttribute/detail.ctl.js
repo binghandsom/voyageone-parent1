@@ -210,7 +210,7 @@ define([
                 searchInfo = self.searchInfo,
                 platformMappingService = self.platformMappingService;
 
-            platformMappingService.save({
+            return platformMappingService.save({
                 cartId: +searchInfo.cartId,
                 categoryType: +searchInfo.categoryType,
                 categoryPath: searchInfo.categoryPath,
@@ -225,6 +225,14 @@ define([
         AttributeDetailController.prototype.close = function () {
             window.opener.focus();
             window.close();
+        };
+
+        AttributeDetailController.prototype.confirmRefresh = function () {
+            var self = this;
+
+            self.save().then(function () {
+                self.popups.confirmProductRefresh(null, self.searchInfo);
+            });
         };
 
         return AttributeDetailController;

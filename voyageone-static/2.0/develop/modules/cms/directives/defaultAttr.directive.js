@@ -1163,7 +1163,7 @@ define([
             };
         })
 
-        .directive('dToolbox', function ($compile) {
+        .directive('dToolbox', function ($compile, popups) {
             return {
                 restrict: 'E',
                 require: '^^dField',
@@ -1173,17 +1173,25 @@ define([
                     var button;
 
                     if (field.type === FIELD_TYPES.INPUT) {
-                        button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping($f,ctrl.searchInfo)" ng-controller="popupCtrl">'
+                        button = angular.element('<button class="btn btn-schema btn-info" ng-click="$match()">'
                             + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
                             + '</button>');
                         $element.append(button);
+
+                        $scope.$match = function () {
+                            popups.openPropertyMapping(field, $scope.ctrl.searchInfo);
+                        };
                     }
 
                     if (field.$top) {
-                        button = angular.element('<button class="btn btn-schema btn-default" ng-click="openPropertyMapping($f,ctrl.searchInfo)">'
+                        button = angular.element('<button class="btn btn-schema btn-default" ng-click="$refresh()">'
                             + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_REFRESH_PRODUCT_FIELD"></span>'
                             + '</button>');
                         $element.append(button);
+
+                        $scope.$refresh = function () {
+                            popups.confirmProductRefresh(field, $scope.ctrl.searchInfo);
+                        };
                     }
 
                     $scope.$f = field;

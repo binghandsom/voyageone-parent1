@@ -538,6 +538,12 @@ define([
                 "controller": 'MoveResultController as ctrl',
                 "size": 'sm'
             }
+        },
+        confirmProductRefresh: {
+            templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
+            controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
+            controller: 'ConfirmProductRefreshController as $ctrl',
+            size: 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1286,7 +1292,14 @@ define([
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
-        }
+        };
+
+        $scope.confirmProductRefresh = function confirmProductRefresh(field, mappingInfo) {
+            return openModal(popActions.confirmProductRefresh, {
+                field: field,
+                mappingInfo: mappingInfo
+            });
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 

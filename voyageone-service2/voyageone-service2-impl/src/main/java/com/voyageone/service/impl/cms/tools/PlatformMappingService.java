@@ -4,9 +4,12 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CustomPropBean;
+import com.voyageone.service.bean.cms.tools.RefreshProductsBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.lang3.StringUtils;
@@ -37,11 +40,14 @@ public class PlatformMappingService extends BaseService {
 
     private final ProductService productService;
     private final CmsBtPlatformMappingDao platformMappingDao;
+    private final MqSender mqSender;
 
     @Autowired
-    public PlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao) {
+    public PlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao,
+                                  MqSender mqSender) {
         this.productService = productService;
         this.platformMappingDao = platformMappingDao;
+        this.mqSender = mqSender;
     }
 
     public CmsBtPlatformMappingModel get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
@@ -136,6 +142,12 @@ public class PlatformMappingService extends BaseService {
             return;
 
         filler.fillValueMap(valueMap, mappingMap);
+    }
+
+    public void refreshProductsByMapping(RefreshProductsBean refreshProductsBean) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("refreshProductsBean", refreshProductsBean);
+        mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
     }
 
     private class ValueMapFiller {

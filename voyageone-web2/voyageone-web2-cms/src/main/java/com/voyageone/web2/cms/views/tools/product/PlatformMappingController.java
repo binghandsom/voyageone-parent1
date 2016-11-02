@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.PageQueryParameters;
-import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.bean.cms.tools.RefreshProductsBean;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -83,5 +83,11 @@ public class PlatformMappingController extends CmsController {
     @RequestMapping(PLATFORM_MAPPING.GET_FEEDCUSTOMPROPS)
     public AjaxResponse getFeedCustomProps() {
         return success(platformMappingViewService.getFeedCustomProps(getUser().getSelChannelId()));
+    }
+
+    @RequestMapping("refreshProducts")
+    public AjaxResponse refreshProducts(@RequestBody RefreshProductsBean refreshProductsBean) {
+        platformMappingService.refreshProductsByMapping(refreshProductsBean);
+        return success(1);
     }
 }
