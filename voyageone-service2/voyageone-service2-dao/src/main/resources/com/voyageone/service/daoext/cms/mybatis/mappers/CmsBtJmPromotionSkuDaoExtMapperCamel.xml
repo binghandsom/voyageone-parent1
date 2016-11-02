@@ -93,5 +93,10 @@
  right JOIN `cms_bt_jm_promotion_sku` AS b ON a.`channel_id`=b.`channel_id` AND a.`sku_code`=b.`sku_code`
  where b.cms_bt_jm_promotion_product_id=#{promotionProductId} and b.cms_bt_jm_promotion_id=#{jmPromotionId}
 </select>
+
+    <select id="selectProductByJmPromotionId" parameterType="java.lang.Integer" resultType="com.voyageone.service.bean.cms.jumei.SkuImportBean">
+        SELECT *
+        FROM cms_bt_jm_promotion_sku where cms_bt_jm_promotion_id = #{promotionProductId}
+    </select>
     <!--jumei2  end-->
 </mapper>
