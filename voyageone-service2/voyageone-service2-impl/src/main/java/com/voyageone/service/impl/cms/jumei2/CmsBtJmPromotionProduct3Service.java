@@ -259,8 +259,9 @@ public class CmsBtJmPromotionProduct3Service {
         //获取未上传的jmproduct
         List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
 
-        //2.7.2.1 只删除未上传的商品  先删除sku 再删除product
+        //2.7.2.1 只删除未上传的商品  先删除sku  tag  再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
+        daoExtCmsBtJmPromotionTagProduct.batchDeleteTag(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
 
         //2.7.2.2  已经上传的商品  写入错误信息
