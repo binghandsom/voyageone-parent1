@@ -1126,11 +1126,15 @@ define([
         /**
          * 高级检索加入活动
          */
-        $scope.popJoinPromotion = function(){
+        $scope.popJoinPromotion = function(cartBean){
 
-            popups.openJoinPromotion({}).then(function(context){
+            _chkProductSel(cartBean.value, function(){
+                popups.openJoinPromotion(cartBean).then(function(context){
 
+                });
             });
+
+
         }
 
     }

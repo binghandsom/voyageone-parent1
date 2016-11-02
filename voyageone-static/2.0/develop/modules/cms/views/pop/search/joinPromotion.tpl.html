@@ -7,53 +7,55 @@
     </div>
     <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg" novalidate>
         <div class="form-group">
-            <label class="col-sm-3 control-label">platform:</label>
+            <label class="col-sm-3 control-label">平台:</label>
             <div class="col-sm-6">
-                <input class="form-control" ng-model="ctrl.promotion.cartName">
+                <input class="form-control" ng-model="ctrl.cartBean.name" readonly>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-3 control-label">Promotion Time:</label>
+            <label class="col-sm-3 control-label">活动时间:</label>
             <div class="col-sm-7 form-inline">
-                <!--<div class="row ">-->
-                    <div class="col-md-5 input-group">
-                        <input class="form-control" ng-model="ctrl.promotion.name1" uib-datepicker-popup
-                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close">
-                        <span class="input-group-btn">
-                          <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </div>
-                    &nbsp;~&nbsp;
-                    <div class="col-md-5 input-group">
-                        <input class="form-control" ng-model="ctrl.promotion.name2" uib-datepicker-popup
-                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker2" close-text="Close">
-                        <span class="input-group-btn">
-                           <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
-                        </span>
-                    </div>
-               <!-- </div>-->
+                <div class="col-md-5 input-group">
+                    <input class="form-control" ng-model="ctrl.groupInfo.startTime" uib-datepicker-popup
+                           date-model-format="yyyy-MM-dd"
+                           min-date="ctrl.nowTime"
+                           is-open="datePicker1" close-text="Close">
+                    <span class="input-group-btn">
+                      <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+                &nbsp;~&nbsp;
+                <div class="col-md-5 input-group">
+                    <input class="form-control" ng-model="ctrl.groupInfo.endTime" uib-datepicker-popup
+                           date-model-format="yyyy-MM-dd"
+                           min-date="ctrl.groupInfo.startTime"
+                           is-open="datePicker2" close-text="Close">
+                    <span class="input-group-btn">
+                       <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
             </div>
             <div class="col-sm-1">
                 <button class="btn btn-success"><i class="fa fa-search"></i></button>
             </div>
         </div>
+        <!------------------- 显示活动标签 ------------------->
         <div class="form-group">
-            <label class="col-sm-3 control-label">Promotion Tag</label>
+            <label class="col-sm-3 control-label">活动标签</label>
             <div class="col-sm-6">
                 <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden">
-                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.catId">
-                        <div class="m-t-xs" ng-if="category.isParent == 1">
-                            <i class="fa fa-plus icon-small text-vo"></i>&nbsp;
-                            <label class=" ">{{category.catName}}</label>
-                        </div>
-                        <div class="m-t-xs" ng-if="category.isParent == 0">
+                    <div class="col-sm-12" ng-repeat="category in ctrl.channelCategoryList track by category.id">
+                        <div class="m-t-xs">
                             <label>
-                                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId]"
-                                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                                &nbsp;{{category.catName}}
+                                <input style="margin: 0" type="checkbox"
+                                       ui-indeterminate="category.checked == 1"
+                                       ng-checked="category.checked == 2"
+                                       ng-click="ctrl.canSelectChild(category)"
+                                       ng-model="ctrl.checkNodes[category.id]">
+                                &nbsp;{{category.name}}
                             </label>
                         </div>
-                        <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
+                        <div ng-if="category.children.length > 0" ng-include="'categoryContainer'"
                              ng-init="categoryContainer = category.children">
                         </div>
                     </div>
@@ -62,20 +64,20 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-3 control-label">Base Price</label>
+            <label class="col-sm-3 control-label">基础价格</label>
             <div class="col-sm-6">
                 <div class="form-group" style="margin-left: 5px;">
                     <label>
-                        <input type="radio" name="BasePrice" value="0">中国建议售价
+                        <input type="radio" name="BasePrice" value="0">&nbsp;中国建议售价
                     </label>&emsp;
                     <label>
-                        <input type="radio" name="BasePrice" value="1">中国最终售价
+                        <input type="radio" name="BasePrice" value="1">&nbsp;中国最终售价
                     </label>&emsp;
                     <label>
-                        <input type="radio" name="BasePrice" value="2">中国指导售价
+                        <input type="radio" name="BasePrice" value="2">&nbsp;中国指导售价
                     </label>&emsp;
                     <label>
-                        <input type="radio" name="BasePrice" value="3">无
+                        <input type="radio" name="BasePrice" value="3">&nbsp;无
                     </label>&emsp;
                 </div>
             </div>
@@ -94,32 +96,32 @@
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio">小数点向上取整
+                            <input type="radio">&nbsp;小数点向上取整
                         </label>&emsp;
                         <label>
-                            <input type="radio">个位向下取整
+                            <input type="radio">&nbsp;个位向下取整
                         </label>&emsp;
                         <label>
-                            <input type="radio">个位向上取整
+                            <input type="radio">&nbsp;个位向上取整
                         </label>&emsp;&emsp;
                         <label>
-                            <input type="radio">无特殊处理
+                            <input type="radio">&nbsp;无特殊处理
                         </label>&emsp;
                     </div>
                 </div>
                 <div class="row m-t-xs">
-                    活动价 = 最终售价 * 0.01
+                    <span class="label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">最终售价</span>&emsp;&times;&emsp;<span class="label label-primary">0.01</span>&emsp;
                 </div>
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio">商品内，SKU统一最高价
+                            <input type="radio">&nbsp;商品内，SKU统一最高价
                         </label>
                         <label>
-                            <input type="radio">商品内，SKU统一最低价
+                            <input type="radio">&nbsp;商品内，SKU统一最低价
                         </label>
                         <label>
-                            <input type="radio">商品内，SKU价格不统一
+                            <input type="radio">&nbsp;商品内，SKU价格不统一
                         </label>
                     </div>
                 </div>
@@ -135,18 +137,15 @@
 
 <script id="categoryContainer" type="text/ng-template">
     <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
-        <div class="m-t-xs" ng-if="category.isParent == 1">
-            <i class="fa fa-minus icon-small text-vo"></i>&nbsp;
-            <label class=" ">{{category.catName}}</label>
-        </div>
-        <div class="m-t-xs" ng-if="category.isParent == 0">
+        <div class="m-t-xs">
             <label>
-                <input style="margin: 0" type="checkbox" ui-indeterminate="ctrl.orgDispMap[category.catId]" ng-checked="ctrl.orgChkStsMap[category.catId] = ctrl.orgChkStsMap[category.catId] ? true : false"
-                       ng-model="ctrl.orgChkStsMap[category.catId]" ng-click="ctrl.chkSave(category.catId,$event)">
-                &nbsp;{{category.catName}}
+                <input style="margin: 0" type="checkbox"
+                       ui-indeterminate="category.checked == 1"
+                       ng-checked="category.checked == 2"
+                       ng-click="ctrl.canSelectChild(category)"
+                       ng-model="ctrl.checkNodes[category.id]">
+                &nbsp;{{category.name}}
             </label>
         </div>
-        <div class="" ng-if="category.isParent == 1" ng-include="'categoryContainer'"
-             ng-init="categoryContainer = category.children"></div>
     </div>
 </script>
