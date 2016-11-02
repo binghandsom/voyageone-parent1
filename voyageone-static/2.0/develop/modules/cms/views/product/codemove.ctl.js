@@ -44,13 +44,13 @@ define([
                     self.cartId = moveCodeInfo.cartId;
                     self.cartName = moveCodeInfo.cartName;
                     self.prodId = moveCodeInfo.prodId;
-                    self.productCode = moveCodeInfo.productCode;
                     self.productUrl = carts.valueOf(parseInt(moveCodeInfo.cartId)).pUrl;
                 }
                 self.productDetailService.moveCodeInit({
-                    productCode: self.productCode,
+                    prodId: self.prodId,
                     cartId: self.cartId
                 }).then(function (resp) {
+                    self.productCode = resp.data.productCode;
                     self.sourceGroupId = resp.data.sourceGroupId;
                     self.sourceGroupName = resp.data.sourceGroupName;
                     self.sourceGroupProductsNum = resp.data.sourceGroupProductsNum;
