@@ -173,8 +173,8 @@ define([
 
             if(!isUpdate) return;
             var parameter={};
-            parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
-            parameter.jmPromotionId=jmPromotionId;
+           // parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
+            //parameter.jmPromotionId=jmPromotionId;
 
             parameter.priceTypeId=$scope.vm.priceTypeId;
             parameter.priceValue=$scope.vm.priceValue;
@@ -182,17 +182,7 @@ define([
             parameter.optType=$scope.vm.optType;
             parameter.roundType=$scope.vm.roundType;
 
-            console.log(parameter);
-            jmPromotionDetailService.batchUpdateSkuDealPrice(parameter).then(function (res) {
-                if (!res.data.result) {
-                    alert(res.data.msg);
-                    return;
-                }
-                $scope.$close();
-                context.search();
-            }, function (res) {
-                alert(res);
-            })
+
         };
 
         JoinPromotionCtl.prototype.save = function () {
