@@ -1682,11 +1682,11 @@ public class BackDoorController extends CmsController {
         newJmProduct.forEach(groupCheckMessage -> {
             builder.append("<li>").append(groupCheckMessage).append("</li>");
             System.out.println(groupCheckMessage);
-            Map<String, Object> error3Param = new HashMap<String, Object>();
-            error3Param.put("channelId", channelId);
-            error3Param.put("productCode", groupCheckMessage);
-            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error3Param);
-            cmsBtJmProductDao.delete(jmproductModel.getId());
+//            Map<String, Object> error3Param = new HashMap<String, Object>();
+//            error3Param.put("channelId", channelId);
+//            error3Param.put("productCode", groupCheckMessage);
+//            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error3Param);
+//            cmsBtJmProductDao.delete(jmproductModel.getId());
         });
         builder.append("</ul>");
         builder.append("<h2>sku中未上新,但是已经插入到jm_sku表</h2>");
@@ -1696,16 +1696,16 @@ public class BackDoorController extends CmsController {
             builder.append("<li>").append(key+"======"+value).append("</li>");
             System.out.println(key+"======"+value);
 
-            Map<String, Object> error41Param = new HashMap<String, Object>();
-            error41Param.put("channelId", channelId);
-            error41Param.put("productCode", value);
-            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error41Param);
-            if (jmproductModel != null)
-                cmsBtJmProductDao.delete(jmproductModel.getId());
-
-            error41Param.put("skuCode", key);
-            CmsBtJmSkuModel jmSku = cmsBtJmSkuDao.selectOne(error41Param);
-            cmsBtJmSkuDao.delete(jmSku.getId());
+//            Map<String, Object> error41Param = new HashMap<String, Object>();
+//            error41Param.put("channelId", channelId);
+//            error41Param.put("productCode", value);
+//            CmsBtJmProductModel jmproductModel = cmsBtJmProductDao.selectOne(error41Param);
+//            if (jmproductModel != null)
+//                cmsBtJmProductDao.delete(jmproductModel.getId());
+//
+//            error41Param.put("skuCode", key);
+//            CmsBtJmSkuModel jmSku = cmsBtJmSkuDao.selectOne(error41Param);
+//            cmsBtJmSkuDao.delete(jmSku.getId());
         });
         builder.append("</ul>");
         builder.append("</body>");

@@ -257,13 +257,12 @@ define([
                  * 移动Code到其他Group
                  * */
                 function moveToGroup() {
-                    if (scope.vm.mastData == null)  return;
-                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name,'productCode' : scope.vm.mastData.productCode});
+                    // if (scope.vm.mastData == null)  return;
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name});
                     var moveCodeInfo = {
                         cartId: scope.cartInfo.value,
                         cartName: scope.cartInfo.name,
-                        prodId: scope.productInfo.productId,
-                        productCode : scope.vm.mastData.productCode
+                        prodId: scope.productInfo.productId
                     };
                     window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
                     confirm(template).then(function () {
@@ -271,7 +270,7 @@ define([
                         productDetailService.moveCodeInitCheck({
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,
-                            productCode : scope.vm.mastData.productCode
+                            prodId: scope.productInfo.productId
                         }).then(function (resp) {
                             newTab.location.href = "#/product/code_move";
                         }, function (err) {

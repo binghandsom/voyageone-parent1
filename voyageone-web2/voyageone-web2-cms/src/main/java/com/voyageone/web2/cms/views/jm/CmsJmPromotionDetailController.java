@@ -244,7 +244,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //批量删除 product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchDeleteProduct)
     public AjaxResponse batchDeleteProduct(@RequestBody BatchDeleteProductParameter parameter) {
-        service3.batchDeleteProduct(parameter);
+        service3.batchDeleteProduct(parameter,getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }

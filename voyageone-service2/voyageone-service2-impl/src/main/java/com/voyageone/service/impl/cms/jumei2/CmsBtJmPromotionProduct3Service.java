@@ -249,7 +249,7 @@ public class CmsBtJmPromotionProduct3Service {
 
     //批量删除  product  已经再售的不删
     @VOTransactional
-    public void batchDeleteProduct(BatchDeleteProductParameter parameter) {
+    public void batchDeleteProduct(BatchDeleteProductParameter parameter,String channelId) {
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getPromotionId());
         //Map<String,Object> map=new HashedMap();
 
@@ -259,10 +259,16 @@ public class CmsBtJmPromotionProduct3Service {
         }
         //获取未上传的jmproduct
         List<CmsBtJmPromotionProductModel> listNotSych = daoExt.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
+        List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
 
-        //2.7.2.1 只删除未上传的商品  先删除sku 再删除product
+        if(listNotSychCode.size()>0) {
+            productService.removeTagByCodes(channelId, listNotSychCode, model.getRefTagId());
+        }
+        //2.7.2.1 只删除未上传的商品  先删除sku  tag  再删除product
         daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
+        daoExtCmsBtJmPromotionTagProduct.batchDeleteTag(parameter.getListPromotionProductId());
         daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
+
 
         //2.7.2.2  已经上传的商品  写入错误信息
         daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
@@ -270,7 +276,6 @@ public class CmsBtJmPromotionProduct3Service {
         //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
         if (modelCmsBtPromotion != null && listNotSych.size() > 0) {
-            List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
             Map<String, Object> map = new HashMap<>();
             map.put("listProductCode", listNotSychCode);
             map.put("promotionId", modelCmsBtPromotion.getId());
@@ -302,6 +307,8 @@ public class CmsBtJmPromotionProduct3Service {
             result.setResult(false);
             result.setMsg("该专场内存在商品已完成上传，禁止删除!");
         }
+        List<String> codes=daoExt.selectCodesByJmPromotionId(jmPromotionId);
+        productService.removeTagByCodes(model.getChannelId(),codes,model.getRefTagId());
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);

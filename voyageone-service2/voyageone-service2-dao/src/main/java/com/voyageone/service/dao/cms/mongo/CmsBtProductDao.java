@@ -5,6 +5,7 @@ import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -77,6 +78,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{\"common.fields.code\":{\"$in\":[" + sb.toString() + "]}}";
         return select(query, channelId);
     }
+
     /**
      * 根据codes返回多条产品数据
      */
@@ -84,6 +86,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         String query = "{\"common.fields.code\":\"" + code + "\"}";
         return selectOneWithQuery(query, channelId);
     }
+
     public List<CmsBtProductBean> selectBean(JongoQuery queryObject, String channelId) {
         return mongoTemplate.find(queryObject, CmsBtProductBean.class, getCollectionName(channelId));
     }
@@ -109,7 +112,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
     @Deprecated
     public WriteResult updateByModel(BaseMongoModel model) {
-         return super.update(model);
+        return super.update(model);
     }
 
     /**
@@ -153,21 +156,18 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     /**
      * 删除Product对应的店铺内自定义分类
      */
-    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId, String modifier ) {
-        String queryStr = "{'channelId':'" + channelId + "','platforms.P"+ cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
+    public List<CmsBtProductModel> deleteSellerCat(String channelId, CmsBtSellerCatModel catModel, int cartId, String modifier) {
+        String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cId':'" + catModel.getCatId() + "'}";
 
         List<CmsBtProductModel> allProduct = select(queryStr, channelId);
-
 
 
         for (CmsBtProductModel product : allProduct) {
 
             List<CmsBtProductModel_SellerCat> sellerCatList = product.getPlatform(cartId).getSellerCats();
 
-            for(int i = sellerCatList.size() - 1 ; i >= 0 ; i--)
-            {
-                if(sellerCatList.get(i).getcId().equals(catModel.getCatId()))
-                {
+            for (int i = sellerCatList.size() - 1; i >= 0; i--) {
+                if (sellerCatList.get(i).getcId().equals(catModel.getCatId())) {
                     sellerCatList.remove(i);
                     break;
                 }
@@ -175,7 +175,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
 
             HashMap<String, Object> rsMap = new HashMap<>();
-            rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+            rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
             rsMap.put("modifier", modifier);
             rsMap.put("modified", DateTimeUtil.getNow());
 
@@ -207,11 +207,9 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
             String cId = catModel.getCatId();
             //如果包含修改过的cId,则需要修改cName和cNames
             if (cIds.stream().filter(w -> w.equals(cId)).count() > 0) {
-                for(int i = 0 ; i < cIds.size(); i++)
-                {
-                    if(cIds.get(i).equals(cId))
-                    {
-                        cNames.set(i , catModel.getCatName());
+                for (int i = 0; i < cIds.size(); i++) {
+                    if (cIds.get(i).equals(cId)) {
+                        cNames.set(i, catModel.getCatName());
                         break;
                     }
                 }
@@ -220,7 +218,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         }
 
         HashMap<String, Object> rsMap = new HashMap<>();
-        rsMap.put("platforms.P"+cartId+".sellerCats", sellerCatList);
+        rsMap.put("platforms.P" + cartId + ".sellerCats", sellerCatList);
         rsMap.put("modifier", modifier);
         rsMap.put("modified", DateTimeUtil.getNow());
 
@@ -254,7 +252,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
             }
 
-            String queryStr = "{'channelId':'" + channelId + "','platforms.P"+cartId+".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
+            String queryStr = "{'channelId':'" + channelId + "','platforms.P" + cartId + ".sellerCats.cIds':" + "{ '$in': [" + sb.toString() + "]}}";
 
             List<CmsBtProductModel> allProduct = select(queryStr, channelId);
 
@@ -270,9 +268,10 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
     /**
      * 移行数据使用,取得老的product数据
+     *
      * @return
      */
-    public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes){
+    public List<OldCmsBtProductModel> selectOldProduct(String channelId, List<String> codes) {
 
         JongoQuery jongoQuery = new JongoQuery();
         if (codes.size() > 0) {
@@ -300,5 +299,13 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         }
 
         return codes;
+    }
+    public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setQuery("{\"common.fields.code\":{$in:#}}");
+        updObj.setQueryParameters(codes);
+        updObj.setUpdate("{$pull:{\"tags\":{$regex:\"-" + tagId + "-\"}}}");
+        String collectionName = getCollectionName(channelId);
+        mongoTemplate.updateMulti(updObj, collectionName);
     }
 }
