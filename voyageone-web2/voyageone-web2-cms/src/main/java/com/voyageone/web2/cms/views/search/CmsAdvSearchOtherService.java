@@ -61,7 +61,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     	{ "sales.codeSum7.cartId%s", "7天销量" },
     	{ "sales.codeSum30.cartId%s", "30天销量"},
     	{ "sales.codeSumYear.cartId%s", "年销量" },
-    	{ "sales.codeSumAll.cartId%s", "全部销量" }
+    	{ "sales.codeSumAll.cartId%s", "总销量" }
     };
     
     private static final String[][] priceTypesSortItems = {
