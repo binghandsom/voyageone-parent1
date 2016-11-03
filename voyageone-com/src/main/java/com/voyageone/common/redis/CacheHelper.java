@@ -3,8 +3,7 @@ package com.voyageone.common.redis;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.spring.SpringContext;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -29,6 +28,18 @@ public class CacheHelper {
 
     public static HashOperations getHashOperation() {
         return getCacheTemplate().opsForHash();
+    }
+
+    public static ListOperations getListOperation() {
+        return getCacheTemplate().opsForList();
+    }
+
+    public static ZSetOperations getZSetOperation() {
+        return getCacheTemplate().opsForZSet();
+    }
+
+    public static ValueOperations getValueOperation() {
+        return getCacheTemplate().opsForValue();
     }
 
     @SuppressWarnings("unchecked")
