@@ -7,8 +7,8 @@
         <p>选择<strong>全商品重刷</strong>，重刷<strong>所有</strong>主数据中的商品</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-vo" ng-click="$ctrl.refresh(false)">待编辑商品重刷</button>
-        <button type="button" class="btn btn-vo" ng-click="$ctrl.refresh(true)">全商品重刷</button>
+        <button type="button" class="btn btn-vo" ng-disabled="$ctrl.handling" ng-click="$ctrl.refresh(false)">待编辑商品重刷</button>
+        <button type="button" class="btn btn-vo" ng-disabled="$ctrl.handling" ng-click="$ctrl.refresh(true)">全商品重刷</button>
         <button type="button" class="btn btn-default" ng-click="$ctrl.close()" translate="BTN_CANCEL"></button>
     </div>
 </div>

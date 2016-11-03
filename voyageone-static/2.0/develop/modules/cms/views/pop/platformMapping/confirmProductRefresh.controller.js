@@ -14,7 +14,9 @@ define(['cms'],
                 var modal = this.$uibModalInstance;
                 var field = this.context.field;
                 var mappingInfo = this.context.mappingInfo;
-                this.platformMappingService.refreshProducts({
+                var self = this;
+                self.handling = true;
+                self.platformMappingService.refreshProducts({
                     cartId: mappingInfo.cartId,
                     categoryPath: mappingInfo.categoryPath,
                     categoryType: mappingInfo.categoryType,
