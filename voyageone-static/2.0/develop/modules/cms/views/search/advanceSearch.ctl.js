@@ -6,10 +6,24 @@ define([
     'modules/cms/service/product.detail.service'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups) {
 
         $scope.vm = {
-            searchInfo: {compareType: null,brand: null,tags: [],priceChgFlg: '',priceDiffFlg: '',tagTypeSelectValue: '0',promotionList: [],catgoryList: [],cidValue: [],promotionTagType: 1,freeTagType: 1,supplierType: 1,brandSelType: 1},
+            searchInfo: {
+                compareType: null,
+                brand: null,
+                tags: [],
+                priceChgFlg: '',
+                priceDiffFlg: '',
+                tagTypeSelectValue: '0',
+                promotionList: [],
+                catgoryList: [],
+                cidValue: [],
+                promotionTagType: 1,
+                freeTagType: 1,
+                supplierType: 1,
+                brandSelType: 1
+            },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, fetch: getProductList},
@@ -17,7 +31,7 @@ define([
             groupList: [],
             productList: [],
             currTab: "product",
-            status: { open: true},
+            status: {open: true},
             groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
@@ -1126,19 +1140,22 @@ define([
         /**
          * 高级检索加入活动
          */
-        $scope.popJoinPromotion = function(cartBean){
+        $scope.popJoinPromotion = function (cartBean) {
 
-            _chkProductSel(cartBean.value, function(){
-                popups.openJoinPromotion(cartBean).then(function(context){
+            _chkProductSel(cartBean.value, function (cartId, selList, context) {
+                popups.openJoinPromotion(_.extend({
+                    cartBean: cartBean,
+                    selList: selList
+                }, context)).then(function (context) {
 
                 });
-            });
+            }, {'isSelAll': $scope.vm._selall ? 1 : 0});
 
 
         }
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups'];
     return searchIndex;
 });

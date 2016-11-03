@@ -27,7 +27,7 @@ define([
     cms.controller('joinPromotionCtl', (function () {
 
         function JoinPromotionCtl(context, addProductToPromotionService, alert, $translate) {
-            this.cartBean = context;
+            this.cartBean = context.cartBean;
             this.alert = alert;
             this.$translate = $translate;
             this.addProductToPromotionService = addProductToPromotionService;
