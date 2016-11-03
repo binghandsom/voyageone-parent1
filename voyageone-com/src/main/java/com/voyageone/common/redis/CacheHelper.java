@@ -30,15 +30,18 @@ public class CacheHelper {
         return getCacheTemplate().opsForHash();
     }
 
-    public static ListOperations getListOperation() {
+    @SuppressWarnings("unchecked")
+    public static ListOperations<String, Object> getListOperation() {
         return getCacheTemplate().opsForList();
     }
 
-    public static ZSetOperations getZSetOperation() {
+    @SuppressWarnings("unchecked")
+    public static ZSetOperations<String, Object> getZSetOperation() {
         return getCacheTemplate().opsForZSet();
     }
 
-    public static ValueOperations getValueOperation() {
+    @SuppressWarnings("unchecked")
+    public static ValueOperations<String, Object> getValueOperation() {
         return getCacheTemplate().opsForValue();
     }
 
