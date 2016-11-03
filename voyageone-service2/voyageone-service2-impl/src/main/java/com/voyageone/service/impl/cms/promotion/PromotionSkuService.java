@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.promotion;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
 import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
+import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExtCamel;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExtCamel;
 import com.voyageone.service.impl.BaseService;
@@ -28,6 +29,9 @@ public class PromotionSkuService extends BaseService {
     CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
     @Autowired
     CmsBtPromotionSkusDaoExtCamel cmsBtPromotionSkusDaoExtCamel;
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
+
     public List<Map<String, Object>> getPromotionSkuList(Map<String, Object> params) {
         return cmsPromotionSkuDao.selectPromotionSkuList(params);
     }
@@ -55,9 +59,12 @@ public class PromotionSkuService extends BaseService {
         return cmsBtPromotionSkusDao.selectOne(map);
     }
     @VOTransactional
-    public void saveSkuPromotionPrices(List<SaveSkuPromotionPricesParameter> list) {
-        list.forEach((p) -> {
+    public void saveSkuPromotionPrices(SaveSkuPromotionPricesParameter parameter) {
+        parameter.getListSkuPromotionPriceInfo().forEach((p) -> {
             cmsBtPromotionSkusDaoExtCamel.updatePromotionPrice(p);
         });
+        //CmsBtPromotionCodesDaoExtCamel
+        cmsBtPromotionCodesDaoExtCamel.updatePromotionPrice(parameter.getPromotionId(),parameter.getProductCode());
+
     }
 }

@@ -157,6 +157,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("团购价格", "dealPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("市场价格", "marketPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
         info.addExcelColumn("聚美SKU", "jmSkuNo", "cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
