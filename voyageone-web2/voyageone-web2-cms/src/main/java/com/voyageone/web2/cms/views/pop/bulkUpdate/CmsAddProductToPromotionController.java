@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.service.bean.cms.businessmodel.CmsAdvanceSearch.AddProductToPromotionParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.SaveParameter;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -25,14 +26,14 @@ public class CmsAddProductToPromotionController extends CmsController {
 
     @Autowired
     private CmsAddProductToPromotionService cmsAddProductToPromotionService;
-    @RequestMapping(CmsUrlConstants.POP.AddProductToPromotion.AddProductToPromotion)
-    public AjaxResponse addProductToPromotion(@RequestBody AddProductToPromotionParameter params) {
+    @RequestMapping(CmsUrlConstants.POP.AddProductToPromotion.Save)
+    public AjaxResponse save(@RequestBody SaveParameter params) {
         // promotionSelectService.addToPromotion(params, getUser(), getCmsSession());
         // TagTreeNode
         return success(true);
     }
     @RequestMapping(CmsUrlConstants.POP.AddProductToPromotion.Init)
-    public AjaxResponse init(@RequestBody AddProductToPromotionParameter params) {
+    public AjaxResponse init(@RequestBody InitParameter params) {
         Map<String, Object> data = cmsAddProductToPromotionService.init(params, getUser().getSelChannelId(), getCmsSession());
         return success(data);
     }

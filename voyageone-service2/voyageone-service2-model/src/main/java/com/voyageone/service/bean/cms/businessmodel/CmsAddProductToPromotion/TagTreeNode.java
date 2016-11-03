@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.businessmodel.CmsAdvanceSearch;
+package com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion;
 import java.util.List;
 /**
  * Created by dell on 2016/11/1.

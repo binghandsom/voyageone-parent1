@@ -26,11 +26,11 @@ define([
 
     cms.controller('joinPromotionCtl', (function () {
 
-        function JoinPromotionCtl(context, addProductToPromotionService2, alert, $translate) {
+        function JoinPromotionCtl(context, addProductToPromotionService, alert, $translate) {
             this.cartBean = context;
             this.alert = alert;
             this.$translate = $translate;
-            this.addProductToPromotionService = addProductToPromotionService2;
+            this.addProductToPromotionService = addProductToPromotionService;
             this.nowTime = new Date();
             this.allCheckNodes;     //原始全选状态
             this.halfCheckNodes;    //原始半选状态

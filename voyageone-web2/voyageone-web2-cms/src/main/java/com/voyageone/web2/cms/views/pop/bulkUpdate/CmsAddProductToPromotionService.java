@@ -1,8 +1,9 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.bean.cms.businessmodel.CmsAdvanceSearch.AddProductToPromotionParameter;
-import com.voyageone.service.bean.cms.businessmodel.CmsAdvanceSearch.TagTreeNode;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.TagService;
@@ -27,8 +28,7 @@ import java.util.*;
 @Service
 public class CmsAddProductToPromotionService extends BaseViewService {
 
-    @Autowired
-    private TagService tagService;
+
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
@@ -46,10 +46,13 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     @Autowired
     CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
 
+    @Autowired
+    TagService tagService;
+
     /**
      * 数据页面初始化(有产品信息)
      */
-    public Map init(AddProductToPromotionParameter params, String channelId, CmsSessionBean cmsSession) {
+    public Map init(InitParameter params, String channelId, CmsSessionBean cmsSession) {
         int cartId = params.getCartId();
         if (cartId == 0) {
             $warn("CmsAddProductToPromotionService.init cartI==0 " + params.toString());
@@ -71,21 +74,30 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
         List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId);
-        list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m)) );
+        list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
 
-        data.put("listTreeNode", list);
+        data.put("listTreeNode", listTagTreeNode);
         return data;
     }
-    TagTreeNode getPromotionTagTreeNode(CmsBtPromotionModel model) {
+
+    TagTreeNode getPromotionTagTreeNode(CmsBtPromotionModel model, List<String> codeList) {
         TagTreeNode tagTreeNode = new TagTreeNode();
         tagTreeNode.setId(model.getId());
         tagTreeNode.setName(model.getPromotionName());
+        tagTreeNode.setChildren(new ArrayList<>());
+        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getPromotionId(), codeList);
+        int codeCount = codeList.size();
 
-//        SELECT c.`id`,c.`tag_name`,SUM(CASE WHEN a.`id` IS NULL THEN 0 ELSE 1 END )    FROM `cms_bt_promotion_codes`  AS a
-//        JOIN `cms_bt_promotion_codes_tag` AS b ON a.`id`=b.`cms_bt_promotion_codes_id` AND a.`promotion_id`=1  AND a.`product_code` IN ('aa')
-//        RIGHT JOIN `cms_bt_tag` AS c ON b.`cms_bt_tag_id`=c.`id`
-//        WHERE c.`parent_tag_id`=3
-//        GROUP BY c.`id`
+        list.forEach(f -> {
+            TagTreeNode node = new TagTreeNode();
+            node.setId(f.getId());
+            node.setName(f.getTagName());
+            if (f.getProductCount() > 0) {
+                node.setChecked(f.getProductCount() == codeCount ? 2 : 1);//0:未选 1：半选 2全选
+            }
+            node.setOldChecked(node.getChecked());
+            tagTreeNode.getChildren().add(node);
+        });
         return tagTreeNode;
     }
 }

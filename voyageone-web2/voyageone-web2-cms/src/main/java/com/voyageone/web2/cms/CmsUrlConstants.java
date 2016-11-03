@@ -495,7 +495,7 @@ public interface CmsUrlConstants {
         interface  AddProductToPromotion
         {
             String ROOT = "/cms/pop/add_product_to_promotion/";
-            String AddProductToPromotion = "addProductToPromotion";
+            String Save = "save";
             String Init="init";
         }
 

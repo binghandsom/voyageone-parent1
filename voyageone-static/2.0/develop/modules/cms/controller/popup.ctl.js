@@ -1275,6 +1275,14 @@ define([
             return openModal(popActions.jumei.promotion.imageBatchUpload, context)
         };
 
+        /**
+         * 高级检索加入活动
+         */
+        $scope.openJoinPromotion = function openJoinPromotion(context) {
+            return openModal(popActions.search.joinPromotion, context)
+        };
+
+
     }).factory('popups', function ($controller, $rootScope) {
 
         var popupScope = $rootScope.$new();
