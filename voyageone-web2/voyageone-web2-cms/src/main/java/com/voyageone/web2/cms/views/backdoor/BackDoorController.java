@@ -1778,6 +1778,7 @@ public class BackDoorController extends CmsController {
                     if (tempSkuInfo.get(skuCode) != null) {
                         updateList.add("skuCode:" + skuCode + "=====platformSize:" + tempSkuInfo.get(skuCode));
                         skuInfo.setAttribute("sizeNick", tempSkuInfo.get(skuCode));
+                        skuInfo.setAttribute("isSale", false);
                     }
 
                 });
