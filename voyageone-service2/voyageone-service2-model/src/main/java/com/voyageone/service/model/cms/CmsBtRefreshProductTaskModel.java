@@ -13,78 +13,78 @@ import com.voyageone.base.dao.mysql.BaseModel;
  * 默认属性功能下的商品重刷任务记录表
  */
 public class CmsBtRefreshProductTaskModel extends BaseModel {
-    protected String channelid;
+    protected String channelId;
 
-    protected Integer cartid;
+    protected Integer cartId;
 
-    protected String categorypath;
+    protected String categoryPath;
 
     /**
      * 1：通用类目，2：具体类目
      */
-    protected Integer categorytype;
+    protected Integer categoryType;
 
     /**
      * 具体的字段
      */
-    protected String fieldid;
+    protected String fieldId;
 
     /**
      * 1: 全部商品，0：只处理待编辑商品
      */
-    protected Boolean allproduct;
+    protected Boolean allProduct;
 
     /**
      * 0：待处理，1：已全部处理
      */
     protected Integer status;
 
-    public String getChannelid() {
-        return channelid;
+    public String getChannelId() {
+        return channelId;
     }
 
-    public void setChannelid(String channelid) {
-        this.channelid = channelid == null ? null : channelid.trim();
+    public void setChannelId(String channelId) {
+        this.channelId = channelId == null ? null : channelId.trim();
     }
 
-    public Integer getCartid() {
-        return cartid;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setCartid(Integer cartid) {
-        this.cartid = cartid;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
-    public String getCategorypath() {
-        return categorypath;
+    public String getCategoryPath() {
+        return categoryPath;
     }
 
-    public void setCategorypath(String categorypath) {
-        this.categorypath = categorypath == null ? null : categorypath.trim();
+    public void setCategoryPath(String categoryPath) {
+        this.categoryPath = categoryPath == null ? null : categoryPath.trim();
     }
 
-    public Integer getCategorytype() {
-        return categorytype;
+    public Integer getCategoryType() {
+        return categoryType;
     }
 
-    public void setCategorytype(Integer categorytype) {
-        this.categorytype = categorytype;
+    public void setCategoryType(Integer categoryType) {
+        this.categoryType = categoryType;
     }
 
-    public String getFieldid() {
-        return fieldid;
+    public String getFieldId() {
+        return fieldId;
     }
 
-    public void setFieldid(String fieldid) {
-        this.fieldid = fieldid == null ? null : fieldid.trim();
+    public void setFieldId(String fieldId) {
+        this.fieldId = fieldId == null ? null : fieldId.trim();
     }
 
-    public Boolean getAllproduct() {
-        return allproduct;
+    public Boolean getAllProduct() {
+        return allProduct;
     }
 
-    public void setAllproduct(Boolean allproduct) {
-        this.allproduct = allproduct;
+    public void setAllProduct(Boolean allProduct) {
+        this.allProduct = allProduct;
     }
 
     public Integer getStatus() {
