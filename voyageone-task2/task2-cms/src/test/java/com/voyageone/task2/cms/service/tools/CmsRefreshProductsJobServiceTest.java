@@ -27,12 +27,12 @@ public class CmsRefreshProductsJobServiceTest {
     private CmsRefreshProductsJobService cmsRefreshProductsJobService;
 
     private static final RefreshProductsBean testCase1 = new RefreshProductsBean() {{
-            setCartId(23);
-            setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
-            setCategoryType(2);
-            setChannelId("010");
-            setFieldId("sell_points");
-            setAllProduct(false);
+        setCartId(23);
+        setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
+        setCategoryType(2);
+        setChannelId("010");
+        setFieldId("sell_points");
+        setAllProduct(false);
     }};
 
     private static final RefreshProductsBean testCase2 = new RefreshProductsBean() {{
