@@ -46,7 +46,8 @@ define([
                 codeList.push(object.code);
             });
             return codeList;
-        }
+        };
+
         /**
          * cartId isSelAll codeList    addProductToPromotionService.init
          */
@@ -55,17 +56,21 @@ define([
         };
 
         JoinPromotionCtl.prototype.search=function () {
-            var self=this;
-            var p = {};
-            p.codeList = self.getCodeList();
-            p.cartId = self.cartBean.value;
-            p.isSelAll = self.context.isSelAll;
-            p.activityStart=self.groupInfo.startTime;
-            p.activityEnd=self.groupInfo.endTime;
+            var self=this,
+                addProductToPromotionService = self.addProductToPromotionService;
 
-            self.addProductToPromotionService.init(p).then(function (res) {
-                console.log(res.data);
+            self.listTreeNode = [];
+            addProductToPromotionService.init({
+                codeList : self.getCodeList(),
+                cartId : self.cartBean.value,
+                isSelAll : self.context.isSelAll,
+                activityStart:self.groupInfo.startTime,
+                activityEnd:self.groupInfo.endTime
+            }).then(function (res) {
                 self.listTreeNode = res.data.listTreeNode;
+
+                //清空原来选中状态
+                self.allCheckNodes = self.halfCheckNodes = {};
 
                 //设置全选
                 self.allCheckNodes = flatCategories(self.listTreeNode, 2);
