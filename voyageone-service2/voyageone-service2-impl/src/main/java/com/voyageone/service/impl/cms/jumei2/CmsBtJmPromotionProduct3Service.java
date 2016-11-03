@@ -175,7 +175,7 @@ public class CmsBtJmPromotionProduct3Service {
         return result;
     }
 
-
+    //批量修改价格
     @VOTransactional
     public CallResult batchUpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter,String userName) {
         CallResult result = new CallResult();
