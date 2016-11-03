@@ -628,11 +628,6 @@
                                 </li>
                             </ul>
                         </div>
-                        <!--图片下载，暂时不做-->
-                        <!--&nbsp;-->
-                        <!--<button type="button" class="btn btn-default">-->
-                        <!--<i class="fa fa-download"></i>&nbsp;{{'TXT_IMAGE_DOWNLOAD' | translate}}-->
-                        <!--</button>-->
                         &nbsp;
                         <div class="btn-group">
                             <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
@@ -728,7 +723,7 @@
                                         </label>
                                     </td>
                                     <td class="text-left" style="display:inline-block;width:90px;padding-left:8px">
-                                        <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn" ng-click="ctrlAdvance.test()"><i class="fa fa-unsorted"></i></button>
+                                        <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('TXT_BRAND')"><i class="fa fa-{{ctrlAdvance.getArrowName('TXT_BRAND')}}"></i></button>
                                     </td>
                                     <td class="text-left" translate="TXT_NAME" style="display:inline-block;width:110px;padding-left:8px"></td>
                                     <td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:110px;padding-left:8px"></td>
