@@ -19,7 +19,7 @@ public class CacheHelperTest {
 
     @Test
     public void testPushListOperation() throws Exception {
-        ListOperations operations = CacheHelper.getListOperation();
+        ListOperations<String, Object> operations = CacheHelper.getListOperation();
         for (int i=0; i<10; i++) {
             operations.leftPush("testList", "a"+i);
             System.out.println("a"+i);
@@ -28,7 +28,7 @@ public class CacheHelperTest {
 
     @Test
     public void testPopListOperation() throws Exception {
-        ListOperations operations = CacheHelper.getListOperation();
+        ListOperations<String, Object> operations = CacheHelper.getListOperation();
         for (int i=0; i<20; i++) {
             String key = (String)operations.rightPop("testList");
             System.out.println(key);
