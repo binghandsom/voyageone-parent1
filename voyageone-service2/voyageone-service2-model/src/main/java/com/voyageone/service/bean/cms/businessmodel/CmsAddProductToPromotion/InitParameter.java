@@ -10,16 +10,6 @@ public class InitParameter {
     int cartId;
     int isSelAll;
     List<String> codeList;
-    List<TagTreeNode> listTagTreeNodel;
-
-    public List<TagTreeNode> getListTagTreeNodel() {
-        return listTagTreeNodel;
-    }
-
-    public void setListTagTreeNodel(List<TagTreeNode> listTagTreeNodel) {
-        this.listTagTreeNodel = listTagTreeNodel;
-    }
-
     public int getIsSelAll() {
         return isSelAll;
     }

@@ -27,6 +27,8 @@ define([
     cms.controller('joinPromotionCtl', (function () {
 
         function JoinPromotionCtl(context, addProductToPromotionService, alert, $translate) {
+            console.log(context);
+            this.context=context;
             this.cartBean = context.cartBean;
             this.alert = alert;
             this.$translate = $translate;
@@ -38,14 +40,26 @@ define([
             this.groupInfo = {};
         }
 
+        JoinPromotionCtl.prototype.getCodeList=function () {
+            var codeList=[];
+            _.forEach(this.context.selList, function (object) {
+                codeList.push(object.code);
+            });
+            return codeList;
+        }
         /**
          * cartId isSelAll codeList    addProductToPromotionService.init
          */
         JoinPromotionCtl.prototype.init = function () {
             var self = this;
+            var p = {};
+            p.codeList = self.getCodeList();
+            p.cartId = self.cartBean.value;
+            p.isSelAll = self.context.isSelAll;
 
-            self.addProductToPromotionService.init().then(function (res) {
-                self.channelCategoryList = res.data;
+            self.addProductToPromotionService.init(p).then(function (res) {
+                console.log(res.data);
+                self.channelCategoryList = res.data.listTreeNode;
 
                 //设置全选
                 self.allCheckNodes = flatCategories(self.channelCategoryList, 2);
@@ -55,6 +69,7 @@ define([
         };
 
         JoinPromotionCtl.prototype.canSelectChild = function (entity) {
+            console.log(entity);
             var self = this,
                 alert = self.alert,
                 checkNodes = self.checkNodes;
@@ -64,7 +79,7 @@ define([
             else
                 entity.checked = 0;
 
-            if (entity.children.length > 0 && checkNodes[entity.id]) {
+            if (entity.children&&entity.children.length > 0 && checkNodes[entity.id]) {
 
                 var exit = _.some(entity.children, function (item) {
                     //只判断全选状态

@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value  = CmsUrlConstants.POP.ADD_TO_PROMOTION.ROOT,
+        value  = CmsUrlConstants.POP.AddProductToPromotion.ROOT,
         method = RequestMethod.POST
 )
 public class CmsAddProductToPromotionController extends CmsController {

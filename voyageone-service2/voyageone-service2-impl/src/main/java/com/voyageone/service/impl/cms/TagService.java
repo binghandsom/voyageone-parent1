@@ -325,7 +325,7 @@ public class TagService extends BaseService {
         return ret;
     }
 
-    public List<TagCodeCountInfo> getListTagCodeCount(int promotionId, List<String> codeList) {
-        return cmsBtTagDaoExtCamel.selectListTagCodeCount(promotionId, codeList);
+    public List<TagCodeCountInfo> getListTagCodeCount(int promotionId,int parentTagId, List<String> codeList) {
+        return cmsBtTagDaoExtCamel.selectListTagCodeCount(promotionId,parentTagId,codeList);
     }
 }

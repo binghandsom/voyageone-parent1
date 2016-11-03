@@ -10,7 +10,7 @@
                                    #{item}
                                  </foreach>
         RIGHT JOIN `cms_bt_tag` AS c ON b.`cms_bt_tag_id`=c.`id`
-        WHERE c.`parent_tag_id`=3
+        WHERE c.`parent_tag_id`=#{parentTagId}
         GROUP BY c.`id`
     </select>
 </mapper>

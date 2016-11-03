@@ -10,10 +10,11 @@ package com.voyageone.service.daoext.cms;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
 public interface CmsBtTagDaoExtCamel {
-    List<TagCodeCountInfo> selectListTagCodeCount(@Param("promotionId") int promotionId, @Param("codeList") List<String> codeList);
+    List<TagCodeCountInfo> selectListTagCodeCount(@Param("promotionId") int promotionId,@Param("parentTagId") int parentTagId, @Param("codeList") List<String> codeList);
 }
