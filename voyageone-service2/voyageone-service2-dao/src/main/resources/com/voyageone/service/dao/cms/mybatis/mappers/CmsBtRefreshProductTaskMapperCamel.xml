@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel" />
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        `id`, `channelId`, `cartId`, `categoryPath`, `categoryType`, `fieldId`, `allProduct`, 
+        `status`, `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from cms_bt_refresh_product_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_refresh_product_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskExample" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_refresh_product_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update cms_bt_refresh_product_task
+        <set >
+            <if test="record.id != null" >
+                `id` = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.channelid != null" >
+                `channelId` = #{record.channelid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cartid != null" >
+                `cartId` = #{record.cartid,jdbcType=INTEGER},
+            </if>
+            <if test="record.categorypath != null" >
+                `categoryPath` = #{record.categorypath,jdbcType=VARCHAR},
+            </if>
+            <if test="record.categorytype != null" >
+                `categoryType` = #{record.categorytype,jdbcType=INTEGER},
+            </if>
+            <if test="record.fieldid != null" >
+                `fieldId` = #{record.fieldid,jdbcType=VARCHAR},
+            </if>
+            <if test="record.allproduct != null" >
+                `allProduct` = #{record.allproduct,jdbcType=BIT},
+            </if>
+            <if test="record.status != null" >
+                `status` = #{record.status,jdbcType=INTEGER},
+            </if>
+            <if test="record.created != null" >
+                `created` = #{record.created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.creater != null" >
+                `creater` = #{record.creater,jdbcType=VARCHAR},
+            </if>
+            <if test="record.modified != null" >
+                `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifier != null" >
+                `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update cms_bt_refresh_product_task
+        set `id` = #{record.id,jdbcType=INTEGER},
+            `channelId` = #{record.channelid,jdbcType=VARCHAR},
+            `cartId` = #{record.cartid,jdbcType=INTEGER},
+            `categoryPath` = #{record.categorypath,jdbcType=VARCHAR},
+            `categoryType` = #{record.categorytype,jdbcType=INTEGER},
+            `fieldId` = #{record.fieldid,jdbcType=VARCHAR},
+            `allProduct` = #{record.allproduct,jdbcType=BIT},
+            `status` = #{record.status,jdbcType=INTEGER},
+            `created` = #{record.created,jdbcType=TIMESTAMP},
+            `creater` = #{record.creater,jdbcType=VARCHAR},
+            `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            `modifier` = #{record.modifier,jdbcType=VARCHAR}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel" >
+        update cms_bt_refresh_product_task
+        <set >
+            <if test="channelid != null" >
+                `channelId` = #{channelid,jdbcType=VARCHAR},
+            </if>
+            <if test="cartid != null" >
+                `cartId` = #{cartid,jdbcType=INTEGER},
+            </if>
+            <if test="categorypath != null" >
+                `categoryPath` = #{categorypath,jdbcType=VARCHAR},
+            </if>
+            <if test="categorytype != null" >
+                `categoryType` = #{categorytype,jdbcType=INTEGER},
+            </if>
+            <if test="fieldid != null" >
+                `fieldId` = #{fieldid,jdbcType=VARCHAR},
+            </if>
+            <if test="allproduct != null" >
+                `allProduct` = #{allproduct,jdbcType=BIT},
+            </if>
+            <if test="status != null" >
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_refresh_product_task
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskExample" >
+        delete from cms_bt_refresh_product_task
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_refresh_product_task
+        <where >
+            <if test="channelid != null" >
+                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            </if>
+            <if test="cartid != null" >
+                and `cartId` = #{cartid,jdbcType=INTEGER}
+            </if>
+            <if test="categorypath != null" >
+                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            </if>
+            <if test="categorytype != null" >
+                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            </if>
+            <if test="fieldid != null" >
+                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            </if>
+            <if test="allproduct != null" >
+                and `allProduct` = #{allproduct,jdbcType=BIT}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_refresh_product_task
+        <where >
+            <if test="channelid != null" >
+                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            </if>
+            <if test="cartid != null" >
+                and `cartId` = #{cartid,jdbcType=INTEGER}
+            </if>
+            <if test="categorypath != null" >
+                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            </if>
+            <if test="categorytype != null" >
+                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            </if>
+            <if test="fieldid != null" >
+                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            </if>
+            <if test="allproduct != null" >
+                and `allProduct` = #{allproduct,jdbcType=BIT}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_refresh_product_task
+        <where >
+            <if test="channelid != null" >
+                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            </if>
+            <if test="cartid != null" >
+                and `cartId` = #{cartid,jdbcType=INTEGER}
+            </if>
+            <if test="categorypath != null" >
+                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            </if>
+            <if test="categorytype != null" >
+                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            </if>
+            <if test="fieldid != null" >
+                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            </if>
+            <if test="allproduct != null" >
+                and `allProduct` = #{allproduct,jdbcType=BIT}
+            </if>
+            <if test="status != null" >
+                and `status` = #{status,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_refresh_product_task
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="channelid != null" >
+                `channelId`,
+            </if>
+            <if test="cartid != null" >
+                `cartId`,
+            </if>
+            <if test="categorypath != null" >
+                `categoryPath`,
+            </if>
+            <if test="categorytype != null" >
+                `categoryType`,
+            </if>
+            <if test="fieldid != null" >
+                `fieldId`,
+            </if>
+            <if test="allproduct != null" >
+                `allProduct`,
+            </if>
+            <if test="status != null" >
+                `status`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="channelid != null" >
+                #{channelid,jdbcType=VARCHAR},
+            </if>
+            <if test="cartid != null" >
+                #{cartid,jdbcType=INTEGER},
+            </if>
+            <if test="categorypath != null" >
+                #{categorypath,jdbcType=VARCHAR},
+            </if>
+            <if test="categorytype != null" >
+                #{categorytype,jdbcType=INTEGER},
+            </if>
+            <if test="fieldid != null" >
+                #{fieldid,jdbcType=VARCHAR},
+            </if>
+            <if test="allproduct != null" >
+                #{allproduct,jdbcType=BIT},
+            </if>
+            <if test="status != null" >
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

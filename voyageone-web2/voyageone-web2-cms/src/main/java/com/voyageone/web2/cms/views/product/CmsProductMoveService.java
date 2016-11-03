@@ -830,7 +830,7 @@ public class CmsProductMoveService extends BaseViewService {
         CmsBtProductModel_Platform_Cart newP0Model = newProductModel.getPlatform(0);
         if ("new".equals(destGroupType)) {
             // 新Group的场合，P0下的主商品=源Code
-            newP0Model.setMainProductCode(sourceCode);
+            newP0Model.setMainProductCode(newFieldModel.getCode());
         } else {
             if ("old".equals(destGroupType)) {
                 // 原Group的场合,P0下的主商品不变
