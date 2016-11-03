@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.SaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
@@ -48,6 +49,12 @@ public class CmsAddProductToPromotionService extends BaseViewService {
 
     @Autowired
     TagService tagService;
+
+    public  void  save(SaveParameter parameter,String channelId,String userName, CmsSessionBean cmsSession) {
+
+
+
+    }
 
     /**
      * 数据页面初始化(有产品信息)

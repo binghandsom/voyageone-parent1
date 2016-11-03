@@ -28,7 +28,7 @@ public class CmsAddProductToPromotionController extends CmsController {
     private CmsAddProductToPromotionService cmsAddProductToPromotionService;
     @RequestMapping(CmsUrlConstants.POP.AddProductToPromotion.Save)
     public AjaxResponse save(@RequestBody SaveParameter params) {
-        // promotionSelectService.addToPromotion(params, getUser(), getCmsSession());
+        cmsAddProductToPromotionService.save(params, getUser().getSelChannelId(),getUser().getUserName(), getCmsSession());
         // TagTreeNode
         return success(true);
     }
