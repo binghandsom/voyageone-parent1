@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.tools;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
@@ -18,6 +19,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -185,23 +187,26 @@ public class PlatformMappingService extends BaseService {
 
     private List<Long> getProductIdList(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
 
-        String query;
+        Criteria criteria;
+        Integer cartId = cmsBtRefreshProductTaskModel.getCartId();
 
         switch (cmsBtRefreshProductTaskModel.getCategoryType()) {
             case PlatformMappingService.CATEGORY_TYPE_COMMON:
                 // 全类目（通用类目）按平台查询
-                query = String.format("{\"platforms.P%s.pCatPath\": {$exists: true}}", cmsBtRefreshProductTaskModel.getCartId());
+                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).exists(true);
                 break;
             case PlatformMappingService.CATEGORY_TYPE_SPECIFIC:
                 // 具体类目则按类目查询
-                query = String.format("{\"platforms.P%s.pCatPath\": \"%s\"}", cmsBtRefreshProductTaskModel.getCartId(), cmsBtRefreshProductTaskModel.getCategoryPath());
-                break;
+                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).is(cmsBtRefreshProductTaskModel.getCategoryPath());break;
             default:
                 return null;
         }
 
-        JongoQuery jongoQuery = new JongoQuery();
-        jongoQuery.setQuery(query);
+        if (!cmsBtRefreshProductTaskModel.getAllProduct()) {
+            criteria.and(String.format("platforms.P%s.status", cartId)).is(CmsConstants.ProductStatus.Pending.name());
+        }
+
+        JongoQuery jongoQuery = new JongoQuery(criteria);
         jongoQuery.setProjection("{\"prodId\":1}");
 
         List<CmsBtProductModel> productModelList = productService.getList(cmsBtRefreshProductTaskModel.getChannelId(), jongoQuery);

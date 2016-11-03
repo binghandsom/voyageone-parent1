@@ -21,9 +21,10 @@ define(['cms'],
                     channelId: mappingInfo.channelId,
                     fieldId: field ? field.id : null,
                     allProduct: isAll
-                }).then(function () {
+                }).then(function (resp) {
+                    var need = resp.data;
                     modal.close();
-                    notify.success('已发送冲刷通知。后续任务将进入后台进行。请等待。')
+                    notify.success(need ? '已发送冲刷通知。后续任务将进入后台进行。请等待' : '重刷已经完成');
                 });
             },
 
