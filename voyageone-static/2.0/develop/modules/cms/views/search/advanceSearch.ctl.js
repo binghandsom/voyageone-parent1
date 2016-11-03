@@ -3,7 +3,8 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance2.service',
-    'modules/cms/service/product.detail.service'
+    'modules/cms/service/product.detail.service',
+    './advance.search.append.ctl'
 ], function (_) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {

@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()" id="advanceSearch">
+<div class="wrapper-md" ng-init="initialize()" id="advanceSearch" ng-controller="adSearchAppendCtl as ctrlAdvance">
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
         <uib-accordion-group is-open="vm.status.open">
             <uib-accordion-heading>
@@ -727,7 +727,9 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </td>
-                                    <td class="text-left" translate="TXT_CODE" style="display:inline-block;width:90px;padding-left:8px"></td>
+                                    <td class="text-left" style="display:inline-block;width:90px;padding-left:8px">
+                                        <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn" ng-click="ctrlAdvance.test()"><i class="fa fa-unsorted"></i></button>
+                                    </td>
                                     <td class="text-left" translate="TXT_NAME" style="display:inline-block;width:110px;padding-left:8px"></td>
                                     <td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:110px;padding-left:8px"></td>
                                     <td class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:50px;padding-left:8px"></td>
