@@ -17,8 +17,8 @@ define(['cms',
         this.cmsBtJmPromotionExportTaskService = cmsBtJmPromotionExportTaskService;
     }
 
-    SpDetailPageController.prototype.skipUrl = function (res) {
-        var self = this,
+    SpDetailPageController.prototype.skipUrl = function (res,ctrl) {
+        var self = ctrl,
             confirm = self.confirm;
         confirm("是否要跳转的新建的返场活动。").then(function () {
             window.location.href = "#/jmpromotion/detail/" + res.data.promotionId + "/" + res.data.jmPromotionId;

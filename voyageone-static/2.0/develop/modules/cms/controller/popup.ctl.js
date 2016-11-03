@@ -1184,11 +1184,11 @@ define([
             });
         };
 
-        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial) {
+        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial,ctrl) {
             popActions.jumei.jmPromotionDetail.encore.size = 'lg';
             openModal(popActions.jumei.jmPromotionDetail.encore, context).then(function (res) {
                 if (fnInitial) {
-                    fnInitial(res);
+                    fnInitial(res,ctrl);
                 }
             });
         };
