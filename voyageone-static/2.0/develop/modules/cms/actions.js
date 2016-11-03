@@ -212,6 +212,7 @@ define(function () {
                     "getEditModel": "getEditModel",
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
+                    "encore": "encore",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId",
                     getBayWindow: 'getBayWindow',

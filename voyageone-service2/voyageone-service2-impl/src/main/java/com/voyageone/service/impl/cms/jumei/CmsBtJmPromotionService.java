@@ -76,6 +76,9 @@ public class CmsBtJmPromotionService extends BaseService {
     private CmsBtJmPromotionTagProductDao cmsBtJmPromotionTagProductDao;
 
     @Autowired
+    private CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
+
+    @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
@@ -603,12 +606,35 @@ public class CmsBtJmPromotionService extends BaseService {
      * @param cmsBtJmPromotionModel
      * @param userName
      */
-    public void promotionCopy(int srcJmPromotionId, CmsBtJmPromotionModel cmsBtJmPromotionModel, String userName) {
+    public CmsBtJmPromotionSaveBean promotionCopy(int srcJmPromotionId, CmsBtJmPromotionModel cmsBtJmPromotionModel, String userName) {
         try {
+            CmsBtJmPromotionImagesModel cmsBtJmPromotionImagesModel = null;
+
+            CmsBtJmBayWindowModel srcCmsBtJmBayWindowModel = null;
+
             //取得源聚美活动信息
             CmsBtJmPromotionSaveBean srcJmPromotionSaveBean = getEditModel(srcJmPromotionId, true);
+            if(srcJmPromotionSaveBean.getExtModel() != null){
+                // image数据取得
+                cmsBtJmPromotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(srcJmPromotionSaveBean.getExtModel().getPromotionId(),srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+
+                srcCmsBtJmBayWindowModel =  cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+
+            }
+
             Integer srcRefTagId = srcJmPromotionSaveBean.getModel().getRefTagId();
-            srcJmPromotionSaveBean.setModel(cmsBtJmPromotionModel);
+            srcJmPromotionSaveBean.getModel().setId(null);
+            srcJmPromotionSaveBean.getModel().setRefTagId(0);
+            srcJmPromotionSaveBean.getModel().setName(cmsBtJmPromotionModel.getName());
+            srcJmPromotionSaveBean.getModel().setPromotionScene(cmsBtJmPromotionModel.getPromotionScene());
+            srcJmPromotionSaveBean.getModel().setPromotionType(cmsBtJmPromotionModel.getPromotionType());
+            srcJmPromotionSaveBean.getModel().setSignupDeadline(cmsBtJmPromotionModel.getSignupDeadline());
+            srcJmPromotionSaveBean.getModel().setPrePeriodStart(cmsBtJmPromotionModel.getPrePeriodStart());
+            srcJmPromotionSaveBean.getModel().setPrePeriodEnd(cmsBtJmPromotionModel.getPrePeriodEnd());
+            srcJmPromotionSaveBean.getModel().setActivityStart(cmsBtJmPromotionModel.getActivityStart());
+            srcJmPromotionSaveBean.getModel().setActivityEnd(cmsBtJmPromotionModel.getActivityEnd());
+            srcJmPromotionSaveBean.getModel().setActivityAppId(cmsBtJmPromotionModel.getActivityAppId());
+            srcJmPromotionSaveBean.getModel().setActivityPcId(cmsBtJmPromotionModel.getActivityPcId());
             if (srcJmPromotionSaveBean.getExtModel() != null) {
                 srcJmPromotionSaveBean.setHasExt(true);
                 srcJmPromotionSaveBean.getExtModel().setId(null);
@@ -621,7 +647,7 @@ public class CmsBtJmPromotionService extends BaseService {
                 newTag.setActive(tag.getModel().getActive());
                 tag.setModel(newTag);
             });
-            saveModel(srcJmPromotionSaveBean, userName, cmsBtJmPromotionModel.getChannelId());
+            saveModel(srcJmPromotionSaveBean, userName, srcJmPromotionSaveBean.getModel().getChannelId());
 
             //List<SkuImportBean > listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName;
             List<ProductImportBean> listProductImport = cmsBtJmPromotionProductDaoExt.selectProductByJmPromotionId(srcJmPromotionId);
@@ -634,10 +660,28 @@ public class CmsBtJmPromotionService extends BaseService {
 
             sortProduct(srcRefTagId, desRefTagId, userName);
 
-        } catch (Exception e) {
-            $error(e);
-        }
+            if(cmsBtJmPromotionImagesModel != null){
+                cmsBtJmPromotionImagesModel.set_id(null);
+                cmsBtJmPromotionImagesModel.setCreater(userName);
+                cmsBtJmPromotionModel.setModifier(userName);
+                cmsBtJmPromotionImagesModel.setJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                cmsBtJmPromotionImagesModel.setPromotionId(srcJmPromotionSaveBean.getExtModel().getPromotionId());
+                cmsBtJmPromotionImagesDao.insert(cmsBtJmPromotionImagesModel);
+            }
 
+            if(srcCmsBtJmBayWindowModel != null){
+                CmsBtJmBayWindowModel newCmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                newCmsBtJmBayWindowModel.setBayWindows(srcCmsBtJmBayWindowModel.getBayWindows());
+                newCmsBtJmBayWindowModel.setFixed(srcCmsBtJmBayWindowModel.getFixed());
+                cmsBtJmBayWindowService.update(newCmsBtJmBayWindowModel);
+            }
+            return srcJmPromotionSaveBean;
+        } catch (BusinessException e){
+            throw e;
+        }catch (Exception e) {
+            $error(e);
+            throw new BusinessException("返场失败");
+        }
     }
 
     @VOTransactional

@@ -75,6 +75,11 @@
                     <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadWaresImageZip()>下载商品主图包</a></li>
                 </ul>
             </div>
+            <div class="btn-group" ng-controller="popupCtrl">
+                <button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" style="margin-left:20px" ng-click="openJmPromotionEncore({promotion:ctrl.promotion},ctrl.skipUrl)">
+                    新建返场
+                </button>
+            </div>
         </div>
     </div>
     <uib-tabset class="tab-container vo_nav-tabs">
