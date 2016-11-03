@@ -432,6 +432,7 @@ public class CmsBtJmPromotionProduct3Service {
             for (ProductTagInfo tagInfo : parameter.getTagList()) {
                 tags.add(String.format("-%s-%s-", modelPromotion.getRefTagId(), tagInfo.getTagId()));
             }
+            tags.add(String.format("-%s-", modelPromotion.getRefTagId()));
             productModel.setTags(tags);
             //3.更新
             productService.updateTags(model.getChannelId(), productModel.getProdId(), tags, modifier);

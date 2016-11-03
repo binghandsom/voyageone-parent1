@@ -13,10 +13,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
-import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -68,6 +65,9 @@ public class PromotionDetailService extends BaseService {
 
     @Autowired
     PromotionSkuService promotionSkuService;
+
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
     public void addPromotionDetail(PromotionDetailAddBean bean){
         addPromotionDetail(bean,true);
     }
@@ -215,6 +215,7 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionSkuModel.setModified(cmsBtPromotionGroupsBean.getModified());
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             });
+            cmsBtPromotionCodesDaoExtCamel.updatePromotionPrice(code.getPromotionId(),code.getProductCode());
         }
     }
 

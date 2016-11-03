@@ -58,7 +58,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(data);
     }
     @RequestMapping(PROMOTION.LIST.DETAIL.SaveSkuPromotionPrices)
-    public AjaxResponse saveSkuPromotionPrices(@RequestBody List<SaveSkuPromotionPricesParameter> parameter) {
+    public AjaxResponse saveSkuPromotionPrices(@RequestBody SaveSkuPromotionPricesParameter parameter) {
         promotionSkuService.saveSkuPromotionPrices(parameter);
         return success(null);
     }
