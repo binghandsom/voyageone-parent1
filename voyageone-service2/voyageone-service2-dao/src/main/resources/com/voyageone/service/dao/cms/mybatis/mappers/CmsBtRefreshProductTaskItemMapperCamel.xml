@@ -63,7 +63,7 @@
     </sql>
 
     <sql id="Base_Column_List" >
-        `id`, `task_id`, `productId`, `status`, `created`, `creater`, `modified`, `modifier`
+        `id`, `task_id`, `product_id`, `status`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemExample" >
@@ -105,8 +105,8 @@
             <if test="record.taskId != null" >
                 `task_id` = #{record.taskId,jdbcType=INTEGER},
             </if>
-            <if test="record.productid != null" >
-                `productId` = #{record.productid,jdbcType=INTEGER},
+            <if test="record.productId != null" >
+                `product_id` = #{record.productId,jdbcType=INTEGER},
             </if>
             <if test="record.status != null" >
                 `status` = #{record.status,jdbcType=INTEGER},
@@ -133,7 +133,7 @@
         update cms_bt_refresh_product_task_item
         set `id` = #{record.id,jdbcType=INTEGER},
             `task_id` = #{record.taskId,jdbcType=INTEGER},
-            `productId` = #{record.productid,jdbcType=INTEGER},
+            `product_id` = #{record.productId,jdbcType=INTEGER},
             `status` = #{record.status,jdbcType=INTEGER},
             `created` = #{record.created,jdbcType=TIMESTAMP},
             `creater` = #{record.creater,jdbcType=VARCHAR},
@@ -150,8 +150,8 @@
             <if test="taskId != null" >
                 `task_id` = #{taskId,jdbcType=INTEGER},
             </if>
-            <if test="productid != null" >
-                `productId` = #{productid,jdbcType=INTEGER},
+            <if test="productId != null" >
+                `product_id` = #{productId,jdbcType=INTEGER},
             </if>
             <if test="status != null" >
                 `status` = #{status,jdbcType=INTEGER},
@@ -195,8 +195,8 @@
             <if test="taskId != null" >
                 and `task_id` = #{taskId,jdbcType=INTEGER}
             </if>
-            <if test="productid != null" >
-                and `productId` = #{productid,jdbcType=INTEGER}
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -225,8 +225,8 @@
             <if test="taskId != null" >
                 and `task_id` = #{taskId,jdbcType=INTEGER}
             </if>
-            <if test="productid != null" >
-                and `productId` = #{productid,jdbcType=INTEGER}
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -252,8 +252,8 @@
             <if test="taskId != null" >
                 and `task_id` = #{taskId,jdbcType=INTEGER}
             </if>
-            <if test="productid != null" >
-                and `productId` = #{productid,jdbcType=INTEGER}
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -279,8 +279,8 @@
             <if test="taskId != null" >
                 `task_id`,
             </if>
-            <if test="productid != null" >
-                `productId`,
+            <if test="productId != null" >
+                `product_id`,
             </if>
             <if test="status != null" >
                 `status`,
@@ -301,8 +301,8 @@
             <if test="taskId != null" >
                 #{taskId,jdbcType=INTEGER},
             </if>
-            <if test="productid != null" >
-                #{productid,jdbcType=INTEGER},
+            <if test="productId != null" >
+                #{productId,jdbcType=INTEGER},
             </if>
             <if test="status != null" >
                 #{status,jdbcType=INTEGER},

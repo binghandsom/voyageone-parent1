@@ -63,7 +63,7 @@
     </sql>
 
     <sql id="Base_Column_List" >
-        `id`, `channelId`, `cartId`, `categoryPath`, `categoryType`, `fieldId`, `allProduct`, 
+        `id`, `channel_id`, `cart_id`, `category_path`, `category_type`, `field_id`, `all_product`, 
         `status`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
@@ -103,23 +103,23 @@
             <if test="record.id != null" >
                 `id` = #{record.id,jdbcType=INTEGER},
             </if>
-            <if test="record.channelid != null" >
-                `channelId` = #{record.channelid,jdbcType=VARCHAR},
+            <if test="record.channelId != null" >
+                `channel_id` = #{record.channelId,jdbcType=VARCHAR},
             </if>
-            <if test="record.cartid != null" >
-                `cartId` = #{record.cartid,jdbcType=INTEGER},
+            <if test="record.cartId != null" >
+                `cart_id` = #{record.cartId,jdbcType=INTEGER},
             </if>
-            <if test="record.categorypath != null" >
-                `categoryPath` = #{record.categorypath,jdbcType=VARCHAR},
+            <if test="record.categoryPath != null" >
+                `category_path` = #{record.categoryPath,jdbcType=VARCHAR},
             </if>
-            <if test="record.categorytype != null" >
-                `categoryType` = #{record.categorytype,jdbcType=INTEGER},
+            <if test="record.categoryType != null" >
+                `category_type` = #{record.categoryType,jdbcType=INTEGER},
             </if>
-            <if test="record.fieldid != null" >
-                `fieldId` = #{record.fieldid,jdbcType=VARCHAR},
+            <if test="record.fieldId != null" >
+                `field_id` = #{record.fieldId,jdbcType=VARCHAR},
             </if>
-            <if test="record.allproduct != null" >
-                `allProduct` = #{record.allproduct,jdbcType=BIT},
+            <if test="record.allProduct != null" >
+                `all_product` = #{record.allProduct,jdbcType=BIT},
             </if>
             <if test="record.status != null" >
                 `status` = #{record.status,jdbcType=INTEGER},
@@ -145,12 +145,12 @@
     <update id="updateByExample" parameterType="map" >
         update cms_bt_refresh_product_task
         set `id` = #{record.id,jdbcType=INTEGER},
-            `channelId` = #{record.channelid,jdbcType=VARCHAR},
-            `cartId` = #{record.cartid,jdbcType=INTEGER},
-            `categoryPath` = #{record.categorypath,jdbcType=VARCHAR},
-            `categoryType` = #{record.categorytype,jdbcType=INTEGER},
-            `fieldId` = #{record.fieldid,jdbcType=VARCHAR},
-            `allProduct` = #{record.allproduct,jdbcType=BIT},
+            `channel_id` = #{record.channelId,jdbcType=VARCHAR},
+            `cart_id` = #{record.cartId,jdbcType=INTEGER},
+            `category_path` = #{record.categoryPath,jdbcType=VARCHAR},
+            `category_type` = #{record.categoryType,jdbcType=INTEGER},
+            `field_id` = #{record.fieldId,jdbcType=VARCHAR},
+            `all_product` = #{record.allProduct,jdbcType=BIT},
             `status` = #{record.status,jdbcType=INTEGER},
             `created` = #{record.created,jdbcType=TIMESTAMP},
             `creater` = #{record.creater,jdbcType=VARCHAR},
@@ -164,23 +164,23 @@
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel" >
         update cms_bt_refresh_product_task
         <set >
-            <if test="channelid != null" >
-                `channelId` = #{channelid,jdbcType=VARCHAR},
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="cartid != null" >
-                `cartId` = #{cartid,jdbcType=INTEGER},
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="categorypath != null" >
-                `categoryPath` = #{categorypath,jdbcType=VARCHAR},
+            <if test="categoryPath != null" >
+                `category_path` = #{categoryPath,jdbcType=VARCHAR},
             </if>
-            <if test="categorytype != null" >
-                `categoryType` = #{categorytype,jdbcType=INTEGER},
+            <if test="categoryType != null" >
+                `category_type` = #{categoryType,jdbcType=INTEGER},
             </if>
-            <if test="fieldid != null" >
-                `fieldId` = #{fieldid,jdbcType=VARCHAR},
+            <if test="fieldId != null" >
+                `field_id` = #{fieldId,jdbcType=VARCHAR},
             </if>
-            <if test="allproduct != null" >
-                `allProduct` = #{allproduct,jdbcType=BIT},
+            <if test="allProduct != null" >
+                `all_product` = #{allProduct,jdbcType=BIT},
             </if>
             <if test="status != null" >
                 `status` = #{status,jdbcType=INTEGER},
@@ -221,23 +221,23 @@
         <include refid="Base_Column_List" />
         from cms_bt_refresh_product_task
         <where >
-            <if test="channelid != null" >
-                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="cartid != null" >
-                and `cartId` = #{cartid,jdbcType=INTEGER}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="categorypath != null" >
-                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            <if test="categoryPath != null" >
+                and `category_path` = #{categoryPath,jdbcType=VARCHAR}
             </if>
-            <if test="categorytype != null" >
-                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            <if test="categoryType != null" >
+                and `category_type` = #{categoryType,jdbcType=INTEGER}
             </if>
-            <if test="fieldid != null" >
-                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            <if test="fieldId != null" >
+                and `field_id` = #{fieldId,jdbcType=VARCHAR}
             </if>
-            <if test="allproduct != null" >
-                and `allProduct` = #{allproduct,jdbcType=BIT}
+            <if test="allProduct != null" >
+                and `all_product` = #{allProduct,jdbcType=BIT}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -263,23 +263,23 @@
         <include refid="Base_Column_List" />
         from cms_bt_refresh_product_task
         <where >
-            <if test="channelid != null" >
-                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="cartid != null" >
-                and `cartId` = #{cartid,jdbcType=INTEGER}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="categorypath != null" >
-                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            <if test="categoryPath != null" >
+                and `category_path` = #{categoryPath,jdbcType=VARCHAR}
             </if>
-            <if test="categorytype != null" >
-                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            <if test="categoryType != null" >
+                and `category_type` = #{categoryType,jdbcType=INTEGER}
             </if>
-            <if test="fieldid != null" >
-                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            <if test="fieldId != null" >
+                and `field_id` = #{fieldId,jdbcType=VARCHAR}
             </if>
-            <if test="allproduct != null" >
-                and `allProduct` = #{allproduct,jdbcType=BIT}
+            <if test="allProduct != null" >
+                and `all_product` = #{allProduct,jdbcType=BIT}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -302,23 +302,23 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_bt_refresh_product_task
         <where >
-            <if test="channelid != null" >
-                and `channelId` = #{channelid,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="cartid != null" >
-                and `cartId` = #{cartid,jdbcType=INTEGER}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="categorypath != null" >
-                and `categoryPath` = #{categorypath,jdbcType=VARCHAR}
+            <if test="categoryPath != null" >
+                and `category_path` = #{categoryPath,jdbcType=VARCHAR}
             </if>
-            <if test="categorytype != null" >
-                and `categoryType` = #{categorytype,jdbcType=INTEGER}
+            <if test="categoryType != null" >
+                and `category_type` = #{categoryType,jdbcType=INTEGER}
             </if>
-            <if test="fieldid != null" >
-                and `fieldId` = #{fieldid,jdbcType=VARCHAR}
+            <if test="fieldId != null" >
+                and `field_id` = #{fieldId,jdbcType=VARCHAR}
             </if>
-            <if test="allproduct != null" >
-                and `allProduct` = #{allproduct,jdbcType=BIT}
+            <if test="allProduct != null" >
+                and `all_product` = #{allProduct,jdbcType=BIT}
             </if>
             <if test="status != null" >
                 and `status` = #{status,jdbcType=INTEGER}
@@ -341,23 +341,23 @@
     <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_refresh_product_task
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="channelid != null" >
-                `channelId`,
+            <if test="channelId != null" >
+                `channel_id`,
             </if>
-            <if test="cartid != null" >
-                `cartId`,
+            <if test="cartId != null" >
+                `cart_id`,
             </if>
-            <if test="categorypath != null" >
-                `categoryPath`,
+            <if test="categoryPath != null" >
+                `category_path`,
             </if>
-            <if test="categorytype != null" >
-                `categoryType`,
+            <if test="categoryType != null" >
+                `category_type`,
             </if>
-            <if test="fieldid != null" >
-                `fieldId`,
+            <if test="fieldId != null" >
+                `field_id`,
             </if>
-            <if test="allproduct != null" >
-                `allProduct`,
+            <if test="allProduct != null" >
+                `all_product`,
             </if>
             <if test="status != null" >
                 `status`,
@@ -375,23 +375,23 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="channelid != null" >
-                #{channelid,jdbcType=VARCHAR},
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="cartid != null" >
-                #{cartid,jdbcType=INTEGER},
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="categorypath != null" >
-                #{categorypath,jdbcType=VARCHAR},
+            <if test="categoryPath != null" >
+                #{categoryPath,jdbcType=VARCHAR},
             </if>
-            <if test="categorytype != null" >
-                #{categorytype,jdbcType=INTEGER},
+            <if test="categoryType != null" >
+                #{categoryType,jdbcType=INTEGER},
             </if>
-            <if test="fieldid != null" >
-                #{fieldid,jdbcType=VARCHAR},
+            <if test="fieldId != null" >
+                #{fieldId,jdbcType=VARCHAR},
             </if>
-            <if test="allproduct != null" >
-                #{allproduct,jdbcType=BIT},
+            <if test="allProduct != null" >
+                #{allProduct,jdbcType=BIT},
             </if>
             <if test="status != null" >
                 #{status,jdbcType=INTEGER},

@@ -15,7 +15,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtRefreshProductTaskItemModel extends BaseModel {
     protected Integer taskId;
 
-    protected Integer productid;
+    protected Integer productId;
 
     /**
      * 0：待处理，1：已处理
@@ -30,12 +30,12 @@ public class CmsBtRefreshProductTaskItemModel extends BaseModel {
         this.taskId = taskId;
     }
 
-    public Integer getProductid() {
-        return productid;
+    public Integer getProductId() {
+        return productId;
     }
 
-    public void setProductid(Integer productid) {
-        this.productid = productid;
+    public void setProductId(Integer productId) {
+        this.productId = productId;
     }
 
     public Integer getStatus() {
