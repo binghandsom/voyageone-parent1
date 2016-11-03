@@ -51,13 +51,17 @@ define([
          * cartId isSelAll codeList    addProductToPromotionService.init
          */
         JoinPromotionCtl.prototype.init = function () {
-            var self = this;
+           // this.search();
+        };
+
+        JoinPromotionCtl.prototype.search=function () {
+            var self=this;
             var p = {};
             p.codeList = self.getCodeList();
             p.cartId = self.cartBean.value;
             p.isSelAll = self.context.isSelAll;
-            p.activityStart=null;
-            p.activityEnd=null;
+            p.activityStart=self.groupInfo.startTime;
+            p.activityEnd=self.groupInfo.endTime;
 
             self.addProductToPromotionService.init(p).then(function (res) {
                 console.log(res.data);
@@ -69,8 +73,8 @@ define([
                 //设置半选
                 self.halfCheckNodes = flatCategories(self.listTreeNode, 1);
             });
-        };
 
+        }
         JoinPromotionCtl.prototype.canSelectChild = function (entity) {
             console.log(entity);
             var self = this,
