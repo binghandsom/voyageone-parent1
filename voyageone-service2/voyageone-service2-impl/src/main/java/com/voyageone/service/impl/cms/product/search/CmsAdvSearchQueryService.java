@@ -1,20 +1,25 @@
 package com.voyageone.service.impl.cms.product.search;
 
-import com.voyageone.base.dao.mongodb.JongoAggregate;
-import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
+import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
  * @author Edward
@@ -27,6 +32,8 @@ public class CmsAdvSearchQueryService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
@@ -660,5 +667,12 @@ public class CmsAdvSearchQueryService extends BaseService {
         result.put("sortOutList", sortOutList);
         return result;
     }
+
+    /**
+     * 取得SKU级的库存属性
+     */
+	public List<Map<String, Object>> getSkuInventoryList(String channelId, String code) {
+		return wmsBtInventoryDaoExt.selectSkuInventoryList(channelId, code);
+	}
 
 }

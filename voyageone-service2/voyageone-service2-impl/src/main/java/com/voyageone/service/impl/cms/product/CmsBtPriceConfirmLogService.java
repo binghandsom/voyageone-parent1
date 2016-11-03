@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtPriceConfirmLogDao;
+import com.voyageone.service.daoext.cms.CmsBtPriceConfirmLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceConfirmLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants.Platform_SKU_COM;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 查询和记录价格确认历史
@@ -34,9 +36,12 @@ public class CmsBtPriceConfirmLogService extends BaseService {
 
     private final CmsBtPriceConfirmLogDao priceConfirmLogDao;
 
+    private final CmsBtPriceConfirmLogDaoExt priceConfirmLogDaoExt;
+
     @Autowired
-    public CmsBtPriceConfirmLogService(CmsBtPriceConfirmLogDao priceConfirmLogDao) {
+    public CmsBtPriceConfirmLogService(CmsBtPriceConfirmLogDao priceConfirmLogDao, CmsBtPriceConfirmLogDaoExt priceConfirmLogDaoExt) {
         this.priceConfirmLogDao = priceConfirmLogDao;
+        this.priceConfirmLogDaoExt = priceConfirmLogDaoExt;
     }
 
     public void addConfirmed(String channelId, String code, CmsBtProductModel_Platform_Cart platformCart, String username) {
@@ -87,5 +92,9 @@ public class CmsBtPriceConfirmLogService extends BaseService {
         priceConfirmLogModel.setFloatingRate(floatingRate);
         priceConfirmLogModel.setCurrentRetailPrice(sku.getDoubleAttribute(Platform_SKU_COM.priceRetail.name()));
         priceConfirmLogModel.setCurrentConfirmPrice(sku.getDoubleAttribute(Platform_SKU_COM.confPriceRetail.name()));
+    }
+
+    public int updateCmsBtPriceLogForMove(String channelId, String itemCodeOld, List<String> skuList, String itemCodeNew, String modifier) {
+        return priceConfirmLogDaoExt.updateCodeForMove(channelId, itemCodeOld, skuList, itemCodeNew, modifier);
     }
 }

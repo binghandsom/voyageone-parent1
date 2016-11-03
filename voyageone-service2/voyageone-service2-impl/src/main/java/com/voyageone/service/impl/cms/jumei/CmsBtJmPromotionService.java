@@ -28,6 +28,7 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -234,7 +235,16 @@ public class CmsBtJmPromotionService extends BaseService {
         }
         info.setModel(model);
         if (model.getRefTagId() != null && model.getRefTagId() != 0) {
-            List<CmsBtTagModel> tagList = tagService.getListByParentTagId(model.getRefTagId());
+            List<CmsBtJmPromotionSaveBean.Tag> tagList = tagService.getListByParentTagId(model.getRefTagId())
+                    .stream()
+                    .map(i -> {
+                        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = tagService.getJmModule(i);
+                        CmsBtJmPromotionSaveBean.Tag tag = new CmsBtJmPromotionSaveBean.Tag(i);
+                        tag.setFeatured(tagJmModuleExtensionModel.getFeatured());
+                        return tag;
+                    })
+                    .sorted((a, b) -> (a.isFeatured() ? 0 : 1) - (b.isFeatured() ? 0 : 1))
+                    .collect(toList());
             info.setTagList(tagList);
         }
 
@@ -371,24 +381,20 @@ public class CmsBtJmPromotionService extends BaseService {
             daoExt.updateByInput(jmPromotionModel);
         }
 
-        setHasFeaturedModule(parameter);
-
         List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
                 .stream()
                 .map(tag -> {
-                    tag.setModifier(jmPromotionModel.getModifier());
+                    CmsBtTagModel tagModel = tag.getModel();
+                    tagModel.setModifier(jmPromotionModel.getModifier());
                     CmsBtTagJmModuleExtensionModel module;
-                    if (tag.getId() != null && tag.getId() > 0) {
-                        tagService.updateTagModel(tag);
-                        module = tagService.getJmModule(tag);
+                    if (tagModel.getId() != null && tagModel.getId() > 0) {
+                        tagService.updateTagModel(tagModel);
+                        module = tagService.getJmModule(tagModel);
                     } else {
-                        addChildTag(tag, jmPromotionModel);
-                        module = tagService.createJmModuleExtension(tag);
+                        addChildTag(tagModel, jmPromotionModel);
+                        module = tagService.createJmModuleExtension(tagModel);
                         tagService.addJmModule(module);
                     }
-
-                    ifNoFeaturedModuleThenUseThis(parameter, tag);
-
                     return module;
                 })
                 .collect(toList());
@@ -431,16 +437,14 @@ public class CmsBtJmPromotionService extends BaseService {
 
         dao.insert(model);
 
-        setHasFeaturedModule(parameter);
-
         // 根据 tag 创建模块
         List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
                 .stream()
                 .map(tag -> {
-                    addChildTag(tag, model);
-                    CmsBtTagJmModuleExtensionModel module = tagService.createJmModuleExtension(tag);
+                    addChildTag(tag.getModel(), model);
+                    CmsBtTagJmModuleExtensionModel module = tagService.createJmModuleExtension(tag.getModel());
+                    module.setFeatured(tag.isFeatured());
                     tagService.addJmModule(module);
-                    ifNoFeaturedModuleThenUseThis(parameter, tag);
                     return module;
                 })
                 .collect(toList());
@@ -451,30 +455,6 @@ public class CmsBtJmPromotionService extends BaseService {
         List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
         jmBayWindowModel.setBayWindows(bayWindowList);
         cmsBtJmBayWindowService.insert(jmBayWindowModel);
-    }
-
-    private void ifNoFeaturedModuleThenUseThis(CmsBtJmPromotionSaveBean parameter, CmsBtTagModel tagModel) {
-        if (parameter.isHasFeaturedModule())
-            return;
-        parameter.setHasFeaturedModule(true);
-
-        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = tagService.getJmModule(tagModel);
-
-        if (tagJmModuleExtensionModel != null) {
-            tagJmModuleExtensionModel.setFeatured(true);
-            tagService.updateTagModel(tagJmModuleExtensionModel);
-            return;
-        }
-
-        tagJmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
-        tagJmModuleExtensionModel.setFeatured(true);
-
-        tagService.addJmModule(tagJmModuleExtensionModel);
-    }
-
-    private void setHasFeaturedModule(CmsBtJmPromotionSaveBean parameter) {
-        boolean hasFeaturedModule = tagService.hasFeaturedJmModuleByTopTagId(parameter.getModel().getRefTagId());
-        parameter.setHasFeaturedModule(hasFeaturedModule);
     }
 
     private void addChildTag(CmsBtTagModel tagModel, CmsBtJmPromotionModel promotionModel) {

@@ -167,5 +167,16 @@ public class CartEnums {
 		public static boolean isJdSeries(Cart cart) {
 			return JD.equals(cart) || JG.equals(cart) || JGJ.equals(cart) || JGY.equals(cart);
 		}
+
+		/**
+		 * 判断给定的店铺的类目是否是共通Schema
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是共通Schema
+		 * @since 2.6.0
+		 */
+		public static boolean isCommonCategorySchema(Cart cart) {
+			return JM.equals(cart) || TT.equals(cart) || USTT.equals(cart) || LIKING.equals(cart);
+		}
     }
 }

@@ -2822,9 +2822,10 @@ public class SxProductService extends BaseService {
         }
         try {
             String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
-            if (StringUtils.isEmpty(scProductId)) {
-                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
-            }
+			// 临时忽略检查
+//            if (StringUtils.isEmpty(scProductId)) {
+//                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
+//            }
             return scProductId;
         } catch (BusinessException be) {
             throw be;

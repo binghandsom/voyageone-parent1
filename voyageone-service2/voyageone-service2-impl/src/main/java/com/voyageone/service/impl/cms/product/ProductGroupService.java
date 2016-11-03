@@ -15,6 +15,8 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,9 @@ public class ProductGroupService extends BaseService {
 
     @Autowired
     private MongoSequenceService commSequenceMongoService; // DAO: Sequence
+
+    @Autowired
+    private ProductService productService;
 
     /**
      * getList
@@ -413,6 +418,21 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 重置group的platformPid
+     */
+    public WriteResult resetProductGroupPlatformPid (String channelId, int cartId, String code) {
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("cartId", cartId);
+        queryMap.put("productCodes", code);
+
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platformPid", "");
+
+        return cmsBtProductGroupDao.update(channelId, queryMap, updateMap);
+    }
+
+    /**
      * 获取聚美下面的所有group的codes大于1的数据,然后将其对应的group按一个code一个group做拆分,并删除以前的group.
      * @param channelId 渠道Id
      */
@@ -472,5 +492,102 @@ public class ProductGroupService extends BaseService {
 
     public long countByQuery(final String strQuery, String channelId) {
         return cmsBtProductGroupDao.countByQuery(strQuery, channelId);
+    }
+
+    /**
+     * 计算group的价格区间
+     */
+    public void calculatePriceRange (CmsBtProductGroupModel groupModel) {
+        Integer cartId = groupModel.getCartId();
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        for (String code : groupModel.getProductCodes()) {
+            CmsBtProductModel productModel = productService.getProductByCode(groupModel.getChannelId(), code);
+            if (productModel != null) {
+                if (cartId < CmsConstants.ACTIVE_CARTID_MIN) {
+                    priceSaleSt = 0.0;
+                    priceSaleEd = 0.0;
+                    for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+                        Double skuPriceRetail = skuModel.getPriceRetail();
+                        if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                            priceRetailSt = skuPriceRetail;
+                        }
+                        if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                            priceRetailEd = skuPriceRetail;
+                        }
+
+                        Double skuPriceMsrp = skuModel.getPriceMsrp();
+                        if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                            priceMsrpSt = skuPriceMsrp;
+                        }
+                        if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                            priceMsrpEd = skuPriceMsrp;
+                        }
+                    }
+                } else {
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+                        // 找到对应的平台信息
+                        if (cartId.equals(platform.getValue().getCartId())) {
+                            for (Map<String, Object> sku : platform.getValue().getSkus()) {
+                                Object objSkuPriceSale = sku.get("priceSale");
+                                Double skuPriceSale = null;
+                                if (objSkuPriceSale != null) {
+                                    skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
+                                }
+                                if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
+                                    priceSaleSt = skuPriceSale;
+                                }
+                                if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
+                                    priceSaleEd = skuPriceSale;
+                                }
+
+                                Object objSkuPriceRetail = sku.get("priceRetail");
+                                Double skuPriceRetail = null;
+                                if (objSkuPriceRetail != null) {
+                                    skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
+                                }
+                                if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                                    priceRetailSt = skuPriceRetail;
+                                }
+                                if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                                    priceRetailEd = skuPriceRetail;
+                                }
+
+                                Object objSkuPriceMsrp = sku.get("priceMsrp");
+                                Double skuPriceMsrp = null;
+                                if (objSkuPriceMsrp != null) {
+                                    skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
+                                }
+                                if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                                    priceMsrpSt = skuPriceMsrp;
+                                }
+                                if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                                    priceMsrpEd = skuPriceMsrp;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        groupModel.setPriceSaleSt(priceSaleSt);
+        groupModel.setPriceSaleEd(priceSaleEd);
+        groupModel.setPriceRetailSt(priceRetailSt);
+        groupModel.setPriceRetailEd(priceRetailEd);
+        groupModel.setPriceMsrpSt(priceMsrpSt);
+        groupModel.setPriceMsrpEd(priceMsrpEd);
+    }
+
+    /**
+     * 删除group
+     */
+    public void deleteGroup (CmsBtProductGroupModel groupModel) {
+        cmsBtProductGroupDao.delete(groupModel);
     }
 }

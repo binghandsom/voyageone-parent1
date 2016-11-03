@@ -5,7 +5,7 @@
 /**
  * angular component head file。
  * 声明各个组件的父模块
- * 
+ *
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -124,8 +124,23 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
+
+    $scope.templateAction = {
+        "promotionDetailPopover":{
+            templateUrl: 'promotionDetailTemplate.html',
+            title: 'Title'
+        },
+        "advanceSkuPopover":{
+            templateUrl: 'advanceSkuTemplate.html',
+            title: 'Title'
+        }
+    };
+
     $scope.showInfo = showInfo;
+    $scope.popoverAdvanceSku = popoverAdvanceSku;
+    $scope.popoverPromotionDetail = popoverPromotionDetail;
+
     function showInfo(values) {
         if (values == undefined || values == '') {
             return '';
@@ -142,6 +157,46 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             tempHtml += values;
         }
         return tempHtml;
+    }
+
+    /**
+     * 高级检索   显示sku
+     */
+    function popoverAdvanceSku(code, skus){
+
+        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+            var skuDetails = [],
+                skuInventories = resp.data;
+            _.forEach(skus, function(sku) {
+                var inventory = null;
+                _.forEach(skuInventories, function(skuInventory) {
+                    if (skuInventory.sku == sku.skuCode) {
+                        inventory = skuInventory.qtyChina;
+                        return false;
+                    }
+                });
+                skuDetails.push({
+                    skuCode: sku.skuCode,
+                    size: sku.size,
+                    inventory: inventory
+                });
+            });
+
+            $scope.advanceSku = skuDetails;
+        });
+
+    }
+
+    /**
+     * 高级线索   显示活动详情
+     */
+    function popoverPromotionDetail(code){
+
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+            $scope.promotionDetail = resp.data;
+            console.log($scope.promotionDetail);
+        });
+
     }
 });
 
@@ -3261,7 +3316,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-                        
+
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3270,7 +3325,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-                        
+
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3596,12 +3651,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-    
+
     languages: {
         en: "en",
         zh: "zh"
     },
-    
+
     /**
      * set the web side language type.
      */
@@ -3612,7 +3667,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-    
+
     /**
      * get the browser language type.
      * @returns {string}

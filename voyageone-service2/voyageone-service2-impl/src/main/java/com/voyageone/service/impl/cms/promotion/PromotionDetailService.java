@@ -120,10 +120,18 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
 
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
         if (!imgList.isEmpty()) {
             cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
+        }else{
+            imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+            if (!imgList.isEmpty()) {
+                cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
+            }
         }
+
+
+
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodesBean) == 0) {
             cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodesBean);
         }
