@@ -433,7 +433,8 @@ define(function () {
                 },
                 "addProductToPromotionService":{
                     "root": "/cms/pop/add_product_to_promotion",
-                    "init": "init"
+                    "init": "init",
+                    "save":"save"
                 },
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",

@@ -155,59 +155,20 @@ define([
         };
 
         JoinPromotionCtl.prototype.saveBasePrice = function(){
-            if (listPromotionProduct.length == 0) {
-                alert("请选择修改价格的商品!");
-                return;
-            }
-            // 检查输入
-            if ($scope.vm.priceTypeId == 0) {
-                alert("未选择基准价格，请选择后再操作。");
-                return;
-            }
-            if ($scope.vm.optType == undefined || $scope.vm.optType == '') {
-                alert("未选择表达式，请选择后再操作。");
-                return;
-            }
-            if ($scope.vm.optType != '=' && ($scope.vm.priceValue == undefined || $scope.vm.priceValue == '')) {
-                alert("未填写价格，请填写后再操作。");
-                return;
-            }
-            if ($scope.vm.priceTypeId == 4 && ($scope.vm.priceValue == undefined || $scope.vm.priceValue == '')) {
-                alert("未填写价格，请填写后再操作。");
-                return;
-            }
-            // 检查输入数据
-            var intVal = $scope.vm.priceValue;
-            if (!(intVal == null || intVal == undefined || intVal == '')) {
-                if (isNaN(intVal)) {
-                    alert("价格必须是数字");
-                    return;
-                }
-            }
 
-            //  if(预热已开始&&synch_status==2)//包含已上新的商品 提示
-            var isUpdate=true;
-            if(isBegin) {
-                for (var i = 0; i < listPromotionProduct.length; i++) {
-                    if (listPromotionProduct[i].synchStatus == 2) {
-                        isUpdate=false;
-                        confirm("专场已上线，变更价格一旦同步至平台将引起客诉，点击确认继续操作。").then(function () {
-                            isUpdate=true;
-                        });
-                    }
-                }
-            }
 
-            if(!isUpdate) return;
+
+
+
             var parameter={};
            // parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
             //parameter.jmPromotionId=jmPromotionId;
 
-            parameter.priceTypeId=$scope.vm.priceTypeId;
-            parameter.priceValue=$scope.vm.priceValue;
-            parameter.skuUpdType=$scope.vm.skuUpdType;
-            parameter.optType=$scope.vm.optType;
-            parameter.roundType=$scope.vm.roundType;
+            parameter.priceTypeId=groupInfo.priceTypeId;
+            parameter.priceValue=groupInfo.priceValue;
+            parameter.skuUpdType=groupInfo.skuUpdType;
+            parameter.optType=groupInfo.optType;
+            parameter.roundType=groupInfo.roundType;
 
 
         };
@@ -249,46 +210,58 @@ define([
                 } else
                     return true;
             });
+            if(!isPass){return;}
 
-            if (isPass) {
-                // int cartId;
-                //
-                // int isSelAll;
-                //
-                // List<String> codeList;
-                //
-                // List<TagTreeNode> listTagTreeNode;
-                //
-                //
-                // //价格类型    1 建议售价   2指导售价  3最终售价  4固定售价
-                // int priceTypeId;
-                //
-                // // 1小数点向上取整    2个位向下取整    3个位向上取整    4无特殊处理
-                // int roundType;
-                //
-                // // 1.商品内，SKU统一最高价    2.商品内，SKU统一最低价    3.商品内，SKU价格不统一
-                // int skuUpdType;
-                // // + -  *  =
-                // String optType;
-                // //price value
-                // double priceValue;
+            // 检查输入
+            if (groupInfo.priceTypeId == 0) {
+                alert("未选择基准价格，请选择后再操作。");
+                return;
+            }
+            if (groupInfo.optType == undefined || groupInfo.optType == '') {
+                alert("未选择表达式，请选择后再操作。");
+                return;
+            }
+            if (groupInfo.optType != '=' && (groupInfo.priceValue == undefined || groupInfo.priceValue == '')) {
+                alert("未填写价格，请填写后再操作。");
+                return;
+            }
+            if (groupInfo.priceTypeId == 4 && (groupInfo.priceValue == undefined || groupInfo.priceValue == '')) {
+                alert("未填写价格，请填写后再操作。");
+                return;
+            }
+            // 检查输入数据
+            var intVal = groupInfo.priceValue;
+            if (!(intVal == null || intVal == undefined || intVal == '')) {
+                if (isNaN(intVal)) {
+                    alert("价格必须是数字");
+                    return;
+                }
+            }
+
+
+
+
                 var upEntity = {};
                 upEntity.cartId = context.cartBean.value;
                 upEntity.isSelAll = context.isSelAll;
                 upEntity.codeList = self.getCodeList();
                 upEntity.listTagTreeNode = self.listTreeNode;
 
-                upEntity.priceTypeId = groupInfo.priceType;
+                upEntity.priceTypeId = groupInfo.priceTypeId;;
                 upEntity.roundType = groupInfo.roundType;
                 upEntity.skuUpdType = groupInfo.skuUpdType;
                 upEntity.optType = groupInfo.optType;
                 upEntity.priceValue = groupInfo.priceValue;
 
+
                 console.log("upEntity",upEntity);
 
-                alert("调用存储接口");
+               self.addProductToPromotionService.save(upEntity).then(function (res) {
+
+
+                });
+
             }
-        };
 
         return JoinPromotionCtl;
 
