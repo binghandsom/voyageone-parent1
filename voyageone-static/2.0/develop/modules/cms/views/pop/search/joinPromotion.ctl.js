@@ -56,15 +56,17 @@ define([
             p.codeList = self.getCodeList();
             p.cartId = self.cartBean.value;
             p.isSelAll = self.context.isSelAll;
+            p.activityStart=null;
+            p.activityEnd=null;
 
             self.addProductToPromotionService.init(p).then(function (res) {
                 console.log(res.data);
-                self.channelCategoryList = res.data.listTreeNode;
+                self.listTreeNode = res.data.listTreeNode;
 
                 //设置全选
-                self.allCheckNodes = flatCategories(self.channelCategoryList, 2);
+                self.allCheckNodes = flatCategories(self.listTreeNode, 2);
                 //设置半选
-                self.halfCheckNodes = flatCategories(self.channelCategoryList, 1);
+                self.halfCheckNodes = flatCategories(self.listTreeNode, 1);
             });
         };
 
@@ -203,7 +205,9 @@ define([
         JoinPromotionCtl.prototype.save = function () {
             var self = this,
                 checkNodes = self.checkNodes,
+                groupInfo = self.groupInfo,
                 alert = self.alert,
+                context = self.context,
                 userArr = objToArr(checkNodes),
                 allCheckArr = objToArr(self.allCheckNodes);
 
@@ -217,7 +221,7 @@ define([
                 return;
             }
 
-            var isPass = _.every(self.channelCategoryList, function (item) {
+            var isPass = _.every(self.listTreeNode, function (item) {
                 if (!checkNodes[item.id])
                     return true;
                 if (item.children.length > 0) {
@@ -237,6 +241,41 @@ define([
             });
 
             if (isPass) {
+                // int cartId;
+                //
+                // int isSelAll;
+                //
+                // List<String> codeList;
+                //
+                // List<TagTreeNode> listTagTreeNode;
+                //
+                //
+                // //价格类型    1 建议售价   2指导售价  3最终售价  4固定售价
+                // int priceTypeId;
+                //
+                // // 1小数点向上取整    2个位向下取整    3个位向上取整    4无特殊处理
+                // int roundType;
+                //
+                // // 1.商品内，SKU统一最高价    2.商品内，SKU统一最低价    3.商品内，SKU价格不统一
+                // int skuUpdType;
+                // // + -  *  =
+                // String optType;
+                // //price value
+                // double priceValue;
+                var upEntity = {};
+                upEntity.cartId = context.cartBean.value;
+                upEntity.isSelAll = context.isSelAll;
+                upEntity.codeList = self.getCodeList();
+                upEntity.listTagTreeNode = self.listTreeNode;
+
+                upEntity.priceTypeId = groupInfo.priceType;
+                upEntity.roundType = groupInfo.roundType;
+                upEntity.skuUpdType = groupInfo.skuUpdType;
+                upEntity.optType = groupInfo.optType;
+                upEntity.priceValue = groupInfo.priceValue;
+
+                console.log("upEntity",upEntity);
+
                 alert("调用存储接口");
             }
         };
