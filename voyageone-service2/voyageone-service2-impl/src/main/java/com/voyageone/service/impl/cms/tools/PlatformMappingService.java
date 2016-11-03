@@ -1,15 +1,19 @@
 package com.voyageone.service.impl.cms.tools;
 
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.bean.cms.CustomPropBean;
-import com.voyageone.service.bean.cms.tools.RefreshProductsBean;
+import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
+import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskItemDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
+import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -41,13 +46,18 @@ public class PlatformMappingService extends BaseService {
     private final ProductService productService;
     private final CmsBtPlatformMappingDao platformMappingDao;
     private final MqSender mqSender;
+    private final CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao;
+    private final CmsBtRefreshProductTaskItemDao cmsBtRefreshProductTaskItemDao;
 
     @Autowired
     public PlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao,
-                                  MqSender mqSender) {
+                                  MqSender mqSender, CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao,
+                                  CmsBtRefreshProductTaskItemDao cmsBtRefreshProductTaskItemDao) {
         this.productService = productService;
         this.platformMappingDao = platformMappingDao;
         this.mqSender = mqSender;
+        this.cmsBtRefreshProductTaskDao = cmsBtRefreshProductTaskDao;
+        this.cmsBtRefreshProductTaskItemDao = cmsBtRefreshProductTaskItemDao;
     }
 
     public CmsBtPlatformMappingModel get(CmsBtPlatformMappingModel platformMappingModel, String channelId) {
@@ -144,10 +154,59 @@ public class PlatformMappingService extends BaseService {
         filler.fillValueMap(valueMap, mappingMap);
     }
 
-    public void refreshProductsByMapping(RefreshProductsBean refreshProductsBean) {
+    public boolean refreshProductsByMapping(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, String userName) {
+
+        List<Long> productIdList = getProductIdList(cmsBtRefreshProductTaskModel);
+
+        if (productIdList == null || productIdList.isEmpty())
+            return false;
+
+        // 创建任务记录
+        cmsBtRefreshProductTaskModel.setCreater(userName);
+        cmsBtRefreshProductTaskModel.setModifier(userName);
+        cmsBtRefreshProductTaskModel.setStatus(0);
+        cmsBtRefreshProductTaskDao.insert(cmsBtRefreshProductTaskModel);
+
+        // 创建商品任务记录
+        productIdList.stream().map(prodId -> new CmsBtRefreshProductTaskItemModel() {{
+            setTaskId(cmsBtRefreshProductTaskModel.getId());
+            setProductId(prodId.intValue());
+            setStatus(0);
+            setCreater(userName);
+            setModifier(userName);
+        }}).forEach(cmsBtRefreshProductTaskItemDao::insert);
+
         Map<String, Object> map = new HashMap<>();
-        map.put("refreshProductsBean", refreshProductsBean);
+        map.put("cmsBtRefreshProductTaskModel", cmsBtRefreshProductTaskModel);
         mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
+
+        return true;
+    }
+
+    private List<Long> getProductIdList(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
+
+        String query;
+
+        switch (cmsBtRefreshProductTaskModel.getCategoryType()) {
+            case PlatformMappingService.CATEGORY_TYPE_COMMON:
+                // 全类目（通用类目）按平台查询
+                query = String.format("{\"platforms.P%s.pCatPath\": {$exists: true}}", cmsBtRefreshProductTaskModel.getCartId());
+                break;
+            case PlatformMappingService.CATEGORY_TYPE_SPECIFIC:
+                // 具体类目则按类目查询
+                query = String.format("{\"platforms.P%s.pCatPath\": \"%s\"}", cmsBtRefreshProductTaskModel.getCartId(), cmsBtRefreshProductTaskModel.getCategoryPath());
+                break;
+            default:
+                return null;
+        }
+
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(query);
+        jongoQuery.setProjection("{\"prodId\":1}");
+
+        List<CmsBtProductModel> productModelList = productService.getList(cmsBtRefreshProductTaskModel.getChannelId(), jongoQuery);
+
+        return productModelList.stream().map(CmsBtProductModel::getProdId).collect(toList());
     }
 
     private class ValueMapFiller {
