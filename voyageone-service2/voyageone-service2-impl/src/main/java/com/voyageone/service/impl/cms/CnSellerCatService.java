@@ -44,18 +44,16 @@ public class CnSellerCatService {
 
         return catId;
     }
-    public void  updateSellerCat(String channelId,String catId, ShopBean shopBean)
+    public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
-        CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");
         }
     }
-    public void  deleteSellerCat(String channelId,String catId, ShopBean shopBean)
+    public void  deleteSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
-        CmsBtSellerCatModel currentNode = cmsBtSellerCatDao.selectByCatId(channelId, catId);
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,true,shopBean);
         if (!ret) {

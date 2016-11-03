@@ -228,28 +228,44 @@
 
     <select id="selectCloseJmPromotionId" resultType="Integer">
         SELECT
-        t2.promotion_id
+            t2.promotion_id
         FROM
-        (
-        SELECT
-        *
-        FROM
-        `cms_bt_jm_promotion` a
+            (
+                SELECT
+                    *
+                FROM
+                    (
+                        SELECT
+                            *, DATE_ADD(
+                                activity_end,
+                                INTERVAL - 8 HOUR
+                            ) AS beijing
+                        FROM
+                            cms_bt_jm_promotion
+                    ) a
+                WHERE
+                    NOW() > a.beijing
+            ) t1,
+            cms_bt_promotion t2
         WHERE
-         NOW() > a.activity_end
-        ) t1,
-        cms_bt_promotion t2
-        WHERE
-        t1.id = t2.promotion_id and
-        t2.promotion_status = 1
+            t1.id = t2.promotion_id
+        AND t2.promotion_status = 1
     </select>
     <select id="selectEffectiveJmPromotionId" resultType="Integer">
-        SELECT
+    SELECT
         t2.id
-        FROM
-        cms_bt_jm_promotion t2
-        WHERE
-        t2.signup_deadline > now()
+    FROM
+        (
+            SELECT
+                *, DATE_ADD(
+                    signup_deadline,
+                    INTERVAL - 8 HOUR
+                ) AS beijing
+            FROM
+                cms_bt_jm_promotion
+        ) t2
+    WHERE
+        t2.beijing > now()
     </select>
     <select id="selectCloseJmPromotionSku" resultType="HashMap" parameterType="java.lang.Integer">
     SELECT

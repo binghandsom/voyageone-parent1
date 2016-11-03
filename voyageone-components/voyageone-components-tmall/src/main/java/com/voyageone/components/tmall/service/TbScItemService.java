@@ -61,6 +61,7 @@ public class TbScItemService extends TbBase {
 
 		request.setItemName(itemName);
 		request.setOuterCode(outerCode);
+		request.setWeight(1L);
 
 		ScitemAddResponse res = reqTaobaoApi(shopBean, request);
 

@@ -3,20 +3,17 @@
 <mapper namespace="com.voyageone.service.daoext.cms.CmsMtEtkHsCodeDaoExt" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtEtkHsCodeModel" />
     <sql id="Base_Column_List" >
-        `id`, `cart_id`, `cat_path`, `etk_hs_code`, `etk_description`, `etk_unit`, `created`, 
-        `creater`, `modified`, `modifier`
+        `id`, `hs_code`, `etk_hs_code`, `etk_description`, `etk_unit`, `created`, `creater`,
+        `modified`, `modifier`
     </sql>
 
-    <select id="selectOneLikeCatPath" resultMap="BaseResultMap" >
+    <select id="selectOneByHsCode" resultMap="BaseResultMap" >
         select
         <include refid="Base_Column_List" />
         from cms_mt_etk_hs_code
         <where >
-            <if test="cartId != null" >
-                and `cart_id` = #{cartId,jdbcType=INTEGER}
-            </if>
-            <if test="catPath != null" >
-                and locate(cat_path,#{catPath,jdbcType=VARCHAR}) > 0
+            <if test="hsCode != null" >
+                and hs_code = #{hsCode,jdbcType=VARCHAR}
             </if>
         </where>
         limit 1

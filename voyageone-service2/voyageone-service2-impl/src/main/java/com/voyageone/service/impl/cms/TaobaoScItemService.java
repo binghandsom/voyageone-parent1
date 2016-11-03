@@ -76,6 +76,11 @@ public class TaobaoScItemService extends BaseService {
 		}
 
 		// 进行库存初始化
+		if (scItem == null) {
+			// 如果没有创建成功， 不需要做库存初始化， 直接跳出
+			return null;
+		}
+
 		try {
 			String errinfo = tbScItemService.doInitialInventory(shopBean, storeCode, sku_outerId, qty);
 			if (!StringUtils.isEmpty(errinfo)) {

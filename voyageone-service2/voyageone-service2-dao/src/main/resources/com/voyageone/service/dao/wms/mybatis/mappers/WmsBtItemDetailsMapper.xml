@@ -22,4 +22,13 @@
   <update id="wms_bt_item_details_updateIsSale">
      UPDATE  `wms_bt_item_details`    SET `is_sale`=#{isSale}  where `client_sku`=#{clientSku} and `order_channel_id`=#{channelId}
   </update>
+
+  <update id="wms_bt_item_details_updateCodeForMove" parameterType="HashMap">
+    update wms_bt_item_details set itemcode=#{itemCodeNew},modified = now(),modifier =#{modifier}  where itemcode=#{itemCodeOld} and order_channel_id=#{channelId}
+    and (sku in
+    <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+      #{skuItem}
+    </foreach>
+    )
+  </update>
 </mapper>

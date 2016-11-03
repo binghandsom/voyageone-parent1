@@ -103,6 +103,7 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
+                    "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",
@@ -114,9 +115,20 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm: "priceConfirm",
+                    "resetTmProduct": "resetTmProduct",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice: "updateSkuPrice"
+                    updateSkuPrice:"updateSkuPrice",
+                    moveCodeInitCheck:"moveCodeInitCheck",
+                    moveCodeInit:"moveCodeInit",
+                    moveCodeSearch:"moveCodeSearch",
+                    moveCodePreview:"moveCodePreview",
+                    moveCode:"moveCode",
+                    moveSkuInitCheck:"moveSkuInitCheck",
+                    moveSkuInit:"moveSkuInit",
+                    moveSkuSearch:"moveSkuSearch",
+                    moveSkuPreview:"moveSkuPreview",
+                    moveSku:"moveSku"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -518,7 +530,8 @@ define(function () {
                         "getCat": "getSellerCat",
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
-                        "updateCat": "updateSellerCat"
+                        "updateCat": "updateSellerCat",
+                        "sortableCat": "sortableCat",
                     }
                 },
                 "imageTemplateService": {
