@@ -73,7 +73,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             throw new BusinessException("未选择商品");
         }
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
-        List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId);
+        List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId,params.getActivityStart(),params.getActivityEnd());
         list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
 
         data.put("listTreeNode", listTagTreeNode);

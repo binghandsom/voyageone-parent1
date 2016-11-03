@@ -5,6 +5,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ public interface CmsBtPromotionDaoExtCamel {
 
     long selectCount(Map<String, Object> param);
 
-    List<CmsBtPromotionModel> selectAddPromotionList(@Param("channelId") String channelId,@Param("cartId") int cartId);
+    List<CmsBtPromotionModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId, @Param("activityStart") Date activityStart, @Param("activityEnd") Date activityEnd);
+
 
 }

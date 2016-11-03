@@ -75,5 +75,11 @@
               and a.promotion_status = 1
               and a.channel_id=#{channelId}
               and a.cart_id=#{cartId}
+        <if test="activityStart != null">
+            and a.activity_start >= #{activityStart,jdbcType=VARCHAR}
+        </if>
+        <if test="activityEnd != null">
+            and #{activityEnd,jdbcType=VARCHAR} >= a.activity_end
+        </if>
     </select>
 </mapper>
