@@ -93,5 +93,5 @@ public class MqRoutingKey {
      *
      * @since 2.9.0
      */
-    public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_??????????_queue";
+    public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
 }
