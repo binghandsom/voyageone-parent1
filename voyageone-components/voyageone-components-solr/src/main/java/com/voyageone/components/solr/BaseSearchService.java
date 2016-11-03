@@ -3,9 +3,11 @@ package com.voyageone.components.solr;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.springframework.data.solr.core.SolrTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +67,17 @@ public abstract class BaseSearchService extends ComponentBase {
      */
     public void commit() {
         getSolrTemplate().commit();
+    }
+
+    /**
+     * optimize
+     */
+    public void optimize() {
+        try {
+            getSolrTemplate().getSolrServer().optimize();
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

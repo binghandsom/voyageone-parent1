@@ -112,6 +112,8 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             cmsProductSearchService.deleteByIds(removeIdList);
             cmsProductSearchService.commit();
         }
+
+        cmsProductSearchService.optimize();
     }
 
     @Override
