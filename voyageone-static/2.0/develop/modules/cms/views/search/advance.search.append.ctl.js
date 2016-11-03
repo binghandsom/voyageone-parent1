@@ -9,7 +9,9 @@ define([
         }
 
         AdSearchAppendCtl.prototype.test = function(){
-            alert("a");
+            var self = this;
+
+            console.log(self.parent());
         };
 
         return AdSearchAppendCtl;
