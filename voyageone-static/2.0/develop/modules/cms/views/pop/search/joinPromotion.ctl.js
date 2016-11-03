@@ -65,6 +65,7 @@ define([
 
                 //设置全选
                 self.allCheckNodes = flatCategories(self.listTreeNode, 2);
+
                 //设置半选
                 self.halfCheckNodes = flatCategories(self.listTreeNode, 1);
             });
