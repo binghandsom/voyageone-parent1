@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="initialize()" id="advanceSearch">
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
         <uib-accordion-group is-open="vm.status.open">
             <uib-accordion-heading>
@@ -679,7 +679,7 @@
                                 </li>
                                 <li class="dropdown-submenu" ng-if="vm.masterData.promotionMap[cartBean.value].length > 0 &&cartBean.cartType!=3">
                                     <a href>加入促销活动</a>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="promotion in vm.masterData.promotionMap[cartBean.value]">
                                             <a href ng-click="$parent.openAddPromotion(promotion,cartBean,openAddToPromotion)" ng-if="cartBean.value!=27">{{promotion.promotionName}}</a>
                                             <a href ng-click="$parent.openJMActivity(promotion,cartBean,openAddJMActivity)" ng-if="cartBean.value==27">{{promotion.name}}</a>
