@@ -29,6 +29,8 @@ public class MqRoutingKey {
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
+
+    public static final String CMS_BATCH_PlatformFieldsTaskJob = "voyageone_cms_batchjob_PlatformFieldsTaskJob_queue";
     /**
      * jd mq task
      */

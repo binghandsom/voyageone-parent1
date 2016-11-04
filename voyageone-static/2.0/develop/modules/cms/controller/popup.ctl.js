@@ -53,6 +53,13 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+            "platformFieldEdit": {
+                "templateUrl": "views/pop/bulkUpdate/platformFieldEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/platformFieldEdit.ctl",
+                "controller": 'popPlatformFieldEditCtl',
+                "backdrop": 'static',
+                "size": 'md'
+            },
             "category": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategory.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategory.ctl",
@@ -672,6 +679,15 @@ define([
             return openModal(popActions.bulkUpdate.category, context);
         };
 
+        /**
+         * 打开类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupPlatformPopOptions = function popupPlatformPopOptions(context) {
+
+            return openModal(popActions.bulkUpdate.platformFieldEdit, context);
+        };
         /**
          * 打开多选类目选择页面
          * @param context

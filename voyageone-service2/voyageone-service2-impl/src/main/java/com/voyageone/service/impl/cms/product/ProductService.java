@@ -538,6 +538,15 @@ public class ProductService extends BaseService {
         }
     }
 
+    public void insertProductHistory(String channelId, CmsBtProductModel productModel) {
+        if (productModel != null) {
+            CmsBtProductLogModel logModel = new CmsBtProductLogModel();
+            logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
+            logModel.set_id(null);
+            cmsBtProductLogDao.insert(logModel);
+        }
+    }
+
     /**
      * get the product info from wms's request
      */
