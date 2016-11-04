@@ -57,14 +57,12 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     	{ "bi.sum%s.scs.cartId", "%s收藏人数" }
     };
     
-    private static final String[][] saleSortItems = {
+    private static final String[][] commonSortItems = {
     	{ "sales.codeSum7.cartId%s", "7天销量" },
     	{ "sales.codeSum30.cartId%s", "30天销量"},
     	{ "sales.codeSumYear.cartId%s", "年销量" },
-    	{ "sales.codeSumAll.cartId%s", "总销量" }
-    };
-    
-    private static final String[][] priceTypesSortItems = {
+    	{ "sales.codeSumAll.cartId%s", "总销量" },
+    	{ "platforms.P%s.pPublishTime", "商品发布时间" },
     	{ "platforms.P%s.pPriceMsrpEd", "中国建议售价" },
     	{ "platforms.P%s.pPriceRetailSt", "中国指导售价" },
     	{ "platforms.P%s.pPriceSaleEd", "中国最终售价" }
@@ -306,19 +304,11 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             	}
             }
             
-            // 添加销量的排序字段
-            for (String[] saleSortItem : saleSortItems) {
+            // 添加通用的排序字段
+            for (String[] commonSortItem : commonSortItems) {
             	Map<String, String> keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + saleSortItem[1]);
-                keySumMap.put("value", String.format(saleSortItem[0], cartId));
-                dataSumList.add(keySumMap);
-            }
-            
-            // 添加中国售价排序字段
-            for (String[] cnPriceType : priceTypesSortItems) {
-        		Map<String, String> keySumMap = new HashMap<>();
-                keySumMap.put("name", cartObj.getName() + cnPriceType[1]);
-                keySumMap.put("value", String.format(cnPriceType[0], cartId));
+                keySumMap.put("name", cartObj.getName() + commonSortItem[1]);
+                keySumMap.put("value", String.format(commonSortItem[0], cartId));
                 dataSumList.add(keySumMap);
             }
         }
