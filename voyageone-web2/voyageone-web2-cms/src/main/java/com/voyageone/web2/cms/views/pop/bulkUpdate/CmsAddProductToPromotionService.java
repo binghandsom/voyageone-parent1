@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author gubuchun 15/12/14
@@ -53,7 +55,24 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     public  void  save(SaveParameter parameter,String channelId,String userName, CmsSessionBean cmsSession) {
 
 
+        parameter.getListTagTreeNode().forEach(f->addToPromotion(f,parameter));
 
+    }
+    public void  addToPromotion(TagTreeNode tagTreeNode,SaveParameter parameter) {
+        if (tagTreeNode.getChecked() == 2) {
+            //状态变化的tag
+            List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
+            if (tagList.size() > 0) {
+                //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
+
+
+            }
+        } else if (tagTreeNode.getChecked() != tagTreeNode.getOldChecked()) {
+            if (tagTreeNode.getChecked() == 0) {
+                // 活动 商品从活动中删除      删除商品tag
+
+            }
+        }
     }
 
     /**
