@@ -2220,6 +2220,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             } else if (product.getCommon().getFields() == null) {
                 product.getCommon().setFields(new CmsBtProductModel_Field());
             }
+
+            if(product.getChannelId().equalsIgnoreCase("024")){
+                product.getCommon().getFields().setLongDesEn(feed.getLongDescription());
+            }
+
             // delete desmond 2016/07/01 start 跟上面重复了
 //            if (product.getFields() == null) {
 //                product.setFields(new CmsBtProductModel_Field());
