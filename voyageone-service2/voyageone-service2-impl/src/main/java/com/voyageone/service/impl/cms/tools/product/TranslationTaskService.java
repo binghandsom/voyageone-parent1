@@ -171,7 +171,7 @@ public class TranslationTaskService extends BaseService {
                     aggregateList.remove(0);
                     aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$nin : [null, \"\"]}}}"));
                     aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
-                    aggregateList.add(new JongoAggregate("{ $sort : {\"common.fields.priorTranslateDate\" : 1}}"));
+                    aggregateList.add(new JongoAggregate("{ $sort : {\"common.fields.priorTranslateDate\" : 1, \"totalQuantity\" : -1}}"));
                     aggregateList.add(new JongoAggregate("{ $limit : 1}"));
                     mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                     if (CollectionUtils.isEmpty(mapList)) {
@@ -188,6 +188,7 @@ public class TranslationTaskService extends BaseService {
             } else {
                 // 无分发规则
                 aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
+                aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                 aggregateList.add(new JongoAggregate("{ $limit : 1}"));
                 mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
             }
