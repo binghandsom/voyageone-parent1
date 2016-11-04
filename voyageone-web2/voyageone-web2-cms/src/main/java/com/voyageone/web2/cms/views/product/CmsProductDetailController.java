@@ -138,6 +138,17 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_COMMON_PRODUCT_SKU_INFO)
+    public AjaxResponse doGetMastProductSkuInfo(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+
+        return success(productPropsEditService.getMastProductSkuInfo(channelId, prodId, getLang()));
+
+    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
     public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
 
@@ -269,11 +280,9 @@ public class CmsProductDetailController extends CmsController {
         Assert.notNull(productCode).elseThrowDefaultWithTitle("productCode");
 
         // 只有天猫， 天猫国际有这个需要
-		if ("010".equals(channelId)) { // 暂时只给jewelry开放这个功能
-			if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
-				cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
-			}
-		}
+        if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
+            cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
+        }
 
         return success(null);
     }

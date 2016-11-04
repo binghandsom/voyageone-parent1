@@ -72,4 +72,14 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
                 "channel_id", channelId,
                 "cart_id", cartId));
     }
+
+    public int updateCmsBtPriceLogForMove(String channelId, String itemCodeOld, List<String> skuList, String itemCodeNew, String modifier) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("itemCodeOld", itemCodeOld);
+        params.put("skuList", skuList);
+        params.put("itemCodeNew", itemCodeNew);
+        params.put("modifier", modifier);
+        return update("updateCodeForMove", params);
+    }
 }
