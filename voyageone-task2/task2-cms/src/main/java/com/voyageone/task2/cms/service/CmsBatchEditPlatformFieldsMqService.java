@@ -49,10 +49,10 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
             if(cmsBtProductModel != null && cmsBtProductModel.getPlatform(cartId) != null){
                 CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProductModel.getPlatform(cartId);
                 cmsBtProductModel_platform_cart.getFields().setAttribute(fieldsId, fieldsValue);
+                $info(String.format("channelId=%s, cartId=%s, code=%s, fieldsId=%s , fieldsValue=%s", channelId, cartId,code, fieldsId, JacksonUtil.bean2Json(fieldsValue)));
 
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("common.fields.code", code);
-
                 List<BulkUpdateModel> bulkList = new ArrayList<>();
                 HashMap<String, Object> updateMap = new HashMap<>();
                 updateMap.put("platforms.P" + cartId +".fields." + fieldsId , fieldsValue);
@@ -62,7 +62,7 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
                 bulkList.add(model);
                 cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
 
-                $info(String.format("channelId=%s, cartId=%s, code=%s, fieldsId=%s , fieldsValue=%s", channelId, cartId,code, fieldsId, JacksonUtil.bean2Json(fieldsValue)));
+
 
                 if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(cmsBtProductModel_platform_cart.getStatus())) {
                     sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(code)), cartId, userName);
