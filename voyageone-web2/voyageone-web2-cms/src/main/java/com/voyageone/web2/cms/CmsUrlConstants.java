@@ -40,6 +40,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String GET_LIST_BY_WHERE = "getListByWhere";
                 String SaveModel = "saveModel";
+                String ENCORE = "encore";
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel = "getEditModel";
@@ -340,6 +341,8 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
+
+			String GET_SKU_INVENTORY = "getSkuInventory";
         }
 
         interface FEED {
@@ -514,6 +517,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
+
+			String GET_UNDUE_PROMOTION = "getUnduePromotion";
         }
 
         interface IMAGE_SETTING {
@@ -769,6 +774,8 @@ public interface CmsUrlConstants {
             String UPDATE_SELLER_CAT = "updateSellerCat";
 
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
+
+            String SORTABLE_CART =  "sortableCat";
         }
 
         interface BLACK_BRAND {

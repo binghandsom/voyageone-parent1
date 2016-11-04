@@ -70,26 +70,26 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
-        zzWorkClear();
-        int cnt = 0;
-        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-            cnt = fullCopyTemp();
-        }else {
-            $info("产品信息插入开始");
-            cnt = superFeedImport();
-        }
-        $info("产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                transformer.new Context(channel, this).transform();
-            }
+//        zzWorkClear();
+//        int cnt = 0;
+//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+//            cnt = fullCopyTemp();
+//        }else {
+//            $info("产品信息插入开始");
+//            cnt = superFeedImport();
+//        }
+//        $info("产品信息插入完成 共" + cnt + "条数据");
+//        if (cnt > 0) {
+//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+//                transformer.new Context(channel, this).transform();
+//            }
             postNewProduct();
-        }
+//        }
     }
     @Override
     public int fullCopyTemp(){
         int cnt = overStockFeedDao.fullCopyTemp();
-        overStockFeedDao.updateMd5();
+//        overStockFeedDao.updateMd5();
         overStockFeedDao.updateUpdateFlag();
         return cnt;
     }
@@ -134,7 +134,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setBrand(getValue(variationType.getProduct().getBrand()));
                                     superFeedverStockBean.setManufacturername(getValue(variationType.getProduct().getManufacturerName()));
                                     superFeedverStockBean.setShortdescription(getValue(variationType.getProduct().getShortDescription()));
-                                    superFeedverStockBean.setLongdescription(getValue(variationType.getProduct().getShortDescription()));
+                                    superFeedverStockBean.setLongdescription(getValue(variationType.getProduct().getLongDescription()));
                                     superFeedverStockBean.setLeadtime(getValue(String.valueOf(variationType.getProduct().getLeadTime())));
                                     superFeedverStockBean.setAdultcontent(getValue(String.valueOf(variationType.getProduct().isAdultContent())));
                                     superFeedverStockBean.setCountryoforigin(getValue(String.valueOf(variationType.getProduct().getCountryOfOrigin())));
@@ -304,7 +304,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         for (ImageType imageType : imageTypeList) {
                                             sb.append(imageType.getCdnPath() + ",");
                                         }
-                                        sb.append(superFeedverStockBean.getModelImage());
+                                        if(!StringUtils.isEmpty(superFeedverStockBean.getModelImage())){
+                                            sb.append(superFeedverStockBean.getModelImage());
+                                        }
                                         superFeedverStockBean.setImage(sb.toString());
                                     }
                                     superFeedverStockBean.setModelRetailerid(getValue(product.getRetailerId()));
@@ -528,6 +530,22 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         sku.setWeightOrg(weightOrg);
                     }
                 }
+                //size转换开始
+                if(sku.getSize().toLowerCase().contains(":")){
+                    String attributeList [] =sku.getSize().split("\\|");
+                    String size = "";
+                    for(String attribute1 :attributeList){
+                        if(attribute1.toLowerCase().contains("size")){
+                            size=attribute1.split(":")[1];
+                        }
+                    }
+                    if(!StringUtils.isEmpty(size)){
+                        sku.setSize(size);
+                    }else{
+                        sku.setSize("OneSize");
+                    }
+                }
+                //size转换结束
                 sku.setWeightOrgUnit(sku.getWeightOrgUnit());
             }
             cmsBtFeedInfoModel.setSkus(skus);

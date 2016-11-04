@@ -396,6 +396,15 @@ public class CmsAdvanceSearchController extends CmsController {
         // 返回用户信息
         return success(resultBean);
     }
+    
+    /**
+     * 取得SKU级的库存属性
+     */
+    @ResponseBody
+    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.GET_SKU_INVENTORY)
+    public AjaxResponse getSkuInventoryList(@RequestBody String code) {
+    	return success(advSearchQueryService.getSkuInventoryList(getUser().getSelChannelId(), code));
+    }
 
 //    /**
 //     * 根据Solr 检索product数据,group数据只是在点击[GROUP一览]时才加载，性能优化

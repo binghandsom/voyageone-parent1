@@ -59,6 +59,11 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_CA_Update_Quantity = "voyageone_vms_wsdl_mq_update_products_quantity_queue";
 
     /**
+     * 平台标题翻译
+     */
+    public static final String CMS_BATCH_PlatformTitleTranslateJob = "voyageone_cms_batchjob_CmsPlatformTitleTranslateJob_queue";
+
+    /**
      * 同步产品sku的价格至code的group价格范围
      */
     public static final String CMS_TASK_ProdcutPriceUpdateJob = "voyageone_cms_task_ProdcutPriceUpdateJob_queue";

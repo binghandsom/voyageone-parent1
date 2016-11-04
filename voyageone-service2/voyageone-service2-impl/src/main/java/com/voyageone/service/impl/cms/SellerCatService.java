@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
@@ -30,10 +31,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -70,8 +68,8 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     private SxProductService sxProductService;
-@Autowired
-MongoSequenceService commSequenceMongoService;
+    @Autowired
+    MongoSequenceService commSequenceMongoService;
 
     @Autowired
     CnSellerCatService cnSellerCatService;
@@ -199,7 +197,7 @@ MongoSequenceService commSequenceMongoService;
 //        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-          cId=cnSellerCatService.addSellerCat(channelId,parentCId,cName,shopBean);
+            cId = cnSellerCatService.addSellerCat(channelId, parentCId, cName, shopBean);
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
             cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
@@ -212,11 +210,10 @@ MongoSequenceService commSequenceMongoService;
     public void updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
 
 
-        List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
-        CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
-        if(isDuplicateNode(sellercats,cName,currentNode.getParentCatId(), cId))
-        {
-            throw  new BusinessException("重复的店铺内分类!");
+        List<CmsBtSellerCatModel> sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+        CmsBtSellerCatModel currentNode = sellercats.stream().filter(w -> w.getCatId().equals(cId)).findFirst().get();
+        if (isDuplicateNode(sellercats, cName, currentNode.getParentCatId(), cId)) {
+            throw new BusinessException("重复的店铺内分类!");
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
@@ -227,7 +224,7 @@ MongoSequenceService commSequenceMongoService;
         } else if (isTMPlatform(shopCartId)) {
             tbSellerCatService.updateSellerCat(shopBean, cId, cName);
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
-        }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+        } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
             cnSellerCatService.updateSellerCat(currentNode, shopBean);
         }
@@ -256,7 +253,7 @@ MongoSequenceService commSequenceMongoService;
         } else if (isTMPlatform(shopCartId)) {
             //去TM平台取店铺分类
             List<SellerCat> sellerCatList = tbSellerCatService.getSellerCat(shopBean);
-            if(sellerCatList != null) {
+            if (sellerCatList != null) {
                 if (sellerCatList.stream().filter(w -> w.getCid() == Long.valueOf(cId).longValue()).count() > 0) {
                     throw new BusinessException(shopBean.getShop_name() + ":请先到天猫后台删除店铺内分类后再在CMS中删除。");
                 }
@@ -362,7 +359,7 @@ MongoSequenceService commSequenceMongoService;
 
                         for (String pCId : cIds) {
                             CmsBtSellerCatModel leaf = sellerCat.stream().filter(w -> pCId.equals(w.getCatId())).findFirst().get();
-                            Map<String, Object> model =  new HashMap<>();
+                            Map<String, Object> model = new HashMap<>();
                             model.put("cId", leaf.getCatId());
                             model.put("cName", leaf.getCatPath());
                             model.put("cIds", leaf.getFullCatId().split("-"));
@@ -372,7 +369,7 @@ MongoSequenceService commSequenceMongoService;
                         }
 
                         Map<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("platform.P"+cartId+".sellerCats" , sellerCats);
+                        updateMap.put("platform.P" + cartId + ".sellerCats", sellerCats);
                         Map<String, Object> queryMap = new HashMap<>();
                         queryMap.put("prodId", product.getProdId());
 
@@ -392,6 +389,62 @@ MongoSequenceService commSequenceMongoService;
 
     }
 
+    /**
+     * 重新设置店铺内分类的顺序
+     *
+     * @param channelId
+     * @param cartId
+     * @return
+     */
+    public boolean doResetPlatformSellerCatIndex(String channelId, int cartId) {
+
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        // 获取店铺内分类的列表
+        List<CmsBtSellerCatModel> sellerCatList = getSellerCatsByChannelCart(channelId, cartId);
+
+        return doResetPlatformSellerCatIndex_sub(shopBean, sellerCatList);
+    }
+
+    /**
+     * 重新设置店铺内分类的顺序（指定一个列表）
+     *
+     * @param shopBean
+     * @param sellerCatList
+     * @return
+     */
+    private boolean doResetPlatformSellerCatIndex_sub(ShopBean shopBean, List<CmsBtSellerCatModel> sellerCatList) {
+
+        // 检查一下是否需要做
+        if (sellerCatList == null || sellerCatList.size() == 0) {
+            return true;
+        }
+
+        // 先处理一下当前的列表的当前的那一级
+        for (int i = 0; i < sellerCatList.size(); i++) {
+            CmsBtSellerCatModel subSellerCat = sellerCatList.get(i);
+
+            String shopCartId = shopBean.getCart_id();
+            if (isJDPlatform(shopBean)) {
+                // 京东API不支持， 以后京东如果支持之后再做
+            } else if (isTMPlatform(shopCartId)) {
+                tbSellerCatService.updateSellerCatSortOrder(shopBean, subSellerCat.getCatId(), i + 1);
+            } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
+                ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+//                cnSellerCatService.updateSellerCat(channelId, subSellerCat.getCatId(), shopBean);
+            }
+
+        }
+
+        // 循环遍历递归children
+        for (CmsBtSellerCatModel subSellerCat : sellerCatList) {
+            if (!doResetPlatformSellerCatIndex_sub(shopBean, subSellerCat.getChildren())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * 将TM店铺自定义分类Model转换成CmsBtSellerCatModel
@@ -531,18 +584,18 @@ MongoSequenceService commSequenceMongoService;
 
     /**
      * 判断是否是重复的节点，同一层的节点名不能重复
+     *
      * @param sellerCats
      * @param name
      * @param parentCId
      * @return
      */
-    public boolean isDuplicateNode(List<CmsBtSellerCatModel>  sellerCats, String name , String parentCId, String cId)
-    {
-        if(sellerCats != null && sellerCats.size() > 0) {
+    public boolean isDuplicateNode(List<CmsBtSellerCatModel> sellerCats, String name, String parentCId, String cId) {
+        if (sellerCats != null && sellerCats.size() > 0) {
             if (sellerCats.stream().filter(w -> {
-                if(StringUtil.isEmpty(cId)){
+                if (StringUtil.isEmpty(cId)) {
                     return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name);
-                }else {
+                } else {
                     return w.getParentCatId().equals(parentCId) && w.getCatName().equals(name) && !w.getCatId().equalsIgnoreCase(cId);
                 }
             }).count() > 0) {
@@ -552,5 +605,25 @@ MongoSequenceService commSequenceMongoService;
         return false;
     }
 
-
+    /**
+     * 保存整组分类树
+     *
+     * @param allCats
+     * @param channelId
+     * @param cartId
+     */
+    public void saveSortableCat(List<Map> allCats, String channelId, Integer cartId) {
+        //根据channelId和cartId去删除数据库对应的树
+        cmsBtSellerCatDao.deleteSortableCat(cartId, channelId);
+        //保存整组分类树
+        for (Map model : allCats) {
+            CmsBtSellerCatModel modelCat = new CmsBtSellerCatModel();
+            //将树转换成CmsBtSellerCatModel
+            BeanUtils.copyProperties(model, modelCat);
+            //将整组树插入数据库
+            cmsBtSellerCatDao.insert(modelCat);
+        }
+        //重新设置店铺内分类的顺序
+//        doResetPlatformSellerCatIndex(channelId, cartId);
+    }
 }

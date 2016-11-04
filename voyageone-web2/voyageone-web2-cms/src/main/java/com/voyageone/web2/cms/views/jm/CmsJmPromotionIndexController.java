@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
+import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
@@ -10,6 +12,7 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,7 +78,14 @@ public class CmsJmPromotionIndexController extends CmsController {
         parameter.getModel().setChannelId(channelId);
         return success(service.saveModel(parameter, userName, channelId));
     }
-
+    @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.ENCORE)
+    public AjaxResponse encore(@RequestBody CmsBtJmPromotionModel params) {
+        CmsBtJmPromotionSaveBean cmsBtJmPromotionSaveBean = service.promotionCopy(params.getId(), params, getUser().getUserName());
+        Map<String,Object> respone = new HashedMap();
+        respone.put("promotionId",cmsBtJmPromotionSaveBean.getExtModel().getPromotionId());
+        respone.put("jmPromotionId",cmsBtJmPromotionSaveBean.getExtModel().getJmpromotionId());
+        return success(respone);
+    }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET)
     public Object get(@RequestBody int id) {//@RequestParam("id")
         return success(service.select(id));

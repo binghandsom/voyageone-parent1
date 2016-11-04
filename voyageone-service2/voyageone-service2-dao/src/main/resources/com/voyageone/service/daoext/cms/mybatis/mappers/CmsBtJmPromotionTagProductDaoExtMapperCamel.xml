@@ -13,4 +13,7 @@
             #{item}
         </foreach>
     </delete>
+    <delete id="deleteByTagId" parameterType="java.lang.Integer">
+        delete from cms_bt_jm_promotion_tag_product  where `cms_bt_tag_id`=#{tagId}
+    </delete>
 </mapper>

@@ -20,6 +20,7 @@ public class TranslationTaskBean {
 
     TranslationTaskBean_CommonFields commonFields;
     List<CustomPropBean> customProps;
+    List<TranslationTaskBean_GroupProduct> groupProducts;
 
 
     public long getProdId() {
@@ -68,5 +69,13 @@ public class TranslationTaskBean {
 
     public void setCatPath(String catPath) {
         this.catPath = catPath;
+    }
+
+    public List<TranslationTaskBean_GroupProduct> getGroupProducts() {
+        return groupProducts;
+    }
+
+    public void setGroupProducts(List<TranslationTaskBean_GroupProduct> groupProducts) {
+        this.groupProducts = groupProducts;
     }
 }
