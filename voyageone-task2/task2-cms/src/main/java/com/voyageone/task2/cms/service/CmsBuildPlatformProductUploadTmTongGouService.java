@@ -357,6 +357,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
 
+            // sku模式 or product模式（默认s模式， 如果没有颜色的话， 就是p模式）
+            sxData.setHasSku(true);
 			if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
 				// 用simple的那个sku， 覆盖到原来的那个sku上
 				int idxOrg = -1;
@@ -379,6 +381,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
 					productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
 
+                    // 换为p(roduct)模式
+                    sxData.setHasSku(false);
 					if (!updateWare) {
 						// 新增商品的时候
 						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
