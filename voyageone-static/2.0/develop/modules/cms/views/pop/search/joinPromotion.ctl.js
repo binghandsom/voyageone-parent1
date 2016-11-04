@@ -47,7 +47,13 @@ define([
             });
             return codeList;
         };
-
+        JoinPromotionCtl.prototype.getProductIdList=function () {
+            var idList=[];
+            _.forEach(this.context.selList, function (object) {
+                idList.push(object.id);
+            });
+            return idList;
+        };
         /**
          * cartId isSelAll codeList    addProductToPromotionService.init
          */
@@ -245,6 +251,7 @@ define([
                 upEntity.cartId = context.cartBean.value;
                 upEntity.isSelAll = context.isSelAll;
                 upEntity.codeList = self.getCodeList();
+                upEntity.idList=self.getProductIdList();
                 upEntity.listTagTreeNode = self.listTreeNode;
 
                 upEntity.priceTypeId = groupInfo.priceTypeId;;

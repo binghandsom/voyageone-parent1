@@ -1,6 +1,15 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
+import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.SaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
@@ -13,13 +22,23 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -52,16 +71,20 @@ public class CmsAddProductToPromotionService extends BaseViewService {
 
     public  void  save(SaveParameter parameter,String channelId,String userName, CmsSessionBean cmsSession) {
 
-        parameter.getListTagTreeNode().forEach(f->save(f,parameter));
+        if (parameter.getCartId() == 0) {
+            $warn("addToPromotion cartId为空 params=" + JacksonUtil.bean2Json(parameter));
+            throw new BusinessException("未选择平台");
+        }
+        parameter.getListTagTreeNode().forEach(f->save(f,parameter,userName,cmsSession));
 
     }
-     void  save(TagTreeNode tagTreeNode,SaveParameter parameter) {
+     void  save(TagTreeNode tagTreeNode,SaveParameter parameter,String userName,CmsSessionBean cmsSession) {
         if (tagTreeNode.getChecked() == 2) {
             //状态变化的tag
             List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
             if (tagList.size() > 0) {
                 //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
-                addToPromotion(tagTreeNode.getId(),tagList,parameter);
+                addToPromotion(tagTreeNode.getId(),tagList,parameter,userName,cmsSession);
             }
         } else if (tagTreeNode.getChecked() != tagTreeNode.getOldChecked()) {
             if (tagTreeNode.getChecked() == 0) {
@@ -71,14 +94,79 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
     }
 
-    void  addToPromotion(int promotionId,List<TagTreeNode> tagList,SaveParameter parameter)
-    {
+    void  addToPromotion(int promotionId,List<TagTreeNode> tagList,SaveParameter parameter,String modifier,CmsSessionBean cmsSession) {
+        // 获取promotion信息
+        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
+        if (promotion == null) {
+            $warn("addToPromotion promotionId不存在 promotionId=" + promotionId);
+            throw new BusinessException("promotionId不存在：" + promotionId);
+        }
+        List<Long> productIds = null;
+        if (parameter.getIsSelAll() == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productIds = advanceSearchService.getProductIdList(promotion.getChannelId(), cmsSession);
+        } else {
+            productIds = parameter.getIdList();
+        }
+        if (productIds == null || productIds.isEmpty()) {
+            $warn("addToPromotion 未选择商品 params=" + JacksonUtil.bean2Json(parameter));
+            throw new BusinessException("未选择商品");
+        }
+
+        // 检查品牌黑名单
+        Iterator<Long> iter = productIds.iterator();
+        while (iter.hasNext()) {
+            Long prodId = iter.next();
+            CmsBtProductModel prodObj = productService.getProductById(promotion.getChannelId(), prodId);
+            if (prodObj == null) {
+                $warn("addToPromotion CmsBtProductModel不存在 channelId=%s, prodId=%d", promotion.getChannelId(), prodId);
+                iter.remove();
+                continue;
+            }
+            String prodCode = StringUtils.trimToNull(prodObj.getCommonNotNull().getFieldsNotNull().getCode());
+            if (prodCode == null) {
+                $warn("addToPromotion CmsBtProductModel不存在(没有code) channelId=%s, prodId=%d", promotion.getChannelId(), prodId);
+                iter.remove();
+                continue;
+            }
+            // 取得feed 品牌
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(promotion.getChannelId(), prodCode);
+            String feedBrand = null;
+            if (cmsBtFeedInfoModel == null) {
+                $warn("addToPromotion CmsBtFeedInfoModel channelId=%s, code=%s", promotion.getChannelId(), prodCode);
+            } else {
+                feedBrand = cmsBtFeedInfoModel.getBrand();
+            }
+            String masterBrand = prodObj.getCommonNotNull().getFieldsNotNull().getBrand();
+            String platBrand = prodObj.getPlatformNotNull(parameter.getCartId()).getpBrandId();
+            if (brandBlockService.isBlocked(promotion.getChannelId(), parameter.getCartId(), feedBrand, masterBrand, platBrand)) {
+                $warn("addToPromotion 该品牌为黑名单 channelId=%s, cartId=%d, code=%s, feed brand=%s, master brand=%s, platform brand=%s", promotion.getChannelId(), parameter.getCartId(), prodCode, feedBrand, masterBrand, platBrand);
+                iter.remove();
+                continue;
+            }
+        }
+        if (productIds.isEmpty()) {
+            $info("addToPromotion：没有商品需要加入活动");
+            return;
+        }
+        productIds.forEach(item -> {
+            PromotionDetailAddBean request = new PromotionDetailAddBean();
+            request.setModifier(modifier);
+            request.setChannelId(promotion.getChannelId());
+            request.setOrgChannelId(promotion.getChannelId());
+            request.setCartId(parameter.getCartId());
+            request.setProductId(item);
+            request.setPromotionId(promotionId);
+            request.setTagList(tagList);
+            promotionDetailService.addPromotionDetail(request, false);
+        });
+    }
+
+    void  deleteFromPromotion(int promotionId,SaveParameter parameter) {
+
 
     }
-    void  deleteFromPromotion(int promotionId,SaveParameter parameter)
-    {
 
-    }
     /**
      * 页面初始化
      */

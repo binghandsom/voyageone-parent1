@@ -12,8 +12,9 @@ public class SaveParameter {
 
     List<String> codeList;
 
-    List<TagTreeNode> listTagTreeNode;
+    List<Long> idList;
 
+    List<TagTreeNode> listTagTreeNode;
 
     //价格类型    1 建议售价   2指导售价  3最终售价  4固定售价
     int priceTypeId;
@@ -100,5 +101,11 @@ public class SaveParameter {
         this.priceValue = priceValue;
     }
 
+    public List<Long> getIdList() {
+        return idList;
+    }
 
+    public void setIdList(List<Long> idList) {
+        this.idList = idList;
+    }
 }

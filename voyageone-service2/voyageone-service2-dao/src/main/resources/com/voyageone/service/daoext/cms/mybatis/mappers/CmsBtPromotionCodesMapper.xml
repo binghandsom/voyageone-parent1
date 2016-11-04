@@ -200,7 +200,7 @@
         AND t2.active = 1
         AND t2.is_all_promotion = 0
     </select>
-    <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean">
+    <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.service.bean.cms.CmsBtPromotionCodesBean" useGeneratedKeys="true" keyProperty="id">
         insert into voyageone_cms2.cms_bt_promotion_codes
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="promotionId != null">

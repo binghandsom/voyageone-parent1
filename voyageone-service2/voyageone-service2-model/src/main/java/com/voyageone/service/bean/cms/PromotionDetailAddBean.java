@@ -1,7 +1,9 @@
 package com.voyageone.service.bean.cms;
 
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +23,13 @@ public class PromotionDetailAddBean {
     private Map<String, Double> promotionPrice;
     private String productCode;
     private Long productId;
+    private List<TagTreeNode> tagList;
+    public List<TagTreeNode> getTagList() {
+        return tagList;
+    }
+    public void setTagList(List<TagTreeNode> tagList) {
+        this.tagList = tagList;
+    }
 
     public Integer getTagId() {
         return tagId;
