@@ -14,6 +14,7 @@ import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.MapUtils;
+import org.bson.types.ObjectId;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -97,7 +98,7 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
         sxProductService.insertSxWorkLoad(product, cartIdList, cmsBtRefreshProductTaskModel.getModifier());
     }
 
-    private class ProductUpdater {
+    class ProductUpdater {
         private CmsBtProductModel product;
         private Map<String, Object> valueMap;
         private Integer cartId;
@@ -135,7 +136,7 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
 
         private Map<String, Object> getQueryMap() {
             Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("_id", product.get_id());
+            queryMap.put("_id", new ObjectId(product.get_id()));
             return queryMap;
         }
     }
