@@ -521,7 +521,7 @@ public class PromotionDetailService extends BaseService {
        map.put("listProductCode", parameter.getCodeList());
        map.put("promotionId",promotion.getId());
 
-       //批量删除 tag
+       //批量删除 promotionCodesTag
        promotionCodesTagService.batchDeleteByCodes(parameter.getCodeList(),promotion.getPromotionId());
        //批量删除 code
        daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
@@ -529,7 +529,6 @@ public class PromotionDetailService extends BaseService {
        daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
        //批量删除  product tag
        productService.removeTagByCodes(promotion.getChannelId(), parameter.getCodeList(), promotion.getRefTagId());
-
 
        // `cms_bt_promotion_codes_tag`
        // `cms_bt_promotion_skus`
