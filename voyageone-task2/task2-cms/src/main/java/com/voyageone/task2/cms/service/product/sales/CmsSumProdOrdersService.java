@@ -28,11 +28,8 @@ import java.util.*;
  */
 @Service
 public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
+    private final CmsBtProductDao cmsBtProductDao;
+    private final CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
 
     private final static int PAGE_LIMIT = 500;
     private static final String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
@@ -43,10 +40,16 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
     private static final String queryCodeStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'prodCode':#}}";
     private static final String queryCodeStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',prodCode:'$prodCode'},count:{$sum:'$qty'}}}";
 
+    @Autowired
+    public CmsSumProdOrdersService(CmsMtProdSalesHisDao cmsMtProdSalesHisDao, CmsBtProductDao cmsBtProductDao) {
+        this.cmsMtProdSalesHisDao = cmsMtProdSalesHisDao;
+        this.cmsBtProductDao = cmsBtProductDao;
+    }
+
     /**
      * 统计产品的销售数据
      */
-    public void sumProdOrders(List<CmsBtProductModel> prodList, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
+    void sumProdOrders(List<CmsBtProductModel> prodList, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
         BulkModelUpdateList bulkList = new BulkModelUpdateList(PAGE_LIMIT, cmsBtProductDao, channelId);
         for (CmsBtProductModel prodObj : prodList) {
             // 对每个产品统计其sku数据
@@ -59,9 +62,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             List<Integer> cartList2 = prodObj.getCartIdList();
             List<String> skuCodeList = new ArrayList<>();
-            skusList.forEach(skuObj -> {
-                skuCodeList.add(skuObj.getSkuCode());
-            });
+            skusList.forEach(skuObj -> skuCodeList.add(skuObj.getSkuCode()));
 
             Map<String, Object> salesMap = new HashMap<>();
             List<Map<String, Object>> skuSum7List = new ArrayList<>();
@@ -129,31 +130,23 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 合并sku销售数据
             for (Map<String, Object> sumInfo : skuSumAllList) {
-                for (Map sum7Info : skuSum7List) {
-                    if (sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId"))) {
-                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7));
-                    }
-                }
-                for (Map sum30Info : skuSum30List) {
-                    if (sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId"))) {
-                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30));
-                    }
-                }
+                skuSum7List
+                        .stream()
+                        .filter(sum7Info -> sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId")))
+                        .forEach(sum7Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7)));
+                skuSum30List
+                        .stream()
+                        .filter(sum30Info -> sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId")))
+                        .forEach(sum30Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30)));
             }
 
             List<Map<String, Object>> skuCartSumList = new ArrayList<>();
             Map<String, String> skuCodeMap = new HashMap<>();
             for (Map<String, Object> sumInfo : skuSumAllList) {
                 skuCodeMap.put((String) sumInfo.get("skuCode"), "");
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, 0);
-                }
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, 0);
-                }
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
-                }
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_7, 0);
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_30, 0);
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             }
 
             // 再统计产品code级别的数据，由于是多维度的统计，由上面的sku数据合并较复杂，不如直接统计
