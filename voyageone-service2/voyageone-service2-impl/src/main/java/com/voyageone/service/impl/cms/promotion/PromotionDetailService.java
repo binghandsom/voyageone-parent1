@@ -133,8 +133,6 @@ public class PromotionDetailService extends BaseService {
             }
         }
 
-
-
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodesBean) == 0) {
             cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodesBean);
         }
