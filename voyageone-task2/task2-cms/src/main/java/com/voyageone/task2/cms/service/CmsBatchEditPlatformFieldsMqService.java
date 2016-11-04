@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -40,7 +41,7 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
         List<String> productCodes = (List<String>) messageMap.get("productCodes");
         String channelId = (String) messageMap.get("channelId");
         Integer cartId = (Integer) messageMap.get("cartId");
-        String fieldsId = (String) messageMap.get("fieldsId");
+        String fieldsId = ((String) messageMap.get("fieldsId")).replace(".","->");
         Object fieldsValue = messageMap.get("fieldsValue");
         String userName = (String) messageMap.get("userName");
         productCodes.forEach(code -> {
@@ -54,12 +55,14 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
 
                 List<BulkUpdateModel> bulkList = new ArrayList<>();
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("platforms.P" + cartId +".fields." + fieldsId, fieldsValue);
+                updateMap.put("platforms.P" + cartId +".fields." + fieldsId , fieldsValue);
                 BulkUpdateModel model = new BulkUpdateModel();
                 model.setUpdateMap(updateMap);
                 model.setQueryMap(queryMap);
                 bulkList.add(model);
                 cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+
+                $info(String.format("channelId=%s, cartId=%s, code=%s, fieldsId=%s , fieldsValue=%s", channelId, cartId,code, fieldsId, JacksonUtil.bean2Json(fieldsValue)));
 
                 if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(cmsBtProductModel_platform_cart.getStatus())) {
                     sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(code)), cartId, userName);

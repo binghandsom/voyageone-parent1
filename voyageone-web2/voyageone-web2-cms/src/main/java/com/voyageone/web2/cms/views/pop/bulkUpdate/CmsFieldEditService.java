@@ -17,12 +17,14 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.*;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -1193,6 +1195,15 @@ public class CmsFieldEditService extends BaseViewService {
         List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
 
         Field fields = SchemaJsonReader.readJsonForObject(prop);
+
+        if (fields instanceof ComplexField) {
+            ComplexField complexField = (ComplexField) fields;
+            List<Field> complexFields = complexField.getFields();
+            ComplexValue complexValue = complexField.getComplexValue();
+            setComplexValue(complexFields, complexValue);
+        }
+
+
         Map<String, Object> result = new LinkedHashMap<>();
         fields.getFieldValueToMap(result);
 
@@ -1204,5 +1215,56 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessage.put("fieldsId",prop_id);
         mqMessage.put("fieldsValue",result.get(prop_id));
         sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+    }
+
+    /**
+     * set complex value.
+     */
+    private void setComplexValue(List<Field> fields, ComplexValue complexValue) {
+
+        for (Field fieldItem : fields) {
+
+            complexValue.put(fieldItem);
+
+            FieldTypeEnum fieldType = fieldItem.getType();
+
+            switch (fieldType) {
+                case INPUT:
+                    InputField inputField = (InputField) fieldItem;
+                    String inputValue = inputField.getValue();
+                    complexValue.setInputFieldValue(inputField.getId(), inputValue);
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField) fieldItem;
+                    Value checkValue = singleCheckField.getValue();
+                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(), checkValue);
+                    break;
+                case MULTICHECK:
+                    MultiCheckField multiCheckField = (MultiCheckField) fieldItem;
+                    List<Value> checkValues = multiCheckField.getValues();
+                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(), checkValues);
+                    break;
+                case MULTIINPUT:
+                    MultiInputField multiInputField = (MultiInputField) fieldItem;
+                    List<String> inputValues = multiInputField.getStringValues();
+                    complexValue.setMultiInputFieldValues(multiInputField.getId(), inputValues);
+                    break;
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField) fieldItem;
+                    List<Field> subFields = complexField.getFields();
+                    ComplexValue subComplexValue = complexField.getComplexValue();
+                    setComplexValue(subFields, subComplexValue);
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField) fieldItem;
+                    List<ComplexValue> complexValueList = multiComplexField.getComplexValues();
+                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(), complexValueList);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
     }
 }
