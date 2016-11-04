@@ -436,6 +436,7 @@ define(function () {
                     "setProductFields": "setProductFields",
                     "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
                     "bulkSetCategory":"bulkSetCategory",
+                    "bulkSetPlatformFields":"bulkSetPlatformFields",
                     "getPlatfromPopOptions": "getPlatfromPopOptions",
                 },
                 "$promotionHistoryService": {

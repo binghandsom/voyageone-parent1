@@ -13,8 +13,8 @@ define([
             propertyInfo: {
                 property: {},
                 productIds: context.productIds,
-                isSelAll: context.isSelAll,
-                cartId: context.cartId
+                isSelAll: context.isSelAll == true?1:0,
+                cartId: +context.cartId
             },
             properties: [],
             selCnt: context.selCnt,
@@ -97,21 +97,9 @@ define([
             }
 
             function _openBulkUpdate() {
-                $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function (res) {
-                    if (res.data.ecd == null || res.data.ecd == undefined) {
-                        alert("提交请求时出现错误");
-                        return;
-                    }
-                    if (res.data.ecd == 1) {
-                        alert("未选择商品，请选择后再操作。");
-                        return;
-                    }
-                    if (res.data.ecd == 2) {
-                        alert("未设置变更项目，请设置后再操作。");
-                        return;
-                    }
+                $fieldEditService.bulkSetPlatformFields($scope.vm.propertyInfo).then(function (res) {
                     notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    $modalInstance.close(res);
+                    $modalInstance.close();
                 });
             }
         }

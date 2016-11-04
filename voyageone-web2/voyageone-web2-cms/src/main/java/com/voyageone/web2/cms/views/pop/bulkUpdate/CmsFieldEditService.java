@@ -21,6 +21,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
@@ -47,6 +48,7 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1164,5 +1166,43 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
+    }
+
+    public void bulkSetPlatformFields(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+
+            new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        if (cartId == null || cartId == 0) {
+            new BusinessException("批量修改商品属性 没有cartId条件 params=" + params.toString());
+        }
+        Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
+        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+
+        Field fields = SchemaJsonReader.readJsonForObject(prop);
+        Map<String, Object> result = new LinkedHashMap<>();
+        fields.getFieldValueToMap(result);
+
+        Map<String,Object> mqMessage = new HashedMap();
+        mqMessage.put("cartId",cartId);
+        mqMessage.put("channelId",userInfo.getSelChannelId());
+        mqMessage.put("productCodes",productCodes);
+        mqMessage.put("userName",userInfo.getUserName());
+        mqMessage.put("fieldsId",prop_id);
+        mqMessage.put("fieldsValue",result.get(prop_id));
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
     }
 }

@@ -125,4 +125,11 @@ public class CmsFieldEditController extends CmsController {
 
         return success(true);
     }
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_PLATFORM_FIELDS)
+    public AjaxResponse bulkSetPlatformFields(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetPlatformFields(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
 }
