@@ -10,7 +10,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
@@ -20,6 +19,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import org.apache.commons.lang.math.NumberUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +28,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author james.li on 2016/4/7.
@@ -137,12 +135,18 @@ public class UploadToUSJoiServiceTest {
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
         // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
-        final List<Integer> cartIds;
-        OrderChannelBean usJoiBean = Channels.getChannel(usjoiChannelId);
-        if (usJoiBean != null && !StringUtil.isEmpty(usJoiBean.getCart_ids())) {
-            cartIds = Arrays.asList(usJoiBean.getCart_ids().split(",")).stream().map(Integer::parseInt).collect(toList());
-        } else {
-            cartIds = new ArrayList<>();
+        final List<Integer> cartIds = new ArrayList<>();
+        // 从synship.com_mt_value_channel表中取得USJOI店铺channel对应的可售卖的cartId列表（如928对应28,29,27等）
+        List<TypeChannelBean> approveCartList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "A", "en"); // 取得可售卖平台数据
+        if (ListUtils.notNull(approveCartList)) {
+            // 取得配置表中可售卖的非空cartId列表
+            approveCartList.forEach(p -> {
+                if(!StringUtils.isEmpty(p.getValue()))
+                    cartIds.add(NumberUtils.toInt(p.getValue()));
+            });
+        }
+        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(cartIds)) {
+            return;
         }
 
         CmsBtSxWorkloadModel sxWorkLoadBean = new CmsBtSxWorkloadModel();

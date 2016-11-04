@@ -886,6 +886,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 //保存product到MongoDB
                 saveProductPlatform(channelId, product);
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                if (sxData.getPlatform().getPlatformStatus() == null
+                        || "WaitingPublish".equalsIgnoreCase(sxData.getPlatform().getPlatformStatus().name())) {
+                    sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                    sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
+                }
                 sxData.getPlatform().setModifier(getTaskName());
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
@@ -963,6 +968,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             saveWorkload(work, WORK_LOAD_FAIL);
 
             e.printStackTrace();
+            if (!StringUtils.isEmpty(sxData.getErrorMessage())) $error(sxData.getErrorMessage());
             $error("workload上新失败！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
         }
 
@@ -1625,82 +1631,120 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 updateMallId(product, mallId);
             }
 
-			{
-				// 更新价格
-				List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
-				List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
-				for (BaseMongoMap<String, Object> sku : skuList) {
-					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
-						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
-                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
-                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
-                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-							// 不是新追加的
-							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
-							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-							skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-							skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-							updateData.add(skuInfo);
-						}
-					}
-				}
+            {
+                // 更新价格
+                List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+                // 聚美批量修改价格一次最多只能修改20个sku，sku个数超过20时所以要循环一下
+                String errMsg = "";
+                int updateCnt = 0;
+                for (int i = 0; i < skuList.size(); i++) {
+                    updateCnt++;
+                    // 清空更新对象sku列表
+                    updateData.clear();
+                    for (int index = i; index < skuList.size(); index++) {
+                        i = index;
+                        BaseMongoMap<String, Object> sku = skuList.get(index);
+                        String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                        if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
+                            // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+                            // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                            // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                            if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                    && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                // 不是新追加的
+                                HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+                                skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+                                skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                                skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                updateData.add(skuInfo);
+                                // 超过20个暂停加入
+                                if (updateData.size() >= 20) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
-				if (!updateData.isEmpty()) {
-					StringBuffer sbPrice = new StringBuffer("");
-					boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
-					if (!isSuccess) {
-						// TODO 临时修改:
-						// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
-						// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
-						// TODO 最终应该是让聚美提供API, 进行关联
-						if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
-							// 价格更新失败throw出去
-							throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
-						}
-					}
-				}
-			}
+                    if (!updateData.isEmpty()) {
+                        StringBuffer sbPrice = new StringBuffer("");
+                        boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
+                        if (!isSuccess) {
+                            // TODO 临时修改:
+                            // TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
+                            // TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
+                            // TODO 最终应该是让聚美提供API, 进行关联
+                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+                                // 价格更新失败throw出去
+//                                throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
+                                errMsg += String.format("第%s批%s个sku的聚美商城商品价格更新失败!%s ", updateCnt, updateData.size(), sbPrice.toString());
+                            }
+                        }
+                    }
+                }
+                // 如果所有的sku都批量更新过，其中有一些有错误的话，报出错误
+                if (!StringUtils.isEmpty(errMsg)) {
+                    throw new BusinessException(errMsg);
+                }
+            }
 
 		} else {
-			{
-				// 更新价格
-				List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
-				List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
-				for (BaseMongoMap<String, Object> sku : skuList) {
-					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
-						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
-                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
-                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
-                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
-							// 不是新追加的
-							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
-							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-							skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-							skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
-							updateData.add(skuInfo);
-						}
-					}
-				}
+            {
+                // 更新价格
+                List<HtMallSkuPriceUpdateInfo> updateData = new ArrayList<>();
+                List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+                // 聚美批量修改价格一次最多只能修改20个sku，sku个数超过20时所以要循环一下
+                String errMsg = "";
+                int updateCnt = 0;
+                for (int i = 0; i < skuList.size(); i++) {
+                    updateCnt++;
+                    // 清空更新对象sku列表
+                    updateData.clear();
+                    for (int index = i; index < skuList.size(); index++) {
+                        i = index;
+                        BaseMongoMap<String, Object> sku = skuList.get(index);
+                        String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                        if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
+                            // 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
+                            // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                            // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                            if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                    && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                // 不是新追加的
+                                HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
+                                skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+                                skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                                skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                                updateData.add(skuInfo);
+                                // 超过20个暂停加入
+                                if (updateData.size() >= 20) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
-				if (!updateData.isEmpty()) {
-					StringBuffer sbPrice = new StringBuffer("");
-					boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
-					if (!isSuccess) {
-						// TODO 临时修改:
-						// TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
-						// TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
-						// TODO 最终应该是让聚美提供API, 进行关联
-						if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
-							// 价格更新失败throw出去
-							throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
-						}
-					}
-				}
-			}
+                    if (!updateData.isEmpty()) {
+                        StringBuffer sbPrice = new StringBuffer("");
+                        boolean isSuccess = jumeiHtMallService.updateMallSkuPrice(shopBean, updateData, sbPrice);
+                        if (!isSuccess) {
+                            // TODO 临时修改:
+                            // TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
+                            // TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
+                            // TODO 最终应该是让聚美提供API, 进行关联
+                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+                                // 价格更新失败throw出去
+//                                throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
+                                errMsg += String.format("第%s批%s个sku的聚美商城商品价格更新失败!%s ", updateCnt, updateData.size(), sbPrice.toString());
+                            }
+                        }
+                    }
+                }
+                // 如果所有的sku都批量更新过，其中有一些有错误的话，报出错误
+                if (!StringUtils.isEmpty(errMsg)) {
+                    throw new BusinessException(errMsg);
+                }
+            }
 
 			// 变更
             BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
@@ -2165,56 +2209,76 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String jmHashId = product.getPlatform(CART_ID).getpNumIId();
 
         List<HtDeal_UpdateDealPriceBatch_UpdateData> updateDataList = new ArrayList<>();
-        for (BaseMongoMap<String, Object> sku : skuList) {
-            // 如果该sku的聚美Sku_no为空,则跳过
-            if (StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) continue;
+        // 聚美批量修改价格一次最多只能修改20个sku，sku个数超过20时所以要循环一下
+        String errMsg = "";
+        int updateCnt = 0;
+        for (int i = 0; i < skuList.size(); i++) {
+            updateCnt++;
+            // 清空更新对象sku列表
+            updateDataList.clear();
+            for (int index = i; index < skuList.size(); index++) {
+                i = index;
+                BaseMongoMap<String, Object> sku = skuList.get(index);
+                // 如果该sku的聚美Sku_no为空,则跳过
+                if (StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) continue;
 
-            // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
-            // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
-            if (!Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) continue;
+                // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                if (!Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) continue;
 
-            HtDeal_UpdateDealPriceBatch_UpdateData skuUpdate = new HtDeal_UpdateDealPriceBatch_UpdateData();
-            // 聚美Deal唯一值(jmHashId)
-            skuUpdate.setJumei_hash_id(jmHashId);
-            // 聚美Sku_no
-            skuUpdate.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
-            // 市场价(市场价和团购价不能同时为空,市场价必须大于等于团购价)
-            if (isUpdateMarketPrice)
-                skuUpdate.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-            // 团购价(市场价和团购价不能同时为空,团购价至少大于15元)
-            if (isUpdateDealPrice)
-                skuUpdate.setDeal_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                HtDeal_UpdateDealPriceBatch_UpdateData skuUpdate = new HtDeal_UpdateDealPriceBatch_UpdateData();
+                // 聚美Deal唯一值(jmHashId)
+                skuUpdate.setJumei_hash_id(jmHashId);
+                // 聚美Sku_no
+                skuUpdate.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
+                // 市场价(市场价和团购价不能同时为空,市场价必须大于等于团购价)
+                if (isUpdateMarketPrice)
+                    skuUpdate.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+                // 团购价(市场价和团购价不能同时为空,团购价至少大于15元)
+                if (isUpdateDealPrice)
+                    skuUpdate.setDeal_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
 
-            updateDataList.add(skuUpdate);
-        }
-
-        if (ListUtils.isNull(updateDataList)) return;
-
-        HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
-        request.setUpdate_data(updateDataList);
-
-        // 修改对象价格
-        String strUpdatePrice = "";
-        if (isUpdateMarketPrice && !isUpdateDealPrice) {
-            strUpdatePrice += "(市场价)";
-        } if (!isUpdateMarketPrice && isUpdateDealPrice) {
-            strUpdatePrice += "(团购价)";
-        } if (isUpdateMarketPrice && isUpdateDealPrice) {
-            strUpdatePrice += "(市场价和团购价)";
-        }
-
-        HtDealUpdateDealPriceBatchResponse response;
-        try {
-            // 调用批量更新deal价格API(/v1/htDeal/updateDealPriceBatch)
-            response = jumeiHtDealService.updateDealPriceBatch(shop, request);
-            if (response != null && response.is_Success()) {
-                $info("批量更新deal价格%s成功! [ProductCode=%s], [JumeiHashId=%s]", strUpdatePrice, productCode, jmHashId);
-            } else {
-                throw new BusinessException(response.getErrorMsg());
+                updateDataList.add(skuUpdate);
+                // 超过20个暂停加入
+                if (updateDataList.size() >= 20) {
+                    break;
+                }
             }
-        } catch (Exception e) {
+
+            if (ListUtils.isNull(updateDataList)) return;
+
+            HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
+            request.setUpdate_data(updateDataList);
+
+            // 修改对象价格
+            String strUpdatePrice = "";
+            if (isUpdateMarketPrice && !isUpdateDealPrice) {
+                strUpdatePrice += "(市场价)";
+            } if (!isUpdateMarketPrice && isUpdateDealPrice) {
+                strUpdatePrice += "(团购价)";
+            } if (isUpdateMarketPrice && isUpdateDealPrice) {
+                strUpdatePrice += "(市场价和团购价)";
+            }
+
+            HtDealUpdateDealPriceBatchResponse response;
+            try {
+                // 调用批量更新deal价格API(/v1/htDeal/updateDealPriceBatch)
+                response = jumeiHtDealService.updateDealPriceBatch(shop, request);
+                if (response != null && response.is_Success()) {
+                    $info("批量更新deal价格%s成功! [ProductCode=%s], [JumeiHashId=%s]", strUpdatePrice, productCode, jmHashId);
+                } else {
+                    errMsg += String.format("第%s批%s个sku%s ", updateCnt, updateDataList.size(), response.getErrorMsg());
+//                    throw new BusinessException(response.getErrorMsg());
+                }
+            } catch (Exception e) {
+                // 即使批量修改deal价格失败，也继续做后面的uploadMall
+                $error("批量更新deal价格%s失败! [ProductCode=%s], [JumeiHashId=%s], [Error=%s]", strUpdatePrice, productCode, jmHashId, e.getMessage());
+            }
+        }
+        // 如果所有的sku都批量更新过，其中有一些有错误的话
+        if (!StringUtils.isEmpty(errMsg)) {
             // 即使批量修改deal价格失败，也继续做后面的uploadMall
-            $error("批量更新deal价格%s失败! [ProductCode=%s], [JumeiHashId=%s], [Error=%s]", strUpdatePrice, productCode, jmHashId, e.getMessage());
+            $error(errMsg);
         }
     }
 

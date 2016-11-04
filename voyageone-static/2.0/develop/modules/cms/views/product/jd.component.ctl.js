@@ -257,22 +257,24 @@ define([
                  * 移动Code到其他Group
                  * */
                 function moveToGroup() {
-                    if (scope.vm.mastData == null)  return;
-                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name,'productCode' : scope.vm.mastData.productCode});
+                    // if (scope.vm.mastData == null)  return;
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name});
+                    var moveCodeInfo = {
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        prodId: scope.productInfo.productId
+                    };
+                    window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
                     confirm(template).then(function () {
+                        var newTab = window.open('about:blank');
                         productDetailService.moveCodeInitCheck({
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,
-                            productCode : scope.vm.mastData.productCode
+                            prodId: scope.productInfo.productId
                         }).then(function (resp) {
-                            var moveCodeInfo = {
-                                cartId: scope.cartInfo.value,
-                                cartName: scope.cartInfo.name,
-                                prodId: scope.productInfo.productId,
-                                productCode : scope.vm.mastData.productCode
-                            };
-                            window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
-                            window.open("#/product/code_move","_blank");
+                            newTab.location.href = "#/product/code_move";
+                        }, function (err) {
+                            newTab.close();
                         });
                     });
                 }

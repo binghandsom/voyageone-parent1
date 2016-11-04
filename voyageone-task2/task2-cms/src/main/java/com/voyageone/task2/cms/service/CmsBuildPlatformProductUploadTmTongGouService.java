@@ -960,6 +960,35 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
                                                        ShopBean shopProp, String crossBorderRreportFlg) {
+
+		// 官网同购， 上新时候的价格， 统一用所有sku里的最高价
+		Double priceMax = 0d;
+		for (CmsBtProductModel product : productList) {
+			if (product.getCommon() == null
+					|| product.getCommon().getFields() == null
+					|| product.getPlatform(cartId) == null
+					|| ListUtils.isNull(product.getPlatform(cartId).getSkus())) {
+				continue;
+			}
+			for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
+				String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+
+				// 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
+				BaseMongoMap<String, Object> mergedSku = skuList.stream()
+						.filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
+						.findFirst()
+						.get();
+				// 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
+				if (priceMax.compareTo(Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue))) < 0) {
+					priceMax = Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue));
+				}
+
+			}
+
+		}
+
+
+		// 具体设置属性的逻辑
         List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
         // 循环productList设置颜色和尺码等信息到sku列表
         for (CmsBtProductModel product : productList) {
@@ -1015,7 +1044,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 				}
 
                 // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
-                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
+//                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
+				skuMap.put("price", String.valueOf(priceMax));
                 // outer_id
                 skuMap.put("outer_id", skuCode);
                 // 库存
