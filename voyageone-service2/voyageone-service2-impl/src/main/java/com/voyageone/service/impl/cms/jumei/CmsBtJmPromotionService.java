@@ -53,7 +53,7 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmImageTemplateService jmImageTemplateService;
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
-    private final CmsBtJmPromotionBrandDao cmsBtJmPromotionBrandDao;
+    private final CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao;
 
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
@@ -68,7 +68,7 @@ public class CmsBtJmPromotionService extends BaseService {
                                    CmsBtJmImageTemplateService jmImageTemplateService,
                                    CmsMtJmConfigService jmConfigService,
                                    CmsBtJmBayWindowService cmsBtJmBayWindowService,
-                                   CmsBtJmPromotionBrandDao cmsBtJmPromotionBrandDao) {
+                                   CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -80,7 +80,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmImageTemplateService = jmImageTemplateService;
         this.jmConfigService = jmConfigService;
         this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
-        this.cmsBtJmPromotionBrandDao = cmsBtJmPromotionBrandDao;
+        this.cmsBtJmPromotionBrandLogoDao = cmsBtJmPromotionBrandLogoDao;
     }
 
     /**
@@ -186,9 +186,8 @@ public class CmsBtJmPromotionService extends BaseService {
             map.put("preDisplayChannelList", valList);
 
             //品牌Logo
-//            jmPromotionExtensionDao.selectOne();
             Map<String, Object> modelMap = new HashMap<>();
-            List<CmsBtJmPromotionBrandModel> listModel = cmsBtJmPromotionBrandDao.selectList(modelMap);
+            List<CmsBtJmPromotionBrandLogoModel> listModel = cmsBtJmPromotionBrandLogoDao.selectList(modelMap);
             map.put("preDisplayBrandLogoList", listModel);
 
             // 直邮信息

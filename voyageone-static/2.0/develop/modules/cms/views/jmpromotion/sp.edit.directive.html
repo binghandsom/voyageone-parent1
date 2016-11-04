@@ -339,13 +339,13 @@
 
                 <div class="form-group" >
                     <label class="col-sm-2 control-label s-required">
-                        <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isCheckedBrand">
+                        <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isCheckedBrandLogo" ng-click="!ctrlEdit.editModel.extModel.isCheckedBrand?ctrlEdit.editModel.extModel.brandLogo=null:''">
                         启用品牌Logo
                     </label>
                     <div class="col-sm-2">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.brandLogo" name="brandLogo" required
-                                ng-options="value.brandLogo as value.brandLogo for value in ctrlEdit.vm.metaData.preDisplayBrandLogoList"
-                                ng-disabled="!ctrlEdit.editModel.extModel.isCheckedBrand">
+                                ng-options="value.brandParameter as value.brandLogo for value in ctrlEdit.vm.metaData.preDisplayBrandLogoList"
+                                ng-disabled="!ctrlEdit.editModel.extModel.isCheckedBrandLogo">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
