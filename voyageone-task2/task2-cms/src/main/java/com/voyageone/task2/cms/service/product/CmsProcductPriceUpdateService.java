@@ -40,7 +40,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
-        $info("CmsProcductPriceUpdateService start");
+
         //$info("参数" + JacksonUtil.bean2Json(messageMap));
         String channelId = StringUtils.trimToNull((String) messageMap.get("channelId"));
         if (channelId == null || messageMap.get("productId") == null || messageMap.get("cartId") == null) {
@@ -50,6 +50,7 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
 
         int cartId = (Integer) messageMap.get("cartId");
         long prodId = (Integer) messageMap.get("productId");
+        $info( String.format("CmsProcductPriceUpdateService start channelId = %s  cartId = %d  prodId = %d",channelId,cartId,prodId));
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
         queryObj.setParameters(prodId, cartId);

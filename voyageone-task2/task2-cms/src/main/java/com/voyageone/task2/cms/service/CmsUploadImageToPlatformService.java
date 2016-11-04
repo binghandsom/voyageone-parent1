@@ -86,6 +86,7 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
         queryObject.setQuery("{\"image.status\":"
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","
                 + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + ","
+                + CartEnums.Cart.TT.getId() + "," + CartEnums.Cart.USTT.getId() + ","
                 + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "]}}");
 
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
@@ -110,7 +111,8 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
      * @param image ImageModel
      */
     private void uploadImageToPlatform(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
-        if (cartId.equals(CartEnums.Cart.TM.getId()) || cartId.equals(CartEnums.Cart.TB.getId()) ||cartId.equals(CartEnums.Cart.TG.getId())) {
+        if (cartId.equals(CartEnums.Cart.TM.getId()) || cartId.equals(CartEnums.Cart.TB.getId()) ||cartId.equals(CartEnums.Cart.TG.getId())
+                || cartId.equals(CartEnums.Cart.TT.getId()) || cartId.equals(CartEnums.Cart.USTT.getId())) {
             uploadImageToTB(channelId, cartId, imageType, image);
         } else if (cartId.equals(CartEnums.Cart.JM.getId())) {
             uploadImageToJM(channelId, imageType, image);
