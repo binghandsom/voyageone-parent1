@@ -156,6 +156,19 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取拆分后的商品 根据OriginalCode，去掉code和original一致的拆分前商品
+     */
+    public List<CmsBtProductModel> getProductByOriginalCodeWithoutItself(String channelId, String code) {
+        List<CmsBtProductModel> result = null;
+        List<CmsBtProductModel> originalCodeProductList = this.getProductByOriginalCode(channelId, code);
+        if (ListUtils.notNull(originalCodeProductList)) {
+            result = originalCodeProductList.stream().filter(p -> !p.getCommonNotNull().getFieldsNotNull().getCode().equals(p.getCommonNotNull().getFieldsNotNull().getOriginalCode())).collect(Collectors.toList());
+        }
+
+        return result;
+    }
+
+    /**
      * 根据Id返回多条产品数据
      */
     public List<CmsBtProductModel> getListByIds(List<Long> ids, String channelId) {
