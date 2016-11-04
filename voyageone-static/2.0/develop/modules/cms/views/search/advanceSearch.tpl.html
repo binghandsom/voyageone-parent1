@@ -537,11 +537,11 @@
                                                 </div>
                                                 <div class="col-sm-7">
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType">
+                                                        <input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType" ng-click="ctrlAdvance.orderStep1()">
                                                         <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' |  translate }}
                                                     </label>
                                                     <label class="checkbox-inline c-radio">
-                                                        <input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType">
+                                                        <input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType" ng-click="ctrlAdvance.orderStep1()">
                                                         <span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
                                                     </label>
                                                 </div>
@@ -714,29 +714,70 @@
                             <table class="table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width:100%" width="{{vm.tblWidth2}}">
                                 <thead>
                                 <tr>
-                                    <td class="text-left" style="display:inline-block; height:40px; line-height:40px;width:110px;padding-left:10px;margin-left:0px">
+                                    <th class="text-left" style="display:inline-block; height:40px; line-height:40px;width:110px;padding-left:10px;margin-left:0px">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                    ng-checked="isAllSelected(vm.productSelList)"
                                                    ng-disabled="!vm.productList.length">
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
-                                    </td>
-                                    <td class="text-left" style="display:inline-block;width:90px;padding-left:8px">
-                                        <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('TXT_BRAND')"><i class="fa fa-{{ctrlAdvance.getArrowName('TXT_BRAND')}}"></i></button>
-                                    </td>
-                                    <td class="text-left" translate="TXT_NAME" style="display:inline-block;width:110px;padding-left:8px"></td>
-                                    <td class="text-left" translate="TXT_BRAND" style="display:inline-block;width:110px;padding-left:8px"></td>
-                                    <td class="text-center" translate="TXT_INVENTORY" style="display:inline-block;width:50px;padding-left:8px"></td>
-                                    <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国建议售价</td>
-                                    <td class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国指导售价</td>
-                                    <td class="text-center" style="display:inline-block;width:170px;padding-left:8px">中国最终售价</td>
-                                    <td class="text-center" translate="TXT_SKU_COUNT" style="display:inline-block;width:165px;padding-left:8px"></td>
-                                    <td class="text-left" translate="TXT_TIME" style="display:inline-block;width:165px;padding-left:8px"></td>
-                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
+                                    </th>
+                                    <th class="text-left" style="display:inline-block;width:90px;padding-left:8px">
+                                        <span translate="TXT_CODE"></span>&emsp;<button class="opacityBtn"
+                                                                                         ng-if="vm.productList.length"
+                                                                                         ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
+                                    </th>
+                                    <th class="text-left" style="display:inline-block;width:110px;padding-left:8px">
+                                        <span translate="TXT_NAME"></span>&emsp;<button class="opacityBtn"
+                                                                                        ng-if="vm.productList.length"
+                                                                                        ng-click="ctrlAdvance.columnOrder('originalTitleCn')"><i class="fa fa-{{ctrlAdvance.getArrowName('originalTitleCn')}}"></i></button>
+                                    </th>
+                                    <th class="text-left" style="display:inline-block;width:110px;padding-left:8px">
+                                        <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn"
+                                                                                        ng-if="vm.productList.length"
+                                                                                        ng-click="ctrlAdvance.columnOrder('brand')"><i class="fa fa-{{ctrlAdvance.getArrowName('brand')}}"></i></button>
+                                    </th>
+                                    <th class="text-center" style="display:inline-block;width:110px;padding-left:8px">
+                                        <span translate="TXT_INVENTORY"></span>&emsp;<button class="opacityBtn"
+                                                                                        ng-if="vm.productList.length"
+                                                                                        ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
+                                    </th>
+                                    <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">
+                                        中国建议售价&emsp;<button class="opacityBtn"
+                                                            ng-if="vm.productList.length && vm._cartType_"
+                                                            ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
+                                    </th>
+                                    <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">
+                                        中国指导售价&emsp;<button class="opacityBtn"
+                                                            ng-if="vm.productList.length && vm._cartType_"
+                                                            ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceRetailSt',vm._cartType_.value)}}"></i></button>
+                                    </th>
+                                    <th class="text-center" style="display:inline-block;width:170px;padding-left:8px">
+                                        中国最终售价&emsp;<button class="opacityBtn"
+                                                            ng-if="vm.productList.length && vm._cartType_"
+                                                            ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceSaleEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceSaleEd',vm._cartType_.value)}}"></i></button>
+                                    </th>
+                                    <th class="text-center" style="display:inline-block;width:165px;padding-left:8px">
+                                        <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
+                                                                                             ng-if="vm.productList.length"
+                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
+                                    </th>
+                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">
+                                        {{prop1.propName}}&emsp;<button class="opacityBtn"
+                                                                        ng-if="vm.productList.length"
+                                                                        ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
+                                    </th>
                                     <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
-                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
-                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">{{prop4.name}}</th>
+                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">
+                                        {{prop3.name}}&emsp;<button class="opacityBtn"
+                                                                    ng-if="vm.productList.length"
+                                                                    ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                    </th>
+                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">
+                                        {{prop4.name}}&emsp;<button class="opacityBtn"
+                                                                    ng-if="vm.productList.length"
+                                                                    ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                    </th>
                                 </tr>
                                 </thead>
                             </table>
@@ -843,23 +884,6 @@
                                                 {{productInfo.common.skus.length}}
                                             </button>
                                         </td>
-                                        <td class="text-left" style="display:inline-block;width:165px;">
-                                            <small ng-controller="showPopoverCtrl"
-                                                   popover-html="showInfo({{productInfo.groupBean.timeDetail}})"
-                                                   popover-trigger="mouseenter" popover-placement="left">
-                                                <div class="table_main">
-                                                    <ul ng-if="productInfo.groupBean.publishTime">
-                                                        <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <li><span>{{productInfo.groupBean.publishTime.substring(0, 19)}}</span>
-                                                        </li>
-                                                    </ul>
-                                                    <ul ng-if="!productInfo.groupBean.publishTime">
-                                                        <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <li><span>{{productInfo.created.substring(0, 19)}}</span></li>
-                                                    </ul>
-                                                </div>
-                                            </small>
-                                        </td>
                                         <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
                                             <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
@@ -898,7 +922,6 @@
                                     <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
                                     <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
                                     <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">{{prop4.name}}</th>
-                                    <th class="text-left" translate="TXT_TIME" style="display:inline-block;width:150px;padding-left:8px"></th>
                                 </tr>
                                 </thead>
                             </table>
@@ -973,23 +996,6 @@
                                         </td>
                                         <td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px">{{prop3.value}}</td>
                                         <td class="text-center" ng-repeat="prop4 in groupInfo.selBiDataArr" style="display:inline-block;width:100px">{{prop4.value}}</td>
-                                        <td class="text-left" style="display:inline-block;width:150px;">
-                                            <small ng-controller="showPopoverCtrl"
-                                                   popover-html="showInfo({{groupInfo.groupBean.timeDetail}})"
-                                                   popover-trigger="mouseenter" popover-placement="left">
-                                                <div class="table_main">
-                                                    <ul ng-if="groupInfo.groupBean.publishTime">
-                                                        <li>{{'TXT_PUBLISH_TIME' | translate}}</li>
-                                                        <li><span>{{groupInfo.groupBean.publishTime.substring(0,19)}}</span>
-                                                        </li>
-                                                    </ul>
-                                                    <ul ng-if="!groupInfo.groupBean.publishTime">
-                                                        <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                        <li><span>{{groupInfo.created.substring(0,19)}}</span></li>
-                                                    </ul>
-                                                </div>
-                                            </small>
-                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>
