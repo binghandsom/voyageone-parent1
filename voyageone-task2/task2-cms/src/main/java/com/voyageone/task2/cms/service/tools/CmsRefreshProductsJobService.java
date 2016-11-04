@@ -93,6 +93,7 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
 
         // 标记上新
         List<String> cartIdList = new ArrayList<>();
+        cartIdList.add(cartId.toString());
         sxProductService.insertSxWorkLoad(product, cartIdList, cmsBtRefreshProductTaskModel.getModifier());
     }
 
