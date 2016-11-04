@@ -3,26 +3,40 @@ package com.voyageone.service.impl.cms.jumei;
 import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
+import com.voyageone.service.bean.cms.jumei.ProductImportBean;
+import com.voyageone.service.bean.cms.jumei.SkuImportBean;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
+import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
+import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created by "some one" on 2016/3/18.
@@ -31,7 +45,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
-
+    private final static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
     private final CmsBtJmPromotionDao dao;
     private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
@@ -40,17 +54,40 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao;
     private final CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt;
     private final CmsBtJmPromotionImagesDao jmPromotionImagesDao;
+    private final CmsBtJmImageTemplateService jmImageTemplateService;
+    private final CmsMtJmConfigService jmConfigService;
+    private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
     @Autowired
-    private CmsBtJmImageTemplateService jmImageTemplateService;
+    private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
-    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
+    @Autowired
+    private CmsBtJmPromotionProductDaoExt cmsBtJmPromotionProductDaoExt;
+
+    @Autowired
+    private CmsBtJmPromotionSkuDaoExt cmsBtJmPromotionSkuDaoExt;
+
+    @Autowired
+    private CmsBtJmPromotionImportTask3Service cmsBtJmPromotionImportTask3Service;
+
+    @Autowired
+    private CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
+
+    @Autowired
+    private CmsBtJmPromotionTagProductDao cmsBtJmPromotionTagProductDao;
+
+    @Autowired
+    private CmsBtJmPromotionImagesDao cmsBtJmPromotionImagesDao;
 
     @Autowired
     public CmsBtJmPromotionService(CmsBtPromotionDao daoCmsBtPromotion,
                                    CmsBtJmPromotionDao dao, CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand,
                                    CmsBtJmPromotionDaoExt daoExt,
                                    TagService tagService, CmsBtJmPromotionSpecialExtensionDao jmPromotionExtensionDao,
-                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt, CmsBtJmPromotionImagesDao jmPromotionImagesDao) {
+                                   CmsBtJmPromotionSpecialExtensionDaoExt jmPromotionExtensionDaoExt,
+                                   CmsBtJmPromotionImagesDao jmPromotionImagesDao,
+                                   CmsBtJmImageTemplateService jmImageTemplateService,
+                                   CmsMtJmConfigService jmConfigService,
+                                   CmsBtJmBayWindowService cmsBtJmBayWindowService) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -59,12 +96,124 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmPromotionExtensionDao = jmPromotionExtensionDao;
         this.jmPromotionExtensionDaoExt = jmPromotionExtensionDaoExt;
         this.jmPromotionImagesDao = jmPromotionImagesDao;
+        this.jmImageTemplateService = jmImageTemplateService;
+        this.jmConfigService = jmConfigService;
+        this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
     }
 
-    public Map<String, Object> init() {
+    /**
+     * 取得画面上的初始数据
+     */
+    public Map<String, Object> init(String channelId, String langId, boolean hasExt) {
         Map<String, Object> map = new HashMap<>();
-        List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String, Object>());
-        map.put("jmMasterBrandList", jmMasterBrandList);
+        // 专场主品牌
+        List<TypeChannelBean> brandList = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, langId);
+        if (brandList == null) {
+            brandList = new ArrayList<>(0);
+        }
+        Map<String, Object> selMap = new HashMap<>();
+        selMap.put("channelId", channelId);
+        selMap.put("cartId", CartEnums.Cart.JM.getValue());
+        for (TypeChannelBean brandObj : brandList) {
+            selMap.put("cmsBrand", brandObj.getValue());
+            List<CmsMtBrandsMappingBean> mBrandList = brandsMappingDaoExt.selectList(selMap);
+            if (mBrandList != null && mBrandList.size() > 0) {
+                brandObj.setName(mBrandList.get(0).getBrandId());
+            } else {
+                brandObj.setName("");
+            }
+        }
+        map.put("jmMasterBrandList", brandList);
+
+        // 活动场景
+        CmsMtJmConfigModel configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.promotionScene);
+        List<Map<String, Object>> valList = null;
+        if (configModel != null) {
+            valList = configModel.getValues();
+        }
+        if (valList == null) {
+            valList = new ArrayList<>(0);
+        }
+        map.put("promotionSceneList", valList);
+
+        // 活动类型
+        configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.promotionType);
+        valList = null;
+        if (configModel != null) {
+            valList = configModel.getValues();
+        }
+        if (valList == null) {
+            valList = new ArrayList<>(0);
+        }
+        map.put("promotionTypeList", valList);
+
+        if (hasExt) {
+            // 展示平台
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.displayPlatform);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("displayPlatformList", valList);
+
+            // 主频道
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.mainChannel);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("mainChannelList", valList);
+
+            // 专场类型
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionType);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("sessionTypelList", valList);
+
+            // 关联品类，有两级类目，不必作特殊处理，ng-options能整理好数据层次
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.sessionCategory);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("sessionCategoryList", valList);
+
+            // 预展示频道
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.preDisplayChannel);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("preDisplayChannelList", valList);
+
+            // 直邮信息
+            configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);
+            valList = null;
+            if (configModel != null) {
+                valList = configModel.getValues();
+            }
+            if (valList == null) {
+                valList = new ArrayList<>(0);
+            }
+            map.put("directmailTypelList", valList);
+        }
         return map;
     }
 
@@ -104,7 +253,16 @@ public class CmsBtJmPromotionService extends BaseService {
         }
         info.setModel(model);
         if (model.getRefTagId() != null && model.getRefTagId() != 0) {
-            List<CmsBtTagModel> tagList = tagService.getListByParentTagId(model.getRefTagId());
+            List<CmsBtJmPromotionSaveBean.Tag> tagList = tagService.getListByParentTagId(model.getRefTagId())
+                    .stream()
+                    .map(i -> {
+                        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = tagService.getJmModule(i);
+                        CmsBtJmPromotionSaveBean.Tag tag = new CmsBtJmPromotionSaveBean.Tag(i);
+                        tag.setFeatured(tagJmModuleExtensionModel.getFeatured());
+                        return tag;
+                    })
+                    .sorted((a, b) -> (a.isFeatured() ? 0 : 1) - (b.isFeatured() ? 0 : 1))
+                    .collect(toList());
             info.setTagList(tagList);
         }
 
@@ -123,12 +281,6 @@ public class CmsBtJmPromotionService extends BaseService {
     @VOTransactional
     public int saveModel(CmsBtJmPromotionSaveBean parameter, String userName, String channelId) {
         parameter.getModel().setChannelId(channelId);
-
-        // 设置品牌名
-        CmsBtJmMasterBrandModel jmMasterBrand = daoCmsBtJmMasterBrand.select(parameter.getModel().getCmsBtJmMasterBrandId());
-        if (jmMasterBrand != null) {
-            parameter.getModel().setBrand(jmMasterBrand.getName());
-        }
 
         if (parameter.getModel().getId() != null && parameter.getModel().getId() > 0) {
             // 更新
@@ -178,7 +330,29 @@ public class CmsBtJmPromotionService extends BaseService {
                     $error("saveModel promotion表和jm_promotion表数据冲突 promotionId=" + parameter.getModel().getId());
                     throw new BusinessException("promotion表和jm_promotion表数据冲突，请联系IT运维人员");
                 }
-                saveCmsBtPromotion(parameter.getModel());
+                int promotionId = saveCmsBtPromotion(parameter.getModel());
+
+                if (parameter.getExtModel() != null) {
+                    // 活动详情编辑
+                    CmsBtJmPromotionSpecialExtensionModel extModel = parameter.getExtModel();
+                    extModel.setJmpromotionId(parameter.getModel().getId());
+                    extModel.setPromotionId(promotionId);
+                    // 从cms_bt_jm_promotion_special_extension表判断扩展信息是否存在
+                    Map<String, Object> extParam = new HashMap<>();
+                    extParam.put("jmpromotionId", parameter.getModel().getId());
+                    if (jmPromotionExtensionDao.selectCount(extParam) == 1) {
+                        // 保存
+                        extModel.setModifier(userName);
+                        jmPromotionExtensionDaoExt.update(extModel);
+                    } else {
+                        // 新建扩展信息
+                        extModel.setCreater(userName);
+                        jmPromotionExtensionDaoExt.insert(extModel);
+                    }
+                    if (parameter.getSaveType() == 1) {
+                        setJmPromotionStepStatus(parameter.getModel().getId(), JmPromotionStepNameEnum.PromotionDetail, JmPromotionStepStatusEnum.Success, userName);
+                    }
+                }
             } else {
                 // 活动名已存在
                 throw new BusinessException("4000093");
@@ -187,7 +361,7 @@ public class CmsBtJmPromotionService extends BaseService {
         return 1;
     }
 
-    private void saveCmsBtPromotion(CmsBtJmPromotionModel model) {
+    private int saveCmsBtPromotion(CmsBtJmPromotionModel model) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", model.getId());
         map.put("cartId", CartEnums.Cart.JM.getValue());
@@ -225,43 +399,76 @@ public class CmsBtJmPromotionService extends BaseService {
         } else {
             daoCmsBtPromotion.update(promotion);
         }
+        return promotion.getId();
     }
 
     private int updateModel(CmsBtJmPromotionSaveBean parameter) {
-        CmsBtJmPromotionModel promotionModel = parameter.getModel();
+        CmsBtJmPromotionModel jmPromotionModel = parameter.getModel();
 
-        if (promotionModel.getRefTagId() == 0) {
-            int refTagId = createPromotionTopTag(promotionModel);
-            promotionModel.setRefTagId(refTagId);
+        if (jmPromotionModel.getRefTagId() == 0) {
+            int refTagId = createPromotionTopTag(jmPromotionModel);
+            jmPromotionModel.setRefTagId(refTagId);
         }
 
         int result = -1;
         if (parameter.isHasExt()) {
             // 聚美专场详细画面中的活动详情子画面来的更新
-            daoExt.updateByInput(promotionModel);
+            if (parameter.getSaveType() == 1) {
+                jmPromotionModel.setIsFstSave(1);
+            }
+            daoExt.updateByInput(jmPromotionModel);
         } else {
             // 活动一览画面来的更新
-            dao.update(promotionModel);
+            daoExt.updateByInput(jmPromotionModel);
         }
 
-        setHasFeaturedModule(parameter);
+        List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
+                .stream()
+                .map(tag -> {
+                    CmsBtTagModel tagModel = tag.getModel();
+                    tagModel.setModifier(jmPromotionModel.getModifier());
+                    CmsBtTagJmModuleExtensionModel module;
+                    if (tagModel.getId() != null && tagModel.getId() > 0) {
+                        tagService.updateTagModel(tagModel);
+                        module = tagService.getJmModule(tagModel);
+                    } else {
+                        addChildTag(tagModel, jmPromotionModel);
+                        module = tagService.createJmModuleExtension(tagModel);
+                        tagService.addJmModule(module);
+                    }
+                    return module;
+                })
+                .collect(toList());
 
-        parameter.getTagList().forEach(cmsBtTagModel -> {
+        // 更新飘窗
+        CmsBtJmBayWindowModel jmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionModel.getId());
+        if (jmBayWindowModel.getFixed()) {
+            List<String> bayWindowTemplateUrls = jmImageTemplateService.getBayWindowTemplateUrls();
+            List<CmsBtJmBayWindowModel.BayWindow> lastBayWindows = jmBayWindowModel.getBayWindows();
+            List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
+            jmBayWindowModel.setBayWindows(bayWindowList);
 
-            cmsBtTagModel.setModifier(promotionModel.getModifier());
-
-            if (cmsBtTagModel.getId() != null && cmsBtTagModel.getId() > 0) {
-                tagService.updateTagModel(cmsBtTagModel);
-            } else {
-                addChildTag(cmsBtTagModel, promotionModel);
+            if (lastBayWindows != null && !lastBayWindows.isEmpty()) {
+                // 如果之前某些飘窗是配置过启用或禁用的
+                // 这里需要同步过来
+                Map<String, CmsBtJmBayWindowModel.BayWindow> lastBayWindowMap = lastBayWindows.stream()
+                        .collect(toMap(CmsBtJmBayWindowModel.BayWindow::getName, i -> i));
+                bayWindowList.forEach(i -> {
+                    if (lastBayWindowMap.containsKey(i.getName()))
+                        i.setEnabled(lastBayWindowMap.get(i.getName()).getEnabled());
+                });
+                // 上一次保存的飘窗头标题也要同步过来
+                bayWindowList.get(0).setName(lastBayWindows.get(0).getName());
+                bayWindowList.get(0).setUrl(lastBayWindows.get(0).getUrl());
             }
 
-            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
-        });
+            cmsBtJmBayWindowService.update(jmBayWindowModel);
+        }
+
         return result;
     }
 
-    private int insertModel(CmsBtJmPromotionSaveBean parameter) {
+    private void insertModel(CmsBtJmPromotionSaveBean parameter) {
         CmsBtJmPromotionModel model = parameter.getModel();
         if (StringUtil.isEmpty(model.getCategory())) {
             model.setCategory("");
@@ -269,40 +476,26 @@ public class CmsBtJmPromotionService extends BaseService {
         int refTagId = createPromotionTopTag(model);
         model.setRefTagId(refTagId);
 
-        setHasFeaturedModule(parameter);
+        dao.insert(model);
 
-        // 子TAG追加
-        parameter.getTagList().forEach(cmsBtTagModel -> {
-            addChildTag(cmsBtTagModel, model);
+        // 根据 tag 创建模块
+        List<CmsBtTagJmModuleExtensionModel> moduleExtensionModelList = parameter.getTagList()
+                .stream()
+                .map(tag -> {
+                    addChildTag(tag.getModel(), model);
+                    CmsBtTagJmModuleExtensionModel module = tagService.createJmModuleExtension(tag.getModel());
+                    module.setFeatured(tag.isFeatured());
+                    tagService.addJmModule(module);
+                    return module;
+                })
+                .collect(toList());
 
-            ifNoFeaturedModuleThenUseThis(parameter, cmsBtTagModel);
-        });
-
-        return dao.insert(model);
-    }
-
-    private void ifNoFeaturedModuleThenUseThis(CmsBtJmPromotionSaveBean parameter, CmsBtTagModel tagModel) {
-        if (parameter.isHasFeaturedModule())
-            return;
-        parameter.setHasFeaturedModule(true);
-
-        CmsBtTagJmModuleExtensionModel tagJmModuleExtensionModel = tagService.getJmModule(tagModel);
-
-        if (tagJmModuleExtensionModel != null) {
-            tagJmModuleExtensionModel.setFeatured(true);
-            tagService.updateTagModel(tagJmModuleExtensionModel);
-            return;
-        }
-
-        tagJmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
-        tagJmModuleExtensionModel.setFeatured(true);
-
-        tagService.addJmModule(tagJmModuleExtensionModel);
-    }
-
-    private void setHasFeaturedModule(CmsBtJmPromotionSaveBean parameter) {
-        boolean hasFeaturedModule = tagService.hasFeaturedJmModuleByTopTagId(parameter.getModel().getRefTagId());
-        parameter.setHasFeaturedModule(hasFeaturedModule);
+        // 创建飘窗
+        List<String> bayWindowTemplateUrls = jmImageTemplateService.getBayWindowTemplateUrls();
+        CmsBtJmBayWindowModel jmBayWindowModel = cmsBtJmBayWindowService.createByPromotion(model, model.getModifier());
+        List<CmsBtJmBayWindowModel.BayWindow> bayWindowList = cmsBtJmBayWindowService.createBayWindows(moduleExtensionModelList, bayWindowTemplateUrls);
+        jmBayWindowModel.setBayWindows(bayWindowList);
+        cmsBtJmBayWindowService.insert(jmBayWindowModel);
     }
 
     private void addChildTag(CmsBtTagModel tagModel, CmsBtJmPromotionModel promotionModel) {
@@ -321,10 +514,6 @@ public class CmsBtJmPromotionService extends BaseService {
 
         tagService.insertCmsBtTagAndUpdateTagPath(tagModel,
                 consumer -> consumer.setTagPath(String.format("-%s-%s-", promotionTopTagId, consumer.getId())));
-
-        // 同时创建聚美的扩展模块
-        CmsBtTagJmModuleExtensionModel jmModuleExtensionModel = tagService.createJmModuleExtension(tagModel);
-        tagService.addJmModule(jmModuleExtensionModel);
     }
 
     private int createPromotionTopTag(CmsBtJmPromotionModel model) {
@@ -410,6 +599,125 @@ public class CmsBtJmPromotionService extends BaseService {
         return promList;
     }
 
+    /**
+     * 聚美活动反场
+     *
+     * @param srcJmPromotionId      原来的活动ID
+     * @param cmsBtJmPromotionModel
+     * @param userName
+     */
+    public CmsBtJmPromotionSaveBean promotionCopy(int srcJmPromotionId, CmsBtJmPromotionModel cmsBtJmPromotionModel, String userName) {
+        try {
+            CmsBtJmPromotionImagesModel cmsBtJmPromotionImagesModel = null;
+
+            CmsBtJmBayWindowModel srcCmsBtJmBayWindowModel = null;
+
+            //取得源聚美活动信息
+            CmsBtJmPromotionSaveBean srcJmPromotionSaveBean = getEditModel(srcJmPromotionId, true);
+            if(srcJmPromotionSaveBean.getExtModel() != null){
+                // image数据取得
+                cmsBtJmPromotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(srcJmPromotionSaveBean.getExtModel().getPromotionId(),srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+
+                srcCmsBtJmBayWindowModel =  cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+
+            }
+
+            Integer srcRefTagId = srcJmPromotionSaveBean.getModel().getRefTagId();
+            srcJmPromotionSaveBean.getModel().setId(null);
+            srcJmPromotionSaveBean.getModel().setRefTagId(0);
+            srcJmPromotionSaveBean.getModel().setName(cmsBtJmPromotionModel.getName());
+            srcJmPromotionSaveBean.getModel().setPromotionScene(cmsBtJmPromotionModel.getPromotionScene());
+            srcJmPromotionSaveBean.getModel().setPromotionType(cmsBtJmPromotionModel.getPromotionType());
+            srcJmPromotionSaveBean.getModel().setSignupDeadline(cmsBtJmPromotionModel.getSignupDeadline());
+            srcJmPromotionSaveBean.getModel().setPrePeriodStart(cmsBtJmPromotionModel.getPrePeriodStart());
+            srcJmPromotionSaveBean.getModel().setPrePeriodEnd(cmsBtJmPromotionModel.getPrePeriodEnd());
+            srcJmPromotionSaveBean.getModel().setActivityStart(cmsBtJmPromotionModel.getActivityStart());
+            srcJmPromotionSaveBean.getModel().setActivityEnd(cmsBtJmPromotionModel.getActivityEnd());
+            srcJmPromotionSaveBean.getModel().setActivityAppId(cmsBtJmPromotionModel.getActivityAppId());
+            srcJmPromotionSaveBean.getModel().setActivityPcId(cmsBtJmPromotionModel.getActivityPcId());
+            if (srcJmPromotionSaveBean.getExtModel() != null) {
+                srcJmPromotionSaveBean.setHasExt(true);
+                srcJmPromotionSaveBean.getExtModel().setId(null);
+                srcJmPromotionSaveBean.getExtModel().setJmpromotionId(null);
+                srcJmPromotionSaveBean.getExtModel().setPromotionId(null);
+            }
+            srcJmPromotionSaveBean.getTagList().forEach(tag -> {
+                CmsBtTagModel newTag = new CmsBtTagModel();
+                newTag.setTagName(tag.getModel().getTagName());
+                newTag.setActive(tag.getModel().getActive());
+                tag.setModel(newTag);
+            });
+            saveModel(srcJmPromotionSaveBean, userName, srcJmPromotionSaveBean.getModel().getChannelId());
+
+            //List<SkuImportBean > listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName;
+            List<ProductImportBean> listProductImport = cmsBtJmPromotionProductDaoExt.selectProductByJmPromotionId(srcJmPromotionId);
+            List<SkuImportBean> listSkuImport = cmsBtJmPromotionSkuDaoExt.selectProductByJmPromotionId(srcJmPromotionId);
+            List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
+            List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
+            cmsBtJmPromotionImportTask3Service.saveImport(srcJmPromotionSaveBean.getModel(), listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap, userName, false);
+
+            Integer desRefTagId = srcJmPromotionSaveBean.getModel().getRefTagId();
+
+            sortProduct(srcRefTagId, desRefTagId, userName);
+
+            if(cmsBtJmPromotionImagesModel != null){
+                cmsBtJmPromotionImagesModel.set_id(null);
+                cmsBtJmPromotionImagesModel.setCreater(userName);
+                cmsBtJmPromotionModel.setModifier(userName);
+                cmsBtJmPromotionImagesModel.setJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                cmsBtJmPromotionImagesModel.setPromotionId(srcJmPromotionSaveBean.getExtModel().getPromotionId());
+                cmsBtJmPromotionImagesDao.insert(cmsBtJmPromotionImagesModel);
+            }
+
+            if(srcCmsBtJmBayWindowModel != null){
+                CmsBtJmBayWindowModel newCmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                newCmsBtJmBayWindowModel.setBayWindows(srcCmsBtJmBayWindowModel.getBayWindows());
+                newCmsBtJmBayWindowModel.setFixed(srcCmsBtJmBayWindowModel.getFixed());
+                cmsBtJmBayWindowService.update(newCmsBtJmBayWindowModel);
+            }
+            return srcJmPromotionSaveBean;
+        } catch (BusinessException e){
+            throw e;
+        }catch (Exception e) {
+            $error(e);
+            throw new BusinessException("返场失败");
+        }
+    }
+
+    @VOTransactional
+    public void sortProduct(Integer srcRefTagId, Integer desRefTagId, String userName) {
+        List<CmsBtTagModel> srcTag = tagService.getListByParentTagId(srcRefTagId);
+        List<CmsBtTagModel> desTags = tagService.getListByParentTagId(desRefTagId);
+        srcTag.forEach(srcTagMode -> {
+            CmsBtTagModel desTag = desTags.stream().filter(desTagMode -> desTagMode.getTagName().equalsIgnoreCase(srcTagMode.getTagName())).findFirst().orElse(null);
+            if (desTag != null) {
+                List<CmsBtJmPromotionProductExtModel> srcProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId2(srcTagMode.getId());
+                List<CmsBtJmPromotionProductExtModel> desProducts = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId2(desTag.getId());
+                List<CmsBtJmPromotionProductExtModel> newProducts = new ArrayList<CmsBtJmPromotionProductExtModel>(desProducts.size());
+                srcProducts.forEach(srcJmPromotionProductExtModel -> {
+                    CmsBtJmPromotionProductExtModel cmsBtJmPromotionProductExtModel = desProducts.stream().filter(desJmPromotionProductExtModel -> desJmPromotionProductExtModel.getProductCode().equalsIgnoreCase(srcJmPromotionProductExtModel.getProductCode())).findFirst().orElse(null);
+                    if (cmsBtJmPromotionProductExtModel != null) {
+                        newProducts.add(cmsBtJmPromotionProductExtModel);
+                    }
+                });
+
+                if (!ListUtils.isNull(newProducts)) {
+                    cmsBtJmPromotionTagProductDaoExt.deleteByTagId(desTag.getId());
+                    newProducts.forEach(cmsBtJmPromotionProductExtModel -> {
+                        CmsBtJmPromotionTagProductModel cmsBtJmPromotionTagProductModel = new CmsBtJmPromotionTagProductModel();
+                        cmsBtJmPromotionTagProductModel.setChannelId(cmsBtJmPromotionProductExtModel.getChannelId());
+                        cmsBtJmPromotionTagProductModel.setCmsBtTagId(desTag.getId());
+                        cmsBtJmPromotionTagProductModel.setTagName(desTag.getTagName());
+                        cmsBtJmPromotionTagProductModel.setCmsBtJmPromotionProductId(cmsBtJmPromotionProductExtModel.getId());
+                        cmsBtJmPromotionTagProductModel.setCreater(userName);
+                        cmsBtJmPromotionTagProductModel.setModifier(userName);
+                        cmsBtJmPromotionTagProductDao.insert(cmsBtJmPromotionTagProductModel);
+                    });
+                }
+            }
+        });
+    }
+
     public long getJmPromotionCount(Map params) {
         // 过滤参数
         Map sqlParams = (Map) params.get("parameters");
@@ -419,20 +727,20 @@ public class CmsBtJmPromotionService extends BaseService {
         return daoExt.getJmPromotionCount(sqlParams);
     }
 
-    public List<Integer> selectCloseJmPromotionId(){
+    public List<Integer> selectCloseJmPromotionId() {
         return daoExt.selectCloseJmPromotionId();
     }
 
-    public List<Integer> selectEffectiveJmPromotionId(){
+    public List<Integer> selectEffectiveJmPromotionId() {
         return daoExt.selectEffectiveJmPromotionId();
     }
 
-    public List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId){
+    public List<Map<String, Object>> selectCloseJmPromotionSku(Integer jmPromotionId) {
         return daoExt.selectCloseJmPromotionSku(jmPromotionId);
     }
 
-    public int updatePromotionStatus(Integer jmPromotionId, String modifier){
-        return daoExt.updatePromotionStatus(jmPromotionId,modifier);
+    public int updatePromotionStatus(Integer jmPromotionId, String modifier) {
+        return daoExt.updatePromotionStatus(jmPromotionId, modifier);
     }
 
     private void convertParams(Map sqlParams) {
@@ -444,11 +752,24 @@ public class CmsBtJmPromotionService extends BaseService {
         String codeListStr = StringUtils.trimToNull((String) sqlParams.get("codeList"));
         if (codeListStr != null) {
             List<String> codeList = Arrays.asList(codeListStr.split("\n"));
-            codeList = codeList.stream().map(pCode -> StringUtils.trimToNull(pCode)).filter(pCode -> pCode != null).distinct().collect(Collectors.toList());
+            codeList = codeList.stream().map(pCode -> StringUtils.trimToNull(pCode)).filter(pCode -> pCode != null).distinct().collect(toList());
             sqlParams.put("codeList", codeList);
         } else {
             sqlParams.put("codeList", null);
         }
+    }
+
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("modifier", userName);
+        param.put("jmPromotionId", jmPromId);
+        param.put("stepName", stepName.getValue());
+        param.put("stepStatus", stepStatus.getValue());
+
+        daoExt.setJmPromotionStepStatus(param);
     }
 
     public static enum JmPromotionStepNameEnum {
@@ -469,6 +790,7 @@ public class CmsBtJmPromotionService extends BaseService {
             return name;
         }
     }
+
     public static enum JmPromotionStepStatusEnum {
 
         Default(0),    // 初始状态
@@ -478,27 +800,13 @@ public class CmsBtJmPromotionService extends BaseService {
 
         private int type;
 
-        JmPromotionStepStatusEnum(Integer type){
+        JmPromotionStepStatusEnum(Integer type) {
             this.type = type;
         }
 
-        public int getValue()
-        {
-            return  type;
+        public int getValue() {
+            return type;
         }
-    }
-
-    /**
-     * 设置聚美活动各阶段的状态
-     */
-    public void setJmPromotionStepStatus(int jmPromId, JmPromotionStepNameEnum stepName, JmPromotionStepStatusEnum stepStatus, String userName) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("modifier", userName);
-        param.put("jmPromotionId", jmPromId);
-        param.put("stepName", stepName.getValue());
-        param.put("stepStatus", stepStatus.getValue());
-
-        daoExt.setJmPromotionStepStatus(param);
     }
 
 }

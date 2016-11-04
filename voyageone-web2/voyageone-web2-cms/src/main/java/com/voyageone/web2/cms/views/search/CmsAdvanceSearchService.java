@@ -104,6 +104,11 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
+        
+        // 取得产品类型
+        masterData.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), language));
+        // 取得尺寸类型
+        masterData.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), language));
 
         // 获取sort list
         List<Map<String, Object>> sortList = commonPropService.getCustColumns(3);

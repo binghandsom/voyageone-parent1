@@ -67,7 +67,8 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList"
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
@@ -102,6 +103,7 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
+                    "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",
@@ -113,9 +115,20 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm: "priceConfirm",
+                    "resetTmProduct": "resetTmProduct",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice: "updateSkuPrice"
+                    updateSkuPrice:"updateSkuPrice",
+                    moveCodeInitCheck:"moveCodeInitCheck",
+                    moveCodeInit:"moveCodeInit",
+                    moveCodeSearch:"moveCodeSearch",
+                    moveCodePreview:"moveCodePreview",
+                    moveCode:"moveCode",
+                    moveSkuInitCheck:"moveSkuInitCheck",
+                    moveSkuInit:"moveSkuInit",
+                    moveSkuSearch:"moveSkuSearch",
+                    moveSkuPreview:"moveSkuPreview",
+                    moveSku:"moveSku"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -200,6 +213,7 @@ define(function () {
                     "getEditModel": "getEditModel",
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
+                    "encore": "encore",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId",
                     getBayWindow: 'getBayWindow',
@@ -426,7 +440,8 @@ define(function () {
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
-                    "getPromotionHistory": "getPromotionHistory"
+                    "getPromotionHistory": "getPromotionHistory",
+                    "getUnduePromotion": "getUnduePromotion"
                 },
                 priceLogService: {
                     root: '/cms/price/log',
@@ -512,7 +527,8 @@ define(function () {
                         "getCat": "getSellerCat",
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
-                        "updateCat": "updateSellerCat"
+                        "updateCat": "updateSellerCat",
+                        "sortableCat": "sortableCat",
                     }
                 },
                 "imageTemplateService": {

@@ -244,7 +244,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //批量删除 product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchDeleteProduct)
     public AjaxResponse batchDeleteProduct(@RequestBody BatchDeleteProductParameter parameter) {
-        service3.batchDeleteProduct(parameter);
+        service3.batchDeleteProduct(parameter,getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }
@@ -343,8 +343,8 @@ public class CmsJmPromotionDetailController extends CmsController {
      * @since 2.8.0
      */
     @RequestMapping("savePromotionTagModules")
-    public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
-        jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
+    public AjaxResponse savePromotionTagModules(@RequestBody SavePromotionTagModules param) {
+        jmPromotionService.savePromotionTagModules(param.getJmPromotionId(), param.getTagModulesList(), getUser());
         return success(true);
     }
 
@@ -398,5 +398,26 @@ public class CmsJmPromotionDetailController extends CmsController {
                 CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
                 getUser().getUserName());
         return success(true);
+    }
+
+    public static class SavePromotionTagModules {
+        private int jmPromotionId;
+        private List<CmsJmPromotionService.CmsJmTagModules> tagModulesList;
+
+        public int getJmPromotionId() {
+            return jmPromotionId;
+        }
+
+        public void setJmPromotionId(int jmPromotionId) {
+            this.jmPromotionId = jmPromotionId;
+        }
+
+        public List<CmsJmPromotionService.CmsJmTagModules> getTagModulesList() {
+            return tagModulesList;
+        }
+
+        public void setTagModulesList(List<CmsJmPromotionService.CmsJmTagModules> tagModulesList) {
+            this.tagModulesList = tagModulesList;
+        }
     }
 }

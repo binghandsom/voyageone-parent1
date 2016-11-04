@@ -387,7 +387,7 @@ define([
                             cartItem._pTxt = cartItem._pname;
                         }
                         if (data.pIsMain == '1') {
-                            cartItem._pTxt += ' (M)';
+                            cartItem._isMain = true;
                         }
 
                         productInfo.carts.push(cartItem);

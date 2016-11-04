@@ -5,7 +5,7 @@
 /**
  * angular component head file。
  * 声明各个组件的父模块
- * 
+ *
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -124,8 +124,23 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
+
+    $scope.templateAction = {
+        "promotionDetailPopover":{
+            templateUrl: 'promotionDetailTemplate.html',
+            title: 'Title'
+        },
+        "advanceSkuPopover":{
+            templateUrl: 'advanceSkuTemplate.html',
+            title: 'Title'
+        }
+    };
+
     $scope.showInfo = showInfo;
+    $scope.popoverAdvanceSku = popoverAdvanceSku;
+    $scope.popoverPromotionDetail = popoverPromotionDetail;
+
     function showInfo(values) {
         if (values == undefined || values == '') {
             return '';
@@ -142,6 +157,46 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             tempHtml += values;
         }
         return tempHtml;
+    }
+
+    /**
+     * 高级检索   显示sku
+     */
+    function popoverAdvanceSku(code, skus){
+
+        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+            var skuDetails = [],
+                skuInventories = resp.data;
+            _.forEach(skus, function(sku) {
+                var inventory = null;
+                _.forEach(skuInventories, function(skuInventory) {
+                    if (skuInventory.sku == sku.skuCode) {
+                        inventory = skuInventory.qtyChina;
+                        return false;
+                    }
+                });
+                skuDetails.push({
+                    skuCode: sku.skuCode,
+                    size: sku.size,
+                    inventory: inventory
+                });
+            });
+
+            $scope.advanceSku = skuDetails;
+        });
+
+    }
+
+    /**
+     * 高级线索   显示活动详情
+     */
+    function popoverPromotionDetail(code){
+
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+            $scope.promotionDetail = resp.data;
+            console.log($scope.promotionDetail);
+        });
+
     }
 });
 
@@ -555,14 +610,21 @@ angular.module("voyageone.angular.directives")
                             return;
                         }
 
-                        // 如果是长度类的检查, 那么为翻译提供长度参数
-                        if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
-                            if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
-                                translateParam.value = targetElement.attr('ng-pattern');
-                        }
+                        // 尝试获取用户定义的错误提示信息
+                        if (attrs[error]) {
+                            // 如果用户自定义了相关错误的信息
+                            // 就显示自定义信息
+                            show(attrs[error]);
+                        } else {
+                            // 如果用户没有设定提示信息，那么就自己根据参数生成
+                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern'].indexOf(error) > -1) {
+                                if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
+                                    translateParam.value = targetElement.attr('ng-pattern');
+                            }
 
-                        // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                        $translate(errorTypes[error], translateParam).then(show, show);
+                            // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
+                            $translate(errorTypes[error], translateParam).then(show, show);
+                        }
 
                     }, true);
 
@@ -3254,7 +3316,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-                        
+
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3263,7 +3325,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-                        
+
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3589,12 +3651,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-    
+
     languages: {
         en: "en",
         zh: "zh"
     },
-    
+
     /**
      * set the web side language type.
      */
@@ -3605,7 +3667,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-    
+
     /**
      * get the browser language type.
      * @returns {string}

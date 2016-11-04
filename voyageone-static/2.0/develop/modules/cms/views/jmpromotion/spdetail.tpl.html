@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.loadPromotion()">
+<div class="wrapper-md" ng-init="ctrl.loadPromotion()" id="jm-promotion2-detail">
     <uib-accordion class="vo_accordion vo_attr">
         <uib-accordion-group heading="聚美专场" is-open="true">
             <div class="row">
@@ -26,12 +26,11 @@
                     <div class="form-horizontal">
                         <div class="form-group">
                             <label class="control-label col-sm-2">活动时间：</label>
-                            <label class="control-label col-sm-1">从</label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                                 <p class="form-control-static">{{ctrl.promotion.activityStart}}</p>
                             </div>
-                            <label class="control-label col-sm-1">到</label>
-                            <div class="col-sm-4">
+                            <label class="col-sm-1 text-center m-t-xs"><strong>~</strong></label>
+                            <div class="col-sm-3">
                                 <p class="form-control-static">{{ctrl.promotion.activityEnd}}</p>
                             </div>
                         </div>
@@ -68,13 +67,18 @@
                 <button type="button" class="btn btn-default btn-pop" uib-dropdown-toggle style="width: 90px;">
                     导出 <span class="caret"></span>
                 </button>
-                <ul class="uib-dropdown-menu">
+                <ul class="uib-dropdown-menu" style="min-width: 114px">
                     <li role="menuitem"><a href="javascript:void(0)" ng-click="ctrl.addExport()">按上传模板</a></li>
                     <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(1)>按专场模板</a></li>
                     <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(2)>按商城模板</a></li>
                     <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadSpecialImageZip()>下载专场图片包</a></li>
                     <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadWaresImageZip()>下载商品主图包</a></li>
                 </ul>
+            </div>
+            <div class="btn-group" ng-controller="popupCtrl">
+                <button  type="button" class="btn btn-default btn-pop" style="width:90px" ng-click="openJmPromotionEncore({promotion:ctrl.promotion},ctrl.skipUrl,ctrl)">
+                    新建返场
+                </button>
             </div>
         </div>
     </div>

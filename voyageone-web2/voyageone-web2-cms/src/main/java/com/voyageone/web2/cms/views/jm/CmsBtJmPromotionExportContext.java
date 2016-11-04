@@ -27,6 +27,7 @@ public class CmsBtJmPromotionExportContext {
         this.model = cmsBtJmPromotionSaveBean.getModel();
         this.extModel = cmsBtJmPromotionSaveBean.getExtModel();
         this.cmsMtJmConfigService = cmsMtJmConfigService;
+        if(this.extModel == null) this.extModel= new CmsBtJmPromotionSpecialExtensionModel();
     }
 
     public CmsBtJmPromotionModel getModel() {

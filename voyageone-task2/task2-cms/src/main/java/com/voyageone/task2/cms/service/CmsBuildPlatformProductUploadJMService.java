@@ -178,10 +178,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             return;
         }
 
-        $info("共读取[%d]条上新任务！[CartId:%s]", groupList.size(), CART_ID);
-
+        $info("从上新任务表中共读取共读取[%d]条聚美上新任务！[CartId:%s]", groupList.size(), CART_ID);
+        int currentNo = 1;
+        int totalCnt = groupList.size();
         for (CmsBtSxWorkloadModel work : groupList) {
             updateProduct(work);
+            $info("本次聚美上新已完成[%d/%d]条上新任务，感谢您的耐心等待！", currentNo, totalCnt);
+            currentNo++;
         }
     }
 
@@ -281,6 +284,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CART_ID);
             String originHashId = jmCart.getpNumIId();
 
+            // add by desmond 2016/10/31 start
+            // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
+            List<CmsBtJmSkuModel> currentCmsBtJmSkuList = getCmsBtJmSkuModels(channelId, productCode);
+            // add by desmond 2016/10/31 end
+
             //取库存
             Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
 
@@ -343,7 +351,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         HtProductAddResponse_Spu spu = spus.stream().filter(w -> w.getPartner_sku_no().equals(jmsku.getSkuCode())).findFirst().get();
                         jmsku.setJmSkuNo(spu.getJumei_sku_no());
                         jmsku.setJmSpuNo(spu.getJumei_spu_no());
-                        cmsBtJmSkuDao.insert(jmsku);
+//                        cmsBtJmSkuDao.insert(jmsku);
+                        // 插入或更新MySql的cms_bt_jm_sku表(以前无条件插入的话，如果有脏数据存在就会报MySql表主键冲突的错误)
+                        insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
+                        // update by desmond 2016/10/31 end
                         $info("新增CmsBtJmSku成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getJumei_spu_no(), product.getProdId(), channelId, CART_ID);
                     }
 
@@ -441,14 +452,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
                         List<JmGetProductInfo_Spus> spus = jmGetProductInfoRes.getSpus();
-                        //查询SPU
-                        List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode);
-                        for (CmsBtJmSkuModel jmsku : skuList) {
+//                        //查询SPU
+//                        List<CmsBtJmSkuModel> skuList = getCmsBtJmSkuModels(channelId, productCode);
+//                        for (CmsBtJmSkuModel jmsku : skuList) {
+                        // 这里只更新，不插入jm_sku表，因为有些"ERROR_"开头的不想被回写，如果是正常的sku，下次更新的时候会加到这个表里面去的，
+                        for (CmsBtJmSkuModel jmsku : currentCmsBtJmSkuList) {
                             if ( spus.stream().filter(w -> w.getBusinessman_code().equals(jmsku.getSkuCode())).count() >0) {
                                 JmGetProductInfo_Spus spu = spus.stream().filter(w -> w.getBusinessman_code().equals(jmsku.getSkuCode())).findFirst().get();
                                 jmsku.setJmSkuNo(spu.getSku_no());
                                 jmsku.setJmSpuNo(spu.getSpu_no());
-                                cmsBtJmSkuDao.update(jmsku);
+//                                cmsBtJmSkuDao.update(jmsku);
+                                insertOrUpdateCmsBtJmSku(jmsku, channelId, productCode);
                                 $info("保存聚美SKU成功！[JM_SPU_NO:%s], [ProductId:%s], [ChannelId:%s], [CartId:%s]", spu.getSpu_no(), product.getProdId(), channelId, CART_ID);
                             }
                         }
@@ -646,7 +660,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     mySku.setCmsSize(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
                                     mySku.setMsrpUsd(new BigDecimal(skuMap.getDoubleAttribute("clientMsrpPrice")));
                                     mySku.setModifier(getTaskName());
-                                    cmsBtJmSkuDao.update(mySku);
+//                                    cmsBtJmSkuDao.update(mySku);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                 }
                                 else
                                 {
@@ -656,6 +671,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     mySku.setJmSkuNo(oldSku.getSku_no());
                                     mySku.setModifier(getTaskName());
                                     mySku.setModified(new Date());
+//                                    cmsBtJmSkuDao.insert(mySku);
+                                    insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                     // 这里不追加的话，后面还以为这个sku还是不存在，再insert就会出错
                                     skuList.add(mySku);
                                 }
@@ -683,14 +700,22 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 htSkuAddRequest.setCustoms_product_number(" ");
                                 // 商家商品编码
                                 htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                // 库存
-                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                // 库存(如果isSale=true时,才设为真实库存；如果isSale=false时，库存设为0)
+                                if (Boolean.getBoolean(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                    htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                } else {
+                                    htSkuAddRequest.setStocks("0");
+                                }
                                 // 团购价
                                 htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                                 // 市场价
                                 htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
                                 // 是否在本次团购售卖，1是，0否
-                                htSkuAddRequest.setSale_on_this_deal("1");
+                                htSkuAddRequest.setSale_on_this_deal("0");
+                                // 如果isSale=true时,才设为在本地团购售卖
+                                if (Boolean.getBoolean(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                    htSkuAddRequest.setSale_on_this_deal("1");
+                                }
 
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
@@ -701,13 +726,15 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                         mySku.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
                                         mySku.setModifier(getTaskName());
                                         mySku.setModified(new Date());
-                                        cmsBtJmSkuDao.update(mySku);
+//                                        cmsBtJmSkuDao.update(mySku);
+                                        insertOrUpdateCmsBtJmSku(mySku, channelId, productCode);
                                     } else
                                     {
                                         CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                         cmsBtJmSkuModel.setJmSpuNo(oldSku.getSpu_no());
                                         cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
 
                                         skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                     }
@@ -720,6 +747,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     $error(msg);
                                     throw  new BusinessException(msg);
                                 }
+                            } else {
+                                // 这里不用加deal中sku的更新逻辑，原因如下：
+                                // 1.deal中的库存，价格等都不是聚美上新程序管理的，另外程序负责管理更新
+                                // 2.如果product.platforms.P27.skus.isSale发生变更的话，在不在deal中售卖(Sale_on_this_deal)在
+                                // sku更新API(/v1/htSku/update)里面不能改，只能由后面的doHideNotExistSkuDeal方法调用另一个API(/v1/htDeal/updateSkuIsEnable)来改
                             }
                         }
                         //新SPU需要增加
@@ -762,14 +794,22 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                 htSkuAddRequest.setCustoms_product_number(" ");
                                 // 商家商品编码
                                 htSkuAddRequest.setBusinessman_num(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
-                                // 库存
-                                htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                // 库存(如果isSale=true时,才设为真实库存；如果isSale=false时，库存设为0)
+                                if (Boolean.getBoolean(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                    htSkuAddRequest.setStocks(String.valueOf(skuLogicQtyMap.get(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))));
+                                } else {
+                                    htSkuAddRequest.setStocks("0");
+                                }
                                 // 团购价
                                 htSkuAddRequest.setDeal_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
                                 // 市场价
                                 htSkuAddRequest.setMarket_price(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
                                 // 是否在本次团购售卖，1是，0否
-                                htSkuAddRequest.setSale_on_this_deal("1");
+                                htSkuAddRequest.setSale_on_this_deal("0");
+                                // 如果isSale=true时,才设为在本地团购售卖
+                                if (Boolean.getBoolean(skuMap.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                                    htSkuAddRequest.setSale_on_this_deal("1");
+                                }
 //
                                 HtSkuAddResponse htSkuAddResponse = jumeiHtSkuService.add(shop, htSkuAddRequest);
                                 if (htSkuAddResponse != null && htSkuAddResponse.is_Success()) {
@@ -778,7 +818,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                                     CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(channelId, productCode, skuMap , sizeStr);
                                     cmsBtJmSkuModel.setJmSpuNo(htSpuAddResponse.getJumei_spu_no());
                                     cmsBtJmSkuModel.setJmSkuNo(htSkuAddResponse.getJumei_sku_no());
-                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                                    cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, channelId, productCode);
 
                                     skuMap.setStringAttribute("jmSkuNo", htSkuAddResponse.getJumei_sku_no());
                                 }
@@ -845,6 +886,11 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 //保存product到MongoDB
                 saveProductPlatform(channelId, product);
                 sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+                if (sxData.getPlatform().getPlatformStatus() == null
+                        || "WaitingPublish".equalsIgnoreCase(sxData.getPlatform().getPlatformStatus().name())) {
+                    sxData.getPlatform().setPlatformStatus(CmsConstants.PlatformStatus.InStock);
+                    sxData.getPlatform().setInStockTime(DateTimeUtil.getNowTimeStamp());
+                }
                 sxData.getPlatform().setModifier(getTaskName());
 
                 productGroupService.updateGroupsPlatformStatus(sxData.getPlatform(), listSxCode);
@@ -853,16 +899,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 // 批量修改deal市场价(为了后面uploadMall时不报商城市场价与团购市场价不一致的错误，即使异常也继续uploadMall)
                 updateDealPriceBatch(shop, product, true, false);
                 // add by desmond 2016/09/29 end
+                // 取得最新聚美平台上的spu信息
+                List<JmGetProductInfo_Spus> currentRemoteSpus = getRemoteSpus(shop, jmCart, productCode);
+                // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
+                // 如果找到了这个skuCode,但product.P27.skus.isSale=false的时候，做下架(不在deal中售卖)/上架(在deal中售卖)操作
+                doHideNotExistSkuDeal(shop, originHashId, currentRemoteSpus, product.getPlatform(CART_ID).getSkus(), skuLogicQtyMap);
 
                 // added by morse.lu 2016/08/30 start
                 uploadMall(product, shop, expressionParser, addSkuList, skuLogicQtyMap);
                 // added by morse.lu 2016/08/30 end
-
-                // 取得最新聚美平台上的spu信息
-                List<JmGetProductInfo_Spus> currentRemoteSpus = getRemoteSpus(shop, jmCart, productCode);
-                // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
-                doHideNotExistSkuDeal(shop, originHashId, currentRemoteSpus, product.getPlatform(CART_ID).getSkus());
                 // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在聚美商城上隐藏该商品编码并把库存改为0
+                // 如果找到了这个skuCode,但product.P27.skus.isSale=false的时候，做下架/上架操作
                 if (!StringUtils.isEmpty(product.getPlatform(CART_ID).getpPlatformMallId()))
                     doHideNotExistSkuMall(shop, currentRemoteSpus, product.getPlatform(CART_ID).getSkus());
             }
@@ -1015,10 +1062,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param channelId
      * @param product
      */
-    private void saveProductPlatform(String channelId, CmsBtProductModel product) {
-        Map<String, Object> rsMap = new HashMap<>();
-
-
+    protected void saveProductPlatform(String channelId, CmsBtProductModel product) {
+//        Map<String, Object> rsMap = new HashMap<>();
+//
+        // 由于product的分平台skus中merge很多上新用字段比如(sizeSx,barCode等)，这里只把P27.skus需要更新的字段挑选出来
         List<BaseMongoMap<String, Object>>   jmSkus  = product.getPlatform(CART_ID).getSkus();
         List<BaseMongoMap<String, Object>>   newJmSkus =  new ArrayList<>();
         for (BaseMongoMap<String, Object> sku : jmSkus)
@@ -1034,21 +1081,44 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             newSku.setStringAttribute("jmSpuNo", sku.getStringAttribute("jmSpuNo"));
             newSku.setStringAttribute("jmSkuNo", sku.getStringAttribute("jmSkuNo"));
             newSku.setStringAttribute("property", sku.getStringAttribute("property"));
+            newSku.setAttribute("originalPriceMsrp", sku.getDoubleAttribute("originalPriceMsrp"));
+            newSku.setStringAttribute("priceMsrpFlg", sku.getStringAttribute("priceMsrpFlg"));
+            newSku.setAttribute("confPriceRetail", sku.getDoubleAttribute("confPriceRetail"));
+            newSku.setStringAttribute("sizeNick", sku.getStringAttribute("sizeNick"));
             newJmSkus.add(newSku);
         }
+//
+//        Map<String, Object> queryMap = new HashMap<>();
+//        queryMap.put("prodId", product.getProdId());
+//
+//        rsMap.put("platforms.P" + CART_ID + ".skus", newJmSkus);
+//        rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
+//        rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
+//
+//
+//        Map<String, Object> updateMap = new HashMap<>();
+//        updateMap.put("$set", rsMap);
+//
+//        cmsBtProductDao.update(channelId, queryMap, updateMap);
 
-        Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", product.getProdId());
+        // -------------------------
+        // add by desmond 2016/10/28 start
+        // 以前的更新方法有错误，P27.skus里面追加了一个字段sizeNick之后，居然更新的时候会把它的值冲掉(因为没有手动往newSku里面设置)
+        JongoUpdate updateProductQuery = new JongoUpdate();
+        updateProductQuery.setQuery("{\"common.fields.code\": #}");
+        updateProductQuery.setQueryParameters(product.getCommon().getFields().getCode());
 
-        rsMap.put("platforms.P" + CART_ID + ".skus", newJmSkus);
-        rsMap.put("platforms.P" + CART_ID + ".pProductId", product.getPlatform(CART_ID).getpProductId());
-        rsMap.put("platforms.P" + CART_ID + ".pNumIId", product.getPlatform(CART_ID).getpNumIId());
+        updateProductQuery.setUpdate("{$set:{" +
+                "\"platforms.P"+ CART_ID +".skus\": #, " +
+                "\"platforms.P"+ CART_ID +".pProductId\": #, " +
+                "\"platforms.P"+ CART_ID +".pNumIId\": #}}");
+        updateProductQuery.setUpdateParameters(newJmSkus,
+                product.getPlatform(CART_ID).getpProductId(),
+                product.getPlatform(CART_ID).getpNumIId());
 
-
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put("$set", rsMap);
-
-        cmsBtProductDao.update(channelId, queryMap, updateMap);
+        productService.updateFirstProduct(updateProductQuery, channelId);
+        // -------------------------
+        // add by desmond 2016/10/28 end
         $info("保存product成功！[ProductId:%s], [ChannelId:%s], [CartId:%s]", product.getProdId(), channelId, CART_ID);
     }
 
@@ -1069,6 +1139,24 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             skuList = new ArrayList<>();
         }
         return skuList;
+    }
+
+    /**
+     * 查询单个CmsBtJmSkuModel
+     *
+     * @param channelId
+     * @param productCode
+     * @return
+     */
+    private CmsBtJmSkuModel getCmsBtJmSkuModel(String channelId, String productCode, String skuCode) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("channelId", channelId);
+        map.put("productCode", productCode);
+        map.put("skuCode", skuCode);
+
+        CmsBtJmSkuModel skuModel = cmsBtJmSkuDao.selectOne(map);
+
+        return skuModel;
     }
 
     /**
@@ -1235,7 +1323,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             JmProductBean_Spus_Sku jmSpuSku = new JmProductBean_Spus_Sku();
             jmSpuSku.setPartner_sku_no(jmSku.getStringAttribute("skuCode"));
-            jmSpuSku.setSale_on_this_deal("1");
+            // 是否在本次团购售卖，1是，0否
+            jmSpuSku.setSale_on_this_deal("0");
+            // 如果isSale=true时,才设为在本地团购售卖
+            if (Boolean.getBoolean(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
+                jmSpuSku.setSale_on_this_deal("1");
+            }
 //            jmSpuSku.setCustoms_product_number(jmSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()));
             jmSpuSku.setCustoms_product_number(" ");
             jmSpuSku.setBusinessman_num(jmSku.getStringAttribute("skuCode"));
@@ -1479,7 +1572,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 jmSku.put("clientRetailPrice", CommonSku.getClientRetailPrice());
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.size.name(), CommonSku.getSize());
                 // add by desmond 2016/07/08 start
-                jmSku.put("sizeNick", CommonSku.getSizeNick());
+                // delete by desmond 2016/10/28 start
+                // 由于现在画面上输入的"容量/尺码"直接更新到分平台P27.skus.sizeNick里面，不更新到common.skus.sizeNick里面了，所以删除
+//                jmSku.put("sizeNick", CommonSku.getSizeNick());
+                // delete by desmond 2016/10/28 end
                 jmSku.put(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), CommonSku.getSizeSx());
                 // add by desmond 2016/07/08 end
             }
@@ -1542,7 +1638,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
 					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
 						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
 							// 不是新追加的
 							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
 							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
@@ -1578,7 +1677,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
 					if (ListUtils.isNull(addSkuList) || !addSkuList.contains(skuCode)) {
 						// 当jmSkuNo不为空时,才加到updateData中，否则批量修改商城商品价格[MALL]时会报100002：jumei_sku_no,参数错误
-						if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) {
+                        // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+                        // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+                        if (!StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))
+                                && Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) {
 							// 不是新追加的
 							HtMallSkuPriceUpdateInfo skuInfo = new HtMallSkuPriceUpdateInfo();
 							skuInfo.setJumei_sku_no(sku.getStringAttribute("jmSkuNo"));
@@ -1671,7 +1773,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
                         cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
                         cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
-                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+                        insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode());
 
                         sku.setStringAttribute("jmSkuNo", jumeiSkuNo);
                         saveProductPlatform(product.getChannelId(), product);
@@ -1731,15 +1834,18 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
     /**
      * 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
+     * 如果找到了这个skuCode,但product.P27.skus.isSale=false的时候，做下架(不在deal中售卖)/上架(在deal中售卖)操作
      *
      * @param shop 店铺信息
      * @param originHashId 聚美hash Id
      * @param remoteSpus 平台上取得的spu列表
      * @param jmSkus DB中的sku列表
+     * @param skuLogicQtyMap sku库存集合
      */
     protected void doHideNotExistSkuDeal(ShopBean shop, String originHashId,
-                                                     List<JmGetProductInfo_Spus> remoteSpus,
-                                                     List<BaseMongoMap<String, Object>> jmSkus) throws Exception{
+                                         List<JmGetProductInfo_Spus> remoteSpus,
+                                         List<BaseMongoMap<String, Object>> jmSkus,
+                                         Map<String, Integer> skuLogicQtyMap) throws Exception{
         if (ListUtils.isNull(remoteSpus)) return;
 
         // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
@@ -1764,35 +1870,48 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					updateErrSpuUpcCode(shop, spu.getSpu_no(), spu.getUpc_code());
 				}
 
-                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0)
+                // 将聚美SKU状态（最新Deal）改为隐藏(is_enable=0),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=0)"
 				if (!StringUtils.isEmpty(spu.getSku_no())) {
 					updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
 				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // P27.sku.isSale = false的时候
                 // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
+                // 如果用lambda表达式的get方法用来得到Optional实例中的值,如果没有get到的话，会报NoSuchElementException的异常,错误消息"No value present",用get()之前一定要加上count()>0
                 if (ListUtils.notNull(remoteSkuList)
-                        && "1".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
+                        && !StringUtils.isEmpty(spu.getSku_no())
+                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
+                        && "1".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
                     // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                     // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
-                    // 把Deal的库存修改成0
+                    // 把Deal的库存修改成0(只有上架显示时才能更新库存)
                     if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
                         String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), "0");
-                        $info("[skuCode:%s]同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+                        $info("[skuCode:%s]的isSale属性值true->false变更时同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
                     }
 
-                    // 将聚美SKU状态（最新Deal）改为隐藏(is_enable="0")
-                    if (!StringUtils.isEmpty(spu.getSku_no())) {
-                        updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
-                    }
+                    // 只有当修改前平台上该sku的状态为"1"(显示)的时候，才将否则就将聚美SKU状态（最新Deal）改为隐藏(is_enable="0"),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=0)"
+                    updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
+                    $info("[skuCode:%s]的isEnable属性值1->0变更 ", spu.getBusinessman_code());
                 }
             } else {
                 // P27.sku.isSale = true的时候
-                // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1)
+                // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=1)"
+                // 如果用lambda表达式的get方法用来得到Optional实例中的值,如果没有get到的话，会报NoSuchElementException的异常,错误消息"No value present",用get()之前一定要加上count()>0
                 if (ListUtils.notNull(remoteSkuList)
-                        && "0".equals(remoteSkuList.stream().filter(p -> p.get("sku_no").equals(spu.getSku_no())).findFirst().get().get("is_enable").toString())) {
-                    // 将聚美SKU状态（最新Deal）改为显示(is_enable="1")  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
+                        && !StringUtils.isEmpty(spu.getSku_no())
+                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
+                        && "0".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
+                    // 只有当修改前平台上该sku的状态为"0"(隐藏)的时候，才将聚美SKU状态（最新Deal）改为显示(is_enable="1")
+                    // 如果在deal中取得的remoteSkuList没找到skuNo,也就是说deal中没有spu.sku_no的时候，会报"100012:Sku不存在"错误
                     updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
+                    $info("[skuCode:%s]的isEnable属性值0->1变更 ", spu.getBusinessman_code());
+
+                    // 把Deal的库存修改成真实库存(只有上架显示时才能更新库存)
+                    if (!StringUtils.isEmpty(spu.getBusinessman_code())) {
+                        String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), String.valueOf(skuLogicQtyMap.get(spu.getBusinessman_code())));
+                        $info("[skuCode:%s]的isSale属性值false->true变更时同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
+                    }
                 }
             }
         }
@@ -1800,6 +1919,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
     /**
      * 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则将聚美商城上隐藏该商品编码
+     * 如果找到了这个skuCode,但product.P27.skus.isSale=false的时候，做下架/上架操作
      *
      * @param shop 店铺信息
      * @param remoteSpus 平台上取得的spu列表
@@ -1826,8 +1946,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 					updateSkuIsEnableMall(shop, spu.getSku_no(), "disabled", failCause);
 				}
             } else {
-                // 将聚美SKU状态（商城）改为显示(is_enable=enabled)  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API
-//                updateSkuIsEnableMall(shop, spu.getSku_no(), "enabled", failCause);
+                // 将聚美SKU状态（商城）改为显示(is_enable=enabled)  // 每个正常的都改一下显示太花时间了，这次先注掉，好像没有取得isEnable的API // 不能再注释掉了，因为画面上可以选择isSale了
+                updateSkuIsEnableMall(shop, spu.getSku_no(), "enabled", failCause);
             }
             if (failCause.toString().length() > 0)
                 $info("隐藏聚美商城sku失败! [skuCode:%s] [failCause=%s]", spu.getBusinessman_code(), failCause.toString());
@@ -2054,6 +2174,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             // 如果该sku的聚美Sku_no为空,则跳过
             if (StringUtils.isEmpty(sku.getStringAttribute("jmSkuNo"))) continue;
 
+            // add 2016/10/30 由于现在取得聚美的上新Data里面连P27.skus.isSale=false(不在该平台售卖)的sku也抽出来的，
+            // 所以这里也要过滤一下isSale=false的sku,不然会报"skuNo:70118904460不在售卖状态, 请核实"的错误
+            if (!Boolean.parseBoolean(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name()))) continue;
+
             HtDeal_UpdateDealPriceBatch_UpdateData skuUpdate = new HtDeal_UpdateDealPriceBatch_UpdateData();
             // 聚美Deal唯一值(jmHashId)
             skuUpdate.setJumei_hash_id(jmHashId);
@@ -2172,6 +2296,32 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         }
 
         return remoteSkuList;
+    }
+
+    /**
+     * 插入或更新MySql的cms_bt_jm_sku表
+     *
+     * @param jmsku 聚美sku对象
+     * @param channelId 渠道id
+     * @param channelId 产品code
+     */
+    protected void insertOrUpdateCmsBtJmSku(CmsBtJmSkuModel jmsku, String channelId, String productCode) {
+        if (jmsku == null || StringUtils.isEmpty(jmsku.getSkuCode())) return;
+
+        // 查询mySql表中的sku列表(一个产品查询一次，如果每个sku更新/新增的时候都去查的话，效率太低了)
+        CmsBtJmSkuModel currentCmsBtJmSku = getCmsBtJmSkuModel(channelId, productCode, jmsku.getSkuCode());
+
+        if (currentCmsBtJmSku == null) {
+            // 不存在，新增
+            $info("新增cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+            cmsBtJmSkuDao.insert(jmsku);
+            $info("新增cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+        } else {
+            // 存在，更新
+            $info("更新cms_bt_jm_sku开始 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+            cmsBtJmSkuDao.update(jmsku);
+            $info("更新cms_bt_jm_sku成功 [ProductCode:%s] [SkuCode:%s]", productCode, jmsku.getSkuCode());
+        }
     }
 
 }

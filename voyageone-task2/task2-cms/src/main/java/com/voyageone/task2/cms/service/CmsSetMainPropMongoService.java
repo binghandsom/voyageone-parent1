@@ -1101,9 +1101,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 } else {
                     // 生成productGroup数据
                     doSetGroup(feed);
+                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    $info("doCreateCmsBtProductModel:" +  (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1128,13 +1130,16 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+                    $info("doSaveItemDetails:" +  (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
+                    platFromAttributeCopyFromMainProduct(cmsProduct);
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-
+                    $info("doSetPrice:" +  (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
+                    $info("setSellerCats:" +  (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
@@ -1142,12 +1147,13 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+                    $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 
                 }
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-
+                $info("insertCmsBtFeedImportSize:" +  (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -1160,6 +1166,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
                 insertWorkload(cmsProduct);
+                $info("insertWorkload:" +  (System.currentTimeMillis() - startTime));
 //                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
 //                    // 遍历主数据product里的sku,看看有没有
 //                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
@@ -1223,70 +1230,38 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
 
         /**
-         * 默认不忽略mapping check的场合, 需要做mapping check
-         *
-         * @param mapping         feed与main的匹配关系
-         * @param cmsProduct      产品对象
-         * @param channelId       渠道id
-         * @param feed           原始Feed
-         * @return check结果
+         * 平台属性冲主商品复制
+         * @param cmsBtProductModel
          */
-        // delete desmond 2016/07/04 start
-//        private boolean checkMapping(CmsBtFeedMappingModel mapping, CmsBtProductModel cmsProduct, String channelId, CmsBtFeedInfoModel feed) {
-//            // 默认不忽略mapping check的场合, 需要做mapping check
-//            if (!this.skip_mapping_check) {
-//                // 查看类目是否匹配完成
-//                if (mapping == null) {
-//                    // 记下log, 跳过当前记录
-//                    if (cmsProduct == null) {
-//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-//                    } else {
-//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCommon().getCatPath()));
-//                    }
-//                    // 设置更新时间,更新者
-//                    feed.setModifier(getTaskName());
-//                    cmsBtFeedInfoDao.update(feed);
-//                    return false;
-//                }
-//                // 查看属性是否匹配完成
-//                if (mapping.getMatchOver() == 0) {
-//                    // 如果没有匹配完成的话, 那就看看是否有共通
-//                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
-//                    if (mapping == null || mapping.getMatchOver() == 0) {
-//                        // 没有共通mapping, 或者没有匹配完成
-//                        // 记下log, 跳过当前记录
-//                        //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-//                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping == null ? "" : mapping.getMainCategoryPath()));
-//                        // 设置更新时间,更新者
-//                        feed.setModifier(getTaskName());
-//                        cmsBtFeedInfoDao.update(feed);
-//                        return false;
-//                    }
-//
-//                }
-//            }
-//            return true;
-//        }
-        // delete desmond 2016/07/04 end
+        private void platFromAttributeCopyFromMainProduct(CmsBtProductModel cmsBtProductModel) {
 
-        /**
-         * 生成Fields的内容
-         *
-         * @param feed               feed的商品信息
-         * @param newFlg             新建flg (true:新建商品 false:更新的商品)
-         * @param productCommonField 共通商品属性
-         * @param isSplit            是否拆分对象
-         * @param originalCode       原始Code
-         * @return 返回整个儿的Fields的内容
-         */
-        // update desmond 2016/07/01 start
-        // 删除product外面的Fields
-        // jeff 2016/04 change start
-        // private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
-//        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel,
-//                                                                       boolean newFlg, CmsBtProductModel_Field productField, CmsBtProductModel_Field ,boolean isSplit, String originalCode) {
+            cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+                if(cmsBtProductModel_platform_cart.getCartId() > 20 && cmsBtProductModel_platform_cart.getCartId() < 900 ){
+                    if(cmsBtProductModel_platform_cart.getpIsMain() == 0 && !StringUtil.isEmpty(cmsBtProductModel_platform_cart.getMainProductCode())){
+                        CmsBtProductModel mainProduct = productService.getProductByCode(cmsBtProductModel.getChannelId(), cmsBtProductModel_platform_cart.getMainProductCode());
+                        if(mainProduct != null && mainProduct.getPlatform(cmsBtProductModel_platform_cart.getCartId()) != null){
+                            CmsBtProductModel_Platform_Cart mainPlatform  =  mainProduct.getPlatform(cmsBtProductModel_platform_cart.getCartId());
+                            cmsBtProductModel_platform_cart.setpCatId(mainPlatform.getpCatId());
+                            cmsBtProductModel_platform_cart.setpCatPath(mainPlatform.getpCatPath());
+                            cmsBtProductModel_platform_cart.setpCatStatus(mainPlatform.getpCatStatus());
+                            cmsBtProductModel_platform_cart.setpAttributeSetter(mainPlatform.getpAttributeSetter());
+                            cmsBtProductModel_platform_cart.setpAttributeSetTime(mainPlatform.getpAttributeSetTime());
+                            cmsBtProductModel_platform_cart.setpAttributeStatus(mainPlatform.getpAttributeStatus());
+                            cmsBtProductModel_platform_cart.setFields(mainPlatform.getFields());
+                            cmsBtProductModel_platform_cart.setpBrandId(mainPlatform.getpBrandId());
+                            cmsBtProductModel_platform_cart.setpBrandName(mainPlatform.getpBrandName());
+                            cmsBtProductModel_platform_cart.setSellerCats(mainPlatform.getSellerCats());
+                            if("Approved".equalsIgnoreCase(mainPlatform.getStatus()) || "Ready".equalsIgnoreCase(mainPlatform.getStatus())){
+                                cmsBtProductModel_platform_cart.setStatus(CmsConstants.ProductStatus.Ready);
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
+
         private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, boolean newFlg,
                                                                        CmsBtProductModel_Field productCommonField,
                                                                        boolean isSplit, String originalCode) {

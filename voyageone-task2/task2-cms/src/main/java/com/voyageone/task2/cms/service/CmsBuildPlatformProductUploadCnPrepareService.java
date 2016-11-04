@@ -199,7 +199,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             CmsConstants.PlatformActive platformActive = sxData.getPlatform().getPlatformActive();
             if (platformActive == CmsConstants.PlatformActive.ToInStock && StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 // ToInStock 删除，但numIId = null(没上过)，就没必要推送了
-                return;
+//                return;
+                throw new BusinessException(String.format("此商品没有上新过,状态又是ToInStock 删除,所以就不做上新处理了![ChannelId:%s] [GroupId:%s] [code:%s]", channelId, groupId, sxData.getPlatform().getMainProductCode()));
             }
 
             // 平台类目schema信息
@@ -304,7 +305,9 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("13");}});
 			} else if("WomenApparel".equals(productType)) {
 				insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("15");}});
-			}
+			} else if("MenApparel".equals(productType)) {
+                insertCnInfoModel.setCatIds(new ArrayList<String>(){{add("14");}});
+            }
 		}
         insertCnInfoModel.setCode(sxData.getMainProduct().getCommon().getFields().getCode());
         insertCnInfoModel.setProdId(sxData.getMainProduct().getProdId());
@@ -756,7 +759,9 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 					((SingleCheckField) field).setValue("accessorysize");
 				} else if("WomenApparel".equals(productType)) {
 					((SingleCheckField) field).setValue("womenapparelsize");
-				}
+				} else if("MenApparel".equals(productType)) {
+                    ((SingleCheckField) field).setValue("menapparelsize");
+                }
 			}
         }
         {
@@ -968,6 +973,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                     ((InputField) field).setValue("13");
                 } else if("WomenApparel".equals(productType)) {
                     ((InputField) field).setValue("15");
+                } else if("MenApparel".equals(productType)) {
+                    ((InputField) field).setValue("14");
                 }
             }
         }
@@ -995,6 +1002,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                     ((InputField) field).setValue("13");
                 } else if("WomenApparel".equals(productType)) {
                     ((InputField) field).setValue("15");
+                } else if("MenApparel".equals(productType)) {
+                    ((InputField) field).setValue("14");
                 }
             }
         }

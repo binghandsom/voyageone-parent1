@@ -1,9 +1,3 @@
-/**
- * Created by sofia on 6/8/2016.
- */
-/**
- * Created by linanbin on 15/12/7.
- */
 define([
     'underscore',
     'modules/cms/controller/popup.ctl',
@@ -28,7 +22,9 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 supplierType: 1,
-                brandSelType: 1
+                brandSelType: 1,
+                productSelType: '1',
+                sizeSelType: '1'
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -958,7 +954,7 @@ define([
                     });
                     res.productIds = productIds;
                     res.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(res).then(function (context) {
+                    $addChannelCategoryService.save(res).then(function () {
                         notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
                     });
@@ -975,13 +971,13 @@ define([
                 if (isPromoTag) {
                     // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
-                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 } else {
                     // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
-                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 }
@@ -1100,7 +1096,7 @@ define([
                     });
                 });
             }
-        }
+        };
 
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
@@ -1147,7 +1143,8 @@ define([
                     });
                 });
             }
-        }
+        };
+
 
     }
 

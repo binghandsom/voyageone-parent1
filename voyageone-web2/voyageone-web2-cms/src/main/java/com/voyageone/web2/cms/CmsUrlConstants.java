@@ -40,6 +40,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String GET_LIST_BY_WHERE = "getListByWhere";
                 String SaveModel = "saveModel";
+                String ENCORE = "encore";
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel = "getEditModel";
@@ -340,6 +341,8 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
+
+			String GET_SKU_INVENTORY = "getSkuInventory";
         }
 
         interface FEED {
@@ -511,6 +514,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
+
+			String GET_UNDUE_PROMOTION = "getUnduePromotion";
         }
 
         interface IMAGE_SETTING {
@@ -566,6 +571,8 @@ public interface CmsUrlConstants {
 
             String GET_COMMON_PRODUCTINFO = "getCommonProductInfo";
 
+            String GET_COMMON_PRODUCT_SKU_INFO = "getCommonProductSkuInfo";
+
             String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
 
             String UPDATE_LOCK = "updateLock";
@@ -593,6 +600,28 @@ public interface CmsUrlConstants {
             String PriceConfirm = "priceConfirm";
 
             String UPDATE_SKUPRICE = "updateSkuPrice";
+
+            String RESET_TM_PRODUCT = "resetTmProduct";
+
+            String MOVE_CODE_INIT_CHECK = "moveCodeInitCheck";
+
+            String MOVE_CODE_INIT = "moveCodeInit";
+
+            String MOVE_CODE_SEARCH = "moveCodeSearch";
+
+            String MOVE_CODE_PREVIEW = "moveCodePreview";
+
+            String MOVE_CODE = "moveCode";
+
+            String MOVE_SKU_INIT_CHECK = "moveSkuInitCheck";
+
+            String MOVE_SKU_INIT = "moveSkuInit";
+
+            String MOVE_SKU_SEARCH = "moveSkuSearch";
+
+            String MOVE_SKU_PREVIEW = "moveSkuPreview";
+
+            String MOVE_SKU = "moveSku";
         }
 
         interface HISTORY {
@@ -742,6 +771,8 @@ public interface CmsUrlConstants {
             String UPDATE_SELLER_CAT = "updateSellerCat";
 
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
+
+            String SORTABLE_CART =  "sortableCat";
         }
 
         interface BLACK_BRAND {

@@ -2,10 +2,7 @@ package com.voyageone.web2.cms.views.jm;
 
 
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CmsBtTagJmModuleExtensionBean;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
@@ -68,7 +65,7 @@ public class CmsJmPromotionExportService extends BaseViewService {
 
         try (InputStream inputStream = new FileInputStream(templatePath)) {
             Workbook book = WorkbookFactory.create(inputStream);
-            writeRecordToJmPromotionInfo(book, cmsBtJmPromotionSaveBean,type);
+            writeRecordToJmPromotionInfo(book, cmsBtJmPromotionSaveBean, type);
             writeRecordToJmModeInfoMain(book, cmsBtJmPromotionSaveBean.getTagList(), type);
             writeRecordToJBayWindow(book, jmPromotionId);
             $info("文档写入完成");
@@ -96,7 +93,7 @@ public class CmsJmPromotionExportService extends BaseViewService {
 
     private void writeRecordToJBayWindow(Workbook book, Integer jmPromotionId) {
         CmsBtJmBayWindowModel cmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(jmPromotionId);
-        if (cmsBtJmBayWindowModel != null) {
+        if (cmsBtJmBayWindowModel != null && !ListUtils.isNull(cmsBtJmBayWindowModel.getBayWindows())) {
             Sheet sheet = book.getSheetAt(2);
             XSSFCellStyle unlock = (XSSFCellStyle) book.createCellStyle();
             unlock.setBorderBottom(CellStyle.BORDER_THIN);
@@ -108,9 +105,9 @@ public class CmsJmPromotionExportService extends BaseViewService {
             int i = 1;
             for (CmsBtJmBayWindowModel.BayWindow bayWindow : cmsBtJmBayWindowModel.getBayWindows()) {
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 0, i++, unlock);
-                if(cmsBtJmBayWindowModel.getFixed()){
+                if (cmsBtJmBayWindowModel.getFixed()) {
                     ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "定位飘窗", unlock);
-                }else{
+                } else {
                     ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "链接飘窗", unlock);
                 }
                 ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 2, bayWindow.getName(), unlock);
@@ -157,40 +154,42 @@ public class CmsJmPromotionExportService extends BaseViewService {
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmPromotionExportContext.getExtModel().getShareContent(), unlock);
         rowIndex++;
 
-        if(type == CmsJmPromotionExportService.HASHID){
+        if (type == CmsJmPromotionExportService.HASHID) {
             ExcelUtils.setCellValue(FileUtils.row(sheet, 25), 1, "商品（HashID）", null);
-        }else{
+        } else {
             ExcelUtils.setCellValue(FileUtils.row(sheet, 25), 1, "商品（MallID）", null);
         }
 
 
-
     }
 
-    private void writeRecordToJmModeInfoMain(Workbook book, List<CmsBtTagModel> tags, Integer type) {
+    private void writeRecordToJmModeInfoMain(Workbook book, List<CmsBtJmPromotionSaveBean.Tag> tags, Integer type) {
 
-        tags.forEach(cmsBtTagModel -> {
+        tags.forEach(tag -> {
+            CmsBtTagModel cmsBtTagModel = tag.getModel();
             CmsBtTagJmModuleExtensionModel cmsBtTagJmModuleExtensionModel = cmsBtTagJmModuleExtensionDao.select(cmsBtTagModel.getId());
-            List<CmsBtJmPromotionProductExtModel> cmsBtJmPromotionProductModels = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(cmsBtTagModel.getId());
-            List<String> ids = null;
-            if (cmsBtJmPromotionProductModels != null) {
-                if (type == CmsJmPromotionExportService.HASHID) {
-                    ids = cmsBtJmPromotionProductModels.stream().filter(item -> !StringUtil.isEmpty(item.getJmHashId()) && item.getQuantity() > 0).map(item -> item.getJmHashId()).collect(Collectors.toList());
-                } else {
-                    ids = cmsBtJmPromotionProductModels.stream().filter(item -> !StringUtil.isEmpty(item.getJumeiMallId()) && item.getQuantity() > 0).map(item -> item.getJumeiMallId()).collect(Collectors.toList());
-                }
-            }
-
-            if(ids == null) ids = new ArrayList<String>();
-            List<List<String>> idList = CommonUtil.splitList(ids, 100);
-            for (int i = 0; i < idList.size(); i++) {
-                if (cmsBtTagJmModuleExtensionModel.getFeatured()) {
-                    writeRecordToFeaturedHashId(book, idList.get(i));
-                } else {
-                    if (i == 0) {
-                        writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, idList.get(i), cmsBtTagModel.getTagName(), type);
+            if (cmsBtTagJmModuleExtensionModel != null) {
+                List<CmsBtJmPromotionProductExtModel> cmsBtJmPromotionProductModels = cmsBtJmPromotionProductDaoExt.selectProductInfoByTagId(cmsBtTagModel.getId());
+                List<String> ids = null;
+                if (cmsBtJmPromotionProductModels != null) {
+                    if (type == CmsJmPromotionExportService.HASHID) {
+                        ids = cmsBtJmPromotionProductModels.stream().filter(item -> !StringUtil.isEmpty(item.getJmHashId()) && item.getQuantity() > 0).map(item -> item.getJmHashId()).collect(Collectors.toList());
                     } else {
-                        writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, idList.get(i), cmsBtTagModel.getTagName() + (i + 1), type);
+                        ids = cmsBtJmPromotionProductModels.stream().filter(item -> !StringUtil.isEmpty(item.getJumeiMallId()) && item.getQuantity() > 0).map(item -> item.getJumeiMallId()).collect(Collectors.toList());
+                    }
+                }
+
+                if (ids == null) ids = new ArrayList<String>();
+                List<List<String>> idList = CommonUtil.splitList(ids, 100);
+                for (int i = 0; i < idList.size(); i++) {
+                    if (cmsBtTagJmModuleExtensionModel.getFeatured()) {
+                        writeRecordToFeaturedHashId(book, idList.get(i));
+                    } else {
+                        if (i == 0) {
+                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, idList.get(i), cmsBtTagModel.getTagName(), type);
+                        } else {
+                            writeRecordToJmModeInfo(book, cmsBtTagModel, cmsBtTagJmModuleExtensionModel, idList.get(i), cmsBtTagModel.getTagName() + (i + 1), type);
+                        }
                     }
                 }
             }
@@ -222,9 +221,9 @@ public class CmsJmPromotionExportService extends BaseViewService {
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, cmsBtJmImageTemplateService.getSeparatorBar(modelName), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getProductsSortBy(), unlock);
         ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex++), 2, tagExt.getNoStockToLast(), unlock);
-        if(type == CmsJmPromotionExportService.HASHID){
+        if (type == CmsJmPromotionExportService.HASHID) {
             ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "商品（HashID）", null);
-        }else{
+        } else {
             ExcelUtils.setCellValue(FileUtils.row(sheet, rowIndex), 1, "商品（MallID）", null);
         }
         for (String id : ids) {
