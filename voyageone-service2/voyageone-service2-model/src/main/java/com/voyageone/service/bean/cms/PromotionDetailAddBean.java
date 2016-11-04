@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms;
 
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 
 import java.util.List;
@@ -34,6 +35,16 @@ public class PromotionDetailAddBean {
 
     private  int refTagId;
     private List<TagTreeNode> tagList;
+    private AddProductSaveParameter addProductSaveParameter;
+
+    public AddProductSaveParameter getAddProductSaveParameter() {
+        return addProductSaveParameter;
+    }
+
+    public void setAddProductSaveParameter(AddProductSaveParameter addProductSaveParameter) {
+        this.addProductSaveParameter = addProductSaveParameter;
+    }
+
     public List<TagTreeNode> getTagList() {
         return tagList;
     }

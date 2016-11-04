@@ -70,7 +70,7 @@ public class PromotionDetailService extends BaseService {
     @Autowired
     PromotionCodesTagService promotionCodesTagService;
 
-
+    @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean){
         addPromotionDetail(bean,true);
     }
@@ -126,7 +126,7 @@ public class PromotionDetailService extends BaseService {
         List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
         if (!imgList.isEmpty()) {
             cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
-        }else{
+        } else {
             imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
             if (!imgList.isEmpty()) {
                 cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
@@ -143,8 +143,9 @@ public class PromotionDetailService extends BaseService {
             throw new BusinessException("商品Sku数据不存在");
         }
         List<BaseMongoMap<String, Object>> listSkuMongo = productInfo.getPlatform(bean.getCartId()).getSkus();
+        List<CmsBtPromotionSkuBean> listPromotionSku = new ArrayList<>();
         skusList.forEach(sku -> {
-            BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, sku.getSkuCode());
+            BaseMongoMap<String, Object> mapSkuPlatform = getPlatformSkuMongo(listSkuMongo, sku.getSkuCode());
             CmsBtPromotionSkuBean cmsBtPromotionSkuModelBean = new CmsBtPromotionSkuBean(productInfo, groupModel, promotionId, modifier, sku.getSkuCode(), 0);
             cmsBtPromotionSkuModelBean.setNumIid(numIId);
             cmsBtPromotionSkuModelBean.setSize(sku.getSize());
@@ -162,7 +163,7 @@ public class PromotionDetailService extends BaseService {
             if (bean.getPromotionPrice() != null && bean.getPromotionPrice().containsKey(cmsBtPromotionSkuModelBean.getProductSku())) {
                 cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(bean.getPromotionPrice().get(cmsBtPromotionSkuModelBean.getProductSku())));
             } else {
-                if (!isUpdatePromotionPrice)//不更新活动价格
+                if (!isUpdatePromotionPrice)//不更新活动价格 还原价格
                 {
                     CmsBtPromotionSkusModel cmsBtPromotionSkusModel = promotionSkuService.get(promotionId, productInfo.getCommon().getFields().getCode(), sku.getSkuCode());
                     if (cmsBtPromotionSkusModel != null) {
@@ -173,17 +174,23 @@ public class PromotionDetailService extends BaseService {
             if (cmsBtPromotionSkuModelBean.getPromotionPrice() == null) {
                 cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
             }
-
+            listPromotionSku.add(cmsBtPromotionSkuModelBean);
+//            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
+//                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
+//            }
+        });
+        promotionSkuService.loadSkuPrice(listPromotionSku,bean.getAddProductSaveParameter());
+        listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
             if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
             }
         });
 
         // 更新 promotionCodesTag
-        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(),channelId,cmsBtPromotionCodesBean.getId(),modifier);
+        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, cmsBtPromotionCodesBean.getId(), modifier);
 
         //更新mongo product  tag
-        updateCmsBtProductTags(channelId,productInfo,bean.getRefTagId(),bean.getTagList(),modifier);
+        updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
     }
     //更新mongo product  tag
     private void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel,int refTagId,List<TagTreeNode> tagList, String modifier) {
@@ -211,7 +218,7 @@ public class PromotionDetailService extends BaseService {
         }
     }
 
-    private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
+    private BaseMongoMap<String, Object> getPlatformSkuMongo(List<BaseMongoMap<String, Object>> list, String skuCode)
     {
         if(list==null) return  null;
         for(BaseMongoMap<String, Object> map:list)

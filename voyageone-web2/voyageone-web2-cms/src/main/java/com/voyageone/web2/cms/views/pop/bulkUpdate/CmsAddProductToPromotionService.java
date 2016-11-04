@@ -1,17 +1,10 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
-import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.SaveParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.daoext.cms.CmsBtPromotionDaoExtCamel;
@@ -22,25 +15,17 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -69,7 +54,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     @Autowired
     TagService tagService;
 
-    public  void  save(SaveParameter parameter,String channelId,String userName, CmsSessionBean cmsSession) {
+    public  void  save(AddProductSaveParameter parameter, String channelId, String userName, CmsSessionBean cmsSession) {
 
         if (parameter.getCartId() == 0) {
             $warn("addToPromotion cartId为空 params=" + JacksonUtil.bean2Json(parameter));
@@ -78,7 +63,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         parameter.getListTagTreeNode().forEach(f->save(f,parameter,userName,cmsSession));
 
     }
-     void  save(TagTreeNode tagTreeNode,SaveParameter parameter,String userName,CmsSessionBean cmsSession) {
+     void  save(TagTreeNode tagTreeNode, AddProductSaveParameter parameter, String userName, CmsSessionBean cmsSession) {
         if (tagTreeNode.getChecked() == 2) {
             //状态变化的tag
             List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
@@ -94,7 +79,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
     }
 
-    void  addToPromotion(int promotionId,List<TagTreeNode> tagList,SaveParameter parameter,String modifier,CmsSessionBean cmsSession) {
+    void  addToPromotion(int promotionId, List<TagTreeNode> tagList, AddProductSaveParameter parameter, String modifier, CmsSessionBean cmsSession) {
         // 获取promotion信息
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
@@ -158,11 +143,12 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             request.setProductId(item);
             request.setPromotionId(promotionId);
             request.setTagList(tagList);
-            promotionDetailService.addPromotionDetail(request, false);
+            request.setAddProductSaveParameter(parameter);
+            promotionDetailService.addPromotionDetail(request, true);
         });
     }
 
-    void  deleteFromPromotion(int promotionId,SaveParameter parameter) {
+    void  deleteFromPromotion(int promotionId,AddProductSaveParameter parameter) {
 
 
     }

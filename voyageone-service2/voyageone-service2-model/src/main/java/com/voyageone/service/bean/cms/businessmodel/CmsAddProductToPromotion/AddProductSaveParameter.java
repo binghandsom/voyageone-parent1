@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by dell on 2016/11/3.
  */
-public class SaveParameter {
+public class AddProductSaveParameter {
     int cartId;
 
     int isSelAll;
