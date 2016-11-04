@@ -866,13 +866,12 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav {
-    position: fixed;
-    width: 100px;
-    margin-left: 25px;
-    cursor: pointer;
-    border-width: 2px;
-    border-style: dotted;
+.default-attr .nav-stacked {
+    min-width: 180px;
+}
+
+.default-attr .nav-stacked .btn {
+    width: 105px;
 }
 
 /*clear margin*/

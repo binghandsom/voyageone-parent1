@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsMtPlatformCategoryExtendInfoDao;
@@ -14,10 +15,13 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author liang 2016/2/24.
@@ -43,14 +47,14 @@ public class PlatformCategoryService extends BaseService {
         return platformCategoryDao.selectByChannel_CartId(channelId, cartId);
     }
 
-	/**
+    /**
      * 获取 "天猫以外" 的platform category schema
      */
     public CmsMtPlatformCategorySchemaModel getPlatformCatSchema(String catId, int cartId) {
         return platformCategorySchemaDao.selectPlatformCatSchemaModel(catId, cartId);
     }
 
-	/**
+    /**
      * 获取 "天猫" 的platform category schema
      * 在天猫, 不同店铺的schema不一样, 所以需要增加一个channel来区分
      */
@@ -296,9 +300,9 @@ public class PlatformCategoryService extends BaseService {
      */
     public CmsMtPlatformCategoryTreeModel getCategoryByCatPath(String channelId, String catPath, int cartId) {
         String cats[] = catPath.split(">");
-        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeList = getFstLvlCategory(channelId,cartId);
+        List<CmsMtPlatformCategoryTreeModel> platformCategoryTreeList = getFstLvlCategory(channelId, cartId);
         for (CmsMtPlatformCategoryTreeModel platformCategoryTree : platformCategoryTreeList) {
-            if(!platformCategoryTree.getCatName().equalsIgnoreCase(cats[0])) continue;
+            if (!platformCategoryTree.getCatName().equalsIgnoreCase(cats[0])) continue;
             CmsMtPlatformCategoryTreeModel model = findCategory(platformCategoryTree, catPath);
             if (model != null) {
                 return model;
@@ -314,6 +318,15 @@ public class PlatformCategoryService extends BaseService {
      */
     public List<CmsMtPlatformCategoryTreeModel> getPlatformCategory(int cartId) {
         return platformCategoryDao.selectAll(cartId);
+    }
+
+    /**
+     * 根据 {@link CmsMtPlatformCategoryTreeModel#children} 是否为空来准确判断类目是否是叶子类目
+     * @since 2.9.0
+     */
+    public boolean isLeafCategory(String categoryPath, String channelId, int cartId) {
+        CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryDao.selectOne(categoryPath, channelId, cartId);
+        return cmsMtPlatformCategoryTreeModel.getChildren().isEmpty();
     }
 
     /**

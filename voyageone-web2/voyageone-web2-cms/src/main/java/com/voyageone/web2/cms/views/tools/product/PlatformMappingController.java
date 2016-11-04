@@ -1,8 +1,9 @@
 package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.PageQueryParameters;
-import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,7 +24,7 @@ import java.util.Map;
  * Created by jonas on 8/13/16.
  *
  * @author jonas
- * @version 2.4.0
+ * @version 2.9.0
  * @since 2.4.0
  */
 @RestController
@@ -83,5 +85,11 @@ public class PlatformMappingController extends CmsController {
     @RequestMapping(PLATFORM_MAPPING.GET_FEEDCUSTOMPROPS)
     public AjaxResponse getFeedCustomProps() {
         return success(platformMappingViewService.getFeedCustomProps(getUser().getSelChannelId()));
+    }
+
+    @RequestMapping("refreshProducts")
+    public AjaxResponse refreshProducts(@RequestBody CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
+        boolean need = platformMappingViewService.refreshProducts(cmsBtRefreshProductTaskModel, getUser().getUserName());
+        return success(need);
     }
 }

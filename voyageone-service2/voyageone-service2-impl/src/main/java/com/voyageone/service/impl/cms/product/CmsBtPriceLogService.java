@@ -143,7 +143,7 @@ public class CmsBtPriceLogService extends BaseService {
 
                     final Integer boxedCartId = platform.getCartId();
 
-                    platform.getSkus()
+                    long logCount = platform.getSkus()
                             .stream()
                             .map(skuModel -> {
                                 final String skuCode = skuModel.getStringAttribute("skuCode");
@@ -169,11 +169,11 @@ public class CmsBtPriceLogService extends BaseService {
                                 return skuModel;
                             })
                             .filter(skuModel -> skuModel != null)
-                            .forEach(skuModel -> {
+                            .filter(skuModel -> {
                                 CmsBtPriceLogModel newLog = (CmsBtPriceLogModel) skuModel.get("newLog");
                                 CmsBtPriceLogModel lastLog = priceLogDaoExt.selectLastOneBySkuOnCart(newLog.getSku(), boxedCartId, channelId);
                                 if (lastLog != null && compareAllPrice(newLog, lastLog))
-                                    return;
+                                    return false;
                                 final Date now = new Date();
                                 newLog.setChannelId(channelId);
                                 newLog.setCartId(boxedCartId);
@@ -187,15 +187,26 @@ public class CmsBtPriceLogService extends BaseService {
 
                                 priceLogDao.insert(newLog);
 
-                                // 向Mq发送消息同步sku,code,group价格范围
-                                sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
-                                        JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
-
                                 Double confirmPrice = skuModel.getDoubleAttribute(confPriceRetail.name());
 
                                 if (newLog.getRetailPrice() >= 0 && !newLog.getRetailPrice().equals(confirmPrice))
                                     priceConfirmLogService.addUnConfirmed(channelId, boxedCartId, newLog.getCode(), skuModel, newLog.getCreater());
-                            });
+
+                                return true;
+                            })
+                            .count();
+
+                    if (logCount > 0) {
+                        CmsBtPriceLogModel newLog = new CmsBtPriceLogModel();
+
+                        newLog.setCartId(boxedCartId);
+                        newLog.setProductId(productId);
+                        newLog.setChannelId(channelId);
+
+                        // 向Mq发送消息同步sku,code,group价格范围
+                        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
+                                JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+                    }
                 });
     }
 

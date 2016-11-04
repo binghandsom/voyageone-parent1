@@ -7,7 +7,7 @@
 
 define([
     'cms'
-],function(cms){
+], function (cms) {
 
     var FIELD_TYPES = {
         "INPUT": "INPUT",
@@ -623,7 +623,7 @@ define([
             return;
 
         //过滤掉input[type='url']
-        if(getInputType(type) === "url")
+        if (getInputType(type) === "url")
             return;
 
         fieldElement = angular.element('<d-field>');
@@ -683,28 +683,34 @@ define([
 
     cms.directive('defaultAttr', function ($compile) {
 
-            function SchemaController($scope) {
-                this.$scope = $scope;
-            }
+        function SchemaController($scope) {
+            this.$scope = $scope;
+        }
 
-            SchemaController.prototype.getSchema = function () {
-                return this.schema;
-            };
+        SchemaController.prototype = {
+            getSchema: function () {
+                return this._schema;
+            },
 
-            SchemaController.prototype.$setSchema = function (data) {
-                this.schema = data;
-            };
+            setSchema: function (schema) {
+                // 为每一个顶层字段保存标识
+                // 在 toolbox 内需要根据 top 判断生成按钮
+                if (schema)
+                    schema.forEach(function (topField) {
+                        topField.$top = true;
+                    });
+                this._schema = schema;
+            },
 
-            SchemaController.prototype.$render = function ($element) {
-
-                var controller = this,
-                    $scope = controller.$scope,
-                    schema = controller.getSchema(),
-                    fieldRepeater = controller.fieldRepeater;
+            $render: function schemaRender($element) {
+                var self = this,
+                    $scope = self.$scope,
+                    schema = self.getSchema(),
+                    fieldRepeater = self.fieldRepeater;
 
                 if (fieldRepeater) {
                     fieldRepeater.destroy();
-                    controller.fieldRepeater = null;
+                    self.fieldRepeater = null;
                 }
 
                 if (!schema || !schema.length)
@@ -712,118 +718,123 @@ define([
 
                 fieldRepeater = new FieldRepeater(schema, schema, $scope, $element, $compile);
 
-                controller.fieldRepeater = fieldRepeater;
+                self.fieldRepeater = fieldRepeater;
 
                 fieldRepeater.renderList();
-            };
-
-            return {
-                restrict: 'E',
-                scope: true,
-                controllerAs: 'schemaController',
-                link: function ($scope, $element, $attrs) {
-                    $scope.$watch($attrs.data, function (data) {
-                        var schemaController = $scope.schemaController;
-                        schemaController.$setSchema(data);
-                        schemaController.$render($element);
-                    });
-                },
-                controller: SchemaController
             }
-        })
+        };
+
+        return {
+            restrict: 'E',
+            scope: true,
+            require: 'defaultAttr',
+            link: function ($scope, $element, $attrs, schemaController) {
+                $scope.$watch($attrs.data, function (data) {
+                    schemaController.setSchema(data);
+                    schemaController.$render($element);
+                });
+            },
+            controller: SchemaController
+        }
+    })
 
         .directive('dField', function ($compile) {
 
-            function SchemaFieldController($scope, $element) {
+            function FieldController($scope, $element) {
                 this.originScope = $scope;
                 this.$element = $element;
             }
 
-            SchemaFieldController.prototype.render = function () {
+            FieldController.prototype = {
+                getField: function () {
+                    return this.field;
+                },
 
-                var controller = this,
-                    $element, showName,
-                    parentScope, $scope,
-                    field, container,
-                    rules, innerElement;
+                setField: function (field) {
+                    if (field)
+                        field.$name = 'f' + random();
+                    this.field = field;
+                },
 
-                controller.destroy();
+                render: function () {
 
-                parentScope = controller.originScope;
+                    var controller = this,
+                        $element, showName,
+                        parentScope, $scope,
+                        field, container,
+                        rules, innerElement;
 
-                $scope = parentScope.$new();
+                    controller.destroy();
 
-                controller.$scope = $scope;
+                    parentScope = controller.originScope;
 
-                $element = controller.$element;
-                showName = controller.showName;
+                    $scope = parentScope.$new();
 
-                field = controller.field;
+                    controller.$scope = $scope;
 
-                container = $element;
+                    $element = controller.$element;
+                    showName = controller.showName;
 
-                rules = getRules(field);
+                    field = controller.field;
 
-                if (showName)
-                    container.append(angular.element('<d-header>'));
+                    container = $element;
 
-                // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="s-wrapper">');
-                container.append(innerElement);
-                container = innerElement;
+                    rules = getRules(field);
 
-                innerElement = angular.element('<d-container>');
-                container.append(innerElement);
+                    if (showName)
+                        container.append(angular.element('<d-header>'));
 
-                //不去解析multicomplex类型
-                if(!field.type === FIELD_TYPES.MULTI_COMPLEX){
-                    bindDefaultValueTip(container, field);
-                    bindTipRule(container, rules);
+                    // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
+                    innerElement = angular.element('<div class="d-wrapper">');
+                    container.append(innerElement);
+                    container = innerElement;
 
-                }
-                // 最终编译
-                $compile($element.contents())($scope);
-            };
+                    innerElement = angular.element('<d-container>');
+                    container.append(innerElement);
 
-            SchemaFieldController.prototype.remove = function (complexValue) {
-                var $scope = this.$scope;
-                var list = $scope.$complexValues;
-                var index = list.indexOf(complexValue);
-                list.splice(index, 1);
-            };
+                    innerElement = angular.element('<d-toolbox>');
+                    container.append(innerElement);
 
-            SchemaFieldController.prototype.getField = function () {
-                return this.field;
-            };
+                    //不去解析multicomplex类型
+                    if (!field.type === FIELD_TYPES.MULTI_COMPLEX) {
+                        bindDefaultValueTip(container, field);
+                        bindTipRule(container, rules);
 
-            SchemaFieldController.prototype.setField = function (field) {
-                if (field)
-                    field.$name = 'f' + random();
-                this.field = field;
-            };
+                    }
+                    // 最终编译
+                    $compile($element.contents())($scope);
+                },
 
-            SchemaFieldController.prototype.destroy = function () {
+                remove: function (complexValue) {
+                    var $scope = this.$scope;
+                    var list = $scope.$complexValues;
+                    var index = list.indexOf(complexValue);
+                    list.splice(index, 1);
+                },
 
-                var controller = this,
-                    $element = controller.$element,
-                    $scope = controller.$scope;
+                destroy: function () {
 
-                if ($element)
-                    $element.empty();
+                    var controller = this;
+                    var $element = controller.$element;
+                    var $scope = controller.$scope;
 
-                if ($scope) {
-                    $scope.$destroy();
-                    controller.$scope = null;
+                    if ($element)
+                        $element.empty();
+
+                    if ($scope) {
+                        $scope.$destroy();
+                        controller.$scope = null;
+                    }
                 }
             };
 
             return {
                 restrict: 'E',
                 scope: true,
-                controllerAs: 'schemaFieldController',
-                link: function ($scope, $element, $attrs) {
+                require: 'dField',
+                link: function ($scope, $element, $attrs, fieldController) {
 
-                    var controller = $scope.schemaFieldController;
+                    var controller = fieldController;
 
                     if (!$attrs.field) {
                         $element.text('请提供 field 属性。');
@@ -844,20 +855,17 @@ define([
                         controller.render();
                     });
                 },
-                controller: SchemaFieldController
+                controller: FieldController
             };
         })
 
         .directive('dHeader', function () {
             return {
                 restrict: 'E',
-                require: ['^^dField'],
+                require: '^^dField',
                 scope: false,
-                link: function (scope, element, attrs, requiredControllers) {
-
-                    var schemaFieldController = requiredControllers[0];
-
-                    var field = schemaFieldController.getField(),
+                link: function (scope, element, attrs, fieldController) {
+                    var field = fieldController.getField(),
                         rules = getRules(field),
                         required = rules.requiredRule,
                         requiredClass = 's-required';
@@ -898,15 +906,12 @@ define([
             return {
                 restrict: 'E',
                 scope: false,
-                require: ['^^dField'],
-                link: function (scope, element, attrs, requiredControllers) {
-
-                    var schemaFieldController = requiredControllers[0];
-
-                    var innerElement , toolbox;
-
-                    var field = schemaFieldController.getField(),
-                        rules = getRules(field), name = field.$name;
+                require: '^^dField',
+                link: function (scope, element, attrs, fieldController) {
+                    var innerElement;
+                    var field = fieldController.getField();
+                    var rules = getRules(field);
+                    var name = field.$name;
 
                     scope.field = field;
                     scope.rules = rules;
@@ -962,13 +967,6 @@ define([
 
                                     innerElement = inputGroup;
                                 }
-
-                                /**属性匹配按钮*/
-                                if (type === 'text' || type === 'textarea'){
-                                    innerElement.addClass("d-col-content");
-                                    toolbox = angular.element("<d-toolbox class='d-col-box'>");
-                                }
-
                             })();
                             break;
                         case FIELD_TYPES.SINGLE_CHECK:
@@ -1027,7 +1025,7 @@ define([
                         case FIELD_TYPES.MULTI_CHECK:
                             (function createCheckboxElements() {
 
-                                var selected,valueStringList;
+                                var selected, valueStringList;
 
                                 innerElement = [];
 
@@ -1120,14 +1118,12 @@ define([
                             break;
                     }
 
-                    if (innerElement instanceof Array){
+                    if (innerElement instanceof Array) {
                         each(innerElement, function (childElement) {
                             element.append(childElement);
-                            element.append(toolbox);
                         });
-                    }else{
+                    } else {
                         element.append(innerElement);
-                        element.append(toolbox);
                     }
 
                     $compile(element.contents())(scope);
@@ -1136,74 +1132,69 @@ define([
         })
 
         .directive('dComplex', function ($compile) {
-
-            function SchemaComplexController($scope, $attrs) {
-                this.$scope = $scope;
-                this.fields = $scope.$eval($attrs.fields);
-            }
-
-            SchemaComplexController.prototype.$render = function (schema, isMulti, $element) {
-
-                var controller = this,
-                    fields = controller.fields,
-                    $scope = controller.$scope,
-                    repeater = controller.repeater;
-
-                if (repeater) {
-                    repeater.destroy();
-                    controller.repeater = null;
-                }
-
-                if (!fields)
-                    return;
-
-                repeater = new FieldRepeater(fields, schema, $scope, $element, $compile);
-
-                controller.repeater = repeater;
-
-                repeater.renderList();
-
-            };
-
             return {
                 restrict: 'E',
                 scope: true,
                 require: ['^^?defaultAttr', '^^dField'],
-                controllerAs: 'schemaComplexController',
                 link: function ($scope, $element, $attrs, requiredControllers) {
 
-                    var controller = $scope.schemaComplexController;
+                    function $render(schema) {
+                        if (repeater) {
+                            repeater.destroy();
+                        }
 
-                    var isMulti = ($attrs.multi === 'true');
+                        if (!fields)
+                            return;
 
+                        repeater = new FieldRepeater(fields, schema, $scope, $element, $compile);
+                        repeater.renderList();
+                    }
+
+                    var repeater = null;
                     var schemaController = requiredControllers[0];
+                    var fields = $scope.$eval($attrs.fields);
 
                     if (schemaController) {
-                        controller.$render(schemaController.getSchema(), isMulti, $element);
+                        $render(schemaController.getSchema());
                     } else {
-                        controller.$render(null, isMulti, $element);
+                        $render(null);
                     }
-                },
-                controller: SchemaComplexController
+                }
             };
         })
 
-        .directive('dToolbox', function ($compile) {
+        .directive('dToolbox', function ($compile, popups) {
             return {
                 restrict: 'E',
-                require: ['^^dField'],
+                require: '^^dField',
                 scope: true,
-                link: function ($scope, $element, $attrs, requiredControllers) {
+                link: function ($scope, $element, $attrs, fieldController) {
+                    var field = fieldController.getField();
+                    var button;
 
-                    var schemaFieldController = requiredControllers[0];
+                    if (field.type === FIELD_TYPES.INPUT) {
+                        button = angular.element('<button class="btn btn-schema btn-info" ng-click="$match()">'
+                            + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
+                            + '</button>');
+                        $element.append(button);
 
-                    $scope.fieldMapping = schemaFieldController.getField();
+                        $scope.$match = function () {
+                            popups.openPropertyMapping(field, $scope.ctrl.searchInfo);
+                        };
+                    }
 
-                    var button = angular.element('<button class="btn btn-schema btn-info" ng-click="openPropertyMapping(fieldMapping,ctrl.searchInfo)" ng-controller="popupCtrl">'
-                                                +'<i class="fa fa-link"></i>&nbsp;<span translate="TXT_MAPPING_ATTRIBUTE"></span>'
-                                                +'</button>');
-                    $element.append(button);
+                    if (field.$top) {
+                        button = angular.element('<button class="btn btn-schema btn-default" ng-click="$refresh()">'
+                            + '<i class="fa fa-link"></i>&nbsp;<span translate="TXT_REFRESH_PRODUCT_FIELD"></span>'
+                            + '</button>');
+                        $element.append(button);
 
+                        $scope.$refresh = function () {
+                            popups.confirmProductRefresh(field, $scope.ctrl.searchInfo);
+                        };
+                    }
+
+                    $scope.$f = field;
                     $compile($element.contents())($scope);
                 }
             };
