@@ -18,4 +18,5 @@ public interface CmsBtPromotionCodesTagDaoExt {
 
     int deleteByTagIdPromotionCodesId(@Param("promotionCodesId") int promotionCodesId,@Param("tagId") int tagId);
 
+    int batchDeleteByCodes(@Param("codeList") List<String> codeList,@Param("promotionId") int promotionId);
 }

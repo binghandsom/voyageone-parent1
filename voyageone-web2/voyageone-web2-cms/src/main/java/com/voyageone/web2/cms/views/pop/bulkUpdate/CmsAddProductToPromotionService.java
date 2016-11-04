@@ -148,9 +148,10 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         });
     }
 
-    void  deleteFromPromotion(int promotionId,AddProductSaveParameter parameter) {
+    void  deleteFromPromotion(  int promotionId,AddProductSaveParameter parameter) {
+        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
 
-
+        promotionDetailService.deleteFromPromotion(promotion, parameter);
     }
 
     /**

@@ -11,6 +11,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
@@ -20,10 +21,7 @@ import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
-import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
-import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
-import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
@@ -262,6 +260,13 @@ public class PromotionDetailService extends BaseService {
     CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
     @Autowired
     CmsBtTagDao daoTag;
+
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
+    @Autowired
+    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
+    @Autowired
+    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
     /**
      * 修改
      */
@@ -509,4 +514,26 @@ public class PromotionDetailService extends BaseService {
             }
         }
     }
+
+    @VOTransactional
+   public  void  deleteFromPromotion(CmsBtPromotionModel promotion, AddProductSaveParameter parameter) {
+       Map<String, Object> map = new HashMap<>();
+       map.put("listProductCode", parameter.getCodeList());
+       map.put("promotionId",promotion.getId());
+
+       //批量删除 tag
+       promotionCodesTagService.batchDeleteByCodes(parameter.getCodeList(),promotion.getPromotionId());
+       //批量删除 code
+       daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
+       //批量删除 sku
+       daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
+       //批量删除  product tag
+       productService.removeTagByCodes(promotion.getChannelId(), parameter.getCodeList(), promotion.getRefTagId());
+
+
+       // `cms_bt_promotion_codes_tag`
+       // `cms_bt_promotion_skus`
+       // `cms_bt_promotion_codes`
+
+   }
 }

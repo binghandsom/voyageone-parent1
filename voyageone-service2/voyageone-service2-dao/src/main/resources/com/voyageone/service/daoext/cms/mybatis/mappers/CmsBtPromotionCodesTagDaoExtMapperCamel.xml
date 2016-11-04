@@ -7,4 +7,13 @@
      delete from `cms_bt_promotion_codes_tag`  where `cms_bt_tag_id`=#{tagId} and `cms_bt_promotion_codes_id`=#{promotionCodesId}
     </delete>
 
+    
+    <delete id="batchDeleteByCodes">
+        DELETE a FROM `cms_bt_promotion_codes_tag` AS a
+        JOIN `cms_bt_promotion_codes` AS b ON a.`cms_bt_promotion_codes_id`=b.`id`
+        WHERE b.promotion_id=#{promotionId}  and  b.product_code IN
+        <foreach item="item" index="i" collection="codeList"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

@@ -56,5 +56,8 @@ public class PromotionCodesTagService extends BaseService {
         map.put("cmsBtPromotionCodesId", promotionCodesId);
         return cmsBtPromotionCodesTagDao.selectOne(map);
     }
-
+    public  int batchDeleteByCodes(List<String> codeList,int promotionId)
+    {
+      return   cmsBtPromotionCodesTagDaoExt.batchDeleteByCodes(codeList, promotionId);
+    }
 }
