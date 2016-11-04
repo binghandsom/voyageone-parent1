@@ -17,6 +17,7 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.*;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -30,11 +31,13 @@ import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -89,6 +92,8 @@ public class CmsFieldEditService extends BaseViewService {
     private CommCacheService commCacheService;
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -126,6 +131,29 @@ public class CmsFieldEditService extends BaseViewService {
             }
             resultList.add(resModel);
         }
+        return resultList;
+    }
+
+    public List<CmsMtCommonPropDefModel> getPlatfromPopOptions(Integer cartId) {
+        CmsMtPlatformCommonSchemaModel commonSchemaModel = cmsMtPlatformCommonSchemaService.get(cartId);
+        List<Field> items = new ArrayList<>();
+        if (commonSchemaModel == null)
+            return null;
+
+        List<Map<String, Object>> itemFieldMapList = commonSchemaModel.getPropsItem();
+        if (itemFieldMapList != null && !itemFieldMapList.isEmpty())
+            items.addAll(SchemaJsonReader.readJsonForList(itemFieldMapList));
+
+        List<Map<String, Object>> productFieldMapList = commonSchemaModel.getPropsProduct();
+        if (productFieldMapList != null && !productFieldMapList.isEmpty())
+            items.addAll(SchemaJsonReader.readJsonForList(productFieldMapList));
+
+        List<CmsMtCommonPropDefModel> resultList = new ArrayList<>(items.size());
+        items.forEach(field -> {
+            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
+            resModel.setField(field);
+            resultList.add(resModel);
+        });
         return resultList;
     }
 

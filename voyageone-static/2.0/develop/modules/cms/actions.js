@@ -435,7 +435,8 @@ define(function () {
                     "getPopOptions": "getPopOptions",
                     "setProductFields": "setProductFields",
                     "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
-                    "bulkSetCategory":"bulkSetCategory"
+                    "bulkSetCategory":"bulkSetCategory",
+                    "getPlatfromPopOptions": "getPlatfromPopOptions",
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
