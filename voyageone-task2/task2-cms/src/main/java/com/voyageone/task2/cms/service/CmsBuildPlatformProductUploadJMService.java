@@ -21,6 +21,7 @@ import com.voyageone.components.jumei.reponse.*;
 import com.voyageone.components.jumei.request.*;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.jumei.service.JumeiProductService;
+import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.jumei.service.JumeiService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtJmProductDao;
@@ -141,6 +142,9 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
     @Autowired
     private JumeiService jumeiService;
+
+    @Autowired
+    private JumeiSaleService jmSaleService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -1821,6 +1825,10 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 }
             }
         }
+
+        // 聚美商城新增/更新成功之后，执行商城产品上下架操作
+        doUpdateMallStatus(mallId, expressionParser.getSxData().getPlatform().getPlatformActive(), shopBean);
+
     }
 
     /**
@@ -2383,5 +2391,44 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         }
     }
 
+    /**
+     * 聚美商城产品上下架
+     *
+     * @param jumeiMallId 聚美Mall唯一标识
+     * @param platformActive 产品group表中的platformActive字段的值
+     * @param shopBean 店铺信息
+     */
+    protected void doUpdateMallStatus(String jumeiMallId, CmsConstants.PlatformActive platformActive, ShopBean shopBean) {
+        if (StringUtils.isEmpty(jumeiMallId) || platformActive == null || shopBean == null) return;
+
+        String errMsg = "";
+        try {
+            // 聚美上下架
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(platformActive.name())) {
+                // 上架
+                HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateListing(shopBean, jumeiMallId);
+                if (response == null) {
+                    errMsg = "聚美上新 调用聚美商城商品上架API失败";
+                } else if (!response.isSuccess()) {
+                    errMsg = response.getErrorMsg();
+                }
+            } else if (CmsConstants.PlatformActive.ToInStock.name().equals(platformActive.name())) {
+                // 下架
+                HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateDelisting(shopBean, jumeiMallId);
+                if (response == null) {
+                    errMsg = "聚美上新 调用聚美商城商品下架API失败";
+                } else if (response.isSuccess()) {
+                    errMsg = response.getErrorMsg();
+                }
+            }
+        } catch (Exception e) {
+            errMsg = "聚美上新 调用聚美商城商品下架API失败 " + e.getMessage();
+        }
+
+        // 上下架失败时，抛出错误
+        if (!StringUtils.isEmpty(errMsg)) {
+            throw new BusinessException(errMsg);
+        }
+    }
 }
 

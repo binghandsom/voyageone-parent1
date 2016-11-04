@@ -15,6 +15,7 @@ import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -68,6 +69,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    ProductGroupService productGroupService;
 
     @Test
     public void TestPrice() throws Exception {
@@ -152,9 +156,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(185);
-        workload.setChannelId("017");
+        workload.setChannelId("028");
         workload.setCartId(27);
-        workload.setGroupId(Long.parseLong("389898"));
+        workload.setGroupId(Long.parseLong("1126837"));
         workload.setPublishStatus(0);
 
         cmsBuildPlatformProductUploadJMService.updateProduct(workload);
@@ -443,9 +447,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Test
     public void testUpdateDealPriceBatch() {
 
-        String channelId = "012";
+        String channelId = "015";
         int cartId = 27;
-        String productCode = "BCH60F46-6R3";
+        String productCode = "1148114032";
 
         ShopBean shop = Shops.getShop(channelId, cartId);
 
@@ -528,6 +532,24 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         }
 
         cmsBuildPlatformProductUploadJMService.saveProductPlatform(channelId, cmsBtProductModel);
+    }
+
+    @Test
+    public void testDoUpdateMallStatus() {
+        String channelId = "023";
+        int cartId = 27;
+        String productCode = "VN-0KC44K1";
+        String pPlatformMallId = "23602";
+
+        CmsBtProductGroupModel productGroupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
+        if (productGroupModel == null) {
+            System.out.print(String.format("没找到对应的产品Group信息 [ProductCode:%s]", productCode));
+        }
+
+        ShopBean shop = Shops.getShop(channelId, cartId);
+
+        // 调用聚美商城商品上下架
+        cmsBuildPlatformProductUploadJMService.doUpdateMallStatus(pPlatformMallId, productGroupModel.getPlatformActive(), shop);
     }
 
 
