@@ -607,16 +607,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         {
             // 如果已经上新过了的话， 使用曾经上新过的品牌
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
-                // 取得更新对象商品id
                 String numIId = sxData.getPlatform().getNumIId();
+                // 取得更新对象商品id
+                TbItemSchema tbItemSchema = null;
                 try {
-                    Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
-                    if (pCatInfoMap.containsKey("brand")) {
-                        productInfoMap.put("brand", pCatInfoMap.get("brand"));
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, NumberUtils.toLong(numIId));
+                    if (tbItemSchema != null && !ListUtils.isNull(tbItemSchema.getFields())) {
+                        InputField inputFieldBrand = (InputField)tbItemSchema.getFieldMap().get("brand");
+                        if (!StringUtils.isEmpty(inputFieldBrand.getDefaultValue())) {
+                            productInfoMap.put("brand", inputFieldBrand.getDefaultValue());
+                        }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                 }
+
             }
         }
 
