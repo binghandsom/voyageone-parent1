@@ -1,6 +1,10 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
+import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
@@ -20,6 +24,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
@@ -70,6 +75,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
@@ -682,6 +690,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //          addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
             // delete by desmond 2016/09/06 end
 
+            // 新增更新USJOI主店产品结束之后，重新计算一下每个产品(包含code,originalCode)的skuCnt
+            List<String> productCodes = productModels.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            if (ListUtils.notNull(productCodes)) {
+                doSetSkuCnt(usJoiChannelId, productCodes);
+            }
+
             // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
             insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
 
@@ -1293,6 +1307,84 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         }
 
         return imageType;
+    }
+
+    /**
+     * 重新计算product的common.skus的sku个数设置product.common.fields.skuCnt
+     * 除了计算本次子店->USJOI主店导入的对象Product,还包含拆分后的Product,里面会自动去查找拆分后的Product
+     *
+     * @param usjoiChannelId  usjoi主店渠道id
+     * @param productCodeList 子店->主店导入对象Product列表(不包含拆分后的Product,里面会自动去查找拆分后的Product)
+     */
+    protected void doSetSkuCnt(String usjoiChannelId, List<String> productCodeList) {
+        if (ListUtils.isNull(productCodeList)) return;
+
+        // 对象产品code列表(大于等于productModels列表值,包含code或originalCode一致的产品code)
+        List<String> codeList = new ArrayList<>();
+        productCodeList.forEach(code -> {
+            // 重复的code不用添加
+            if (!codeList.contains(code)) codeList.add(code);
+        });
+
+        // 主店的产品运营可能会把一个产品的sku拆分到另一个产品中去(根据originalCode建立关联关系)
+        if (ListUtils.notNull(codeList)) {
+            // 查询所有originalCode在对象productCode列表中的产品信息列表
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.setQuery("{'common.fields.originalCode':{$in:#}}");
+            queryObj.setParameters(codeList);
+            queryObj.setProjectionExt("common.fields.code");
+            List<CmsBtProductModel> originalCodeProductList = productService.getList(usjoiChannelId, queryObj);
+            if (ListUtils.notNull(originalCodeProductList)) {
+                // 取得originalCode=对象code的产品的common.fields.code并加入待重新计算skuCnt的code列表
+                List<String> originalCodeList = originalCodeProductList.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+                if (ListUtils.notNull(originalCodeList)) {
+                    originalCodeList.forEach(code -> {
+                        // 重复的code不用添加
+                        if (!codeList.contains(code)) codeList.add(code);
+                    });
+                }
+            }
+        }
+
+        // 重新计算每个产品的common.skus的个数，并更新到common.fields.skuCnt中
+        if (ListUtils.notNull(codeList)) {
+            // 批量更新USJOI主店product表的common.skuCnt的值
+            BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, usjoiChannelId);
+
+            BulkWriteResult rs;
+            JongoQuery queryObj = new JongoQuery();
+
+            for (String productCode : codeList) {
+                // 取得商品信息
+                queryObj.setQuery("{'common.fields.code':#}");
+                queryObj.setParameters(productCode);
+                queryObj.setProjectionExt("common.fields.skuCnt", "common.skus");
+                CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, usjoiChannelId);
+                if (prodObj == null) {
+                    $warn("UploadToUSJoiService 找不到商品code [ChannelId=%s] [ProductCode=%d]", usjoiChannelId, productCode);
+                } else {
+                    int skuCnt = prodObj.getCommonNotNull().getFieldsNotNull().getSkuCnt();
+                    int reallySkuCnt = prodObj.getCommonNotNull().getSkus().size();
+                    // 目前的skuCnt和真实的reallySkuCnt不一致时，才做更新(如果skuCnt数没有变化，就不用更新了)
+                    if (skuCnt != reallySkuCnt) {
+                        JongoUpdate updObj = new JongoUpdate();
+                        updObj.setQuery("{'common.fields.code':#}");
+                        updObj.setQueryParameters(productCode);
+                        updObj.setUpdate("{$set:{'common.fields.skuCnt':#,'modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters(reallySkuCnt, DateTimeUtil.getNowTimeStamp(), getTaskName());
+                        rs = bulkList.addBulkJongo(updObj);
+                        if (rs != null) {
+                            $debug("UploadToUSJoiService [ChannelId=%s] [ProductCode=%s] [skuCnt更新结果=%s]", usjoiChannelId, productCode, rs.toString());
+                        }
+                    }
+                }
+            }
+            rs = bulkList.execute();
+            if (rs != null) {
+                $debug("UploadToUSJoiService [ChannelId=%s] [skuCnt更新结果=%s]", usjoiChannelId, rs.toString());
+            }
+        }
+
     }
 
 }

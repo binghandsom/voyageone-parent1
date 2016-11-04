@@ -212,7 +212,13 @@ public class UploadToUSJoiServiceTest {
     }
 
     @Test
-    public void testUpload1() throws Exception {
+    public void testDoSetSkuCnt() throws Exception {
+        String usjoiChannelId = "928";
 
+        List<String> productCodes = new ArrayList<>();
+        productCodes.add("NY-23923-PG-PINK");
+        productCodes.add("NY-26153");
+
+        uploadToUSJoiService.doSetSkuCnt(usjoiChannelId, productCodes);
     }
 }
