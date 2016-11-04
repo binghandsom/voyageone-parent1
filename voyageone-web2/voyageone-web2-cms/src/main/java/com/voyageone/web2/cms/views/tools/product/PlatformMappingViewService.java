@@ -15,6 +15,10 @@ import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
@@ -49,19 +53,22 @@ class PlatformMappingViewService extends BaseViewService {
     private final CommonSchemaService commonSchemaService;
     private final CmsMtFeedCustomPropDao feedCustomPropDao;
     private final PlatformCategoryService platformCategoryService;
+    private final MqSender mqSender;
 
     @Autowired
     public PlatformMappingViewService(PlatformMappingService platformMappingService,
                                       PlatformSchemaService platformSchemaService,
                                       CmsMtPlatformCommonSchemaService platformCommonSchemaService,
                                       CommonSchemaService commonSchemaService,
-                                      CmsMtFeedCustomPropDao feedCustomPropDao, PlatformCategoryService platformCategoryService) {
+                                      CmsMtFeedCustomPropDao feedCustomPropDao,
+                                      PlatformCategoryService platformCategoryService, MqSender mqSender) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
         this.platformCommonSchemaService = platformCommonSchemaService;
         this.commonSchemaService = commonSchemaService;
         this.feedCustomPropDao = feedCustomPropDao;
         this.platformCategoryService = platformCategoryService;
+        this.mqSender = mqSender;
     }
 
     Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
@@ -277,6 +284,20 @@ class PlatformMappingViewService extends BaseViewService {
             jsObject.put("cnLabel", f.getFeedPropTranslation());
             return jsObject;
         }).collect(toList());
+    }
+
+    boolean refreshProducts(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, String userName) {
+
+        boolean need = platformMappingService.createRefreshProductsTask(cmsBtRefreshProductTaskModel, userName);
+
+        if (!need)
+            return false;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(MqParameterKeys.key1, cmsBtRefreshProductTaskModel.getId());
+        mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
+
+        return true;
     }
 
     private void fillMapping(Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap, List<Field> fieldList) {

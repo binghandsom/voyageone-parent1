@@ -23,18 +23,62 @@ import java.util.regex.Pattern;
 public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMappingModel> {
 
     public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId) {
+        return selectCommon(cartId, channelId, null);
+    }
 
+    /**
+     * @since 2.9.0
+     */
+    public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId, String fieldId) {
         Criteria criteria = new Criteria("categoryType").is(1).and("cartId").is(cartId);
+        JongoQuery jongoQuery = new JongoQuery(criteria);
 
-        return selectOneWithQuery(new JongoQuery(criteria), channelId);
+        if (!StringUtils.isEmpty(fieldId)) {
+            jongoQuery.setProjectionExt(
+                    "created",
+                    "creater",
+                    "modified",
+                    "modifier",
+                    "channelId",
+                    "cartId",
+                    "categoryType",
+                    "categoryPath",
+                    "mappings." + fieldId
+            );
+        }
+
+        return selectOneWithQuery(jongoQuery, channelId);
     }
 
     public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId) {
+        return selectOne(cartId, categoryType, categoryPath, channelId, null);
+    }
 
-        return selectOneWithQuery(new JongoQuery(
+    /**
+     * @since 2.9.0
+     */
+    public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId, String fieldId) {
+
+        JongoQuery jongoQuery = new JongoQuery(
                 new Criteria("cartId").is(cartId)
                         .and("categoryType").is(categoryType)
-                        .and("categoryPath").is(categoryPath)), channelId);
+                        .and("categoryPath").is(categoryPath));
+
+        if (!StringUtils.isEmpty(fieldId)) {
+            jongoQuery.setProjectionExt(
+                    "created",
+                    "creater",
+                    "modified",
+                    "modifier",
+                    "channelId",
+                    "cartId",
+                    "categoryType",
+                    "categoryPath",
+                    "mappings." + fieldId
+            );
+        }
+
+        return selectOneWithQuery(jongoQuery, channelId);
     }
 
     public boolean exists(CmsBtPlatformMappingModel fieldMapsModel) {

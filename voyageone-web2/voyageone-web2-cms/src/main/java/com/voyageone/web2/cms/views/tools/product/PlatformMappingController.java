@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.PageQueryParameters;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -87,7 +89,7 @@ public class PlatformMappingController extends CmsController {
 
     @RequestMapping("refreshProducts")
     public AjaxResponse refreshProducts(@RequestBody CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
-        boolean need = platformMappingService.refreshProductsByMapping(cmsBtRefreshProductTaskModel, getUser().getUserName());
+        boolean need = platformMappingViewService.refreshProducts(cmsBtRefreshProductTaskModel, getUser().getUserName());
         return success(need);
     }
 }

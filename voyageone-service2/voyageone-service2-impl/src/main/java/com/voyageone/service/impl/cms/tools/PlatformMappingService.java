@@ -5,14 +5,14 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.service.bean.cms.CmsBtRefreshProductTaskItemModelStatus;
+import com.voyageone.service.bean.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskItemDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtPlatformMappingDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
@@ -22,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -47,17 +50,15 @@ public class PlatformMappingService extends BaseService {
 
     private final ProductService productService;
     private final CmsBtPlatformMappingDao platformMappingDao;
-    private final MqSender mqSender;
     private final CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao;
     private final CmsBtRefreshProductTaskItemDao cmsBtRefreshProductTaskItemDao;
 
     @Autowired
     public PlatformMappingService(ProductService productService, CmsBtPlatformMappingDao platformMappingDao,
-                                  MqSender mqSender, CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao,
+                                  CmsBtRefreshProductTaskDao cmsBtRefreshProductTaskDao,
                                   CmsBtRefreshProductTaskItemDao cmsBtRefreshProductTaskItemDao) {
         this.productService = productService;
         this.platformMappingDao = platformMappingDao;
-        this.mqSender = mqSender;
         this.cmsBtRefreshProductTaskDao = cmsBtRefreshProductTaskDao;
         this.cmsBtRefreshProductTaskItemDao = cmsBtRefreshProductTaskItemDao;
     }
@@ -89,10 +90,15 @@ public class PlatformMappingService extends BaseService {
     }
 
     public Map<String, Object> getValueMap(String channelId, Long productId, int cartId, String categoryPath) {
-
-        // 查询需要用到的平台类目也在商品中获取
-
         CmsBtProductModel product = productService.getProductById(channelId, productId);
+        return getValueMap(channelId, cartId, product, categoryPath, null);
+    }
+
+    /**
+     * 基于商品信息和默认属性配置，计算商品属性值
+     * @since 2.9.0
+     */
+    public Map<String, Object> getValueMap(String channelId, int cartId, CmsBtProductModel product, String categoryPath, String fieldId) {
 
         if (StringUtils.isEmpty(categoryPath)) {
             CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
@@ -116,14 +122,14 @@ public class PlatformMappingService extends BaseService {
         ValueMapFiller filler = new ValueMapFiller(product, customPropBeanList);
 
         // 执行通用配置
-        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId);
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId, fieldId);
         if (commonFieldMapsModel != null)
             fillValueMap(valueMap, filler, commonFieldMapsModel);
 
         // 执行多级目录配置
         while (!categoryPathStack.isEmpty()) {
             String targetCategoryPath = categoryPathStack.pop();
-            CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, targetCategoryPath, channelId);
+            CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, targetCategoryPath, channelId, fieldId);
             if (fieldMapsModel != null)
                 fillValueMap(valueMap, filler, fieldMapsModel);
         }
@@ -156,7 +162,12 @@ public class PlatformMappingService extends BaseService {
         filler.fillValueMap(valueMap, mappingMap);
     }
 
-    public boolean refreshProductsByMapping(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, String userName) {
+    /**
+     * 创建任务和子任务记录，并返回是否实际需要执行
+     *
+     * @since 2.9.0
+     */
+    public boolean createRefreshProductsTask(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, String userName) {
 
         List<Long> productIdList = getProductIdList(cmsBtRefreshProductTaskModel);
 
@@ -166,25 +177,44 @@ public class PlatformMappingService extends BaseService {
         // 创建任务记录
         cmsBtRefreshProductTaskModel.setCreater(userName);
         cmsBtRefreshProductTaskModel.setModifier(userName);
-        cmsBtRefreshProductTaskModel.setStatus(0);
+        cmsBtRefreshProductTaskModel.setStatus(CmsBtRefreshProductTaskModelStatus.WAITING);
         cmsBtRefreshProductTaskDao.insert(cmsBtRefreshProductTaskModel);
 
         // 创建商品任务记录
         productIdList.stream().map(prodId -> new CmsBtRefreshProductTaskItemModel() {{
             setTaskId(cmsBtRefreshProductTaskModel.getId());
             setProductId(prodId.intValue());
-            setStatus(0);
+            setStatus(CmsBtRefreshProductTaskItemModelStatus.WAITING);
             setCreater(userName);
             setModifier(userName);
         }}).forEach(cmsBtRefreshProductTaskItemDao::insert);
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("cmsBtRefreshProductTaskModel", cmsBtRefreshProductTaskModel);
-        mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
-
         return true;
     }
 
+    /**
+     * （无视顺序）取出一个待执行重刷任务的商品（取出后直接标记为已完成，禁止下一次取出）
+     *
+     * @since 2.9.0
+     */
+    public CmsBtRefreshProductTaskItemModel popRefreshProduct(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
+        // 创建条件
+        CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel = new CmsBtRefreshProductTaskItemModel();
+        cmsBtRefreshProductTaskItemModel.setTaskId(cmsBtRefreshProductTaskModel.getId());
+        cmsBtRefreshProductTaskItemModel.setStatus(CmsBtRefreshProductTaskItemModelStatus.WAITING);
+        // 查询值
+        cmsBtRefreshProductTaskItemModel = cmsBtRefreshProductTaskItemDao.selectOne(cmsBtRefreshProductTaskItemModel);
+        // 标记完成
+        cmsBtRefreshProductTaskItemModel.setStatus(CmsBtRefreshProductTaskItemModelStatus.COMPLETED);
+        cmsBtRefreshProductTaskItemDao.update(cmsBtRefreshProductTaskItemModel);
+
+        return cmsBtRefreshProductTaskItemModel;
+    }
+
+    /**
+     * 根据具体的重刷任务配置，获取受影响的商品 ID
+     * @since 2.9.0
+     */
     private List<Long> getProductIdList(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel) {
 
         Criteria criteria;
@@ -197,7 +227,8 @@ public class PlatformMappingService extends BaseService {
                 break;
             case PlatformMappingService.CATEGORY_TYPE_SPECIFIC:
                 // 具体类目则按类目查询
-                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).is(cmsBtRefreshProductTaskModel.getCategoryPath());break;
+                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).is(cmsBtRefreshProductTaskModel.getCategoryPath());
+                break;
             default:
                 return null;
         }
