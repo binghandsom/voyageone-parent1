@@ -92,17 +92,26 @@ public class CmsProductMoveService extends BaseViewService {
      */
     public void moveCodeInitCheck(Map<String, Object> params, String channelId, String lang) {
         // 移动的Code
-        String productCode = (String) params.get("productCode");
+        String prodId = (String) params.get("prodId");
+        String productCode = "";
         // 相关的平台id
         Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
         // 相关的平台名称
         String cartName = (String) params.get("cartName");
 
-        // 取得Group信息
-        CmsBtProductGroupModel sourceGroupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
-
         // 取得移动的Code的Product信息
-        CmsBtProductModel productModel = productService.getProductByCode(channelId, productCode);
+        CmsBtProductModel productModel = null;
+        // 取得Group信息
+        CmsBtProductGroupModel sourceGroupModel = null;
+
+        try {
+            productModel = productService.getProductById(channelId, Long.parseLong(prodId));
+            if (productModel != null) {
+                productCode =  productModel.getCommon().getFields().getCode();
+                sourceGroupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
+            }
+        } catch (NumberFormatException ex) {
+        }
 
         // check移动信息是否匹配（源Group下是否包含移动的Code，源Group是否存在）
         if (sourceGroupModel == null
@@ -147,9 +156,22 @@ public class CmsProductMoveService extends BaseViewService {
         Map<String, Object> returnMap = new HashMap<>();
 
         // 移动的Code
-        String productCode = (String) params.get("productCode");
+        String prodId = (String) params.get("prodId");
+        String productCode = "";
         // 相关的平台id
         Integer cartId = params.get("cartId") != null ? new Integer(String.valueOf(params.get("cartId"))) : null;
+
+        // 取得移动的Code的Product信息
+        CmsBtProductModel productModel = null;
+        if (!StringUtils.isEmpty(prodId)) {
+            try {
+                productModel = productService.getProductById(channelId, Long.parseLong(prodId));
+                if (productModel != null) {
+                    productCode =  productModel.getCommon().getFields().getCode();
+                }
+            } catch (NumberFormatException ex) {
+            }
+        }
 
         // 取得Group信息
         CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
@@ -159,14 +181,15 @@ public class CmsProductMoveService extends BaseViewService {
         String moveSourceGroupName = "";
         if (groupModel != null) {
             moveSourceGroupId = groupModel.getGroupId();
-            CmsBtProductModel productModel = productService.getProductByCode(channelId, groupModel.getMainProductCode());
-            if (productModel != null) {
-                moveSourceGroupName = productModel.getCommon().getFields().getOriginalTitleCn();
+            CmsBtProductModel productModelInfo = productService.getProductByCode(channelId, groupModel.getMainProductCode());
+            if (productModelInfo != null) {
+                moveSourceGroupName = productModelInfo.getCommon().getFields().getOriginalTitleCn();
                 if (StringUtils.isEmpty(moveSourceGroupName)) {
-                    moveSourceGroupName = productModel.getCommon().getFields().getProductNameEn();
+                    moveSourceGroupName = productModelInfo.getCommon().getFields().getProductNameEn();
                 }
             }
         }
+        returnMap.put("productCode", productCode);
         returnMap.put("sourceGroupId", moveSourceGroupId);
         returnMap.put("sourceGroupName", moveSourceGroupName);
         returnMap.put("sourceGroupProductsNum", groupModel == null ? 0 : groupModel.getProductCodes().size());
@@ -807,7 +830,7 @@ public class CmsProductMoveService extends BaseViewService {
         CmsBtProductModel_Platform_Cart newP0Model = newProductModel.getPlatform(0);
         if ("new".equals(destGroupType)) {
             // 新Group的场合，P0下的主商品=源Code
-            newP0Model.setMainProductCode(sourceCode);
+            newP0Model.setMainProductCode(newFieldModel.getCode());
         } else {
             if ("old".equals(destGroupType)) {
                 // 原Group的场合,P0下的主商品不变

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -390,6 +391,30 @@ public class CmsAdvSearchQueryService extends BaseService {
             } else {
                 queryObject.addQuery("{'common.fields.hsCodeStatus':{$in:[null,'','0']}}");
             }
+        }
+
+        // 获取产品类型设置状态
+        if (StringUtils.isNotEmpty(searchValue.getProductSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getProductTypeList())) {
+        	if ("1".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$in: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
+        	} else if ("2".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
+        	}
+        }
+
+        // 获取尺寸类型设置状态
+        if (StringUtils.isNotEmpty(searchValue.getSizeSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getSizeTypeList())) {
+        	if ("1".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$in: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
+        	} else if ("2".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
+        	}
         }
 
         // 获取商品锁定状态

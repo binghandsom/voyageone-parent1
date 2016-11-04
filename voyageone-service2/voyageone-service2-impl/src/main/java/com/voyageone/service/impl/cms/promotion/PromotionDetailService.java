@@ -14,10 +14,7 @@ import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
-import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
@@ -69,11 +66,6 @@ public class PromotionDetailService extends BaseService {
 
     @Autowired
     PromotionSkuService promotionSkuService;
-
-    @Autowired
-    PromotionCodesTagService promotionCodesTagService;
-
-
     public void addPromotionDetail(PromotionDetailAddBean bean){
         addPromotionDetail(bean,true);
     }
@@ -183,13 +175,7 @@ public class PromotionDetailService extends BaseService {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
             }
         });
-        //添加 tag
-        promotionCodesTagService.addPromotionCodesTag(bean.getTagList(),channelId,cmsBtPromotionCodesBean.getId(),modifier);
     }
-
-
-
-
     private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
     {
         if(list==null) return  null;

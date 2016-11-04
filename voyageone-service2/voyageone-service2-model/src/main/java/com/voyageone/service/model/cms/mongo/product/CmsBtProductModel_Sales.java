@@ -23,7 +23,9 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public final static String CARTID = "cartId";
     public final static String CARTID_0 = "cartId0";
     public final static String SKUS = "skus";
-
+    // 年销量
+    public static final String CODE_SUM_YEAR = "codeSumYear";
+    
     public CmsBtProductModel_Sales() {
     }
 

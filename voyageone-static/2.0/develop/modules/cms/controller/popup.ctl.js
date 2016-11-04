@@ -379,6 +379,13 @@ define([
                     "templateUrl": "views/pop/jm/tagmodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/tagmodify.ctl",
                     "controller": 'popTagModifyCtl'
+                },
+                "encore": {
+                    "templateUrl": "views/pop/jm/promotionEncore.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotionEncore.ctl",
+                    "controller": 'popJMPromotionEncoreCtl',
+                    "backdrop": "static",
+                    "size": 'lg'
                 }
             },
             "jmImageManage": {
@@ -1169,6 +1176,15 @@ define([
             openModal(popActions.jumei.jmPromotionDetail.detail, context).then(function () {
                 if (fnInitial) {
                     fnInitial();
+                }
+            });
+        };
+
+        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial,ctrl) {
+            popActions.jumei.jmPromotionDetail.encore.size = 'lg';
+            openModal(popActions.jumei.jmPromotionDetail.encore, context).then(function (res) {
+                if (fnInitial) {
+                    fnInitial(res,ctrl);
                 }
             });
         };

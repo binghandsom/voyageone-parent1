@@ -40,6 +40,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String GET_LIST_BY_WHERE = "getListByWhere";
                 String SaveModel = "saveModel";
+                String ENCORE = "encore";
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel = "getEditModel";
