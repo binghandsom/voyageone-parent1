@@ -67,7 +67,8 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList"
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
@@ -212,6 +213,7 @@ define(function () {
                     "getEditModel": "getEditModel",
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
+                    "encore": "encore",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId",
                     getBayWindow: 'getBayWindow',
@@ -438,7 +440,8 @@ define(function () {
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
-                    "getPromotionHistory": "getPromotionHistory"
+                    "getPromotionHistory": "getPromotionHistory",
+                    "getUnduePromotion": "getUnduePromotion"
                 },
                 priceLogService: {
                     root: '/cms/price/log',
@@ -524,7 +527,8 @@ define(function () {
                         "getCat": "getSellerCat",
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
-                        "updateCat": "updateSellerCat"
+                        "updateCat": "updateSellerCat",
+                        "sortableCat": "sortableCat",
                     }
                 },
                 "imageTemplateService": {
