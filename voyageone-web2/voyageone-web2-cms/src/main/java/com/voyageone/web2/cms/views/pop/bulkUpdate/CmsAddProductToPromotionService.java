@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 @Service
 public class CmsAddProductToPromotionService extends BaseViewService {
 
-
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
@@ -48,35 +47,40 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     private CmsBtBrandBlockService brandBlockService;
     @Autowired
     CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
-
     @Autowired
     TagService tagService;
 
     public  void  save(SaveParameter parameter,String channelId,String userName, CmsSessionBean cmsSession) {
 
-
-        parameter.getListTagTreeNode().forEach(f->addToPromotion(f,parameter));
+        parameter.getListTagTreeNode().forEach(f->save(f,parameter));
 
     }
-    public void  addToPromotion(TagTreeNode tagTreeNode,SaveParameter parameter) {
+     void  save(TagTreeNode tagTreeNode,SaveParameter parameter) {
         if (tagTreeNode.getChecked() == 2) {
             //状态变化的tag
             List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
             if (tagList.size() > 0) {
                 //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
-
-
+                addToPromotion(tagTreeNode.getId(),tagList,parameter);
             }
         } else if (tagTreeNode.getChecked() != tagTreeNode.getOldChecked()) {
             if (tagTreeNode.getChecked() == 0) {
                 // 活动 商品从活动中删除      删除商品tag
-
+                deleteFromPromotion(tagTreeNode.getId(),parameter);
             }
         }
     }
 
+    void  addToPromotion(int promotionId,List<TagTreeNode> tagList,SaveParameter parameter)
+    {
+
+    }
+    void  deleteFromPromotion(int promotionId,SaveParameter parameter)
+    {
+
+    }
     /**
-     * 数据页面初始化(有产品信息)
+     * 页面初始化
      */
     public Map init(InitParameter params, String channelId, CmsSessionBean cmsSession) {
         int cartId = params.getCartId();
@@ -105,15 +109,14 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         data.put("listTreeNode", listTagTreeNode);
         return data;
     }
-
+    //获取活动的节点数据
     TagTreeNode getPromotionTagTreeNode(CmsBtPromotionModel model, List<String> codeList) {
         TagTreeNode tagTreeNode = new TagTreeNode();
         tagTreeNode.setId(model.getId());
         tagTreeNode.setName(model.getPromotionName());
         tagTreeNode.setChildren(new ArrayList<>());
-        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(),model.getRefTagId(), codeList);
+        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
         int codeCount = codeList.size();
-
         list.forEach(f -> {
             TagTreeNode node = new TagTreeNode();
             node.setId(f.getId());
@@ -124,6 +127,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             node.setOldChecked(node.getChecked());
             tagTreeNode.getChildren().add(node);
         });
+        int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
+        tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
         return tagTreeNode;
     }
 }
