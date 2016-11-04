@@ -70,26 +70,26 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
-        zzWorkClear();
-        int cnt = 0;
-        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-            cnt = fullCopyTemp();
-        }else {
-            $info("产品信息插入开始");
-            cnt = superFeedImport();
-        }
-        $info("产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                transformer.new Context(channel, this).transform();
-            }
+//        zzWorkClear();
+//        int cnt = 0;
+//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+//            cnt = fullCopyTemp();
+//        }else {
+//            $info("产品信息插入开始");
+//            cnt = superFeedImport();
+//        }
+//        $info("产品信息插入完成 共" + cnt + "条数据");
+//        if (cnt > 0) {
+//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+//                transformer.new Context(channel, this).transform();
+//            }
             postNewProduct();
-        }
+//        }
     }
     @Override
     public int fullCopyTemp(){
         int cnt = overStockFeedDao.fullCopyTemp();
-        overStockFeedDao.updateMd5();
+//        overStockFeedDao.updateMd5();
         overStockFeedDao.updateUpdateFlag();
         return cnt;
     }
