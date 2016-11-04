@@ -602,6 +602,24 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         }
         productInfoMap.put("brand", valBrand);
 
+        // 为什么要这段内容呢， 因为发生了一件很奇怪的事情， 曾经上新成功的商品， 更新的时候提示说【id:xxx还没有成为品牌】
+        // 所以使用之前上过的品牌
+        {
+            // 如果已经上新过了的话， 使用曾经上新过的品牌
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                // 取得更新对象商品id
+                String numIId = sxData.getPlatform().getNumIId();
+                try {
+                    Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
+                    if (pCatInfoMap.containsKey("brand")) {
+                        productInfoMap.put("brand", pCatInfoMap.get("brand"));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         // 主图(必填)
         // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
         // 格式：<value>http://img.alicdn.com/imgextra/i1/2640015666/TB2PTFYkXXXXXaUXpXXXXXXXXXX_!!2640015666.jpg,
