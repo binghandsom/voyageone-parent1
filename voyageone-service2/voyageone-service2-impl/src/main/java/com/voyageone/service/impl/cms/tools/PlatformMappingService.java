@@ -204,6 +204,10 @@ public class PlatformMappingService extends BaseService {
         cmsBtRefreshProductTaskItemModel.setStatus(CmsBtRefreshProductTaskItemModelStatus.WAITING);
         // 查询值
         cmsBtRefreshProductTaskItemModel = cmsBtRefreshProductTaskItemDao.selectOne(cmsBtRefreshProductTaskItemModel);
+
+        if (cmsBtRefreshProductTaskItemModel == null)
+            return null;
+
         // 标记完成
         cmsBtRefreshProductTaskItemModel.setStatus(CmsBtRefreshProductTaskItemModelStatus.COMPLETED);
         cmsBtRefreshProductTaskItemDao.update(cmsBtRefreshProductTaskItemModel);

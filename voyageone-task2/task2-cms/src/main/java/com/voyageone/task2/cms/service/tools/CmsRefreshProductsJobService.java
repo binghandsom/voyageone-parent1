@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.tools;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.service.bean.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -66,6 +67,19 @@ public class CmsRefreshProductsJobService extends BaseMQCmsService {
         // 取商品
         CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel = platformMappingService.popRefreshProduct(cmsBtRefreshProductTaskModel);
 
+        while (cmsBtRefreshProductTaskItemModel != null) {
+
+            refreshProduct(cmsBtRefreshProductTaskModel, cmsBtRefreshProductTaskItemModel);
+
+            cmsBtRefreshProductTaskItemModel = platformMappingService.popRefreshProduct(cmsBtRefreshProductTaskModel);
+        }
+
+        cmsBtRefreshProductTaskModel.setStatus(CmsBtRefreshProductTaskModelStatus.COMPLETED);
+        cmsBtRefreshProductTaskModel.setModifier("CmsRefreshProductsJobService");
+        cmsBtRefreshProductTaskDao.update(cmsBtRefreshProductTaskModel);
+    }
+
+    private void refreshProduct(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, CmsBtRefreshProductTaskItemModel cmsBtRefreshProductTaskItemModel) {
         String channelId = cmsBtRefreshProductTaskModel.getChannelId();
         CmsBtProductModel product = productService.getProductById(channelId, cmsBtRefreshProductTaskItemModel.getProductId());
 
