@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.tools;
 
+import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,46 +25,10 @@ public class CmsRefreshProductsJobServiceTest {
     @Autowired
     private CmsRefreshProductsJobService cmsRefreshProductsJobService;
 
-    private static final CmsBtRefreshProductTaskModel testCase1 = new CmsBtRefreshProductTaskModel() {{
-        setCartId(23);
-        setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
-        setCategoryType(2);
-        setChannelId("010");
-        setFieldId("sell_points");
-        setAllProduct(false);
-    }};
-
-    private static final CmsBtRefreshProductTaskModel testCase2 = new CmsBtRefreshProductTaskModel() {{
-        setCartId(23);
-        setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
-        setCategoryType(2);
-        setChannelId("010");
-        setFieldId("sell_points");
-        setAllProduct(true);
-    }};
-
-    private static final CmsBtRefreshProductTaskModel testCase3 = new CmsBtRefreshProductTaskModel() {{
-        setCartId(23);
-        setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
-        setCategoryType(2);
-        setChannelId("010");
-        setFieldId(null);
-        setAllProduct(false);
-    }};
-
-    private static final CmsBtRefreshProductTaskModel testCase4 = new CmsBtRefreshProductTaskModel() {{
-        setCartId(23);
-        setCategoryPath("珠宝/钻石/翡翠/黄金>彩色宝石/贵重宝石>手饰");
-        setCategoryType(2);
-        setChannelId("010");
-        setFieldId(null);
-        setAllProduct(true);
-    }};
-
     @Test
     public void onStartup() throws Exception {
         Map<String, Object> map = new HashMap<>();
-        map.put("CmsBtRefreshProductTaskModel", testCase1);
+        map.put(MqParameterKeys.key1, 1);
         cmsRefreshProductsJobService.onStartup(map);
     }
 }
