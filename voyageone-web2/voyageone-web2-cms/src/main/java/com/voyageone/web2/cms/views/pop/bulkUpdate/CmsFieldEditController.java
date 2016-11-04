@@ -41,6 +41,12 @@ public class CmsFieldEditController extends CmsController {
         return success(result);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_PLATFROM_POP_OPTIONS)
+    public AjaxResponse getPlatfromPopOptions(){
+        List<CmsMtCommonPropDefModel> result = fieldEditService.getPopOptions(getLang(), getUser().getSelChannelId());
+        return success(result);
+    }
+
     /**
      * 批量修改属性.
      */
