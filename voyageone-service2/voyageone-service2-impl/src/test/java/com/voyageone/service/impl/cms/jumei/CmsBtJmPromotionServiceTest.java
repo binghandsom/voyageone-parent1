@@ -9,8 +9,12 @@ import com.voyageone.service.model.cms.CmsBtJmProductImagesModel;
 import com.voyageone.service.model.cms.CmsBtJmProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmSkuModel;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,7 +35,8 @@ import static org.junit.Assert.assertTrue;
  * @date: 2016/4/25 10:36
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
  */
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class CmsBtJmPromotionServiceTest {
 
     @Autowired
@@ -131,6 +136,22 @@ public class CmsBtJmPromotionServiceTest {
         int priceType = 1;
        // return jmPromotionService.buildJmProductImportAllInfo(productIds, promotion, channelId, discount, priceType);
         return null;
+    }
+
+    @Test
+    public void promotionCopy(){
+        CmsBtJmPromotionModel cmsBtJmPromotionModel = new CmsBtJmPromotionModel();
+
+        cmsBtJmPromotionModel = jmPromotionService.getEditModel(124,false).getModel();
+        cmsBtJmPromotionModel.setRefTagId(0);
+        cmsBtJmPromotionModel.setId(null);
+        cmsBtJmPromotionModel.setName(""+ System.currentTimeMillis());
+        jmPromotionService.promotionCopy(124,cmsBtJmPromotionModel,"james");
+    }
+
+    @Test
+    public void sortProduct(){
+        jmPromotionService.sortProduct(1096,1129,"james");
     }
 
 

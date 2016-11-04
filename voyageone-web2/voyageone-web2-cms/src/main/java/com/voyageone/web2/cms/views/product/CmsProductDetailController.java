@@ -280,11 +280,9 @@ public class CmsProductDetailController extends CmsController {
         Assert.notNull(productCode).elseThrowDefaultWithTitle("productCode");
 
         // 只有天猫， 天猫国际有这个需要
-		if ("010".equals(channelId)) { // 暂时只给jewelry开放这个功能
-			if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
-				cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
-			}
-		}
+        if (cartId == CartEnums.Cart.TM.getValue() || cartId == CartEnums.Cart.TG.getValue()) {
+            cmsProductPlatformDetailService.resetProductGroupPlatformPid(channelId, cartId, productCode);
+        }
 
         return success(null);
     }

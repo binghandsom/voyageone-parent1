@@ -523,9 +523,33 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         ORDER BY
             t1.id
     </select>
+    <select id="selectProductInfoByTagId2" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel" parameterType="java.lang.Integer">
+        SELECT
+        t2.*
+        FROM
+        (
+        SELECT
+        *
+        FROM
+        cms_bt_jm_promotion_tag_product
+        WHERE
+        cms_bt_tag_id = #{tagId, jdbcType=INTEGER}
+        ) t1,
+        cms_bt_jm_promotion_product t2
+        WHERE
+        t1.cms_bt_jm_promotion_product_id = t2.id
+        ORDER BY
+        t1.id
+    </select>
     <update id="updateRemark">
     UPDATE `cms_bt_jm_promotion_product` SET `remark`=#{remark} where id=#{jmPromotionProductId}
     </update>
+
+    <select id="selectCodesByJmPromotionId" resultType="java.lang.String">
+            select product_code
+            from cms_bt_jm_promotion_product
+            where cms_bt_jm_promotion_id=#{jmPromotionId}
+    </select>
     <!--jm2 end-->
 
     <!-- 取得当前有效的活动下的所有产品 -->
@@ -546,4 +570,8 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         </foreach>
     </update>
 
+    <select id="selectProductByJmPromotionId" parameterType="java.lang.Integer" resultType="com.voyageone.service.bean.cms.jumei.ProductImportBean">
+                SELECT *
+        FROM cms_bt_jm_promotion_product where cms_bt_jm_promotion_id = #{promotionProductId}
+    </select>
 </mapper>

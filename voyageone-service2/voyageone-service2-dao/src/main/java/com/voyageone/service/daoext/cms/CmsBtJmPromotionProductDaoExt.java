@@ -2,6 +2,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
@@ -105,8 +106,11 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
 
+    List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId2(Integer tagId);
+
     int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
 
+    List<String> selectCodesByJmPromotionId(int jmPromotionId);
     //jm2 end
 
     /**
@@ -118,4 +122,7 @@ public interface CmsBtJmPromotionProductDaoExt {
      * 更新活动下的产品的库存数据
      */
     int updateProductStockInfo(@Param("jmPromotionProductList") List<CmsBtJmPromotionProductModel> productList);
+
+
+    List<ProductImportBean> selectProductByJmPromotionId(Integer jmPromotionId);
 }

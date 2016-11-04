@@ -7,6 +7,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionImportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExtCamel;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
@@ -35,7 +36,8 @@ public class CmsBtJmPromotionImportSave3Service {
     private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
-
+    @Autowired
+    private ProductService productService;
     @VOTransactional
     public void saveProductSaveInfo(ProductSaveInfo info) {
         //CmsBtJmPromotionProduct
@@ -72,6 +74,8 @@ public class CmsBtJmPromotionImportSave3Service {
                 daoCmsBtPromotionSkus.insert(skusModel);
             }
         }
+        productService.updateTags(info.jmProductModel.getChannelId(),info.productInfo.getProdId(),info.productInfo.getTags(),info.jmProductModel.getModifier());
+
         daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(info.jmProductModel.getId());//求价格 折扣 平均值
     }
 }
