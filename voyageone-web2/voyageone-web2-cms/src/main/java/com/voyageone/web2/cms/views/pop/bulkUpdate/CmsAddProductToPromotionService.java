@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
@@ -150,8 +152,12 @@ public class CmsAddProductToPromotionService extends BaseViewService {
 
     void  deleteFromPromotion(  int promotionId,AddProductSaveParameter parameter) {
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
+        Date activityStart = DateTimeUtil.parse(promotion.getActivityStart());
+        if (DateTimeUtilBeijing.toLocalTime(activityStart) > new Date().getTime()) {
+            //活动已开始
+            promotionDetailService.deleteFromPromotion(promotion, parameter);
+        }
 
-        promotionDetailService.deleteFromPromotion(promotion, parameter);
     }
 
     /**
