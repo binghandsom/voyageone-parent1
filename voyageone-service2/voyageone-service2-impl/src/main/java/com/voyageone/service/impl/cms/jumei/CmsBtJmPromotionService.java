@@ -12,10 +12,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
-import com.voyageone.service.dao.cms.CmsBtJmMasterBrandDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionSpecialExtensionDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSpecialExtensionDaoExt;
@@ -28,7 +25,6 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
-import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +53,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmImageTemplateService jmImageTemplateService;
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    private final CmsBtJmPromotionBrandDao cmsBtJmPromotionBrandDao;
+
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
@@ -69,7 +67,8 @@ public class CmsBtJmPromotionService extends BaseService {
                                    CmsBtJmPromotionImagesDao jmPromotionImagesDao,
                                    CmsBtJmImageTemplateService jmImageTemplateService,
                                    CmsMtJmConfigService jmConfigService,
-                                   CmsBtJmBayWindowService cmsBtJmBayWindowService) {
+                                   CmsBtJmBayWindowService cmsBtJmBayWindowService,
+                                   CmsBtJmPromotionBrandDao cmsBtJmPromotionBrandDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -81,6 +80,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmImageTemplateService = jmImageTemplateService;
         this.jmConfigService = jmConfigService;
         this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
+        this.cmsBtJmPromotionBrandDao = cmsBtJmPromotionBrandDao;
     }
 
     /**
@@ -184,6 +184,12 @@ public class CmsBtJmPromotionService extends BaseService {
                 valList = new ArrayList<>(0);
             }
             map.put("preDisplayChannelList", valList);
+
+            //品牌Logo
+//            jmPromotionExtensionDao.selectOne();
+            Map<String, Object> modelMap = new HashMap<>();
+            List<CmsBtJmPromotionBrandModel> listModel = cmsBtJmPromotionBrandDao.selectList(modelMap);
+            map.put("preDisplayBrandLogoList", listModel);
 
             // 直邮信息
             configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);

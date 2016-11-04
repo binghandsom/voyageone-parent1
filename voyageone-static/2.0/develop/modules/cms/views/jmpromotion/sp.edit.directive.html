@@ -333,6 +333,26 @@
                         <vo-message target="ctrlEdit.promotionForm.subtitle"></vo-message>
                     </div>
                 </div>
+
+
+
+
+                <div class="form-group" >
+                    <label class="col-sm-2 control-label s-required">
+                        <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isCheckedBrand">
+                        启用品牌Logo
+                    </label>
+                    <div class="col-sm-2">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.brandLogo" name="brandLogo" required
+                                ng-options="value.brandLogo as value.brandLogo for value in ctrlEdit.vm.metaData.preDisplayBrandLogoList"
+                                ng-disabled="!ctrlEdit.editModel.extModel.isCheckedBrand">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
                 <div class="form-group">
                     <label class="col-sm-2 control-label">入口图专场导向文案</label>
                     <div class="col-sm-5">
