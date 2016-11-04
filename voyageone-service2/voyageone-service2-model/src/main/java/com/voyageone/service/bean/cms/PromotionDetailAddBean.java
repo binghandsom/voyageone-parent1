@@ -23,6 +23,16 @@ public class PromotionDetailAddBean {
     private Map<String, Double> promotionPrice;
     private String productCode;
     private Long productId;
+
+    public int getRefTagId() {
+        return refTagId;
+    }
+
+    public void setRefTagId(int refTagId) {
+        this.refTagId = refTagId;
+    }
+
+    private  int refTagId;
     private List<TagTreeNode> tagList;
     public List<TagTreeNode> getTagList() {
         return tagList;

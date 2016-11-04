@@ -66,6 +66,11 @@ public class PromotionDetailService extends BaseService {
 
     @Autowired
     PromotionSkuService promotionSkuService;
+
+    @Autowired
+    PromotionCodesTagService promotionCodesTagService;
+
+
     public void addPromotionDetail(PromotionDetailAddBean bean){
         addPromotionDetail(bean,true);
     }
@@ -175,7 +180,39 @@ public class PromotionDetailService extends BaseService {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
             }
         });
+
+        // 更新 promotionCodesTag
+        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(),channelId,cmsBtPromotionCodesBean.getId(),modifier);
+
+        //更新mongo product  tag
+        updateCmsBtProductTags(channelId,productInfo,bean.getRefTagId(),bean.getTagList(),modifier);
     }
+    //更新mongo product  tag
+    private void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel,int refTagId,List<TagTreeNode> tagList, String modifier) {
+        //更新商品Tags  sunpt
+        if (productModel != null) {
+            List<String> tags = productModel.getTags();
+            int size = tags.size();
+            //1.移除该活动的所有tag
+            for (int i = size - 1; i >= 0; i--) {
+                String tag = String.format("-%s-", refTagId);
+                if (tags.get(i).indexOf(tag) == 0) {
+                    tags.remove(i);
+                }
+            }
+            //2.添加新的tag
+            for (TagTreeNode tagInfo : tagList) {
+                if (tagInfo.getChecked() != 0) {
+                    tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                }
+            }
+            tags.add(String.format("-%s-", refTagId));
+            productModel.setTags(tags);
+            //3.更新
+            productService.updateTags(channelId, productModel.getProdId(), tags, modifier);
+        }
+    }
+
     private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
     {
         if(list==null) return  null;

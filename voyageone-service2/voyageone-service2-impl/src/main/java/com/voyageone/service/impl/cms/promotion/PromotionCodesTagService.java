@@ -27,7 +27,7 @@ public class PromotionCodesTagService extends BaseService {
     CmsBtPromotionCodesTagDao cmsBtPromotionCodesTagDao;
 
     @VOTransactional
-    public void addPromotionCodesTag(List<TagTreeNode> tagList, String channelId, int promotionCodesId,String userName) {
+    public void updatePromotionCodesTag(List<TagTreeNode> tagList, String channelId, int promotionCodesId,String userName) {
         if(tagList==null) return;
         tagList.forEach(f -> {
             if (f.getChecked() == 0) {
