@@ -152,7 +152,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
 
     void  deleteFromPromotion(  int promotionId,AddProductSaveParameter parameter) {
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
-        Date activityStart = DateTimeUtil.parse(promotion.getActivityStart());
+        Date activityStart = DateTimeUtil.parse(promotion.getActivityStart(),"yyyy-MM-dd");
         if (DateTimeUtilBeijing.toLocalTime(activityStart) > new Date().getTime()) {
             //活动已开始
             promotionDetailService.deleteFromPromotion(promotion, parameter);
@@ -210,6 +210,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         });
         int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
         tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
+        tagTreeNode.setOldChecked(tagTreeNode.getChecked());
         return tagTreeNode;
     }
 }
