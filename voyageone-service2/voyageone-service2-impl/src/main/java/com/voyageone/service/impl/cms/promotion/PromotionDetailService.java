@@ -113,7 +113,6 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionGroupsBean.setNumIid(numIId);
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
-        CmsBtPromotionCodesModel codesModel= getCmsBtPromotionCodesModel(productInfo,groupModel,promotionId,modifier,cartId);
 
         List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
         if (skusList == null || skusList.isEmpty()) {
@@ -121,6 +120,47 @@ public class PromotionDetailService extends BaseService {
             throw new BusinessException("商品Sku数据不存在");
         }
 
+        //初始化PromotionCode
+        CmsBtPromotionCodesModel codesModel= loadCmsBtPromotionCodesModel(productInfo,groupModel,promotionId,modifier,cartId);
+
+        //初始化PromotionSku
+        List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean,productInfo,groupModel,promotionId,modifier,isUpdatePromotionPrice);
+
+        //计算PromotionSku活动价
+        promotionSkuService.loadSkuPrice(listPromotionSku,bean.getAddProductSaveParameter());
+
+        //保存sku
+        listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
+            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
+                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
+            }
+        });
+
+
+        //PromotionSku活动最大价格 为商品活动价格
+        double  maxPromotionPrice= listPromotionSku.stream().mapToDouble(m->m.getPromotionPrice().doubleValue()).max().getAsDouble();
+        codesModel.setPromotionPrice(maxPromotionPrice);
+
+        //保存codes
+        if(codesModel.getId()==null||codesModel.getId()==0)
+        {
+            daoCmsBtPromotionCodes.insert(codesModel);
+        }
+        else
+        {
+            daoCmsBtPromotionCodes.update(codesModel);
+        }
+
+        // 更新 promotionCodesTag
+        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, codesModel.getId(), modifier);
+
+        //更新mongo product tag
+        updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+    }
+
+    List<CmsBtPromotionSkuBean>   loadPromotionSkus(PromotionDetailAddBean bean,CmsBtProductModel productInfo,CmsBtProductGroupModel groupModel, int promotionId, String modifier,boolean isUpdatePromotionPrice) {
+        List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
+        String numIId = groupModel == null ? null : groupModel.getNumIId();
         List<BaseMongoMap<String, Object>> listSkuMongo = productInfo.getPlatform(bean.getCartId()).getSkus();
         List<CmsBtPromotionSkuBean> listPromotionSku = new ArrayList<>();
         skusList.forEach(sku -> {
@@ -154,36 +194,10 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
             }
             listPromotionSku.add(cmsBtPromotionSkuModelBean);
-//            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
-//                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
-//            }
         });
-        //保存sku
-        promotionSkuService.loadSkuPrice(listPromotionSku,bean.getAddProductSaveParameter());
-        listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
-            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
-                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
-            }
-        });
-        //保存codes
-       double  maxPromotionPrice= listPromotionSku.stream().mapToDouble(m->m.getPromotionPrice().doubleValue()).max().getAsDouble();
-        codesModel.setPromotionPrice(maxPromotionPrice);
-        if(codesModel.getId()==null||codesModel.getId()==0)
-        {
-            daoCmsBtPromotionCodes.insert(codesModel);
-        }
-        else
-        {
-            daoCmsBtPromotionCodes.update(codesModel);
-        }
-
-        // 更新 promotionCodesTag
-        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, codesModel.getId(), modifier);
-
-        //更新mongo product  tag
-        updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+        return  listPromotionSku;
     }
-    CmsBtPromotionCodesModel  getCmsBtPromotionCodesModel( CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel,int promotionId,String modifier,int cartId) {
+    CmsBtPromotionCodesModel loadCmsBtPromotionCodesModel(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String modifier, int cartId) {
         CmsBtPromotionCodesModel codesModel = get(promotionId, productInfo.getCommon().getFields().getCode());
         if(codesModel==null)codesModel=new CmsBtPromotionCodesModel();
         String numIId = groupModel == null ? null : groupModel.getNumIId();
