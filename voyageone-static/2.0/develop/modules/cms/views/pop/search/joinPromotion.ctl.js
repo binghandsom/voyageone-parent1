@@ -194,8 +194,11 @@ define([
                         return false;
                     } else
                         return true;
-                } else
-                    return true;
+                } else{
+                    alert(item.name + "活动下至少选择一个标签！");
+                    return false;
+                }
+
             });
 
             if (!isPass)
@@ -207,12 +210,6 @@ define([
             upEntity.codeList = self.getCodeList();
             upEntity.idList = self.getProductIdList();
             upEntity.listTagTreeNode = self.listTreeNode;
-
-/*            upEntity.priceTypeId = groupInfo.priceTypeId;
-            upEntity.roundType = groupInfo.roundType;
-            upEntity.skuUpdType = groupInfo.skuUpdType;
-            upEntity.optType = groupInfo.optType;
-            upEntity.priceValue = groupInfo.priceValue;*/
 
             self.addProductToPromotionService.save(_.extend(upEntity,groupInfo)).then(function (res) {
                 notify.success("添加成功！");
