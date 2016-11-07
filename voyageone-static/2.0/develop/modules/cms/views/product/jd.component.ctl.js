@@ -45,8 +45,8 @@ define([
                 scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
                 scope.refreshPrice = refreshPrice;
-                scope.doResetTmProduct = doResetTmProduct;
                 scope.moveToGroup = moveToGroup;
+                scope.doResetTmProduct = doResetTmProduct;
 
                 /**
                  * 获取京东页面初始化数据

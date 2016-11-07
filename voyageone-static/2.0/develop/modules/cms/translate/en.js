@@ -794,6 +794,7 @@ define(function () {
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配情况",
         "TXT_FEED_BRAND": "Feed品牌",
         "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
+        "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_PLATFORM_BRAND": "平台品牌",
         "TXT_REGET_PLATFORM_BRANDS": "重新获取平台品牌",
