@@ -68,7 +68,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             Map<String, Object> salesMap = new HashMap<>();
             List<Map<String, Object>> skuSum7List = new ArrayList<>();
             List<Map<String, Object>> skuSum30List = new ArrayList<>();
-            List<Map<String, Object>> skuSumYear = new ArrayList<>();
+            List<Map<String, Object>> skuSumYearList = new ArrayList<>();
             List<Map<String, Object>> skuSumAllList = new ArrayList<>();
 
             // 7天销售sku数据
@@ -117,7 +117,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                     skuSalesMap.put("skuCode", groupKey.get("sku"));
                     skuSalesMap.put("cartId", groupKey.get("cart_id"));
                     skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, qty);
-                    skuSumYear.add(skuSalesMap);
+                    skuSumYearList.add(skuSalesMap);
                 }
             }
 
@@ -159,7 +159,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                         .stream()
                         .filter(sum30Info -> sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId")))
                         .forEach(sum30Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30)));
-                skuSumYear
+                skuSumYearList
                         .stream()
                         .filter(sumYearInfo -> sumInfo.get("skuCode").equals(sumYearInfo.get("skuCode")) && sumInfo.get("cartId").equals(sumYearInfo.get("cartId")))
                         .forEach(sumYearInfo -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, sumYearInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR)));
@@ -251,12 +251,13 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             for (String skuCode : skuCodeMap.keySet()) {
                 int skuSum7 = 0;
                 int skuSum30 = 0;
+                int skuSumYear = 0;
                 int skuSumAll = 0;
                 for (Map sumInfo : skuSumAllList) {
                     if (skuCode.equals(sumInfo.get("skuCode"))) {
                         skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7));
                         skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30));
-                        skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR));
+                        skuSumYear += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR));
                         skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL));
                     }
                 }
