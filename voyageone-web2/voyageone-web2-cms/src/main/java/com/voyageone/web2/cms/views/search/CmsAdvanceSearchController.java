@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -34,7 +32,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsFieldEditService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 /**
@@ -63,8 +60,6 @@ public class CmsAdvanceSearchController extends CmsController {
 
     @Autowired
     private CmsProductSearchQueryService cmsProductSearchQueryService;
-    @Autowired
-    private CmsFieldEditService fieldEditService;
 
     /**
      * 初始化,获取master数据
@@ -405,23 +400,6 @@ public class CmsAdvanceSearchController extends CmsController {
 
         // 返回用户信息
         return success(resultBean);
-    }
-    
-    /**
-     * 商品智能上新
-     */
-    @SuppressWarnings("unchecked")
-	@RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.INTELLIGENT_PUBLISH)
-    public AjaxResponse intelligentPublish(@RequestBody Map<String, Object> params) {
-    	List<String> productIds = (List<String>) params.get("productIds");
-    	Integer cartId = (Integer) params.get("cartId");
-    	// 验证参数
-    	Preconditions.checkArgument(CollectionUtils.isNotEmpty(productIds));
-    	Preconditions.checkNotNull(cartId);
-    	// 设置商品的智能上新
-    	advSearchQueryService.intelligentPublish(getUser().getSelChannelId(), cartId, productIds);
-    	
-    	return success(true);
     }
 
 //    /**

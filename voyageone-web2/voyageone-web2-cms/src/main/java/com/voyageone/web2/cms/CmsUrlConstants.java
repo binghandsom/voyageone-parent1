@@ -340,8 +340,6 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
-
-			String INTELLIGENT_PUBLISH = "intelligentPublish";
         }
 
         interface FEED {
@@ -481,6 +479,7 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
             String SET_PRODUCT_FIELDS = "setProductFields";
             String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
+            String INTELLIGENT_PUBLISH = "intelligentPublish";
         }
 
         interface ADD_TO_PROMOTION {

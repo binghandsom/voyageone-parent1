@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
+    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService) {
         return {
             restrict: "E",
             templateUrl: "views/product/jd.component.tpl.html",
@@ -78,6 +78,7 @@ define([
 
                         scope.vm.mastData = mastData = resp.data.mastData;
                         scope.vm.platform = platform = resp.data.platform;
+                        scope.vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
@@ -466,9 +467,12 @@ define([
                 function publishProduct() {
                 	var params = {
                 		cartId: scope.vm.platform.cartId,
-                		productId: scope.productInfo.productId
+                		productId: [scope.productInfo.productId],
+                		isSelectAll: 0
                 	}
-                	alert("TODO: 商品智能上新, PARAMS: " + angular.toJson(params));
+                	$fieldEditService.intelligentPublish(params).then(function() {
+            			alert('已完成商品的智能上新！');
+        			});
                 }
 
                 /**

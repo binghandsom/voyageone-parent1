@@ -67,8 +67,7 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList",
-                    "intelligentPublish": "intelligentPublish"
+                    "getCustSearchList": "getCustSearchList"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
@@ -435,7 +434,8 @@ define(function () {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
                     "setProductFields": "setProductFields",
-                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
+                    "intelligentPublish": "intelligentPublish"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",

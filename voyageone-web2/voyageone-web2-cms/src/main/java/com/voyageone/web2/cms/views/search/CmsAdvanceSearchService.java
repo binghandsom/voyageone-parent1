@@ -5,6 +5,7 @@ import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_F
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,6 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.CartEnums.Cart;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
@@ -36,7 +36,6 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -50,7 +49,6 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
-import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
@@ -203,21 +201,39 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("isPriceFormula", isPriceFormula);
         
         // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
+        masterData.put("channelConfig", getChannelConfig(userInfo.getSelChannelId(), cartList, language));
+
+        return masterData;
+    }
+    
+    /**
+     * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
+     */
+    public Map<String, Object> getChannelConfig(String channelId, Integer cartId, String langId) {
+    	TypeChannelBean channelConfig = new TypeChannelBean();
+    	channelConfig.setValue(String.valueOf(cartId));
+    	return getChannelConfig(channelId, Arrays.asList(channelConfig), langId);
+    }
+    
+    /**
+     * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
+     */
+    public Map<String, Object> getChannelConfig(String channelId, List<TypeChannelBean> cartList, String langId) {
+        // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
         Map<String, Object> configMap = new HashMap<String, Object>();
         if (CollectionUtils.isEmpty(cartList)) {
         	configMap.put("publishEnabledChannels", "");
         } else {
         	List<String> publishEnabledChannels = new ArrayList<String>();
         	cartList.forEach(cart -> {
-        		if (sxProductService.isSmartSx(userInfo.getSelChannelId(), Integer.valueOf(cart.getValue()))) {
+        		if (sxProductService.isSmartSx(channelId, Integer.valueOf(cart.getValue()))) {
         			publishEnabledChannels.add(cart.getValue());
         		}
         	});
         	configMap.put("publishEnabledChannels", publishEnabledChannels);
         }
-        masterData.put("channelConfig", configMap);
-
-        return masterData;
+        
+        return configMap;
     }
 
     /**

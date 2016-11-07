@@ -768,12 +768,13 @@ define([
         			var productIds = [];
         			if (_selProdList && _selProdList.length) {
                         _.forEach(_selProdList, function (object) {
-                            productIds.push(object.id);
+                            productIds.push(object.code);
                         });
                     }
-        			$searchAdvanceService2.intelligentPublish({
+        			$fieldEditService.intelligentPublish({
         				cartId: cartId,
-        				productIds: productIds
+        				productIds: productIds,
+        				isSelectAll: $scope.vm._selall ? 1 : 0
         			}).then(function() {
             			alert('已完成商品的智能上新！');
                         $scope.search();

@@ -652,15 +652,4 @@ public class CmsAdvSearchQueryService extends BaseService {
         return result;
     }
 
-    /**
-     * 商品的智能上新
-     * @param channelId		渠道ID
-     * @param cartId		店铺ID
-     * @param productIds	商品ID列表
-     */
-	public void intelligentPublish(String channelId, Integer cartId, List<String> productIds) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

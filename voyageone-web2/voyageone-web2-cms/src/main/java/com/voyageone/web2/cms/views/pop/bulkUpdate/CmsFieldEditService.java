@@ -1,5 +1,20 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -9,13 +24,17 @@ import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.*;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.beans.*;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.beans.CartBean;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -27,7 +46,11 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.*;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
@@ -43,15 +66,6 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author gubuchun 15/12/9
@@ -127,6 +141,82 @@ public class CmsFieldEditService extends BaseViewService {
         }
         return resultList;
     }
+    
+    /**
+     * 商品的智能上新
+     */
+	@SuppressWarnings("unchecked")
+	public void intelligentPublish(int cartId, Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+    	List<String> productCodes = null;
+    	// 判断是否为全选
+    	boolean isSelectAll = ((Integer) params.get("isSelectAll") == 1);
+    	if (isSelectAll) {
+    		// 从高级检索重新取得查询结果（根据Session中保存的查询条件）
+    		productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+    	} else {
+    		productCodes = (List<String>) params.get("productIds");
+    	}
+    	
+    	// 按产品的Code检索出所有的商品
+        JongoQuery queryObj = new JongoQuery();
+        StringBuilder queryStr = new StringBuilder("{")
+        		.append(" 'common.fields.code':{$in:#}")
+				.append(",'common.fields.hsCodeStatus': '1'")
+        		.append(",'platform.P").append(cartId).append(".pBrandId': {$nin:[null, '']")
+				.append(",'platform.P").append(cartId).append(".pCatId': {$nin:[null, '']")
+				.append("}");
+        queryObj.setQuery(queryStr.toString());
+        queryObj.setParameters(productCodes);
+        queryObj.setProjection("{'common.fields.code':1,'_id':0}");
+        List<CmsBtProductModel> products = productService.getList(userInfo.getSelChannelId(), queryObj);
+        
+        // 开始智能上新
+        if (CollectionUtils.isNotEmpty(products)) {
+        	productCodes.clear();
+        	// 智能上新批处理
+        	BulkJongoUpdateList productBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
+        	
+        	String productCode = null;
+        	for (CmsBtProductModel product : products) {
+        		productCode = product.getCommon().getFields().getCode();
+        		StringBuffer updateStr = new StringBuffer("{$set:{")
+        				.append(" 'platforms.P").append(cartId).append(".status':'Approved'")
+        				.append(",'modified':#")
+        				.append(",'modifier':#")
+        				.append("}}");
+        		// 更新商品状态
+        		JongoUpdate updateObj = new JongoUpdate();
+        		updateObj.setQuery("{'common.fields.code':#}");
+        		updateObj.setQueryParameters(productCode);
+        		updateObj.setUpdate(updateStr.toString());
+        		updateObj.setUpdateParameters(DateTimeUtil.getNowTimeStamp(), userInfo.getUserName());
+        		
+        		// 保存商品Code
+        		productCodes.add(productCode);
+        		// 添加秕处理执行语句
+        		BulkWriteResult rs = productBulkList.addBulkJongo(updateObj);
+        		if (rs != null) {
+                    $debug(String.format("智能上新(product表) channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
+                }
+        	}
+        	
+        	// 执行智能上新批处理
+        	BulkWriteResult rs = productBulkList.execute();
+            if (rs != null) {
+                $debug(String.format("智能上新(product表) channelId=%s 结果=%s", userInfo.getSelChannelId(), rs.toString()));
+            }
+            
+            // 插入上新程序
+            $debug("批量修改属性 (智能上新) 开始记入SxWorkLoad表");
+            long start = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName(), true);
+            $debug("批量修改属性 (智能上新) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - start));
+
+            // 记录商品修改历史
+            productStatusHistoryService.insertList(userInfo.getSelChannelId(), productCodes, cartId, EnumProductOperationType.IntelligentPublish,
+            		"高级检索 智能上新", userInfo.getUserName());
+        }
+	}
 
     /**
      * 批量修改属性.
