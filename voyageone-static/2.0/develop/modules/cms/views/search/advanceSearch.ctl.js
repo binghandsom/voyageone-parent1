@@ -262,7 +262,12 @@ define([
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
                 $scope.vm.currTab = "product";
-                $scope.vm.currTab2 = true;
+
+                if($scope.vm.currTab == 'product')
+                    $scope.vm.currTab2 = true;
+                else
+                    $scope.$feedActive = false;
+
                 $scope.vm.fstShowGrpFlg = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 900) + 'px';
@@ -323,6 +328,11 @@ define([
                 $scope.vm.fstShowGrpFlg = false;
                 getGroupList();
             }
+
+            if($scope.vm.currTab == 'product')
+                $scope.vm.currTab2 = true;
+            else
+                $scope.$feedActive = false;
         };
 
         /**

@@ -57,8 +57,10 @@ define([
             searchInfo.sortOneName = columnName;
             searchInfo.sortOneType = sortOneType == 'sort-up' ? '1' : '-1';
 
-            parentScope.search();
-
+            if(parentScope.vm.currTab == 'product')
+                parentScope.search();
+            else
+                parentScope.getGroupList();
         };
 
         AdSearchAppendCtl.prototype.getArrowName = function (columnName,cartId) {
