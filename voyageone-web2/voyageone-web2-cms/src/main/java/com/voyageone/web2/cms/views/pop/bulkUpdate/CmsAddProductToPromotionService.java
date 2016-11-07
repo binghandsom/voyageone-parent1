@@ -157,7 +157,6 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             //活动已开始
             promotionDetailService.deleteFromPromotion(promotion, parameter);
         }
-
     }
 
     /**
