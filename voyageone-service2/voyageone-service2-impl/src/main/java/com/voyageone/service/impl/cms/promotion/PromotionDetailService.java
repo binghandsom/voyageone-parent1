@@ -9,6 +9,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
@@ -22,10 +23,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.*;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -115,31 +113,14 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionGroupsBean.setNumIid(numIId);
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
-        // 插入cms_bt_promotion_code表
-        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier, cartId);
-        cmsBtPromotionCodesBean.setNumIid(numIId);
-        cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
-        cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
-
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
-        if (!imgList.isEmpty()) {
-            cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
-        } else {
-            imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
-            if (!imgList.isEmpty()) {
-                cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
-            }
-        }
-
-        if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodesBean) == 0) {
-            cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodesBean);
-        }
+        CmsBtPromotionCodesModel codesModel= getCmsBtPromotionCodesModel(productInfo,groupModel,promotionId,modifier,cartId);
 
         List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
         if (skusList == null || skusList.isEmpty()) {
             $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
             throw new BusinessException("商品Sku数据不存在");
         }
+
         List<BaseMongoMap<String, Object>> listSkuMongo = productInfo.getPlatform(bean.getCartId()).getSkus();
         List<CmsBtPromotionSkuBean> listPromotionSku = new ArrayList<>();
         skusList.forEach(sku -> {
@@ -177,18 +158,90 @@ public class PromotionDetailService extends BaseService {
 //                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
 //            }
         });
+        //保存sku
         promotionSkuService.loadSkuPrice(listPromotionSku,bean.getAddProductSaveParameter());
         listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
             if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
             }
         });
+        //保存codes
+       double  maxPromotionPrice= listPromotionSku.stream().mapToDouble(m->m.getPromotionPrice().doubleValue()).max().getAsDouble();
+        codesModel.setPromotionPrice(maxPromotionPrice);
+        if(codesModel.getId()==null||codesModel.getId()==0)
+        {
+            daoCmsBtPromotionCodes.insert(codesModel);
+        }
+        else
+        {
+            daoCmsBtPromotionCodes.update(codesModel);
+        }
 
         // 更新 promotionCodesTag
-        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, cmsBtPromotionCodesBean.getId(), modifier);
+        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, codesModel.getId(), modifier);
 
         //更新mongo product  tag
         updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+    }
+    CmsBtPromotionCodesModel  getCmsBtPromotionCodesModel( CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel,int promotionId,String modifier,int cartId) {
+        CmsBtPromotionCodesModel codesModel = get(promotionId, productInfo.getCommon().getFields().getCode());
+        if(codesModel==null)codesModel=new CmsBtPromotionCodesModel();
+        String numIId = groupModel == null ? null : groupModel.getNumIId();
+        // 插入cms_bt_promotion_code表
+        CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean(productInfo, groupModel, promotionId, modifier, cartId);
+        codesModel.setNumIid(numIId);
+        //cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
+        //cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
+
+        codesModel.setProductId(ConvertUtil.toInt(productInfo.getProdId()));
+        codesModel.setProductCode(productInfo.getCommon().getFields().getCode());
+        codesModel.setProductName(com.taobao.api.internal.util.StringUtils.isEmpty(productInfo.getCommon().getFields().getOriginalTitleCn()) ? productInfo.getCommon().getFields().getProductNameEn() : productInfo.getCommon().getFields().getOriginalTitleCn());
+//        this.setProductName(productInfo.getFields().getProductNameEn());
+        CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(cartId);
+
+        if (ptfObj != null &&ptfObj.getSkus() != null &&!ptfObj.getSkus().isEmpty()) {
+            codesModel.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
+            codesModel.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
+            codesModel.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));
+        }
+        codesModel.setCatPath(productInfo.getCommon().getCatPath());
+
+        // ProductModel
+        codesModel.setProductModel(productInfo.getCommon().getFields().getModel());
+
+
+        //codesModel.set.setSynFlg("0");
+
+        codesModel.setPromotionId(promotionId);
+        codesModel.setOrgChannelId(productInfo.getOrgChannelId());
+
+        codesModel.setCreater(modifier);
+
+        codesModel.setModifier(modifier);
+        if (groupModel != null) {
+            // numIid
+            codesModel.setNumIid(groupModel.getNumIId());
+            // modelId
+            codesModel.setModelId(groupModel.getGroupId().intValue());
+        }
+
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
+        if (!imgList.isEmpty()) {
+            codesModel.setImageUrl1(imgList.get(0).getName());
+        } else {
+            imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+            if (!imgList.isEmpty()) {
+                codesModel.setImageUrl1(imgList.get(0).getName());
+            }
+        }
+
+        return codesModel;
+    }
+    CmsBtPromotionCodesModel get(int promotionId,String code) {
+        Map<String, Object> map = new HashedMap();
+        map.put("promotionId", promotionId);
+        map.put("productCode", code);
+        return daoCmsBtPromotionCodes.selectOne(map);
     }
     //更新mongo product  tag
     private void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel,int refTagId,List<TagTreeNode> tagList, String modifier) {

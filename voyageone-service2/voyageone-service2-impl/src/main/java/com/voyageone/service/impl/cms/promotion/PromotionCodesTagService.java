@@ -37,6 +37,7 @@ public class PromotionCodesTagService extends BaseService {
                 if (get(promotionCodesId, f.getId()) == null) {
                     //不存在 新增
                     CmsBtPromotionCodesTagModel promotionCodesTagModel=new CmsBtPromotionCodesTagModel();
+                    promotionCodesTagModel.setTagName(f.getName());
                     promotionCodesTagModel.setCmsBtTagId(f.getId());
                     promotionCodesTagModel.setChannelId(channelId);
                     promotionCodesTagModel.setCmsBtPromotionCodesId(promotionCodesId);
