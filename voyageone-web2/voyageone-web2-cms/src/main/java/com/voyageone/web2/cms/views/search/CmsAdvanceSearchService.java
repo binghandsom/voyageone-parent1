@@ -1,5 +1,23 @@
 package com.voyageone.web2.cms.views.search;
 
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
@@ -7,16 +25,18 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.CartEnums.Cart;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -26,26 +46,17 @@ import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * @author Edward
@@ -76,6 +87,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private MqSender sender;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+
+    @Autowired
+    private SxProductService sxProductService;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -187,6 +201,21 @@ public class CmsAdvanceSearchService extends BaseViewService {
             isPriceFormula = "1";
         }
         masterData.put("isPriceFormula", isPriceFormula);
+        
+        // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
+        Map<String, Object> configMap = new HashMap<String, Object>();
+        if (CollectionUtils.isEmpty(cartList)) {
+        	configMap.put("publishEnabledChannels", "");
+        } else {
+        	List<String> publishEnabledChannels = new ArrayList<String>();
+        	cartList.forEach(cart -> {
+        		if (sxProductService.isSmartSx(userInfo.getSelChannelId(), Integer.valueOf(cart.getValue()))) {
+        			publishEnabledChannels.add(cart.getValue());
+        		}
+        	});
+        	configMap.put("publishEnabledChannels", publishEnabledChannels);
+        }
+        masterData.put("channelConfig", configMap);
 
         return masterData;
     }

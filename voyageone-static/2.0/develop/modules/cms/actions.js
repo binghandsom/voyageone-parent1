@@ -67,7 +67,8 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList"
+                    "getCustSearchList": "getCustSearchList",
+                    "intelligentPublish": "intelligentPublish"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",

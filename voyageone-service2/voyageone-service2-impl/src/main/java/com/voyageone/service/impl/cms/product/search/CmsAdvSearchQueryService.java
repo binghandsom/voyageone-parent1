@@ -1,20 +1,24 @@
 package com.voyageone.service.impl.cms.product.search;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -647,5 +651,16 @@ public class CmsAdvSearchQueryService extends BaseService {
         result.put("sortOutList", sortOutList);
         return result;
     }
+
+    /**
+     * 商品的智能上新
+     * @param channelId		渠道ID
+     * @param cartId		店铺ID
+     * @param productIds	商品ID列表
+     */
+	public void intelligentPublish(String channelId, Integer cartId, List<String> productIds) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

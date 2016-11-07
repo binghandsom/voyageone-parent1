@@ -47,6 +47,7 @@ define([
                 scope.refreshPrice = refreshPrice;
                 scope.moveToGroup = moveToGroup;
                 scope.doResetTmProduct = doResetTmProduct;
+                scope.publishProduct = publishProduct;
 
                 /**
                  * 获取京东页面初始化数据
@@ -459,6 +460,15 @@ define([
                         alert("处理完成， 请重新approve一下商品");
                         // notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
+                }
+                
+                // 商品智能上新
+                function publishProduct() {
+                	var params = {
+                		cartId: scope.vm.platform.cartId,
+                		productId: scope.productInfo.productId
+                	}
+                	alert("TODO: 商品智能上新, PARAMS: " + angular.toJson(params));
                 }
 
                 /**
