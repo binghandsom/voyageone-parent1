@@ -14,9 +14,11 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionTagProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
@@ -43,6 +45,9 @@ public class JMPromotionDetailService extends BaseService {
     CmsBtJmPromotionProductDaoExt daoext;
 
     @Autowired
+    CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
+
+    @Autowired
     CmsBtJmPromotionSkuDao daoCmsBtJmPromotionSku;
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
@@ -52,6 +57,8 @@ public class JMPromotionDetailService extends BaseService {
 
     @Autowired
     CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
+    @Autowired
+    private ProductService productService;
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier, CmsBtProductModel productInfo) {
@@ -80,13 +87,10 @@ public class JMPromotionDetailService extends BaseService {
         }
 
         // 保存 JmPromotionSku
-        listPromotionSku.forEach(f->{
-            if(f.getId()!=null&&f.getId()>0)
-            {
+        listPromotionSku.forEach(f -> {
+            if (f.getId() != null && f.getId() > 0) {
                 daoCmsBtJmPromotionSku.update(f);
-            }
-            else
-            {
+            } else {
                 daoCmsBtJmPromotionSku.insert(f);
             }
         });
@@ -96,8 +100,7 @@ public class JMPromotionDetailService extends BaseService {
 
     }
 
-    CmsBtJmPromotionProductModel loadJmPromotionProduct(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String userName, CmsBtProductModel productInfo)
-    {
+    CmsBtJmPromotionProductModel loadJmPromotionProduct(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String userName, CmsBtProductModel productInfo) {
         CmsBtJmPromotionProductModel jmProductModel = daoext.selectByProductCode(bean.getProductCode(), jmPromotionModel.getChannelId(), jmPromotionModel.getId());
         if (jmProductModel == null) {
             jmProductModel = new CmsBtJmPromotionProductModel();
@@ -147,10 +150,10 @@ public class JMPromotionDetailService extends BaseService {
         if (sbPromotionTag.length() > 0) {
             jmProductModel.setPromotionTag(sbPromotionTag.substring(1));
         }
-        return  jmProductModel;
+        return jmProductModel;
     }
 
-    List<CmsBtJmPromotionSkuModel>   loadJmPromotionSkus(PromotionDetailAddBean bean, CmsBtJmPromotionProductModel jmProductModel,CmsBtProductModel productInfo, String modifier) {
+    List<CmsBtJmPromotionSkuModel> loadJmPromotionSkus(PromotionDetailAddBean bean, CmsBtJmPromotionProductModel jmProductModel, CmsBtProductModel productInfo, String modifier) {
         List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
         List<BaseMongoMap<String, Object>> listSkuMongo = productInfo.getPlatform(bean.getCartId()).getSkus();
         List<CmsBtJmPromotionSkuModel> listPromotionSku = new ArrayList<>();
@@ -158,7 +161,7 @@ public class JMPromotionDetailService extends BaseService {
             Double priceMsrp = 0d;
             Double priceRetail = 0d;
             Double priceSale = 0d;
-            Double msrpUsd=9d;
+            Double msrpUsd = 9d;
             BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, sku.getSkuCode());
             if (mapSkuPlatform != null) {
                 priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
@@ -214,39 +217,40 @@ public class JMPromotionDetailService extends BaseService {
         });
         return listPromotionSku;
     }
-    private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
-    {
-        for(BaseMongoMap<String, Object> map:list)
-        {
-            if(skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode")))
-            {
-                return  map;
+
+    private BaseMongoMap<String, Object> getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list, String skuCode) {
+        for (BaseMongoMap<String, Object> map : list) {
+            if (skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode"))) {
+                return map;
             }
         }
         return null;
     }
-    @VOTransactional
-    public  void  deleteFromPromotion(CmsBtJmPromotionModel promotion, AddProductSaveParameter parameter) {
 
-       // CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotion());
+    @VOTransactional
+    public void deleteFromPromotion(CmsBtJmPromotionModel promotion, AddProductSaveParameter parameter) {
+
+        // CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(promotion());
         //Map<String,Object> map=new HashedMap();
 
         // 2.7.1
         if (promotion.getPrePeriodStart().getTime() < DateTimeUtilBeijing.getCurrentBeiJingDate().getTime()) {
             throw new BusinessException("预热已经开始,不能批量删除!");
         }
-//        //获取未上传的jmproduct
-//        List<CmsBtJmPromotionProductModel> listNotSych = daoext.selectNotSynchListByPromotionProductIds(parameter.getListPromotionProductId());
-//        List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
-//
-//        if(listNotSychCode.size()>0) {
-//            productService.removeTagByCodes(channelId, listNotSychCode, model.getRefTagId());
-//        }
-//        //2.7.2.1 只删除未上传的商品  先删除sku  tag  再删除product
-//        daoExtCmsBtJmPromotionSku.batchDeleteSku(parameter.getListPromotionProductId());
-//        daoExtCmsBtJmPromotionTagProduct.batchDeleteTag(parameter.getListPromotionProductId());
-//        daoExt.batchDeleteProduct(parameter.getListPromotionProductId());
-//
+        //获取未上传的jmproduct
+        List<CmsBtJmPromotionProductModel> listNotSych = daoext.selectNotSynchListByProductCodes(promotion.getId(), parameter.getCodeList());
+        List<String> listNotSychCode = getListNotSychCode(listNotSych);//获取未上传的code
+
+        if (listNotSychCode.size() > 0) {
+            productService.removeTagByCodes(promotion.getChannelId(), listNotSychCode, promotion.getRefTagId());
+        }
+       List<Integer> jmPromotionProductIdList= getListNotSychJmPromotionProductId(listNotSych);
+        //2.7.2.1 只删除未上传的商品  先删除sku  tag  再删除product
+        if(jmPromotionProductIdList.size()>0) {
+            daoExtCmsBtJmPromotionSku.batchDeleteSku(jmPromotionProductIdList);
+            cmsBtJmPromotionTagProductDaoExt.batchDeleteTag(jmPromotionProductIdList);
+            daoext.batchDeleteProduct(jmPromotionProductIdList);
+        }
 //
 //        //2.7.2.2  已经上传的商品  写入错误信息
 //        daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
@@ -281,5 +285,21 @@ public class JMPromotionDetailService extends BaseService {
         // `cms_bt_promotion_codes`
         //group不删除
 
+    }
+
+    public List<String> getListNotSychCode(List<CmsBtJmPromotionProductModel> listNotSych) {
+        List<String> codeList = new ArrayList<>();
+        listNotSych.stream().forEach((o) -> {
+            codeList.add(o.getProductCode());
+        });
+        return codeList;
+    }
+
+    public List<Integer> getListNotSychJmPromotionProductId(List<CmsBtJmPromotionProductModel> listNotSych) {
+        List<Integer> idList = new ArrayList<>();
+        listNotSych.stream().forEach((o) -> {
+            idList.add(o.getId());
+        });
+        return idList;
     }
 }

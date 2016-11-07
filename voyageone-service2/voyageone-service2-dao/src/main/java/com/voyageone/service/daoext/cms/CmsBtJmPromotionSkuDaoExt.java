@@ -38,7 +38,7 @@ public interface CmsBtJmPromotionSkuDaoExt {
 
     List<SkuPriceBean> selectJmSkuPriceInfoListByPromotionProductId(int promotionProductId);
 
-    int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int batchDeleteSku(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
     List<MapModel> selectViewListByPromotionProductId(@Param("promotionProductId") int promotionProductId,@Param("jmPromotionId") int jmPromotionId);
