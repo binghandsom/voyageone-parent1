@@ -41,6 +41,13 @@ public class CmsFieldEditController extends CmsController {
         return success(result);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_PLATFROM_POP_OPTIONS)
+    public AjaxResponse getPlatfromPopOptions(@RequestBody Integer cartId){
+
+        List<CmsMtCommonPropDefModel> result = fieldEditService.getPlatfromPopOptions(cartId);
+        return success(result);
+    }
+
     /**
      * 批量修改属性.
      */
@@ -111,4 +118,18 @@ public class CmsFieldEditController extends CmsController {
         return genResponseEntityFromBytes(MediaType.valueOf("application/csv"), fileName, byteData);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_CATEGORY)
+    public AjaxResponse bulkSetCategory(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetCategory(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_PLATFORM_FIELDS)
+    public AjaxResponse bulkSetPlatformFields(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetPlatformFields(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
 }

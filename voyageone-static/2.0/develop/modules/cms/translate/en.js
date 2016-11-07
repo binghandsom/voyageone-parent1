@@ -172,6 +172,7 @@ define(function () {
         "TXT_MAPPING_CATEGORY_OR_FORWARD": "类目匹配 / 继承",
         "TXT_MAPPING_ATTRIBUTE_IS_FINISHED": "属性匹配完成?",
         "TXT_MAPPING_ATTRIBUTE": "属性匹配",
+        "TXT_REFRESH_PRODUCT_FIELD": "强制重刷",
         "TXT_MASTER_DATA_ATTRIBUTE_MAPPING": "主数据属性匹配",
         "TXT_PLATFORM_ATTRIBUTE_MAPPING": "平台属性匹配",
         "TXT_ATTRIBUTE_MAPPING": "属性匹配",

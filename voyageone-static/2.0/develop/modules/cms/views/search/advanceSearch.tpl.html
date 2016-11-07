@@ -714,6 +714,13 @@
                                 <li ng-if="vm.masterData.autoApprovePrice!=1">
                                     <a href="javascript:void(0)" ng-click="toopenSalePrice(openSalePrice,cartBean.value)">{{'TXT_FINAL_SALE_PRICE_SETTING'|translate}}</a>
                                 </li>
+
+                                <li >
+                                    <a href="javascript:void(0)" ng-click="jdCategoryMapping(cartBean.value)">修改平台类目</a>
+                                </li>
+                                <li >
+                                    <a href="javascript:void(0)" ng-click="editPlatformAttribute(cartBean.value)">修改平台共同属性</a>
+                                </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="cfmRetailPrice(cartBean)">指导价变更确认</a>
                                 </li>

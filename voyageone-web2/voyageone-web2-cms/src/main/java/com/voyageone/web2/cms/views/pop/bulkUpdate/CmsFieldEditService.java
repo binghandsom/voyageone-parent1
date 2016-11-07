@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -16,10 +17,14 @@ import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.*;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.OptionsField;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
+import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -29,11 +34,13 @@ import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -43,6 +50,7 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +96,8 @@ public class CmsFieldEditService extends BaseViewService {
     private CommCacheService commCacheService;
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private CmsMtPlatformCommonSchemaService cmsMtPlatformCommonSchemaService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -125,6 +135,29 @@ public class CmsFieldEditService extends BaseViewService {
             }
             resultList.add(resModel);
         }
+        return resultList;
+    }
+
+    public List<CmsMtCommonPropDefModel> getPlatfromPopOptions(Integer cartId) {
+        CmsMtPlatformCommonSchemaModel commonSchemaModel = cmsMtPlatformCommonSchemaService.get(cartId);
+        List<Field> items = new ArrayList<>();
+        if (commonSchemaModel == null)
+            return null;
+
+        List<Map<String, Object>> itemFieldMapList = commonSchemaModel.getPropsItem();
+        if (itemFieldMapList != null && !itemFieldMapList.isEmpty())
+            items.addAll(SchemaJsonReader.readJsonForList(itemFieldMapList));
+
+        List<Map<String, Object>> productFieldMapList = commonSchemaModel.getPropsProduct();
+        if (productFieldMapList != null && !productFieldMapList.isEmpty())
+            items.addAll(SchemaJsonReader.readJsonForList(productFieldMapList));
+
+        List<CmsMtCommonPropDefModel> resultList = new ArrayList<>(items.size());
+        items.forEach(field -> {
+            CmsMtCommonPropDefModel resModel = new CmsMtCommonPropDefModel();
+            resModel.setField(field);
+            resultList.add(resModel);
+        });
         return resultList;
     }
 
@@ -1088,4 +1121,150 @@ public class CmsFieldEditService extends BaseViewService {
         return rsMap;
     }
 
+    /**
+     * 批量设置类目
+     */
+    public void bulkSetCategory(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession){
+        $debug("批量修改商品价格 开始处理");
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+
+            new BusinessException("批量修改商品价格 没有code条件 params=" + params.toString());
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        if (cartId == null || cartId == 0) {
+            new BusinessException("批量修改商品价格 没有cartId条件 params=" + params.toString());
+        }
+        String pCatPath = (String) params.get("pCatPath");
+        String pCatId = (String) params.get("pCatId");
+        if(StringUtil.isEmpty(pCatPath) || StringUtil.isEmpty(pCatId)){
+            new BusinessException("类目不能为空");
+        }
+        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+        for (String productCode : productCodes) {
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("platforms.P" + cartId + ".pCatPath", pCatPath);
+            updateMap.put("platforms.P" + cartId + ".pCatId", pCatId);
+            updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("common.fields.code", productCode);
+            HashMap<String, Object> queryMap2 = new HashMap<>();
+            queryMap2.put("$in",new String[]{null,""});
+            queryMap.put("platforms.P" + cartId + ".pCatPath", queryMap2);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
+
+        cmsBtProductDao.bulkUpdateWithMap(userInfo.getSelChannelId(), bulkList, userInfo.getUserName(), "$set");
+    }
+
+    public void bulkSetPlatformFields(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
+        List<String> productCodes = (ArrayList<String>) params.get("productIds");
+        Integer isSelAll = (Integer) params.get("isSelAll");
+        if (isSelAll == null) {
+            isSelAll = 0;
+        }
+
+        if (isSelAll == 1) {
+            // 从高级检索重新取得查询结果（根据session中保存的查询条件）
+            productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
+        }
+        if (productCodes == null || productCodes.isEmpty()) {
+
+            new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
+        }
+
+        Integer cartId = (Integer) params.get("cartId");
+        if (cartId == null || cartId == 0) {
+            new BusinessException("批量修改商品属性 没有cartId条件 params=" + params.toString());
+        }
+        Map<String, Object> prop = (Map<String, Object>) params.get("property");
+        String prop_id = StringUtils.trimToEmpty((String) prop.get("id"));
+        List<BulkUpdateModel> bulkList = new ArrayList<>(productCodes.size());
+
+        Field fields = SchemaJsonReader.readJsonForObject(prop);
+
+        if (fields instanceof ComplexField) {
+            ComplexField complexField = (ComplexField) fields;
+            List<Field> complexFields = complexField.getFields();
+            ComplexValue complexValue = complexField.getComplexValue();
+            setComplexValue(complexFields, complexValue);
+        }
+
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        fields.getFieldValueToMap(result);
+
+        Map<String,Object> mqMessage = new HashedMap();
+        mqMessage.put("cartId",cartId);
+        mqMessage.put("channelId",userInfo.getSelChannelId());
+        mqMessage.put("productCodes",productCodes);
+        mqMessage.put("userName",userInfo.getUserName());
+        mqMessage.put("fieldsId",prop_id);
+        mqMessage.put("fieldsValue",result.get(prop_id));
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+    }
+
+    /**
+     * set complex value.
+     */
+    private void setComplexValue(List<Field> fields, ComplexValue complexValue) {
+
+        for (Field fieldItem : fields) {
+
+            complexValue.put(fieldItem);
+
+            FieldTypeEnum fieldType = fieldItem.getType();
+
+            switch (fieldType) {
+                case INPUT:
+                    InputField inputField = (InputField) fieldItem;
+                    String inputValue = inputField.getValue();
+                    complexValue.setInputFieldValue(inputField.getId(), inputValue);
+                    break;
+                case SINGLECHECK:
+                    SingleCheckField singleCheckField = (SingleCheckField) fieldItem;
+                    Value checkValue = singleCheckField.getValue();
+                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(), checkValue);
+                    break;
+                case MULTICHECK:
+                    MultiCheckField multiCheckField = (MultiCheckField) fieldItem;
+                    List<Value> checkValues = multiCheckField.getValues();
+                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(), checkValues);
+                    break;
+                case MULTIINPUT:
+                    MultiInputField multiInputField = (MultiInputField) fieldItem;
+                    List<String> inputValues = multiInputField.getStringValues();
+                    complexValue.setMultiInputFieldValues(multiInputField.getId(), inputValues);
+                    break;
+                case COMPLEX:
+                    ComplexField complexField = (ComplexField) fieldItem;
+                    List<Field> subFields = complexField.getFields();
+                    ComplexValue subComplexValue = complexField.getComplexValue();
+                    setComplexValue(subFields, subComplexValue);
+                    break;
+                case MULTICOMPLEX:
+                    MultiComplexField multiComplexField = (MultiComplexField) fieldItem;
+                    List<ComplexValue> complexValueList = multiComplexField.getComplexValues();
+                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(), complexValueList);
+                    break;
+
+                default:
+                    break;
+            }
+
+        }
+    }
 }

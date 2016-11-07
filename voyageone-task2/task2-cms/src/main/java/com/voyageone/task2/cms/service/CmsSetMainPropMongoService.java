@@ -1057,6 +1057,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
 
+                    // 设置sku数
+                    cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     //james g kg 计算
                     weightCalculate(cmsProduct);
 
@@ -1141,7 +1143,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
-                    $info("weightCalculate:" +  (System.currentTimeMillis() - startTime));
+
+                    // 设置sku数
+                    cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 

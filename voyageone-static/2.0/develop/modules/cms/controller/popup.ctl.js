@@ -53,6 +53,13 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+            "platformFieldEdit": {
+                "templateUrl": "views/pop/bulkUpdate/platformFieldEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/platformFieldEdit.ctl",
+                "controller": 'popPlatformFieldEditCtl',
+                "backdrop": 'static',
+                "size": 'md'
+            },
             "category": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategory.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategory.ctl",
@@ -545,6 +552,12 @@ define([
                 "controller": 'MoveResultController as ctrl',
                 "size": 'sm'
             }
+        },
+        confirmProductRefresh: {
+            templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
+            controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
+            controller: 'ConfirmProductRefreshController as $ctrl',
+            size: 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -666,6 +679,15 @@ define([
             return openModal(popActions.bulkUpdate.category, context);
         };
 
+        /**
+         * 打开类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupPlatformPopOptions = function popupPlatformPopOptions(context) {
+
+            return openModal(popActions.bulkUpdate.platformFieldEdit, context);
+        };
         /**
          * 打开多选类目选择页面
          * @param context
@@ -1302,7 +1324,14 @@ define([
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
-        }
+        };
+
+        $scope.confirmProductRefresh = function confirmProductRefresh(field, mappingInfo) {
+            return openModal(popActions.confirmProductRefresh, {
+                field: field,
+                mappingInfo: mappingInfo
+            });
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 

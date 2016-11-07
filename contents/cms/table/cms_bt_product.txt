@@ -66,6 +66,7 @@
     * usageCn ->20160627,使用说明中文
     * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
     * commissionRate ->20160713,VO佣金费率,商品级
+    * skuCnt ->20161111,sku数
   * skus[]
     * skuCode
     * barcode
