@@ -821,7 +821,7 @@ pre {
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1005;
+   /* z-index: 1005;*/
 }
 .app-footer.app-footer-fixed {
     position: fixed;

@@ -969,3 +969,9 @@ schema .ng-invalid.focus-error {
     color: white;
     font-weight: bold;
 }
+
+/**高级检索样式*/
+#advanceSearch .dropdown-menu-ul{
+    max-height: 350px;
+    overflow: auto;
+}

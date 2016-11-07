@@ -722,10 +722,14 @@
                                 </li>
                                 <li class="dropdown-submenu" ng-if="vm.masterData.promotionMap[cartBean.value].length > 0 &&cartBean.cartType!=3">
                                     <a href>加入促销活动</a>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu dropdown-menu-ul">
                                         <li ng-repeat="promotion in vm.masterData.promotionMap[cartBean.value]">
-                                            <a href ng-click="$parent.openAddPromotion(promotion,cartBean,openAddToPromotion)" ng-if="cartBean.value!=27">{{promotion.promotionName}}</a>
-                                            <a href ng-click="$parent.openJMActivity(promotion,cartBean,openAddJMActivity)" ng-if="cartBean.value==27">{{promotion.name}}</a>
+                                            <a href ng-click="$parent.openAddPromotion(promotion,cartBean,openAddToPromotion)" ng-if="cartBean.value!=27" title="{{promotion.promotionName}}">
+                                                {{promotion.promotionName | limitTo: 10}}{{promotion.promotionName.length > 10 ? '...' : ''}}
+                                            </a>
+                                            <a href ng-click="$parent.openJMActivity(promotion,cartBean,openAddJMActivity)" ng-if="cartBean.value==27" title="{{promotion.name}}">
+                                                {{promotion.name | limitTo: 10}}{{promotion.name.length > 10 ? '...' : ''}}
+                                            </a>
                                         </li>
                                     </ul>
                                 </li>
