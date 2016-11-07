@@ -51,4 +51,25 @@
         )
     </update>
 
+    <select id="wms_bt_inventory_center_logic_selectLogicInventory_bycode" resultType="com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel" parameterType="Map" >
+        SELECT
+        order_channel_id as orderChannelId,
+        code,
+        sum(qty_orgin) as qtyOrgin,
+        sum(qty_china) as qtyChina,
+        active,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM
+        wms_bt_inventory_center_logic
+        WHERE order_channel_id = #{channelId}
+            and code in
+            <foreach collection="codeList" item="codeItem" open="(" separator="," close=")">
+                #{codeItem.productCode}
+            </foreach>
+
+        group by code
+    </select>
 </mapper>

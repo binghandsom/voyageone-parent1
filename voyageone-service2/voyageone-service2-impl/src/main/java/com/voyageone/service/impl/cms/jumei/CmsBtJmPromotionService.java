@@ -18,6 +18,7 @@ import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtJmPromotionImagesDao;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtJmBayWindowService;
@@ -28,12 +29,14 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -57,6 +60,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmImageTemplateService jmImageTemplateService;
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
@@ -614,11 +619,11 @@ public class CmsBtJmPromotionService extends BaseService {
 
             //取得源聚美活动信息
             CmsBtJmPromotionSaveBean srcJmPromotionSaveBean = getEditModel(srcJmPromotionId, true);
-            if(srcJmPromotionSaveBean.getExtModel() != null){
+            if (srcJmPromotionSaveBean.getExtModel() != null) {
                 // image数据取得
-                cmsBtJmPromotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(srcJmPromotionSaveBean.getExtModel().getPromotionId(),srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                cmsBtJmPromotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(srcJmPromotionSaveBean.getExtModel().getPromotionId(), srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
 
-                srcCmsBtJmBayWindowModel =  cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
+                srcCmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
 
             }
 
@@ -652,6 +657,12 @@ public class CmsBtJmPromotionService extends BaseService {
             //List<SkuImportBean > listSkuImport, List<Map<String, Object>> listProducctErrorMap, List<Map<String, Object>> listSkuErrorMap,String userName;
             List<ProductImportBean> listProductImport = cmsBtJmPromotionProductDaoExt.selectProductByJmPromotionId(srcJmPromotionId);
             List<SkuImportBean> listSkuImport = cmsBtJmPromotionSkuDaoExt.selectProductByJmPromotionId(srcJmPromotionId);
+
+            // 排除没有库存的code
+            List<String> availabilityCode = inventoryChk(srcJmPromotionSaveBean.getModel().getChannelId(), listProductImport);
+            listProductImport = listProductImport.stream().filter(productImportBean -> availabilityCode.contains(productImportBean.getProductCode())).collect(Collectors.toList());
+            listSkuImport = listSkuImport.stream().filter(skuImportBean -> availabilityCode.contains(skuImportBean.getProductCode())).collect(Collectors.toList());
+
             List<Map<String, Object>> listSkuErrorMap = new ArrayList<>();//;错误行集合
             List<Map<String, Object>> listProducctErrorMap = new ArrayList<>();//错误行集合
             cmsBtJmPromotionImportTask3Service.saveImport(srcJmPromotionSaveBean.getModel(), listProductImport, listSkuImport, listProducctErrorMap, listSkuErrorMap, userName, false);
@@ -660,7 +671,7 @@ public class CmsBtJmPromotionService extends BaseService {
 
             sortProduct(srcRefTagId, desRefTagId, userName);
 
-            if(cmsBtJmPromotionImagesModel != null){
+            if (cmsBtJmPromotionImagesModel != null) {
                 cmsBtJmPromotionImagesModel.set_id(null);
                 cmsBtJmPromotionImagesModel.setCreater(userName);
                 cmsBtJmPromotionModel.setModifier(userName);
@@ -669,16 +680,16 @@ public class CmsBtJmPromotionService extends BaseService {
                 cmsBtJmPromotionImagesDao.insert(cmsBtJmPromotionImagesModel);
             }
 
-            if(srcCmsBtJmBayWindowModel != null){
+            if (srcCmsBtJmBayWindowModel != null) {
                 CmsBtJmBayWindowModel newCmsBtJmBayWindowModel = cmsBtJmBayWindowService.getBayWindowByJmPromotionId(srcJmPromotionSaveBean.getExtModel().getJmpromotionId());
                 newCmsBtJmBayWindowModel.setBayWindows(srcCmsBtJmBayWindowModel.getBayWindows());
                 newCmsBtJmBayWindowModel.setFixed(srcCmsBtJmBayWindowModel.getFixed());
                 cmsBtJmBayWindowService.update(newCmsBtJmBayWindowModel);
             }
             return srcJmPromotionSaveBean;
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             throw e;
-        }catch (Exception e) {
+        } catch (Exception e) {
             $error(e);
             throw new BusinessException("返场失败");
         }
@@ -716,6 +727,14 @@ public class CmsBtJmPromotionService extends BaseService {
                 }
             }
         });
+    }
+
+    public List<String> inventoryChk(String channelId, List<ProductImportBean> listProductImport) {
+        List<WmsBtInventoryCenterLogicModel> wmsBtInventoryCenterLogicModels = wmsBtInventoryCenterLogicDao.getInventoryByCode(channelId, listProductImport);
+
+        List<String> availabilityCode = wmsBtInventoryCenterLogicModels.stream().filter(inventory->inventory.getQtyChina()>0).map(WmsBtInventoryCenterLogicModel::getCode).collect(Collectors.toList());
+
+        return availabilityCode;
     }
 
     public long getJmPromotionCount(Map params) {

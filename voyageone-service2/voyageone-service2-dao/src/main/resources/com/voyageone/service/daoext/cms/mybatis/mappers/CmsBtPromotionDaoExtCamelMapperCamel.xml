@@ -33,6 +33,20 @@
             <if test="createdEnd != null">
                 and #{createdEnd,jdbcType=VARCHAR} >= a.created
             </if>
+            <if test="promotionStart != null and  promotionEnd != null">
+                and (
+                activity_start BETWEEN #{promotionStart,jdbcType=VARCHAR}
+                AND #{promotionEnd,jdbcType=VARCHAR}
+                )
+                OR (
+                activity_end BETWEEN #{promotionStart,jdbcType=VARCHAR}
+                AND #{promotionEnd,jdbcType=VARCHAR}
+                )
+                OR (
+                #{promotionStart,jdbcType=VARCHAR} > activity_start
+                AND activity_end > #{promotionEnd,jdbcType=VARCHAR}
+                )
+            </if>
         </where>
         order by ${orderByColumn}  limit #{offset},#{pageRowCount}) as a on a.Id=cms_bt_promotion.Id
     </select>
