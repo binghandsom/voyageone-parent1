@@ -2,8 +2,9 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.cms.SellerCatService;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ethan Shi on 2016/6/7.
@@ -127,6 +126,12 @@ public class ProductServiceTest {
     @Test
     public void testGetProductByNumIid() throws Exception {
         List<CmsBtProductModel> a = productService.getProductByNumIid("010", "527616787069", 23);
+        System.out.println(JacksonUtil.bean2Json(a));
+    }
+
+    @Test
+    public void testGetProductByOriginalCodeWithoutItself() throws Exception {
+        List<CmsBtProductModel> a = productService.getProductByOriginalCodeWithoutItself("928", "NY-23923-PG-PINK");
         System.out.println(JacksonUtil.bean2Json(a));
     }
 }
