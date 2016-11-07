@@ -100,10 +100,23 @@ public class PlatformMappingService extends BaseService {
      */
     public Map<String, Object> getValueMap(String channelId, int cartId, CmsBtProductModel product, String categoryPath, String fieldId) {
 
+        // 创建配置计算基础数据
+        List<CustomPropBean> customPropBeanList = productService.getCustomProp(product);
+        Map<String, Object> valueMap = new HashMap<>();
+        ValueMapFiller filler = new ValueMapFiller(product, customPropBeanList);
+
+        // 执行通用配置
+        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId, fieldId);
+        if (commonFieldMapsModel != null)
+            fillValueMap(valueMap, filler, commonFieldMapsModel);
+
         if (StringUtils.isEmpty(categoryPath)) {
             CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
             categoryPath = cart.getpCatPath();
         }
+
+        if (StringUtils.isEmpty(categoryPath))
+            return valueMap;
 
         // 计算多级类目
         Stack<String> categoryPathStack = new Stack<>();
@@ -115,16 +128,6 @@ public class PlatformMappingService extends BaseService {
             categoryPathStack.push(part);
             index = part.lastIndexOf(separator);
         }
-
-        // 创建配置计算基础数据
-        List<CustomPropBean> customPropBeanList = productService.getCustomProp(product);
-        Map<String, Object> valueMap = new HashMap<>();
-        ValueMapFiller filler = new ValueMapFiller(product, customPropBeanList);
-
-        // 执行通用配置
-        CmsBtPlatformMappingModel commonFieldMapsModel = platformMappingDao.selectCommon(cartId, channelId, fieldId);
-        if (commonFieldMapsModel != null)
-            fillValueMap(valueMap, filler, commonFieldMapsModel);
 
         // 执行多级目录配置
         while (!categoryPathStack.isEmpty()) {
