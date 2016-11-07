@@ -196,6 +196,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         tagTreeNode.setName(model.getPromotionName());
         tagTreeNode.setChildren(new ArrayList<>());
         List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
+        if(list.size()==0) return tagTreeNode;
         int codeCount = codeList.size();
         list.forEach(f -> {
             TagTreeNode node = new TagTreeNode();
