@@ -5,7 +5,7 @@
         </button>
         <h5 class="modal-title"> 加入活动 </h5>
     </div>
-    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg" novalidate>
+    <form name="ctrl.promotionFrom" class="form-horizontal m-t-md m-l-lg m-b-lg" novalidate>
         <div class="form-group">
             <label class="col-sm-3 control-label">平台:</label>
             <div class="col-sm-6">
@@ -17,6 +17,8 @@
             <div class="col-sm-7 form-inline">
                 <div class="col-md-5 input-group">
                     <input class="form-control" ng-model="ctrl.groupInfo.startTime" uib-datepicker-popup
+                           name="startTime"
+
                            date-model-format="yyyy-MM-dd"
                            min-date="ctrl.nowTime"
                            is-open="datePicker1" close-text="Close">
@@ -27,6 +29,8 @@
                 &nbsp;~&nbsp;
                 <div class="col-md-5 input-group">
                     <input class="form-control" ng-model="ctrl.groupInfo.endTime" uib-datepicker-popup
+                           name="endTime"
+
                            date-model-format="yyyy-MM-dd"
                            min-date="ctrl.groupInfo.startTime"
                            is-open="datePicker2" close-text="Close">
@@ -39,6 +43,15 @@
                 <button class="btn btn-success" ng-click="ctrl.search()"><i class="fa fa-search"></i></button>
             </div>
         </div>
+
+<!--        <div class="form-group">
+            <div class="row">
+                <div class="col-md-offset-3">
+                    <vo-message target="ctrl.promotionFrom.endTime"></vo-message>
+                </div>
+            </div>
+        </div>-->
+
         <!------------------- 显示活动标签 ------------------->
         <div class="form-group">
             <label class="col-sm-3 control-label">活动标签</label>
@@ -69,54 +82,74 @@
                 <div class="form-group" style="margin-left: 5px;">
                     <div class="row">
                         <label class="col-md-5">
-                            <input type="radio" name="BasePrice" value="priceMsrp" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('1','TXT_MSRP_PRICE')">&nbsp;{{'TXT_MSRP_PRICE'|translate}}
+                            <input type="radio" name="BasePrice" value="priceMsrp" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('1','TXT_MSRP_PRICE')" required>&nbsp;{{'TXT_MSRP_PRICE'|translate}}
                         </label>&emsp;
                         <label class="col-md-5">
-                            <input type="radio" name="BasePrice" value="priceRetail" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('2','TXT_RETAIL_PRICE_WITH_COLON')">&nbsp;{{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
+                            <input type="radio" name="BasePrice" value="priceRetail" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('2','TXT_RETAIL_PRICE_WITH_COLON')" required>&nbsp;{{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
                         </label>&emsp;
                         </div>
                     <div class="row">
                         <label class="col-md-5">
-                            <input type="radio" name="BasePrice" value="priceSale" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('3','TXT_SALE_PRICE')">&nbsp;{{'TXT_SALE_PRICE'|translate}}
+                            <input type="radio" name="BasePrice" value="priceSale" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('3','TXT_SALE_PRICE')" required>&nbsp;{{'TXT_SALE_PRICE'|translate}}
                         </label>&emsp;
                         <label class="col-md-5">
-                            <input type="radio" name="BasePrice" value="" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('4','')">&nbsp;{{'TXT_NONE'|translate}}
+                            <input type="radio" name="BasePrice" value="" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('4','')" required>&nbsp;{{'TXT_NONE'|translate}}
                         </label>&emsp;
                     </div>
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-offset-3">
+                    <vo-message target="ctrl.promotionFrom.BasePrice"></vo-message>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="col-sm-3 control-label">{{'TXT_EXPRESSION' | translate}}</label>
             <div class="col-sm-6">
                 <div class="row m-t-xs">
                     <div class="col-md-6">
-                        <select class="form-control" ng-model="ctrl.groupInfo.optType" ng-disabled="ctrl.groupInfo._optStatus" ng-change="ctrl.chkOptionType()">
+                        <select class="form-control" name="optType" ng-model="ctrl.groupInfo.optType" ng-disabled="ctrl.groupInfo._optStatus" ng-change="ctrl.chkOptionType()" required>
                             <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             <option value="*">*</option>
                             <option value="+">+</option>
                             <option value="-">-</option>
                             <option value="=">=</option>
                         </select>
+                        <div class="m-t-xs">
+                            <vo-message target="ctrl.promotionFrom.optType"></vo-message>
+                        </div>
+
                     </div>
+
                     <div class="col-md-6">
-                        <input type="number" class="form-control" ng-if="ctrl.groupInfo.priceInputFlg" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0">
+                        <input type="number" class="form-control" ng-if="ctrl.groupInfo.priceInputFlg" name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
+                        <div class="m-t-xs">
+                            <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
+                        </div>
                     </div>
                 </div>
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio" value="1" ng-model="ctrl.groupInfo.roundType">&nbsp;小数点向上取整
+                            <input type="radio" name="roundType" value="1" ng-model="ctrl.groupInfo.roundType" required>&nbsp;小数点向上取整
                         </label>&emsp;
                         <label>
-                            <input type="radio" value="2" ng-model="ctrl.groupInfo.roundType">&nbsp;个位向下取整
+                            <input type="radio" name="roundType" value="2" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向下取整
                         </label>&emsp;
                         <label>
-                            <input type="radio" value="3" ng-model="ctrl.groupInfo.roundType">&nbsp;个位向上取整
+                            <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
                         </label>&emsp;&emsp;
                         <label>
-                            <input type="radio" value="4" ng-model="ctrl.groupInfo.roundType">&nbsp;无特殊处理
+                            <input type="radio" name="roundType" value="4" ng-model="ctrl.groupInfo.roundType" required>&nbsp;无特殊处理
                         </label>&emsp;
+                    </div>
+                    <div class="form-group">
+                        <vo-message target="ctrl.promotionFrom.roundType"></vo-message>
                     </div>
                 </div>
                 <div class="row m-t-xs">
@@ -125,30 +158,34 @@
                 <div class="row m-t-xs">
                     <div class="form-group" style="margin-left: 5px;">
                         <label>
-                            <input type="radio" value="1" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU统一最高价
+                            <input type="radio" name="skuUpdType" value="1" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最高价
                         </label>
                         <label>
-                            <input type="radio" value="2" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU统一最低价
+                            <input type="radio" name="skuUpdType" value="2" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最低价
                         </label>
                         <label>
-                            <input type="radio" value="3" ng-model="ctrl.groupInfo.skuUpdType">&nbsp;商品内，SKU价格不统一
+                            <input type="radio" name="skuUpdType" value="3" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU价格不统一
                         </label>
+                    </div>
+                    <div class="form-group"  style="margin-left: 5px;">
+                        <vo-message target="ctrl.promotionFrom.skuUpdType"></vo-message>
                     </div>
                 </div>
             </div>
         </div>
 
     </form>
+
     <div class="modal-footer">
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()" ng-disabled="ctrl.promotionFrom.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div>
 
 <script id="categoryContainer" type="text/ng-template">
     <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
         <div class="m-t-xs">
-            <label>{{category.checked}}
+            <label>
                 <input style="margin: 0" type="checkbox"
                        ui-indeterminate="category.checked == 1"
                        ng-checked="category.checked == 2"

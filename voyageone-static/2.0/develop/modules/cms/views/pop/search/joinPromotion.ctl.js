@@ -1,6 +1,5 @@
 define([
-    'cms',
-    './joinPromotion.dev'
+    'cms'
 ], function (cms) {
 
     function flatCategories(categories, flag) {
@@ -26,12 +25,13 @@ define([
 
     cms.controller('joinPromotionCtl', (function () {
 
-        function JoinPromotionCtl(context, addProductToPromotionService, alert, $translate) {
-            console.log(context);
-            this.context=context;
+        function JoinPromotionCtl(context, addProductToPromotionService, alert, $translate, notify, $uibModalInstance) {
+            this.context = context;
             this.cartBean = context.cartBean;
             this.alert = alert;
+            this.notify = notify;
             this.$translate = $translate;
+            this.$uibModalInstance = $uibModalInstance;
             this.addProductToPromotionService = addProductToPromotionService;
             this.nowTime = new Date();
             this.allCheckNodes;     //原始全选状态
@@ -40,38 +40,36 @@ define([
             this.groupInfo = {};
         }
 
-        JoinPromotionCtl.prototype.getCodeList=function () {
-            var codeList=[];
+        JoinPromotionCtl.prototype.getCodeList = function () {
+            var codeList = [];
             _.forEach(this.context.selList, function (object) {
                 codeList.push(object.code);
             });
             return codeList;
         };
-        JoinPromotionCtl.prototype.getProductIdList=function () {
-            var idList=[];
+        JoinPromotionCtl.prototype.getProductIdList = function () {
+            var idList = [];
             _.forEach(this.context.selList, function (object) {
                 idList.push(object.id);
             });
             return idList;
         };
-        /**
-         * cartId isSelAll codeList    addProductToPromotionService.init
-         */
+
         JoinPromotionCtl.prototype.init = function () {
-           // this.search();
+            this.search();
         };
 
-        JoinPromotionCtl.prototype.search=function () {
-            var self=this,
+        JoinPromotionCtl.prototype.search = function () {
+            var self = this,
                 addProductToPromotionService = self.addProductToPromotionService;
 
             self.listTreeNode = [];
             addProductToPromotionService.init({
-                codeList : self.getCodeList(),
-                cartId : self.cartBean.value,
-                isSelAll : self.context.isSelAll,
-                activityStart:self.groupInfo.startTime,
-                activityEnd:self.groupInfo.endTime
+                codeList: self.getCodeList(),
+                cartId: self.cartBean.value,
+                isSelAll: self.context.isSelAll,
+                activityStart: self.groupInfo.startTime,
+                activityEnd: self.groupInfo.endTime
             }).then(function (res) {
                 self.listTreeNode = res.data.listTreeNode;
 
@@ -85,7 +83,8 @@ define([
                 self.halfCheckNodes = flatCategories(self.listTreeNode, 1);
             });
 
-        }
+        };
+
         JoinPromotionCtl.prototype.canSelectChild = function (entity) {
             console.log(entity);
             var self = this,
@@ -97,7 +96,7 @@ define([
             else
                 entity.checked = 0;
 
-            if (entity.children&&entity.children.length > 0 && checkNodes[entity.id]) {
+            if (entity.children && entity.children.length > 0 && checkNodes[entity.id]) {
 
                 var exit = _.some(entity.children, function (item) {
                     //只判断全选状态
@@ -111,7 +110,6 @@ define([
             }
         };
 
-        // 选择基准价格时的画面检查
         JoinPromotionCtl.prototype.chkPriceType = function (priceTypeVal, typeTxt) {
             var self = this,
                 groupInfo = self.groupInfo,
@@ -148,7 +146,7 @@ define([
                 groupInfo.priceInputFlg = false;
             } else if (groupInfo.optType == '=') {
                 groupInfo._opeText = '';
-                if(groupInfo.priceTypeId == 4) {
+                if (groupInfo.priceTypeId == 4) {
                     // 基准价格为None时才可以输入
                     groupInfo.priceInputFlg = true;
                 } else {
@@ -160,30 +158,13 @@ define([
             }
         };
 
-        JoinPromotionCtl.prototype.saveBasePrice = function(){
-
-
-
-
-
-            var parameter={};
-           // parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
-            //parameter.jmPromotionId=jmPromotionId;
-
-            parameter.priceTypeId=groupInfo.priceTypeId;
-            parameter.priceValue=groupInfo.priceValue;
-            parameter.skuUpdType=groupInfo.skuUpdType;
-            parameter.optType=groupInfo.optType;
-            parameter.roundType=groupInfo.roundType;
-
-
-        };
-
         JoinPromotionCtl.prototype.save = function () {
             var self = this,
                 checkNodes = self.checkNodes,
                 groupInfo = self.groupInfo,
                 alert = self.alert,
+                notify = self.notify,
+                $uibModalInstance = self.$uibModalInstance,
                 context = self.context,
                 userArr = objToArr(checkNodes),
                 allCheckArr = objToArr(self.allCheckNodes);
@@ -193,7 +174,7 @@ define([
                 return allCheckArr.indexOf(item) < 0;
             });
 
-            if (userArr.length == 0 || !isClick) {
+            if (!isClick) {
                 alert("未做任何改变！");
                 return;
             }
@@ -216,59 +197,29 @@ define([
                 } else
                     return true;
             });
-            if(!isPass){return;}
 
-            // 检查输入
-            if (groupInfo.priceTypeId == 0) {
-                alert("未选择基准价格，请选择后再操作。");
+            if (!isPass)
                 return;
-            }
-            if (groupInfo.optType == undefined || groupInfo.optType == '') {
-                alert("未选择表达式，请选择后再操作。");
-                return;
-            }
-            if (groupInfo.optType != '=' && (groupInfo.priceValue == undefined || groupInfo.priceValue == '')) {
-                alert("未填写价格，请填写后再操作。");
-                return;
-            }
-            if (groupInfo.priceTypeId == 4 && (groupInfo.priceValue == undefined || groupInfo.priceValue == '')) {
-                alert("未填写价格，请填写后再操作。");
-                return;
-            }
-            // 检查输入数据
-            var intVal = groupInfo.priceValue;
-            if (!(intVal == null || intVal == undefined || intVal == '')) {
-                if (isNaN(intVal)) {
-                    alert("价格必须是数字");
-                    return;
-                }
-            }
 
+            var upEntity = {};
+            upEntity.cartId = context.cartBean.value;
+            upEntity.isSelAll = context.isSelAll;
+            upEntity.codeList = self.getCodeList();
+            upEntity.idList = self.getProductIdList();
+            upEntity.listTagTreeNode = self.listTreeNode;
 
+/*            upEntity.priceTypeId = groupInfo.priceTypeId;
+            upEntity.roundType = groupInfo.roundType;
+            upEntity.skuUpdType = groupInfo.skuUpdType;
+            upEntity.optType = groupInfo.optType;
+            upEntity.priceValue = groupInfo.priceValue;*/
 
+            self.addProductToPromotionService.save(_.extend(upEntity,groupInfo)).then(function (res) {
+                notify.success("添加成功！");
+                $uibModalInstance.close();
+            });
 
-                var upEntity = {};
-                upEntity.cartId = context.cartBean.value;
-                upEntity.isSelAll = context.isSelAll;
-                upEntity.codeList = self.getCodeList();
-                upEntity.idList=self.getProductIdList();
-                upEntity.listTagTreeNode = self.listTreeNode;
-
-                upEntity.priceTypeId = groupInfo.priceTypeId;;
-                upEntity.roundType = groupInfo.roundType;
-                upEntity.skuUpdType = groupInfo.skuUpdType;
-                upEntity.optType = groupInfo.optType;
-                upEntity.priceValue = groupInfo.priceValue;
-
-
-                console.log("upEntity",upEntity);
-
-               self.addProductToPromotionService.save(upEntity).then(function (res) {
-
-
-                });
-
-            }
+        };
 
         return JoinPromotionCtl;
 
