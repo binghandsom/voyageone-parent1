@@ -223,7 +223,7 @@ define([
                 codeList: self.getCodeList(),
                 idList: self.getProductIdList(),
                 listTagTreeNode: self.listTreeNode
-            }, groupInfo)).then(function (res) {
+            }, groupInfo)).then(function () {
                 notify.success("添加成功！");
                 $uibModalInstance.close();
             });
