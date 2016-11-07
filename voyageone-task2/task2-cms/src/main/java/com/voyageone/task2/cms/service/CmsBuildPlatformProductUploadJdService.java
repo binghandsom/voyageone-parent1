@@ -426,8 +426,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             // 编辑京东共通属性
+            boolean blnForceSmartSx = false;
+            if (3 == cmsBtSxWorkloadModel.getPublishStatus()) {
+                blnForceSmartSx = true;
+            }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
-                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap);
+                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
 
             // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
             List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -713,6 +717,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -720,7 +725,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                                                  long groupId, ShopBean shopProp,
                                                  CmsMtPlatformCategorySchemaModel jdCommonSchema,
                                                  CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                 Map<String, Integer> skuLogicQtyMap) throws BusinessException {
+                                                 Map<String, Integer> skuLogicQtyMap,
+                                                 boolean blnForceSmartSx) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -731,7 +737,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         String cartId = sxData.getCartId().toString();
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
-        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser);
+        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
 
         // 京东上新产品共通属性设定
         JdProductBean jdProductBean = new JdProductBean();
@@ -880,7 +886,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setService(mainProduct.getXXX());                   // 不使用
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser);
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser, blnForceSmartSx);
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
         jdProductBean.setAttributes(jdProductAttrMap.get(Attrivutes));
@@ -930,10 +936,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
-                                                ShopBean shopBean, ExpressionParser expressionParser) {
+                                                ShopBean shopBean, ExpressionParser expressionParser,
+                                                boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -949,7 +957,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东共通Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), jdCommonSchema.getCatId());
@@ -1007,10 +1015,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                       ShopBean shopBean, ExpressionParser expressionParser) {
+                                                       ShopBean shopBean, ExpressionParser expressionParser,
+                                                       boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1026,7 +1036,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
