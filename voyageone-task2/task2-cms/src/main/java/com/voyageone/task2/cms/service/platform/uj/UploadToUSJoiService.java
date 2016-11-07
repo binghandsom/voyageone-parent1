@@ -668,7 +668,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 platformCart.setpIsMain(1);
                             }
 
-                            if (platformCart.getSkus() == null) {
+                            if (ListUtils.isNull(platformCart.getSkus())) {
 //                              // 设置主店产品的PXX.skus信息
                                 platformCart.setSkus(correctPlatformSkus);
                             } else {
