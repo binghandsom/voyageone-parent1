@@ -41,7 +41,7 @@ public class CmsSumProdOrdersServiceTest {
     @Test
     public void testSumProdOrders() throws Exception {
 
-        long productId = 9303;
+        long productId = 6362;
         String channelId = "010";
         String taskName = "CmsSumProdOrdersServiceTest";
 
