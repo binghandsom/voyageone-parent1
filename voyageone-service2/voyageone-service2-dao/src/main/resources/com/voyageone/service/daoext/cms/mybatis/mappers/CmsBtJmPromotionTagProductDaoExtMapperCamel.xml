@@ -16,4 +16,17 @@
     <delete id="deleteByTagId" parameterType="java.lang.Integer">
         delete from cms_bt_jm_promotion_tag_product  where `cms_bt_tag_id`=#{tagId}
     </delete>
+
+    <delete id="deleteByTagIdJmPromotionProductId">
+        delete from cms_bt_jm_promotion_tag_product  where `cms_bt_tag_id`=#{tagId} and cms_bt_jm_promotion_product_id=#{jmPromotionProductId}
+    </delete>
+
+    <delete id="batchDeleteByCodes">
+        DELETE a FROM `cms_bt_jm_promotion_tag_product` AS a
+        JOIN `cms_bt_jm_promotion_product` AS b ON a.`cms_bt_jm_promotion_product_id`=b.`id`
+        WHERE b.cms_bt_jm_promotion_id=#{jmPromotionId}  and  b.product_code IN
+        <foreach item="item" index="i" collection="codeList"  open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 </mapper>

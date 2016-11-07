@@ -11,9 +11,13 @@ import java.util.List;
 @Repository
 public interface CmsBtJmPromotionTagProductDaoExt {
     int deleteByCmsBtJmPromotionProductId(int cmsBtJmPromotionProductId);
+
     int batchDeleteTag(@Param("listPromotionProductId") List<Long> listPromotionProductId);
 
 
     int deleteByTagId(int tagId);
 
+    int deleteByTagIdJmPromotionProductId(@Param("tagId") int tagId, @Param("jmPromotionProductId") int jmPromotionProductId);
+
+    int batchDeleteByCodes(@Param("codeList") List<String> codeList, @Param("jmPromotionId") int jmPromotionId);
 }

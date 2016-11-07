@@ -4,13 +4,16 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.bean.cms.jumei.BatchUpdateSkuPriceParameterBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
+import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
+import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionTagProductService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
@@ -38,17 +41,56 @@ public class JMPromotionDetailService extends BaseService {
     CmsBtJmPromotionProductDaoExt daoext;
 
     @Autowired
+    CmsBtJmPromotionSkuDao daoCmsBtJmPromotionSku;
+    @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
 
     @Autowired
     CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
 
+    @Autowired
+    CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
+
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier, CmsBtProductModel productInfo) {
 
+        //1.初始化 JmPromotionProduct
         CmsBtJmPromotionProductModel jmProductModel = loadJmPromotionProduct(bean, jmPromotionModel, modifier, productInfo);
 
+        //2.初始化 JmPromotionSku
         List<CmsBtJmPromotionSkuModel> listPromotionSku = loadJmPromotionSkus(bean, jmProductModel, productInfo, modifier);
+
+        //3.计算活动价格
+        BatchUpdateSkuPriceParameterBean parameter = new BatchUpdateSkuPriceParameterBean();
+        parameter.setJmPromotionId(jmPromotionModel.getId());
+        parameter.setOptType(bean.getAddProductSaveParameter().getOptType());
+        parameter.setPriceTypeId(bean.getAddProductSaveParameter().getPriceTypeId());
+        parameter.setPriceValue(bean.getAddProductSaveParameter().getPriceValue());
+        parameter.setRoundType(bean.getAddProductSaveParameter().getRoundType());
+        parameter.setSkuUpdType(bean.getAddProductSaveParameter().getSkuUpdType());
+        cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, listPromotionSku, modifier);
+
+        // 保存 JmPromotionProduct
+        if (jmProductModel.getId() != null && jmProductModel.getId() > 0) {
+            dao.update(jmProductModel);
+        } else {
+            dao.insert(jmProductModel);
+        }
+
+        // 保存 JmPromotionSku
+        listPromotionSku.forEach(f->{
+            if(f.getId()!=null&&f.getId()>0)
+            {
+                daoCmsBtJmPromotionSku.update(f);
+            }
+            else
+            {
+                daoCmsBtJmPromotionSku.insert(f);
+            }
+        });
+
+        //更新 tag
+        cmsBtJmPromotionTagProductService.updateJmPromotionTagProduct(bean.getTagList(), jmPromotionModel.getChannelId(), jmProductModel.getId(), modifier);
 
     }
 
