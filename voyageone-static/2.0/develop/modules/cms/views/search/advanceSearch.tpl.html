@@ -711,10 +711,10 @@
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                         <!-- Products table and controls -->
                         <div class="table-responsive box-body">
-                            <table class="table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width:100%" width="{{vm.tblWidth2}}">
+                            <table class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
-                                    <tr>
-                                        <th class="text-left" style="display:inline-block; height:40px; line-height:40px;width:110px;padding-left:10px;margin-left:0px">
+                                    <tr style="background:#e67e22;color: #fff">
+                                        <th class="text-left" style="height:40px; line-height:40px;width:5%;padding-left:10px;margin-left:0px" colspan="2">
                                             <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                                 <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                        ng-checked="isAllSelected(vm.productSelList)"
@@ -722,70 +722,70 @@
                                                 <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-left" style="display:inline-block;width:90px;padding-left:8px">
+                                        <th class="text-left" style="width:90px;padding-left:8px">
                                             <span translate="TXT_CODE"></span>&emsp;<button class="opacityBtn"
                                                                                              ng-if="vm.productList.length"
                                                                                              ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
                                         </th>
-                                        <th class="text-left" style="display:inline-block;width:110px;padding-left:8px">
+                                        <th class="text-left" style="width:110px;padding-left:8px">
                                             <span translate="TXT_NAME"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('originalTitleCn')"><i class="fa fa-{{ctrlAdvance.getArrowName('originalTitleCn')}}"></i></button>
                                         </th>
-                                        <th class="text-left" style="display:inline-block;width:110px;padding-left:8px">
+                                        <th class="text-left" style="width:110px;padding-left:8px">
                                             <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('brand')"><i class="fa fa-{{ctrlAdvance.getArrowName('brand')}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="display:inline-block;width:110px;padding-left:8px">
+                                        <th class="text-center" style="width:110px;padding-left:8px">
                                             <span translate="TXT_INVENTORY"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">
+                                        <th class="text-center" style="width:150px;padding-left:8px">
                                             中国建议售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">
+                                        <th class="text-center" style="width:150px;padding-left:8px">
                                             中国指导售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceRetailSt',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="display:inline-block;width:170px;padding-left:8px">
+                                        <th class="text-center" style="width:170px;padding-left:8px">
                                             中国最终售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceSaleEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceSaleEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" style="display:inline-block;width:165px;padding-left:8px">
+                                        <th class="text-center" style="width:165px;padding-left:8px">
                                             <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
                                                                                                  ng-if="vm.productList.length"
                                                                                                  ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">
+                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width:120px;padding-left:8px">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
                                                                             ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
-                                        <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">
+                                        <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="width:120px;padding-left:8px">{{prop2.name}}</th>
+                                        <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="width:100px;padding-left:8px">
                                             {{prop3.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
                                                                         ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
                                         </th>
-                                        <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">
+                                        <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="width:100px;padding-left:8px">
                                             {{prop4.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
                                                                         ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
                                         </th>
                                     </tr>
                                 </thead>
-                            </table>
-                            <div class="col-sm-12 box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
-                                <table class="table-hover vo_table vo_models" ng-if="vm.productList.length" style="min-width: 100%;margin-bottom:10px;" width="{{vm.tblWidth2}}" ng-controller="popupCtrl">
-                                    <tbody ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd;">
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
-                                        <td class="text-center" style="height: 80px" rowspan="2">
+                                <tbody>
+                                    <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
+                                </tbody>
+                                <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd;">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+                                        <td class="text-center" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
                                                        ng-controller="selectRowsCtrl"
@@ -798,8 +798,7 @@
                                                 <img image="{{productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="9" class="control-label text-left form-inline"
-                                            style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+                                        <td colspan="7" class="control-label text-left form-inline" style="height:27px; ">
                                             <!--Todo 活动详情pop的数据取得-->
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
@@ -827,14 +826,20 @@
                                                         popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                             </span>
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
+                                        </td>
+                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr"></td>
+                                        <td class="text-left" ng-repeat="prop2 in productInfo.custArr"></td>
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr"></td>
+                                        <td class="text-center" ng-repeat="prop4 in productInfo.selBiDataArr"></td>
+                                        <td class="text-right">
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
                                         </td>
                                     </tr>
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}">
-                                        <td class="text-left" style="display:inline-block;width:90px;">
+                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
+                                        <td class="text-left" style="width:90px;">
                                             <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.common.fields.code"></a>
                                         </td>
-                                        <td class="text-left" style="display:inline-block;width:110px;">
+                                        <td class="text-left" style="width:110px;">
                                             <a ng-if="productInfo.common.fields.originalTitleCn"
                                                href="#/product/detail/{{productInfo.prodId}}"
                                                title="{{productInfo.common.fields.originalTitleCn}}"
@@ -844,13 +849,13 @@
                                                title="{{productInfo.common.fields.productNameEn}}"
                                                target="_blank">{{productInfo.common.fields.productNameEn | limitTo: 30}}{{productInfo.common.fields.productNameEn.length > 30 ? '...' : ''}}</a>
                                         </td>
-                                        <td class="text-left" style="display:inline-block;width:110px;">
+                                        <td class="text-left" style="width:110px;">
                                             {{productInfo.common.fields.brand}}
                                         </td>
-                                        <td class="text-center" style="display:inline-block;width:50px;">
+                                        <td class="text-center" style="width:50px;">
                                             {{productInfo.common.fields.quantity || 0}}
                                         </td>
-                                        <td class="text-center" style="display:inline-block;width:150px;">
+                                        <td class="text-center" style="width:150px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceMsrp.length>0"
                                                     popover-html="showInfo({{productInfo.priceMsrp}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -858,7 +863,7 @@
                                                 {{productInfo.priceMsrp[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-center" style="display:inline-block;width:150px;">
+                                        <td class="text-center" style="width:150px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceRetail.length>0"
                                                     popover-html="showInfo({{productInfo.priceRetail}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -866,7 +871,7 @@
                                                 {{productInfo._retailPriceCol.pVal}}<label ng-if="productInfo._retailPriceCol.pTxt" ng-class="productInfo._retailPriceCol.cssTxt" style="margin-bottom:0px">&nbsp;{{productInfo._retailPriceCol.pTxt}}</label>
                                             </button>
                                         </td>
-                                        <td class="text-center" style="display:inline-block;width:170px;">
+                                        <td class="text-center" style="width:170px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.priceSale.length>0"
                                                     popover-html="showInfo({{productInfo.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -875,7 +880,7 @@
                                             </button>
                                         </td>
                                         <!--show SKU length -->
-                                        <td class="text-center" style="display:inline-block;width:165px;">
+                                        <td class="text-center" style="width:165px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
                                                     popover-html="popoverAdvanceSku(productInfo.common.fields.code, productInfo.common.skus)"
                                                     uib-popover-template="templateAction.advanceSkuPopover.templateUrl"
@@ -884,21 +889,21 @@
                                                 {{productInfo.common.skus.length}}
                                             </button>
                                         </td>
-                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="display:inline-block;width:120px;">
+                                        <td class="text-left" ng-repeat="prop1 in productInfo.commArr" style="width:120px;">
                                             <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
                                         </td>
-                                        <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}" style="display:inline-block;width:120px;">
+                                        <td class="text-left" ng-repeat="prop2 in productInfo.custArr" title="{{prop2.value}}" style="width:120px;">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="display:inline-block;width:100px;">{{prop3.value}}</td>
-                                        <td class="text-center" ng-repeat="prop4 in productInfo.selBiDataArr" style="display:inline-block;width:100px;">{{prop4.value}}</td>
+                                        <td class="text-center" ng-repeat="prop3 in productInfo.selSalesTyeArr" style="width:100px;">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop4 in productInfo.selBiDataArr" style="width:100px;">{{prop4.value}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                        </div><!-- .table-responsive -->
+
+                        </div>
                         <div class="col-sm-12 m-t-lg m-b-lg">
                             <vpagination config="vm.productPageOption"></vpagination>
                         </div>
@@ -907,31 +912,35 @@
                     <uib-tab ng-click="firstShowGroupList()">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
                         <div class="table-responsive box-body">
-                            <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width: 100%" width="{{vm.tblWidth}}">
+                            <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="min-width: 100%" width="{{vm.tblWidth}}" ng-style="{'border': vm.groupList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                 <tr>
-                                    <th colspan="3" class="text-left" style="display:inline-block; height:40px; line-height:40px;width:400px;padding-left:10px">
+                                    <th colspan="2" class="text-left" style="height:40px; line-height:40px;width:10%;padding-left:10px">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(vm.groupSelList)" ng-checked="isAllSelected(vm.groupSelList)" ng-disabled="!vm.groupList.length">
-                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                        </label>
+                                    </th>
+                                    <th class="text-center">
                                         <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>&emsp;<button class="opacityBtn"
                                                                                                                    ng-if="vm.groupList.length"
                                                                                                                    ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
                                     </th>
-                                    <th class="text-center" style="display:inline-block;width:150px;padding-left:8px">中国最终售价</th>
-                                    <th class="text-left" translate="TXT_BRAND" style="display:inline-block;width:150px;padding-left:8px"></th>
-                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="display:inline-block;width:120px;padding-left:8px">{{prop1.propName}}</th>
-                                    <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="display:inline-block;width:120px;padding-left:8px">{{prop2.name}}</th>
-                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="display:inline-block;width:100px;padding-left:8px">{{prop3.name}}</th>
-                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="display:inline-block;width:100px;padding-left:8px">{{prop4.name}}</th>
+                                    <th class="text-center" style="width:150px;padding-left:8px">中国最终售价</th>
+                                    <th class="text-left" translate="TXT_BRAND" style="width:150px;padding-left:8px"></th>
+                                    <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width:120px;padding-left:8px">{{prop1.propName}}</th>
+                                    <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="width:120px;padding-left:8px">{{prop2.name}}</th>
+                                    <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="width:100px;padding-left:8px">{{prop3.name}}</th>
+                                    <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="width:100px;padding-left:8px">{{prop4.name}}</th>
                                 </tr>
                                 </thead>
-                            </table>
-
-                            <div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
-                                <table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" style="min-width: 100%;margin-bottom: 10px;" width="{{vm.tblWidth}}" ng-controller="popupCtrl">
-                                    <tbody ng-repeat="groupInfo in vm.groupList" style="border-bottom: 1px solid #ddd;">
-                                    <tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}" class="table_bg_gray">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="9" if-no-rows="vm.groupList.length"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody ng-repeat="groupInfo in vm.groupList"  style="border-bottom:1px solid #ddd;">
+                                    <tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                         <td class="text-center" style="height: 80px" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"
@@ -940,12 +949,13 @@
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
-                                        <td class="text-center" rowspan="2" colspan="2" style="padding-left: 0">
+                                        <td class="text-center" rowspan="2" style="padding-left: 0">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)">
                                                 <img image="{{groupInfo.common.fields.images1[0].image1}}" alt="{{groupInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="7" class="control-label text-left form-inline" style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
+
+                                        <td colspan="2" class="control-label text-left form-inline" style="height:27px;">
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(groupInfo.common.fields.code)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
@@ -964,11 +974,17 @@
                                             <span class="form-inline" ng-if="groupInfo.grpImgList.length > 0">
                                                 <a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-r-xs" image="{{prop2.value}}" /></a>
                                             </span>
+                                        </td>
+                                        <td ng-repeat="prop1 in vm.commonProps"></td>
+                                        <td ng-repeat="prop2 in vm.sumCustomProps"></td>
+                                        <td ng-repeat="prop3 in vm.selSalesType"></td>
+                                        <td ng-repeat="prop4 in vm.selBiDataList"></td>
+                                        <td>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{groupInfo.common.catPath}}</span>
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}">
-                                        <td class="text-left" style="display:inline-block;width:290px;">
+                                        <td class="text-left" style="width:290px;">
                                             <div class="table_main" style="width:100%">
                                                 <ul style="max-height: 68px; overflow: auto;word-break: break-all; border-bottom: 1px solid #EFEFEF;">
                                                     <li><a ng-href="#/product/detail/{{groupInfo.prodId}}"
@@ -977,7 +993,7 @@
                                                 </ul>
                                             </div>
                                         </td>
-                                        <td class="text-center" style="display:inline-block;width:150px;">
+                                        <td class="text-center" style="width:150px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="groupInfo.groupBean.priceSale.length>0"
                                                     popover-html="showInfo({{groupInfo.groupBean.priceSale}})"
                                                     popover-title="{{'TXT_PRICE' | translate}}" type="button"
@@ -985,24 +1001,23 @@
                                                 {{groupInfo.groupBean.priceSale[0]}}
                                             </button>
                                         </td>
-                                        <td class="text-left" style="display:inline-block;width:150px;">
+                                        <td class="text-left" style="width:150px;">
                                             {{groupInfo.common.fields.brand}}
                                         </td>
-                                        <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; overflow:hidden;">
+                                        <td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="width:120px; overflow:hidden;">
                                             <span ng-if="prop1.value.length > 50"><popover-text content="prop1.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop1.value.length <= 50">{{prop1.value}}</span>
                                         </td>
-                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; overflow:hidden;">
+                                        <td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="width:120px; overflow:hidden;">
                                             <span ng-if="prop2.value.length > 50"><popover-text content="prop2.value" direct="left" size="50"></popover-text></span>
                                             <span ng-if="prop2.value.length <= 50">{{prop2.value}}</span>
                                         </td>
-                                        <td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="display:inline-block;width:100px">{{prop3.value}}</td>
-                                        <td class="text-center" ng-repeat="prop4 in groupInfo.selBiDataArr" style="display:inline-block;width:100px">{{prop4.value}}</td>
+                                        <td class="text-center" ng-repeat="prop3 in groupInfo.selSalesTyeArr" style="width:100px">{{prop3.value}}</td>
+                                        <td class="text-center" ng-repeat="prop4 in groupInfo.selBiDataArr" style="width:100px">{{prop4.value}}</td>
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div><!-- .table-responsive -->
-                        </div>
+                            </div>
                         <div class="col-sm-12 m-t-lg m-b-lg">
                             <vpagination config="vm.groupPageOption"></vpagination>
                         </div>
@@ -1027,21 +1042,23 @@
                             </div>
                             <div class="panel-body">
                                 <div class="table-responsive box box-body">
-                                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" ng-style="{'border': vm.exportList.length ? '1px solid #ddd': 'none'}">
                                         <thead>
-                                        <tr>
-                                            <th class="text-center mfb-xxt">No.</th>
-                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_FILE_NAME"></th>
-                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUEST_TIME"></th>
-                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_CREATE_TIME"></th>
-                                            <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUESTER"></th>
-                                            <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
-                                        </tr>
+                                            <tr>
+                                                <th class="text-center mfb-xxt">No.</th>
+                                                <th class="text-left mfb-xxt" translate="TXT_EXPORT_FILE_NAME"></th>
+                                                <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUEST_TIME"></th>
+                                                <th class="text-left mfb-xxt" translate="TXT_EXPORT_CREATE_TIME"></th>
+                                                <th class="text-left mfb-xxt" translate="TXT_EXPORT_REQUESTER"></th>
+                                                <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
+                                            </tr>
                                         </thead>
-                                    </table>
-                                    <div class="box-body" if-no-rows="vm.exportList.length">
-                                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
-                                            <tbody>
+                                        <tbody ng-if="!vm.exportList.length">
+                                            <tr>
+                                                <td colspan="6"  if-no-rows="vm.exportList.length"></td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody>
                                             <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
                                                 <td class="text-center mfb-xxt">{{$index + 1}}</td>
                                                 <td class="text-left mfb-xxt">
@@ -1055,7 +1072,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
                                 <div class="col-sm-12 m-t-lg m-b-lg">
                                     <vpagination config="vm.exportPageOption"></vpagination>
                                 </div>
