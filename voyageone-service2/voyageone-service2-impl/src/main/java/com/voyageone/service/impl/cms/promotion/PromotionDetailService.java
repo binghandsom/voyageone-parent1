@@ -121,7 +121,7 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
 
         List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
-        if (!imgList.isEmpty()) {
+        if (!imgList.isEmpty() && imgList.get(0).size() != 0) {
             cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
         }else{
             imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();

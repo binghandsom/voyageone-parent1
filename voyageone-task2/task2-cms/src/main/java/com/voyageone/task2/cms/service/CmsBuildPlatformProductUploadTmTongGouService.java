@@ -658,10 +658,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //         start_from为货源地;
         // 格式:<value>{"weight":"1.5","volume":"0.0001","template_id":"243170100","province":"美国","city":"美国"}</value>
         Map<String, Object> paramLogistics = new HashMap<>();
-        // 物流重量 // TODO 这里要改进
-        paramLogistics.put("weight", getValueFromPage("logistics_weight", "1", mainProductPlatformCart));
-        // 物流体积 // TODO 这里是要改成从condition表获取
-        paramLogistics.put("volume", getValueFromPage("logistics_volume", "1", mainProductPlatformCart));
+        // 物流重量
+        paramLogistics.put("weight", getValueFromPageOrCondition("logistics_weight", "", mainProductPlatformCart, sxData, shopProp));
+        // 物流体积
+        paramLogistics.put("volume", getValueFromPageOrCondition("logistics_volume", "", mainProductPlatformCart, sxData, shopProp));
         // 物流模板ID
         paramLogistics.put("template_id", getValueFromPageOrCondition("logistics_template_id", "", mainProductPlatformCart, sxData, shopProp));
         // 省(国家)

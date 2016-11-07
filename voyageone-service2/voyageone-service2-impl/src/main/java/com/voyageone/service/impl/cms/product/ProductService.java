@@ -169,6 +169,14 @@ public class ProductService extends BaseService {
     }
 
     /**
+     * 获取商品 根据SkuCode(一个SkuCode应该只在一个product中)
+     */
+    public List<CmsBtProductModel> getProductBySkuCode(String channelId, String skuCode) {
+        String query = "{\"common.skus.skuCode\":\"" + skuCode + "\"}";
+        return cmsBtProductDao.select(query, channelId);
+    }
+
+    /**
      * 根据Id返回多条产品数据
      */
     public List<CmsBtProductModel> getListByIds(List<Long> ids, String channelId) {
