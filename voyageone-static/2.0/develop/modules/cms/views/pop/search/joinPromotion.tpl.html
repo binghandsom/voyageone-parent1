@@ -178,7 +178,10 @@
 
     <div class="modal-footer">
         <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()" ng-disabled="ctrl.promotionFrom.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"
+                ng-disabled="ctrl.promotionFrom.$invalid || !ctrl.listTreeNode.length">
+            <i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}
+        </button>
     </div>
 </div>
 

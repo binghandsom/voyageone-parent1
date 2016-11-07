@@ -2,6 +2,7 @@ define([
     'cms'
 ], function (cms) {
 
+    /**通过状态递归查询树节点*/
     function flatCategories(categories, flag) {
 
         return _.reduce(categories, function (map, curr) {
@@ -13,6 +14,7 @@ define([
 
     }
 
+    /**对象拍成array*/
     function objToArr(obj) {
 
         return _.map(obj, function (value, key) {
@@ -47,6 +49,7 @@ define([
             });
             return codeList;
         };
+
         JoinPromotionCtl.prototype.getProductIdList = function () {
             var idList = [];
             _.forEach(this.context.selList, function (object) {
@@ -86,7 +89,7 @@ define([
         };
 
         JoinPromotionCtl.prototype.canSelectChild = function (entity) {
-            console.log(entity);
+
             var self = this,
                 alert = self.alert,
                 checkNodes = self.checkNodes;
@@ -169,7 +172,7 @@ define([
                 userArr = objToArr(checkNodes),
                 allCheckArr = objToArr(self.allCheckNodes);
 
-            //判断用户是否选择了新的活动标签
+            /**判断用户是否选择了新的活动标签*/
             var isClick = _.every(userArr, function (item) {
                 return allCheckArr.indexOf(item) < 0;
             });
@@ -177,6 +180,16 @@ define([
             if (!isClick) {
                 alert("未做任何改变！");
                 return;
+            }
+
+            /**至少要选择一个活动*/
+            var eachP = _.some(self.listTreeNode, function (item) {
+                return item.checked != 0 && item.checked != 1;
+            });
+
+            if (!eachP) {
+                alert("请至少选择一个活动");
+                return
             }
 
             var isPass = _.every(self.listTreeNode, function (item) {
@@ -194,7 +207,7 @@ define([
                         return false;
                     } else
                         return true;
-                } else{
+                } else {
                     alert(item.name + "活动下至少选择一个标签！");
                     return false;
                 }
@@ -204,14 +217,13 @@ define([
             if (!isPass)
                 return;
 
-            var upEntity = {};
-            upEntity.cartId = context.cartBean.value;
-            upEntity.isSelAll = context.isSelAll;
-            upEntity.codeList = self.getCodeList();
-            upEntity.idList = self.getProductIdList();
-            upEntity.listTagTreeNode = self.listTreeNode;
-
-            self.addProductToPromotionService.save(_.extend(upEntity,groupInfo)).then(function (res) {
+            self.addProductToPromotionService.save(_.extend({
+                cartId: context.cartBean.value,
+                isSelAll: context.isSelAll,
+                codeList: self.getCodeList(),
+                idList: self.getProductIdList(),
+                listTagTreeNode: self.listTreeNode
+            }, groupInfo)).then(function (res) {
                 notify.success("添加成功！");
                 $uibModalInstance.close();
             });
