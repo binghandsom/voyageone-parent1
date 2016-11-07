@@ -182,35 +182,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             $warn("没有code条件 params=" + params.toString());
             throw new BusinessException("未选择商品");
         }
-        List<TagTreeNode> listTagTreeNode = new ArrayList<>();
-        List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId,params.getActivityStart(),params.getActivityEnd());
-        list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
-
-        data.put("listTreeNode", listTagTreeNode);
-        return data;
+        return promotionDetailService.init(params, channelId, codeList);
     }
     //获取活动的节点数据
-    TagTreeNode getPromotionTagTreeNode(CmsBtPromotionModel model, List<String> codeList) {
-        TagTreeNode tagTreeNode = new TagTreeNode();
-        tagTreeNode.setId(model.getId());
-        tagTreeNode.setName(model.getPromotionName());
-        tagTreeNode.setChildren(new ArrayList<>());
-        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
-        if(list.size()==0) return tagTreeNode;
-        int codeCount = codeList.size();
-        list.forEach(f -> {
-            TagTreeNode node = new TagTreeNode();
-            node.setId(f.getId());
-            node.setName(f.getTagName());
-            if (f.getProductCount() > 0) {
-                node.setChecked(f.getProductCount() == codeCount ? 2 : 1);//0:未选 1：半选 2全选
-            }
-            node.setOldChecked(node.getChecked());
-            tagTreeNode.getChildren().add(node);
-        });
-        int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
-        tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
-        tagTreeNode.setOldChecked(tagTreeNode.getChecked());
-        return tagTreeNode;
-    }
+
 }

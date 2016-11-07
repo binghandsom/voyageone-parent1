@@ -7,6 +7,9 @@ import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.bean.cms.jumei.BatchUpdateSkuPriceParameterBean;
 import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
@@ -14,6 +17,7 @@ import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionTagProductService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -24,6 +28,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +70,51 @@ public class JMPromotionDetailService extends BaseService {
 
     @Autowired
     CmsBtPromotionSkusDaoExtCamel cmsBtPromotionSkusDaoExtCamel;
+
+    @Autowired
+    TagService tagService;
+
+    public Map init(InitParameter params, String channelId,List<String> codeList) {
+        Map<String, Object> data = new HashedMap();
+        int cartId = params.getCartId();
+
+        List<TagTreeNode> listTagTreeNode = new ArrayList<>();
+        // // TODO: 2016/11/7  待实现 
+        //List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId, params.getActivityStart(), params.getActivityEnd());
+        //list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
+
+        data.put("listTreeNode", listTagTreeNode);
+        return data;
+    }
+    //获取活动的节点数据
+    TagTreeNode getPromotionTagTreeNode(CmsBtJmPromotionModel model, List<String> codeList) {
+        TagTreeNode tagTreeNode = new TagTreeNode();
+        tagTreeNode.setId(model.getId());
+        tagTreeNode.setName(model.getName());
+        tagTreeNode.setChildren(new ArrayList<>());
+        // TODO: 2016/11/7  待实现
+        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
+        if(list.size()==0) return tagTreeNode;
+        int codeCount = codeList.size();
+        list.forEach(f -> {
+            TagTreeNode node = new TagTreeNode();
+            node.setId(f.getId());
+            node.setName(f.getTagName());
+            if (f.getProductCount() > 0) {
+                node.setChecked(f.getProductCount() == codeCount ? 2 : 1);//0:未选 1：半选 2全选
+            }
+            node.setOldChecked(node.getChecked());
+            tagTreeNode.getChildren().add(node);
+        });
+        int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
+        tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
+        tagTreeNode.setOldChecked(tagTreeNode.getChecked());
+        return tagTreeNode;
+    }
+
+
+
+
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier, CmsBtProductModel productInfo) {
