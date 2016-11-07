@@ -20,6 +20,7 @@ import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.jumei.CmsMtJmConfigService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.util.MapModel;
@@ -73,6 +74,8 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
 
+    @Autowired
+    PromotionService promotionService;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -122,13 +125,7 @@ public class CmsBtJmPromotionProduct3Service {
         return dao.delete(id);
     }
 
-    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("promotionId", jmPromotionId);
-        map.put("cartId", CartEnums.Cart.JM.getValue());
-        CmsBtPromotionModel promotion = daoCmsBtPromotion.selectOne(map);
-        return promotion;
-    }
+
 
     //批量修改价格 批量变更价格
     @VOTransactional
@@ -273,7 +270,7 @@ public class CmsBtJmPromotionProduct3Service {
         daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
 
         //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
-        CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
+        CmsBtPromotionModel modelCmsBtPromotion = promotionService.getCmsBtPromotionModelByJmPromotionId(parameter.getPromotionId());
         if (modelCmsBtPromotion != null && listNotSych.size() > 0) {
             Map<String, Object> map = new HashMap<>();
             map.put("listProductCode", listNotSychCode);
@@ -311,7 +308,7 @@ public class CmsBtJmPromotionProduct3Service {
         //先删除sku 再删除product
         daoExtCmsBtJmPromotionSku.deleteAllSku(jmPromotionId);
         daoExt.deleteAllProduct(jmPromotionId);
-        CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(jmPromotionId);
+        CmsBtPromotionModel modelCmsBtPromotion = promotionService.getCmsBtPromotionModelByJmPromotionId(jmPromotionId);
         if (modelCmsBtPromotion != null) {
             daoExtCamelCmsBtPromotionCodes.deleteByPromotionId(modelCmsBtPromotion.getId());
             daoExtCamelCmsBtPromotionGroups.deleteByPromotionId(modelCmsBtPromotion.getId());

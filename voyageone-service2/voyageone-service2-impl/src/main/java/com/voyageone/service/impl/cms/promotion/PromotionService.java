@@ -408,5 +408,11 @@ public class PromotionService extends BaseService {
     public Map<String,Object>  getPromotionIDByCartId(String promotionId) {
         return cmsBtPromotionDaoExt.selectPromotionIDByCartId(promotionId);
     }
-
+    public CmsBtPromotionModel getCmsBtPromotionModelByJmPromotionId(int jmPromotionId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("promotionId", jmPromotionId);
+        map.put("cartId", CartEnums.Cart.JM.getValue());
+        CmsBtPromotionModel promotion = promotionDao.selectOne(map);
+        return promotion;
+    }
 }

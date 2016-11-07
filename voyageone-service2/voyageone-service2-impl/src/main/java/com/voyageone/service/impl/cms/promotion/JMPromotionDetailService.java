@@ -12,9 +12,7 @@ import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
 import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtJmPromotionTagProductDaoExt;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionSku3Service;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionTagProductService;
@@ -59,6 +57,14 @@ public class JMPromotionDetailService extends BaseService {
     CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
+
+    @Autowired
+    CmsBtPromotionSkusDaoExtCamel cmsBtPromotionSkusDaoExtCamel;
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier, CmsBtProductModel productInfo) {
@@ -252,38 +258,17 @@ public class JMPromotionDetailService extends BaseService {
             daoext.batchDeleteProduct(jmPromotionProductIdList);
         }
 //
-//        //2.7.2.2  已经上传的商品  写入错误信息
-//        daoExt.updateSynch2ErrorMsg(parameter.getListPromotionProductId(), "该商品已调用过聚美上传API，聚美平台静止相关操作纪录的删除。为保证数据一致性，该商品无法删除");
-//
+
 //        //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
-//        CmsBtPromotionModel modelCmsBtPromotion = getCmsBtPromotionModel(parameter.getPromotionId());
-//        if (modelCmsBtPromotion != null && listNotSych.size() > 0) {
-//            Map<String, Object> map = new HashMap<>();
-//            map.put("listProductCode", listNotSychCode);
-//            map.put("promotionId", modelCmsBtPromotion.getId());
-//            daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
-//            daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
-//        }
+        CmsBtPromotionModel modelCmsBtPromotion = promotionService.getCmsBtPromotionModelByJmPromotionId(promotion.getId());
+        if (modelCmsBtPromotion != null && listNotSych.size() > 0) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("listProductCode", listNotSychCode);
+            map.put("promotionId", modelCmsBtPromotion.getId());
+            cmsBtPromotionCodesDaoExtCamel.deleteByPromotionCodeList(map);
+            cmsBtPromotionSkusDaoExtCamel.deleteByPromotionCodeList(map);
+        }
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("listProductCode", parameter.getCodeList());
-        map.put("promotionId", promotion.getId());
-
-        //批量删除 promotionCodesTag
-
-//        promotionCodesTagService.batchDeleteByCodes(parameter.getCodeList(), promotion.getPromotionId());
-//
-//        //批量删除 code
-//        daoExtCamelCmsBtPromotionCodes.deleteByPromotionCodeList(map);
-//        //批量删除 sku
-//        daoExtCamelCmsBtPromotionSkus.deleteByPromotionCodeList(map);
-//        //批量删除  product tag
-//        productService.removeTagByCodes(promotion.getChannelId(), parameter.getCodeList(), promotion.getRefTagId());
-
-        // `cms_bt_promotion_codes_tag`
-        // `cms_bt_promotion_skus`
-        // `cms_bt_promotion_codes`
-        //group不删除
 
     }
 

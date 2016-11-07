@@ -585,8 +585,6 @@ public class PromotionDetailService extends BaseService {
     @VOTransactional
    public  void  deleteFromPromotion(CmsBtPromotionModel promotion, AddProductSaveParameter parameter) {
 
-
-
         Map<String, Object> map = new HashMap<>();
         map.put("listProductCode", parameter.getCodeList());
         map.put("promotionId", promotion.getId());
