@@ -713,17 +713,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 主要币种代码：人民币/CNY 港币/HKD 新台币/TWD 美元/USD 英镑/GBP 日元/JPY 韩元/KRW 欧元/EUR 加拿大元/CAD
         //             澳元/AUD 新西兰元/NZD
         paramExtends.put("currency_type", getValueFromPageOrCondition("extends_currency_type", "", mainProductPlatformCart, sxData, shopProp));
-        // 是否需要自动翻译(必填)  (如果标题是中文，那么就是false，否则就是true)
+        // 是否需要自动翻译(必填)  (如果有配置优先使用配置项目，没有配置的时候如果标题是中文，那么就是false，否则就是true)
         String extends_translate = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
-                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
-            extends_translate = "false";
-        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
-            extends_translate = "false";
-        } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
-            extends_translate = "false";
-        } else {
-            extends_translate = "true";
+        // 解析cms_mt_channel_condition_config表中的数据字典取得"项目名_XX"(XX为cartId)对应的值
+        extends_translate = getConditionPropValue(sxData, "extends_translate2", shopProp);
+        if (!"true".equalsIgnoreCase(extends_translate) && !"false".equals(extends_translate)) {
+            // cms_mt_channel_condition_config表中配置的"extends_translate"的值不是"true"或"false"时
+            if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                    && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
+                extends_translate = "false";
+            } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
+                extends_translate = "false";
+            } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
+                extends_translate = "false";
+            } else {
+                extends_translate = "true";
+            }
         }
         paramExtends.put("translate", extends_translate);
         // 商品原始语言(必填)
