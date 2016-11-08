@@ -60,7 +60,11 @@ define([
             var data = angular.copy($scope.searchInfo);
             for (var key in data) {
                 if (!data[key]) {
-                    data[key] = undefined;
+                    if(key=='stockQty'&&data[key]==0){
+                        data[key] = 0;
+                    }else{
+                        data[key] = undefined;
+                    }
                 }
             }
             return data;
