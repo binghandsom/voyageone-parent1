@@ -243,6 +243,20 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
                 ruleRoot.addRuleWord(commonWord);
             }
 
+			{
+				// 描述前加一个换行
+				String html = "<br /><br />";
+				TextWord word = new TextWord(html);
+				ruleRoot.addRuleWord(word);
+			}
+
+			{
+				// 英文使用说明(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
+				String column = "usageEn";
+				CommonWord commonWord = new CommonWord(column);
+				ruleRoot.addRuleWord(commonWord);
+			}
+
             {
                 // 描述后加一个换行
                 String html = "<br /><br />";
