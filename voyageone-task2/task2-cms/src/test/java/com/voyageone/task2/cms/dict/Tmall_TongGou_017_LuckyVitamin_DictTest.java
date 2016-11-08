@@ -213,24 +213,20 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             }
 
             {
-                // 顶部固定图_品牌信息 （PC端需要加宽度790限制，无线端图片自动使用不用设宽度）
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i4/2640015666/TB2kKZgaQ1M.eBjSZFOXXc0rFXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
-            }
+                // 店铺介绍图
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
 
-            {
-                // 顶部固定图_消费者告知书
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i3/2640015666/TB2jjI2awOI.eBjSszhXXbHvFXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
-            }
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));
 
-            {
-                // 顶部固定图_官网直供提示文字
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i1/2640015666/TB2CXUjaQ1M.eBjSZFFXXc3vVXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
             }
 
             {
@@ -256,7 +252,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 
             {
                 // 中间插入自定义部分_产品实拍分隔文字
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i3/2640015666/TB2sKFhXhRzc1FjSZFPXXcGAFXa_!!2640015666.jpg\"/>";
+                String html = "<img width=\"790px\" src=\"https://img.alicdn.com/imgextra/i1/3031513024/TB2lLA_cEWO.eBjSZPcXXbopVXa_!!3031513024.jpg\"/>";
                 TextWord word = new TextWord(html);
                 ruleRoot.addRuleWord(word);
             }
@@ -264,7 +260,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             {
                 // 商品图片(带模板的产品图片image1)
                 RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<div><img width=790px src=\"%s\" /></div>"));
+                htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
 
                 // SxProductService.getImageTemplate()方法的retUrl = String.format(matchModels.get(0).getImageTemplateContent(), imageParam);
                 // 报错，如果是java.util.UnknownFormatConversionException: Conversion = 'F'
@@ -282,24 +278,20 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             }
 
             {
-                // 底部固定图_购物流程
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i2/2640015666/TB2IqQPasaJ.eBjy0FbXXcwrFXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
-            }
+                // 购物流程图
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
 
-            {
-                // 底部固定图_温馨提示
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i2/2640015666/TB2TuFhXhRzc1FjSZFPXXcGAFXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
-            }
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("4"));
 
-            {
-                // 底部固定图_售后须知，关于价格
-                String html = "<img width=790px src=\"http://img.alicdn.com/imgextra/i3/2640015666/TB2XxQOar1K.eBjSsphXXcJOXXa_!!2640015666.jpg\"/>";
-                TextWord word = new TextWord(html);
-                ruleRoot.addRuleWord(word);
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
             }
 
             {
