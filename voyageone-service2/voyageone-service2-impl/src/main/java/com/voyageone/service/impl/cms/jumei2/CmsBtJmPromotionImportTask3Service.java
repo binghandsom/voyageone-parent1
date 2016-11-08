@@ -584,6 +584,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 skuModel = new CmsBtJmPromotionSkuModel();
                 skuModel.setSynchStatus(0);
                 skuModel.setUpdateState(0);
+                skuModel.setDealPrice(new BigDecimal(0));
+                skuModel.setMarketPrice(new BigDecimal(0));
                 skuModel.setCmsBtJmPromotionId(saveInfo.jmProductModel.getCmsBtJmPromotionId());
                 skuModel.setChannelId(saveInfo.jmProductModel.getChannelId());
                 skuModel.setSkuCode(skuImportBean.getSkuCode());
