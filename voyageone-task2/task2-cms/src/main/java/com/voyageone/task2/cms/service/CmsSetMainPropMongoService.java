@@ -65,6 +65,7 @@ import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * feed->master导入服务
@@ -539,6 +541,18 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+
+                        List<CmsBtFeedInfoModel_Sku> skus = feed.getSkus().stream()
+                                .filter(sku -> sku.getPriceNet() != null && sku.getPriceNet().compareTo(0D) > 0 && !StringUtil.isEmpty(sku.getBarcode()))
+                                .collect(Collectors.toList());
+                        if(ListUtils.isNull(skus)){
+                            // feed里面的品牌已被加入黑名单,导入失败
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                                    "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (CommonConfigNotFoundException ce) {
@@ -4000,13 +4014,24 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
      */
     private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
         if (feed == null) return;
+//
+//        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
+//        feed.setUpdMessage(errMsg);
+//        if (!StringUtils.isEmpty(isFeedReImport))
+//            feed.setIsFeedReImport(isFeedReImport);
+//        feed.setModifier(getTaskName());
+//        feedInfoService.updateFeedInfo(feed);
+        Map <String, Object>paraMap = new HashedMap();
+        paraMap.put("code",feed.getCode());
 
-        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
-        feed.setUpdMessage(errMsg);
+        Map <String, Object>rsMap = new HashedMap();
+        rsMap.put("updFlg",updFlg);
+        rsMap.put("updMessage",errMsg);
+        rsMap.put("modifier",getTaskName());
+        rsMap.put("modified",DateTimeUtil.getNowTimeStamp());
         if (!StringUtils.isEmpty(isFeedReImport))
-            feed.setIsFeedReImport(isFeedReImport);
-        feed.setModifier(getTaskName());
-        feedInfoService.updateFeedInfo(feed);
+            rsMap.put("isFeedReImport",isFeedReImport);
+        feedInfoService.updateFeedInfo(feed.getChannelId(), paraMap, rsMap);
     }
 
     /**

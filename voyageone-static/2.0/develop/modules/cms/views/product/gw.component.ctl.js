@@ -300,19 +300,21 @@ define([
                                     platform: scope.vm.platform
                                 });
 
-                                productDetailService.checkCategory({
-                                    cartId: scope.vm.platform.cartId,
-                                    pCatPath: scope.vm.platform.pCatPath
-                                }).then(function (resp) {
-                                    if (resp.data === false) {
-                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                            scope.vm.platform.status = scope.vm.status = "Pending";
+                                if (scope.vm.platform.pCatPath) {
+                                    productDetailService.checkCategory({
+                                        cartId: scope.vm.platform.cartId,
+                                        pCatPath: scope.vm.platform.pCatPath
+                                    }).then(function (resp) {
+                                        if (resp.data === false) {
+                                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
+                                                scope.vm.platform.status = scope.vm.status = "Pending";
+                                                callSave();
+                                            });
+                                        } else {
                                             callSave();
-                                        });
-                                    } else {
-                                        callSave();
-                                    }
-                                });
+                                        }
+                                    });
+                                }
 
                             } else {
                                 callSave();
