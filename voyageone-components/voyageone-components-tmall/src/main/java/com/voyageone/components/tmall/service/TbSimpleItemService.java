@@ -38,6 +38,11 @@ public class TbSimpleItemService extends TbBase {
      * @return numIId
      */
     public String addSimpleItem(ShopBean shopBean, String schemaXml) throws ApiException {
+        logger.info("url:" + shopBean.getApp_url());
+        logger.info("appkey:" + shopBean.getAppKey());
+        logger.info("secret:" + shopBean.getAppSecret());
+        logger.info("session:" + shopBean.getSessionKey());
+        logger.info("xml:" + schemaXml);
 
         TmallItemSimpleschemaAddRequest request = new TmallItemSimpleschemaAddRequest();
         request.setSchemaXmlFields(schemaXml);
@@ -64,6 +69,12 @@ public class TbSimpleItemService extends TbBase {
      * @return numIId
      */
     public String updateSimpleItem(ShopBean shopBean, Long numIId, String schemaXml) throws ApiException {
+        logger.info("url:" + shopBean.getApp_url());
+        logger.info("appkey:" + shopBean.getAppKey());
+        logger.info("secret:" + shopBean.getAppSecret());
+        logger.info("session:" + shopBean.getSessionKey());
+        logger.info("numIId:" + numIId);
+        logger.info("xml:" + schemaXml);
 
         TmallItemSimpleschemaUpdateRequest request = new TmallItemSimpleschemaUpdateRequest();
 
