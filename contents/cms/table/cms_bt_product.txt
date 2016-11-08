@@ -66,14 +66,13 @@
     * usageCn ->20160627,使用说明中文
     * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
     * commissionRate ->20160713,VO佣金费率,商品级
-    * skuCnt ->20161111,sku数
+    * skuCnt                       <-翻译时间(sku的件数，用于高级检索 CMSDOC-209)
   * skus[]
     * skuCode
     * barcode
     * clientSkuCode
     * clientSize
     * size
-    * sizeNick  ->20160627,售卖用尺码别名
     * sizeSx    ->20160707,只给上新用(getSxProductDataByGroupId生成这个字段的数据, 上新的地方直接用这个就行了)
     * clientMsrpPrice     ->客户建议零售价(double)
     * clientRetailPrice   ->客户指导价(double)
@@ -127,6 +126,7 @@
       * priceChgFlg  ->指导售价变化状态（U/D） 这里是指导售价价格本身变化
       * priceDiffFlg ->最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5） 这里表示最终售价与指导价的比较结果 (string型)
       * isSale    ->用于表示该sku是否在该平台销售(true(默认), false)
+      * sizeNick  ->20160627,售卖用尺码别名
     * sellerCats[]  ->店铺内分类
       * cId
       * cIds
@@ -184,6 +184,7 @@
 	  * property
 	  * jmSpuNo
 	  * jmSkuNo
+	  * sizeNick  ->20160627,售卖用尺码别名
 	* sellerCats[]
 	  * cId
 	  * cIds
