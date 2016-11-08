@@ -38,14 +38,12 @@ import java.util.*;
 public class JMPromotionDetailService extends BaseService {
 
     @Autowired
+    CmsBtJmPromotionDaoExt cmsBtJmPromotionDaoExt;
+    @Autowired
     CmsBtJmPromotionProductDao dao;
 
     @Autowired
     CmsBtJmPromotionProductDaoExt daoext;
-
-    @Autowired
-    CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
-
     @Autowired
     CmsBtJmPromotionSkuDao daoCmsBtJmPromotionSku;
 
@@ -72,15 +70,17 @@ public class JMPromotionDetailService extends BaseService {
     @Autowired
     TagService tagService;
 
+    @Autowired
+    CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
+
     public Map init(InitParameter params, String channelId,List<String> codeList) {
         Map<String, Object> data = new HashedMap();
         int cartId = params.getCartId();
 
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
-        // // TODO: 2016/11/7  待实现 
-        //List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId, params.getActivityStart(), params.getActivityEnd());
-        //list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
 
+        List<CmsBtJmPromotionModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId);
+        list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
         data.put("listTreeNode", listTagTreeNode);
         return data;
     }
@@ -91,7 +91,7 @@ public class JMPromotionDetailService extends BaseService {
         tagTreeNode.setName(model.getName());
         tagTreeNode.setChildren(new ArrayList<>());
         // TODO: 2016/11/7  待实现
-        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
+        List<TagCodeCountInfo> list = cmsBtJmPromotionTagProductDaoExt.selectListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
         if(list.size()==0) return tagTreeNode;
         int codeCount = codeList.size();
         list.forEach(f -> {

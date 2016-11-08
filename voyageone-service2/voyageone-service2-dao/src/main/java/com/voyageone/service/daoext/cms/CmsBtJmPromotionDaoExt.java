@@ -1,6 +1,7 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -56,4 +57,7 @@ public interface CmsBtJmPromotionDaoExt {
      * 更新活动基本信息(根据画面输入，可以有空值，注意：这里指更新画面可以输入的项目)
      */
     int updateByInput(CmsBtJmPromotionModel record);
+
+    //加入活动有效列表
+    List<CmsBtJmPromotionModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId);
 }

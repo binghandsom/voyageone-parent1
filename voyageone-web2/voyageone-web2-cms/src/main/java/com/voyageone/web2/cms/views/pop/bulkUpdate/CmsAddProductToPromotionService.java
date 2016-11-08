@@ -15,6 +15,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.impl.cms.promotion.JMPromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -159,6 +160,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
     }
 
+    @Autowired
+    JMPromotionDetailService jmPromotionDetailService;
     /**
      * 页面初始化
      */
@@ -181,6 +184,10 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         if (codeList == null || codeList.isEmpty()) {
             $warn("没有code条件 params=" + params.toString());
             throw new BusinessException("未选择商品");
+        }
+        if(params.getCartId()==27)
+        {
+            return jmPromotionDetailService.init(params,channelId,codeList);
         }
         return promotionDetailService.init(params, channelId, codeList);
     }

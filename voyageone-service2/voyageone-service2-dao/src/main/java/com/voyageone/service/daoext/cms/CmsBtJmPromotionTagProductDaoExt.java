@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,6 @@ public interface CmsBtJmPromotionTagProductDaoExt {
     int deleteByTagIdJmPromotionProductId(@Param("tagId") int tagId, @Param("jmPromotionProductId") int jmPromotionProductId);
 
     int batchDeleteByCodes(@Param("codeList") List<String> codeList, @Param("jmPromotionId") int jmPromotionId);
+
+    List<TagCodeCountInfo> selectListTagCodeCount(@Param("jmPromotionId") int jmPromotionId,@Param("parentTagId") int parentTagId, @Param("codeList") List<String> codeList);
 }
