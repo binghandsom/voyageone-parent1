@@ -126,8 +126,8 @@
 
                     </div>
 
-                    <div class="col-md-6">
-                        <input type="number" class="form-control" ng-if="ctrl.groupInfo.priceInputFlg" name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
+                    <div class="col-md-6" ng-if="ctrl.groupInfo.priceInputFlg">
+                        <input type="number" class="form-control"  name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
                         <div class="m-t-xs">
                             <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
                         </div>
@@ -194,7 +194,7 @@
                        ng-checked="category.checked == 2"
                        ng-click="ctrl.canSelectChild(category)"
                        ng-model="ctrl.checkNodes[category.id]"
-                       ng-disabled="parentNode.checked == 0">
+                       ng-disabled="parentNode.checked == 0 || parentNode.checked == 1">
                 &nbsp;{{category.name}}
             </label>
         </div>

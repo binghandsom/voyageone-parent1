@@ -78,7 +78,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
              List<TagTreeNode> tagList = tagTreeNode.getChildren().stream().filter(p -> p.getChecked() != p.getOldChecked()).collect(Collectors.toList());
              if (tagList.size() > 0) {
                  //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
-                 if (parameter.getCartId() == 2) {
+                 if (parameter.getCartId() == 27) {
+                     //聚美
                      addToJmPromotion(tagTreeNode.getId(), tagList, parameter, userName, cmsSession);
                  } else {
                      addToPromotion(tagTreeNode.getId(), tagList, parameter, userName, cmsSession);
@@ -87,9 +88,9 @@ public class CmsAddProductToPromotionService extends BaseViewService {
          } else if (tagTreeNode.getChecked() != tagTreeNode.getOldChecked()) {
              if (tagTreeNode.getChecked() == 0) {
                  // 活动 商品从活动中删除      删除商品tag
-                 if (parameter.getCartId() == 2) {
-                     //jmPromotionDetailService.deleteFromPromotion();
-
+                 if (parameter.getCartId() == 27) {
+                     //聚美
+                     deleteFromJmPromotion(tagTreeNode.getId(),parameter);
                  } else {
                      deleteFromPromotion(tagTreeNode.getId(), parameter);
                  }
@@ -175,6 +176,11 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
     }
 
+    void  deleteFromJmPromotion(  int promotionId,AddProductSaveParameter parameter) {
+        CmsBtJmPromotionModel promotion = cmsBtJmPromotion3Service.get(promotionId);
+        //活动内已经再售的商品 不允许删除 聚美平台已完成活动上传的商品将不做删除操作,
+        jmPromotionDetailService.deleteFromPromotion(promotion, parameter);
+    }
 
     /**
      * 页面初始化

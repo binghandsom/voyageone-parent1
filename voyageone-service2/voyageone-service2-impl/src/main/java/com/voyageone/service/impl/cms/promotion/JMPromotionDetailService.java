@@ -117,6 +117,7 @@ public class JMPromotionDetailService extends BaseService {
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
 
         CmsBtProductModel productInfo=bean.getProductInfo();//check 初始化
+        bean.setProductCode(productInfo.getCommon().getFields().getCode());
         //1.初始化 JmPromotionProduct
         CmsBtJmPromotionProductModel jmProductModel = loadJmPromotionProduct(bean, jmPromotionModel, modifier, productInfo);
 
@@ -142,6 +143,7 @@ public class JMPromotionDetailService extends BaseService {
 
         // 保存 JmPromotionSku
         listPromotionSku.forEach(f -> {
+            f.setCmsBtJmPromotionProductId(jmProductModel.getId());
             if (f.getId() != null && f.getId() > 0) {
                 daoCmsBtJmPromotionSku.update(f);
             } else {
@@ -183,6 +185,7 @@ public class JMPromotionDetailService extends BaseService {
             jmProductModel.setLimit(0);
             jmProductModel.setUpdateStatus(0);
             jmProductModel.setPromotionTag("");
+            jmProductModel.setErrorMsg("");
             jmProductModel.setProductNameEn(productInfo.getCommon().getFields().getProductNameEn());
             if (productInfo.getCommon().getFields().getImages1() != null && productInfo.getCommon().getFields().getImages1().size() > 0) {
                 if (productInfo.getCommon().getFields().getImages1().get(0).get("image1") != null) {
