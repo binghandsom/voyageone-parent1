@@ -599,10 +599,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //      匹配成功的品牌，会出现在商品详情页面;
         //      如果无法匹配，且商家希望显示品牌的，建议商家通过商家后台申请新品牌。
         String valBrand = "";
-        if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
-                && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
-            // common中的品牌 (格式：<value>nike</value>)
-            valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+        // 优先使用cms_mt_brands_mapping表中的匹配过的天猫平台上已有的品牌id(格式:<value>"{\"brand_id\":\"93764828\"}"</value>)
+        if (!StringUtils.isEmpty(sxData.getBrandCode())) {
+            valBrand = "{\"brand_id\":\"" + sxData.getBrandCode() + "\"}";
+        } else {
+            // 如果没找到匹配过的天猫平台品牌id，就用feed中带过来的brand，让平台自己去匹配
+            if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
+                    && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
+                // common中的品牌 (格式：<value>nike</value>)
+                valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+            }
         }
         productInfoMap.put("brand", valBrand);
 
