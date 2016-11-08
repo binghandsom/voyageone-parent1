@@ -28,7 +28,6 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
-import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +56,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmImageTemplateService jmImageTemplateService;
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    private final CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao;
+
     @Autowired
     private CmsMtBrandsMappingDaoExt brandsMappingDaoExt;
 
@@ -87,7 +88,8 @@ public class CmsBtJmPromotionService extends BaseService {
                                    CmsBtJmPromotionImagesDao jmPromotionImagesDao,
                                    CmsBtJmImageTemplateService jmImageTemplateService,
                                    CmsMtJmConfigService jmConfigService,
-                                   CmsBtJmBayWindowService cmsBtJmBayWindowService) {
+                                   CmsBtJmBayWindowService cmsBtJmBayWindowService,
+                                   CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -99,6 +101,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmImageTemplateService = jmImageTemplateService;
         this.jmConfigService = jmConfigService;
         this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
+        this.cmsBtJmPromotionBrandLogoDao = cmsBtJmPromotionBrandLogoDao;
     }
 
     /**
@@ -202,6 +205,11 @@ public class CmsBtJmPromotionService extends BaseService {
                 valList = new ArrayList<>(0);
             }
             map.put("preDisplayChannelList", valList);
+
+            //品牌Logo
+            Map<String, Object> modelMap = new HashMap<>();
+            List<CmsBtJmPromotionBrandLogoModel> listModel = cmsBtJmPromotionBrandLogoDao.selectList(modelMap);
+            map.put("preDisplayBrandLogoList", listModel);
 
             // 直邮信息
             configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtJmPromotionBrandLogoDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtJmPromotionBrandLogoModel" />
+    <sql id="Base_Column_List" >
+        `id`, `brand_logo`, `brand_parameter`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_brand_logo
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionBrandLogoModel" >
+        update cms_bt_jm_promotion_brand_logo
+        <set >
+            <if test="brandLogo != null" >
+                `brand_logo` = #{brandLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="brandParameter != null" >
+                `brand_parameter` = #{brandParameter,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_jm_promotion_brand_logo
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_brand_logo
+        <where >
+            <if test="brandLogo != null" >
+                and `brand_logo` = #{brandLogo,jdbcType=VARCHAR}
+            </if>
+            <if test="brandParameter != null" >
+                and `brand_parameter` = #{brandParameter,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_jm_promotion_brand_logo
+        <where >
+            <if test="brandLogo != null" >
+                and `brand_logo` = #{brandLogo,jdbcType=VARCHAR}
+            </if>
+            <if test="brandParameter != null" >
+                and `brand_parameter` = #{brandParameter,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_jm_promotion_brand_logo
+        <where >
+            <if test="brandLogo != null" >
+                and `brand_logo` = #{brandLogo,jdbcType=VARCHAR}
+            </if>
+            <if test="brandParameter != null" >
+                and `brand_parameter` = #{brandParameter,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtJmPromotionBrandLogoModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_jm_promotion_brand_logo
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="brandLogo != null" >
+                `brand_logo`,
+            </if>
+            <if test="brandParameter != null" >
+                `brand_parameter`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="brandLogo != null" >
+                #{brandLogo,jdbcType=VARCHAR},
+            </if>
+            <if test="brandParameter != null" >
+                #{brandParameter,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
