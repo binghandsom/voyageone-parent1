@@ -90,7 +90,6 @@ public class JMPromotionDetailService extends BaseService {
         tagTreeNode.setId(model.getId());
         tagTreeNode.setName(model.getName());
         tagTreeNode.setChildren(new ArrayList<>());
-        // TODO: 2016/11/7  待实现
         List<TagCodeCountInfo> list = cmsBtJmPromotionTagProductDaoExt.selectListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
         if(list.size()==0) return tagTreeNode;
         int codeCount = codeList.size();
@@ -115,8 +114,9 @@ public class JMPromotionDetailService extends BaseService {
 
 
     @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier, CmsBtProductModel productInfo) {
+    public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {
 
+        CmsBtProductModel productInfo=bean.getProductInfo();//check 初始化
         //1.初始化 JmPromotionProduct
         CmsBtJmPromotionProductModel jmProductModel = loadJmPromotionProduct(bean, jmPromotionModel, modifier, productInfo);
 
@@ -152,6 +152,8 @@ public class JMPromotionDetailService extends BaseService {
         //更新 tag
         cmsBtJmPromotionTagProductService.updateJmPromotionTagProduct(bean.getTagList(), jmPromotionModel.getChannelId(), jmProductModel.getId(), modifier);
 
+        //更新mongo product tag
+        productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
     }
 
     CmsBtJmPromotionProductModel loadJmPromotionProduct(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String userName, CmsBtProductModel productInfo) {
@@ -305,8 +307,6 @@ public class JMPromotionDetailService extends BaseService {
             cmsBtJmPromotionTagProductDaoExt.batchDeleteTag(jmPromotionProductIdList);
             daoext.batchDeleteProduct(jmPromotionProductIdList);
         }
-//
-
 //        //2.7.3 删除 CmsBtPromotionCodes  CmsBtPromotionSkus
         CmsBtPromotionModel modelCmsBtPromotion = promotionService.getCmsBtPromotionModelByJmPromotionId(promotion.getId());
         if (modelCmsBtPromotion != null && listNotSych.size() > 0) {

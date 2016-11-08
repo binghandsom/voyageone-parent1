@@ -20,12 +20,15 @@ import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.TaskService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.*;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,29 +75,25 @@ public class PromotionDetailService extends BaseService {
     @Autowired
     CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
     @Autowired
+    private FeedInfoService feedInfoService;
+    @Autowired
+    private CmsBtBrandBlockService brandBlockService;
+    @Autowired
     TagService tagService;
     @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean){
-        addPromotionDetail(bean,true);
+    public void addPromotionDetail(PromotionDetailAddBean bean) {
+        if (!check_addPromotionDetail(bean))//验证不通过 不能添加活动
+        {
+            return;
+        }
+        addPromotionDetail(bean, true);
     }
-    /**
-     * 添加商品到promotion
-     */
-    @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean, boolean isUpdatePromotionPrice) {
+
+    public  boolean check_addPromotionDetail(PromotionDetailAddBean bean) {
         String channelId = bean.getChannelId();
         Integer cartId = bean.getCartId();
-        Integer promotionId = bean.getPromotionId();
-        Integer tagId = bean.getTagId();
-        //String tagPath = bean.getTagPath();
         String productCode = bean.getProductCode();
         Long productId = bean.getProductId();
-        Double promotionPrice = 0.0;
-        if (bean.getPromotionPrice() != null && bean.getPromotionPrice().size() > 0) {
-            promotionPrice = (Double) bean.getPromotionPrice().values().toArray()[0];
-        }
-        String modifier = bean.getModifier();
-
         // 获取Product信息
         CmsBtProductModel productInfo;
         CmsBtProductGroupModel groupModel;
@@ -108,11 +107,48 @@ public class PromotionDetailService extends BaseService {
             query.setQuery("{\"productCodes\":\"" + productInfo.getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
             groupModel = productGroupService.getProductGroupByQuery(channelId, query);
         }
-
         if (productInfo == null) {
             $warn("addPromotionDetail product不存在 " + bean.toString());
             throw new BusinessException("productCode:" + productCode + "不存在");
         }
+        productCode = productInfo.getCommon().getFields().getCode();
+        // 取得feed 品牌
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(channelId, productInfo.getCommon().getFields().getCode());
+        String feedBrand = null;
+        if (cmsBtFeedInfoModel == null) {
+            $warn("addToPromotion CmsBtFeedInfoModel channelId=%s, code=%s", channelId, productCode);
+        } else {
+            feedBrand = cmsBtFeedInfoModel.getBrand();
+        }
+        String masterBrand = productInfo.getCommonNotNull().getFieldsNotNull().getBrand();
+        String platBrand = productInfo.getPlatformNotNull(cartId).getpBrandId();
+        if (brandBlockService.isBlocked(channelId, cartId, feedBrand, masterBrand, platBrand)) {
+            $warn("addToPromotion 该品牌为黑名单 channelId=%s, cartId=%d, code=%s, feed brand=%s, master brand=%s, platform brand=%s", channelId, cartId, productCode, feedBrand, masterBrand, platBrand);
+
+            return false;
+        }
+        List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
+        if (skusList == null || skusList.isEmpty()) {
+            $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
+            throw new BusinessException("商品Sku数据不存在");
+        }
+        bean.setProductInfo(productInfo);
+        bean.setGroupModel(groupModel);
+        return true;
+    }
+    /**
+     * 添加商品到promotion
+     */
+    @VOTransactional
+    public void addPromotionDetail(PromotionDetailAddBean bean, boolean isUpdatePromotionPrice) {
+        String channelId = bean.getChannelId();
+        Integer cartId = bean.getCartId();
+        Integer promotionId = bean.getPromotionId();
+        String modifier = bean.getModifier();
+
+        // 获取Product信息
+        CmsBtProductModel productInfo=bean.getProductInfo();   //check方法  已经初始化
+        CmsBtProductGroupModel groupModel=bean.getGroupModel();//check方法  已经初始化
 
         String numIId = groupModel == null ? null : groupModel.getNumIId();
         // 插入cms_bt_promotion_model表
@@ -120,21 +156,14 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionGroupsBean.setNumIid(numIId);
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
-
-        List<CmsBtProductModel_Sku> skusList = productInfo.getCommonNotNull().getSkus();
-        if (skusList == null || skusList.isEmpty()) {
-            $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
-            throw new BusinessException("商品Sku数据不存在");
-        }
-
         //初始化PromotionCode
-        CmsBtPromotionCodesModel codesModel= loadCmsBtPromotionCodesModel(productInfo,groupModel,promotionId,modifier,cartId);
+        CmsBtPromotionCodesModel codesModel = loadCmsBtPromotionCodesModel(productInfo, groupModel, promotionId, modifier, cartId);
 
         //初始化PromotionSku
-        List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean,productInfo,groupModel,promotionId,modifier,isUpdatePromotionPrice);
+        List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean, productInfo, groupModel, promotionId, modifier, isUpdatePromotionPrice);
 
         //计算PromotionSku活动价
-        promotionSkuService.loadSkuPrice(listPromotionSku,bean.getAddProductSaveParameter());
+        promotionSkuService.loadSkuPrice(listPromotionSku, bean.getAddProductSaveParameter());
 
         //保存sku
         listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
@@ -145,24 +174,22 @@ public class PromotionDetailService extends BaseService {
 
 
         //PromotionSku活动最大价格 为商品活动价格
-        double  maxPromotionPrice= listPromotionSku.stream().mapToDouble(m->m.getPromotionPrice().doubleValue()).max().getAsDouble();
+        double maxPromotionPrice = listPromotionSku.stream().mapToDouble(m -> m.getPromotionPrice().doubleValue()).max().getAsDouble();
         codesModel.setPromotionPrice(maxPromotionPrice);
 
         //保存codes
-        if(codesModel.getId()==null||codesModel.getId()==0)
-        {
+        if (codesModel.getId() == null || codesModel.getId() == 0) {
             daoCmsBtPromotionCodes.insert(codesModel);
-        }
-        else
-        {
+        } else {
             daoCmsBtPromotionCodes.update(codesModel);
         }
+        if (cartId != 2) {
+            // 更新 promotionCodesTag
+            promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, codesModel.getId(), modifier);
 
-        // 更新 promotionCodesTag
-        promotionCodesTagService.updatePromotionCodesTag(bean.getTagList(), channelId, codesModel.getId(), modifier);
-
-        //更新mongo product tag
-        updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+            //更新mongo product tag
+            productService.updateCmsBtProductTags(channelId, productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+        }
     }
 
     List<CmsBtPromotionSkuBean>   loadPromotionSkus(PromotionDetailAddBean bean,CmsBtProductModel productInfo,CmsBtProductGroupModel groupModel, int promotionId, String modifier,boolean isUpdatePromotionPrice) {
@@ -264,31 +291,7 @@ public class PromotionDetailService extends BaseService {
         map.put("productCode", code);
         return daoCmsBtPromotionCodes.selectOne(map);
     }
-    //更新mongo product  tag
-    private void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel,int refTagId,List<TagTreeNode> tagList, String modifier) {
-        //更新商品Tags  sunpt
-        if (productModel != null) {
-            List<String> tags = productModel.getTags();
-            int size = tags.size();
-            //1.移除该活动的所有tag
-            for (int i = size - 1; i >= 0; i--) {
-                String tag = String.format("-%s-", refTagId);
-                if (tags.get(i).indexOf(tag) == 0) {
-                    tags.remove(i);
-                }
-            }
-            //2.添加新的tag
-            for (TagTreeNode tagInfo : tagList) {
-                if (tagInfo.getChecked() != 0) {
-                    tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
-                }
-            }
-            tags.add(String.format("-%s-", refTagId));
-            productModel.setTags(tags);
-            //3.更新
-            productService.updateTags(channelId, productModel.getProdId(), tags, modifier);
-        }
-    }
+
 
     private BaseMongoMap<String, Object> getPlatformSkuMongo(List<BaseMongoMap<String, Object>> list, String skuCode)
     {

@@ -3,6 +3,8 @@ package com.voyageone.service.bean.cms;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,27 @@ public class PromotionDetailAddBean {
     private  int refTagId;
     private List<TagTreeNode> tagList;
     private AddProductSaveParameter addProductSaveParameter;
+
+    //check方法 初始化
+    CmsBtProductModel productInfo;
+    //check方法 初始化
+    CmsBtProductGroupModel groupModel;
+
+    public CmsBtProductModel getProductInfo() {
+        return productInfo;
+    }
+
+    public void setProductInfo(CmsBtProductModel productInfo) {
+        this.productInfo = productInfo;
+    }
+
+    public CmsBtProductGroupModel getGroupModel() {
+        return groupModel;
+    }
+
+    public void setGroupModel(CmsBtProductGroupModel groupModel) {
+        this.groupModel = groupModel;
+    }
 
     public AddProductSaveParameter getAddProductSaveParameter() {
         return addProductSaveParameter;

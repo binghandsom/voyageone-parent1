@@ -22,6 +22,7 @@ import com.voyageone.common.util.*;
 import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CustomPropBean;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -1382,5 +1383,30 @@ public class ProductService extends BaseService {
 
     public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
         cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
+    }
+    //更新mongo product  tag
+    public void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel, int refTagId, List<TagTreeNode> tagList, String modifier) {
+        //更新商品Tags  sunpt
+        if (productModel != null) {
+            List<String> tags = productModel.getTags();
+            int size = tags.size();
+            //1.移除该活动的所有tag
+            for (int i = size - 1; i >= 0; i--) {
+                String tag = String.format("-%s-", refTagId);
+                if (tags.get(i).indexOf(tag) == 0) {
+                    tags.remove(i);
+                }
+            }
+            //2.添加新的tag
+            for (TagTreeNode tagInfo : tagList) {
+                if (tagInfo.getChecked() != 0) {
+                    tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                }
+            }
+            tags.add(String.format("-%s-", refTagId));
+            productModel.setTags(tags);
+            //3.更新
+            updateTags(channelId, productModel.getProdId(), tags, modifier);
+        }
     }
 }
