@@ -10,12 +10,12 @@ define([
 
     cms.controller('intelApproveController',(function(){
 
-        function IntelApproveController(context,$menuService){
+        function IntelApproveController(context, $menuService, statusHistoryService){
 
             var self = this;
             self.context = context;
             self.$menuService = $menuService;
-            //self.statusHistoryService = statusHistoryService;
+            self.statusHistoryService = statusHistoryService;
             self.paging = {
                 size: 10,
                 fetch: function (pageNum, size) {
@@ -28,32 +28,22 @@ define([
 
         IntelApproveController.prototype.init = function(){
             var self = this,
-                $menuService = self.$menuService,
-                defaultSelectedCartId = self.context.cartId;
+                $menuService = self.$menuService;
 
             $menuService.getPlatformType().then(function (resp) {
 
                 var cartList = _.filter(resp.data, function (item) {
                     return item.value >= 20;
                 });
-                var defaultCart = {value: '', label: 'Select...'};
 
-                cartList = _.map(cartList, function (item) {
-                    return {value: item.value, label: item.name};
+                _.find(cartList, function (cart) {
+                	if (cart.value === self.context.cartId) {
+                		self.selectedCart = cart.name;
+                		return;
+                	}
                 });
 
-                cartList.unshift(defaultCart);
-
-                if (!defaultSelectedCartId)
-                    self.selectedCart = cartList[1];
-                else
-                    self.selectedCart = _.find(cartList, function (cart) {
-                        return cart.value === defaultSelectedCartId;
-                    });
-
-                self.cartList = cartList;
-
-                //self.getPage(1);
+                self.getPage(1);
             });
         };
 
@@ -61,7 +51,7 @@ define([
 
             var self = this;
 
-/*            self.statusHistoryService.getPage({
+            self.statusHistoryService.getPage({
                 pageIndex: pageNumber,
                 pageRowCount: self.paging.size,
                 orderBy: {
@@ -69,22 +59,17 @@ define([
                 },
                 parameters: {
                     code: self.code,
-                    cartId: self.selectedCart.value
+                    cartId: self.context.cartId,
+                    operationType: 13
                 }
             }).then(function (resp) {
                 var res = resp.data;
                 self.data = res.data.map(function (row) {
-                    var cart = self.cartList.find(function (cart) {
-                        return cart.value == row.cartId;
-                    });
-
-                    if (cart)
-                        row.cartName = cart.label;
-
+                    row.cartName = self.selectedCart;
                     return row;
                 });
                 self.paging.total = res.count;
-            });*/
+            });
         };
 
         return IntelApproveController;

@@ -10,8 +10,7 @@
             <div class="col-sm-4 form-inline">
                 <label>
                     <strong translate="TXT_CART_NAME"></strong>&nbsp;:&emsp;
-                    <select class="form-control" ng-model="ctrl.selectedCart" ng-change="ctrl.getPage(ctrl.paging.curr = 1)" ng-options="cart as cart.label for cart in ctrl.cartList">
-                    </select>
+                    <label ng-bind="ctrl.selectedCart"></label>
                 </label>
             </div>
             <div class="col-sm-4 text-right"><button class="btn btn-info btn-pop" ng-click="ctrl.getPage(ctrl.paging.curr)" translate="BTN_REFRESH"></button></div>

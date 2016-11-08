@@ -54,7 +54,6 @@ public class CmsFieldEditController extends CmsController {
     public AjaxResponse intelligentPublish(@RequestBody Map<String, Object> params) {
     	Integer cartId = (Integer) params.get("cartId");
     	// 验证参数
-    	//Preconditions.checkArgument(CollectionUtils.isNotEmpty(productIds));
     	Preconditions.checkNotNull(cartId);
     	// 设置商品的智能上新
     	fieldEditService.intelligentPublish(cartId, params, getUser(), getCmsSession());

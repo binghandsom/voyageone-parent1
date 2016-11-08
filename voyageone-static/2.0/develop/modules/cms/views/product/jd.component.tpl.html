@@ -139,7 +139,7 @@
                                 <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
                                                                                         vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.publishEnabled">
                             	<button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || vm.platform.pBrandId == '' || vm.platform.cartId == ''">
                             		<i class="glyphicon glyphicon-floppy-disk"></i>智能上新
                             	</button>

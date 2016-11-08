@@ -162,8 +162,8 @@ public class CmsFieldEditService extends BaseViewService {
         StringBuilder queryStr = new StringBuilder("{")
         		.append(" 'common.fields.code':{$in:#}")
 				.append(",'common.fields.hsCodeStatus': '1'")
-        		.append(",'platform.P").append(cartId).append(".pBrandId': {$nin:[null, '']")
-				.append(",'platform.P").append(cartId).append(".pCatId': {$nin:[null, '']")
+        		.append(",'platforms.P").append(cartId).append(".pBrandId': {$nin:[null, '']}")
+				.append(",'platforms.P").append(cartId).append(".pCatId': {$nin:[null, '']}")
 				.append("}");
         queryObj.setQuery(queryStr.toString());
         queryObj.setParameters(productCodes);

@@ -467,7 +467,7 @@ define([
                 function publishProduct() {
                 	var params = {
                 		cartId: scope.vm.platform.cartId,
-                		productId: [scope.productInfo.productId],
+                		productIds: [scope.vm.mastData.productCode],
                 		isSelectAll: 0
                 	}
                 	$fieldEditService.intelligentPublish(params).then(function() {
