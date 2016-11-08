@@ -287,6 +287,12 @@ public class CmsAdvSearchQueryService extends BaseService {
                     }
                 }
             }
+            
+            // NumIID多项查询
+            if (StringUtils.isNoneEmpty(searchValue.getNumIIds())) {
+                queryObject.addQuery("{'platforms.P#.pNumIId': {$in: #}}");
+                queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
+            }
         }
 
         // 获取其他检索条件
@@ -482,7 +488,14 @@ public class CmsAdvSearchQueryService extends BaseService {
                 }
             }
             if (inputList.size() > 0) {
-                queryObject.addQuery("{'$and':[" + inputList.stream().collect(Collectors.joining(",")) + "]}");
+            	String custQueryConditions = inputList.stream().collect(Collectors.joining(","));
+            	if ("1".equals(searchValue.getCustGroupType())) {
+            		// 满足所有条件 
+            		queryObject.addQuery("{'$and':[" + custQueryConditions + "]}");
+            	} else {
+            		// 满足任意条件
+            		queryObject.addQuery("{'$or':[" + custQueryConditions + "]}");
+            	}
             }
         }
     }

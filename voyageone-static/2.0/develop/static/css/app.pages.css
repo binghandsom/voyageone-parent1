@@ -968,3 +968,8 @@ schema .ng-invalid.focus-error {
     color: white;
     font-weight: bold;
 }
+
+#advanceSearch .opacityBtn{
+    border: none;
+    background: none;
+}
