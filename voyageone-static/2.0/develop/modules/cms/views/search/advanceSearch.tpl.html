@@ -871,7 +871,7 @@
                                             <!--Todo  显示商品numid  -->
                                             <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
-                                                <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}.html" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId == 27"></a>
+                                                <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
                                             </span>
                                             <!--Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
@@ -1049,7 +1049,7 @@
                                             </span>
                                             <span class="m-r-sm" ng-if="!!groupInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
                                                 <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.numIId}}" target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
-                                                <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.numIId}}.html" target="_blank" ng-bind="groupInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId==27"></a>
+                                                <a ng-href="{{vm.productUrl}}{{groupInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="groupInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId==27"></a>
                                             </span>&nbsp;
                                             <span>产品Code&nbsp;
                                                 <a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.common.fields.code" target="_blank"></a>
@@ -1184,7 +1184,7 @@
     <div class="row">
         <table style="width: 100%;border: none;">
             <thead>
-                <th class="mfb-xxxs text-center">sku</th>
+                <th class="mfb-xxxs text-center">SKU</th>
                 <th class="mfb-xxxs text-center">尺码</th>
                 <th class="mfb-xxxs text-center">库存</th>
             </thead>

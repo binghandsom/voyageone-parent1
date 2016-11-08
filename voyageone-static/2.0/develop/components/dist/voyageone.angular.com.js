@@ -194,7 +194,6 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
 
         $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
             $scope.promotionDetail = resp.data;
-            console.log($scope.promotionDetail);
         });
 
     }
