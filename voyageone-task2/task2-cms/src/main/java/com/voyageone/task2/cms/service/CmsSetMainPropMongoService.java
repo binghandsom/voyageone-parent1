@@ -77,6 +77,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * feed->master导入服务
@@ -539,6 +540,18 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+
+                        List<CmsBtFeedInfoModel_Sku> skus = feed.getSkus().stream()
+                                .filter(sku -> sku.getPriceNet() != null && sku.getPriceNet().compareTo(0D) > 0 && !StringUtil.isEmpty(sku.getBarcode()))
+                                .collect(Collectors.toList());
+                        if(ListUtils.isNull(skus)){
+                            // feed里面的品牌已被加入黑名单,导入失败
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                                    "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (CommonConfigNotFoundException ce) {

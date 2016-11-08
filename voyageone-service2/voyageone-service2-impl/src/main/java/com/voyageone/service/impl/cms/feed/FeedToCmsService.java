@@ -334,21 +334,22 @@ public class FeedToCmsService extends BaseService {
             return false;
         }
 
-        StringBuffer sbUpdMessage = new StringBuffer();
-        for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
-            if (StringUtil.isEmpty(sku.getBarcode())) {
-                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                sku.setErrInfo("没有UPC");
-                sbUpdMessage.append(sku.getClientSku() +":没有UPC,");
-            }
-            if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
-                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
-                sku.setErrInfo("成本价为0");
-                sbUpdMessage.append(sku.getClientSku() +":成本价为0,");
-            }
-        }
+//        StringBuffer sbUpdMessage = new StringBuffer();
+//        for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+//            if (StringUtil.isEmpty(sku.getBarcode())) {
+//                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+//                sku.setErrInfo("没有UPC");
+//                sbUpdMessage.append(sku.getClientSku() +":没有UPC,");
+//            }
+//
+//            if (sku.getPriceNet() == null || sku.getPriceNet().compareTo(0D) == 0) {
+//                product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
+//                sku.setErrInfo("成本价为0");
+//                sbUpdMessage.append(sku.getClientSku() +":成本价为0,");
+//            }
+//        }
         if(CmsConstants.FeedUpdFlgStatus.FeedErr == product.getUpdFlg()){
-            product.setUpdMessage(sbUpdMessage.toString());
+//            product.setUpdMessage(sbUpdMessage.toString());
             $info(product.getCode() + "----" +product.getUpdMessage());
             return false;
         }
