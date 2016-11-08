@@ -1097,10 +1097,11 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             if (StringUtils.isEmpty(brand)) {
                 throw new BusinessException("品牌关联没做!");
             }
-//            String field_id = "Brand";
-//            listSp.add(field_id);
-//            Field field = fieldsMap.get(field_id);
-//
+            String field_id = "Brand";
+            listSp.add(field_id);
+            Field field = fieldsMap.get(field_id);
+
+            ((InputField) field).setValue(brand);
 ////            ((InputField) field).setValue(product.getCommon().getFields().getBrand());
 //            ((InputField) field).setValue(sxData.getTmpSxCnCode().getBrand());
         }
