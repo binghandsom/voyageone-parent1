@@ -614,7 +614,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
         // 为什么要这段内容呢， 因为发生了一件很奇怪的事情， 曾经上新成功的商品， 更新的时候提示说【id:xxx还没有成为品牌】
         // 所以使用之前上过的品牌
-        {
+        // TODO:目前好像只有024这家店有这个问题， 明天再查一下
+        if (sxData.getChannelId().equals("024")) {
             // 如果已经上新过了的话， 使用曾经上新过的品牌
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 String numIId = sxData.getPlatform().getNumIId();
