@@ -267,7 +267,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true);
+        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, false);
 
     }
 

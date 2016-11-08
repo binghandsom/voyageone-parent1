@@ -666,7 +666,7 @@ public class CmsFieldEditService extends BaseViewService {
             // 插入上新程序
             $debug("批量修改属性 (商品审批) 开始记入SxWorkLoad表");
             long sta = System.currentTimeMillis();
-            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, userInfo.getUserName());
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), newProdCodeList, cartIdVal, userInfo.getUserName(),false);
             $debug("批量修改属性 (商品审批) 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
 
             // 记录商品修改历史

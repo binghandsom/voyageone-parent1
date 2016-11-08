@@ -3416,10 +3416,12 @@ public class SxProductService extends BaseService {
 
 		// 是否智能上新
 		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
-		if (blnForceSmartSx) {
-			// 强制智能上新
-			blnIsSmartSx = true;
-		}
+		if (blnIsSmartSx && blnForceSmartSx) {
+			// 当前店铺允许智能上新， 并且要求当前商品智能上新 的场合
+            blnIsSmartSx = true;
+		} else {
+            blnIsSmartSx = false;
+        }
 
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
