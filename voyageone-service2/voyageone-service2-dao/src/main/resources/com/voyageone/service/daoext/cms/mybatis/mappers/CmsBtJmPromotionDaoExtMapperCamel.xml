@@ -125,7 +125,11 @@
                 and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
             <if test="jmBrandName != null">
-                and jmprom.master_brand_name = #{jmBrandName}
+                and jmprom.master_brand_name IN (
+                <foreach collection="jmBrandName" item="brandName" separator=",">
+                    #{brandName}
+                </foreach>
+                )
             </if>
             <if test="compareType == 1 and prodSum != null">
                 and jmprom.prod_sum &lt;= #{prodSum}
