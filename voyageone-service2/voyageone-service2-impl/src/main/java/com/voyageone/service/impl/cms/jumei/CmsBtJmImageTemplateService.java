@@ -95,15 +95,15 @@ public class CmsBtJmImageTemplateService {
         //根据模板传出参数来选择模板
         //【品牌Logo】属性 & 【入口图专场导向文案】属性为空时
         if (!StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
-                cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
+                !cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
                 StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
             // 模板一
             index = 0;
         }
         //【品牌Logo】属性为空 &【入口图专场导向文案】不为空时 模板二
         if (StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
-                cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
-                !StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
+                !cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
+                StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
             // 模板二
             index = 1;
         }
