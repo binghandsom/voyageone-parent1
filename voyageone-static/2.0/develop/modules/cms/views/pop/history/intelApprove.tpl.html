@@ -1,0 +1,48 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{ 'TXT_PRODUCT_STATUS_HISTORY' | translate}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-4"><strong translate="TXT_PRODUCT_CODE_WITH_COLON"></strong>&nbsp;:&emsp;<span>{{::ctrl.code}}</span></div>
+            <div class="col-sm-4 form-inline">
+                <label>
+                    <strong translate="TXT_CART_NAME"></strong>&nbsp;:&emsp;
+                    <select class="form-control" ng-model="ctrl.selectedCart" ng-change="ctrl.getPage(ctrl.paging.curr = 1)" ng-options="cart as cart.label for cart in ctrl.cartList">
+                    </select>
+                </label>
+            </div>
+            <div class="col-sm-4 text-right"><button class="btn btn-info btn-pop" ng-click="ctrl.getPage(ctrl.paging.curr)" translate="BTN_REFRESH"></button></div>
+        </div>
+        <table class="table table-hover-new hbox">
+            <thead>
+            <tr>
+                <th translate="TXT_ACTION_TIME"></th>
+                <th translate="TXT_ACTION_USER"></th>
+                <th translate="TXT_CART_NAME"></th>
+                <th translate="TXT_PRODUCT_STATUS"></th>
+                <th>
+                    <span translate="TXT_ACTION"></span><span translate="TXT_TYPE"></span>
+                </th>
+                <th translate="TXT_COMMENT"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="row in ctrl.data">
+                <td>{{::row.modified}}</td>
+                <td>{{::row.modifier}}</td>
+                <td>{{::row.cartName}}</td>
+                <td>{{::row.statusCn}}</td>
+                <td>{{::row.operationTypeName}}</td>
+                <td><popover-text content="row.comment" direct="left" size="15"></popover-text></td>
+            </tr>
+            </tbody>
+        </table>
+        <!--<vpagination config="ctrl.paging"></vpagination>-->
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_OK' | translate}}</button>
+    </div>
+</div>
