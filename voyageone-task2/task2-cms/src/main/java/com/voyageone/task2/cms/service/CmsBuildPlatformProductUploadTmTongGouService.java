@@ -419,6 +419,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
 
             // 更新特价宝
+            sxData.getPlatform().setNumIId(numIId);
             updateTeJiaBaoPromotion(sxData);
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
