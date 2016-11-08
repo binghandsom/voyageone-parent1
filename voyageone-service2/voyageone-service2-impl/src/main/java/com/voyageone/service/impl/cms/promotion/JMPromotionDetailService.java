@@ -243,7 +243,13 @@ public class JMPromotionDetailService extends BaseService {
         jmProductModel.setModifier(userName);
         jmProductModel.setModified(new Date());
         StringBuilder sbPromotionTag = new StringBuilder();
-        bean.getTagList().forEach(f -> sbPromotionTag.append("|").append(f.getName()));
+        bean.getTagList().forEach(f ->{
+                   if(f.getChecked()!=0) {
+                       sbPromotionTag.append("|").append(f.getName());
+                   }
+                   });
+
+
         if (sbPromotionTag.length() > 0) {
             jmProductModel.setPromotionTag(sbPromotionTag.substring(1));
         }

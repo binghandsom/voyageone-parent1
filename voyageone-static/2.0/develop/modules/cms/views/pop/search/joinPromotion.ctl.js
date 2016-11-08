@@ -129,7 +129,7 @@ define([
                 groupInfo.optType = '=';
                 groupInfo._typeText = '';
                 groupInfo.priceInputFlg = true;
-                groupInfo.skuUpdType = "0";
+                //groupInfo.skuUpdType = "0";
             } else {
                 groupInfo._optStatus = false;
                 groupInfo.optType = '';
@@ -172,7 +172,7 @@ define([
                 userArr = objToArr(checkNodes),
                 allCheckArr = objToArr(self.allCheckNodes);
 
-            /**判断用户是否选择了新的活动标签*/
+/*            /!**判断用户是否选择了新的活动标签*!/
             var isClick = _.every(userArr, function (item) {
                 return allCheckArr.indexOf(item) < 0;
             });
@@ -180,7 +180,7 @@ define([
             if (!isClick) {
                 alert("未做任何改变！");
                 return;
-            }
+            }*/
 
             /**至少要选择一个活动*/
             var eachP = _.some(self.listTreeNode, function (item) {
