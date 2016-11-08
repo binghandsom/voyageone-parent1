@@ -268,6 +268,12 @@ define([
                 "controllerUrl": "modules/cms/views/pop/history/productStatus.ctl",
                 "controller": "ProductStatusPopupController as ctrl",
                 "size": "lg"
+            },
+            "intelApprove": {
+                "templateUrl": "views/pop/history/intelApprove.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/history/intelApprove.ctl",
+                "controller": "intelApproveController as ctrl",
+                "size": "lg"
             }
         },
         "promotion": {
@@ -447,20 +453,20 @@ define([
                 "controller": 'popChannelListCtl'
             }
         },
-        "maintain":{
+        "maintain": {
             "masterBrandCheck": {
                 "templateUrl": "views/pop/maintain/masterBrandCheck.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandCheck.ctl",
                 "controller": 'masterBrandCheckCtl as ctrl',
-                "size":"lg"
+                "size": "lg"
             },
             "masterBrandMapDetail": {
                 "templateUrl": "views/pop/maintain/masterBrandMapDetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandMapDetail.ctl",
                 "controller": 'masterBrandMapDetailCtl as ctrl',
-                "size":"lg"
+                "size": "lg"
             },
-            "masterBrandEdit":{
+            "masterBrandEdit": {
                 "templateUrl": "views/pop/maintain/masterBrandEdit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandEdit.ctl",
                 "controller": 'masterBrandEditCtl as ctrl'
@@ -1321,9 +1327,17 @@ define([
         $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
             return openModal(popActions.product.skuMoveConfirm, context);
         };
+
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
+        };
+
+        /** 智能上新操作历史 */
+        $scope.openIntelApprove = function openIntelApprove(code, cartId) {
+            return openModal(popActions.history.intelApprove, {code: code, cartId: cartId});
+        }
+
         };
 
         $scope.confirmProductRefresh = function confirmProductRefresh(field, mappingInfo) {

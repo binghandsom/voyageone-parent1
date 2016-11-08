@@ -23,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class Jumei_009_SwissWatch_DictTest {
+public class Jumei_031_WoodLand_DictTest {
     @Autowired
     private SxProductService sxProductService;
 
@@ -58,10 +58,10 @@ public class Jumei_009_SwissWatch_DictTest {
 
     @Test
     public void dictTest() {
-        SxData sxData = sxProductService.getSxProductDataByGroupId("009", 1140474L);
+        SxData sxData = sxProductService.getSxProductDataByGroupId("010", 20893L);
         sxData.setCartId(27);
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-        ShopBean shopProp = Shops.getShop("009", 27);
+        ShopBean shopProp = Shops.getShop("010", 27);
 //        shopProp.setCart_id("27");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.JM.getId());
 
@@ -172,31 +172,13 @@ public class Jumei_009_SwissWatch_DictTest {
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
-        {
-            // 商品自定义图
-            RuleExpression htmlTemplate = new RuleExpression();
-            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-            RuleExpression imageTemplate = new RuleExpression();
-            imageTemplate.addRuleWord(new TextWord(""));
-
-            RuleExpression imageType = new RuleExpression();
-            imageType.addRuleWord(new TextWord(C_自定义图片));
-
-            RuleExpression useOriUrl = new RuleExpression();
-            useOriUrl.addRuleWord(new TextWord("1"));
-
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
-            ruleRoot.addRuleWord(new CustomWord(word));
-        }
-
         return ruleRoot;
 
     }
 
     /**
      * 聚美使用方法
-     * 1. 短描述 - 中文
+     * 1. 详情描述 - 中文
      * 2. 尺码图
      */
     private RuleExpression doDict_聚美使用方法() {
@@ -206,13 +188,12 @@ public class Jumei_009_SwissWatch_DictTest {
 
         // 生成内容
         {
-            // 中文短描述
-            MasterHtmlWord word = new MasterHtmlWord("shortDesCn");
+            // 详情描述 - 中文
+            // 注意：<br> 替换成 <br />，并删除所有*号。
+            MasterHtmlWord word = new MasterHtmlWord("longDesCn");
             ruleRoot.addRuleWord(word);
         }
-        {
-            // SwissWatch特别要求: 不想要英文描述, 只要中文短描述
-        }
+
         {
             // 回车一个
             TextWord word = new TextWord(C_TEXT_BR);

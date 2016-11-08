@@ -357,6 +357,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
 
+            // sku模式 or product模式（默认s模式， 如果没有颜色的话， 就是p模式）
+            sxData.setHasSku(true);
 			if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
 				// 用simple的那个sku， 覆盖到原来的那个sku上
 				int idxOrg = -1;
@@ -379,6 +381,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
 					productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
 
+                    // 换为p(roduct)模式
+                    sxData.setHasSku(false);
 					if (!updateWare) {
 						// 新增商品的时候
 						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
@@ -601,6 +605,28 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
         }
         productInfoMap.put("brand", valBrand);
+
+        // 为什么要这段内容呢， 因为发生了一件很奇怪的事情， 曾经上新成功的商品， 更新的时候提示说【id:xxx还没有成为品牌】
+        // 所以使用之前上过的品牌
+        {
+            // 如果已经上新过了的话， 使用曾经上新过的品牌
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                String numIId = sxData.getPlatform().getNumIId();
+                // 取得更新对象商品id
+                TbItemSchema tbItemSchema = null;
+                try {
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, NumberUtils.toLong(numIId));
+                    if (tbItemSchema != null && !ListUtils.isNull(tbItemSchema.getFields())) {
+                        InputField inputFieldBrand = (InputField)tbItemSchema.getFieldMap().get("brand");
+                        if (!StringUtils.isEmpty(inputFieldBrand.getDefaultValue())) {
+                            productInfoMap.put("brand", inputFieldBrand.getDefaultValue());
+                        }
+                    }
+                } catch (Exception e) {
+                }
+
+            }
+        }
 
         // 主图(必填)
         // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。

@@ -3480,11 +3480,13 @@ public class SxProductService extends BaseService {
      * @param fields List<Field> 直接把值set进这个fields对象
      * @param shopBean ShopBean
      * @param expressionParser ExpressionParser
+	 * @param blnForceSmartSx 是否强制使用智能上新
      * @return 设好值的FieldId和Field
      * @throws Exception
      */
     public Map<String, Field> constructPlatformProps(List<Field> fields, ShopBean shopBean,
-                                                     ExpressionParser expressionParser) throws Exception {
+                                                     ExpressionParser expressionParser,
+													   boolean blnForceSmartSx) throws Exception {
         // 返回用Map<field_id, Field>
         Map<String, Field> retMap = null;
         SxData sxData = expressionParser.getSxData();
@@ -3504,6 +3506,12 @@ public class SxProductService extends BaseService {
 
 		// 是否智能上新
 		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
+		if (blnIsSmartSx && blnForceSmartSx) {
+			// 当前店铺允许智能上新， 并且要求当前商品智能上新 的场合
+            blnIsSmartSx = true;
+		} else {
+            blnIsSmartSx = false;
+        }
 
         for(Field field : fields) {
             if (mapSp.containsKey(field.getId())) {
@@ -3898,7 +3906,21 @@ public class SxProductService extends BaseService {
         productModel.getPlatforms().forEach( (cartId, platform) -> {
             if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
                     && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
-                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, isSmartSx(productModel.getChannelId(), platform.getCartId()));
+            }
+        });
+    }
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     * @param blnSmartSx 是否是智能上新
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, String modifier, boolean blnSmartSx) {
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, blnSmartSx);
             }
         });
     }
@@ -3920,7 +3942,29 @@ public class SxProductService extends BaseService {
             if (cartIdList.contains(StringUtils.toString(platform.getCartId()))
                     && CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
                     && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
-                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier);
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, isSmartSx(productModel.getChannelId(), platform.getCartId()));
+            }
+        });
+    }
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (单个产品指定平台的场合)
+     * @param productModel  产品数据
+     * @param modifier      修改者
+     * @param blnSmartSx 是否是智能上新
+     */
+    public void insertSxWorkLoad(CmsBtProductModel productModel, List<String> cartIdList, String modifier, boolean blnSmartSx) {
+        // 输入参数检查
+        if (productModel == null || ListUtils.isNull(cartIdList)) {
+            $warn("insertSxWorkLoad(单个产品指定平台的场合) 参数不对");
+            return;
+        }
+
+        productModel.getPlatforms().forEach( (cartId, platform) -> {
+            // 指定平台，已批准且未锁定时插入指定平台的workload上新
+            if (cartIdList.contains(StringUtils.toString(platform.getCartId()))
+                    && CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus())
+                    && (StringUtils.isEmpty(productModel.getLock()) || "0".equals(productModel.getLock()))) {
+                insertSxWorkLoad(productModel.getChannelId(), productModel.getCommon().getFields().getCode(), platform.getCartId(), modifier, blnSmartSx);
             }
         });
     }
@@ -3933,9 +3977,20 @@ public class SxProductService extends BaseService {
      * @param modifier 修改者
      */
     public void insertSxWorkLoad(String channelId, String code, Integer cartId, String modifier) {
+        insertSxWorkLoad(channelId, code, cartId, modifier, isSmartSx(channelId, cartId));
+    }
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (单个code的场合)
+     * @param channelId channel id
+     * @param code code
+     * @param cartId cartId (如果指定cartId, 那么就只插入指定cart的数据, 如果传入null, 那么就是默认全渠道) (会自动去除没有勾选不能上新的渠道)
+     * @param modifier 修改者
+     * @param blnSmartSx 是否是智能上新
+     */
+    public void insertSxWorkLoad(String channelId, String code, Integer cartId, String modifier, boolean blnSmartSx) {
         List<String> codeList = new ArrayList<>();
         codeList.add(code);
-        insertSxWorkLoad(channelId, codeList, cartId, modifier);
+        insertSxWorkLoad(channelId, codeList, cartId, modifier, blnSmartSx);
     }
 
     /**
@@ -3946,6 +4001,17 @@ public class SxProductService extends BaseService {
      * @param modifier 修改者
      */
     public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier) {
+        insertSxWorkLoad(channelId, codeList, cartId, modifier, isSmartSx(channelId, cartId));
+    }
+    /**
+     * 插入上新表的唯一一个正式的统一入口 (批量code的场合)
+     * @param channelId channel id
+     * @param codeList code列表, 允许重复(重复会自动合并)
+     * @param cartId cartId (如果指定cartId, 那么就只插入指定cart的数据, 如果传入null, 那么就是默认全渠道) (会自动去除没有勾选不能上新的渠道)
+     * @param modifier 修改者
+     * @param blnSmartSx 是否是智能上新
+     */
+    public void insertSxWorkLoad(String channelId, List<String> codeList, Integer cartId, String modifier, boolean blnSmartSx) {
         // 输入参数检查
         if (StringUtils.isEmpty(channelId) || codeList == null || codeList.isEmpty() || StringUtils.isEmpty(modifier)) {
             $warn("insertSxWorkLoad 缺少参数");
@@ -3999,7 +4065,13 @@ public class SxProductService extends BaseService {
                 model.setChannelId(channelId);
                 model.setCartId(group.getCartId());
                 model.setGroupId(group.getGroupId());
-                model.setPublishStatus(0);
+                if (blnSmartSx) {
+                    // 智能上新是3
+                    model.setPublishStatus(3);
+                } else {
+                    // 普通上新是0
+                    model.setPublishStatus(0);
+                }
                 model.setModifier(modifier);
                 model.setModified(DateTimeUtil.getDate());
                 model.setCreater(modifier);

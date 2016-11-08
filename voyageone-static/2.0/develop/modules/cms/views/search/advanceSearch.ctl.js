@@ -73,6 +73,7 @@ define([
         $scope.getCat = getCat;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
+        $scope.openIntelligentPublish = openIntelligentPublish;
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
@@ -99,7 +100,7 @@ define([
                     $scope.vm._cartType_ = $scope.vm.cartList[0];
                     getCat($scope.vm._cartType_);
                 }
-
+            	
                 // 如果来至category 或者header search 则默认检索
                 $scope.vm.tblWidth = '100%'; // group tab的原始宽度
                 $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
@@ -754,6 +755,31 @@ define([
                     });
             }
         };
+        
+        // 智能上新
+        function openIntelligentPublish(cartId) {
+        	_chkProductSel(parseInt(cartId), __openIntelligentPublish);
+        	
+        	function __openIntelligentPublish(cartId, _selProdList) {
+        		confirm('以下属性未完成商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
+        		.then(function() {
+        			var productIds = [];
+        			if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+        			$fieldEditService.intelligentPublish({
+        				cartId: cartId,
+        				productIds: productIds,
+        				isSelectAll: $scope.vm._selall ? 1 : 0
+        			}).then(function() {
+            			alert('已完成商品的智能上新！');
+                        $scope.search();
+        			});
+        		});
+        	}
+        }
 
         // 商品审批
         function openApproval(openUpdateApprovalFnc, cartId) {

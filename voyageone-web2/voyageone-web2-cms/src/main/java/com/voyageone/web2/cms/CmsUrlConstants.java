@@ -482,6 +482,7 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
             String SET_PRODUCT_FIELDS = "setProductFields";
             String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
+            String INTELLIGENT_PUBLISH = "intelligentPublish";
             String BULK_SET_CATEGORY = "bulkSetCategory";
             String BULK_SET_PLATFORM_FIELDS = "bulkSetPlatformFields";
             String GET_PLATFROM_POP_OPTIONS = "getPlatfromPopOptions";
