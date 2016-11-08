@@ -4,15 +4,12 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.bean.cms.jumei.BatchUpdateSkuPriceParameterBean;
-import com.voyageone.service.bean.cms.jumei.ProductSaveInfo;
-import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.*;
@@ -25,7 +22,6 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.commons.collections.map.HashedMap;
@@ -52,6 +48,7 @@ public class JMPromotionDetailService extends BaseService {
 
     @Autowired
     CmsBtJmPromotionSkuDao daoCmsBtJmPromotionSku;
+
     @Autowired
     CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
 
@@ -60,6 +57,7 @@ public class JMPromotionDetailService extends BaseService {
 
     @Autowired
     CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
+
     @Autowired
     private ProductService productService;
 
