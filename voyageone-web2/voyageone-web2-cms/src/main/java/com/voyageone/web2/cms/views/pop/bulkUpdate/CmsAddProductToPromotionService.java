@@ -80,9 +80,9 @@ public class CmsAddProductToPromotionService extends BaseViewService {
                  //商品加入活动        tag  checked: 0:删除 商品tag    2 加入商品tag
                  if (parameter.getCartId() == 27) {
                      //聚美
-                     addToJmPromotion(tagTreeNode.getId(), tagList, parameter, userName, cmsSession);
+                     addToJmPromotion(tagTreeNode.getId(), tagTreeNode.getChildren(), parameter, userName, cmsSession);
                  } else {
-                     addToPromotion(tagTreeNode.getId(), tagList, parameter, userName, cmsSession);
+                     addToPromotion(tagTreeNode.getId(), tagTreeNode.getChildren(), parameter, userName, cmsSession);
                  }
              }
          } else if (tagTreeNode.getChecked() != tagTreeNode.getOldChecked()) {
