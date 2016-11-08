@@ -95,7 +95,9 @@ public class CmsBtJmPromotionSku3Service {
         listSku.forEach(f -> {
                     f.setModifier(userName);
                     f.setModified(new Date());
-                    dao.update(f);
+                   f.setDiscount(BigDecimalUtil.divide(f.getDealPrice(), f.getMarketPrice(), 2));//折扣
+
+            dao.update(f);
                 }
         );//更新deal价格
     }
