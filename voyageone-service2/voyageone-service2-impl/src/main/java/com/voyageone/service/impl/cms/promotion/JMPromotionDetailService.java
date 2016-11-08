@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.promotion;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.BigDecimalUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
@@ -23,6 +24,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +136,27 @@ public class JMPromotionDetailService extends BaseService {
         parameter.setSkuUpdType(bean.getAddProductSaveParameter().getSkuUpdType());
         cmsBtJmPromotionSku3Service.UpdateSkuDealPrice(parameter, listPromotionSku, modifier);
 
+        //设置 JmPromotionProduct价格
+        CmsBtProductModel_Platform_Cart p_Platform_Cart= productInfo.getPlatform(CartEnums.Cart.JM);
+        jmProductModel.setMaxMsrpUsd(new BigDecimal(productInfo.getCommon().getFields().getPriceMsrpEd()));
+        jmProductModel.setMinMsrpUsd(new BigDecimal(productInfo.getCommon().getFields().getPriceMsrpSt()));
+        if(p_Platform_Cart!=null) {
+            jmProductModel.setMaxMsrpRmb(new BigDecimal(p_Platform_Cart.getpPriceMsrpEd()));
+            jmProductModel.setMinMsrpRmb(new BigDecimal(p_Platform_Cart.getpPriceMsrpSt()));
+            jmProductModel.setMaxRetailPrice(new BigDecimal(p_Platform_Cart.getpPriceRetailEd()));
+            jmProductModel.setMinRetailPrice(new BigDecimal(p_Platform_Cart.getpPriceRetailSt()));
+            jmProductModel.setMaxSalePrice(new BigDecimal(p_Platform_Cart.getpPriceSaleEd()));
+            jmProductModel.setMinSalePrice(new BigDecimal(p_Platform_Cart.getpPriceSaleSt()));
+        }
+        if (listPromotionSku.size() > 0) {
+            jmProductModel.setMaxMarketPrice(getMaxMarketPrice(listPromotionSku));
+            jmProductModel.setMinMarketPrice(getMinMarketPrice(listPromotionSku));
+            jmProductModel.setMaxDealPrice(getMaxDealPrice(listPromotionSku));
+            jmProductModel.setMinDealPrice(getMinDealPrice(listPromotionSku));
+            jmProductModel.setDiscount(listPromotionSku.get(0).getDiscount());//折扣
+            jmProductModel.setSkuCount(listPromotionSku.size());
+        }
+
         // 保存 JmPromotionProduct
         if (jmProductModel.getId() != null && jmProductModel.getId() > 0) {
             dao.update(jmProductModel);
@@ -157,7 +180,22 @@ public class JMPromotionDetailService extends BaseService {
         //更新mongo product tag
         productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
     }
-
+    public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().max((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
+    }
+    public BigDecimal getMinMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().min((m1,m2)->{return m1.getMarketPrice().doubleValue()>m2.getMarketPrice().doubleValue()?1:-1;}).get().getMarketPrice();
+    }
+    public BigDecimal getMaxDealPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().max((m1,m2)->{return m1.getDealPrice().doubleValue()>m2.getDealPrice().doubleValue()?1:-1;}).get().getDealPrice();
+    }
+    public BigDecimal getMinDealPrice(List<CmsBtJmPromotionSkuModel> skuList)
+    {
+        return   skuList.stream().min((m1,m2)->{return m1.getDealPrice().doubleValue()>m2.getDealPrice().doubleValue()?1:-1;}).get().getDealPrice();
+    }
     CmsBtJmPromotionProductModel loadJmPromotionProduct(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String userName, CmsBtProductModel productInfo) {
         CmsBtJmPromotionProductModel jmProductModel = daoext.selectByProductCode(bean.getProductCode(), jmPromotionModel.getChannelId(), jmPromotionModel.getId());
         if (jmProductModel == null) {
@@ -254,11 +292,11 @@ public class JMPromotionDetailService extends BaseService {
 //            if (jmProductModel.getSynchStatus() == 2) {
 //                if (skuModel.getDealPrice().doubleValue() != skuImportBean.getDealPrice()) {
 //                    skuModel.setUpdateState(1);//已变更
-//                    saveInfo.jmProductModel.setUpdateStatus(1);//已变更
+//                    jmProductModel.setUpdateStatus(1);//已变更
 //                }
 //                if (skuModel.getMarketPrice().doubleValue() != skuImportBean.getMarketPrice()) {
 //                    skuModel.setUpdateState(1);//已变更
-//                    saveInfo.jmProductModel.setUpdateStatus(1);//已变更
+//                    jmProductModel.setUpdateStatus(1);//已变更
 //                }
 //            }
 
