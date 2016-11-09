@@ -772,7 +772,7 @@ define([
         	_chkProductSel(parseInt(cartId), __openIntelligentPublish);
 
         	function __openIntelligentPublish(cartId, _selProdList) {
-        		confirm('以下属性未完成商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
+        		confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
         		.then(function() {
         			var productIds = [];
         			if (_selProdList && _selProdList.length) {
