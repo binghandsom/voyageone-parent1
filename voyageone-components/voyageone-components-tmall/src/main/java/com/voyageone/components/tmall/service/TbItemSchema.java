@@ -151,6 +151,23 @@ public class TbItemSchema {
             setFullSchemaMainImage(imageUrls);
     }
 
+    public String[] getMainImages() {
+        if (isSimple())
+            return getSimpleSchemaMainImages();
+        else
+            return getFullSchemaMainImages();
+    }
+
+    private String[] getFullSchemaMainImages() {
+        Field field = getFieldMap().get("item_images");
+
+        ComplexField complexField = (ComplexField) field;
+
+        ComplexValue complexValue = complexField.getDefaultComplexValue();
+
+        return complexValue.getFieldKeySet().stream().map(complexValue::getInputFieldValue).toArray(String[]::new);
+    }
+
     private void setFullSchemaMainImage(Map<Integer, String> imageUrls) {
 
         // 找到第一个节点。否则为空
@@ -169,6 +186,16 @@ public class TbItemSchema {
 
             complexValue.setInputFieldValue("item_image_" + String.valueOf(index - 1), imageUrl.getValue());
         }
+    }
+
+    private String[] getSimpleSchemaMainImages() {
+        Field field = getFieldMap().get("main_images");
+
+        InputField inputField = (InputField) field;
+
+        String imageSplitUrls = inputField.getDefaultValue();
+
+        return imageSplitUrls.split(",");
     }
 
     private void setSimpleSchemaMainImage(Map<Integer, String> imageUrls) {
