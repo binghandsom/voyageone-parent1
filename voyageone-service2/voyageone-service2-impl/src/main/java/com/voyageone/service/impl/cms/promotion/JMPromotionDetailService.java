@@ -178,7 +178,8 @@ public class JMPromotionDetailService extends BaseService {
         cmsBtJmPromotionTagProductService.updateJmPromotionTagProduct(bean.getTagList(), jmPromotionModel.getChannelId(), jmProductModel.getId(), modifier);
 
         //更新mongo product tag
-        productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, bean.getRefTagId(), bean.getTagList(), modifier);
+        productService.updateCmsBtProductTags(bean.getChannelId(), productInfo, jmPromotionModel.getRefTagId(), bean.getTagList(), modifier);
+
     }
     public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
     {
