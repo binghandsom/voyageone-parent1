@@ -60,6 +60,8 @@ public class CmsBtJmPromotionService extends BaseService {
     private final CmsBtJmImageTemplateService jmImageTemplateService;
     private final CmsMtJmConfigService jmConfigService;
     private final CmsBtJmBayWindowService cmsBtJmBayWindowService;
+    private final CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao;
+
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
     @Autowired
@@ -92,7 +94,8 @@ public class CmsBtJmPromotionService extends BaseService {
                                    CmsBtJmPromotionImagesDao jmPromotionImagesDao,
                                    CmsBtJmImageTemplateService jmImageTemplateService,
                                    CmsMtJmConfigService jmConfigService,
-                                   CmsBtJmBayWindowService cmsBtJmBayWindowService) {
+                                   CmsBtJmBayWindowService cmsBtJmBayWindowService,
+                                   CmsBtJmPromotionBrandLogoDao cmsBtJmPromotionBrandLogoDao) {
         this.tagService = tagService;
         this.daoCmsBtPromotion = daoCmsBtPromotion;
         this.dao = dao;
@@ -104,6 +107,7 @@ public class CmsBtJmPromotionService extends BaseService {
         this.jmImageTemplateService = jmImageTemplateService;
         this.jmConfigService = jmConfigService;
         this.cmsBtJmBayWindowService = cmsBtJmBayWindowService;
+        this.cmsBtJmPromotionBrandLogoDao = cmsBtJmPromotionBrandLogoDao;
     }
 
     /**
@@ -207,6 +211,11 @@ public class CmsBtJmPromotionService extends BaseService {
                 valList = new ArrayList<>(0);
             }
             map.put("preDisplayChannelList", valList);
+
+            //品牌Logo
+            Map<String, Object> modelMap = new HashMap<>();
+            List<CmsBtJmPromotionBrandLogoModel> listModel = cmsBtJmPromotionBrandLogoDao.selectList(modelMap);
+            map.put("preDisplayBrandLogoList", listModel);
 
             // 直邮信息
             configModel = jmConfigService.getCmsMtJmConfigById(CmsMtJmConfigService.JmCofigTypeEnum.directmailType);

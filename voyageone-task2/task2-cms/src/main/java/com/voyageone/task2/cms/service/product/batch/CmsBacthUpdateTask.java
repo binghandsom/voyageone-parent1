@@ -124,7 +124,7 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
                 priceService.setPrice(newProduct, synPriceFlg || oldHsCode == null);
                 newProduct.getPlatforms().forEach((s, platform) -> {
                     if (platform.getCartId() != 0) {
-                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt);
+                        productService.updateProductPlatform(channelId, newProduct.getProdId(), platform, userName, false, EnumProductOperationType.BatchUpdate, msgTxt, true);
                     }
                 });
 

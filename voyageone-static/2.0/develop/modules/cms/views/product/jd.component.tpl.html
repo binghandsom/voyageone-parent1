@@ -46,6 +46,11 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                             </a>
                                         </li>
+                                        <li ng-if="vm.publishEnabled">
+                                        	<a href="javascript:void(0)" ng-click="openIntelApprove(vm.mastData.productCode,cartInfo.value)">
+                                        		<i class="fa fa-arrow-circle-right"></i>&nbsp;智能上新历史
+                                        	</a>
+                                        </li>
                                     </ul>
                                 </div>&nbsp;&nbsp;
                                 <div ng-if="cartInfo.value!=27" class="btn-group" uib-dropdown ng-controller="popupCtrl">
@@ -133,6 +138,11 @@
                             <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
                                 <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
                                                                                         vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                            </div>
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.publishEnabled">
+                            	<button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || vm.platform.pBrandId == '' || vm.platform.cartId == ''">
+                            		<i class="glyphicon glyphicon-floppy-disk"></i>智能上新
+                            	</button>
                             </div>
                             <div class="pull-right text-warnings" style="padding-left:0px">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。

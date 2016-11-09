@@ -440,6 +440,7 @@ define(function () {
                     "bulkSetCategory":"bulkSetCategory",
                     "bulkSetPlatformFields":"bulkSetPlatformFields",
                     "getPlatfromPopOptions": "getPlatfromPopOptions",
+                    "intelligentPublish": "intelligentPublish"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",

@@ -186,6 +186,8 @@ define([
                 var itemVal = '';
                 if ("comment" == data.propId) {
                     itemVal = prodInfo.common.comment;
+                } else if ('created' == data.propId) {
+                	itemVal = prodInfo.created;
                 } else {
                     itemVal = prodInfo.common.fields[data.propId];
                 }
@@ -239,28 +241,28 @@ define([
             var selBiDataArr = [];
             _.forEach(selBiDataList, function (data) {
                 var selValue = data.value;
-                var dotIdx = selValue.indexOf(".", 6);
-                var itemValObj = prodInfo.bi[selValue.substring(3, dotIdx)]; // 取到sum一级
-                var itemVal = null;
-                if (itemValObj == undefined) {
-                    itemVal = "";
-                } else {
-                    dotIdx ++;
-                    var lastdotIdx = selValue.indexOf(".", dotIdx);
-                    itemValObj = itemValObj[selValue.substring(dotIdx, lastdotIdx)];    // bi分类
-                    if (itemValObj == undefined) {
-                        itemVal = "";
-                    } else {
-                        lastdotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(lastdotIdx + 1)];    // 各平台
-                        if (itemVal == undefined) {
-                            itemVal = "";
-                        }
-                    }
+                var itemVal = getObjectValue(prodInfo, selValue);
+                // 处理发布时间格式
+                if (selValue.indexOf('.pPublishTime') != -1 && angular.isString(itemVal)) {
+                	itemVal = itemVal.substring(0, 19);
                 }
                 selBiDataArr.push({value: itemVal});
             });
             prodInfo.selBiDataArr = selBiDataArr;
+            
+            // 解析对象值
+            function getObjectValue(object, name) {
+            	var value = angular.copy(object);
+            	var names = name.split('.');
+            	for (var i = 0; i < names.length; i++) {
+            		if (value.hasOwnProperty(names[i])) {
+            			value = value[names[i]];
+            		} else {
+            			return '';
+            		}
+            	}
+            	return value;
+            }
         }
 
         /**

@@ -974,3 +974,8 @@ schema .ng-invalid.focus-error {
     max-height: 350px;
     overflow: auto;
 }
+
+#advanceSearch .opacityBtn{
+    border: none;
+    background: none;
+}

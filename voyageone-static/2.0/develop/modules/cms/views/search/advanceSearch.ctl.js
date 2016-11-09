@@ -3,7 +3,8 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance2.service',
-    'modules/cms/service/product.detail.service'
+    'modules/cms/service/product.detail.service',
+    './advance.search.append.ctl'
 ], function (_) {
 
     function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q) {
@@ -24,7 +25,9 @@ define([
                 supplierType: 1,
                 brandSelType: 1,
                 productSelType: '1',
-                sizeSelType: '1'
+                sizeSelType: '1',
+                salesType: 'All',
+                custGroupType: '1'
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -73,6 +76,7 @@ define([
         $scope.getCat = getCat;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
+        $scope.openIntelligentPublish = openIntelligentPublish;
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
@@ -263,11 +267,16 @@ define([
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
                 $scope.vm.currTab = "product";
-                $scope.vm.currTab2 = true;
+
+                if($scope.vm.currTab == 'product')
+                    $scope.vm.currTab2 = true;
+                else
+                    $scope.$feedActive = false;
+
                 $scope.vm.fstShowGrpFlg = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 900) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1300) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1360) + 'px';
             })
         }
 
@@ -324,6 +333,11 @@ define([
                 $scope.vm.fstShowGrpFlg = false;
                 getGroupList();
             }
+
+            if($scope.vm.currTab == 'product')
+                $scope.vm.currTab2 = true;
+            else
+                $scope.$feedActive = false;
         };
 
         /**
@@ -479,10 +493,8 @@ define([
 
         // 删除自定义查询选项
         function delCustAttribute(idx) {
-            if ($scope.vm.custAttrList.length > 1) {
+            if ($scope.vm.custAttrList.length > 0) {
                 $scope.vm.custAttrList.splice(idx, 1);
-            } else {
-                alert("最少保留一项")
             }
         }
 
@@ -584,7 +596,7 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
 
-            $scope.vm.searchInfo.salesType = null;
+            $scope.vm.searchInfo.salesType = 'All';
             $scope.vm.searchInfo.salesSortType = null;
             $scope.vm.searchInfo.salesStart = null;
             $scope.vm.searchInfo.salesEnd = null;
@@ -754,6 +766,31 @@ define([
                     });
             }
         };
+
+        // 智能上新
+        function openIntelligentPublish(cartId) {
+        	_chkProductSel(parseInt(cartId), __openIntelligentPublish);
+
+        	function __openIntelligentPublish(cartId, _selProdList) {
+        		confirm('以下属性未完成商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
+        		.then(function() {
+        			var productIds = [];
+        			if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+        			$fieldEditService.intelligentPublish({
+        				cartId: cartId,
+        				productIds: productIds,
+        				isSelectAll: $scope.vm._selall ? 1 : 0
+        			}).then(function() {
+            			alert('已完成商品的智能上新！');
+                        $scope.search();
+        			});
+        		});
+        	}
+        }
 
         // 商品审批
         function openApproval(openUpdateApprovalFnc, cartId) {
