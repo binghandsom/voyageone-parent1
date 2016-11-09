@@ -78,7 +78,11 @@ public class TagService extends BaseService {
      * @return CmsBtTagJmModuleExtensionModel
      */
     public CmsBtTagJmModuleExtensionModel getJmModule(CmsBtTagModel tagModel) {
-        return tagJmModuleExtensionDao.select(tagModel.getId());
+        return getJmModule(tagModel.getId());
+    }
+
+    public CmsBtTagJmModuleExtensionModel getJmModule(Integer tagId) {
+        return tagJmModuleExtensionDao.select(tagId);
     }
 
     /**

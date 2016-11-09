@@ -734,6 +734,15 @@ public class CmsBtJmPromotionService extends BaseService {
                         cmsBtJmPromotionTagProductDao.insert(cmsBtJmPromotionTagProductModel);
                     });
                 }
+
+                CmsBtTagJmModuleExtensionModel desJmModuleExtensionModel = tagService.getJmModule(desTag);
+                CmsBtTagJmModuleExtensionModel srcJmModuleExtensionModel = tagService.getJmModule(srcTagMode);
+                desJmModuleExtensionModel.setHideFlag(srcJmModuleExtensionModel.getHideFlag());
+                desJmModuleExtensionModel.setShelfType(srcJmModuleExtensionModel.getShelfType());
+                desJmModuleExtensionModel.setImageType(srcJmModuleExtensionModel.getImageType());
+                desJmModuleExtensionModel.setProductsSortBy(srcJmModuleExtensionModel.getProductsSortBy());
+                desJmModuleExtensionModel.setNoStockToLast(srcJmModuleExtensionModel.getNoStockToLast());
+                tagService.updateTagModel(desJmModuleExtensionModel);
             }
         });
     }
