@@ -121,14 +121,18 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), language));
         // 取得尺寸类型
         masterData.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), language));
-
+        
+        // 取得销量类型
+        List<Map<String, String>> salesTypeList = advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null);
+        List<Map<String, String>> allSortList = new ArrayList<>(salesTypeList);
         // 获取sort list
         List<Map<String, Object>> sortList = commonPropService.getCustColumns(3);
         List<Map<String, String>> biDataList = advSearchOtherService.getBiDataList(userInfo.getSelChannelId(), language, null);
-        for (Map<String, String> biData : biDataList) {
+        allSortList.addAll(biDataList);
+        for (Map<String, String> sortData : allSortList) {
             Map<String, Object> keySumMap = new HashMap<>();
-            keySumMap.put("propId", biData.get("value"));
-            keySumMap.put("propName", biData.get("name"));
+            keySumMap.put("propId", sortData.get("value"));
+            keySumMap.put("propName", sortData.get("name"));
             sortList.add(keySumMap);
         }
         masterData.put("sortList", sortList);
@@ -156,7 +160,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         masterData.put("tagTypeList", Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), language));
 
         // 设置按销量排序的选择列表
-        masterData.put("salesTypeList", advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
+        masterData.put("salesTypeList", salesTypeList);
 
         // 设置BI数据显示的选择列表
         masterData.put("biDataList", biDataList);
