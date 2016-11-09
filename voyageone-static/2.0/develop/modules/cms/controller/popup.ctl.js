@@ -1336,8 +1336,6 @@ define([
         /** 智能上新操作历史 */
         $scope.openIntelApprove = function openIntelApprove(code, cartId) {
             return openModal(popActions.history.intelApprove, {code: code, cartId: cartId});
-        }
-
         };
 
         $scope.confirmProductRefresh = function confirmProductRefresh(field, mappingInfo) {
