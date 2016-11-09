@@ -5,7 +5,7 @@
 /**
  * angular component head file。
  * 声明各个组件的父模块
- *
+ * 
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -162,7 +162,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(code, skus){
+    function popoverAdvanceSku(code, skus , entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
             var skuDetails = [],
@@ -190,11 +196,16 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(code){
+    function popoverPromotionDetail(code,entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
             $scope.promotionDetail = resp.data;
-            console.log($scope.promotionDetail);
         });
 
     }
@@ -3316,7 +3327,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-
+                        
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3325,7 +3336,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-
+                        
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3651,12 +3662,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-
+    
     languages: {
         en: "en",
         zh: "zh"
     },
-
+    
     /**
      * set the web side language type.
      */
@@ -3667,7 +3678,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-
+    
     /**
      * get the browser language type.
      * @returns {string}

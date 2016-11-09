@@ -754,7 +754,7 @@
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                         <!-- Products table and controls -->
                         <div class="table-responsive box-body">
-                            <table class="table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width:100%" width="{{vm.tblWidth2}}">
+                            <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;min-width:100%" width="{{vm.tblWidth2}}">
                                 <thead>
                                 <tr>
                                     <td class="text-left" style="display:inline-block; height:40px; line-height:40px;width:110px;padding-left:10px;margin-left:0px">
@@ -781,7 +781,7 @@
                                 </tr>
                                 </thead>
                             </table>
-                            <div class="col-sm-12 box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
+                            <div class="box-body" if-no-rows="vm.productList.length" style="padding-left:0px">
                                 <table class="table-hover vo_table vo_models" ng-if="vm.productList.length" style="min-width: 100%;margin-bottom:10px;" width="{{vm.tblWidth2}}" ng-controller="popupCtrl">
                                     <tbody ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd;">
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
@@ -801,7 +801,7 @@
                                         <td colspan="9" class="control-label text-left form-inline"
                                             style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                             <!--Todo 活动详情pop的数据取得-->
-                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code)"
+                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code,productInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>&nbsp;
@@ -877,7 +877,7 @@
                                         <!--show SKU length -->
                                         <td class="text-center" style="display:inline-block;width:165px;">
                                             <button ng-controller="showPopoverCtrl" ng-if="productInfo.skuDetail.length>0"
-                                                    popover-html="popoverAdvanceSku(productInfo.common.fields.code, productInfo.common.skus)"
+                                                    popover-html="popoverAdvanceSku(productInfo.common.fields.code, productInfo.common.skus,productInfo)"
                                                     uib-popover-template="templateAction.advanceSkuPopover.templateUrl"
                                                     popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
                                                     type="button" popover-placement="left" class="btn btn-default btn-xs">
@@ -962,7 +962,7 @@
                                             </a>
                                         </td>
                                         <td colspan="7" class="control-label text-left form-inline" style="height:27px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
-                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(groupInfo.common.fields.code)"
+                                            <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(groupInfo.common.fields.code,groupInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>
