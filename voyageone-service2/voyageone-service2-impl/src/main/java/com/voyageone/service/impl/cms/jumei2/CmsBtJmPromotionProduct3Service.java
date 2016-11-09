@@ -371,38 +371,6 @@ public class CmsBtJmPromotionProduct3Service {
     public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String channelId, String userName) {
         cmsBtJmPromotionTagProductService.updatePromotionProductTag(parameter,channelId,userName);
         return  1;
-//        String tagNameList = "";
-//        for (ProductTagInfo tagInfo : parameter.getTagList()) {
-//            tagNameList += "|" + tagInfo.getTagName();
-//        }
-//        CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
-//        if (tagNameList.length() > 0) {
-//            model.setPromotionTag(tagNameList.substring(1));//1.更新 CmsBtJmPromotionProductModel tag
-//        } else {
-//            model.setPromotionTag("");//1.更新 CmsBtJmPromotionProductModel tag
-//        }
-//        model.setModifier(userName);
-//        dao.update(model);//1
-//
-//        CmsBtJmPromotionModel modelPromotion = daoCmsBtJmPromotion.select(model.getCmsBtJmPromotionId());
-//        daoExtCmsBtJmPromotionTagProduct.deleteByCmsBtJmPromotionProductId(parameter.getId());//2删除旧的tag
-//        CmsBtJmPromotionTagProductModel modelCmsBtJmPromotionTagProduct = null;
-//        //3.添加新的tag
-//        for (ProductTagInfo tagInfo : parameter.getTagList()) {
-//            modelCmsBtJmPromotionTagProduct = new CmsBtJmPromotionTagProductModel();
-//            modelCmsBtJmPromotionTagProduct.setCmsBtTagId(tagInfo.getTagId());
-//            modelCmsBtJmPromotionTagProduct.setTagName(tagInfo.getTagName());
-//            modelCmsBtJmPromotionTagProduct.setCmsBtJmPromotionProductId(parameter.getId());
-//            modelCmsBtJmPromotionTagProduct.setChannelId(model.getChannelId());
-//            modelCmsBtJmPromotionTagProduct.setModifier(userName);
-//            modelCmsBtJmPromotionTagProduct.setCreated(new Date());
-//            modelCmsBtJmPromotionTagProduct.setModified(new Date());
-//            modelCmsBtJmPromotionTagProduct.setCreater(userName);
-//            daoCmsBtJmPromotionTagProduct.insert(modelCmsBtJmPromotionTagProduct);
-//        }
-//        //更新mongo  product  tag
-//        updateCmsBtProductTags(model, modelPromotion, parameter, userName);
-//        return 1;
     }
     //批量修改商品tag
     @VOTransactional
