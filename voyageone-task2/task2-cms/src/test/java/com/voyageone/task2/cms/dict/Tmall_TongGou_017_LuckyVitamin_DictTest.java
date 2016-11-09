@@ -21,8 +21,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @version 2.5.0
  * @since 2.5.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context-cms-test.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:context-cms-test.xml")
 public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
     @Autowired
     private SxProductService sxProductService;
@@ -252,7 +252,8 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 
 			{
 				// 英文使用说明(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
-				String column = "usageEn";
+				// 备注： LuckyVitamin的使用说明是在材质上的
+				String column = "materialEn";
 				CommonWord commonWord = new CommonWord(column);
 				ruleRoot.addRuleWord(commonWord);
 			}
@@ -338,52 +339,24 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             ruleRoot.addRuleWord(word);
         }
 
-//        {
-//            // K-V 模板
-//            String kv = "\"k1\":{\"k1-1\":\"v1\",\"k1-2\":\"v2\"},";
-//            TextWord word = new TextWord(kv);
-//            ruleRoot.addRuleWord(word);
-//
-//            <field id="xxx_enable" name="是否启用" type="singleCheck">
-//                <options>
-//                <option displayName="启用" value="true"/>
-//                <option displayName="不启用" value="false"/>
-//                </options>
-//            </field>
-//        }
-
         {
             // coupon 优惠（order不加也可以）
-//            String kv = "\"coupon\":{"order": "1",\"enable\":\"true\",\"coupon_id\":\"342115\"},";
-            String kv = "\"coupon\":{\"order\": \"1\",\"enable\":\"false\"},";
+            String kv = "\"coupon\": {\"enable\": \"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
 
         {
             // hot_recommanded 同店推荐
-//            <field id="hot_recommanded_id" name="选择模板" type="singleCheck">
-//                <options>
-//                <option displayName="商品推荐" value="520277"/>
-//                </options>
-//            </field>
-//            String kv = "\"hot_recommanded\":{\"order": "2",\"enable\":\"true\",\"hot_recommanded_id\":\"341911\"},";
-            String kv = "\"hot_recommanded\":{\"order\": \"2\",\"enable\":\"false\"},";
-            TextWord word = new TextWord(kv);
-            ruleRoot.addRuleWord(word);
-        }
-
-        {
-            // shop_discount 店铺活动
-//            String kv = "\"shop_discount\":{\"enable\":\"true\",\"shop_discount_id\":\"342160\"},";
-            String kv = "\"shop_discount\":{\"order\": \"3\",\"enable\":\"false\"},";
+            String kv = "\"hot_recommanded\": {\"enable\": \"false\"},";
             TextWord word = new TextWord(kv);
             ruleRoot.addRuleWord(word);
         }
 
 //        {
-//            // user_define 自定义
-//            String kv = "\"user_define\":{\"user_define_enable\":\"true\",\"user_define_name\":\"xxx\",\"user_define_image_0\":\"xxx\",\"user_define_image_1\":\"xxx\"},";
+//            // shop_discount 店铺活动
+////            String kv = "\"shop_discount\":{\"enable\":\"true\",\"shop_discount_id\":\"342160\"},";
+//            String kv = "\"shop_discount\":{\"order\": \"3\",\"enable\":\"false\"},";
 //            TextWord word = new TextWord(kv);
 //            ruleRoot.addRuleWord(word);
 //        }
@@ -392,32 +365,81 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
         {
             // item_picture 商品图片 （每张图片url是放在content里面的）
             {
-                String kv = "\"item_picture\":{\"order\": \"6\",\"enable\":\"true\",";
+                String kv = "\"item_picture\": {\"content\": [";
                 TextWord word = new TextWord(kv);
                 ruleRoot.addRuleWord(word);
             }
 
             {
-                TextWord word = new TextWord("\"content\":[");
-                ruleRoot.addRuleWord(word);
-            }
+//                // 第1张, 顶部固定图_品牌信息
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i3/2640015666/TB2.J7faOGO.eBjSZFpXXb3tFXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(0, ruleRoot, new TextWord(strImgJiage));
+
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("0"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                do处理天猫同购无线端20张图片(0, ruleRoot, new CustomWord(getCommonImagesWord));
+			}
 
             {
-                // 第1张, 顶部固定图_品牌信息
-                String strImgJiage = "http://img.alicdn.com/imgextra/i3/2640015666/TB2.J7faOGO.eBjSZFpXXb3tFXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(0, ruleRoot, new TextWord(strImgJiage));
-            }
+//                // 第2张, 顶部固定图_消费者告知书
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i4/2640015666/TB2hD3OaseJ.eBjy0FiXXXqapXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(1, ruleRoot, new TextWord(strImgJiage));
 
-            {
-                // 第2张, 顶部固定图_消费者告知书
-                String strImgJiage = "http://img.alicdn.com/imgextra/i4/2640015666/TB2hD3OaseJ.eBjy0FiXXXqapXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(1, ruleRoot, new TextWord(strImgJiage));
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("1"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+				do处理天猫同购无线端20张图片(1, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
                 // 第3张, 顶部固定图_产品实拍分隔文字
-                String strImgJiage = "http://img.alicdn.com/imgextra/i3/2640015666/TB2pRsVar5K.eBjy0FnXXaZzVXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(2, ruleRoot, new TextWord(strImgJiage));
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i3/2640015666/TB2pRsVar5K.eBjy0FnXXaZzVXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(2, ruleRoot, new TextWord(strImgJiage));
+
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("2"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+				do处理天猫同购无线端20张图片(2, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
@@ -431,29 +453,78 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 
             {
                 // 第9张, 底部固定图_购物流程
-                String strImgJiage = "http://img.alicdn.com/imgextra/i2/2640015666/TB2fIsiaNaK.eBjSZFwXXXjsFXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(8, ruleRoot, new TextWord(strImgJiage));
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i2/2640015666/TB2fIsiaNaK.eBjSZFwXXXjsFXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(8, ruleRoot, new TextWord(strImgJiage));
+
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("0"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+				do处理天猫同购无线端20张图片(8, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
                 // 第10张, 底部固定图_温馨提示
-                String strImgJiage = "http://img.alicdn.com/imgextra/i2/2640015666/TB2KOwjaJuO.eBjSZFCXXXULFXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(9, ruleRoot, new TextWord(strImgJiage));
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i2/2640015666/TB2KOwjaJuO.eBjSZFCXXXULFXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(9, ruleRoot, new TextWord(strImgJiage));
+
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("1"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+				do处理天猫同购无线端20张图片(9, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
                 // 第11张, 底部固定图_售后须知，关于价格
-                String strImgJiage = "http://img.alicdn.com/imgextra/i4/2640015666/TB2It7oaF5N.eBjSZFvXXbvMFXa_!!2640015666.jpg";
-                do处理天猫同购无线端20张图片(10, ruleRoot, new TextWord(strImgJiage));
-            }
+//                String strImgJiage = "http://img.alicdn.com/imgextra/i4/2640015666/TB2It7oaF5N.eBjSZFvXXbvMFXa_!!2640015666.jpg";
+//                do处理天猫同购无线端20张图片(10, ruleRoot, new TextWord(strImgJiage));
 
-            {
-                TextWord word = new TextWord("]");
-                ruleRoot.addRuleWord(word);
+				// 店铺图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+				RuleExpression viewType = new RuleExpression();
+				viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+				RuleExpression useOriUrl = null;
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("2"));
+
+				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+				do处理天猫同购无线端20张图片(10, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             // end
-            String endStr = "}";
+            String endStr = "],\"enable\": \"true\"}";
             TextWord endWord = new TextWord(endStr);
             ruleRoot.addRuleWord(endWord);
         }
