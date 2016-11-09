@@ -778,7 +778,7 @@
                         <tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
                         <!-- Products table and controls -->
                         <div class="table-responsive box-body">
-                            <table class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
+                            <table ng-controller="popupCtrl"  class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                     <tr style="background:#e67e22;color: #fff">
                                         <th class="text-left" style="height:40px; line-height:40px;width:5%;padding-left:10px;margin-left:0px" colspan="2">
@@ -979,7 +979,7 @@
                     <uib-tab ng-click="firstShowGroupList()" active="$feedActive">
                         <tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
                         <div class="table-responsive box-body">
-                            <table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="min-width: 100%" width="{{vm.tblWidth}}" ng-style="{'border': vm.groupList.length ? '1px solid #ddd': 'none'}">
+                            <table ng-controller="popupCtrl" class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="min-width: 100%" width="{{vm.tblWidth}}" ng-style="{'border': vm.groupList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                 <tr>
                                     <th colspan="2" class="text-left" style="height:40px; line-height:40px;width:10%;padding-left:10px">
