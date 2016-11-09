@@ -500,7 +500,9 @@ s-field textarea.s-html {
 
 .product-shema-detail .thumbnail {
     max-width: 100px;
-    max-height: 110px;
+    height: 105px;
+    max-height: 115px;
+    margin: 0px auto;
 }
 
 .product-shema-detail .thumbnail.current {

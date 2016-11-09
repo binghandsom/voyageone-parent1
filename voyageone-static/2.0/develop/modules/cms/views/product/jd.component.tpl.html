@@ -176,10 +176,6 @@
                                 <div class="col-md-2">
                                     <div class="row text-right">
                                         <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
-                                        <br>
-                                        <label class="control-label"><strong>中国最终售价</strong></label>
-                                        <br>
-                                        <label class="control-label"><strong>库存</strong></label>
                                     </div>
                                 </div>
                                 <div class="col-md-8">
@@ -189,27 +185,27 @@
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
-                                            <div ng-if="image.productCode == productInfo.masterField.code" class="text-right"   style="border-right: 1px solid #ddd">
-                                                    <span class="text-wrap">
-                                                        {{image.priceSaleSt == image.priceSaleEd?image.priceSaleSt:image.priceSaleSt + "-" + image.priceSaleEd}}
-                                                    </span>
-                                            </div>
-                                            <div ng-if="image.productCode == productInfo.masterField.code" class="text-right"  style="border-right: 1px solid #ddd">
-                                                {{image.qty}}
-                                            </div>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
                                             <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
-                                            <div ng-if="image.productCode != productInfo.masterField.code" class="text-right" style="border-right: 1px solid #ddd">
-                                                    <span class="text-wrap">
-                                                        {{image.priceSaleSt == image.priceSaleEd?image.priceSaleSt:image.priceSaleSt + "-" + image.priceSaleEd}}
-                                                    </span>
+                                            <div style="border-right: 1px solid #ddd">
+                                                <div class="row">
+                                                    <div class="col-md-6"><strong title="中国最终售价" style="cursor: help">￥:</strong></div>
+                                                    <div class="col-md-6 text-right">
+                                                        <span class="text-wrap">
+                                                            <span ng-if="image.priceSaleSt == image.priceSaleEd">{{image.priceSaleSt | currency:''}}</span>
+                                                            <span ng-if="!image.priceSaleSt == image.priceSaleEd">{{image.priceSaleSt | currency:''}}&nbsp;-&nbsp;{{image.priceSaleEd | currency:''}}</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6"><strong>库存:</strong></div>
+                                                    <div class="col-md-6 text-right">{{image.qty}}</div>
+                                                </div>
                                             </div>
-                                            <div ng-if="image.productCode != productInfo.masterField.code" class="text-right" style="border-right: 1px solid #ddd">
-                                                {{image.qty}}
-                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
