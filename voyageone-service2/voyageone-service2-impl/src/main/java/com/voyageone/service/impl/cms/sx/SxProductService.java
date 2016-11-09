@@ -1013,12 +1013,17 @@ public class SxProductService extends BaseService {
 
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
+        Integer sizeChartId = null;
+        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getFields().getSizeChart())) {
+            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getFields().getSizeChart());
+        }
         Map<String, String> sizeMap = getSizeMap(
                 channelId,
 //                sxData.getMainProduct().getOrgChannelId(),
                 sxData.getMainProduct().getCommon().getFields().getBrand(),
                 sxData.getMainProduct().getCommon().getFields().getProductType(),
-                sxData.getMainProduct().getCommon().getFields().getSizeType()
+                sxData.getMainProduct().getCommon().getFields().getSizeType(),
+                sizeChartId
         );
 
         // 20160805 这段有问题, 不要了 tom START
@@ -3165,6 +3170,43 @@ public class SxProductService extends BaseService {
         }
 
         return listUrls;
+    }
+
+    /**
+     * 从cms_bt_size_chart(mongo)取得尺码对照数据，取得逻辑与getImageUrls相同
+     * 如果有sizeChartId则用sizeCharId去查，没有的话用brandName,productType,sizeType去查
+     *
+     * @param brandName product.fields.brand
+     * @param productType product.fields.productType
+     * @param sizeType product.fields.sizeType
+     * @param sizeChartId product.fields.sizeChartId
+     * @return Map<originalSize, adjustSize>
+     */
+    public Map<String, String> getSizeMap(String channelId, String brandName, String productType, String sizeType, Integer sizeChartId) {
+
+        if (sizeChartId == null || sizeChartId == 0) {
+            // 根据品牌，产品分类，尺码分类来查找尺码表信息
+            return getSizeMap(channelId, brandName, productType, sizeType);
+        } else {
+            // 根据sizeChartId来查找尺码表信息
+            Map<String, String> sizeMap = new HashMap<>();
+            CmsBtSizeChartModel sizeChartModel = sizeChartService.getCmsBtSizeChartModel(sizeChartId, channelId);
+            if (sizeChartModel != null && ListUtils.notNull(sizeChartModel.getSizeMap())) {
+                for (CmsBtSizeChartModelSizeMap sizeInfo : sizeChartModel.getSizeMap()) {
+                    if (sizeMap.containsKey(sizeInfo.getOriginalSize())) {
+                        // 这一版暂时不允许有原始尺码一样的，以后会支持
+                        throw new BusinessException("根据sizeChartId在尺码对照表找到一条符合的记录,但有相同的原始尺码,请修正尺码表设定!" +
+                                "channelId= "    + channelId   +
+                                ",sizeChartId= " + sizeChartId +
+                                "OriginalSize="  + sizeInfo.getOriginalSize());
+                    }
+                    sizeMap.put(sizeInfo.getOriginalSize(), sizeInfo.getAdjustSize());
+                }
+            }
+
+            return sizeMap;
+        }
+
     }
 
     /**
