@@ -199,7 +199,8 @@ define(function () {
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
-                    "saveSkuPromotionPrices": "saveSkuPromotionPrices"
+                    "saveSkuPromotionPrices": "saveSkuPromotionPrices",
+                    "updatePromotionProductTag":"updatePromotionProductTag"
                 }
             },
             "jmpromotion": {

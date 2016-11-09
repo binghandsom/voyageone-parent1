@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class UpdatePromotionProductTagParameter {
     int id;
-   List<ProductTagInfo> tagList;
+    List<ProductTagInfo> tagList;
 
     public int getId() {
         return id;
@@ -24,7 +24,6 @@ public class UpdatePromotionProductTagParameter {
     public void setTagList(List<ProductTagInfo> tagList) {
         this.tagList = tagList;
     }
-
 
 }
 

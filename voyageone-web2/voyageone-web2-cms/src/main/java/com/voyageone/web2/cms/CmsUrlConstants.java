@@ -204,6 +204,7 @@ public interface CmsUrlConstants {
                 String TMALL_JUHUASUAN_EXPORT = "tmallJuhuasuanExport";
 
                 String TMALL_PROMOTION_EXPORT = "tmallPromotionExport";
+                String UpdatePromotionProductTag="updatePromotionProductTag";
             }
         }
 

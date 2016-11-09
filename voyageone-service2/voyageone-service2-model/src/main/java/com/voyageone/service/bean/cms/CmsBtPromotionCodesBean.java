@@ -67,6 +67,17 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
    private double maxRetailPrice;
    private double minRetailPrice;
 
+    public List<String> getTagNameList() {
+        return tagNameList;
+    }
+
+    public void setTagNameList(List<String> tagNameList) {
+        this.tagNameList = tagNameList;
+    }
+
+    private List<String> tagNameList;
+
+
     public double getMaxMsrpRmb() {
         return maxMsrpRmb;
     }

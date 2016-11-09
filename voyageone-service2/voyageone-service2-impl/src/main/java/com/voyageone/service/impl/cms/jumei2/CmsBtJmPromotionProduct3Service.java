@@ -372,7 +372,11 @@ public class CmsBtJmPromotionProduct3Service {
             tagNameList += "|" + tagInfo.getTagName();
         }
         CmsBtJmPromotionProductModel model = dao.select(parameter.getId());
-        model.setPromotionTag(tagNameList);//1.更新 CmsBtJmPromotionProductModel tag
+        if (tagNameList.length() > 0) {
+            model.setPromotionTag(tagNameList.substring(1));//1.更新 CmsBtJmPromotionProductModel tag
+        } else {
+            model.setPromotionTag("");//1.更新 CmsBtJmPromotionProductModel tag
+        }
         model.setModifier(userName);
         dao.update(model);//1
 
