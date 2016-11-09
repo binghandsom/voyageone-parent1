@@ -110,7 +110,7 @@ public class TbItemSchema {
     private boolean setSpecialFieldValue(Field field) {
         // 暂时只有 sku 排序, 所以这里是简写写法
         // 后续请在此修改, 对更多字段提供支持
-        return "darwin_sku".equals(field.getId()) && setSortedSku(field);
+        return ("darwin_sku".equals(field.getId()) || "sku".equals(field.getId())) && setSortedSku(field);
     }
 
     private boolean setSortedSku(Field field) {
