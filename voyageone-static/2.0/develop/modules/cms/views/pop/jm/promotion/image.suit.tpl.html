@@ -27,7 +27,7 @@
                 <tr ng-repeat="image in ctrl.dataList" ng-if="ctrl.dataList.length > 0">
                     <td class="text-center mfb-x">
                         <label class="checkbox-inline c-checkbox">
-                            <input type="checkbox" ng-model="ctrl.selected[image.promotionId]">
+                            <input type="radio" name="promotionId"  value="{{image.promotionId}}" ng-model="ctrl.selected">
                             <span class="fa fa-check"></span>
                         </label>
                     </td>

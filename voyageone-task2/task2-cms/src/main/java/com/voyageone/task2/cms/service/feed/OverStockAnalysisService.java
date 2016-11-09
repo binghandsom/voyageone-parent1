@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.feed;
 
 import com.overstock.mp.mpc.externalclient.api.Result;
 import com.overstock.mp.mpc.externalclient.model.*;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.issueLog.enums.*;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
@@ -11,6 +11,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -69,26 +70,26 @@ public class OverStockAnalysisService extends BaseAnalysisService {
 
         init();
 
-        zzWorkClear();
-        int cnt = 0;
-        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-            cnt = fullCopyTemp();
-        }else {
-            $info("产品信息插入开始");
-            cnt = superFeedImport();
-        }
-        $info("产品信息插入完成 共" + cnt + "条数据");
-        if (cnt > 0) {
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-                transformer.new Context(channel, this).transform();
-            }
+//        zzWorkClear();
+//        int cnt = 0;
+//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+//            cnt = fullCopyTemp();
+//        }else {
+//            $info("产品信息插入开始");
+//            cnt = superFeedImport();
+//        }
+//        $info("产品信息插入完成 共" + cnt + "条数据");
+//        if (cnt > 0) {
+//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+//                transformer.new Context(channel, this).transform();
+//            }
             postNewProduct();
-        }
+//        }
     }
     @Override
     public int fullCopyTemp(){
         int cnt = overStockFeedDao.fullCopyTemp();
-        overStockFeedDao.updateMd5();
+//        overStockFeedDao.updateMd5();
         overStockFeedDao.updateUpdateFlag();
         return cnt;
     }
@@ -104,7 +105,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(200);
+            request.setLimit(50);
             String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
@@ -133,7 +134,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     superFeedverStockBean.setBrand(getValue(variationType.getProduct().getBrand()));
                                     superFeedverStockBean.setManufacturername(getValue(variationType.getProduct().getManufacturerName()));
                                     superFeedverStockBean.setShortdescription(getValue(variationType.getProduct().getShortDescription()));
-                                    superFeedverStockBean.setLongdescription(getValue(variationType.getProduct().getShortDescription()));
+                                    superFeedverStockBean.setLongdescription(getValue(variationType.getProduct().getLongDescription()));
                                     superFeedverStockBean.setLeadtime(getValue(String.valueOf(variationType.getProduct().getLeadTime())));
                                     superFeedverStockBean.setAdultcontent(getValue(String.valueOf(variationType.getProduct().isAdultContent())));
                                     superFeedverStockBean.setCountryoforigin(getValue(String.valueOf(variationType.getProduct().getCountryOfOrigin())));
@@ -303,7 +304,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                         for (ImageType imageType : imageTypeList) {
                                             sb.append(imageType.getCdnPath() + ",");
                                         }
-                                        sb.append(superFeedverStockBean.getModelImage());
+                                        if(!StringUtils.isEmpty(superFeedverStockBean.getModelImage())){
+                                            sb.append(superFeedverStockBean.getModelImage());
+                                        }
                                         superFeedverStockBean.setImage(sb.toString());
                                     }
                                     superFeedverStockBean.setModelRetailerid(getValue(product.getRetailerId()));
@@ -352,7 +355,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                                     //取得bean
                                     superfeed.add(superFeedverStockBean);
                                     count++;
-                                    $debug("SKU:" + count + "---" + sku);
+                                    $info("SKU:" + count + "---" + sku);
                                     if (superfeed.size() > 1000) {
                                         transactionRunner.runWithTran(() -> insertSuperFeed(superfeed));
                                         superfeed.clear();
@@ -366,7 +369,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 200;
+                offset = offset + 50;
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
@@ -380,6 +383,60 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         $info("OverStock产品api调用结束");
         $info("OverStock产品个数为:" + count);
         return count;
+    }
+
+    /**
+     * 调用 WsdlProductService 提交新商品
+     *
+     * @throws Exception
+     */
+    @Override
+    protected void postNewProduct() throws Exception {
+
+
+        $info("准备 <构造> 类目树");
+        List<String> categoriePaths = getCategories();
+
+        List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
+        // 准备接收失败内容
+        List<CmsBtFeedInfoModel> productFailAllList = new ArrayList<>();
+        List<CmsBtFeedInfoModel> productAll = new ArrayList<>();
+
+        for (String categorPath : categoriePaths) {
+
+            // 每棵树的信息取得
+            $info("每棵树的信息取得开始" + categorPath);
+            List<CmsBtFeedInfoModel> product;
+            try{
+                while (true) {
+                    int cnt = 0;
+                    product = getFeedInfoByCategory(categorPath);
+                    cnt = product == null?0:product.size();
+                    $info("每棵树的信息取得结束");
+
+                    String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
+                    if (!StringUtils.isEmpty(categorySplit)) {
+                        product.forEach(cmsBtFeedInfoModel -> {
+                            List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(categorySplit));
+                            cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
+                        });
+                    }
+                    productAll.addAll(product);
+                    if (productAll.size() > 500) {
+                        executeMongoDB(productAll, productSucceeList, productFailAllList);
+                    }
+                    if(cnt < 500 ) break;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                $error(e);
+                issueLog.log(e, com.voyageone.common.components.issueLog.enums.ErrorType.BatchJob, SubSystem.CMS);
+            }
+        }
+        executeMongoDB(productAll, productSucceeList, productFailAllList);
+
+        $info("总共~ 失败的 Product: %s", productFailAllList.size());
+
     }
 
     /**
@@ -433,7 +490,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         }
 
         // 条件则根据类目筛选
-        String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
+        String where = String.format("WHERE %s AND %s = '%s' limit 0,500", INSERT_FLG, colums.get("category").toString(),
                 categorPath.replace("'", "\\\'"));
 
         colums.put("keyword", where);
@@ -473,6 +530,22 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         sku.setWeightOrg(weightOrg);
                     }
                 }
+                //size转换开始
+                if(sku.getSize().toLowerCase().contains(":")){
+                    String attributeList [] =sku.getSize().split("\\|");
+                    String size = "";
+                    for(String attribute1 :attributeList){
+                        if(attribute1.toLowerCase().contains("size")){
+                            size=attribute1.split(":")[1];
+                        }
+                    }
+                    if(!StringUtils.isEmpty(size)){
+                        sku.setSize(size);
+                    }else{
+                        sku.setSize("OneSize");
+                    }
+                }
+                //size转换结束
                 sku.setWeightOrgUnit(sku.getWeightOrgUnit());
             }
             cmsBtFeedInfoModel.setSkus(skus);

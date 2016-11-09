@@ -67,7 +67,8 @@ define(function () {
                     "getCustColumnsInfo": "getCustColumnsInfo",
                     "saveCustColumnsInfo": "saveCustColumnsInfo",
                     "addFreeTag": "addFreeTag",
-                    "getCustSearchList": "getCustSearchList"
+                    "getCustSearchList": "getCustSearchList",
+                    "getSkuInventory": "getSkuInventory"
                 },
                 "$feedSearchService": {
                     "root": "/cms/search/feed/",
@@ -102,6 +103,7 @@ define(function () {
                     "updateProductPlatformChk": "updateProductPlatformChk",
                     "updateProductFeed": "updateProductFeed",
                     "getCommonProductInfo": "getCommonProductInfo",
+                    "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
                     "updateProductAtts": "updateProductAtts",
@@ -113,9 +115,20 @@ define(function () {
                     "hsCodeChg": "hsCodeChg",
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
-                    priceConfirm: "priceConfirm",
+                    "resetTmProduct": "resetTmProduct",
+                    priceConfirm:"priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice: "updateSkuPrice"
+                    updateSkuPrice:"updateSkuPrice",
+                    moveCodeInitCheck:"moveCodeInitCheck",
+                    moveCodeInit:"moveCodeInit",
+                    moveCodeSearch:"moveCodeSearch",
+                    moveCodePreview:"moveCodePreview",
+                    moveCode:"moveCode",
+                    moveSkuInitCheck:"moveSkuInitCheck",
+                    moveSkuInit:"moveSkuInit",
+                    moveSkuSearch:"moveSkuSearch",
+                    moveSkuPreview:"moveSkuPreview",
+                    moveSku:"moveSku"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -200,6 +213,7 @@ define(function () {
                     "getEditModel": "getEditModel",
                     "getEditModelExt": "getEditModelExt",
                     "saveModel": "saveModel",
+                    "encore": "encore",
                     "delete": "delete",
                     "getTagListByPromotionId": "getTagListByPromotionId",
                     getBayWindow: 'getBayWindow',
@@ -422,11 +436,16 @@ define(function () {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
                     "setProductFields": "setProductFields",
-                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
+                    "bulkSetCategory":"bulkSetCategory",
+                    "bulkSetPlatformFields":"bulkSetPlatformFields",
+                    "getPlatfromPopOptions": "getPlatfromPopOptions",
+                    "intelligentPublish": "intelligentPublish"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
-                    "getPromotionHistory": "getPromotionHistory"
+                    "getPromotionHistory": "getPromotionHistory",
+                    "getUnduePromotion": "getUnduePromotion"
                 },
                 priceLogService: {
                     root: '/cms/price/log',
@@ -512,7 +531,8 @@ define(function () {
                         "getCat": "getSellerCat",
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
-                        "updateCat": "updateSellerCat"
+                        "updateCat": "updateSellerCat",
+                        "sortableCat": "sortableCat",
                     }
                 },
                 "imageTemplateService": {
@@ -598,6 +618,7 @@ define(function () {
                     cache: CACHE.SESSION,
                     cacheWith: [KEY.CHANNEL]
                 },
+                refreshProducts: 'refreshProducts',
                 // 原 platform mapping 的功能已删除
                 // 原 platformMappingService 的以下两个 action 被其他内容调用
                 // 所以暂时寄存在新的 platformMappingService 下

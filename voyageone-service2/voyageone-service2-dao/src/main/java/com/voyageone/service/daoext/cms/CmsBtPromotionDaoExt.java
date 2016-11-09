@@ -109,4 +109,13 @@ public class CmsBtPromotionDaoExt extends ServiceBaseDao {
     public int selectPromotionHistoryCnt(Map<String, Object> param) {
         return updateTemplate.selectOne("select_promotion_history_cnt", param);
     }
+    
+    /**
+     * 取得未过期的产品活动详情（包括所有的Cart的活动）
+     * @param param 查询参数
+     * @return 未过期的产品活动详情列表
+     */
+    public List<CmsBtPromotionHistoryBean> selectUnduePromotion(Map<String, Object> param) {
+        return updateTemplate.selectList("select_undue_promotion", param);
+    }
 }

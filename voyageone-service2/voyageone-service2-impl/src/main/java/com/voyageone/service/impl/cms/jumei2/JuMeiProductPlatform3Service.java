@@ -115,7 +115,7 @@ public class JuMeiProductPlatform3Service extends BaseService {
                 // 再售
                 if (StringUtil.isEmpty(parameter.cmsBtJmPromotionProductModel.getJmHashId())) {
                     //6.1.1再售接口前check   copyDeal_beforeCheck(4.1)
-                    copyDeal_beforeCheck(parameter);
+                   // copyDeal_beforeCheck(parameter);
                     //6.1.2调用再售接口  copyDeal
                     copyDeal(parameter);
                     //6.1.3再售接口后check   在方法copyDeal内部调用copyDeal_afterCheck(4.2)
@@ -589,6 +589,10 @@ public class JuMeiProductPlatform3Service extends BaseService {
         }
 
         try {
+
+            if (list.size() == 0) {
+                throw new BusinessException("productId:" + model.getId() + " jmHtDealUpdateDealPriceBatch:sku未上新或不存在");
+            }
             String errorMsg="";
             List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list,10);
             for(List<HtDeal_UpdateDealPriceBatch_UpdateData> page:pageList) {

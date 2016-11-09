@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
+import com.voyageone.service.bean.cms.jumei2.JmProduct;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,7 +244,7 @@ public class CmsJmPromotionDetailController extends CmsController {
     //批量删除 product  已经再售的不删
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.BatchDeleteProduct)
     public AjaxResponse batchDeleteProduct(@RequestBody BatchDeleteProductParameter parameter) {
-        service3.batchDeleteProduct(parameter);
+        service3.batchDeleteProduct(parameter,getUser().getSelChannelId());
         CallResult result = new CallResult();
         return success(result);
     }
@@ -343,8 +343,8 @@ public class CmsJmPromotionDetailController extends CmsController {
      * @since 2.8.0
      */
     @RequestMapping("savePromotionTagModules")
-    public AjaxResponse savePromotionTagModules(@RequestBody List<CmsJmPromotionService.CmsJmTagModules> jmTagModulesList) {
-        jmPromotionService.savePromotionTagModules(jmTagModulesList, getUser());
+    public AjaxResponse savePromotionTagModules(@RequestBody SavePromotionTagModules param) {
+        jmPromotionService.savePromotionTagModules(param.getJmPromotionId(), param.getTagModulesList(), getUser());
         return success(true);
     }
 
@@ -369,7 +369,7 @@ public class CmsJmPromotionDetailController extends CmsController {
 
     private static class SaveProductSort {
         Integer tagId;
-        List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList;
+        List<JmProduct> jmProductList;
 
         public Integer getTagId() {
             return tagId;
@@ -379,11 +379,11 @@ public class CmsJmPromotionDetailController extends CmsController {
             this.tagId = tagId;
         }
 
-        public List<CmsBtJmPromotionProduct3Service.JmProduct> getJmProductList() {
+        public List<JmProduct> getJmProductList() {
             return jmProductList;
         }
 
-        public void setJmProductList(List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList) {
+        public void setJmProductList(List<JmProduct> jmProductList) {
             this.jmProductList = jmProductList;
         }
     }
@@ -398,5 +398,26 @@ public class CmsJmPromotionDetailController extends CmsController {
                 CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
                 getUser().getUserName());
         return success(true);
+    }
+
+    public static class SavePromotionTagModules {
+        private int jmPromotionId;
+        private List<CmsJmPromotionService.CmsJmTagModules> tagModulesList;
+
+        public int getJmPromotionId() {
+            return jmPromotionId;
+        }
+
+        public void setJmPromotionId(int jmPromotionId) {
+            this.jmPromotionId = jmPromotionId;
+        }
+
+        public List<CmsJmPromotionService.CmsJmTagModules> getTagModulesList() {
+            return tagModulesList;
+        }
+
+        public void setTagModulesList(List<CmsJmPromotionService.CmsJmTagModules> tagModulesList) {
+            this.tagModulesList = tagModulesList;
+        }
     }
 }

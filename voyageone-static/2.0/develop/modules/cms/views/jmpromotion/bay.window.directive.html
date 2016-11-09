@@ -1,4 +1,14 @@
 <section style="position: relative">
+    <style>
+        .baySorter .fa-angle-double-up {
+            border-top: 2px solid #7b7b7b;
+            line-height: 4px;
+        }
+        .baySorter .fa-angle-double-down {
+            border-bottom: 2px solid #7b7b7b;
+            line-height: 4px;
+        }
+    </style>
     <div class="panel panel-vo">
         <div class="panel-heading">
             <h4 class="panel-title">
@@ -9,7 +19,7 @@
             <form class="form-horizontal" novalidate name="ctrl.bayWindowForm">
                 <div class="form-group">
                     <label class="control-label col-sm-2">Bay Window Type:</label>
-                    <div class="col-sm-4" ng-switch="ctrl.bayWindow.fixed">
+                    <div class="col-sm-6" ng-switch="ctrl.bayWindow.fixed">
                         <div class="radio">
                             <label><input type="radio" name="bay-window-type" ng-model="ctrl.bayWindow.fixed"
                                           ng-value="true" ng-change="ctrl.switchPreview()"> 定位飘窗</label>
@@ -30,7 +40,7 @@
                                                ng-model="item.name" ng-change="ctrl.updateUrl(item, $index)" required>
                                         <span ng-switch-default>{{item.name}}</span>
                                     </div>
-                                    <div class="col-sm-11 col-sm-offset-1">
+                                    <div class="col-sm-11 col-sm-offset-1" ng-switch-when="0">
                                         <vo-message target="ctrl.bayWindowForm.header"></vo-message>
                                     </div>
                                 </div>
@@ -58,22 +68,17 @@
                                 <td>
                                     <input name="{{'link' + $index}}" type="text" required
                                            ng-pattern="/^http:\/\/hd.jumeiglobal.com\//"
-                                           class="form-control" ng-model="item.link"
-                                           ng-change="ctrl.updateUrl(item, $index)">
-                                    <vo-message target="ctrl.bayWindowForm['link' + $index]"></vo-message>
+                                           class="form-control" ng-model="item.link">
+                                    <vo-message target="ctrl.bayWindowForm['link' + $index]" pattern="输入的地址必须以 http://hd.jumeiglobal.com/ 开头"></vo-message>
                                 </td>
                                 <td ng-switch-when="0"></td>
-                                <td ng-switch-default>
-                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1"
-                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.up)"><i
-                                            class="fa fa-angle-up"></i></button>
+                                <td ng-switch-default class="btn-group baySorter">
                                     <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1"
                                             ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.upToTop)"><i
                                             class="fa fa-angle-double-up"></i></button>
-                                    <button type="button" class="btn btn-xs btn-danger"
-                                            ng-click="ctrl.removeLinkWindow(item, $index)"><i class="fa fa-trash"></i>
-                                    </button>
-                                    <br>
+                                    <button type="button" class="btn btn-xs btn-default" ng-disabled="$index === 1"
+                                            ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.up)"><i
+                                            class="fa fa-angle-up"></i></button>
                                     <button type="button" class="btn btn-xs btn-default"
                                             ng-disabled="$index === ctrl.linkWindows.length - 1"
                                             ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.down)"><i
@@ -82,12 +87,15 @@
                                             ng-disabled="$index === ctrl.linkWindows.length - 1"
                                             ng-click="ctrl.moveLinkWindow($index, ctrl.moveKeys.downToLast)"><i
                                             class="fa fa-angle-double-down"></i></button>
+                                    <button type="button" class="btn btn-xs btn-danger"
+                                            ng-click="ctrl.removeLinkWindow(item, $index)"><i class="fa fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-sm-5 col-sm-offset-1">
+                    <div class="col-sm-4">
                         <div ng-repeat="item in ctrl.previewWindows">
                             <img src="{{item.url}}" alt="{{item.name}}" ng-if="item.enabled">
                         </div>
@@ -97,9 +105,12 @@
         </div>
     </div>
     <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
-        <ul class="nav nav-pills nav-stacked">
+        <ul class="nav nav-pills nav-stacked" id="bay-window-btns">
             <li>
-                <button type="button" class="btn btn-success" ng-click="ctrl.saveAll()">保存</button>
+                <button type="button" class="btn btn-success" ng-click="ctrl.save()">暂存</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary" ng-click="ctrl.submit()">提交</button>
             </li>
         </ul>
     </sticky>

@@ -287,6 +287,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //            // added by morse.lu 2016/06/28 end
             // delete by desmond 2016/07/08 end
 
+            // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
+            // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
+            {
+                // 京东默认补满image1的5张图片
+                if (ListUtils.notNull(sxData.getMainProduct().getCommon().getFields().getImages1())) {
+                    int cnt = sxData.getMainProduct().getCommon().getFields().getImages1().size();
+                    for (int i = cnt; i < 5; i++) {
+                        sxData.getMainProduct().getCommon().getFields().getImages1().add(sxData.getMainProduct().getCommon().getFields().getImages1().get(0));
+                    }
+                }
+                // 补满每个产品image1的5张图片
+                for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+                    if (ListUtils.notNull(cmsBtProduct.getCommon().getFields().getImages1())) {
+                        int cnt = cmsBtProduct.getCommon().getFields().getImages1().size();
+                        for (int i = cnt; i < 5; i++) {
+                            cmsBtProduct.getCommon().getFields().getImages1().add(cmsBtProduct.getCommon().getFields().getImages1().get(0));
+                        }
+                    }
+                }
+            }
+
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
             List<CmsBtProductModel> cmsBtProductList = sxData.getProductList();
@@ -405,8 +426,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             // 编辑京东共通属性
+            boolean blnForceSmartSx = false;
+            if (3 == cmsBtSxWorkloadModel.getPublishStatus()) {
+                blnForceSmartSx = true;
+            }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
-                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap);
+                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
 
             // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
             List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -692,6 +717,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -699,7 +725,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                                                  long groupId, ShopBean shopProp,
                                                  CmsMtPlatformCategorySchemaModel jdCommonSchema,
                                                  CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                 Map<String, Integer> skuLogicQtyMap) throws BusinessException {
+                                                 Map<String, Integer> skuLogicQtyMap,
+                                                 boolean blnForceSmartSx) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -710,7 +737,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         String cartId = sxData.getCartId().toString();
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
-        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser);
+        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
 
         // 京东上新产品共通属性设定
         JdProductBean jdProductBean = new JdProductBean();
@@ -859,7 +886,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setService(mainProduct.getXXX());                   // 不使用
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser);
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser, blnForceSmartSx);
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
         jdProductBean.setAttributes(jdProductAttrMap.get(Attrivutes));
@@ -909,10 +936,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
-                                                ShopBean shopBean, ExpressionParser expressionParser) {
+                                                ShopBean shopBean, ExpressionParser expressionParser,
+                                                boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -928,7 +957,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东共通Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), jdCommonSchema.getCatId());
@@ -986,10 +1015,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                       ShopBean shopBean, ExpressionParser expressionParser) {
+                                                       ShopBean shopBean, ExpressionParser expressionParser,
+                                                       boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1005,7 +1036,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
@@ -1305,10 +1336,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                         if (productColorMap.containsKey(productCode)) {
                             sbSkuProperties.append(productColorMap.get(productCode));
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (skuSizeMap.containsKey(sizeSx)) {
                             sbSkuProperties.append(Separtor_Xor);        // "^"
                             sbSkuProperties.append(skuSizeMap.get(sizeSx));
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                    "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                    "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (productColorMap.containsKey(productCode)
                                 || skuSizeMap.containsKey(sizeSx)) {
@@ -1331,6 +1379,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                             sbPropertyAlias.append(Separtor_Colon);         // ":"
                             sbPropertyAlias.append(color);
                             sbPropertyAlias.append(Separtor_Xor);           // "^"
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     } else if ("3".equals(salePropStatus)) {
                         // 如果平台类目没有颜色只有尺寸信息时，skuSizeMap中的key为productCode_sizeSx
@@ -1339,6 +1395,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         if (skuSizeMap.containsKey(sizeKey)) {
                             sbSkuProperties.append(skuSizeMap.get(sizeKey));
                             sbSkuProperties.append(Separtor_Vertical);   // "|"
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                            "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                            "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     }
 
@@ -1695,7 +1760,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
 
                 // 删除剩余的图片
-                for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+                for (int i = delImageCnt; i < intOldImageCnt; i++) {
                     // 调用删除图片API（指定删除第一张）
                     // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
                     try {

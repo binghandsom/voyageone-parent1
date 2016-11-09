@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 查询平台类目的属性匹配
@@ -22,18 +23,62 @@ import java.util.List;
 public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMappingModel> {
 
     public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId) {
+        return selectCommon(cartId, channelId, null);
+    }
 
+    /**
+     * @since 2.9.0
+     */
+    public CmsBtPlatformMappingModel selectCommon(int cartId, String channelId, String fieldId) {
         Criteria criteria = new Criteria("categoryType").is(1).and("cartId").is(cartId);
+        JongoQuery jongoQuery = new JongoQuery(criteria);
 
-        return selectOneWithQuery(new JongoQuery(criteria), channelId);
+        if (!StringUtils.isEmpty(fieldId)) {
+            jongoQuery.setProjectionExt(
+                    "created",
+                    "creater",
+                    "modified",
+                    "modifier",
+                    "channelId",
+                    "cartId",
+                    "categoryType",
+                    "categoryPath",
+                    "mappings." + fieldId
+            );
+        }
+
+        return selectOneWithQuery(jongoQuery, channelId);
     }
 
     public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId) {
+        return selectOne(cartId, categoryType, categoryPath, channelId, null);
+    }
 
-        return selectOneWithQuery(new JongoQuery(
+    /**
+     * @since 2.9.0
+     */
+    public CmsBtPlatformMappingModel selectOne(int cartId, int categoryType, String categoryPath, String channelId, String fieldId) {
+
+        JongoQuery jongoQuery = new JongoQuery(
                 new Criteria("cartId").is(cartId)
                         .and("categoryType").is(categoryType)
-                        .and("categoryPath").is(categoryPath)), channelId);
+                        .and("categoryPath").is(categoryPath));
+
+        if (!StringUtils.isEmpty(fieldId)) {
+            jongoQuery.setProjectionExt(
+                    "created",
+                    "creater",
+                    "modified",
+                    "modifier",
+                    "channelId",
+                    "cartId",
+                    "categoryType",
+                    "categoryPath",
+                    "mappings." + fieldId
+            );
+        }
+
+        return selectOneWithQuery(jongoQuery, channelId);
     }
 
     public boolean exists(CmsBtPlatformMappingModel fieldMapsModel) {
@@ -46,7 +91,7 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         return countByQuery(query.getQuery(), fieldMapsModel.getChannelId()) > 0;
     }
 
-    public List<CmsBtPlatformMappingModel> selectPage(String channelId, Integer categoryType, Integer cartId, String categoryPath, int offset, int limit) {
+    public List<CmsBtPlatformMappingModel> selectPage(String channelId, Integer categoryType, Integer cartId, String categoryPathPrefix, int offset, int limit) {
 
         Criteria criteria = new Criteria("channelId").is(channelId);
 
@@ -56,8 +101,8 @@ public class CmsBtPlatformMappingDao extends BaseMongoChannelDao<CmsBtPlatformMa
         if (cartId != null)
             criteria.and("cartId").is(cartId);
 
-        if (!StringUtils.isEmpty(categoryPath))
-            criteria.and("categoryPath").is(categoryPath);
+        if (!StringUtils.isEmpty(categoryPathPrefix))
+            criteria.and("categoryPath").regex(Pattern.quote(categoryPathPrefix) + ".*");
 
         return select(new JongoQuery(criteria)
                 .setProjection("{\"mappings\":0}")

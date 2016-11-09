@@ -240,6 +240,10 @@ s-field textarea.s-html {
     list-style-type: none;
 }
 
+.category_drag_list_dp ul li{
+    height: 30px;
+}
+
 .category_drag_list_dp li a:link {
     float: left;
     width: 100%;
@@ -496,6 +500,7 @@ s-field textarea.s-html {
 
 .product-shema-detail .thumbnail {
     max-width: 100px;
+    max-height: 110px;
 }
 
 .product-shema-detail .thumbnail.current {
@@ -861,13 +866,17 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav {
-    position: fixed;
-    width: 100px;
-    margin-left: 25px;
-    cursor: pointer;
-    border-width: 2px;
-    border-style: dotted;
+.default-attr .nav-stacked {
+    min-width: 180px;
+}
+
+.default-attr .nav-stacked .btn {
+    width: 105px;
+}
+
+/*clear margin*/
+.clear-margin-bottom {
+    margin-bottom: 0;
 }
 
 /* 聚美专场v2模块画面，商品排序弹出框样式 */
@@ -884,6 +893,12 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
 }
 
+.jm-sortable-product-modal .arrow-button button {
+    background: #fff;
+    border: none;
+    padding: 0px;
+}
+
 .jm-sortable-product {
     width: 220px;
 }
@@ -895,6 +910,7 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
     padding: 5px;
     background: white;
+    height: 118px;
 }
 
 .jm-sortable-product .close {
@@ -929,4 +945,31 @@ schema .ng-invalid.focus-error {
     background-repeat: no-repeat;
 }
 
+#jm-promotion2-detail .nav-stacked {
+    min-width: 150px;
+}
+
+#jm-promotion2-detail sticky .btn-success,
+#jm-promotion2-detail sticky .btn-primary {
+    width: 90px;
+}
+
+.clear-margin-bottom{
+    margin-bottom:0;
+}
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
+
+/* 高级检索附加样式 */
+#advanceSearch td .popover {
+    max-width: 350px;
+}
+
+#advanceSearch td .mainPrd {
+    color: white;
+    font-weight: bold;
+}
+
+#advanceSearch .opacityBtn{
+    border: none;
+    background: none;
+}

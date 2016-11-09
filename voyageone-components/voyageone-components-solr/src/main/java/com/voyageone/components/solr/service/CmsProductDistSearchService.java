@@ -34,29 +34,6 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
     private static final Pattern stringFormatP = Pattern.compile("\t|\r|\n");
 
-    private String replaceBlank(String str) {
-        if (str != null) {
-            Matcher m = stringFormatP.matcher(str);
-            return m.replaceAll(" ");
-        }
-        return null;
-    }
-
-    private Double convertToDouble(Object data) {
-        if (data != null) {
-            if (data instanceof Double) {
-                return (Double) data;
-            } else {
-                try {
-                    return Double.parseDouble(String.valueOf(data));
-                } catch (Exception ex) {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
     @Override
     protected String getSolrTemplateName() {
         return SOLR_TEMPLATE_NAME;
@@ -134,11 +111,72 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 if (productImageList != null && !productImageList.isEmpty()) {
                     model.setImageLink(productImageList.get(0).getName());
                 }
-
-                //private Integer pv;
-                //private Integer uv;
-                //private Integer saleCount;
             }
+
+            //saleCount;
+            int saleCount = 0;
+            if (cmsBtProductModel.getSales() != null) {
+                CmsBtProductModel_Sales salesModel = cmsBtProductModel.getSales();
+                @SuppressWarnings("unchecked")
+                Map<String, Object> codeSum30Model = salesModel.getAttribute(CmsBtProductModel_Sales.CODE_SUM_30);
+                //noinspection Duplicates
+                if (codeSum30Model != null) {
+                    Object count = codeSum30Model.get("cartId0");
+                    if (count instanceof Integer) {
+                        saleCount = saleCount + ((Integer)count);
+                    } else if (count instanceof Long) {
+                        saleCount = saleCount + ((Long) count).intValue();
+                    }
+                }
+            }
+            model.setSaleCount(saleCount);
+
+            //pv sum
+            int pv = 0;
+            //uv sum
+            int uv = 0;
+            if (cmsBtProductModel.getBi() != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> biModel = cmsBtProductModel.getBi();
+                @SuppressWarnings("unchecked")
+                Map<String, Object> sum30Map = (Map<String, Object>) biModel.get("sum30");
+                //noinspection Duplicates
+                if (sum30Map != null) {
+                    long pvSum = 0;
+                    long uvSum = 0;
+                    //pv
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> pvMap = (Map<String, Object>) sum30Map.get("pv");
+                    //noinspection Duplicates
+                    if (pvMap != null) {
+                        for (Object pvObj : pvMap.values()) {
+                            if (pvObj instanceof Integer) {
+                                pvSum = pvSum + ((Integer)pvObj);
+                            } else if (pvObj instanceof Long) {
+                                pvSum = pvSum + (Long) pvObj;
+                            }
+                        }
+                    }
+                    //uv
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> uvMap = (Map<String, Object>) sum30Map.get("uv");
+                    //noinspection Duplicates
+                    if (uvMap != null) {
+                        for (Object uvObj : uvMap.values()) {
+                            if (uvObj instanceof Integer) {
+                                uvSum = uvSum + ((Integer)uvObj);
+                            } else if (uvObj instanceof Long) {
+                                uvSum = uvSum + (Long) uvObj;
+                            }
+                        }
+                    }
+
+                    pv = ((Long)pvSum).intValue();
+                    uv = ((Long)pvSum).intValue();
+                }
+            }
+            model.setPv(pv);
+            model.setUv(uv);
         }
 
         if (lastVer != null) {
@@ -231,11 +269,71 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     Document productImage = productImageList.get(0);
                     model.setImageLink((String) productImage.get("image1"));
                 }
-
-                //private Integer pv;
-                //private Integer uv;
-                //private Integer saleCount;
             }
+
+            //saleCount;
+            int saleCount = 0;
+            Document salesDoc = (Document) objectDoc.get("sales");
+            if (salesDoc != null) {
+                @SuppressWarnings("unchecked")
+                Document codeSum30Model = (Document)salesDoc.get(CmsBtProductModel_Sales.CODE_SUM_30);
+                //noinspection Duplicates
+                if (codeSum30Model != null) {
+                    Object count = codeSum30Model.get("cartId0");
+                    if (count instanceof Integer) {
+                        saleCount = saleCount + ((Integer)count);
+                    } else if (count instanceof Long) {
+                        saleCount = saleCount + ((Long) count).intValue();
+                    }
+                }
+            }
+            model.setSaleCount(saleCount);
+
+            //pv sum
+            int pv = 0;
+            //uv sum
+            int uv = 0;
+            Document biDoc = (Document) objectDoc.get("bi");
+            if (biDoc != null) {
+                @SuppressWarnings("unchecked")
+                Document sum30Map = (Document) biDoc.get("sum30");
+                //noinspection Duplicates
+                if (sum30Map != null) {
+                    long pvSum = 0;
+                    long uvSum = 0;
+                    //pv
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> pvMap = (Map<String, Object>) sum30Map.get("pv");
+                    //noinspection Duplicates
+                    if (pvMap != null) {
+                        for (Object pvObj : pvMap.values()) {
+                            if (pvObj instanceof Integer) {
+                                pvSum = pvSum + ((Integer)pvObj);
+                            } else if (pvObj instanceof Long) {
+                                pvSum = pvSum + (Long) pvObj;
+                            }
+                        }
+                    }
+                    //uv
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> uvMap = (Map<String, Object>) sum30Map.get("uv");
+                    //noinspection Duplicates
+                    if (uvMap != null) {
+                        for (Object uvObj : uvMap.values()) {
+                            if (uvObj instanceof Integer) {
+                                uvSum = uvSum + ((Integer)uvObj);
+                            } else if (uvObj instanceof Long) {
+                                uvSum = uvSum + (Long) uvObj;
+                            }
+                        }
+                    }
+
+                    pv = ((Long)pvSum).intValue();
+                    uv = ((Long)pvSum).intValue();
+                }
+            }
+            model.setPv(pv);
+            model.setUv(uv);
         }
 
         if (lastVer != null) {
@@ -456,4 +554,27 @@ public class CmsProductDistSearchService extends BaseSearchService {
 //        //noinspection unchecked
 //        return (SolrResultPage) getSolrTemplate().queryForPage(query, clazz);
 //    }
+
+    private String replaceBlank(String str) {
+        if (str != null) {
+            Matcher m = stringFormatP.matcher(str);
+            return m.replaceAll(" ");
+        }
+        return null;
+    }
+
+    private Double convertToDouble(Object data) {
+        if (data != null) {
+            if (data instanceof Double) {
+                return (Double) data;
+            } else {
+                try {
+                    return Double.parseDouble(String.valueOf(data));
+                } catch (Exception ex) {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
 }

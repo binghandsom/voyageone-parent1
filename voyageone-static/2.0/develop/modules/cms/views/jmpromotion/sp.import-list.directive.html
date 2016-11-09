@@ -1,10 +1,10 @@
 <div class="wrapper-md" ng-init="initialize()" ng-controller="popupCtrl">
-    <div class="vo_accordion vo_attr">
-        <div class="form-horizontal form-inline">
-            <!--<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>-->
-            <button class="btn btn-vo" ng-click="searchImport()"><i class="fa fa-search"></i>&nbsp;搜索</button>
-        </div>
-    </div>
+    <!--<div class="vo_accordion vo_attr">-->
+        <!--<div class="form-horizontal form-inline">-->
+            <!--&lt;!&ndash;<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>&ndash;&gt;-->
+            <!--<button class="btn btn-vo" ng-click="searchImport()"><i class="fa fa-search"></i>&nbsp;搜索</button>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="table-responsive">
         <table class="table table-hover-new vo_table" style="table-layout: fixed;">
             <thead>
@@ -27,14 +27,16 @@
                 <td class="text-left">{{model.beginTime}}</td>
                 <td class="text-left">{{model.endTime}}</td>
                 <td class="text-left">
-                    <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                       popover-placement="left" class="ng-scope">
-                        <div class="table_main">
-                            <ul>
-                                <li>{{getErrorMsg(model.errorMsg)}}</li>
-                            </ul>
-                        </div>
-                    </a>
+                    <span ng-if="model.errorMsg.length > 50"><popover-text content="model.errorMsg" direct="left" size="50"></popover-text></span>
+                    <span ng-if="model.errorMsg.length <= 50">{{model.errorMsg}}</span>
+                    <!--<a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"-->
+                       <!--popover-placement="left" class="ng-scope">-->
+                        <!--<div class="table_main">-->
+                            <!--<ul>-->
+                                <!--<li>{{getErrorMsg(model.errorMsg)}}</li>-->
+                            <!--</ul>-->
+                        <!--</div>-->
+                    <!--</a>-->
                 </td>
                 <td class="text-left"><a ng-click="downloadImportErrorExcel(model.id);">{{model.failuresFileName}}</a></td>
                 <td class="text-center">

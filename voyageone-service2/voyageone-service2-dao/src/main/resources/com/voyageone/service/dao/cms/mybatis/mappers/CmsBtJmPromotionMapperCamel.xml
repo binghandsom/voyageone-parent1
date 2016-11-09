@@ -9,7 +9,7 @@
         `status`, `recovery_status`, `promotion_scene`, `promotion_type`, `is_promotion_down`, 
         `is_promotion_full_minus`, `promotion_full_amount`, `promotion_minus_amount`, `is_promotion_give_coupons`, 
         `signup_deadline`, `prod_sum`, `quantity_sum`,
-        `upload_status`, `detail_status`, `shelf_status`,`image_status`, `bay_window_status`
+        `upload_status`, `detail_status`, `shelf_status`,`image_status`, `bay_window_status`, `is_fst_save`, `master_brand_name`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,6 +39,9 @@
             </if>
             <if test="brand != null" >
                 `brand` = #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="masterBrandName != null" >
+                `master_brand_name` = #{masterBrandName,jdbcType=VARCHAR},
             </if>
             <if test="category != null" >
                 `category` = #{category,jdbcType=VARCHAR},
@@ -438,6 +441,9 @@
             <if test="brand != null" >
                 `brand`,
             </if>
+            <if test="masterBrandName != null" >
+                `master_brand_name`,
+            </if>
             <if test="category != null" >
                 `category`,
             </if>
@@ -528,6 +534,9 @@
             </if>
             <if test="brand != null" >
                 #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="masterBrandName != null" >
+                #{masterBrandName,jdbcType=VARCHAR},
             </if>
             <if test="category != null" >
                 #{category,jdbcType=VARCHAR},

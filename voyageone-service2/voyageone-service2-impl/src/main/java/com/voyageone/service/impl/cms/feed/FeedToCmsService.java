@@ -123,6 +123,7 @@ public class FeedToCmsService extends BaseService {
         Boolean isUsJoi = isUsJoi(channelId);
         Map<String, Map<String, List<String>>> attributeMtDatas = new HashMap<>();
         for (CmsBtFeedInfoModel product : products) {
+            product.setCode(product.getCode().replaceAll("\"","-"));
             boolean insertLog = false;
             try {
 

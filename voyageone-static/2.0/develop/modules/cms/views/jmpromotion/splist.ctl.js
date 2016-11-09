@@ -67,7 +67,7 @@ define([
         $scope.del = function (data) {
             confirm($translate.instant('TXT_MSG_PROMOTION_DELETE').replace("%s",data.name)).then(function () {
                 var index = _.indexOf($scope.vm.promotionList, data);
-                promotionService.deleteByPromotionId(data.id).then(function(res) {
+                promotionService.deleteByPromotionId(data.promId).then(function(res) {
                     if(res.data.result) {
                         $scope.vm.promotionList.splice(index, 1);
                         $scope.dataPageOption.total = $scope.vm.promotionList.length;

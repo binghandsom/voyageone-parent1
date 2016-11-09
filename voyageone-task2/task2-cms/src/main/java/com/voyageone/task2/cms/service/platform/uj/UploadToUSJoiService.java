@@ -33,7 +33,6 @@ import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -82,9 +81,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
-
-    @Autowired
-    private ProductSkuService productSkuService;
 
     @Autowired
     private PriceService priceService;
@@ -244,7 +240,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     cartIds.add(NumberUtils.toInt(p.getValue()));
             });
         }
-        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(approveCartList)) {
+        if (ListUtils.isNull(approveCartList) || ListUtils.isNull(cartIds)) {
             String errMsg = usjoiChannelId + " " + String.format("%1$-15s", channelBean.getFull_name()) + " com_mt_value_channel表中没有usJoiChannel(" +
                     usjoiChannelId + ")对应的可售卖平台(53 A en)mapping信息,不能生成Product.PXX分平台信息，终止UploadToUSJoiServie处理，请修改好共通数据后再导入";
             $info(errMsg);
@@ -252,6 +248,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             resultMap.put(usjoiChannelId, errMsg);
             return;
         }
+
+        // 从cms_mt_channel_config配置表中取得渠道级别配置项的值集合,2016/10/24以后在这个表里面新加的配置项都可以在这个里面取得
+        Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
+        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
+        doChannelConfigInit(usjoiChannelId, channelConfigValueMap);
 
         // 该usjoichannel每次子店->USJOI主店导入最大件数(最大2000件,默认为500件)
         int uploadToUsjoiMax = UPLOAD_TO_USJOI_MAX_500;
@@ -267,6 +268,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         }
 
         // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
+        // 自动上新插入workload表用(在feed->master时用于自动向liking传递变更信息，在liking主店时用于自动上新到集合店平台)
         String ccAutoSyncCarts = "";
         List<String> ccAutoSyncCartList = null;
         // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
@@ -302,7 +304,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             try {
                 // 循环上传单个产品到USJOI主店
                 upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
-                        cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime);
+                        cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime, channelConfigValueMap);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
                 errCnt++;
@@ -343,7 +345,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                        List<String> ccAutoSyncCartList,
                        int currentIndex,
                        int totalCnt,
-                       long startTime) {
+                       long startTime,
+                       Map<String, String> channelConfigValueMap) {
         // workload表中的cartId是usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usJoiChannelId = sxWorkLoadBean.getCartId().toString();
 
@@ -377,6 +380,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 productModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), CmsBtProductModel.class);
                 productModel.set_id(null);
 
+                // productModel是子店的产品model,pr是主店查出来的产品model
                 CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productModel.getCommon().getFields().getCode());
                 if (pr == null) {
                     // 产品不存在，新增
@@ -390,17 +394,19 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     productModel.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
 
                     // platform对应 从子店的platform.p928 929 中的数据生成usjoi的platform
-                    CmsBtProductModel_Platform_Cart platform = productModel.getPlatform(sxWorkLoadBean.getCartId());
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-                    platform.setpCatId(null);
-                    platform.setpCatPath(null);
-                    platform.setpBrandId(null);
-                    platform.setpBrandName(null);
+                    CmsBtProductModel_Platform_Cart fromPlatform = productModel.getPlatform(sxWorkLoadBean.getCartId());
                     productModel.platformsClear();
                     // 下面几个cartId都设成同一个platform
-                    if (platform != null) {
+                    if (fromPlatform != null) {
                         final CmsBtProductModel finalProductModel = productModel;
                         for (Integer cartId : cartIds) {
+                            CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+                            platform.putAll(fromPlatform);
+                            platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                            platform.setpCatId(null);
+                            platform.setpCatPath(null);
+                            platform.setpBrandId(null);
+                            platform.setpBrandName(null);
                             // 重新设置P28平台的mainProductCode和pIsMain
                             CmsBtProductGroupModel cartGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), cartId);
                             if (cartGroupModel != null && !StringUtils.isEmpty(cartGroupModel.getMainProductCode())) {
@@ -444,10 +450,37 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // 插入或者更新cms_bt_product_group_c928中的productGroup信息
                     doSetGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
                     // 更新common的一部分属性
+                    // productModel是子店的产品model,pr是主店查出来的产品model
                     CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
                     if (prCommonFields != null && productModel.getCommon().getFields() != null) {
-                        // 更新common.fields.image1(品牌方商品图)
+                        // 更新common.fields.images1(品牌方商品图)
                         prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+
+                        // add by desmond 2016/10/27 start
+                        // 从子店产品中复制图片到总店产品的common.fields.images2~images9的图片
+                        // -------------------------------------------
+                        // 子店到主店的图片(images2~images9)复制方式:
+                        //    空或0:不复制品牌方商品图以外的图片
+                        //    1:以UNION方式复制图片
+                        //    2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店
+                        // -------------------------------------------
+                        // 取得cms_mt_channel_config配置表中配置的子店->USJOI总店的品牌方商品图(images1)以外的图片复制方式(LIKING_IMAGE_COPY_FLG)
+                        // LIKING_IMAGE_COPY_FLG  LIKING子店到总店更新时图片复制方式(不包含品牌方商品图images1)(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
+                        String likingImageCopyFlg = "";   // 没有配置时，默认为空(""或者"0":不复制品牌方商品图以外的图)
+                        // 子店到主店的品牌方商品图(images1)以外图片拷贝方式取得key
+                        String likingImageCopyFlgKey = CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG + "_0";
+                        if (channelConfigValueMap != null && channelConfigValueMap.containsKey(likingImageCopyFlgKey)) {
+                            likingImageCopyFlg = channelConfigValueMap.get(likingImageCopyFlgKey);
+                        }
+                        // 从子店产品中复制图片到总店产品
+                        // 子店到总店更新时图片复制方式(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
+                        // 包装图(images2) 角度图(images3) PC端自定义图(images4) APP端自定义图(images5) PC端自拍商品图(images6)
+                        // App端自拍商品图(images7) App端自拍商品图(images7) 吊牌图(images8) (images9)
+                        for (int imagesNo = 2; imagesNo <= 9; imagesNo++) {
+                            // 从子店产品复制图片到主店产品中(images2~images9)
+                            copyImageToUsjoi(likingImageCopyFlg, imagesNo, productModel, pr);
+                        }
+                        // add by desmond 2016/10/27 end
 
                         // 主店的税号没设置，子店的税号设置了的话，将主店商品更新成子店的税号code
                         // 税号集货
@@ -525,8 +558,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     final CmsBtProductModel finalProductModel1 = productModel;
                     for (Integer cartId : cartIds) {
                         CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cartId);
-                        CmsBtProductModel_Platform_Cart newPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
+                        CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
                         if (platformCart == null) {
+                            CmsBtProductModel_Platform_Cart newPlatform = new CmsBtProductModel_Platform_Cart();
+                            newPlatform.putAll(fromPlatform);
                             // 如果主店商品里面没有这个cartId的platform,则新加
                             newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
                             newPlatform.setpCatId(null);
@@ -557,9 +592,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             if (platformCart.getSkus() == null) {
-                                platformCart.setSkus(newPlatform.getSkus());
+                                platformCart.setSkus(fromPlatform.getSkus());
                             } else {
-                                for (BaseMongoMap<String, Object> newSku : newPlatform.getSkus()) {
+                                for (BaseMongoMap<String, Object> newSku : fromPlatform.getSkus()) {
                                     boolean updateFlg = false;
                                     if (platformCart.getSkus() != null) {
                                         for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
@@ -1143,6 +1178,139 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 变更自动同步到指定平台(用逗号分隔 如:"28,29")时
             sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
         }
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值集合
+     *
+     * @param channelId String LIKING渠道id
+     * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
+     */
+    public void doChannelConfigInit(String channelId,  Map<String, String> channelConfigValueMap) {
+
+        // 从配置表(cms_mt_channel_config)表中取得子店->USJOI总店的品牌方商品图(images1)以外的图片复制方式(LIKING__IMAGE_COPY_FLG_0)
+        String likingImageCopyFlgKey = CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG + "_0";
+        String likingImageCopyFlgValue1 = getChannelConfigValue(channelId, CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG, null);
+        channelConfigValueMap.put(likingImageCopyFlgKey, likingImageCopyFlgValue1);
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
+    }
+
+    /**
+     * 从子店产品中复制图片到总店产品
+     *
+     * @param likingImageCopyFlg String 子店到总店时图片复制方式(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
+     * @param imagesNo String 图片No
+     * @param productModel CmsBtProductModel子店产品
+     * @param pr CmsBtProductModel 主店产品
+     */
+    public void copyImageToUsjoi(String likingImageCopyFlg, int imagesNo, CmsBtProductModel productModel, CmsBtProductModel pr) {
+        if (!"1".equals(likingImageCopyFlg) && !"2".equals(likingImageCopyFlg)) return;
+        if (productModel == null || pr == null) return;
+
+        String imageKey = "image" + imagesNo;
+        CmsBtProductConstants.FieldImageType imageTypeNo = getImageTypeByNo(imagesNo);
+        if (imageTypeNo == null) return;
+
+        // 子店产品的images(如果不存在会new一个空的List，不会出现null的情况)
+        List<CmsBtProductModel_Field_Image> productImagesNo = productModel.getCommon().getFields().getImages(imageTypeNo);
+        // 主店产品images(如果不存在会new一个空的List，不会出现null的情况)
+        List<CmsBtProductModel_Field_Image> prImagesNo = pr.getCommon().getFields().getImages(imageTypeNo);
+
+        // 子店到总店时图片复制方式为"1:以UNION方式复制"时
+        if ("1".equals(likingImageCopyFlg)) {
+            // 循环子店产品的是images列表，看看在主店商品里有没有这张图片，如果没有就追加到主店images列表的末尾
+            productImagesNo.forEach(s -> {
+                // 取得子店图片名
+                String productImageName = s.getStringAttribute(imageKey);  // s.getName()也可以取得
+                // 如果子店产品的image的图片名不为空，并且，在主店产品里面没有找到对应的图片名时，将这张子店产品图片追加到住店产品图片的最后
+                if (!StringUtils.isEmpty(productImageName)
+                        && (prImagesNo.stream().filter(p -> productImageName.equals(p.getStringAttribute(imageKey))).count() == 0)) {
+                    // 将在主店中不存在的这张子店图片加入主店产品中图片列表末尾
+                    prImagesNo.add(s);
+                }
+            });
+        } else if ("2".equals(likingImageCopyFlg)) {
+            // 子店到总店时图片复制方式为"2:以主店优先方式复制"时(以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店)时
+            // 子店产品有图片且总店产品一张图片都没有时，将子店产品图片复制到总店产品中
+            if ((ListUtils.notNull(productImagesNo) && !StringUtils.isEmpty(productImagesNo.get(0).getStringAttribute(imageKey)))
+                    && (ListUtils.isNull(prImagesNo) || StringUtils.isEmpty(prImagesNo.get(0).getStringAttribute(imageKey)))) {
+                pr.getCommon().getFields().setImages(imageTypeNo, productImagesNo);
+            }
+        }
+
+        // 如果更新前主店为空(images数组size=1，但里面其实没有值)，要删除空的image数据元素;万一有2个以上的元素为空，全部删除
+        for (int i = 0; i < prImagesNo.size(); i++) {
+            // 删除空的images数组元素(数组只有一个元素，空的就不删除了;万一有2个以上的元素为空，全部删除)
+            if (prImagesNo.size() > 1 && StringUtils.isEmpty(prImagesNo.get(i).getStringAttribute(imageKey))) {
+                prImagesNo.remove(i);
+                // 正向删除集合中元素的时候要减1(因为删除元素后面的元素index会减1)，如果是反向删除集合不需要减1
+                i--;
+            }
+        }
+    }
+
+    public CmsBtProductConstants.FieldImageType getImageTypeByNo(int imagesNo) {
+        CmsBtProductConstants.FieldImageType imageType = null;
+
+        switch (imagesNo) {
+            case 1:
+                imageType = CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE;
+                break;
+            case 2:
+                imageType = CmsBtProductConstants.FieldImageType.PACKAGE_IMAGE;
+                break;
+            case 3:
+                imageType = CmsBtProductConstants.FieldImageType.ANGLE_IMAGE;
+                break;
+            case 4:
+                imageType = CmsBtProductConstants.FieldImageType.CUSTOM_IMAGE;
+                break;
+            case 5:
+                imageType = CmsBtProductConstants.FieldImageType.MOBILE_CUSTOM_IMAGE;
+                break;
+            case 6:
+                imageType = CmsBtProductConstants.FieldImageType.CUSTOM_PRODUCT_IMAGE;
+                break;
+            case 7:
+                imageType = CmsBtProductConstants.FieldImageType.M_CUSTOM_PRODUCT_IMAGE;
+                break;
+            case 8:
+                imageType = CmsBtProductConstants.FieldImageType.HANG_TAG_IMAGE;
+                break;
+            case 9:
+                imageType = CmsBtProductConstants.FieldImageType.DURABILITY_TAG_IMAGE;
+                break;
+            default:
+                break;
+        }
+
+        return imageType;
     }
 
     /**

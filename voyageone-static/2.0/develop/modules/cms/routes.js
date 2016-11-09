@@ -150,7 +150,7 @@ define(function () {
             "hash": "/channel/default_attribute_detail/:upEntity?",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
-            "controller": "attributeDetailController as ctrl"
+            "controller": "AttributeDetailController as ctrl"
         },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
@@ -372,6 +372,18 @@ define(function () {
             "templateUrl": "views/channel/black_brand/list.tpl.html",
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
+        },
+        "sku-move": {
+            "hash": "/product/sku_move",
+            "templateUrl": "views/product/skumove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/skumove.ctl",
+            "controller": "SkuMoveController as ctrl"
+        },
+        "code-move": {
+            "hash": "/product/code_move",
+            "templateUrl": "views/product/codemove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/codemove.ctl",
+            "controller": "CodeMoveController as ctrl"
         },
         "maintain_common_master_brand_application": {
             "hash": "/maintain/common/masterBrandApplication/",

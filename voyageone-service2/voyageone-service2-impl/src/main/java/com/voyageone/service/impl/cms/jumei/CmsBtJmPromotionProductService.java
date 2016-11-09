@@ -1,66 +1,53 @@
 package com.voyageone.service.impl.cms.jumei;
 
 import com.voyageone.common.components.transaction.VOTransactional;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
-import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTime;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtJmPromotionTagProductModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by dell on 2016/3/18.
+ *
+ * @version 2.8.0
  */
 @Service
 public class CmsBtJmPromotionProductService {
-    @Autowired
-    CmsBtJmPromotionProductDao dao;
-    @Autowired
-    CmsBtJmPromotionProductDaoExt daoExt;
-    @Autowired
-    CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
-    @Autowired
-    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
-    @Autowired
-    private CmsBtPromotionGroupsDao daoCmsBtPromotionGroups;
-    @Autowired
-    private CmsBtPromotionSkusDao daoCmsBtPromotionSkus;
+    private final CmsBtJmPromotionProductDao dao;
+    private final CmsBtJmPromotionProductDaoExt daoExt;
+    private final CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku;
+    private final CmsBtJmPromotionDao daoCmsBtJmPromotion;
+    private final CmsBtJmPromotionTagProductDao cmsBtJmPromotionTagProductDao;
+    private final CmsBtTagDao cmsBtTagDao;
 
     @Autowired
-    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
-    @Autowired
-    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
-    @Autowired
-    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
-    @Autowired
-    CmsBtPromotionDao daoCmsBtPromotion;
-//    @Autowired
-//    JuMeiProductPlatformService serviceJuMeiProductPlatform;
-//    @Autowired
-//    CmsMtJmConfigService serviceCmsMtJmConfig;
-//    @Autowired
-//    JMShopBeanService serviceJMShopBean;
-   @Autowired
-    CmsBtJmPromotionDao daoCmsBtJmPromotion;
-    @Autowired
-    CmsBtTagDao daoCmsBtTag;
+    public CmsBtJmPromotionProductService(CmsBtJmPromotionProductDao dao,
+                                          CmsBtJmPromotionSkuDaoExt daoExtCmsBtJmPromotionSku,
+                                          CmsBtJmPromotionProductDaoExt daoExt,
+                                          CmsBtJmPromotionDao daoCmsBtJmPromotion,
+                                          CmsBtJmPromotionTagProductDao cmsBtJmPromotionTagProductDao,
+                                          CmsBtTagDao cmsBtTagDao) {
+        this.dao = dao;
+        this.daoExtCmsBtJmPromotionSku = daoExtCmsBtJmPromotionSku;
+        this.daoExt = daoExt;
+        this.daoCmsBtJmPromotion = daoCmsBtJmPromotion;
+        this.cmsBtJmPromotionTagProductDao = cmsBtJmPromotionTagProductDao;
+        this.cmsBtTagDao = cmsBtTagDao;
+    }
+
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -77,41 +64,47 @@ public class CmsBtJmPromotionProductService {
         return daoExt.selectListByWhere(map);
     }
 
-
     public List<MapModel> getPageByWhere(Map<String, Object> map) {
-        if(map.containsKey("code"))
-        {
-           String code= map.get("code").toString();
-          String[] codeList=code.split("\r\n|\n|\\s+");//split("\r\n");
-          map.put("codeList",codeList);
-        }
+        loadWhere(map);
         List<MapModel> list = daoExt.selectPageByWhere(map);
-        for (MapModel model : list) {
-            loadMap(model);
-        }
+        list.forEach(this::setTagNames);
         return list;
     }
-      void  loadMap(MapModel map) {
-          String promotionTag = map.get("promotionTag").toString();
-          if (!StringUtils.isEmpty(promotionTag)) {
-              String[] tagStrList =  promotionTag.split("\\|");
-              List<String> tagNameList = new ArrayList<>();
-              for (String tagName : tagStrList) {
-                  if (!StringUtils.isEmpty(tagName)) {
-                      tagNameList.add(tagName);
-                  }
-              }
-              map.put("tagNameList",tagNameList);
-          }
-      }
+
+    /**
+     * Jonas 修改
+     * @since 2.8.0
+     */
+    private void setTagNames(MapModel map) {
+        CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+        parameter.setCmsBtJmPromotionProductId(Integer.valueOf(map.get("id").toString()));
+        List<CmsBtJmPromotionTagProductModel> cmsBtJmPromotionTagProductModelList = cmsBtJmPromotionTagProductDao.selectList(parameter);
+        List<String> tagNameList = cmsBtJmPromotionTagProductModelList
+                .stream()
+                .map(CmsBtJmPromotionTagProductModel::getCmsBtTagId)
+                .map(cmsBtTagDao::select)
+                .filter(model -> model != null)
+                .map(CmsBtTagModel::getTagName)
+                .collect(toList());
+        map.put("tagNameList",tagNameList);
+    }
+
+    public  void  loadWhere(Map<String, Object> map)
+    {
+        if (map.containsKey("code")) {
+            String code = map.get("code").toString();
+            String[] codeList = code.split("\r\n|\n|\\s+");//split("\r\n");
+            map.put("codeList", codeList);
+        }
+    }
     public int getCountByWhere(Map<String, Object> map) {
+        loadWhere(map);
         return daoExt.selectCountByWhere(map);
     }
 
     public int delete(int id) {
-      CmsBtJmPromotionProductModel modelProduct=dao.select(id);
-        if(modelProduct.getSynchStatus()==2)
-        {
+        CmsBtJmPromotionProductModel modelProduct = dao.select(id);
+        if (modelProduct.getSynchStatus() == 2) {
             return 0;
         }
         return dao.delete(id);
@@ -126,7 +119,7 @@ public class CmsBtJmPromotionProductService {
 //        return daoExtCmsBtJmPromotionSku.updateDealPrice(dealPrice, model.getId());
 //    }
 
-//    @VOTransactional
+    //    @VOTransactional
 //    public void deleteByPromotionId(int jmPromotionId) {
 //        daoExt.deleteByPromotionId(jmPromotionId);
 //        daoExtCmsBtJmPromotionSku.deleteByPromotionId(jmPromotionId);
@@ -142,7 +135,8 @@ public class CmsBtJmPromotionProductService {
         daoExt.deleteByProductIdListInfo(parameter);
         daoExtCmsBtJmPromotionSku.deleteByProductIdListInfo(parameter);
     }
-//    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
+
+    //    public CmsBtPromotionModel getCmsBtPromotionModel(int jmPromotionId)
 //    {
 //        Map<String, Object> map = new HashMap<>();
 //        map.put("promotionId",jmPromotionId);

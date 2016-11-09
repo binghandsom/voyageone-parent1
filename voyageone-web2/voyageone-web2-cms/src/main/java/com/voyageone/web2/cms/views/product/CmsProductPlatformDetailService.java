@@ -96,7 +96,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 && cartId != CartEnums.Cart.USJGY.getValue()
                 && cartId != CartEnums.Cart.USJGT.getValue()) {
             // 非主商品的平台类目跟这个主商品走
-            if (platformCart.getpIsMain() != 1 && cartId != CartEnums.Cart.JM.getValue()) {
+            if (platformCart.getpIsMain() != 1 && (cartId != CartEnums.Cart.JM.getValue() && !CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(cartId+"")))) {
                 CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), cartId);
                 if (cmsBtProductGroup == null) {
                     throw new BusinessException(CartEnums.Cart.getValueByID(cartId + "") + "该商品的没有设置主商品，请先设置主商品：" + cmsBtProduct.getCommon().getFields().getCode());
@@ -178,6 +178,9 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
+                image.put("qty",product.getCommon().getFields().getQuantity());
+                image.put("priceSaleSt",product.getPlatform(cartId).getpPriceSaleSt());
+                image.put("priceSaleEd",product.getPlatform(cartId).getpPriceSaleEd());
                 images.add(image);
             }
         });
@@ -267,7 +270,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true);
+        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, false);
 
     }
 
@@ -482,4 +485,14 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
         });
     }
+
+    /**
+     * 重置group的platformPid
+     */
+    public void resetProductGroupPlatformPid(String channelId, int cartId, String code) {
+
+        productGroupService.resetProductGroupPlatformPid(channelId, cartId, code);
+
+    }
+
 }

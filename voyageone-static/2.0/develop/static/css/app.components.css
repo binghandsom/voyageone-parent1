@@ -44,8 +44,13 @@ d-header
 }
 
 .s-wrapper {
-    width: 82%;
+    width: 50%;
     flex-grow: 1;
+}
+
+.d-wrapper {
+    flex-grow: 1;
+    display: flex;
 }
 
 s-complex,
@@ -91,11 +96,14 @@ d-toolbar .btn-schema
     right: 6px;
 }
 
-s-toolbox,
-d-toolbox
+s-toolbox
 {
     display: block;
     flex-grow: 0;
+}
+
+d-toolbox .btn {
+    margin-left: 5px;
 }
 
 s-complex[multi],
@@ -150,6 +158,11 @@ d-complex[multi] d-toolbox
     padding-left: 6px;
 }
 
+d-container {
+    width: 50%;
+    flex-grow: 1;
+}
+
 s-container label,
 d-container label
 {
@@ -180,12 +193,7 @@ d-tip:before
     display: inline-block;
     width:80%;
 }
-.d-col-box{
-    width: 20%;
-    display: inline;
-    vertical-align: text-bottom;
-    margin-left: 25px;
-}
+
 /* } schema directive 样式定义 */
 
 /* 为其他页面提供 .vo-validate 样式, 来指定错误时该如何显示 */

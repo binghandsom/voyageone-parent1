@@ -41,6 +41,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
@@ -571,6 +572,7 @@ public class CmsProductDetailService extends BaseViewService {
                 image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
+                image.put("qty",product.getCommon().getFields().getQuantity());
                 images.add(image);
             }
         });
@@ -622,6 +624,52 @@ public class CmsProductDetailService extends BaseViewService {
 
         result.put("productComm", productComm);
         result.put("mastData", mastData);
+        return result;
+    }
+
+    public Map<String, Object> getMastProductSkuInfo(String channelId, Long prodId, String lang) {
+        Map<String, Object> result = new HashMap<>();
+
+        CmsBtProductModel cmsBtProduct = null;
+        CmsBtFeedInfoModel feedInfoModel = null;
+
+        // 取得产品信息
+        cmsBtProduct = productService.getProductById(channelId, prodId);
+
+        // 取得Feed信息
+        if (cmsBtProduct != null) {
+            feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
+        }
+
+        List<Map<String, Object>> skuList = new ArrayList<>();
+        for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
+            Map<String, Object> skuInfo = new HashMap<>();
+            skuInfo.put("skuCode", skuModel.getSkuCode());
+            skuInfo.put("qty", skuModel.getQty());
+            skuInfo.put("size", skuModel.getSize());
+            skuInfo.put("barcode", skuModel.getBarcode());
+            // 取得FeedInfo中的原始图片
+            String imageUrl = "";
+            if (feedInfoModel != null) {
+                for (CmsBtFeedInfoModel_Sku feedSkuModel : feedInfoModel.getSkus()) {
+                    if (feedSkuModel.getSku().equals(skuModel.getSkuCode())) {
+                        // 如果图片在sku上，那么取得sku里的第一张图片
+                        if (feedSkuModel.getImage() != null && feedSkuModel.getImage().size() > 0) {
+                            imageUrl = feedSkuModel.getImage().get(0);
+                        } else {
+                            // 否则取得Code中的第一站图片
+                            if (feedInfoModel.getImage() != null && feedInfoModel.getImage().size() > 0) {
+                                imageUrl = feedInfoModel.getImage().get(0);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            skuInfo.put("imageUrl", imageUrl);
+            skuList.add(skuInfo);
+        }
+        result.put("skuList", skuList);
         return result;
     }
 
@@ -681,7 +729,7 @@ public class CmsProductDetailService extends BaseViewService {
                         });
                         cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                     }
-                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
                 }
             });
 
@@ -1354,18 +1402,20 @@ public class CmsProductDetailService extends BaseViewService {
 
     private void delistingCode(DelistingParameter paramr, String modifier, String code) {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(paramr.getChannelId(), code);
-        CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
-        platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
-        platForm.setpProductId("");
-        platForm.setpNumIId("");
-        platForm.remove("pStatus");
-        productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
-        String comment = paramr.getComment();
-        productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
-        if (imsBtProductModel != null) {
-            imsBtProductModel.setNumIid("");
-            imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+        if(cmsBtProductModel != null) {
+            CmsBtProductModel_Platform_Cart platForm = cmsBtProductModel.getPlatform(paramr.getCartId());
+            platForm.setStatus(CmsConstants.ProductStatus.Ready.name());
+            platForm.setpProductId("");
+            platForm.setpNumIId("");
+            platForm.remove("pStatus");
+            productService.updateProductPlatform(paramr.getChannelId(), cmsBtProductModel.getProdId(), platForm, modifier);
+            String comment = paramr.getComment();
+            productStatusHistoryService.insert(paramr.getChannelId(), cmsBtProductModel.getCommon().getFields().getCode(), platForm.getStatus(), paramr.getCartId(), EnumProductOperationType.DelistinGroup, comment, modifier);
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(paramr.getChannelId(), paramr.getCartId(), code);
+            if (imsBtProductModel != null) {
+                imsBtProductModel.setNumIid("");
+                imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+            }
         }
     }
 

@@ -1,20 +1,26 @@
 package com.voyageone.service.impl.cms.product.search;
 
-import com.voyageone.base.dao.mongodb.JongoAggregate;
-import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.MongoUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
+import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
  * @author Edward
@@ -27,10 +33,12 @@ public class CmsAdvSearchQueryService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private WmsBtInventoryCenterLogicDaoExt wmsBtInventoryDaoExt;
 
     // 查询产品信息时的缺省输出列
     public final static String searchItems = "channelId;prodId;created;creater;modified;orgChannelId;modifier;freeTags;sales;bi;platforms;lock;" +
-            "common.skus.skuCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
+            "common.skus.skuCode;common.skus.size;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
             "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
@@ -279,6 +287,12 @@ public class CmsAdvSearchQueryService extends BaseService {
                     }
                 }
             }
+            
+            // NumIID多项查询
+            if (StringUtils.isNoneEmpty(searchValue.getNumIIds())) {
+                queryObject.addQuery("{'platforms.P#.pNumIId': {$in: #}}");
+                queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
+            }
         }
 
         // 获取其他检索条件
@@ -385,6 +399,30 @@ public class CmsAdvSearchQueryService extends BaseService {
             }
         }
 
+        // 获取产品类型设置状态
+        if (StringUtils.isNotEmpty(searchValue.getProductSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getProductTypeList())) {
+        	if ("1".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$in: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
+        	} else if ("2".equals(searchValue.getProductSelType())) {
+        		queryObject.addQuery("{'common.fields.productType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getProductTypeList());
+        	}
+        }
+
+        // 获取尺寸类型设置状态
+        if (StringUtils.isNotEmpty(searchValue.getSizeSelType())
+        		&& CollectionUtils.isNotEmpty(searchValue.getSizeTypeList())) {
+        	if ("1".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$in: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
+        	} else if ("2".equals(searchValue.getSizeSelType())) {
+        		queryObject.addQuery("{'common.fields.sizeType':{$nin: #}}");
+                queryObject.addParameters(searchValue.getSizeTypeList());
+        	}
+        }
+
         // 获取商品锁定状态
         if (StringUtils.isNotEmpty(searchValue.getLockFlg())) {
             queryObject.addQuery("{'lock':#}");
@@ -450,7 +488,14 @@ public class CmsAdvSearchQueryService extends BaseService {
                 }
             }
             if (inputList.size() > 0) {
-                queryObject.addQuery("{'$and':[" + inputList.stream().collect(Collectors.joining(",")) + "]}");
+            	String custQueryConditions = inputList.stream().collect(Collectors.joining(","));
+            	if ("1".equals(searchValue.getCustGroupType())) {
+            		// 满足所有条件 
+            		queryObject.addQuery("{'$and':[" + custQueryConditions + "]}");
+            	} else {
+            		// 满足任意条件
+            		queryObject.addQuery("{'$or':[" + custQueryConditions + "]}");
+            	}
             }
         }
     }
@@ -647,5 +692,12 @@ public class CmsAdvSearchQueryService extends BaseService {
         result.put("sortOutList", sortOutList);
         return result;
     }
+
+    /**
+     * 取得SKU级的库存属性
+     */
+	public List<Map<String, Object>> getSkuInventoryList(String channelId, String code) {
+		return wmsBtInventoryDaoExt.selectSkuInventoryList(channelId, code);
+	}
 
 }

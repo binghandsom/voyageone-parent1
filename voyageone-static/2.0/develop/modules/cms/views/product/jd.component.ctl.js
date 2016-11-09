@@ -6,7 +6,7 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
+    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService) {
         return {
             restrict: "E",
             templateUrl: "views/product/jd.component.tpl.html",
@@ -45,6 +45,9 @@ define([
                 scope.choseBrand = choseBrand;
                 scope.copyMainProduct = copyMainProduct;
                 scope.refreshPrice = refreshPrice;
+                scope.moveToGroup = moveToGroup;
+                scope.doResetTmProduct = doResetTmProduct;
+                scope.publishProduct = publishProduct;
 
                 /**
                  * 获取京东页面初始化数据
@@ -75,6 +78,7 @@ define([
 
                         scope.vm.mastData = mastData = resp.data.mastData;
                         scope.vm.platform = platform = resp.data.platform;
+                        scope.vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
@@ -252,6 +256,32 @@ define([
                 }
 
                 /**
+                 * 移动Code到其他Group
+                 * */
+                function moveToGroup() {
+                    // if (scope.vm.mastData == null)  return;
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name});
+                    var moveCodeInfo = {
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        prodId: scope.productInfo.productId
+                    };
+                    window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
+                    confirm(template).then(function () {
+                        var newTab = window.open('about:blank');
+                        productDetailService.moveCodeInitCheck({
+                            cartId: scope.cartInfo.value,
+                            cartName: scope.cartInfo.name,
+                            prodId: scope.productInfo.productId
+                        }).then(function (resp) {
+                            newTab.location.href = "#/product/code_move";
+                        }, function (err) {
+                            newTab.close();
+                        });
+                    });
+                }
+
+                /**
                  * @description 更新操作
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
@@ -417,6 +447,32 @@ define([
                     return scope.vm.platform.skus.some(function (element) {
                         return element.isSale === true;
                     });
+                }
+
+                /**
+                 * 重置天猫产品id
+                 * @returns {*}
+                 */
+                function doResetTmProduct(){
+                    return productDetailService.resetTmProduct({
+                        cartId: scope.cartInfo.value,
+                        productCode: scope.productInfo.masterField.code
+                    }).then(function () {
+                        alert("处理完成， 请重新approve一下商品");
+                        // notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    });
+                }
+                
+                // 商品智能上新
+                function publishProduct() {
+                	var params = {
+                		cartId: scope.vm.platform.cartId,
+                		productIds: [scope.vm.mastData.productCode],
+                		isSelectAll: 0
+                	}
+                	$fieldEditService.intelligentPublish(params).then(function() {
+            			alert('已完成商品的智能上新！');
+        			});
                 }
 
                 /**

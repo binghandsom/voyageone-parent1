@@ -12,6 +12,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,11 +29,8 @@ import java.util.*;
  */
 @Service
 public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
+    private final CmsBtProductDao cmsBtProductDao;
+    private final CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
 
     private final static int PAGE_LIMIT = 500;
     private static final String queryStr = "{$match:{'date':{$gte:#,$lte:#},'cart_id':{$in:#},'channel_id':#,'sku':{$in:#}}}";
@@ -43,10 +41,16 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
     private static final String queryCodeStr2 = "{$match:{'cart_id':{$in:#},'channel_id':#,'prodCode':#}}";
     private static final String queryCodeStr3 = "{$group:{_id:{cart_id:'$cart_id',channel_id:'$channel_id',prodCode:'$prodCode'},count:{$sum:'$qty'}}}";
 
+    @Autowired
+    public CmsSumProdOrdersService(CmsMtProdSalesHisDao cmsMtProdSalesHisDao, CmsBtProductDao cmsBtProductDao) {
+        this.cmsMtProdSalesHisDao = cmsMtProdSalesHisDao;
+        this.cmsBtProductDao = cmsBtProductDao;
+    }
+
     /**
      * 统计产品的销售数据
      */
-    public void sumProdOrders(List<CmsBtProductModel> prodList, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
+    void sumProdOrders(List<CmsBtProductModel> prodList, String channelId, String begDate1, String begDate2, String endDate, String taskName) {
         BulkModelUpdateList bulkList = new BulkModelUpdateList(PAGE_LIMIT, cmsBtProductDao, channelId);
         for (CmsBtProductModel prodObj : prodList) {
             // 对每个产品统计其sku数据
@@ -59,13 +63,12 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             List<Integer> cartList2 = prodObj.getCartIdList();
             List<String> skuCodeList = new ArrayList<>();
-            skusList.forEach(skuObj -> {
-                skuCodeList.add(skuObj.getSkuCode());
-            });
+            skusList.forEach(skuObj -> skuCodeList.add(skuObj.getSkuCode()));
 
             Map<String, Object> salesMap = new HashMap<>();
             List<Map<String, Object>> skuSum7List = new ArrayList<>();
             List<Map<String, Object>> skuSum30List = new ArrayList<>();
+            List<Map<String, Object>> skuSumYearList = new ArrayList<>();
             List<Map<String, Object>> skuSumAllList = new ArrayList<>();
 
             // 7天销售sku数据
@@ -100,6 +103,25 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 }
             }
 
+            // 今年的销售数据
+            String today = new DateTime().toString(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            String firstDay = String.format("%s-01-01 00:00:00", Calendar.getInstance().getWeekYear());
+            params = new Object[]{firstDay, today, cartList2, channelId, skuCodeList};
+            List<Map<String, Object>> thisYear = cmsMtProdSalesHisDao.aggregateToMap(new JongoAggregate(queryStr, params), new JongoAggregate(queryStr3));
+            if (!thisYear.isEmpty()) {
+                for (Map hisInfo : thisYear) {
+                    int qty = ((Number) hisInfo.get("count")).intValue();
+                    Map groupKey = (Map) hisInfo.get("_id");
+
+                    Map<String, Object> skuSalesMap = new HashMap<>();
+                    skuSalesMap.put("skuCode", groupKey.get("sku"));
+                    skuSalesMap.put("cartId", groupKey.get("cart_id"));
+                    skuSalesMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, qty);
+                    skuSumYearList.add(skuSalesMap);
+                }
+            }
+
+
             // 所有销售sku数据
             params = new Object[]{cartList2, channelId, skuCodeList};
             List<Map<String, Object>> amtall = cmsMtProdSalesHisDao.aggregateToMap(new JongoAggregate(queryStr2, params), new JongoAggregate(queryStr3));
@@ -129,31 +151,28 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
 
             // 合并sku销售数据
             for (Map<String, Object> sumInfo : skuSumAllList) {
-                for (Map sum7Info : skuSum7List) {
-                    if (sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId"))) {
-                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7));
-                    }
-                }
-                for (Map sum30Info : skuSum30List) {
-                    if (sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId"))) {
-                        sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30));
-                    }
-                }
+                skuSum7List
+                        .stream()
+                        .filter(sum7Info -> sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) && sumInfo.get("cartId").equals(sum7Info.get("cartId")))
+                        .forEach(sum7Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7)));
+                skuSum30List
+                        .stream()
+                        .filter(sum30Info -> sumInfo.get("skuCode").equals(sum30Info.get("skuCode")) && sumInfo.get("cartId").equals(sum30Info.get("cartId")))
+                        .forEach(sum30Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30)));
+                skuSumYearList
+                        .stream()
+                        .filter(sumYearInfo -> sumInfo.get("skuCode").equals(sumYearInfo.get("skuCode")) && sumInfo.get("cartId").equals(sumYearInfo.get("cartId")))
+                        .forEach(sumYearInfo -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, sumYearInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR)));
             }
 
             List<Map<String, Object>> skuCartSumList = new ArrayList<>();
             Map<String, String> skuCodeMap = new HashMap<>();
             for (Map<String, Object> sumInfo : skuSumAllList) {
                 skuCodeMap.put((String) sumInfo.get("skuCode"), "");
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, 0);
-                }
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, 0);
-                }
-                if (sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL) == null) {
-                    sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
-                }
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_7, 0);
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_30, 0);
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_YEAR, 0);
+                sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             }
 
             // 再统计产品code级别的数据，由于是多维度的统计，由上面的sku数据合并较复杂，不如直接统计
@@ -189,6 +208,22 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 salesMap.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Map);
             }
 
+            // 今年销量
+            params = new Object[]{firstDay, today, cartList2, channelId, prodCode};
+            thisYear = cmsMtProdSalesHisDao.aggregateToMap(new JongoAggregate(queryCodeStr, params), new JongoAggregate(queryCodeStr3));
+            if (!thisYear.isEmpty()) {
+                Map<String, Object> yearMap = new HashMap<>();
+                int sumYear = 0;
+                for (Map hisInfo : thisYear) {
+                    int qty = ((Number) hisInfo.get("count")).intValue();
+                    sumYear += qty;
+                    Map groupKey = (Map) hisInfo.get("_id");
+                    yearMap.put(CmsBtProductModel_Sales.CARTID + groupKey.get("cart_id"), qty);
+                }
+                yearMap.put(CmsBtProductModel_Sales.CARTID_0, sumYear);
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, yearMap);
+            }
+
             // 所有销售code数据
             params = new Object[]{cartList2, channelId, prodCode};
             amtall = cmsMtProdSalesHisDao.aggregateToMap(new JongoAggregate(queryCodeStr2, params), new JongoAggregate(queryCodeStr3));
@@ -216,11 +251,13 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             for (String skuCode : skuCodeMap.keySet()) {
                 int skuSum7 = 0;
                 int skuSum30 = 0;
+                int skuSumYear = 0;
                 int skuSumAll = 0;
                 for (Map sumInfo : skuSumAllList) {
                     if (skuCode.equals(sumInfo.get("skuCode"))) {
                         skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7));
                         skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30));
+                        skuSumYear += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR));
                         skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL));
                     }
                 }
@@ -229,6 +266,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 skuMap.put("cartId", 0);
                 skuMap.put(CmsBtProductModel_Sales.CODE_SUM_7, skuSum7);
                 skuMap.put(CmsBtProductModel_Sales.CODE_SUM_30, skuSum30);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, skuSumYear);
                 skuMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, skuSumAll);
                 skuCartSumList.add(skuMap);
             }
@@ -255,6 +293,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             if (qty0 == null) {
                 sum7Map.put(CmsBtProductModel_Sales.CARTID_0, 0);
             }
+            // 30
             Map<String, Object> sum30Map = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_30);
             if (sum30Map == null) {
                 sum30Map = new HashMap<>();
@@ -274,6 +313,23 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             if (qty0 == null) {
                 sum30Map.put(CmsBtProductModel_Sales.CARTID_0, 0);
             }
+
+            // Year
+            Map<String, Object> sumYearMap = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_YEAR);
+            if (sumYearMap == null) {
+                sumYearMap = new HashMap<>();
+                for (Integer cartItem : cartList2) {
+                    sumYearMap.put(CmsBtProductModel_Sales.CARTID + cartItem, 0);
+                }
+                salesMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, sumYearMap);
+            } else {
+                for (Integer cartItem : cartList2) {
+                    sumYearMap.putIfAbsent(CmsBtProductModel_Sales.CARTID + cartItem, 0);
+                }
+            }
+            sumYearMap.putIfAbsent(CmsBtProductModel_Sales.CARTID_0, 0);
+
+            // All
             Map<String, Object> sumAllMap = (Map<String, Object>) salesMap.get(CmsBtProductModel_Sales.CODE_SUM_ALL);
             if (sumAllMap == null) {
                 sumAllMap = new HashMap<>();

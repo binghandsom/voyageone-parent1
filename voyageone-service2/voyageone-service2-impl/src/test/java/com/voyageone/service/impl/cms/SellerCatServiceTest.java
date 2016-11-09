@@ -86,4 +86,10 @@ public class SellerCatServiceTest {
 //
 //
 //    }
+
+    @Test
+    public void testPaixu() throws Exception {
+        sellerCatService.doResetPlatformSellerCatIndex("010", 23);
+    }
+
 }

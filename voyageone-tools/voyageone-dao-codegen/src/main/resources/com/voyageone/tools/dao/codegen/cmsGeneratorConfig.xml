@@ -12,7 +12,7 @@
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/voyageone_cms2"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.83/voyageone_cms2"
                         userId="root" password="sneakerhead">
         </jdbcConnection>
 
@@ -439,6 +439,16 @@
         <table tableName="cms_bt_tag_jm_module_extension" delimitAllColumns="true" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
+        </table>
+        <table tableName="cms_bt_refresh_product_task" delimitAllColumns="true" enableCountByExample="true"
+               enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table tableName="cms_bt_refresh_product_task_item" delimitAllColumns="true" enableCountByExample="true"
+               enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+            <generatedKey column="id" sqlStatement="JDBC"/>
         </table>
     </context>
 </generatorConfiguration>
