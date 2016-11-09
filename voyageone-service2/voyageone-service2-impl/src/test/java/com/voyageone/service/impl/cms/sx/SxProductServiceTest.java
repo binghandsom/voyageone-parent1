@@ -140,4 +140,13 @@ public class SxProductServiceTest {
 
     }
 
+    @Test
+    public void testGetSizeMap() {
+        String channelId = "023";
+        int sizeChartId = 10;
+
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, null, null, null, sizeChartId);
+        System.out.println("sizeMap size = " + sizeMap.size());
+    }
+
 }
