@@ -524,7 +524,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             }
 
             // end
-            String endStr = "],\"enable\": \"true\"}";
+            String endStr = "],\"enable\": \"true\", \"order\": \"3\"}";
             TextWord endWord = new TextWord(endStr);
             ruleRoot.addRuleWord(endWord);
         }
