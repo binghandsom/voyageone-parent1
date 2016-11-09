@@ -123,6 +123,7 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             request.setOrgChannelId(promotion.getChannelId());
             request.setCartId(parameter.getCartId());
             request.setProductId(item);
+            request.setRefTagId(promotion.getRefTagId());
             request.setPromotionId(promotionId);
             request.setTagList(tagList);
             request.setAddProductSaveParameter(parameter);
