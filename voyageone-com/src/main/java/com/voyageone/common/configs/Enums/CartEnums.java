@@ -158,6 +158,17 @@ public class CartEnums {
 		}
 
 		/**
+		 * 判断给定的店铺是否是天猫系
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是天猫系
+		 * @since 2.6.0
+		 */
+		public static boolean isTmSeries(Cart cart) {
+			return TM.equals(cart) || TG.equals(cart);
+		}
+
+		/**
 		 * 判断给定的店铺是否是京东系
 		 *
 		 * @param cart 某店铺
