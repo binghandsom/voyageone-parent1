@@ -69,20 +69,6 @@ public class TbPictureService extends TbBase {
      * 淘宝接口名：taobao.picture.get
      * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:138
      */
-    public PictureGetResponse getPictures(ShopBean shopBean, String urls) throws ApiException {
-
-        PictureGetRequest req = new PictureGetRequest();
-
-        req.setUrls(urls);
-
-        return reqTaobaoApi(shopBean, req);
-    }
-
-    /**
-     * 获取图片信息
-     * 淘宝接口名：taobao.picture.get
-     * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:138
-     */
     public PictureGetResponse getPictures(ShopBean shopBean, String title, Long category_id) throws ApiException {
 
         PictureGetRequest req = new PictureGetRequest();

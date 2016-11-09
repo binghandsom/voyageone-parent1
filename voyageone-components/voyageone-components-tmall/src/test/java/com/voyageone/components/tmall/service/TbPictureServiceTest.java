@@ -7,7 +7,6 @@ import com.taobao.api.request.ItemImgUploadRequest;
 import com.taobao.api.response.ItemImgDeleteResponse;
 import com.taobao.api.response.ItemImgUploadResponse;
 import com.taobao.api.response.PictureCategoryGetResponse;
-import com.taobao.api.response.PictureGetResponse;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.bean.TbGetPicCategoryParam;
 import org.junit.Test;
@@ -18,8 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertNull;
 
 /**
  * 淘宝图片服务单元测试
@@ -42,30 +39,6 @@ public class TbPictureServiceTest {
         shopBean.setAppKey("21008948");
         shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
         shopBean.setSessionKey("62013001ZZ9c83cb4fe59499440ef154430b7679c3866f21792368114");
-    }
-
-    /**
-     * @since 2.9.0
-     */
-    @Test
-    public void replacePicture() throws Exception {
-
-    }
-
-    /**
-     * @since 2.9.0
-     */
-    @Test
-    public void getPictures() throws Exception {
-        PictureGetResponse result2 = tbPictureService.getPictures(shopBean, "http://img.alicdn.com/imgextra/i1/1792368114/TB2h0qAbbmI.eBjy1zjXXaq5VXa_!!1792368114.jpg_430x430q90.jpg");
-
-        assertNull(result2.getErrorCode());
-
-        TbItemSchema itemSchema = tbItemService.getUpdateSchema(shopBean, 541009678524L);
-
-        PictureGetResponse result1 = tbPictureService.getPictures(shopBean, "http://img.alicdn.com/" + itemSchema.getMainImages()[0]);
-
-        assertNull(result1.getErrorCode());
     }
 
     @Test
