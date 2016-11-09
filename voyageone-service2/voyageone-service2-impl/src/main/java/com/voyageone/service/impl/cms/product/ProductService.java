@@ -1389,21 +1389,22 @@ public class ProductService extends BaseService {
         //更新商品Tags  sunpt
         if (productModel != null) {
             List<String> tags = productModel.getTags();
-            int size = tags.size();
-            //1.移除该活动的所有tag
-            for (int i = size - 1; i >= 0; i--) {
-                String tag = String.format("-%s-", refTagId);
-                if (tags.get(i).indexOf(tag) == 0) {
-                    tags.remove(i);
+            tagList.forEach(tagInfo -> {
+                if (tagInfo.getChecked() == 0) {
+                    //删除
+                    tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+
+                } else if (tagInfo.getChecked() == 2) {
+
+                    //添加
+                    String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
+                    if (!tags.contains(tag)) {
+                        tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                    }
+
                 }
-            }
-            //2.添加新的tag
-            for (TagTreeNode tagInfo : tagList) {
-                if (tagInfo.getChecked() != 0) {
-                    tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
-                }
-            }
-            tags.add(String.format("-%s-", refTagId));
+            });
+
             productModel.setTags(tags);
             //3.更新
             updateTags(channelId, productModel.getProdId(), tags, modifier);

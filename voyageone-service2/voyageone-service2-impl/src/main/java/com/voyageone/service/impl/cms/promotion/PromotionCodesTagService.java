@@ -3,10 +3,16 @@ package com.voyageone.service.impl.cms.promotion;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesTagDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesTagDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesTagModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +32,16 @@ public class PromotionCodesTagService extends BaseService {
     CmsBtPromotionCodesTagDaoExt cmsBtPromotionCodesTagDaoExt;
 
     @Autowired
+    CmsBtPromotionCodesDao cmsBtPromotionCodesDao;
+
+    @Autowired
+    CmsBtPromotionDao cmsBtPromotionDao;
+
+    @Autowired
     CmsBtPromotionCodesTagDao cmsBtPromotionCodesTagDao;
+
+    @Autowired
+    ProductService productService;
 
     @VOTransactional
     public void updatePromotionCodesTag(List<TagTreeNode> tagList, String channelId, int promotionCodesId,String userName) {
@@ -54,14 +69,21 @@ public class PromotionCodesTagService extends BaseService {
     }
     @VOTransactional
     public  void  updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String channelId,String userName) {
-        List<TagTreeNode> tagList=  parameter.getTagList().stream().map(m -> {
+        List<TagTreeNode> tagList = parameter.getTagList().stream().map(m -> {
             TagTreeNode tagTreeNode = new TagTreeNode();
             tagTreeNode.setId(m.getTagId());
             tagTreeNode.setName(m.getTagName());
             tagTreeNode.setChecked(m.getChecked());
             return tagTreeNode;
         }).collect(Collectors.toList());
-        updatePromotionCodesTag(tagList,channelId,parameter.getId(),userName);
+
+        updatePromotionCodesTag(tagList, channelId, parameter.getId(), userName);
+
+        //更新mongo product tag
+        CmsBtPromotionCodesModel codesModel = cmsBtPromotionCodesDao.select(parameter.getId());
+        CmsBtPromotionModel promotionModel = cmsBtPromotionDao.select(codesModel.getPromotionId());
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
+        productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
     }
     public CmsBtPromotionCodesTagModel get(int promotionCodesId, int tagId) {
         Map<String, Object> map = new HashedMap();
