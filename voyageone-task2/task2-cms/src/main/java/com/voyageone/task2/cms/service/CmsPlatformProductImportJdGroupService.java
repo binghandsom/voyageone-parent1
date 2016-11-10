@@ -1,14 +1,16 @@
 package com.voyageone.task2.cms.service;
 
-import com.taobao.api.ApiException;
-import com.taobao.api.domain.Item;
+import com.jd.open.api.sdk.JdException;
+import com.jd.open.api.sdk.domain.ware.Ware;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.tmall.service.TbSaleService;
+import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.CmsProductCodeChangeGroupService;
@@ -22,24 +24,19 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * 根据天猫现在商品分组情况来进行cms的产品code拆分合并
+ * 根据京东现在商品分组情况来进行cms的产品code拆分合并
  *
  * @author morse on 2016/11/08
  * @version 2.6.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_TMGroupImportCms2Job)
-public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JDGroupImportCms2Job)
+public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
 
-    @Autowired
-    private TbSaleService tbSaleService;
     @Autowired
     private ProductGroupService productGroupService;
     @Autowired
@@ -49,9 +46,14 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
-    private CmsPlatformProductImportTmFieldsService cmsPlatformProductImportTmFieldsService;
+    private CmsPlatformProductImportJdFieldsService cmsPlatformProductImportJdFieldsService;
 
-    private static final int PAGE_SIZE = 200;
+    @Autowired
+    private JdSaleService jdSaleService;
+    @Autowired
+    private JdWareService jdWareService;
+
+    private static final int PAGE_SIZE = 100;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -63,8 +65,8 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         String cartId = null;
         if (messageMap.containsKey("cartId")) {
             cartId = String.valueOf(messageMap.get("cartId"));
-            if (!CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(cartId))) {
-                $error("入参的平台id不是天猫系!");
+            if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(cartId))) {
+                $error("入参的平台id不是京东系!");
                 return;
             }
         }
@@ -90,7 +92,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             return;
         }
 
-        String runType = null; // runType=1的话，继续做取得天猫上商品属性并回写的事情
+        String runType = null; // runType=1的话，继续做取得京东上商品属性并回写的事情
         if (messageMap.containsKey("runType")) {
             runType = String.valueOf(messageMap.get("runType"));
         }
@@ -119,17 +121,17 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             messageMap.remove("runType");
             messageMap.remove("numIId");
             messageMap.remove("platformStatus");
-            cmsPlatformProductImportTmFieldsService.onStartup(messageMap);
+            cmsPlatformProductImportJdFieldsService.onStartup(messageMap);
         }
     }
 
     public void executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
-        Map<CmsConstants.PlatformStatus, List<String>> numIIdMap = getTmNumIIdList(channelId, cartId);
+        Map<CmsConstants.PlatformStatus, List<String>> wareIdMap = getJdWareIdList(channelId, cartId);
 
-        numIIdMap.forEach((status, numIIdList) -> {
-            for (String numIId : numIIdList) {
+        wareIdMap.forEach((status, wareIdList) -> {
+            for (String wareId : wareIdList) {
                 try {
-                    executeMove(shopBean, channelId, Integer.valueOf(cartId), numIId, status);
+                    executeMove(shopBean, channelId, Integer.valueOf(cartId), wareId, status);
                 } catch (Exception e) {
                     if (e instanceof BusinessException) {
                         $error(e.getMessage());
@@ -141,56 +143,58 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     }
 
     /**
-     * 获取店铺全部的numIId
+     * 获取店铺全部的wareId
      */
-    private Map<CmsConstants.PlatformStatus, List<String>> getTmNumIIdList(String channelId, String cartId) {
-        List<String> inStockNumIIdList = new ArrayList<>();
+    private Map<CmsConstants.PlatformStatus, List<String>> getJdWareIdList(String channelId, String cartId) {
+        List<String> inStockWareIdList = new ArrayList<>();
         long pageNo = 1;
         while(true) {
-            List<Item> rsList;
+            List<Ware> jdList;
             try {
                 // 查询下架
-                rsList = tbSaleService.getInventoryProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
-            } catch (ApiException apiExp) {
-                $error(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+                jdList = jdSaleService.getDeListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                pageNo++;
+            } catch (JdException apiExp) {
+                $error(String.format("调用京东API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
                 break;
             } catch (Exception exp) {
-                $error(String.format("调用淘宝API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+                $error(String.format("调用京东API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
                 break;
             }
-            if (rsList != null && rsList.size() > 0) {
-                inStockNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            if (jdList != null && jdList.size() > 0) {
+                inStockWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
             }
-            if (rsList == null || rsList.size() < PAGE_SIZE) {
+            if (jdList == null || jdList.size() < PAGE_SIZE) {
                 break;
             }
         }
 
-        List<String> onSaleNumIIdList = new ArrayList<>();
+        List<String> onSaleWareIdList = new ArrayList<>();
         pageNo = 1;
         while(true) {
-            List<Item> rsList;
+            List<Ware> jdList;
             try {
                 // 查询上架
-                rsList = tbSaleService.getOnsaleProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
-            } catch (ApiException apiExp) {
-                $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+                jdList = jdSaleService.getOnListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                pageNo++;
+            } catch (JdException apiExp) {
+                $error(String.format("调用京东API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
                 break;
             } catch (Exception exp) {
-                $error(String.format("调用淘宝API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+                $error(String.format("调用京东API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
                 break;
             }
-            if (rsList != null && rsList.size() > 0) {
-                onSaleNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            if (jdList != null && jdList.size() > 0) {
+                onSaleWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
             }
-            if (rsList == null || rsList.size() < PAGE_SIZE) {
+            if (jdList == null || jdList.size() < PAGE_SIZE) {
                 break;
             }
         }
 
         Map<CmsConstants.PlatformStatus, List<String>> retMap = new HashMap<>();
-        retMap.put(CmsConstants.PlatformStatus.InStock, inStockNumIIdList);
-        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleNumIIdList);
+        retMap.put(CmsConstants.PlatformStatus.InStock, inStockWareIdList);
+        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleWareIdList);
         return retMap;
     }
 
@@ -200,32 +204,22 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     private void executeMove(ShopBean shopBean, String channelId, int cartId, String numIId, CmsConstants.PlatformStatus status) throws Exception {
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByNumIId(channelId, cartId, numIId);
 
-        Map<String, Object> fieldMap = new HashMap<>();
         if (cmsBtProductGroup == null) {
-//            // TODO: 暂时没想到怎么解决，Group先拆出来，然后报个错出来吧
-//            throw new BusinessException(String.format("天猫上的商品在cms里不存在! [numIId:%s] [Sku:%s]", numIId, tmSkuList));
-            fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformWareInfoItem(numIId, shopBean));
-            List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
             // 拆分出一个新的group
-            doMoveCodeToNewGroup(tmSkuList, numIId, channelId, cartId, status);
+            doMoveCodeToNewGroup(shopBean, numIId, channelId, cartId, status);
         } else {
-            // deleted by morse.lu 2016/11/09 start
-            // 貌似不需要取得产品信息
-//            fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformProduct(cmsBtProductGroup.getPlatformPid(), shopBean));
-            // deleted by morse.lu 2016/11/09 end
-            fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformWareInfoItem(cmsBtProductGroup.getNumIId(), shopBean));
-
             // 拆分合并code
-            doMoveCodeToAnotherGroup(fieldMap, cmsBtProductGroup, channelId, cartId, status);
+            doMoveCodeToAnotherGroup(shopBean, cmsBtProductGroup, channelId, cartId, status);
         }
     }
 
     /**
      * 拆分合并code(创建一个新的group)
      */
-    private void doMoveCodeToNewGroup(List<String> tmSkuList, String numIId, String channelId, int cartId, CmsConstants.PlatformStatus status) {
+    private void doMoveCodeToNewGroup(ShopBean shopBean, String wareId, String channelId, int cartId, CmsConstants.PlatformStatus status) {
+        List<String> jdSkuList = geJdSkuList(shopBean, wareId); // 获取京东上的sku列表
         // 根据要移动的skuList取得code列表
-        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(numIId, channelId, tmSkuList);
+        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(wareId, channelId, jdSkuList);
 
         boolean isFirst = true;
         CmsBtProductGroupModel newGroupModel = null;
@@ -238,7 +232,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 newGroupModel = cmsProductCodeChangeGroupService.moveToNewGroup(channelId, cartId, moveCode, sourceGroupModel, getTaskName());
                 // 回写下numIId,状态
                 newGroupModel.setPlatformStatus(status);
-                newGroupModel.setNumIId(numIId);
+                newGroupModel.setNumIId(wareId);
                 productGroupService.update(newGroupModel);
             } else {
                 // 第二个code开始，追加进这个
@@ -250,27 +244,29 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                     "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + newGroupModel.getGroupId(), getTaskName());
         }
 
-        $info(String.format("新group做成! numIId:%s, productCodes:%s", numIId, moveCods.keySet()));
+        $info(String.format("新group做成! numIId:%s, productCodes:%s", wareId, moveCods.keySet()));
+
     }
 
     /**
      * 拆分合并code(合并在现有的group)
      */
-    private void doMoveCodeToAnotherGroup(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, CmsConstants.PlatformStatus status) {
-        List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
+    private void doMoveCodeToAnotherGroup(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, CmsConstants.PlatformStatus status) {
+        String wareId = cmsBtProductGroup.getNumIId();
+        List<String> jdSkuList = geJdSkuList(shopBean, wareId); // 获取京东上的sku列表
 
         cmsBtProductGroup.getProductCodes().forEach(productCode -> {
             CmsBtProductModel productModel = cmsBtProductDao.selectByCode(productCode, channelId);
             productModel.getCommon().getSkus().forEach(sku -> {
                 String skucode = sku.getSkuCode();
-                if (tmSkuList.contains(skucode)) {
-                    tmSkuList.remove(skucode);
+                if (jdSkuList.contains(skucode)) {
+                    jdSkuList.remove(skucode);
                 }
             });
         });
 
         // 根据要移动的skuList取得code列表
-        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(cmsBtProductGroup.getNumIId(), channelId, tmSkuList);
+        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(cmsBtProductGroup.getNumIId(), channelId, jdSkuList);
 
         cmsBtProductGroup.setPlatformStatus(status);
 
@@ -293,37 +289,30 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     }
 
     /**
-     * 获取天猫上的sku列表
+     * 获取京东上的sku列表
      */
-    private List<String> geTmSkuList(Map<String, Object> fieldMap) {
-        List<String> tmSkuList = new ArrayList<>(); // 天猫上的sku列表
-        if (fieldMap.containsKey("sku")) {
-            // sku级
-            List<Map<String, Object>> listSkuVal = (List) fieldMap.get("sku");
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
-
-        } else if (fieldMap.containsKey("darwin_sku")) {
-            // sku级
-            List<Map<String, Object>> listSkuVal = (List) fieldMap.get("darwin_sku");
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
+    private List<String> geJdSkuList(ShopBean shopBean, String wareId) {
+        // 获取商品信息(360buy.ware.get)
+        Ware ware = jdWareService.getWareInfo(shopBean, wareId, "skus");
+        if (ListUtils.isNull(ware.getSkus())) {
+            return Collections.emptyList();
         } else {
-            tmSkuList.add(fieldMap.get("outer_id").toString());
+            return ware.getSkus().stream().map(sku -> sku.getOuterId()).collect(Collectors.toList());
         }
-        return tmSkuList;
     }
 
     /**
      * 根据要移动的skuList取得code列表
      * @return Map<code, CmsBtProductModel>
      */
-    private Map<String, CmsBtProductModel> getMoveCodesBySkuList(String numIId, String channelId, List<String> tmSkuList) {
+    private Map<String, CmsBtProductModel> getMoveCodesBySkuList(String numIId, String channelId, List<String> jdSkuList) {
         Map<String, CmsBtProductModel> moveCods = new HashMap<>();
-        for (String skuCode : tmSkuList) {
-            // 剩下的是天猫上有，但是group表里没有的sku
+        for (String skuCode : jdSkuList) {
+            // 剩下的是京东上有，但是group表里没有的sku
             // 那么把这些sku对应的code移到这个group下
             CmsBtProductModel productModel = cmsBtProductDao.selectBySku(skuCode, channelId);
             if (productModel == null) {
-                throw new BusinessException(String.format("天猫上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
+                throw new BusinessException(String.format("京东上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
             }
 
             String code = productModel.getCommon().getFields().getCode();
