@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.BigDecimalUtil;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
@@ -26,6 +27,7 @@ import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,23 +80,29 @@ public class JMPromotionDetailService extends BaseService {
     public Map init(InitParameter params, String channelId,List<String> codeList) {
         Map<String, Object> data = new HashedMap();
         int cartId = params.getCartId();
-
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
 
-        List<CmsBtJmPromotionModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId);
+        List<MapModel> list = cmsBtJmPromotionDaoExt.selectAddPromotionList(channelId, cartId, codeList);
         list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
         data.put("listTreeNode", listTagTreeNode);
         return data;
     }
     //获取活动的节点数据
-    TagTreeNode getPromotionTagTreeNode(CmsBtJmPromotionModel model, List<String> codeList) {
-        TagTreeNode tagTreeNode = new TagTreeNode();
-        tagTreeNode.setId(model.getId());
-        tagTreeNode.setName(model.getName());
-        tagTreeNode.setChildren(new ArrayList<>());
-        List<TagCodeCountInfo> list = cmsBtJmPromotionTagProductDaoExt.selectListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
-        if(list.size()==0) return tagTreeNode;
+    TagTreeNode getPromotionTagTreeNode(MapModel map, List<String> codeList) {
         int codeCount = codeList.size();
+
+        TagTreeNode tagTreeNode = new TagTreeNode();
+        int id = ConvertUtil.toInt(map.get("id"));
+        int productCount = ConvertUtil.toInt(map.get("productCount"));
+        tagTreeNode.setId(id);
+        tagTreeNode.setName(ConvertUtil.toString(map.get("name")));
+        if (productCount > 0) {
+            tagTreeNode.setChecked(productCount == codeCount ? 2 : 1);
+        }
+        tagTreeNode.setChildren(new ArrayList<>());
+        List<TagCodeCountInfo> list = cmsBtJmPromotionTagProductDaoExt.selectListTagCodeCount(id, ConvertUtil.toInt(map.get("refTagId")), codeList);
+        if (list.size() == 0) return tagTreeNode;
+
         list.forEach(f -> {
             TagTreeNode node = new TagTreeNode();
             node.setId(f.getId());
@@ -105,15 +113,12 @@ public class JMPromotionDetailService extends BaseService {
             node.setOldChecked(node.getChecked());
             tagTreeNode.getChildren().add(node);
         });
+
         int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
         tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
         tagTreeNode.setOldChecked(tagTreeNode.getChecked());
         return tagTreeNode;
     }
-
-
-
-
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean, CmsBtJmPromotionModel jmPromotionModel, String modifier) {

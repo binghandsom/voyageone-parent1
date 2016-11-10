@@ -14,6 +14,7 @@ import java.util.Map;
 public interface CmsBtJmPromotionDaoExt {
 
     List<MapModel> getJmPromotionList(Map<String, Object> map);
+
     long getJmPromotionCount(Map<String, Object> map);
 
     List<MapModel> selectListByWhere(Map<String, Object> map);
@@ -35,7 +36,7 @@ public interface CmsBtJmPromotionDaoExt {
 
     List<Integer> selectCloseJmPromotionId();
 
-    List<Map<String,Object>> selectCloseJmPromotionSku(Integer jmPromotionId);
+    List<Map<String, Object>> selectCloseJmPromotionSku(Integer jmPromotionId);
 
     List<Integer> selectEffectiveJmPromotionId();
 
@@ -59,5 +60,5 @@ public interface CmsBtJmPromotionDaoExt {
     int updateByInput(CmsBtJmPromotionModel record);
 
     //加入活动有效列表
-    List<CmsBtJmPromotionModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId);
+    List<MapModel> selectAddPromotionList(@Param("channelId") String channelId, @Param("cartId") int cartId, @Param("codeList") List<String> codeList);
 }

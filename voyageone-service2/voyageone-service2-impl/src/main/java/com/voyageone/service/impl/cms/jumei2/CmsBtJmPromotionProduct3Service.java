@@ -387,30 +387,7 @@ public class CmsBtJmPromotionProduct3Service {
         return 1;
     }
 
-    //更新mongo  product  tag
-    private void updateCmsBtProductTags(CmsBtJmPromotionProductModel model, CmsBtJmPromotionModel modelPromotion, UpdatePromotionProductTagParameter parameter, String modifier) {
-        //更新商品Tags  sunpt
-        CmsBtProductModel productModel = productService.getProductByCode(model.getChannelId(), model.getProductCode());
-        if (productModel != null) {
-            List<String> tags = productModel.getTags();
-            int size = tags.size();
-            //1.移除该活动的所有tag
-            for (int i = size - 1; i >= 0; i--) {
-                String tag = String.format("-%s-", modelPromotion.getRefTagId().toString());
-                if (tags.get(i).indexOf(tag) == 0) {
-                    tags.remove(i);
-                }
-            }
-            //2.添加新的tag
-            for (ProductTagInfo tagInfo : parameter.getTagList()) {
-                tags.add(String.format("-%s-%s-", modelPromotion.getRefTagId(), tagInfo.getTagId()));
-            }
-            tags.add(String.format("-%s-", modelPromotion.getRefTagId()));
-            productModel.setTags(tags);
-            //3.更新
-            productService.updateTags(model.getChannelId(), productModel.getProdId(), tags, modifier);
-        }
-    }
+
 
     public int selectChangeCountByPromotionId(long JmPromotionId) {
         return daoExt.selectChangeCountByPromotionId(JmPromotionId);

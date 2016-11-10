@@ -347,15 +347,22 @@
         where `id` = #{id,jdbcType=INTEGER}
     </update>
    
-     <select id="selectAddPromotionList" resultType="com.voyageone.service.model.cms.CmsBtJmPromotionModel">
-          SELECT a.*  FROM cms_bt_jm_promotion a JOIN cms_bt_promotion b ON a.id = b.promotion_id
+     <select id="selectAddPromotionList" resultType="MapModel">
+
+      SELECT a.`id`,a.`name`,a.`ref_tag_id`,COUNT(*) AS productCount  FROM cms_bt_jm_promotion a JOIN cms_bt_promotion b ON a.id = b.promotion_id
+      JOIN  `cms_bt_jm_promotion_product` AS c ON  a.`id`=c.`cms_bt_jm_promotion_id`
         WHERE
-            a.channel_id =#{channelId}
-            AND b.activity_end >= NOW()
-            AND b.promotion_status = 1
-            AND b.active = 1
-            AND a.active = 1
-            AND b.cart_id =#{cartId}
-            ORDER BY id DESC
+        a.channel_id =#{channelId}
+        AND b.activity_end >= NOW()
+        AND b.promotion_status = 1
+        AND b.active = 1
+        AND a.active = 1
+        AND b.cart_id =#{cartId}
+        and AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator="," close=")">
+         #{item}
+     </foreach>
+        GROUP BY a.id
+        ORDER BY a.id DESC
+
      </select>
 </mapper>
