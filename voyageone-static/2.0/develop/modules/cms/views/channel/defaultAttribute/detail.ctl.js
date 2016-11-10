@@ -203,7 +203,7 @@ define([
             });
         };
 
-        AttributeDetailController.prototype.save = function () {
+        AttributeDetailController.prototype.save = function save() {
 
             var self = this,
                 fields = self.fields,

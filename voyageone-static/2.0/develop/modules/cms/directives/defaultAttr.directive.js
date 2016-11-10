@@ -1190,7 +1190,9 @@ define([
                         $element.append(button);
 
                         $scope.$refresh = function () {
-                            popups.confirmProductRefresh(field, $scope.ctrl.searchInfo);
+                            $scope.ctrl.save().then(function () {
+                                popups.confirmProductRefresh(field, $scope.ctrl.searchInfo);
+                            });
                         };
                     }
 
