@@ -47,9 +47,10 @@ define([
             $scope.searchInfo.selectedChanged = null;
         };
         $scope.search = function () {
-            var data = getSearchInfo();
-
-            goPage(1, 10)
+            var data = getSearchInfo(),
+                size = $scope.dataPageOption.size ? $scope.dataPageOption.size : 10;
+                console.log(size);
+            goPage(1, size);
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
             }, function (res) {
