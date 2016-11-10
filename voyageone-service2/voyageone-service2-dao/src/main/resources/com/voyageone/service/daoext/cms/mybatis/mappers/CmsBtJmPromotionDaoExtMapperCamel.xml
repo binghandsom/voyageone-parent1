@@ -169,7 +169,7 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <!-- 统计聚美专场个数的sql文 -->
+    <!-- 统计聚美专场个数的sql文 和上面一条同步-->
     <select id="getJmPromotionCount" resultType="long">
         select count(DISTINCT jmprom.id) from cms_bt_jm_promotion as jmprom INNER JOIN cms_bt_promotion as prom
         on prom.promotion_id = jmprom.id
@@ -192,7 +192,11 @@
                 and jmprom.name like concat('%', #{jmpromName},'%')
             </if>
             <if test="jmBrandName != null">
-                and jmprom.master_brand_name = #{jmBrandName}
+                and jmprom.master_brand_name IN (
+                <foreach collection="jmBrandName" item="brandName" separator=",">
+                    #{brandName}
+                </foreach>
+                )
             </if>
             <if test="compareType == 1 and prodSum != null">
                 and jmprom.prod_sum &lt;= #{prodSum}
@@ -224,8 +228,8 @@
             </if>
             <if test="codeList != null">
                 and ( jmpromsku.product_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
-                     or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
-                     or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
+                or jmpromsku.sku_code in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>)
+                or jmpromsku.product_model in (<foreach collection="codeList" item="item" separator=","> #{item} </foreach>) )
             </if>
         </where>
     </select>
