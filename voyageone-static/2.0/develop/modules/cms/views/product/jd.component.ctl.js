@@ -23,7 +23,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
+                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0, cart: 0, brand: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -79,6 +79,10 @@ define([
                         scope.vm.mastData = mastData = resp.data.mastData;
                         scope.vm.platform = platform = resp.data.platform;
                         scope.vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
+                        scope.vm.checkFlag.cart = (angular.isDefined(scope.vm.platform.pCatId) 
+                        		&& scope.vm.platform.pCatId != null && scope.vm.platform.pCatId != '') ? 1 : 0;
+                        scope.vm.checkFlag.brand = (angular.isDefined(scope.vm.platform.pBrandId) 
+                        		&& scope.vm.platform.pBrandId != null && scope.vm.platform.pBrandId != '') ? 1 : 0;
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
