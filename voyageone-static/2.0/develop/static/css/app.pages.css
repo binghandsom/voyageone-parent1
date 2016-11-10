@@ -433,6 +433,12 @@ s-field textarea.s-html {
     max-height: 100px;
 }
 
+.product-shema-detail .thumbInfo{
+    margin:0px auto;
+    max-width: 100px;
+    border-right: 1px solid #ddd
+}
+
 .panel-default .panel-detail-head {
     background: #e67e22;
     color: white;
