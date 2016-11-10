@@ -253,7 +253,9 @@ MongoSequenceService commSequenceMongoService;
     public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-
+        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
+            shopBean = Shops.getShop(channelId, 23);
+        }
         String shopCartId = shopBean.getCart_id();
 
         if (isJDPlatform(shopBean)) {
