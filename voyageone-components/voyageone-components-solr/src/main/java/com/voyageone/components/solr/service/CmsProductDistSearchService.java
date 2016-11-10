@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Cms Product Distribution Search Service
@@ -498,22 +499,22 @@ public class CmsProductDistSearchService extends BaseSearchService {
         Set<String> brandCatSet = new HashSet<>();
         List<String> brands = new ArrayList<>();
         if (model.getBrandEn() != null) {
-            brandCatSet.add(model.getBrandEn());
-            brands.add(model.getBrandEn());
+            brandCatSet.add(model.getBrandEn().toLowerCase());
+            brands.add(model.getBrandEn().toLowerCase());
         }
         if (model.getBrandCn() != null) {
-            brandCatSet.add(model.getBrandCn());
-            brands.add(model.getBrandCn());
+            brandCatSet.add(model.getBrandCn().toLowerCase());
+            brands.add(model.getBrandCn().toLowerCase());
         }
 
         List<String> cats = new ArrayList<>();
         if (model.getCatEns() != null && !model.getCatEns().isEmpty()) {
             brandCatSet.addAll(model.getCatEns());
-            cats.addAll(model.getCatEns());
+            cats.addAll(model.getCatEns().stream().filter(str -> str != null).map(String::toLowerCase).collect(Collectors.toList()));
         }
         if (model.getCatCns() != null && !model.getCatCns().isEmpty()) {
             brandCatSet.addAll(model.getCatCns());
-            cats.addAll(model.getCatCns());
+            cats.addAll(model.getCatCns().stream().filter(str -> str != null).map(String::toLowerCase).collect(Collectors.toList()));
         }
 
         for (String brand : brands) {
