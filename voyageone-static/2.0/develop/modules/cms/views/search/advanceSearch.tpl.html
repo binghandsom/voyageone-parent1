@@ -827,23 +827,23 @@
                                         <th class="text-center" style="width:165px;padding-left:8px">
                                             <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
                                                                                                  ng-if="vm.productList.length"
-                                                                                                 ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
+                                                                                                 ng-click="ctrlAdvance.columnOrder('skuCnt')"><i class="fa fa-{{ctrlAdvance.getArrowName('skuCnt')}}"></i></button>
                                         </th>
                                         <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width:120px;padding-left:8px">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
-                                                                            ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
+                                                                            ng-click="ctrlAdvance.columnOrder(prop1.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.value)}}"></i></button>
                                         </th>
                                         <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="width:120px;padding-left:8px">{{prop2.name}}</th>
                                         <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="width:100px;padding-left:8px">
                                             {{prop3.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
-                                                                        ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                                                        ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
                                         </th>
                                         <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="width:100px;padding-left:8px">
                                             {{prop4.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
-                                                                        ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                                                        ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
                                         </th>
                                     </tr>
                                 </thead>
@@ -988,7 +988,7 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center" style="width: 20%">
+                                    <th class="text-center" style="width: 15%">
                                         <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>&emsp;<button class="opacityBtn"
                                                                                                                    ng-if="vm.groupList.length"
                                                                                                                    ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
@@ -1006,18 +1006,18 @@
                                     <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width:120px;padding-left:8px">
                                         {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.groupList.length"
-                                                                        ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
+                                                                        ng-click="ctrlAdvance.columnOrder(prop1.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.value)}}"></i></button>
                                     </th>
                                     <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="width:120px;padding-left:8px">{{prop2.name}}</th>
                                     <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="width:100px;padding-left:8px">
                                         {{prop3.name}}&emsp;<button class="opacityBtn"
                                                                     ng-if="vm.groupList.length"
-                                                                    ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                                                    ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
                                     </th>
                                     <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="width:100px;padding-left:8px">
                                         {{prop4.name}}&emsp;<button class="opacityBtn"
                                                                     ng-if="vm.groupList.length"
-                                                                    ng-click="ctrlAdvance.columnOrder(prop3.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.propId)}}"></i></button>
+                                                                    ng-click="ctrlAdvance.columnOrder(prop4.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop4.value)}}"></i></button>
                                     </th>
                                 </tr>
                                 </thead>

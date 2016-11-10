@@ -59,10 +59,6 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     };
     
     private static final String[][] commonSortItems = {
-    	{ "sales.codeSum7.cartId%s", "7天销量" },
-    	{ "sales.codeSum30.cartId%s", "30天销量"},
-    	{ "sales.codeSumYear.cartId%s", "年销量" },
-    	{ "sales.codeSumAll.cartId%s", "总销量" },
     	{ "platforms.P%s.pPublishTime", "商品发布时间" },
     	{ "platforms.P%s.pPriceMsrpEd", "中国建议售价" },
     	{ "platforms.P%s.pPriceRetailSt", "中国指导售价" },
