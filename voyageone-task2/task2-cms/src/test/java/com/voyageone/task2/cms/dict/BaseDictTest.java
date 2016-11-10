@@ -52,8 +52,8 @@ public class BaseDictTest {
     }
 
     protected void do处理天猫同购无线端20张图片(int idx, RuleExpression ruleRoot, RuleWord ruleWord) {
-        String imageStr = ",{\"img\":\"";
-        if (idx == 0) imageStr = "{\"img\":\"";
+        String imageStr = ",{\"img\": \"";
+        if (idx == 0) imageStr = "{\"img\": \"";
         TextWord imageWord = new TextWord(imageStr);
         ruleRoot.addRuleWord(imageWord);
 

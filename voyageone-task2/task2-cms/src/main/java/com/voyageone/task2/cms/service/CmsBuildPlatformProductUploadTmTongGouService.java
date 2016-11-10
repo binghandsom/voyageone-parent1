@@ -715,8 +715,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         paramExtends.put("currency_type", getValueFromPageOrCondition("extends_currency_type", "", mainProductPlatformCart, sxData, shopProp));
         // 是否需要自动翻译(必填)  (如果有配置优先使用配置项目，没有配置的时候如果标题是中文，那么就是false，否则就是true)
         String extends_translate = "";
-        // 解析cms_mt_channel_condition_config表中的数据字典取得"项目名_XX"(XX为cartId)对应的值
-        extends_translate = getConditionPropValue(sxData, "extends_translate", shopProp);
+        // 优先使用画面选择的是否自动翻译，再解析cms_mt_channel_condition_config表中的数据字典取得"项目名_XX"(XX为cartId)对应的值
+        extends_translate = getValueFromPageOrCondition("extends_translate", "", mainProductPlatformCart, sxData, shopProp);
         if (!"true".equalsIgnoreCase(extends_translate) && !"false".equalsIgnoreCase(extends_translate)) {
             // cms_mt_channel_condition_config表中配置的"extends_translate"的值不是"true"或"false"时
             if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
