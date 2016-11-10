@@ -144,6 +144,16 @@ define([
                 "controller": 'BrandMappingConfirmController as ctrl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "newChannelConfig": {
+                "templateUrl": "views/pop/channel/channelConfigAdd.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/channelConfigAdd.ctl",
+                "controller": "channelConfigAddController as ctrl"
+            },
+            "editChannelConfig": {
+                "templateUrl": "views/pop/channel/channelConfigEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/channelConfigEdit.ctl",
+                "controller": "channelConfigEditController as ctrl"
             }
         },
         "custom": {
@@ -1329,6 +1339,14 @@ define([
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
+        };
+        /**新增店铺配置(channelconfig)*/
+        $scope.newChannelConfig = function newChannelConfig(context) {
+            return openModal(popActions.channel.newChannelConfig, context);
+        };
+        /**编辑店铺配置*/
+        $scope.editChannelConfig = function editChannelConfig(context) {
+            return openModal(popActions.channel.editChannelConfig, context);
         };
 
         /** 智能上新操作历史 */
