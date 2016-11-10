@@ -119,7 +119,7 @@
                       )
             </if>
             <if test="listBrandName!=null and listBrandName.size()!=0">
-                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                and  b.vo_brand_name in <foreach item="item" index="i" collection="listBrandName"
                                               open="(" separator="," close=")">
                 #{item}
             </foreach>
