@@ -794,6 +794,16 @@ public interface CmsUrlConstants {
 
             String UPDATE_BLACK_BRAND = "updateBlackBrand";
         }
+
+        interface CONFIG {
+            String ROOT = "/cms/channel/config";
+            String INIT = "init";
+            String LOAD_BY_CHANNEL = "loadByChannel";
+            String ADD_CHANNEL_CONFIG = "addChannelConfig";
+            String LOAD_CHANNEL_CONFIG_DETAIL = "loadChannelConfigDetail";
+            String EDIT_CHANNEL_CONFIG = "editChannelConfig";
+            String DEL_CHANNEL_CONFIG = "delChannelConfig";
+        }
     }
 
     interface ImageCreate {

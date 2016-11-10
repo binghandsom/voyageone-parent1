@@ -21,9 +21,18 @@ public class CacheHelper {
 
     private final static String RELAOD = "reload";
 
+//    @SuppressWarnings("unchecked")
+//    public static RedisTemplate getCacheTemplate() {
+//        return SpringContext.getBean(RedisTemplate.class);
+//    }
+
+    /**
+     * Author rex.wu 2016/11/9
+     * @return
+     */
     @SuppressWarnings("unchecked")
-    public static RedisTemplate getCacheTemplate() {
-        return SpringContext.getBean(RedisTemplate.class);
+    public static VoCacheTemplate getCacheTemplate() {
+        return SpringContext.getBean(VoCacheTemplate.class);
     }
 
     public static HashOperations getHashOperation() {

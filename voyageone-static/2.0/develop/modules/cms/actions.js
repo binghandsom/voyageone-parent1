@@ -591,6 +591,17 @@ define(function () {
                     }
                 }
             },
+            "channelConfig" : {
+                "channelConfigService" : {
+                    "root" : "/cms/channel/config",
+                    "init" : "init",
+                    "loadByChannel" : "loadByChannel",
+                    "addChannelConfig":"addChannelConfig",
+                    "loadChannelConfigDetail":"loadChannelConfigDetail",
+                    "editChannelConfig":"editChannelConfig",
+                    "delChannelConfig" : "delChannelConfig"
+                }
+            },
             "hsCodeInfo": {
                 "hsCodeInfoService": {
                     "root": "/cms/tools/product",
