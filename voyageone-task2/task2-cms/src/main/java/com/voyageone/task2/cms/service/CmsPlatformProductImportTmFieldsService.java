@@ -85,7 +85,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             return;
         }
         // modified by morse.lu 2016/11/08 end
-        Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
+//        Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 //        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
@@ -104,9 +104,10 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
             try {
-                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
+//                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
+                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
                 doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), finalSellerCat);
-
+                $info(String.format("numIId[%s]取得成功!", item.getNumIId()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -243,9 +244,11 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                 if ("0".equals(item_status)) {
                     // 出售中
                     updateMap.put("platforms.P" + cartId + ".pStatus", CmsConstants.PlatformStatus.OnSale.name());
+                    updateMap.put("platforms.P" + cartId + ".pReallyStatus", CmsConstants.PlatformStatus.OnSale.name());
                 } else {
                     // 仓库中
                     updateMap.put("platforms.P" + cartId + ".pStatus", CmsConstants.PlatformStatus.InStock.name());
+                    updateMap.put("platforms.P" + cartId + ".pReallyStatus", CmsConstants.PlatformStatus.InStock.name());
                 }
             }
             // added by morse.lu 2016/07/18 end

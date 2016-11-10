@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * 根据天猫/京东现在商品分组情况来进行cms的产品code拆分合并
+ * 根据天猫现在商品分组情况来进行cms的产品code拆分合并
  *
  * @author morse on 2016/11/08
  * @version 2.6.0
@@ -247,6 +247,8 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                     status.name(), cartId, EnumProductOperationType.MoveCode,
                     "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + newGroupModel.getGroupId(), getTaskName());
         }
+
+        $info(String.format("新group做成! numIId:%s, productCodes:%s", numIId, moveCods.keySet()));
     }
 
     /**
@@ -279,6 +281,12 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                     productModel.getPlatform(cartId).getStatus(), cartId, EnumProductOperationType.MoveCode,
                     "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + cmsBtProductGroup.getGroupId(), getTaskName());
         });
+
+        if (moveCods.size() > 0) {
+            $info(String.format("group追加了code! numIId:%s, 追加的productCodes:%s", cmsBtProductGroup.getNumIId(), moveCods.keySet()));
+        } else {
+            $info(String.format("group不需要追加code! numIId:%s", cmsBtProductGroup.getNumIId()));
+        }
 
     }
 

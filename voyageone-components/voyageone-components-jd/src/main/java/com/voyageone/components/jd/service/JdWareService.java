@@ -1,6 +1,7 @@
 package com.voyageone.components.jd.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.jd.open.api.sdk.domain.ware.Ware;
 import com.jd.open.api.sdk.request.ware.*;
 import com.jd.open.api.sdk.response.ware.*;
 import com.voyageone.base.exception.BusinessException;
@@ -966,6 +967,43 @@ public class JdWareService extends JdBase {
 
         logger.error("调用京东API设置商品打标失败! 商品编号:" + wareId + ",response=null");
         return false;
+    }
+
+    /**
+     * 获取商品详细信息
+     *
+     * @param shop 店铺信息
+     * @param wareId 京东商品编号
+     * @param fields 需返回的字段列表。可选值：ware结构体中的所有字段；字段之间用,分隔
+     * @return
+     */
+    public Ware getWareInfo(ShopBean shop, String wareId, String fields) {
+
+        WareGetRequest request = new WareGetRequest();
+        // 商品编号
+        request.setWareId(wareId);
+        // 需返回的字段列表
+        request.setFields(fields);
+
+        try {
+            // 调用"根据商品ID查询单个商品的详细信息"API(360buy.ware.get)
+            WareGetResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return response.getWare();
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                throw new BusinessException("获取商品详细信息失败(response = null)");
+            }
+        } catch (Exception ex) {
+            logger.error("调用京东API获取商品详细信息失败! 商品编号:" + wareId + ",errorMsg:" + ex.getMessage());
+            throw new BusinessException("获取商品详细信息失败! " + ex.getMessage());
+        }
     }
 
 }

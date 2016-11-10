@@ -45,6 +45,9 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_CMS_BATCH_TMFieldsImportCms2Job_queue";
     public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_CMS_BATCH_TMGroupImportCms2Job_queue";
 
+    public static final String CMS_BATCH_JDFieldsImportCms2Job = "voyageone_CMS_BATCH_JDFieldsImportCms2Job_queue";
+    public static final String CMS_BATCH_JDGroupImportCms2Job = "voyageone_CMS_BATCH_JDGroupImportCms2Job_queue";
+
     /**
      * tmall mq task
      */
