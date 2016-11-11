@@ -30,6 +30,7 @@ import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.util.MapModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -670,21 +671,26 @@ public class PromotionDetailService extends BaseService {
         int cartId = params.getCartId();
 
         List<TagTreeNode> listTagTreeNode = new ArrayList<>();
-        List<CmsBtPromotionModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId, params.getActivityStart(), params.getActivityEnd());
+        List<MapModel> list = cmsBtPromotionDaoExtCamel.selectAddPromotionList(channelId, cartId,codeList, params.getActivityStart(), params.getActivityEnd());
         list.forEach(m -> listTagTreeNode.add(getPromotionTagTreeNode(m, codeList)));
 
         data.put("listTreeNode", listTagTreeNode);
         return data;
     }
     //获取活动的节点数据
-    TagTreeNode getPromotionTagTreeNode(CmsBtPromotionModel model, List<String> codeList) {
-        TagTreeNode tagTreeNode = new TagTreeNode();
-        tagTreeNode.setId(model.getId());
-        tagTreeNode.setName(model.getPromotionName());
-        tagTreeNode.setChildren(new ArrayList<>());
-        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(model.getId(), model.getRefTagId(), codeList);
-        if(list.size()==0) return tagTreeNode;
+    TagTreeNode getPromotionTagTreeNode(MapModel model, List<String> codeList) {
         int codeCount = codeList.size();
+        int id = ConvertUtil.toInt(model.get("id"));
+        int productCount = ConvertUtil.toInt(model.get("productCount"));
+        TagTreeNode tagTreeNode = new TagTreeNode();
+        tagTreeNode.setId(id);
+        if (productCount > 0) {
+            tagTreeNode.setChecked(productCount == codeCount ? 2 : 1);
+        }
+        tagTreeNode.setName(ConvertUtil.toString(model.get("promotionName")));
+        tagTreeNode.setChildren(new ArrayList<>());
+        List<TagCodeCountInfo> list = tagService.getListTagCodeCount(id, ConvertUtil.toInt(model.get("refTagId")), codeList);
+        if (list.size() == 0) return tagTreeNode;
         list.forEach(f -> {
             TagTreeNode node = new TagTreeNode();
             node.setId(f.getId());
@@ -695,8 +701,6 @@ public class PromotionDetailService extends BaseService {
             node.setOldChecked(node.getChecked());
             tagTreeNode.getChildren().add(node);
         });
-        int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
-        tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
         tagTreeNode.setOldChecked(tagTreeNode.getChecked());
         return tagTreeNode;
     }

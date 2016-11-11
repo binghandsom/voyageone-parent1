@@ -208,8 +208,10 @@ public class CmsAddProductToPromotionService extends BaseViewService {
         }
         if(params.getCartId()==27)
         {
+            //聚美
             return jmPromotionDetailService.init(params,channelId,codeList);
         }
+            //聚美 京东
         return promotionDetailService.init(params, channelId, codeList);
     }
     //获取活动的节点数据
