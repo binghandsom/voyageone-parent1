@@ -10,9 +10,9 @@
         <result column="product_id" property="productId" jdbcType="INTEGER"/>
         <result column="product_code" property="productCode" jdbcType="VARCHAR"/>
         <result column="product_name" property="productName" jdbcType="VARCHAR"/>
-        <result column="tag_id" property="tagId" jdbcType="INTEGER"/>
-        <result column="tag_path" property="tagPath" jdbcType="VARCHAR"/>
-        <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR"/>
+        <!--<result column="tag_id" property="tagId" jdbcType="INTEGER"/>-->
+        <!--<result column="tag_path" property="tagPath" jdbcType="VARCHAR"/>-->
+        <!--<result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR"/>-->
         <result column="tag_name" property="tag" jdbcType="VARCHAR"/>
         <result column="property_1" property="property1" jdbcType="VARCHAR"/>
         <result column="property_2" property="property2" jdbcType="VARCHAR"/>

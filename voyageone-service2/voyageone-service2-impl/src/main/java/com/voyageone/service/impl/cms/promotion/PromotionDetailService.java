@@ -73,13 +73,28 @@ public class PromotionDetailService extends BaseService {
     PromotionCodesTagService promotionCodesTagService;
 
     @Autowired
+    PromotionService  promotionService;//promotionService promotionCodesTagService
+
+    @Autowired
     CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
     private CmsBtBrandBlockService brandBlockService;
     @Autowired
+    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
+    @Autowired
+    CmsBtTagDao daoTag;
+
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
+    @Autowired
+    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
+    @Autowired
+    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
+    @Autowired
     TagService tagService;
+
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean) {
         if (!check_addPromotionDetail(bean))//验证不通过 不能添加活动
@@ -306,7 +321,7 @@ public class PromotionDetailService extends BaseService {
         return null;
     }
     @VOTransactional
-    public void insertPromotionGroup(CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean) {
+    public void insertPromotionGroup(CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean,List<CmsBtTagModel> tags) {
 
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
@@ -316,9 +331,26 @@ public class PromotionDetailService extends BaseService {
             code.setModifier(cmsBtPromotionGroupsBean.getModifier());
             code.setModified(cmsBtPromotionGroupsBean.getModified());
             code.setModelId(cmsBtPromotionGroupsBean.getModelId());
-            if (cmsPromotionCodeDao.updatePromotionCode(code) == 0) {
+
+            int codesId=0;
+            CmsBtPromotionCodesModel codesModel = get(cmsBtPromotionGroupsBean.getPromotionId(),code.getProductCode());
+            if(codesModel==null)
+            {
                 cmsPromotionCodeDao.insertPromotionCode(code);
+                codesId=code.getId();
             }
+            else {
+                codesId = codesModel.getId();
+                cmsPromotionCodeDao.updatePromotionCode(code);
+            }
+
+            CmsBtTagModel tag = searchTag(tags, code.getTag());
+            if (tag != null) {
+                //cmsBtPromotionCodeModel1.setTagId(tag.getId());
+                //// votodo: 2016/11/10  待实现
+                promotionCodesTagService.addTag(code.getChannelId(), codesId, tag, code.getModifier());
+            }
+
             cmsPromotionSkuDao.deletePromotionSkuByProductCode(cmsBtPromotionGroupsBean.getPromotionId(), code.getProductCode());
             code.getSkus().forEach(cmsBtPromotionSkuModel -> {
                 cmsBtPromotionSkuModel.setNumIid(cmsBtPromotionGroupsBean.getNumIid());
@@ -332,18 +364,16 @@ public class PromotionDetailService extends BaseService {
             });
         }
     }
+    private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, String tagName) {
 
-    @Autowired
-    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
-    @Autowired
-    CmsBtTagDao daoTag;
+        for (CmsBtTagModel tag : tags) {
+            if (tag.getTagName().equalsIgnoreCase(tagName)) {
+                return tag;
+            }
+        }
+        return null;
+    }
 
-    @Autowired
-    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
-    @Autowired
-    private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
-    @Autowired
-    private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
     /**
      * 修改
      */
@@ -365,50 +395,53 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setModifier(modifier);
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
 
+            // votodo: 2016/11/10   删除tag处理    新增tag表 cms_bt_promotion_codes_tag
             // 删除旧的的TAG 插入新的TAG
-            CmsBtTagModel modelTag = daoTag.select(oldPromotionCodesModel.getTagId());//获取修改前的tag
-            if(modelTag == null){
-                updateCmsBtProductTags(promotionCodeModel, null,modifier);//更新商品Tags
-            }else{
-                updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
-            }
+//            CmsBtTagModel modelTag = daoTag.select(oldPromotionCodesModel.getTagId());//获取修改前的tag
+//            if(modelTag == null){
+//                updateCmsBtProductTags(promotionCodeModel, null,modifier);//更新商品Tags
+//            }else{
+//                updateCmsBtProductTags(promotionCodeModel, modelTag.getTagPath(),modifier);//更新商品Tags
+//            }
         }
     }
     /**
      * 更新商品Tags
      */
-    private void updateCmsBtProductTags(CmsBtPromotionCodesBean promotionCodeModel,String oldTagPath,String modifier) {
-        //更新商品Tags  sunpt
-        CmsBtProductModel productModel = productService.getProductByCode(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductCode());
-        if(productModel != null) {
-            List<String> tags = productModel.getTags();
-            int size = tags.size();
-            boolean isUpdate = false;
-            if(!StringUtil.isEmpty(oldTagPath)) {
-                for (int i = 0; i < size; i++) {
-                    if (oldTagPath.equals(tags.get(i))) {
-                        //存在替换
-                        tags.set(i, promotionCodeModel.getTagPath());
-                        isUpdate = true;
-                        break;
-                    }
-                }
-            }
-            if (!isUpdate)//没有更新 就添加
-            {
-                tags.add(promotionCodeModel.getTagPath());
-            }
-            productModel.setTags(tags);
-            productService.updateTags(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId(), tags, modifier);
-        }
-       //productService.update(productModel);
-    }
+//    private void updateCmsBtProductTags(CmsBtPromotionCodesBean promotionCodeModel,String oldTagPath,String modifier) {
+//        //更新商品Tags  sunpt
+//        CmsBtProductModel productModel = productService.getProductByCode(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductCode());
+//        if(productModel != null) {
+//            List<String> tags = productModel.getTags();
+//            int size = tags.size();
+//            boolean isUpdate = false;
+//            if(!StringUtil.isEmpty(oldTagPath)) {
+//                for (int i = 0; i < size; i++) {
+//                    if (oldTagPath.equals(tags.get(i))) {
+//                        //存在替换
+//                        tags.set(i, promotionCodeModel.getTagPath());
+//                        isUpdate = true;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (!isUpdate)//没有更新 就添加
+//            {
+//                tags.add(promotionCodeModel.getTagPath());
+//            }
+//            productModel.setTags(tags);
+//            productService.updateTags(promotionCodeModel.getOrgChannelId(), promotionCodeModel.getProductId(), tags, modifier);
+//        }
+//       //productService.update(productModel);
+//    }
 
     /**
      * 删除
      */
     @VOTransactional
     public void remove(String channelId, List<CmsBtPromotionGroupsBean> promotionModes, String modifier) {
+        if (promotionModes.size() == 0) return;
+        List<String> codeList = new ArrayList<>();
         for (CmsBtPromotionGroupsBean item : promotionModes) {
             cmsPromotionModelDao.deleteCmsPromotionModel(item);
             HashMap<String, Object> param = new HashMap<>();
@@ -417,9 +450,10 @@ public class PromotionDetailService extends BaseService {
 
             List<CmsBtPromotionCodesBean> codes = cmsPromotionCodeDao.selectPromotionCodeList(param);
             codes.forEach(code -> {
-                List<Long> prodIdList = new ArrayList<>();
-                prodIdList.add(code.getProductId());
-                productTagService.delete(channelId, code.getTagPath(), prodIdList, "tags", modifier);
+                codeList.add(code.getProductCode());
+//                List<Long> prodIdList = new ArrayList<>();
+//                prodIdList.add(code.getProductId());
+//                productTagService.delete(channelId, code.getTagPath(), prodIdList, "tags", modifier);
 
                 CmsBtTaskTejiabaoModel promotionTask = new CmsBtTaskTejiabaoModel();
                 promotionTask.setPromotionId(item.getPromotionId());
@@ -432,6 +466,9 @@ public class PromotionDetailService extends BaseService {
             cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getProductModel());
             cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
         }
+        //批量删除tag
+        CmsBtPromotionModel promotionModel = promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
+        promotionCodesTagService.deleteListByPromotionId_Codes(channelId, promotionModel.getPromotionId(), codeList, promotionModel.getRefTagId());
     }
 
     /**
@@ -499,8 +536,9 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionCodesBean.getSkus().forEach(cmsBtPromotionSkuBean -> promostionPrice.put(cmsBtPromotionSkuBean.getProductSku(),cmsBtPromotionSkuBean.getPromotionPrice().doubleValue()));
         }
         request.setPromotionPrice(promostionPrice);
-        request.setTagId(cmsBtPromotionCodesBean.getTagId());
-        request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
+        // votodo tag改造 增加表  cms_bt_promotion_codes_tag
+        //request.setTagId(cmsBtPromotionCodesBean.getTagId());
+        //request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
 
         addPromotionDetail(request);
     }
@@ -542,8 +580,11 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionCodesBean.getSkus().forEach(cmsBtPromotionSkuBean -> promostionPrice.put(cmsBtPromotionSkuBean.getProductSku(),cmsBtPromotionSkuBean.getPromotionPrice().doubleValue()));
             }
             request.setPromotionPrice(promostionPrice);
-            request.setTagId(cmsBtPromotionCodesBean.getTagId());
-            request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
+            
+            // votodo: 2016/11/10     tag 改造   增加表 cms_bt_promotion_codes_tag
+
+           // request.setTagId(cmsBtPromotionCodesBean.getTagId());
+            //request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
 
             addPromotionDetail(request);
 
@@ -560,7 +601,13 @@ public class PromotionDetailService extends BaseService {
 
     @VOTransactional
     public void delPromotionCode(List<CmsBtPromotionCodesBean> promotionModes, String channelId, String operator) {
+        if(promotionModes.size()==0) return;
+        List<String> codeList=new ArrayList<>();
+
         for (CmsBtPromotionCodesBean item : promotionModes) {
+
+            codeList.add(item.getProductCode());
+
             cmsPromotionCodeDao.deletePromotionCode(item);
 
             CmsBtTaskTejiabaoModel promotionTask = new CmsBtTaskTejiabaoModel();
@@ -584,12 +631,16 @@ public class PromotionDetailService extends BaseService {
 
             cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());
 
-            List<Long> poIds = new ArrayList<>();
-            poIds.add(item.getProductId());
-            if (!StringUtil.isEmpty(item.getTagPath())) {
-                productTagService.delete(channelId, item.getTagPath(), poIds, "tags", operator);
-            }
+//            List<Long> poIds = new ArrayList<>();
+//            poIds.add(item.getProductId());
+//            if (!StringUtil.isEmpty(item.getTagPath())) {
+//                productTagService.delete(channelId, item.getTagPath(), poIds, "tags", operator);
+//            }
         }
+
+        //批量删除tag
+        CmsBtPromotionModel   promotionModel= promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
+        promotionCodesTagService.deleteListByPromotionId_Codes(channelId,promotionModel.getPromotionId(),codeList,promotionModel.getRefTagId());
     }
 
     @VOTransactional

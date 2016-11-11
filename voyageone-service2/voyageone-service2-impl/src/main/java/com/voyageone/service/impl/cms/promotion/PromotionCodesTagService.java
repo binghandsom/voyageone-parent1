@@ -12,6 +12,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesTagModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +45,8 @@ public class PromotionCodesTagService extends BaseService {
     ProductService productService;
 
     @VOTransactional
-    public void updatePromotionCodesTag(List<TagTreeNode> tagList, String channelId, int promotionCodesId,String userName) {
-        if(tagList==null) return;
+    public void updatePromotionCodesTag(List<TagTreeNode> tagList, String channelId, int promotionCodesId, String userName) {
+        if (tagList == null) return;
         tagList.forEach(f -> {
             if (f.getChecked() == 0) {
                 //删除
@@ -53,7 +54,7 @@ public class PromotionCodesTagService extends BaseService {
             } else if (f.getChecked() == 2) {
                 if (get(promotionCodesId, f.getId()) == null) {
                     //不存在 新增
-                    CmsBtPromotionCodesTagModel promotionCodesTagModel=new CmsBtPromotionCodesTagModel();
+                    CmsBtPromotionCodesTagModel promotionCodesTagModel = new CmsBtPromotionCodesTagModel();
                     promotionCodesTagModel.setTagName(f.getName());
                     promotionCodesTagModel.setCmsBtTagId(f.getId());
                     promotionCodesTagModel.setChannelId(channelId);
@@ -67,8 +68,9 @@ public class PromotionCodesTagService extends BaseService {
             }
         });
     }
+
     @VOTransactional
-    public  void  updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String channelId,String userName) {
+    public void updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
         List<TagTreeNode> tagList = parameter.getTagList().stream().map(m -> {
             TagTreeNode tagTreeNode = new TagTreeNode();
             tagTreeNode.setId(m.getTagId());
@@ -85,14 +87,42 @@ public class PromotionCodesTagService extends BaseService {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
         productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
     }
+
     public CmsBtPromotionCodesTagModel get(int promotionCodesId, int tagId) {
         Map<String, Object> map = new HashedMap();
         map.put("cmsBtTagId", tagId);
         map.put("cmsBtPromotionCodesId", promotionCodesId);
         return cmsBtPromotionCodesTagDao.selectOne(map);
     }
-    public  int batchDeleteByCodes(List<String> codeList,int promotionId)
-    {
-      return   cmsBtPromotionCodesTagDaoExt.batchDeleteByCodes(codeList, promotionId);
+
+    public int batchDeleteByCodes(List<String> codeList, int promotionId) {
+        return cmsBtPromotionCodesTagDaoExt.batchDeleteByCodes(codeList, promotionId);
     }
+
+    //批量删除活动商品的tag
+    @VOTransactional
+    public int deleteListByPromotionId_Codes(String channelId, int promotionId, List<String> codes, int refTagId) {
+        int result = cmsBtPromotionCodesTagDaoExt.batchDeleteByCodes(codes, promotionId);
+        productService.removeTagByCodes(channelId, codes, refTagId);
+        return result;
+    }
+
+    @VOTransactional
+    public  void   addTag(String channelId,int promotionCodesId, CmsBtTagModel tag,String userName)
+    {
+        if (get(promotionCodesId,tag.getId()) == null) {
+            //不存在 新增
+            CmsBtPromotionCodesTagModel promotionCodesTagModel = new CmsBtPromotionCodesTagModel();
+            promotionCodesTagModel.setTagName(tag.getTagName());
+            promotionCodesTagModel.setCmsBtTagId(tag.getId());
+            promotionCodesTagModel.setChannelId(channelId);
+            promotionCodesTagModel.setCmsBtPromotionCodesId(promotionCodesId);
+            promotionCodesTagModel.setCreater(userName);
+            promotionCodesTagModel.setModifier(userName);
+            promotionCodesTagModel.setCreated(new Date());
+            promotionCodesTagModel.setModified(new Date());
+            cmsBtPromotionCodesTagDao.insert(promotionCodesTagModel);
+        }
+    }
+
 }

@@ -155,18 +155,19 @@ public class CmsPromotionDetailService extends BaseViewService {
         List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
 
         for (CmsBtPromotionGroupsBean productModel : productModels) {
-            productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
-                CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
-                if (tag != null) {
-                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
-                }
-            });
+            // votodo: 2016/11/10  tag
+//            productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
+//                CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
+//                if (tag != null) {
+//                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
+//                }
+//            });
 
             boolean errflg = false;
             try {
                 productModel.setPromotionId(promotionId);
                 productModel.setModifier(operator);
-                promotionDetailService.insertPromotionGroup(productModel);
+                promotionDetailService.insertPromotionGroup(productModel,tags);
             } catch (Exception e) {
                 $error(e);
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("fail").add(cmsBtPromotionCodeModel.getProductCode()));
