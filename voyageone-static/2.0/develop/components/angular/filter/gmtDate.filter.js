@@ -20,5 +20,4 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
 
     };
 
-
 });
