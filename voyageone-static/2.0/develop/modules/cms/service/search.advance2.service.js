@@ -356,6 +356,7 @@ define([
                     cartItem.platformStatus = data.pStatus;
                     cartItem.publishTime = data.pPublishTime;
                     cartItem.numiid = data.pNumIId;
+                    cartItem.mallId = data.pPlatformMallId;
                     // 设置产品状态显示区域的css(背景色)
                     var cssVal = '';
                     var statusTxt = '';
@@ -405,7 +406,7 @@ define([
                             cartItem._purl = '';
                         } else {
                             if (cartItem.cartId == 27) {
-                                cartItem._purl = cartInfo.pUrl + cartItem.numiid + '.html';
+                                cartItem._purl = cartInfo.pUrl + cartItem.mallId + '.html';
                             } else {
                                 cartItem._purl = cartInfo.pUrl + cartItem.numiid;
                             }
