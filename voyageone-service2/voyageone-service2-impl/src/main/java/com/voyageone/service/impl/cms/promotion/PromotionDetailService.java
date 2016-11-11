@@ -16,6 +16,8 @@ import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.Add
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ProductTagInfo;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.*;
@@ -322,7 +324,7 @@ public class PromotionDetailService extends BaseService {
         return null;
     }
     @VOTransactional
-    public void insertPromotionGroup(CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean,List<CmsBtTagModel> tags) {
+    public void insertPromotionGroup(CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean,List<CmsBtTagModel> tagModelList) {
 
         cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
@@ -332,7 +334,7 @@ public class PromotionDetailService extends BaseService {
             code.setModifier(cmsBtPromotionGroupsBean.getModifier());
             code.setModified(cmsBtPromotionGroupsBean.getModified());
             code.setModelId(cmsBtPromotionGroupsBean.getModelId());
-
+            code.setChannelId(cmsBtPromotionGroupsBean.getOrgChannelId());
             int codesId=0;
             CmsBtPromotionCodesModel codesModel = get(cmsBtPromotionGroupsBean.getPromotionId(),code.getProductCode());
             if(codesModel==null)
@@ -342,16 +344,15 @@ public class PromotionDetailService extends BaseService {
             }
             else {
                 codesId = codesModel.getId();
+                code.setId(codesId);
                 cmsPromotionCodeDao.updatePromotionCode(code);
             }
 
-            CmsBtTagModel tag = searchTag(tags, code.getTag());
-            if (tag != null) {
-                //cmsBtPromotionCodeModel1.setTagId(tag.getId());
-                //// votodo: 2016/11/10  待实现
-                promotionCodesTagService.addTag(code.getChannelId(), codesId, tag, code.getModifier());
+            //CmsBtTagModel tag = searchTag(tags, code.getTag());
+            UpdatePromotionProductTagParameter tagParameter = getUpdatePromotionProductTagParameter(tagModelList, code);
+            if (tagParameter.getTagList().size()>0) {
+                promotionCodesTagService.updatePromotionProductTag(tagParameter, code.getChannelId(), code.getModifier());
             }
-
             cmsPromotionSkuDao.deletePromotionSkuByProductCode(cmsBtPromotionGroupsBean.getPromotionId(), code.getProductCode());
             code.getSkus().forEach(cmsBtPromotionSkuModel -> {
                 cmsBtPromotionSkuModel.setNumIid(cmsBtPromotionGroupsBean.getNumIid());
@@ -364,6 +365,34 @@ public class PromotionDetailService extends BaseService {
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             });
         }
+    }
+    public UpdatePromotionProductTagParameter  getUpdatePromotionProductTagParameter(List<CmsBtTagModel> tagModelList,CmsBtPromotionCodesBean code) {
+
+        UpdatePromotionProductTagParameter parameter = new UpdatePromotionProductTagParameter();
+
+        parameter.setId(code.getId());
+
+        parameter.setTagList(new ArrayList<>());
+
+        if(org.springframework.util.StringUtils.isEmpty(code.getTag()))
+        {
+            return parameter;
+        }
+        String[] tagList = code.getTag().split("\\|");
+
+        for (String s : tagList) {
+            CmsBtTagModel tag = searchTag(tagModelList, s);
+            if (tag != null) {
+                ProductTagInfo tagInfo = new ProductTagInfo();
+                tagInfo.setTagId(tag.getId());
+                tagInfo.setTagName(tag.getTagName());
+                tagInfo.setChecked(2);//增加
+                parameter.getTagList().add(tagInfo);
+            }
+        }
+
+        return parameter;
+
     }
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, String tagName) {
 

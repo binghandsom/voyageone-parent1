@@ -110,19 +110,25 @@ public class PromotionCodesTagService extends BaseService {
     @VOTransactional
     public  void   addTag(String channelId,int promotionCodesId, CmsBtTagModel tag,String userName)
     {
-        if (get(promotionCodesId,tag.getId()) == null) {
-            //不存在 新增
-            CmsBtPromotionCodesTagModel promotionCodesTagModel = new CmsBtPromotionCodesTagModel();
-            promotionCodesTagModel.setTagName(tag.getTagName());
-            promotionCodesTagModel.setCmsBtTagId(tag.getId());
-            promotionCodesTagModel.setChannelId(channelId);
-            promotionCodesTagModel.setCmsBtPromotionCodesId(promotionCodesId);
-            promotionCodesTagModel.setCreater(userName);
-            promotionCodesTagModel.setModifier(userName);
-            promotionCodesTagModel.setCreated(new Date());
-            promotionCodesTagModel.setModified(new Date());
-            cmsBtPromotionCodesTagDao.insert(promotionCodesTagModel);
-        }
+//        if (get(promotionCodesId,tag.getId()) == null) {
+//            //不存在 新增
+//            CmsBtPromotionCodesTagModel promotionCodesTagModel = new CmsBtPromotionCodesTagModel();
+//            promotionCodesTagModel.setTagName(tag.getTagName());
+//            promotionCodesTagModel.setCmsBtTagId(tag.getId());
+//            promotionCodesTagModel.setChannelId(channelId);
+//            promotionCodesTagModel.setCmsBtPromotionCodesId(promotionCodesId);
+//            promotionCodesTagModel.setCreater(userName);
+//            promotionCodesTagModel.setModifier(userName);
+//            promotionCodesTagModel.setCreated(new Date());
+//            promotionCodesTagModel.setModified(new Date());
+//            cmsBtPromotionCodesTagDao.insert(promotionCodesTagModel);
+//        }
+//        CmsBtTagModel tag = searchTag(tags, code.getTag());
+//        if (tag != null) {
+//            //cmsBtPromotionCodeModel1.setTagId(tag.getId());
+//            // //// votodo: 2016/11/10  待实现
+//            promotionCodesTagService.addTag(code.getChannelId(), codesId, tag, code.getModifier());
+//        }
     }
 
 }
