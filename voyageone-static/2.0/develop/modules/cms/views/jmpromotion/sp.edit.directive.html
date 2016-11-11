@@ -264,7 +264,6 @@
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.onMainChannelChange()"
                                 ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.mainChannelList" ng-disabled="ctrlEdit.editModel.model.isFstSave==1">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
@@ -525,7 +524,7 @@
                 <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-gift,,-60">活动促销信息</button>
             </li>
             <hr>
-            <li>
+            <li ng-if="ctrlEdit.spDataService.jmPromotionObj.detailStatus != 1">
                 <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
             </li>
             <li>

@@ -62,6 +62,9 @@ define([
             if (editModel.extModel.directmailType == undefined || editModel.extModel.directmailType == null || editModel.extModel.directmailType == '') {
                 editModel.extModel.directmailType = '1';
             }
+            if (editModel.extModel.mainChannel == undefined || editModel.extModel.mainChannel == null || editModel.extModel.mainChannel == '') {
+                editModel.extModel.mainChannel = 'luxuryglobal';
+            }
 
             // 转换并设置checkbox
             editModel.extModel.syncMobile = editModel.extModel.syncMobile == '1';
@@ -212,29 +215,31 @@ define([
         }
 
         var tempPromotionProductType = '';
-        if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
+        if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined || self.editModel.extModel.promotionProductType == '') {
             self.editModel.extModel.promotionProductType = '';
             tempPromotionProductType = '';
         } else {
             tempPromotionProductType = "_" + self.editModel.extModel.promotionProductType
         }
 
-        if (self.editModel.model.promotionType == '3') {
-            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-            idTime = parseInt(idTime).toString(36);
-            var pageId = idDate + mainChannel + tempPromotionProductType + '_' + jmBrandId + '_' + idTime;
-            self.editModel.extModel.pcPageId = pageId + '_pc';
-            self.editModel.extModel.appPageId = pageId + '_app';
-        } else {
-            //if (fieldName == 'promotionProductType') {
-            //    // 其他专场时，活动主要商品品类的输入无效
-            //    return;
-            //}
-            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-            idTime = parseInt(idTime).toString(36);
-            var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + tempPromotionProductType + '_' + idDate + '_' + idTime;
-            self.editModel.extModel.pcPageId = pageId + '_pc';
-            self.editModel.extModel.appPageId = pageId + '_app';
+        if (self.spDataService.jmPromotionObj.detailStatus != 1) {
+            if (self.editModel.model.promotionType == '3') {
+                var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+                idTime = parseInt(idTime).toString(36);
+                var pageId = idDate + mainChannel + tempPromotionProductType + '_' + jmBrandId + '_' + idTime;
+                self.editModel.extModel.pcPageId = pageId + '_pc';
+                self.editModel.extModel.appPageId = pageId + '_app';
+            } else {
+                //if (fieldName == 'promotionProductType') {
+                //    // 其他专场时，活动主要商品品类的输入无效
+                //    return;
+                //}
+                var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+                idTime = parseInt(idTime).toString(36);
+                var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + tempPromotionProductType + '_' + idDate + '_' + idTime;
+                self.editModel.extModel.pcPageId = pageId + '_pc';
+                self.editModel.extModel.appPageId = pageId + '_app';
+            }
         }
     };
 
