@@ -334,7 +334,7 @@ public class PromotionDetailService extends BaseService {
             code.setModifier(cmsBtPromotionGroupsBean.getModifier());
             code.setModified(cmsBtPromotionGroupsBean.getModified());
             code.setModelId(cmsBtPromotionGroupsBean.getModelId());
-            code.setChannelId(cmsBtPromotionGroupsBean.getOrgChannelId());
+            code.setChannelId(cmsBtPromotionGroupsBean.getChannelId());
             int codesId=0;
             CmsBtPromotionCodesModel codesModel = get(cmsBtPromotionGroupsBean.getPromotionId(),code.getProductCode());
             if(codesModel==null)

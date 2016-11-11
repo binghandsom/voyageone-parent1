@@ -167,6 +167,7 @@ public class CmsPromotionDetailService extends BaseViewService {
             try {
                 productModel.setPromotionId(promotionId);
                 productModel.setModifier(operator);
+                productModel.setChannelId(promotion.getChannelId());
                 promotionDetailService.insertPromotionGroup(productModel,tags);
             } catch (Exception e) {
                 $error(e);
