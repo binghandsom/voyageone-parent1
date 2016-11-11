@@ -44,7 +44,8 @@ public class CmsBrandCatsDistSearchService extends BaseSearchService {
         for (Map.Entry<String, Integer> entry : brandCatsCntMap.entrySet()) {
             SolrUpdateBean update = new SolrUpdateBean("id", String.valueOf(i));
             update.add("channelId", channelId);
-            update.add("keyword", entry.getKey());
+            update.add("title", entry.getKey());
+            update.add("keyword", entry.getKey().toLowerCase());
             update.add("productCnt", entry.getValue());
             if (lastVer != null) {
                 update.add("lastVer", lastVer);
