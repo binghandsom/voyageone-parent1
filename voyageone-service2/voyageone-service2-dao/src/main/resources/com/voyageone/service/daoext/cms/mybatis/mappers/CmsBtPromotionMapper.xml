@@ -366,6 +366,7 @@
         <if test="cartId !=null and cartId != ''">
             and b.cart_id = #{cartId}
         </if>
+        order by  b.activity_start desc
         LIMIT #{offset}, #{rows}
     </select>
 
