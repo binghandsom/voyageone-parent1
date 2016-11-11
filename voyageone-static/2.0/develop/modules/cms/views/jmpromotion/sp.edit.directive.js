@@ -3,12 +3,13 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpEditDirectiveController($routeParams, jmPromotionService, spDataService, alert, confirm, $translate, $filter, $scope) {
+    function SpEditDirectiveController($routeParams, jmPromotionService, spDataService, alert, confirm, $translate, $filter, $scope, notify) {
         this.$routeParams = $routeParams;
         this.jmPromotionService = jmPromotionService;
         this.spDataService = spDataService;
         this.alert = alert;
         this.confirm = confirm;
+        this.notify = notify;
         this.$translate = $translate;
         this.$filter = $filter;
         this.vm = {"brandEnName": '', "mainChannelAb": '', "isFromBox": false};
@@ -248,6 +249,7 @@ define([
     SpEditDirectiveController.prototype.save = function (saveType) {
         var self = this,
             alert = self.alert,
+            notify = self.notify,
             jmPromotionService = self.jmPromotionService,
             spDataService = self.spDataService,
             editModel = self.editModel;
@@ -375,12 +377,14 @@ define([
         param.saveType = saveType;
         param.extModel.promotionId = self.$routeParams.promId;
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
-        spDataService.jmPromotionObj.detailStatus = 2;
 
         jmPromotionService.saveModel(param).then(function () {
+            notify.success('TXT_SAVE_SUCCESS');
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
                 model.isFstSave = 1;
+            } else {
+                spDataService.jmPromotionObj.detailStatus = 2;
             }
             // 保存之后如果标签被修改过就需要重新刷新标签缓存
             spDataService.getPromotionModules(true).then(function (tagModels) {
@@ -469,7 +473,7 @@ define([
         return {
             restrict: 'E',
             scope: {},
-            controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
+            controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', 'notify', SpEditDirectiveController],
             controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }

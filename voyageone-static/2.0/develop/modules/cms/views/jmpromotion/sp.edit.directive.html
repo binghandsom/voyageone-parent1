@@ -342,11 +342,16 @@
                         启用品牌Logo
                     </label>
                     <div class="col-sm-2">
-                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.brandLogo" name="brandLogo"
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.brandLogo" name="brandLogo" ng-required="ctrlEdit.editModel.extModel.isCheckedBrandLogo"
                                 ng-options="value.brandParameter as value.brandLogo for value in ctrlEdit.vm.metaData.preDisplayBrandLogoList"
                                 ng-disabled="!ctrlEdit.editModel.extModel.isCheckedBrandLogo">
                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.brandLogo"></vo-message>
                     </div>
                 </div>
 
