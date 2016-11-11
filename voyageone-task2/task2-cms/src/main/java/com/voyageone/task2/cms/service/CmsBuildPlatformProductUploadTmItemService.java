@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemSchemaAddResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
-import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -109,32 +108,66 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
             throw new BusinessException(e.getMessage());
         }
 
-        if (StringUtils.isEmpty(numIId)) {
-            // add
-            try {
-                $debug("addTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + "]");
-                numIId = addTmallItem(categoryCode, platformProductId, fields, shopBean);
-            } catch (ApiException e) {
+        // 如果添加或更新天猫商品时，报商品是否为新品打标错误的时候，不要报出错误，把新品->非新品再试一次
+        for (int retry = 0; retry < 2; retry++) {
+            if (StringUtils.isEmpty(numIId)) {
+                // add
+                try {
+                    $debug("addTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + "]");
+                    numIId = addTmallItem(categoryCode, platformProductId, fields, shopBean);
+                } catch (ApiException e) {
 //                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-                sxData.setErrorMessage(e.getMessage());
-                throw new BusinessException(e.getMessage());
-            } catch (BusinessException e) {
-                sxData.setErrorMessage(e.getMessage());
-                throw new BusinessException(e.getMessage());
-            }
-        } else {
-            // update
-            try {
-                $debug("updateTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + ", numIId:" + numIId + "]");
-                numIId = updateTmallItem(platformProductId, numIId, categoryCode, fields, shopBean);
-            } catch (ApiException e) {
+                    // 当前用户拥有该类目下没有发布新品权限时,返回错误码:isv.invalid-permission:xinpin (参考：taobao.item.update (更新商品信息))
+                    // 如果不是一口价全新的宝贝被设置为新品,返回错误码：isv.invalid-parameter:xinpin   (参考：taobao.item.update (更新商品信息))
+                    // 如果没有上传上传一张吊牌图片，会返回错误码：isv.invalid-parameter:isXinpin 发布新品，必须上传一张吊牌图片,但正常情况下天猫上新
+                    // 都会上传吊牌图的(如果没有吊牌图会上传一张白色背景图)，所以如果出现必须上传吊牌图的错误，就抛出错误
+                    if (retry == 0
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
+                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                        continue;
+                    }
+                    sxData.setErrorMessage(e.getMessage());
+                    throw new BusinessException(e.getMessage());
+                } catch (BusinessException e) {
+                    if (retry == 0
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
+                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                        continue;
+                    }
+                    sxData.setErrorMessage(e.getMessage());
+                    throw new BusinessException(e.getMessage());
+                }
+            } else {
+                // update
+                try {
+                    $debug("updateTmallItem: [productCode:" + platformProductId + ", categoryCode:" + categoryCode + ", numIId:" + numIId + "]");
+                    numIId = updateTmallItem(platformProductId, numIId, categoryCode, fields, shopBean);
+                } catch (ApiException e) {
 //                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-                sxData.setErrorMessage(e.getMessage());
-                throw new BusinessException(e.getMessage());
-            } catch (BusinessException e) {
-                sxData.setErrorMessage(e.getMessage());
-                throw new BusinessException(e.getMessage());
+                    if (retry == 0
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
+                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                        continue;
+                    }
+                    sxData.setErrorMessage(e.getMessage());
+                    throw new BusinessException(e.getMessage());
+                } catch (BusinessException e) {
+                    if (retry == 0
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                        // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
+                        sxProductService.setFieldValue(fields, "is_xinpin", "false");
+                        continue;
+                    }
+                    sxData.setErrorMessage(e.getMessage());
+                    throw new BusinessException(e.getMessage());
+                }
             }
+
+            // 如果没有商品是否为新品打标错误时，只需要做一次就跳过循环
+            break;
         }
 
         return numIId;
@@ -168,6 +201,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                     return numId;
                 }
             } else {
+                failCause.append(addItemResponse.getSubCode());
                 failCause.append(addItemResponse.getSubMsg());
             }
 
@@ -213,6 +247,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 $debug(String.format("find numId(%s) has been uploaded before", numId));
                 return numId;
             }
+            failCause.append(updateItemResponse.getSubCode());
             //天猫系统服务异常
             if (failCause.indexOf("天猫商品服务异常") != -1
                     || failCause.indexOf("访问淘宝超时") != -1) {
@@ -261,5 +296,5 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
         }
         return numId;
     }
-    
+
 }
