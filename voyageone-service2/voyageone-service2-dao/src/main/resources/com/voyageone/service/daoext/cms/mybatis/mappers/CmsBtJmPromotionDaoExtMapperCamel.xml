@@ -358,7 +358,7 @@
         AND b.active = 1
         AND a.active = 1
         AND b.cart_id =#{cartId}
-        and AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator="," close=")">
+        AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator="," close=")">
          #{item}
      </foreach>
         GROUP BY a.id

@@ -113,9 +113,6 @@ public class JMPromotionDetailService extends BaseService {
             node.setOldChecked(node.getChecked());
             tagTreeNode.getChildren().add(node);
         });
-
-        int maxChecked = tagTreeNode.getChildren().stream().mapToInt(m -> m.getChecked()).max().getAsInt();
-        tagTreeNode.setChecked(maxChecked);//活动选择状态 和 tag选中状态最大值 一致
         tagTreeNode.setOldChecked(tagTreeNode.getChecked());
         return tagTreeNode;
     }
