@@ -1,3 +1,6 @@
+/**
+ * 格林威治时间转换为当地时区时间
+ */
 angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
 
     return function (input,format) {
