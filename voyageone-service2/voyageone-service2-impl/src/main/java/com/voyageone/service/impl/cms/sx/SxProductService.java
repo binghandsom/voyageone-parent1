@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
@@ -2121,6 +2122,33 @@ public class SxProductService extends BaseService {
                     }
                     break;
                 }
+                case IS_XINPIN:
+                {
+                    // 商品是否为新品
+                    int cartId = sxData.getCartId();
+                    if (processFields == null || processFields.size() != 1) {
+                        throw new BusinessException("is_xinpin's platformProps must have only one prop!");
+                    }
+
+                    Field field = processFields.get(0);
+                    if (field.getType() != FieldTypeEnum.INPUT) {
+                        $error("is_xinpin's field(" + field.getId() + ") must be input");
+                    } else {
+                        InputField inputField = (InputField) field;
+                        // 商品是否为新品。只有在当前类目开通新品,并且当前用户拥有该类目下发布新品权限时才能设置is_xinpin为true，
+                        // 否则设置true后会返回错误码:isv.invalid-permission:add-xinpin。
+                        // 同时只有一口价全新的宝贝才能设置为新品，否则会返回错误码：isv.invalid-parameter:xinpin。
+                        // 不设置该参数值或设置为false效果一致。
+                        // 新品判断逻辑(第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品，否则设为非新品)
+                        if (isXinPin(mainSxProduct, cartId)) {
+                            inputField.setValue("true");
+                        } else {
+                            inputField.setValue("false");
+                        }
+                        retMap.put(field.getId(), inputField);
+                    }
+                    break;
+                }
                 case PRICE_SECTION:
                 {
                     if (processFields == null || processFields.size() != 1) {
@@ -4104,5 +4132,116 @@ public class SxProductService extends BaseService {
         }
 
         return transBaiduCn;
+    }
+
+    /**
+     * 判断产品是否为新品
+     * 第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品;否则设为非新品
+     *
+     * @param mainSxProduct 上新主产品
+     * @return boolean 是否为新品
+     */
+    public boolean isXinPin(CmsBtProductModel mainSxProduct, int cartId) {
+        if (mainSxProduct == null) return false;
+
+        String pNumIId =  mainSxProduct.getPlatformNotNull(cartId).getpPublishTime();
+        String pPublishTime = mainSxProduct.getPlatformNotNull(cartId).getpPublishTime();
+        Date pPublishTimedate = DateTimeUtil.parseToGmt(pPublishTime, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        Date currentTimeDate = DateTimeUtil.getDate();
+        // 新品判断逻辑(第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品，否则设为非新品)
+        if ((StringUtils.isEmpty(pNumIId) && StringUtils.isEmpty(pPublishTime))
+                || (!StringUtils.isEmpty(pPublishTime) && DateTimeUtil.diffDays(currentTimeDate, pPublishTimedate) <= 60)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 设置对象Field列表中指定Field的单个值
+     *
+     * @param fields     对象Field列表
+     * @param fieldId    需要设置值的对象FieldId
+     * @param fieldValue 需要设置Field值
+     */
+    public void setFieldValue(List<Field> fields, String fieldId, String fieldValue) {
+        if (ListUtils.isNull(fields) || StringUtils.isEmpty(fieldId)) return;
+
+        List<String> fieldValues = new ArrayList<>();
+        fieldValues.add(fieldValue);
+
+        this.setFieldValues(fields, fieldId, fieldValues);
+    }
+
+    /**
+     * 设置对象Field列表中指定Field的多个值
+     *
+     * @param fields     对象Field列表
+     * @param fieldId    需要设置值的对象FieldId
+     * @param fieldValues 需要设置Field值列表
+     */
+    public void setFieldValues(List<Field> fields, String fieldId, List<String> fieldValues) {
+        if (ListUtils.isNull(fields) || StringUtils.isEmpty(fieldId)) return;
+
+        if (fields.stream().filter(p -> fieldId.equalsIgnoreCase(p.getId())).count() > 0) {
+            Field updateField = fields.stream().filter(p -> fieldId.equalsIgnoreCase(p.getId())).findFirst().get();
+            this.setFieldValues(updateField, fieldValues);
+        }
+    }
+
+    /**
+     * 设置对象Field列表中指定Field的单个值
+     *
+     * @param field     对象Field
+     * @param fieldValue Field值
+     */
+    public void setFieldValue(Field field, String fieldValue) {
+        List<String> fieldValues = new ArrayList<>();
+        fieldValues.add(fieldValue);
+
+        this.setFieldValues(field, fieldValues);
+    }
+
+    /**
+     * 设置对象Field列表中指定Field的多个值
+     *
+     * @param field     对象Field
+     * @param fieldValues Field值列表
+     */
+    public void setFieldValues(Field field, List<String> fieldValues) {
+        if (field == null || ListUtils.isNull(fieldValues)) return;
+
+        switch (field.getType()) {
+            case INPUT: {
+                InputField inputField = (InputField) field;
+                inputField.setValue(fieldValues.get(0));
+                break;
+            }
+            case SINGLECHECK: {
+                SingleCheckField singleCheckField = (SingleCheckField) field;
+                singleCheckField.setValue(fieldValues.get(0));
+                break;
+            }
+            case MULTIINPUT:
+                break;
+            case MULTICHECK: {
+                MultiCheckField multiCheckField = (MultiCheckField) field;
+                // 先把以前的值清空，再加新的值
+                List<Value> values = new ArrayList<>();
+                multiCheckField.setValues(values);
+                for (String value : fieldValues) {
+                    multiCheckField.addValue(value);
+                }
+                break;
+            }
+            case COMPLEX:
+                break;
+            case MULTICOMPLEX:
+                break;
+            case LABEL:
+                break;
+            default:
+                $error("复杂类型的属性:" + field.getType() + "不能使用setFieldValues来设值");
+        }
     }
 }
