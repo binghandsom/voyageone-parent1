@@ -15,13 +15,15 @@ angular.module('voyageone.angular.controllers', []);
 angular.module('voyageone.angular.directives', []);
 angular.module('voyageone.angular.factories', []);
 angular.module('voyageone.angular.services', []);
+angular.module('voyageone.angular.filter', []);
 
 // 总模块, 供子系统一次性引入
 angular.module('voyageone.angular', [
     'voyageone.angular.controllers',
     'voyageone.angular.directives',
     'voyageone.angular.factories',
-    'voyageone.angular.services'
+    'voyageone.angular.services',
+    'voyageone.angular.filter'
 ]);
 
 /*****************************/
@@ -3192,6 +3194,32 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
             return _showPages[_showPages.length - 1] < _pages;
         }
     };
+});
+
+
+/*****************************/
+
+angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
+
+    return function (input,format) {
+
+        var miliTimes;
+
+        if (!input){
+            console.warn("没有要转换的日期");
+            return '';
+        }
+
+
+        input = typeof input === 'string' ? new Date(input) : input;
+
+        miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
+
+
+        return $filter('date')(new Date(miliTimes), format);
+    };
+
+
 });
 
 
