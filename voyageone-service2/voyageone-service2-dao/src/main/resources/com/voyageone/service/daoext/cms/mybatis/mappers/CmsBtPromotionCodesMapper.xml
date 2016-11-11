@@ -167,17 +167,16 @@
         a.modified,
         a.modifier,
         a.image_url_1 as image,
-        b.tag_path,
-        b.tag_name,
-        b.tag_path_name,
+        -- b.tag_path,
+        GROUP_CONCAT(b.tag_name SEPARATOR '|') as tag_name,
+        -- b.tag_path_name,
         c.product_sku,
         c.size
         FROM
         voyageone_cms2.cms_bt_promotion_codes a
-        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id
-        LEFT JOIN voyageone_cms2.cms_bt_promotion_skus c on a.promotion_id = c.promotion_id and a.product_code =
-        c.product_code
-
+        -- LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.id
+        left join  voyageone_cms2.`cms_bt_promotion_codes_tag` as  b on a.id=b.cms_bt_promotion_codes_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_skus c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
         <where>
             <if test="promotionId != null">
                 a.promotion_id = #{promotionId,jdbcType=INTEGER}
@@ -186,7 +185,7 @@
                 and a.org_channel_id= #{orgChannelId,jdbcType=VARCHAR}
             </if>
         </where>
-
+        group by a.id,c.id
     </select>
     <select id="select_cms_bt_promotion_code_in_active_promotion_name" resultType="HashMap" parameterType="HashMap">
         SELECT DISTINCT(promotion_name) from voyageone_cms2.cms_bt_promotion_codes t1
@@ -266,9 +265,9 @@
             <if test="property4 != null">
                 property_4,
             </if>
-            <if test="tagId != null">
-                tag_id,
-            </if>
+            <!--<if test="tagId != null">-->
+                <!--tag_id,-->
+            <!--</if>-->
             created,
             <if test="creater != null">
                 creater,
@@ -342,9 +341,9 @@
             <if test="property4 != null">
                 #{property4,jdbcType=VARCHAR},
             </if>
-            <if test="tagId != null">
-                #{tagId,jdbcType=INTEGER},
-            </if>
+            <!--<if test="tagId != null">-->
+                <!--#{tagId,jdbcType=INTEGER},-->
+            <!--</if>-->
             now(),
             <if test="creater != null">
                 #{creater,jdbcType=VARCHAR},
@@ -421,9 +420,9 @@
             <if test="property4 != null">
                 property_4 = #{property4,jdbcType=VARCHAR},
             </if>
-            <if test="tagId != null">
-                tag_id = #{tagId,jdbcType=INTEGER},
-            </if>
+            <!--<if test="tagId != null">-->
+                <!--tag_id = #{tagId,jdbcType=INTEGER},-->
+            <!--</if>-->
             modified = now(),
             <if test="modifier != null">
                 modifier = #{modifier,jdbcType=VARCHAR},

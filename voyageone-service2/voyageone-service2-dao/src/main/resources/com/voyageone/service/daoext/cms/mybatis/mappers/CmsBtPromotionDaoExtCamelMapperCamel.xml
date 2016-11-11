@@ -69,8 +69,10 @@
         </where>
     </select>
     <select id="selectAddPromotionList" resultType="MapModel">
-        SELECT a.`id`,a.`promotion_name`,a.`ref_tag_id`,COUNT(*) AS productCount FROM voyageone_cms2.cms_bt_promotion a
-        JOIN  `cms_bt_promotion_codes` AS c ON  a.`id`=c.`promotion_id`
+        SELECT a.`id`,a.`promotion_name`,a.`ref_tag_id`,COUNT(c.id) AS productCount FROM voyageone_cms2.cms_bt_promotion a
+        left JOIN  `cms_bt_promotion_codes` AS c ON  a.`id`=c.`promotion_id`  AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator=","  close=")">
+        #{item}
+    </foreach>
         where a.active = 1
               and a.activity_end >= now()
               and a.promotion_status = 1
@@ -82,9 +84,7 @@
         <if test="activityEnd != null">
             and #{activityEnd,jdbcType=VARCHAR} >= a.activity_end
         </if>
-        AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator=","  close=")">
-                                    #{item}
-                                 </foreach>
+
         GROUP BY a.id
         ORDER BY a.id DESC
     </select>
