@@ -2131,21 +2131,21 @@ public class SxProductService extends BaseService {
                     }
 
                     Field field = processFields.get(0);
-                    if (field.getType() != FieldTypeEnum.INPUT) {
-                        $error("is_xinpin's field(" + field.getId() + ") must be input");
+                    if (field.getType() != FieldTypeEnum.SINGLECHECK) {
+                        $error("is_xinpin's field(" + field.getId() + ") must be singleCheck");
                     } else {
-                        InputField inputField = (InputField) field;
+                        SingleCheckField isXinpinField = (SingleCheckField) field;
                         // 商品是否为新品。只有在当前类目开通新品,并且当前用户拥有该类目下发布新品权限时才能设置is_xinpin为true，
                         // 否则设置true后会返回错误码:isv.invalid-permission:add-xinpin。
                         // 同时只有一口价全新的宝贝才能设置为新品，否则会返回错误码：isv.invalid-parameter:xinpin。
                         // 不设置该参数值或设置为false效果一致。
                         // 新品判断逻辑(第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品，否则设为非新品)
                         if (isXinPin(mainSxProduct, cartId)) {
-                            inputField.setValue("true");
+                            isXinpinField.setValue("true");
                         } else {
-                            inputField.setValue("false");
+                            isXinpinField.setValue("false");
                         }
-                        retMap.put(field.getId(), inputField);
+                        retMap.put(isXinpinField.getId(), isXinpinField);
                     }
                     break;
                 }
