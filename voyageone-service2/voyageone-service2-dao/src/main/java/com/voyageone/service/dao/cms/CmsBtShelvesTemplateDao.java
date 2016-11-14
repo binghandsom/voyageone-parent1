@@ -7,8 +7,10 @@
  */
 package com.voyageone.service.dao.cms;
 
+import com.voyageone.service.model.cms.CmsBtShelvesTemplateExample;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import java.util.List;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,5 +27,15 @@ public interface CmsBtShelvesTemplateDao {
 
     int update(CmsBtShelvesTemplateModel record);
 
+    int countByExample(CmsBtShelvesTemplateExample example);
+
+    int deleteByExample(CmsBtShelvesTemplateExample example);
+
     int delete(Integer id);
+
+    List<CmsBtShelvesTemplateModel> selectByExample(CmsBtShelvesTemplateExample example);
+
+    int updateByExampleSelective(@Param("record") CmsBtShelvesTemplateModel record, @Param("example") CmsBtShelvesTemplateExample example);
+
+    int updateByExample(@Param("record") CmsBtShelvesTemplateModel record, @Param("example") CmsBtShelvesTemplateExample example);
 }
