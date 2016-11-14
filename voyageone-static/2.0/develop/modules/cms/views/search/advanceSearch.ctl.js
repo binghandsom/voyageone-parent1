@@ -1265,7 +1265,10 @@ define([
             }, {'isSelAll': $scope.vm._selall ? 1 : 0});
 
 
-        }
+        };
+
+
+    }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q'];
     return searchIndex;

@@ -16,9 +16,16 @@ import java.util.Map;
  */
 public class PromotionDetailAddBean {
 
+    /**
+     *modifier
+     */
+    protected String modifier;
+    //check方法 初始化
+    CmsBtProductModel productInfo;
+    //check方法 初始化
+    CmsBtProductGroupModel groupModel;
     private Integer tagId;
     private String tagPath;
-
     private Integer promotionId;
     private Integer cartId;
     private String channelId;
@@ -26,6 +33,9 @@ public class PromotionDetailAddBean {
     private Map<String, Double> promotionPrice;
     private String productCode;
     private Long productId;
+    private  int refTagId;
+    private List<TagTreeNode> tagList;
+    private AddProductSaveParameter addProductSaveParameter;
 
     public int getRefTagId() {
         return refTagId;
@@ -34,15 +44,6 @@ public class PromotionDetailAddBean {
     public void setRefTagId(int refTagId) {
         this.refTagId = refTagId;
     }
-
-    private  int refTagId;
-    private List<TagTreeNode> tagList;
-    private AddProductSaveParameter addProductSaveParameter;
-
-    //check方法 初始化
-    CmsBtProductModel productInfo;
-    //check方法 初始化
-    CmsBtProductGroupModel groupModel;
 
     public CmsBtProductModel getProductInfo() {
         return productInfo;
@@ -71,6 +72,7 @@ public class PromotionDetailAddBean {
     public List<TagTreeNode> getTagList() {
         return tagList;
     }
+
     public void setTagList(List<TagTreeNode> tagList) {
         this.tagList = tagList;
     }
@@ -147,10 +149,6 @@ public class PromotionDetailAddBean {
         this.orgChannelId = orgChannelId;
     }
 
-    /**
-     *modifier
-     */
-    protected String modifier;
     public String getModifier() {
         return modifier;
     }

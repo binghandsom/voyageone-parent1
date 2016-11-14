@@ -55,28 +55,21 @@ import java.util.stream.Collectors;
 public class CmsPromotionDetailService extends BaseViewService {
 
     @Autowired
+    CmsBtPromotionCodesTagDao cmsBtPromotionCodesTagDao;
+    @Autowired
     private TaskService taskService;
-
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
     @Autowired
     private CmsAddToPromotionService cmsPromotionSelectService;
-
     @Autowired
     private PromotionDetailService promotionDetailService;
-
     @Autowired
     private PromotionModelService promotionModelService;
-
     @Autowired
     private PromotionCodeService promotionCodeService;
-
     @Autowired
     private PromotionSkuService promotionSkuService;
-
-    @Autowired
-    private ProductService productService;
 
 
 //    private static final int codeCellNum = 1;
@@ -138,6 +131,8 @@ public class CmsPromotionDetailService extends BaseViewService {
 //        });
 //        return response;
 //    }
+    @Autowired
+    private ProductService productService;
 
     public Map<String, List<String>> insertPromotionProduct2(List<CmsBtPromotionGroupsBean> productModels, int promotionId, String operator) {
 
@@ -247,8 +242,6 @@ public class CmsPromotionDetailService extends BaseViewService {
         return promList;
     }
 
-    @Autowired
-    CmsBtPromotionCodesTagDao cmsBtPromotionCodesTagDao;
     private void setTagNames(CmsBtPromotionCodesBean bean) {
         // CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
         // parameter.setCmsBtJmPromotionProductId(Integer.valueOf(map.get("id").toString()));

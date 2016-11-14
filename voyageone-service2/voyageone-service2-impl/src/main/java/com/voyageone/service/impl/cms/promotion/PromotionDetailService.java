@@ -51,6 +51,22 @@ import java.util.Map;
 public class PromotionDetailService extends BaseService {
 
     @Autowired
+    PromotionSkuService promotionSkuService;
+    @Autowired
+    PromotionCodesTagService promotionCodesTagService;
+    @Autowired
+    PromotionService  promotionService;//promotionService promotionCodesTagService
+    @Autowired
+    CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
+    @Autowired
+    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
+    @Autowired
+    CmsBtTagDao daoTag;
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
+    @Autowired
+    TagService tagService;
+    @Autowired
     private CmsBtPromotionGroupsDaoExt cmsPromotionModelDao;
     @Autowired
     private CmsBtPromotionCodesDaoExt cmsPromotionCodeDao;
@@ -58,7 +74,6 @@ public class PromotionDetailService extends BaseService {
     private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
     @Autowired
     private CmsBtTaskTejiabaoDaoExt cmsPromotionTaskDao;
-
     @Autowired
     private TaskService taskService;
     @Autowired
@@ -67,35 +82,14 @@ public class PromotionDetailService extends BaseService {
     private ProductGroupService productGroupService;
     @Autowired
     private ProductTagService productTagService;
-
-    @Autowired
-    PromotionSkuService promotionSkuService;
-
-    @Autowired
-    PromotionCodesTagService promotionCodesTagService;
-
-    @Autowired
-    PromotionService  promotionService;//promotionService promotionCodesTagService
-
-    @Autowired
-    CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
     @Autowired
     private FeedInfoService feedInfoService;
     @Autowired
     private CmsBtBrandBlockService brandBlockService;
     @Autowired
-    CmsBtPromotionCodesDao daoCmsBtPromotionCodes;
-    @Autowired
-    CmsBtTagDao daoTag;
-
-    @Autowired
-    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
-    @Autowired
     private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
     @Autowired
     private CmsBtPromotionSkusDaoExtCamel daoExtCamelCmsBtPromotionSkus;
-    @Autowired
-    TagService tagService;
 
     @VOTransactional
     public void addPromotionDetail(PromotionDetailAddBean bean) {

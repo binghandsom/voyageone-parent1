@@ -59,23 +59,18 @@ public class JMPromotionDetailService extends BaseService {
 
     @Autowired
     CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
-
-    @Autowired
-    private ProductService productService;
-
     @Autowired
     PromotionService promotionService;
     @Autowired
     CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
-
     @Autowired
     CmsBtPromotionSkusDaoExtCamel cmsBtPromotionSkusDaoExtCamel;
-
     @Autowired
     TagService tagService;
-
     @Autowired
     CmsBtJmPromotionTagProductDaoExt cmsBtJmPromotionTagProductDaoExt;
+    @Autowired
+    private ProductService productService;
 
     public Map init(InitParameter params, String channelId,List<String> codeList) {
         Map<String, Object> data = new HashedMap();

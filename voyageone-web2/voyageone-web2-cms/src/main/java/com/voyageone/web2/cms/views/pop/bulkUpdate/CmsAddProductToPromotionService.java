@@ -41,6 +41,14 @@ import java.util.stream.Collectors;
 public class CmsAddProductToPromotionService extends BaseViewService {
 
     @Autowired
+    CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
+    @Autowired
+    TagService tagService;
+    @Autowired
+    CmsBtJmPromotion3Service cmsBtJmPromotion3Service;
+    @Autowired
+    JMPromotionDetailService jmPromotionDetailService;
+    @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
     private ProductService productService;
@@ -54,14 +62,6 @@ public class CmsAddProductToPromotionService extends BaseViewService {
     private FeedInfoService feedInfoService;
     @Autowired
     private CmsBtBrandBlockService brandBlockService;
-    @Autowired
-    CmsBtPromotionDaoExtCamel cmsBtPromotionDaoExtCamel;
-    @Autowired
-    TagService tagService;
-    @Autowired
-    CmsBtJmPromotion3Service cmsBtJmPromotion3Service;
-    @Autowired
-    JMPromotionDetailService jmPromotionDetailService;
 
     public  void  save(AddProductSaveParameter parameter, String channelId, String userName, CmsSessionBean cmsSession) {
 

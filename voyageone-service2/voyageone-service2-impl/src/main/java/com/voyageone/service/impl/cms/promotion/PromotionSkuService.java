@@ -27,13 +27,13 @@ import java.util.Map;
 @Service
 public class PromotionSkuService extends BaseService {
     @Autowired
-    private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
-    @Autowired
     CmsBtPromotionSkusDao cmsBtPromotionSkusDao;
     @Autowired
     CmsBtPromotionSkusDaoExtCamel cmsBtPromotionSkusDaoExtCamel;
     @Autowired
     CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
+    @Autowired
+    private CmsBtPromotionSkusDaoExt cmsPromotionSkuDao;
 
     public List<Map<String, Object>> getPromotionSkuList(Map<String, Object> params) {
         return cmsPromotionSkuDao.selectPromotionSkuList(params);

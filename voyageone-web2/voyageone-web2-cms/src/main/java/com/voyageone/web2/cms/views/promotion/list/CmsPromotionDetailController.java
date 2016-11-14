@@ -36,8 +36,9 @@ import java.util.Map;
 public class CmsPromotionDetailController extends CmsController {
 
     @Autowired
+    PromotionCodesTagService promotionCodesTagService;
+    @Autowired
     private CmsPromotionDetailService cmsPromotionDetailService;
-
     @Autowired
     private PromotionSkuService promotionSkuService;
 
@@ -55,16 +56,19 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
+
     @RequestMapping(PROMOTION.LIST.DETAIL.GetPromotionSkuList)
     public AjaxResponse GetPromotionSkuList(@RequestBody Map<String, Object> params) {
         Object data= promotionSkuService.getListByWhere(params);
         return success(data);
     }
+
     @RequestMapping(PROMOTION.LIST.DETAIL.SaveSkuPromotionPrices)
     public AjaxResponse saveSkuPromotionPrices(@RequestBody SaveSkuPromotionPricesParameter parameter) {
         promotionSkuService.saveSkuPromotionPrices(parameter);
         return success(null);
     }
+
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map<String, Object> params) {
         int cartId = Integer.parseInt(getCmsSession().getPlatformType().get("cartId").toString());
@@ -78,8 +82,6 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
-    @Autowired
-    PromotionCodesTagService promotionCodesTagService;
 
     //修改tag
     @RequestMapping(PROMOTION.LIST.DETAIL.UpdatePromotionProductTag)

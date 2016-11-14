@@ -58,11 +58,17 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     CmsBtJmPromotionTagProductDaoExt daoExtCmsBtJmPromotionTagProduct;
     @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
+    @Autowired
+    CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
+    @Autowired
+    PromotionService promotionService;
+    @Autowired
+    CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private CmsBtJmPromotion3Service service3CmsBtJmPromotion;
-    @Autowired
-    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
     @Autowired
     private CmsBtPromotionGroupsDaoExtCamel daoExtCamelCmsBtPromotionGroups;
     @Autowired
@@ -72,11 +78,6 @@ public class CmsBtJmPromotionProduct3Service {
     @Autowired
     private CmsBtPromotionDao daoCmsBtPromotion;
 
-    @Autowired
-    CmsBtJmPromotionSku3Service cmsBtJmPromotionSku3Service;
-
-    @Autowired
-    PromotionService promotionService;
     public CmsBtJmPromotionProductModel select(int id) {
         return dao.select(id);
     }
@@ -125,8 +126,6 @@ public class CmsBtJmPromotionProduct3Service {
     public int delete(int id) {
         return dao.delete(id);
     }
-
-
 
     //批量修改价格 批量变更价格
     @VOTransactional
@@ -187,9 +186,6 @@ public class CmsBtJmPromotionProduct3Service {
         daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(parameter.getJmPromotionId(), parameter.getListPromotionProductId());
         return result;
     }
-
-
-
 
     //批量同步价格  1. then price_status=1
     public void batchSynchPrice(BatchSynchPriceParameter parameter) {
@@ -365,8 +361,6 @@ public class CmsBtJmPromotionProduct3Service {
         return 1;
     }
 
-    @Autowired
-    CmsBtJmPromotionTagProductService cmsBtJmPromotionTagProductService;
     //修改单个商品tag
     @VOTransactional
     public int updatePromotionProductTag(UpdatePromotionProductTagParameter parameter,String channelId, String userName) {
