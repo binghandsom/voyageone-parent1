@@ -147,7 +147,7 @@ define([
         /**
          * 清空画面上显示的数据
          */
-        function clear() {
+        function clear(child) {
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
@@ -185,6 +185,13 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
             $scope.vm._freeTags = null;
+
+            if(child.columnArrow){
+                _.forEach(child.columnArrow, function (value, key) {
+                    child.columnArrow[key] = null;
+                });
+            }
+
         }
 
         /**
