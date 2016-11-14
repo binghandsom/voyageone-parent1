@@ -50,14 +50,14 @@ public class CmsBtShelvesModel extends BaseModel {
     protected Integer promotionId;
 
     /**
+     * 逻辑删除：0未被删除，1被删除
+     */
+    protected Integer active;
+
+    /**
      * 货架内信息最近更新时间
      */
     protected Date lastUpdate;
-
-    /**
-     * 逻辑删除：0未被删除，1被删除
-     */
-    protected Integer deleted;
 
     public String getShelvesName() {
         return shelvesName;
@@ -115,19 +115,19 @@ public class CmsBtShelvesModel extends BaseModel {
         this.promotionId = promotionId;
     }
 
+    public Integer getActive() {
+        return active;
+    }
+
+    public void setActive(Integer active) {
+        this.active = active;
+    }
+
     public Date getLastUpdate() {
         return lastUpdate;
     }
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
-    }
-
-    public Integer getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Integer deleted) {
-        this.deleted = deleted;
     }
 }

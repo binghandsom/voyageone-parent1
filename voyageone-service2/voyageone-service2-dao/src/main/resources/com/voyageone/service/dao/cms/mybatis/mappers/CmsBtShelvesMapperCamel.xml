@@ -4,8 +4,8 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesModel" />
     <sql id="Base_Column_List" >
         `id`, `shelves_name`, `cart_id`, `channel_id`, `client_type`, `layout_template_id`, 
-        `single_template_id`, `promotion_id`, `creater`, `created`, `modifier`, `modified`, 
-        `last_update`, `deleted`
+        `single_template_id`, `promotion_id`, `active`, `last_update`, `creater`, `created`, 
+        `modifier`, `modified`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -39,6 +39,12 @@
             <if test="promotionId != null" >
                 `promotion_id` = #{promotionId,jdbcType=INTEGER},
             </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdate != null" >
+                `last_update` = #{lastUpdate,jdbcType=TIMESTAMP},
+            </if>
             <if test="creater != null" >
                 `creater` = #{creater,jdbcType=VARCHAR},
             </if>
@@ -53,12 +59,6 @@
             </if>
             <if test="modified == null" >
                 `modified` = now(),
-            </if>
-            <if test="lastUpdate != null" >
-                `last_update` = #{lastUpdate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="deleted != null" >
-                `deleted` = #{deleted,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -95,6 +95,12 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="lastUpdate != null" >
+                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
+            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -106,12 +112,6 @@
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="lastUpdate != null" >
-                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
-            </if>
-            <if test="deleted != null" >
-                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
         limit 1
@@ -143,6 +143,12 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="lastUpdate != null" >
+                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
+            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -154,12 +160,6 @@
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="lastUpdate != null" >
-                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
-            </if>
-            <if test="deleted != null" >
-                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -188,6 +188,12 @@
             <if test="promotionId != null" >
                 and `promotion_id` = #{promotionId,jdbcType=INTEGER}
             </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+            <if test="lastUpdate != null" >
+                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
+            </if>
             <if test="creater != null" >
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
@@ -199,12 +205,6 @@
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
-            </if>
-            <if test="lastUpdate != null" >
-                and `last_update` = #{lastUpdate,jdbcType=TIMESTAMP}
-            </if>
-            <if test="deleted != null" >
-                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -233,6 +233,12 @@
             <if test="promotionId != null" >
                 `promotion_id`,
             </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            <if test="lastUpdate != null" >
+                `last_update`,
+            </if>
             <if test="creater != null" >
                 `creater`,
             </if>
@@ -244,12 +250,6 @@
                 `modifier`,
             </if>
             `modified`,
-            <if test="lastUpdate != null" >
-                `last_update`,
-            </if>
-            <if test="deleted != null" >
-                `deleted`,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="shelvesName != null" >
@@ -273,6 +273,12 @@
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
             </if>
+            <if test="active != null" >
+                #{active,jdbcType=INTEGER},
+            </if>
+            <if test="lastUpdate != null" >
+                #{lastUpdate,jdbcType=TIMESTAMP},
+            </if>
             <if test="creater != null" >
                 #{creater,jdbcType=VARCHAR},
             </if>
@@ -293,12 +299,6 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
-            </if>
-            <if test="lastUpdate != null" >
-                #{lastUpdate,jdbcType=TIMESTAMP},
-            </if>
-            <if test="deleted != null" >
-                #{deleted,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
