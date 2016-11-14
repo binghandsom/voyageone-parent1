@@ -6,6 +6,11 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
+
+    var cntConfig = {
+        checkArr: ['translate', 'tax', 'category', 'attribute']
+    };
+
     cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService) {
         return {
             restrict: "E",
@@ -23,7 +28,7 @@ define([
                     platform: null,
                     status: "Pending",
                     skuTemp: {},
-                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0, cart: 0, brand: 0},
+                    checkFlag: {translate: 0, tax: 0, category: 0, attribute: 0},
                     resultFlag: 0,
                     sellerCats: [],
                     productUrl: "",
@@ -79,10 +84,6 @@ define([
                         scope.vm.mastData = mastData = resp.data.mastData;
                         scope.vm.platform = platform = resp.data.platform;
                         scope.vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
-                        scope.vm.checkFlag.cart = (angular.isDefined(scope.vm.platform.pCatId) 
-                        		&& scope.vm.platform.pCatId != null && scope.vm.platform.pCatId != '') ? 1 : 0;
-                        scope.vm.checkFlag.brand = (angular.isDefined(scope.vm.platform.pBrandId) 
-                        		&& scope.vm.platform.pBrandId != null && scope.vm.platform.pBrandId != '') ? 1 : 0;
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
@@ -277,9 +278,9 @@ define([
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,
                             prodId: scope.productInfo.productId
-                        }).then(function (resp) {
+                        }).then(function () {
                             newTab.location.href = "#/product/code_move";
-                        }, function (err) {
+                        }, function () {
                             newTab.close();
                         });
                     });
@@ -298,16 +299,17 @@ define([
                         }
                     }
 
-                    var statusCount = 0;
-                    for (var attr in scope.vm.checkFlag) {
-                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                    }
+                    var statusFlag = _.filter(scope.vm.checkFlag, function (value, key) {
+                        return cntConfig.checkArr.indexOf(key) >= 0;
+                    }).every(function (value) {
+                        return value == true ? 1 : 0;
+                    });
 
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
                         case "Pending":
-                            scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
+                            scope.vm.status = statusFlag ? "Ready" : scope.vm.status;
                             break;
                         case "Ready":
                             scope.vm.status = "Approved";
@@ -383,7 +385,7 @@ define([
                             }
                         });
                     } else {
-                        callSave();
+                        return callSave();
                     }
 
                 }
@@ -392,12 +394,15 @@ define([
                 function callSave(mark) {
 
                     /**判断价格*/
-                    productDetailService.updateProductPlatformChk({
+                    var promise = productDetailService.updateProductPlatformChk({
                         prodId: scope.productInfo.productId,
                         platform: scope.vm.platform
-                    }).then(function (resp) {
+                    });
+
+                    promise.then(function (resp) {
                         scope.vm.platform.modified = resp.data.modified;
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        if(mark !== 'intel')
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }, function (resp) {
                         if (resp.code != "4000091" && resp.code != "4000092") {
                             scope.vm.status = scope.vm.preStatus;
@@ -417,6 +422,8 @@ define([
                                 scope.vm.status = scope.vm.preStatus;
                         });
                     });
+
+                    return promise;
                 }
 
                 function validSchema() {
@@ -457,7 +464,7 @@ define([
                  * 重置天猫产品id
                  * @returns {*}
                  */
-                function doResetTmProduct(){
+                function doResetTmProduct() {
                     return productDetailService.resetTmProduct({
                         cartId: scope.cartInfo.value,
                         productCode: scope.productInfo.masterField.code
@@ -466,17 +473,20 @@ define([
                         // notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
                 }
-                
+
                 // 商品智能上新
                 function publishProduct() {
-                	var params = {
-                		cartId: scope.vm.platform.cartId,
-                		productIds: [scope.vm.mastData.productCode],
-                		isSelectAll: 0
-                	}
-                	$fieldEditService.intelligentPublish(params).then(function() {
-            			alert('已完成商品的智能上新！');
-        			});
+
+                    callSave('intel').then(function () {
+                        $fieldEditService.intelligentPublish({
+                            cartId: scope.vm.platform.cartId,
+                            productIds: [scope.vm.mastData.productCode],
+                            isSelectAll: 0
+                        }).then(function () {
+                            alert('已完成商品的智能上新！');
+                        });
+                    });
+
                 }
 
                 /**
