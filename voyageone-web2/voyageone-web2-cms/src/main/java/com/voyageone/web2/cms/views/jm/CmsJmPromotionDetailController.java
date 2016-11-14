@@ -6,6 +6,7 @@ import com.voyageone.service.bean.cms.businessmodel.JMUpdateSkuWithPromotionInfo
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.*;
 import com.voyageone.service.bean.cms.jumei.*;
+import com.voyageone.service.bean.cms.jumei2.JmProduct;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.jumei.*;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionProduct3Service;
@@ -18,6 +19,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -280,13 +281,15 @@ public class CmsJmPromotionDetailController extends CmsController {
     //修改单个商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
     public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
-        service3.updatePromotionProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        service3.updatePromotionProductTag(parameter, userSessionBean.getSelChannelId(),userSessionBean.getUserName());
         return success(null);
     }
     //批量修改商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
     public int updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
-        return service3.updatePromotionListProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        return service3.updatePromotionListProductTag(parameter,userSessionBean.getSelChannelId(), userSessionBean.getUserName());
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
@@ -367,27 +370,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(true);
     }
 
-    private static class SaveProductSort {
-        Integer tagId;
-        List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList;
-
-        public Integer getTagId() {
-            return tagId;
-        }
-
-        public void setTagId(Integer tagId) {
-            this.tagId = tagId;
-        }
-
-        public List<CmsBtJmPromotionProduct3Service.JmProduct> getJmProductList() {
-            return jmProductList;
-        }
-
-        public void setJmProductList(List<CmsBtJmPromotionProduct3Service.JmProduct> jmProductList) {
-            this.jmProductList = jmProductList;
-        }
-    }
-
     /**
      * 设置聚美活动各阶段的状态
      */
@@ -398,6 +380,27 @@ public class CmsJmPromotionDetailController extends CmsController {
                 CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
                 getUser().getUserName());
         return success(true);
+    }
+
+    private static class SaveProductSort {
+        Integer tagId;
+        List<JmProduct> jmProductList;
+
+        public Integer getTagId() {
+            return tagId;
+        }
+
+        public void setTagId(Integer tagId) {
+            this.tagId = tagId;
+        }
+
+        public List<JmProduct> getJmProductList() {
+            return jmProductList;
+        }
+
+        public void setJmProductList(List<JmProduct> jmProductList) {
+            this.jmProductList = jmProductList;
+        }
     }
 
     public static class SavePromotionTagModules {

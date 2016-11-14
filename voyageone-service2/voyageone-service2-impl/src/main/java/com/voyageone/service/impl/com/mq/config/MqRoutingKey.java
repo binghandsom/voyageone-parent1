@@ -29,6 +29,8 @@ public class MqRoutingKey {
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
+
+    public static final String CMS_BATCH_PlatformFieldsTaskJob = "voyageone_cms_batchjob_PlatformFieldsTaskJob_queue";
     /**
      * jd mq task
      */
@@ -92,4 +94,11 @@ public class MqRoutingKey {
      * @since 2.6.0
      */
     public static final String CMS_TASK_BRANDBLOCKJOB = "voyageone_cms_task_CmsBrandBlockJobService_queue";
+    /**
+     * 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
+     * create by jonas on 2016-11-02 19:26:28
+     *
+     * @since 2.9.0
+     */
+    public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
 }

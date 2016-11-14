@@ -199,6 +199,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("clientProductUrl", clientProductUrl);
     }
 
+    public Integer getSkuCnt(){
+        return getIntAttribute("skuCnt");
+    }
+    public void setSkuCnt(Integer skuCnt){
+        setAttribute("skuCnt",skuCnt == null ? 0:skuCnt);
+    }
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;

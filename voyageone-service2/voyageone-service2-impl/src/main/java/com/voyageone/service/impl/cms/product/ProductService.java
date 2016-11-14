@@ -22,6 +22,7 @@ import com.voyageone.common.util.*;
 import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.CustomPropBean;
+import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -166,6 +167,14 @@ public class ProductService extends BaseService {
         }
 
         return result;
+    }
+
+    /**
+     * 获取商品 根据SkuCode(一个SkuCode应该只在一个product中)
+     */
+    public List<CmsBtProductModel> getProductBySkuCode(String channelId, String skuCode) {
+        String query = "{\"common.skus.skuCode\":\"" + skuCode + "\"}";
+        return cmsBtProductDao.select(query, channelId);
     }
 
     /**
@@ -551,6 +560,15 @@ public class ProductService extends BaseService {
         }
     }
 
+    public void insertProductHistory(String channelId, CmsBtProductModel productModel) {
+        if (productModel != null) {
+            CmsBtProductLogModel logModel = new CmsBtProductLogModel();
+            logModel = JacksonUtil.json2Bean(JacksonUtil.bean2Json(productModel), logModel.getClass());
+            logModel.set_id(null);
+            cmsBtProductLogDao.insert(logModel);
+        }
+    }
+
     /**
      * get the product info from wms's request
      */
@@ -857,10 +875,14 @@ public class ProductService extends BaseService {
     }
 
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk) {
-        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑");
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", true);
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment) {
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, boolean blnSmartSx) {
+        return updateProductPlatform(channelId, prodId, platformModel, modifier, isModifiedChk, EnumProductOperationType.WebEdit, "页面编辑", blnSmartSx);
+    }
+
+    public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel, String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment, boolean blnSmartSx) {
         CmsBtProductModel oldProduct = getProductById(channelId, prodId);
         if (isModifiedChk) {
             CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = oldProduct.getPlatform(platformModel.getCartId());
@@ -889,6 +911,12 @@ public class ProductService extends BaseService {
             }
         });
 
+        // 设定类目状态
+        if(!StringUtil.isEmpty(platformModel.getpCatId()) && !StringUtil.isEmpty(platformModel.getpCatPath())){
+            platformModel.setpCatStatus("1");
+        }else{
+            platformModel.setpCatStatus("0");
+        }
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
@@ -903,7 +931,7 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
 
         if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(platformModel.getStatus())) {
-            sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), platformModel.getCartId(), modifier);
+            sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(oldProduct.getCommon().getFields().getCode())), platformModel.getCartId(), modifier, blnSmartSx);
         }
         insertProductHistory(channelId, prodId);
 
@@ -1395,5 +1423,31 @@ public class ProductService extends BaseService {
 
     public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
         cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
+    }
+    //更新mongo product  tag
+    public void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel, int refTagId, List<TagTreeNode> tagList, String modifier) {
+        //更新商品Tags  sunpt
+        if (productModel != null) {
+            List<String> tags = productModel.getTags();
+            tagList.forEach(tagInfo -> {
+                if (tagInfo.getChecked() == 0) {
+                    //删除
+                    tags.remove(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+
+                } else if (tagInfo.getChecked() == 2) {
+
+                    //添加
+                    String tag = String.format("-%s-%s-", refTagId, tagInfo.getId());
+                    if (!tags.contains(tag)) {
+                        tags.add(String.format("-%s-%s-", refTagId, tagInfo.getId()));
+                    }
+
+                }
+            });
+
+            productModel.setTags(tags);
+            //3.更新
+            updateTags(channelId, productModel.getProdId(), tags, modifier);
+        }
     }
 }

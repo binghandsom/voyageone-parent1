@@ -125,9 +125,9 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     protected String shareContent;
 
     /**
-     * 直邮信息
+     * 直邮类型信息
      */
-    private String directmailType;
+    protected String directmailType;
 
     /**
      * 是否满减
@@ -179,6 +179,13 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
      */
     protected BigDecimal voCouponsMoney;
 
+    protected String brandLogo;
+
+    /**
+     * fasle
+     */
+    protected Boolean isCheckedBrandLogo;
+
     public Integer getPromotionId() {
         return promotionId;
     }
@@ -216,7 +223,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     }
 
     public void setMainChannel(String mainChannel) {
-        this.mainChannel = mainChannel;
+        this.mainChannel = mainChannel == null ? null : mainChannel.trim();
     }
 
     public String getSessionType() {
@@ -232,7 +239,7 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
     }
 
     public void setSessionCategory(String sessionCategory) {
-        this.sessionCategory = sessionCategory;
+        this.sessionCategory = sessionCategory == null ? null : sessionCategory.trim();
     }
 
     public String getPreDisplayChannel() {
@@ -355,6 +362,14 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.shareContent = shareContent == null ? null : shareContent.trim();
     }
 
+    public String getDirectmailType() {
+        return directmailType;
+    }
+
+    public void setDirectmailType(String directmailType) {
+        this.directmailType = directmailType == null ? null : directmailType.trim();
+    }
+
     public Integer getIsPromotionFullMinus() {
         return isPromotionFullMinus;
     }
@@ -435,11 +450,19 @@ public class CmsBtJmPromotionSpecialExtensionModel extends BaseModel {
         this.voCouponsMoney = voCouponsMoney;
     }
 
-    public String getDirectmailType() {
-        return directmailType;
+    public String getBrandLogo() {
+        return brandLogo;
     }
 
-    public void setDirectmailType(String directmailType) {
-        this.directmailType = directmailType;
+    public void setBrandLogo(String brandLogo) {
+        this.brandLogo = brandLogo == null ? null : brandLogo.trim();
+    }
+
+    public Boolean getIsCheckedBrandLogo() {
+        return isCheckedBrandLogo;
+    }
+
+    public void setIsCheckedBrandLogo(Boolean isCheckedBrandLogo) {
+        this.isCheckedBrandLogo = isCheckedBrandLogo;
     }
 }

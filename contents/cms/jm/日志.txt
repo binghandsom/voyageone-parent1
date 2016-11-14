@@ -1,0 +1,5 @@
+导入     JmBtPromotionImportJobService
+tail -f -n 300 /vdb/app-shared/voyageone_web/voyageone_log/flume/batch/cms2/cms/JmBtPromotionImportJobService/task-JmBtPromotionImportJobService-2016-10-24.log
+
+更新聚美 JuMeiProductUpdateJobService
+tail -f -n 300 /vdb/app-shared/voyageone_web/voyageone_log/flume/batch/cms2/cms/JuMeiProductUpdateJobService/task-JuMeiProductUpdateJobService-2016-10-31.log

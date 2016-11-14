@@ -47,9 +47,10 @@ define([
             $scope.searchInfo.selectedChanged = null;
         };
         $scope.search = function () {
-            var data = getSearchInfo();
-
-            goPage(1, 10)
+            var data = getSearchInfo(),
+                size = $scope.dataPageOption.size ? $scope.dataPageOption.size : 10;
+                console.log(size);
+            goPage(1, size);
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
             }, function (res) {
@@ -60,7 +61,11 @@ define([
             var data = angular.copy($scope.searchInfo);
             for (var key in data) {
                 if (!data[key]) {
-                    data[key] = undefined;
+                    if(key=='stockQty'&&data[key]==0){
+                        data[key] = 0;
+                    }else{
+                        data[key] = undefined;
+                    }
                 }
             }
             return data;
@@ -568,15 +573,35 @@ define([
 
             return minPrice + "~" +maxPrice;
         };
-        $scope.changeSelectTag=function(m) {
+        $scope.changeSelectTag=function(m,oldTagNameList) {
+            //获取删除的tag
+            var delTagNameList = _.filter(oldTagNameList, function (tagName) {
+                return !_.contains(m.tagNameList, tagName);
+            });
+            //获取新增的tag
+            var addTagNameList = _.filter(m.tagNameList, function (tagName) {
+                return !_.contains(oldTagNameList, tagName);
+            });
+
+            // console.log("delTagNameList")
+            // console.log(delTagNameList)
+            // console.log("addTagNameList")
+            // console.log(addTagNameList)
+
             var productTagList = [];
-            for (var i = 0; i < m.tagNameList.length; i++) {
-                var tagName = m.tagNameList[i];
+            _.each(delTagNameList, function (tagName) {
                 var tag = _.find($scope.vm.tagList, function (tag) {
                     return tag.tagName == tagName;
                 });
-                productTagList.push({tagId: tag.id, tagName: tag.tagName});
-            }
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 0});
+            });
+            _.each(addTagNameList, function (tagName) {
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 2});
+            });
+
             var parameter = {};
             parameter.tagList = productTagList;
             parameter.id = m.id;

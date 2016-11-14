@@ -1,5 +1,20 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
@@ -7,15 +22,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author gubuchun 15/12/9
@@ -38,6 +44,27 @@ public class CmsFieldEditController extends CmsController {
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_POP_OPTIONS)
     public AjaxResponse getPopOptions(){
         List<CmsMtCommonPropDefModel> result = fieldEditService.getPopOptions(getLang(), getUser().getSelChannelId());
+        return success(result);
+    }
+    
+    /**
+     * 商品智能上新
+     */
+	@RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.INTELLIGENT_PUBLISH)
+    public AjaxResponse intelligentPublish(@RequestBody Map<String, Object> params) {
+    	Integer cartId = (Integer) params.get("cartId");
+    	// 验证参数
+    	Preconditions.checkNotNull(cartId);
+    	// 设置商品的智能上新
+    	fieldEditService.intelligentPublish(cartId, params, getUser(), getCmsSession());
+    	
+    	return success(true);
+    }
+
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_PLATFROM_POP_OPTIONS)
+    public AjaxResponse getPlatfromPopOptions(@RequestBody Integer cartId){
+
+        List<CmsMtCommonPropDefModel> result = fieldEditService.getPlatfromPopOptions(cartId);
         return success(result);
     }
 
@@ -111,4 +138,18 @@ public class CmsFieldEditController extends CmsController {
         return genResponseEntityFromBytes(MediaType.valueOf("application/csv"), fileName, byteData);
     }
 
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_CATEGORY)
+    public AjaxResponse bulkSetCategory(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetCategory(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
+    @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.BULK_SET_PLATFORM_FIELDS)
+    public AjaxResponse bulkSetPlatformFields(@RequestBody Map<String, Object> params) {
+
+        fieldEditService.bulkSetPlatformFields(params,getUser(),getCmsSession());
+
+        return success(true);
+    }
 }

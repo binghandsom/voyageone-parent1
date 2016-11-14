@@ -264,7 +264,6 @@
                     <div class="col-sm-5">
                         <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.onMainChannelChange()"
                                 ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.mainChannelList" ng-disabled="ctrlEdit.editModel.model.isFstSave==1">
-                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                         </select>
                     </div>
                 </div>
@@ -333,6 +332,31 @@
                         <vo-message target="ctrlEdit.promotionForm.subtitle"></vo-message>
                     </div>
                 </div>
+
+
+
+
+                <div class="form-group" >
+                    <label class="col-sm-2 control-label s-required">
+                        <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isCheckedBrandLogo" ng-click="!ctrlEdit.editModel.extModel.isCheckedBrand?ctrlEdit.editModel.extModel.brandLogo=null:''">
+                        启用品牌Logo
+                    </label>
+                    <div class="col-sm-2">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.brandLogo" name="brandLogo" ng-required="ctrlEdit.editModel.extModel.isCheckedBrandLogo"
+                                ng-options="value.brandParameter as value.brandLogo for value in ctrlEdit.vm.metaData.preDisplayBrandLogoList"
+                                ng-disabled="!ctrlEdit.editModel.extModel.isCheckedBrandLogo">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.brandLogo"></vo-message>
+                    </div>
+                </div>
+
+
+
                 <div class="form-group">
                     <label class="col-sm-2 control-label">入口图专场导向文案</label>
                     <div class="col-sm-5">
@@ -505,7 +529,7 @@
                 <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-gift,,-60">活动促销信息</button>
             </li>
             <hr>
-            <li>
+            <li ng-if="ctrlEdit.spDataService.jmPromotionObj.detailStatus != 1">
                 <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
             </li>
             <li>

@@ -729,7 +729,7 @@ public class CmsProductDetailService extends BaseViewService {
                         });
                         cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                     }
-                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
                 }
             });
 

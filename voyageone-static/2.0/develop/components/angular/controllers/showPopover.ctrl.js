@@ -42,7 +42,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(code, skus){
+    function popoverAdvanceSku(code, skus , entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
             var skuDetails = [],
@@ -70,7 +76,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(code){
+    function popoverPromotionDetail(code,entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
             $scope.promotionDetail = resp.data;

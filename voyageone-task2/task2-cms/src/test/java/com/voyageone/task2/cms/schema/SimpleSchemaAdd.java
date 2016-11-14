@@ -42,7 +42,7 @@ public class SimpleSchemaAdd {
 		{
 			// 是否需要自动翻译 选项列表(true, false)
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";// 不要设初期值，不然的话什么都没选直接APPROVE的话，不是想要的值；默认值在cms_mt_channel_condition_config表里面配置的
 			String tipInfo1 = "true, false";
 			fieldList.add(createSingleCheckField("extends_translate", "是否需要自动翻译", optionList, defaultValue, false, tipInfo1));
 		}
@@ -53,7 +53,7 @@ public class SimpleSchemaAdd {
 		{
 			// 是否自动插入商品关键词 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";
 			String tipInfo1 = "true, false, 默认false， 比如自动插入： X国 官网 直邮 进口";
 			fieldList.add(createSingleCheckField("extends_original_title", "是否自动插入商品关键词", optionList, defaultValue, false, tipInfo1));
 		}
@@ -69,28 +69,28 @@ public class SimpleSchemaAdd {
 		{
 			// 是否单独发货 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";
 			String tipInfo1 = "true, false, 默认false， 建议超过1000人民币的商品单独发货， 然后就会自动拆单， 需要付两份运费";
 			fieldList.add(createSingleCheckField("extends_delivery_separate", "是否单独发货", optionList, defaultValue, false, tipInfo1));
 		}
 		{
 			// 支持退货 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";
 			String tipInfo1 = "true, false";
 			fieldList.add(createSingleCheckField("extends_support_refund", "支持退货", optionList, defaultValue, false, tipInfo1));
 		}
 		{
 			// 官网是否热卖 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";
 			String tipInfo1 = "true, false";
 			fieldList.add(createSingleCheckField("extends_hot_sale", "官网是否热卖", optionList, defaultValue, false, tipInfo1));
 		}
 		{
 			// 在官网是否是新品 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
-			String defaultValue = "false";
+			String defaultValue = "";
 			String tipInfo1 = "true, false";
 			fieldList.add(createSingleCheckField("extends_new_goods", "在官网是否是新品", optionList, defaultValue, false, tipInfo1));
 		}

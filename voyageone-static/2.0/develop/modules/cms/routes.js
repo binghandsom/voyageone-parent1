@@ -150,7 +150,7 @@ define(function () {
             "hash": "/channel/default_attribute_detail/:upEntity?",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
-            "controller": "attributeDetailController as ctrl"
+            "controller": "AttributeDetailController as ctrl"
         },
         "search_advance_new": {
             "hash": "/search/advanceSearch",

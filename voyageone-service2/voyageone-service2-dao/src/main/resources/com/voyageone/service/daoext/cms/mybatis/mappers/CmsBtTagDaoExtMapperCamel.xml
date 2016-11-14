@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtTagDaoExtCamel" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTagModel" />
+
+    <select id="selectListTagCodeCount" resultType="com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo">
+        SELECT c.`id`,c.`tag_name`,SUM(CASE WHEN a.`id` IS NULL THEN 0 ELSE 1 END ) as productCount   FROM `cms_bt_promotion_codes`  AS a
+        JOIN `cms_bt_promotion_codes_tag` AS b ON a.`id`=b.`cms_bt_promotion_codes_id` AND a.`promotion_id`=#{promotionId}
+        AND a.`product_code` IN  <foreach item="item" index="i" collection="codeList" open="(" separator="," close=")">
+                                   #{item}
+                                 </foreach>
+        RIGHT JOIN `cms_bt_tag` AS c ON b.`cms_bt_tag_id`=c.`id`
+        WHERE c.`parent_tag_id`=#{parentTagId}
+        GROUP BY c.`id`
+    </select>
+</mapper>

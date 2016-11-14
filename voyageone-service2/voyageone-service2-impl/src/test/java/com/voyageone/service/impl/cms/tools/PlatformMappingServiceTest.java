@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 对商品属性计算进行单元测试
@@ -120,5 +121,22 @@ public class PlatformMappingServiceTest {
 //        assert valueMap != null;
 
         fieldMapsDao.delete(fieldMapsModel);
+    }
+
+    @Test
+    public void getValueMap() throws Exception {
+
+        String channelId = "010";
+        Integer cartId = 23;
+        long productId = 9315;
+        String fieldId = "prop_8560225";
+        Object expected = "Hello World";
+        Object actual;
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, productId);
+
+        Map<String, Object> valueMap = platformMappingService.getValueMap(channelId, cartId, cmsBtProductModel, null, "sell_points");
+
+        assert valueMap != null;
     }
 }

@@ -199,7 +199,8 @@ define(function () {
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
-                    "saveSkuPromotionPrices": "saveSkuPromotionPrices"
+                    "saveSkuPromotionPrices": "saveSkuPromotionPrices",
+                    "updatePromotionProductTag":"updatePromotionProductTag"
                 }
             },
             "jmpromotion": {
@@ -432,11 +433,20 @@ define(function () {
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
                 },
+                "addProductToPromotionService":{
+                    "root": "/cms/pop/add_product_to_promotion",
+                    "init": "init",
+                    "save":"save"
+                },
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",
                     "getPopOptions": "getPopOptions",
                     "setProductFields": "setProductFields",
-                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale"
+                    "dldUnProcCode4PriceSale": "dldUnProcCode4PriceSale",
+                    "bulkSetCategory":"bulkSetCategory",
+                    "bulkSetPlatformFields":"bulkSetPlatformFields",
+                    "getPlatfromPopOptions": "getPlatfromPopOptions",
+                    "intelligentPublish": "intelligentPublish"
                 },
                 "$promotionHistoryService": {
                     "root": "/cms/pop/history_promotion",
@@ -614,6 +624,7 @@ define(function () {
                     cache: CACHE.SESSION,
                     cacheWith: [KEY.CHANNEL]
                 },
+                refreshProducts: 'refreshProducts',
                 // 原 platform mapping 的功能已删除
                 // 原 platformMappingService 的以下两个 action 被其他内容调用
                 // 所以暂时寄存在新的 platformMappingService 下

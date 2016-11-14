@@ -5,7 +5,7 @@
 /**
  * angular component head file。
  * 声明各个组件的父模块
- *
+ * 
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -15,13 +15,15 @@ angular.module('voyageone.angular.controllers', []);
 angular.module('voyageone.angular.directives', []);
 angular.module('voyageone.angular.factories', []);
 angular.module('voyageone.angular.services', []);
+angular.module('voyageone.angular.filter', []);
 
 // 总模块, 供子系统一次性引入
 angular.module('voyageone.angular', [
     'voyageone.angular.controllers',
     'voyageone.angular.directives',
     'voyageone.angular.factories',
-    'voyageone.angular.services'
+    'voyageone.angular.services',
+    'voyageone.angular.filter'
 ]);
 
 /*****************************/
@@ -162,7 +164,13 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(code, skus){
+    function popoverAdvanceSku(code, skus , entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
             var skuDetails = [],
@@ -190,11 +198,16 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(code){
+    function popoverPromotionDetail(code,entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
 
         $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
             $scope.promotionDetail = resp.data;
-            console.log($scope.promotionDetail);
         });
 
     }
@@ -3186,6 +3199,32 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
 
 /*****************************/
 
+angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
+
+    return function (input,format) {
+
+        var miliTimes;
+
+        if (!input){
+            console.warn("没有要转换的日期");
+            return '';
+        }
+
+
+        input = typeof input === 'string' ? new Date(input) : input;
+
+        miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
+
+
+        return $filter('date')(new Date(miliTimes), format);
+    };
+
+
+});
+
+
+/*****************************/
+
 /**
  * @description
  *
@@ -3316,7 +3355,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-
+                        
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3325,7 +3364,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-
+                        
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3651,12 +3690,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-
+    
     languages: {
         en: "en",
         zh: "zh"
     },
-
+    
     /**
      * set the web side language type.
      */
@@ -3667,7 +3706,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-
+    
     /**
      * get the browser language type.
      * @returns {string}

@@ -3,12 +3,13 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    function SpEditDirectiveController($routeParams, jmPromotionService, spDataService, alert, confirm, $translate, $filter, $scope) {
+    function SpEditDirectiveController($routeParams, jmPromotionService, spDataService, alert, confirm, $translate, $filter, $scope, notify) {
         this.$routeParams = $routeParams;
         this.jmPromotionService = jmPromotionService;
         this.spDataService = spDataService;
         this.alert = alert;
         this.confirm = confirm;
+        this.notify = notify;
         this.$translate = $translate;
         this.$filter = $filter;
         this.vm = {"brandEnName": '', "mainChannelAb": '', "isFromBox": false};
@@ -61,6 +62,9 @@ define([
             }
             if (editModel.extModel.directmailType == undefined || editModel.extModel.directmailType == null || editModel.extModel.directmailType == '') {
                 editModel.extModel.directmailType = '1';
+            }
+            if (editModel.extModel.mainChannel == undefined || editModel.extModel.mainChannel == null || editModel.extModel.mainChannel == '') {
+                editModel.extModel.mainChannel = 'luxuryglobal';
             }
 
             // 转换并设置checkbox
@@ -212,29 +216,31 @@ define([
         }
 
         var tempPromotionProductType = '';
-        if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined) {
+        if (self.editModel.extModel.promotionProductType == null || self.editModel.extModel.promotionProductType == undefined || self.editModel.extModel.promotionProductType == '') {
             self.editModel.extModel.promotionProductType = '';
             tempPromotionProductType = '';
         } else {
             tempPromotionProductType = "_" + self.editModel.extModel.promotionProductType
         }
 
-        if (self.editModel.model.promotionType == '3') {
-            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-            idTime = parseInt(idTime).toString(36);
-            var pageId = idDate + mainChannel + tempPromotionProductType + '_' + jmBrandId + '_' + idTime;
-            self.editModel.extModel.pcPageId = pageId + '_pc';
-            self.editModel.extModel.appPageId = pageId + '_app';
-        } else {
-            //if (fieldName == 'promotionProductType') {
-            //    // 其他专场时，活动主要商品品类的输入无效
-            //    return;
-            //}
-            var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
-            idTime = parseInt(idTime).toString(36);
-            var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + tempPromotionProductType + '_' + idDate + '_' + idTime;
-            self.editModel.extModel.pcPageId = pageId + '_pc';
-            self.editModel.extModel.appPageId = pageId + '_app';
+        if (self.spDataService.jmPromotionObj.detailStatus != 1) {
+            if (self.editModel.model.promotionType == '3') {
+                var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+                idTime = parseInt(idTime).toString(36);
+                var pageId = idDate + mainChannel + tempPromotionProductType + '_' + jmBrandId + '_' + idTime;
+                self.editModel.extModel.pcPageId = pageId + '_pc';
+                self.editModel.extModel.appPageId = pageId + '_app';
+            } else {
+                //if (fieldName == 'promotionProductType') {
+                //    // 其他专场时，活动主要商品品类的输入无效
+                //    return;
+                //}
+                var idTime = self.$filter("date")(new Date(),"HH-mm-ss-sss").replace(/-/g, "");
+                idTime = parseInt(idTime).toString(36);
+                var pageId = self.vm.mainChannelAb + '_' + self.vm.brandEnName + tempPromotionProductType + '_' + idDate + '_' + idTime;
+                self.editModel.extModel.pcPageId = pageId + '_pc';
+                self.editModel.extModel.appPageId = pageId + '_app';
+            }
         }
     };
 
@@ -243,6 +249,7 @@ define([
     SpEditDirectiveController.prototype.save = function (saveType) {
         var self = this,
             alert = self.alert,
+            notify = self.notify,
             jmPromotionService = self.jmPromotionService,
             spDataService = self.spDataService,
             editModel = self.editModel;
@@ -370,12 +377,14 @@ define([
         param.saveType = saveType;
         param.extModel.promotionId = self.$routeParams.promId;
         param.extModel.jmpromotionId = self.$routeParams.jmpromId;
-        spDataService.jmPromotionObj.detailStatus = 2;
 
         jmPromotionService.saveModel(param).then(function () {
+            notify.success('TXT_SAVE_SUCCESS');
             if (saveType == 1) {
                 spDataService.jmPromotionObj.detailStatus = 1;
                 model.isFstSave = 1;
+            } else {
+                spDataService.jmPromotionObj.detailStatus = 2;
             }
             // 保存之后如果标签被修改过就需要重新刷新标签缓存
             spDataService.getPromotionModules(true).then(function (tagModels) {
@@ -464,7 +473,7 @@ define([
         return {
             restrict: 'E',
             scope: {},
-            controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', SpEditDirectiveController],
+            controller: ['$routeParams', 'jmPromotionService', 'spDataService', 'alert', 'confirm', '$translate', '$filter', '$scope', 'notify', SpEditDirectiveController],
             controllerAs: 'ctrlEdit',
             templateUrl: '/modules/cms/views/jmpromotion/sp.edit.directive.html'
         }
