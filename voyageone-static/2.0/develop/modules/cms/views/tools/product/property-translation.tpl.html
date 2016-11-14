@@ -187,19 +187,22 @@
                                         <div class="col-sm-3">
                                             <div class="row text-right">
                                                 <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
-                                                <br>
-                                                <label class="control-label"><strong>库存</strong></label>
+                                                <!--<br>-->
+                                                <!--<label class="control-label"><strong>库存</strong></label>-->
                                             </div>
                                         </div>
                                         <div class="col-md-8">
-                                            <div class="row">
+                                            <div class="row product-shema-detail">
                                                 <div class="col-xs-6 col-md-2"  ng-repeat="groupProduct in ctrl.vm.taskDetail.groupProducts">
-                                                    <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom ng-scope">
-                                                        <strong class="main" style="position: absolute;" ng-if="groupProduct.code == ctrl.vm.taskDetail.productCode"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{groupProduct.iamge}}" title="{{groupProduct.code}}"/>
+                                                    <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" style="height: 115px;">
+                                                        <strong class="main" ng-if="groupProduct.code == ctrl.vm.taskDetail.productCode"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
+                                                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{groupProduct.iamge}}" title="{{groupProduct.code}}">
                                                     </a>
-                                                    <div class="text-right"  style="border-right: 1px solid #ddd">
-                                                        {{groupProduct.inventory}}
+                                                    <div class="thumbInfo">
+                                                        <div class="row">
+                                                            <div class="col-md-5"><strong>库存:</strong></div>
+                                                            <div class="col-md-7 text-right">{{groupProduct.inventory}}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
