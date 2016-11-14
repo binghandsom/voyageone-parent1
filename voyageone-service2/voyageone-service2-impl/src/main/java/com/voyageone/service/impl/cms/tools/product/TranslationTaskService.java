@@ -186,10 +186,11 @@ public class TranslationTaskService extends BaseService {
                         }
                     }
                 }
-                // 如果按照现有条件未获取到翻译任务,并且没有输入 模糊查询
-                if (CollectionUtils.isEmpty(mapList) && !StringUtils.isNullOrBlank2(keyWord)) {
-                    throw new BusinessException("根据输入的模糊查询["+keyWord+"]无法获取未翻译任务!");
-                }
+            }
+
+            // 如果按照现有条件未获取到翻译任务,并且没有输入 模糊查询
+            if (CollectionUtils.isEmpty(mapList) && !StringUtils.isNullOrBlank2(keyWord)) {
+                throw new BusinessException("根据输入的模糊查询["+keyWord+"]无法获取未翻译任务!");
             }
         }
         if (product == null && (CollectionUtils.isEmpty(mapList) || mapList.get(0) == null)) {
