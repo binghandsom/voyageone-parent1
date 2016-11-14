@@ -31,7 +31,7 @@ define([
         };
 
         $scope.ok = function () {
-            console.log($scope.vm);
+
             if (listPromotionProduct.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;

@@ -12,7 +12,7 @@
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.83/voyageone_cms2"
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://10.0.0.24/voyageone_cms2"
                         userId="root" password="sneakerhead">
         </jdbcConnection>
 
@@ -39,7 +39,7 @@
         </javaClientGenerator>
 
 
-        <table tableName="cms_bt_jm_promotion_special_extension" delimitAllColumns="true" enableCountByExample="false"
+        <table tableName="cms_bt_promotion_codes_tag" delimitAllColumns="true" enableCountByExample="false"
         enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
         selectByExampleQueryId="false">
         <generatedKey column="id" sqlStatement="JDBC"/>

@@ -3,12 +3,16 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.CmsTagInfoBean;
+import com.voyageone.service.bean.cms.businessmodel.CmsBtTag.TagCodeCountInfo;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtTagDaoExtCamel;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.util.MapModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,9 @@ public class TagService extends BaseService {
     private final CmsBtTagDaoExt cmsBtTagDaoExt;
     private final CmsBtTagDao cmsBtTagDao;
     private final CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao;
+
+    @Autowired
+    CmsBtTagDaoExtCamel cmsBtTagDaoExtCamel;
 
     @Autowired
     public TagService(CmsBtTagDaoExt cmsBtTagDaoExt, CmsBtTagDao cmsBtTagDao, CmsBtTagJmModuleExtensionDao tagJmModuleExtensionDao) {
@@ -320,5 +327,9 @@ public class TagService extends BaseService {
         }
 
         return ret;
+    }
+
+    public List<TagCodeCountInfo> getListTagCodeCount(int promotionId,int parentTagId, List<String> codeList) {
+        return cmsBtTagDaoExtCamel.selectListTagCodeCount(promotionId,parentTagId,codeList);
     }
 }

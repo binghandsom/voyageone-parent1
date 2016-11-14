@@ -36,9 +36,7 @@ define([
             groupList: [],
             productList: [],
             currTab: "product",
-            status: {
-                open: true
-            },
+            status: {open: true},
             groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
@@ -50,11 +48,9 @@ define([
             _cart_tab_act: false
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
-
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function () {
-            //$scope.vm.status.open = false;//收缩搜索栏
             search();
             $scope.vm._selall = false;
         };
@@ -1247,8 +1243,22 @@ define([
             }
         };
 
+        /**
+         * 高级检索加入活动
+         */
+        $scope.popJoinPromotion = function (cartBean) {
 
-    }
+            _chkProductSel(cartBean.value, function (cartId, selList, context) {
+                popups.openJoinPromotion(_.extend({
+                    cartBean: cartBean,
+                    selList: selList
+                }, context)).then(function (context) {
+
+                });
+            }, {'isSelAll': $scope.vm._selall ? 1 : 0});
+
+
+        }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q'];
     return searchIndex;

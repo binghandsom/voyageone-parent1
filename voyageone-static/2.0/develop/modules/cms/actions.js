@@ -199,7 +199,8 @@ define(function () {
                     "tmallJuhuasuanExport": "tmallJuhuasuanExport",
                     "tmallPromotionExport": "tmallPromotionExport",
                     "getPromotionSkuList": "getPromotionSkuList",
-                    "saveSkuPromotionPrices": "saveSkuPromotionPrices"
+                    "saveSkuPromotionPrices": "saveSkuPromotionPrices",
+                    "updatePromotionProductTag":"updatePromotionProductTag"
                 }
             },
             "jmpromotion": {
@@ -431,6 +432,11 @@ define(function () {
                     "getPromotionTags": "getPromotionTags",
                     "addToPromotion": "addToPromotion",
                     "checkPromotionTags": "checkPromotionTags"
+                },
+                "addProductToPromotionService":{
+                    "root": "/cms/pop/add_product_to_promotion",
+                    "init": "init",
+                    "save":"save"
                 },
                 "$fieldEditService": {
                     "root": "/cms/pop/field_edit",

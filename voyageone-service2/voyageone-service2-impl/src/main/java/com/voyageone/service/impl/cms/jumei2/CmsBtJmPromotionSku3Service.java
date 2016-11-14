@@ -68,6 +68,13 @@ public class CmsBtJmPromotionSku3Service {
         List<Double> listPrice = new ArrayList<>();
 
         List<CmsBtJmPromotionSkuModel> listSku = getListByJmPromotionProductId(promotionProductId);
+        UpdateSkuDealPrice(parameter,listSku,userName);
+    }
+    @VOTransactional
+    public  void UpdateSkuDealPrice(BatchUpdateSkuPriceParameterBean parameter, List<CmsBtJmPromotionSkuModel> listSku,String userName) {
+        //1.商品内，SKU统一最高价    2.商品内，SKU统一最低价    3.商品内，SKU价格不统一
+        List<Double> listPrice = new ArrayList<>();
+
         listSku.forEach(sku -> {
             double price = getSkuPrice(parameter, sku);
             listPrice.add(price);
@@ -88,7 +95,9 @@ public class CmsBtJmPromotionSku3Service {
         listSku.forEach(f -> {
                     f.setModifier(userName);
                     f.setModified(new Date());
-                    dao.update(f);
+                   f.setDiscount(BigDecimalUtil.divide(f.getDealPrice(), f.getMarketPrice(), 2));//折扣
+
+            dao.update(f);
                 }
         );//更新deal价格
     }

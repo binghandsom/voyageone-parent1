@@ -4,10 +4,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.impl.cms.promotion.PromotionCodesTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -75,7 +78,18 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
-    @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
+    @Autowired
+    PromotionCodesTagService promotionCodesTagService;
+
+    //修改tag
+    @RequestMapping(PROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
+    public  AjaxResponse  updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
+        UserSessionBean userSessionBean = getUser();
+        promotionCodesTagService.updatePromotionProductTag(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+
+       return success(null);
+    }
+        @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
     public AjaxResponse getPromotionSku(@RequestBody Map<String, Object> params) {
 
         String channelId = getUser().getSelChannelId();

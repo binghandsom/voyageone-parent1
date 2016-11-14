@@ -240,7 +240,7 @@
                         </td>
                         <td>{{model.productLongName}}</td>
                         <td>
-                            <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model)" ng-model="model.tagNameList"
+                            <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model,{{model.tagNameList}})" ng-model="model.tagNameList"
                                     ng-options="m.tagName as m.tagName for m in vm.tagList">
                             </select>
                         </td>
