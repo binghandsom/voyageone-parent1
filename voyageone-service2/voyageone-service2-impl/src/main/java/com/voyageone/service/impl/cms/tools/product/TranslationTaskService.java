@@ -191,14 +191,6 @@ public class TranslationTaskService extends BaseService {
                     throw new BusinessException("根据输入的模糊查询["+keyWord+"]无法获取未翻译任务!");
                 }
             }
-
-            if (CollectionUtils.isEmpty(mapList)) {
-                // 无分发规则
-                aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
-                aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
-                aggregateList.add(new JongoAggregate("{ $limit : 1}"));
-                mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
-            }
         }
         if (product == null && (CollectionUtils.isEmpty(mapList) || mapList.get(0) == null)) {
             throw new BusinessException("当前没有待领取的翻译任务！");
