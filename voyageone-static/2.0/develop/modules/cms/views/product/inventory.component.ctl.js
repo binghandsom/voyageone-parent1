@@ -4,6 +4,7 @@
  * @version 2.9.0
  * @datetime 2016/10/24.
  */
+
 define([
     'cms',
     'modules/cms/controller/popup.ctl'
@@ -32,15 +33,14 @@ define([
             restrict: "E",
             templateUrl: "views/product/inventory.component.tpl.html",
             scope: {productInfo: "=productInfo"},
-            link: function (scope, element) {
+            link: function (scope) {
 
                 initial();
                 scope.count = count;
-                scope.thEntity = _inventConfig.orgTh;
 
                 function initial() {
                     scope.showDetail = false;
-                    scope.generalLength = '3';
+                    scope.thEntity = _inventConfig.orgTh;
                 }
 
                 function count(value) {
