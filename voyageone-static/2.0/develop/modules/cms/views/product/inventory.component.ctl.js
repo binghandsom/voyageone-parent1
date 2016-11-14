@@ -8,44 +8,46 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    cms.directive("inventorySchema", function (selectRowsFactory) {
+
+    cms.directive("inventorySchema", function () {
+
+        var _inventConfig = {
+            orgTh: {
+                generalLength: '3',
+                CNPrivateLength: '1',
+                CNThirdPartyLength: '1',
+                USPrivateLength: '1',
+                USThirdPartyLength: '1'
+            },
+            expandTh: {
+                generalLength: '4',
+                CNPrivateLength: '6',
+                CNThirdPartyLength: '4',
+                USPrivateLength: '2',
+                USThirdPartyLength: '8'
+            }
+        };
+
         return {
             restrict: "E",
             templateUrl: "views/product/inventory.component.tpl.html",
             scope: {productInfo: "=productInfo"},
             link: function (scope, element) {
 
-                scope.initial = initial;
+                initial();
                 scope.count = count;
-                scope.generalLength = '3';
-                scope.CNPrivateLength = '1';
-                scope.CNThirdPartyLength = '1';
-                scope.USPrivateLength = '1';
-                scope.USThirdPartyLength = '1';
+                scope.thEntity = _inventConfig.orgTh;
 
-                /**
-                 * Sku属性初始化
-                 */
                 function initial() {
                     scope.showDetail = false;
                     scope.generalLength = '3';
-                    scope.tempStockListSelect = new selectRowsFactory();
                 }
 
                 function count(value) {
-                    if (value == true) {
-                        scope.generalLength = '4';
-                        scope.CNPrivateLength = '6';
-                        scope.CNThirdPartyLength = '4';
-                        scope.USPrivateLength = '2';
-                        scope.USThirdPartyLength = '8';
-                    }else {
-                        scope.generalLength = '3';
-                        scope.CNPrivateLength = '1';
-                        scope.CNThirdPartyLength = '1';
-                        scope.USPrivateLength = '1';
-                        scope.USThirdPartyLength = '1';
-                    }
+                    if (value == true)
+                        scope.thEntity = _inventConfig.expandTh;
+                    else
+                        scope.thEntity = _inventConfig.orgTh;
                 }
             }
         };
