@@ -2,11 +2,87 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtShelvesDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesModel" />
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
     <sql id="Base_Column_List" >
         `id`, `shelves_name`, `cart_id`, `channel_id`, `client_type`, `layout_template_id`, 
         `single_template_id`, `promotion_id`, `active`, `last_update`, `creater`, `created`, 
         `modifier`, `modified`
     </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtShelvesExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
@@ -14,6 +90,85 @@
         from cms_bt_shelves
         where `id` = #{id,jdbcType=INTEGER}
     </select>
+
+    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtShelvesExample" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_shelves
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update cms_bt_shelves
+        <set >
+            <if test="record.id != null" >
+                `id` = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.shelvesName != null" >
+                `shelves_name` = #{record.shelvesName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.cartId != null" >
+                `cart_id` = #{record.cartId,jdbcType=INTEGER},
+            </if>
+            <if test="record.channelId != null" >
+                `channel_id` = #{record.channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.clientType != null" >
+                `client_type` = #{record.clientType,jdbcType=INTEGER},
+            </if>
+            <if test="record.layoutTemplateId != null" >
+                `layout_template_id` = #{record.layoutTemplateId,jdbcType=INTEGER},
+            </if>
+            <if test="record.singleTemplateId != null" >
+                `single_template_id` = #{record.singleTemplateId,jdbcType=INTEGER},
+            </if>
+            <if test="record.promotionId != null" >
+                `promotion_id` = #{record.promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="record.active != null" >
+                `active` = #{record.active,jdbcType=INTEGER},
+            </if>
+            <if test="record.lastUpdate != null" >
+                `last_update` = #{record.lastUpdate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.creater != null" >
+                `creater` = #{record.creater,jdbcType=VARCHAR},
+            </if>
+            <if test="record.created != null" >
+                `created` = #{record.created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifier != null" >
+                `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="record.modified != null" >
+                `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update cms_bt_shelves
+        set `id` = #{record.id,jdbcType=INTEGER},
+            `shelves_name` = #{record.shelvesName,jdbcType=VARCHAR},
+            `cart_id` = #{record.cartId,jdbcType=INTEGER},
+            `channel_id` = #{record.channelId,jdbcType=VARCHAR},
+            `client_type` = #{record.clientType,jdbcType=INTEGER},
+            `layout_template_id` = #{record.layoutTemplateId,jdbcType=INTEGER},
+            `single_template_id` = #{record.singleTemplateId,jdbcType=INTEGER},
+            `promotion_id` = #{record.promotionId,jdbcType=INTEGER},
+            `active` = #{record.active,jdbcType=INTEGER},
+            `last_update` = #{record.lastUpdate,jdbcType=TIMESTAMP},
+            `creater` = #{record.creater,jdbcType=VARCHAR},
+            `created` = #{record.created,jdbcType=TIMESTAMP},
+            `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            `modified` = #{record.modified,jdbcType=TIMESTAMP}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
 
     <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtShelvesModel" >
         update cms_bt_shelves
@@ -67,6 +222,13 @@
     <delete id="delete" parameterType="java.lang.Integer" >
         delete from cms_bt_shelves
         where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtShelvesExample" >
+        delete from cms_bt_shelves
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
