@@ -177,6 +177,8 @@ public class TranslationTaskService extends BaseService {
                     if (CollectionUtils.isEmpty(mapList)) {
                         aggregateList.remove(0);
                         aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}}}"));
+                        aggregateList.remove(2);
+                        aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                         mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
                         if (CollectionUtils.isEmpty(mapList)) {
                             aggregateList.remove(0);

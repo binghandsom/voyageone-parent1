@@ -1,6 +1,10 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
+import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.common.CmsConstants;
@@ -20,6 +24,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.BusinessLogService;
@@ -70,6 +75,9 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
@@ -373,9 +381,38 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 productModel.set_id(null);
                 // 子店的产品code(到主店后产品code也一样)
                 String productCode = productModel.getCommonNotNull().getFieldsNotNull().getCode();
-
+                // 子店的原始产品Code(由于子店也可能在feed->master导入或者运营手动拆分商品，但运营手动拆分信息不带到主店去，所以根据skuCode去查product，把价格更新到该产品中)
+                String originalProductCode = productModel.getCommonNotNull().getFieldsNotNull().getOriginalCode();
                 // productModel是子店的产品model,pr是主店查出来的产品model
-                CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productCode);
+                List<CmsBtProductModel> prList = new ArrayList<>();
+                // 判断是否是在子店拆分过的产品，如果拆分过的产品，直接用skuCode去查询产品
+                if (!StringUtils.isEmpty(originalProductCode) && !productCode.equals(originalProductCode)) {
+                    if (ListUtils.notNull(productModel.getCommonNotNull().getSkus())) {
+                        productModel.getCommonNotNull().getSkus().forEach(s -> {
+                            // 子店产品本身就是拆分出来的产品时，根据skuCode去主店里面查询产品
+                            List<CmsBtProductModel> movedPrList = productService.getProductBySkuCode(usJoiChannelId, s.getSkuCode());
+                            if (ListUtils.notNull(movedPrList)) {
+                                if (movedPrList.size() > 1) {
+                                    String errMsg = String.format("子店产品(%s)中skuCode(%s)在LIKING主店产品里面存在多个产品Code(%s)中，" +
+                                                    "正常情况下一个skuCode只能存在于一个产品中，请确认主店产品数据。", productCode, originalProductCode,
+                                            movedPrList.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.joining(",")));
+                                    $error(errMsg);
+                                    throw new BusinessException(errMsg);
+                                } else if (movedPrList.size() == 1){
+                                    // 把子店产品中每个skuCode对应的主店产品都加入到更新列表中去
+                                    prList.add(movedPrList.get(0));
+                                }
+                            }
+                        });
+                    }
+                } else {
+                    // 子店不是拆分出来的产品，用code去查(其实也可以用skuCode去查，但效率可能会比较低)
+                    CmsBtProductModel pr = productService.getProductByCode(usJoiChannelId, productCode);
+                    if (pr != null) prList.add(pr);
+                }
+
+                // 根据code去查主店产品
+//                pr = productService.getProductByCode(usJoiChannelId, productCode);
                 // 再根据originalCode再去查一下，如果code没查到而originalCode查到的话，就是数据不整合，报错误
                 List<CmsBtProductModel> originalCodeProductList = productService.getProductByOriginalCodeWithoutItself(usJoiChannelId, productCode);
                 // -------------------------------------------------------------------------------------------------
@@ -386,7 +423,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 //      4. 如果P1里面追加了一个新的sku(sku4),则应追加到P1里面 P1(sku1) -> P1(sku1,sku4) P2(sku2) P3(sku3);
                 //      5. 主店产品的sku拆分是由别的程序(如:CmsProductMoveService)来做的，本程序新增产品的时候不做拆分，只需要确保更新的时候正确更新到拆分后的产品即可;
                 // -------------------------------------------------------------------------------------------------
-                if (pr == null) {
+                if (ListUtils.isNull(prList)) {
                     // 如果code没查到而originalCode查到的话，就是数据不整合，报出错误消息
                     if (ListUtils.notNull(originalCodeProductList)) {
                         String errMsg = String.format("子店->USJOI主店产品导入:根据code(%s)没查到产品但根据originalCode(%s)查" +
@@ -460,106 +497,107 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // 将子店的产品加入更新对象产品列表中
                     targetProductList.add(productModel);
                 } else {
-                    // 如果已经存在（如老的数据已经有了），更新
-                    // 插入或者更新cms_bt_product_group_c928中的productGroup信息
-                    doSetGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
-                    // 更新common的一部分属性
-                    // productModel是子店的产品model,pr是主店查出来的产品model
-                    CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
-                    if (prCommonFields != null && productModel.getCommon().getFields() != null) {
-                        // 更新common.fields.images1(品牌方商品图)
-                        prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
+                    for (CmsBtProductModel pr : prList) {
+                        // 如果已经存在（如老的数据已经有了），更新
+                        // 插入或者更新cms_bt_product_group_c928中的productGroup信息
+                        doSetGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
+                        // 更新common的一部分属性
+                        // productModel是子店的产品model,pr是主店查出来的产品model
+                        CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
+                        if (prCommonFields != null && productModel.getCommon().getFields() != null) {
+                            // 更新common.fields.images1(品牌方商品图)
+                            prCommonFields.setImages1(productModel.getCommon().getFields().getImages1());
 
-                        // add by desmond 2016/10/27 start
-                        // 从子店产品中复制图片到总店产品的common.fields.images2~images9的图片
-                        // -------------------------------------------
-                        // 子店到主店的图片(images2~images9)复制方式:
-                        //    空或0:不复制品牌方商品图以外的图片
-                        //    1:以UNION方式复制图片
-                        //    2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店
-                        // -------------------------------------------
-                        // 取得cms_mt_channel_config配置表中配置的子店->USJOI总店的品牌方商品图(images1)以外的图片复制方式(LIKING_IMAGE_COPY_FLG)
-                        // LIKING_IMAGE_COPY_FLG  LIKING子店到总店更新时图片复制方式(不包含品牌方商品图images1)(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
-                        String likingImageCopyFlg = "";   // 没有配置时，默认为空(""或者"0":不复制品牌方商品图以外的图)
-                        // 子店到主店的品牌方商品图(images1)以外图片拷贝方式取得key
-                        String likingImageCopyFlgKey = CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG + "_0";
-                        if (channelConfigValueMap != null && channelConfigValueMap.containsKey(likingImageCopyFlgKey)) {
-                            likingImageCopyFlg = channelConfigValueMap.get(likingImageCopyFlgKey);
-                        }
-                        // 从子店产品中复制图片到总店产品
-                        // 子店到总店更新时图片复制方式(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
-                        // 包装图(images2) 角度图(images3) PC端自定义图(images4) APP端自定义图(images5) PC端自拍商品图(images6)
-                        // App端自拍商品图(images7) App端自拍商品图(images7) 吊牌图(images8) (images9)
-                        for (int imagesNo = 2; imagesNo <= 9; imagesNo++) {
-                            // 从子店产品复制图片到主店产品中(images2~images9)
-                            copyImageToUsjoi(likingImageCopyFlg, imagesNo, productModel, pr);
-                        }
-                        // add by desmond 2016/10/27 end
-
-                        // 主店的税号没设置，子店的税号设置了的话，将主店商品更新成子店的税号code
-                        // 税号集货
-                        if (StringUtil.isEmpty(prCommonFields.getHsCodeCrop())
-                                && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCrop())) {
-                            prCommonFields.setHsCodeCrop(productModel.getCommon().getFields().getHsCodeCrop());
-                        }
-
-                        // 税号跨境申报（10位）
-                        if (StringUtil.isEmpty(prCommonFields.getHsCodeCross())
-                                && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCross())) {
-                            prCommonFields.setHsCodeCross(productModel.getCommon().getFields().getHsCodeCross());
-                        }
-
-                        // 税号个人
-                        if (StringUtil.isEmpty(prCommonFields.getHsCodePrivate())
-                                && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodePrivate())) {
-                            prCommonFields.setHsCodePrivate(productModel.getCommon().getFields().getHsCodePrivate());
-                        }
-
-                        // 更新税号设置状态
-                        String oldHsCodeStatus = prCommonFields.getHsCodeStatus();
-                        prCommonFields.setHsCodeStatus(StringUtil.isEmpty(prCommonFields.getHsCodePrivate()) ? "0" : "1");
-                        if(!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
-                            // 如果状态有变更且变成1时，记录更新时间
-                            if(prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")){
-                                prCommonFields.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
-                                prCommonFields.setHsCodeSetter(getTaskName());
+                            // add by desmond 2016/10/27 start
+                            // 从子店产品中复制图片到总店产品的common.fields.images2~images9的图片
+                            // -------------------------------------------
+                            // 子店到主店的图片(images2~images9)复制方式:
+                            //    空或0:不复制品牌方商品图以外的图片
+                            //    1:以UNION方式复制图片
+                            //    2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店
+                            // -------------------------------------------
+                            // 取得cms_mt_channel_config配置表中配置的子店->USJOI总店的品牌方商品图(images1)以外的图片复制方式(LIKING_IMAGE_COPY_FLG)
+                            // LIKING_IMAGE_COPY_FLG  LIKING子店到总店更新时图片复制方式(不包含品牌方商品图images1)(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
+                            String likingImageCopyFlg = "";   // 没有配置时，默认为空(""或者"0":不复制品牌方商品图以外的图)
+                            // 子店到主店的品牌方商品图(images1)以外图片拷贝方式取得key
+                            String likingImageCopyFlgKey = CmsConstants.ChannelConfig.LIKING_IMAGE_COPY_FLG + "_0";
+                            if (channelConfigValueMap != null && channelConfigValueMap.containsKey(likingImageCopyFlgKey)) {
+                                likingImageCopyFlg = channelConfigValueMap.get(likingImageCopyFlgKey);
                             }
+                            // 从子店产品中复制图片到总店产品
+                            // 子店到总店更新时图片复制方式(空或0：不复制，1:以UNION方式复制，2：以主店优先方式复制)
+                            // 包装图(images2) 角度图(images3) PC端自定义图(images4) APP端自定义图(images5) PC端自拍商品图(images6)
+                            // App端自拍商品图(images7) App端自拍商品图(images7) 吊牌图(images8) (images9)
+                            for (int imagesNo = 2; imagesNo <= 9; imagesNo++) {
+                                // 从子店产品复制图片到主店产品中(images2~images9)
+                                copyImageToUsjoi(likingImageCopyFlg, imagesNo, productModel, pr);
+                            }
+                            // add by desmond 2016/10/27 end
+
+                            // 主店的税号没设置，子店的税号设置了的话，将主店商品更新成子店的税号code
+                            // 税号集货
+                            if (StringUtil.isEmpty(prCommonFields.getHsCodeCrop())
+                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCrop())) {
+                                prCommonFields.setHsCodeCrop(productModel.getCommon().getFields().getHsCodeCrop());
+                            }
+
+                            // 税号跨境申报（10位）
+                            if (StringUtil.isEmpty(prCommonFields.getHsCodeCross())
+                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCross())) {
+                                prCommonFields.setHsCodeCross(productModel.getCommon().getFields().getHsCodeCross());
+                            }
+
+                            // 税号个人
+                            if (StringUtil.isEmpty(prCommonFields.getHsCodePrivate())
+                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodePrivate())) {
+                                prCommonFields.setHsCodePrivate(productModel.getCommon().getFields().getHsCodePrivate());
+                            }
+
+                            // 更新税号设置状态
+                            String oldHsCodeStatus = prCommonFields.getHsCodeStatus();
+                            prCommonFields.setHsCodeStatus(StringUtil.isEmpty(prCommonFields.getHsCodePrivate()) ? "0" : "1");
+                            if(!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
+                                // 如果状态有变更且变成1时，记录更新时间
+                                if(prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")){
+                                    prCommonFields.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
+                                    prCommonFields.setHsCodeSetter(getTaskName());
+                                }
+                            }
+
+                            // 克(common.fields.weightG)
+                            if (productModel.getCommon().getFields().getWeightG() != 0)
+                                prCommonFields.setWeightG(productModel.getCommon().getFields().getWeightG());
+                            // 千克(common.fields.WeighKG)
+                            if (productModel.getCommon().getFields().getWeightKG().compareTo(0.0d) != 0)
+                                prCommonFields.setWeightKG(productModel.getCommon().getFields().getWeightKG());
                         }
 
-                        // 克(common.fields.weightG)
-                        if (productModel.getCommon().getFields().getWeightG() != 0)
-                            prCommonFields.setWeightG(productModel.getCommon().getFields().getWeightG());
-                        // 千克(common.fields.WeighKG)
-                        if (productModel.getCommon().getFields().getWeightKG().compareTo(0.0d) != 0)
-                            prCommonFields.setWeightKG(productModel.getCommon().getFields().getWeightKG());
-                    }
-
-                    // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
-                    for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
-                        CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
-                        if (oldSku == null) {
-                            boolean updateFlg = false;
-                            // 如果没有在usjoi产品的commom.skus找到子店对应的skuCode，再用originalCode产品里面查找该skucode,找到就更新到originalCode的产品中的sku
-                            if (ListUtils.notNull(originalCodeProductList)) {
-                                for (CmsBtProductModel prodObj : originalCodeProductList) {
-                                    List<CmsBtProductModel_Sku> prodCommonSkusObj = prodObj.getCommonNotNull().getSkus();
-                                    if (ListUtils.notNull(prodCommonSkusObj) && prodCommonSkusObj.stream().filter(p -> sku.getSkuCode().equals(p.getSkuCode())).count() > 0) {
-                                        CmsBtProductModel_Sku prodCommonSku = prodCommonSkusObj.stream().filter(p -> sku.getSkuCode().equals(p.getSkuCode())).findFirst().get();
-                                        if (prodCommonSku != null) {
-                                            // 把子店产品中common.skus.sku更新到总店拆分后的产品(例：P2, P3)
-                                            updateCommonSku(sku, prodCommonSku);
-                                            updateFlg = true;
-                                            // 正常情况下，一个skuCode应该只存在一个产品中,所以找到就退出
-                                            break;
+                        // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
+                        for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                            CmsBtProductModel_Sku oldSku = pr.getCommon().getSku(sku.getSkuCode());
+                            if (oldSku == null) {
+                                boolean updateFlg = false;
+                                // 如果没有在usjoi产品的commom.skus找到子店对应的skuCode，再用originalCode产品里面查找该skucode,找到就更新到originalCode的产品中的sku
+                                if (ListUtils.notNull(originalCodeProductList)) {
+                                    for (CmsBtProductModel prodObj : originalCodeProductList) {
+                                        List<CmsBtProductModel_Sku> prodCommonSkusObj = prodObj.getCommonNotNull().getSkus();
+                                        if (ListUtils.notNull(prodCommonSkusObj) && prodCommonSkusObj.stream().filter(p -> sku.getSkuCode().equals(p.getSkuCode())).count() > 0) {
+                                            CmsBtProductModel_Sku prodCommonSku = prodCommonSkusObj.stream().filter(p -> sku.getSkuCode().equals(p.getSkuCode())).findFirst().get();
+                                            if (prodCommonSku != null) {
+                                                // 把子店产品中common.skus.sku更新到总店拆分后的产品(例：P2, P3)
+                                                updateCommonSku(sku, prodCommonSku);
+                                                updateFlg = true;
+                                                // 正常情况下，一个skuCode应该只存在一个产品中,所以找到就退出
+                                                break;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            // 如果在code和拆分后的originalCode里面都没有找到该skuCode,则将该sku追加到code(例：P1)中
-                            if (!updateFlg) pr.getCommon().getSkus().add(sku);
-                        } else {
-                            // 把子店产品中common.skus.sku更新到总店产品
-                            updateCommonSku(sku, oldSku);
+                                // 如果在code和拆分后的originalCode里面都没有找到该skuCode,则将该sku追加到code(例：P1)中
+                                if (!updateFlg) pr.getCommon().getSkus().add(sku);
+                            } else {
+                                // 把子店产品中common.skus.sku更新到总店产品
+                                updateCommonSku(sku, oldSku);
 //                            // 如果在usjoi产品的commom.skus找到子店对应的skuCode时
 //                            // 跟feed->master统一，无条件更新尺码等共通sku属性
 //                            oldSku.setBarcode(sku.getBarcode());
@@ -582,105 +620,105 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //                            // 人民币指导价(后面价格计算要用到，因为010,018等店铺不用新价格体系，还是用老的价格公式)
 //                            oldSku.setPriceRetail(sku.getPriceRetail());
 ////                            }
+                            }
                         }
-                    }
 
 //                    // 由于需要无条件更新common.image1等属性，所以无条件更新common属性
 //                    // 共通方法里面有Approved的时候，自动插入USJOI(928,929)->平台(京东国际匠心界，悦境)上新workload记录
 //                    productService.updateProductCommon(usJoiChannelId, pr.getProdId(), pr.getCommon(), getTaskName(), false);
 
-                    // ****************platform.PXX.skus的更新(有的sku可能在拆分后的product中)****************
-                    final CmsBtProductModel finalProductModel1 = productModel;
-                    // 子店产品中的一部分sku可能已经在主店中被拆分到其他产品中去了，所以不能直接用子店产品的PXX.skus设置
-                    // 由于前面已经更新了pr.common.skus(该加的sku也都加了)，所以这里根据pr.common.skus里面有的skuCode过滤就行了
-                    // 当前产品的正确common.skuCode列表
-                    List<CmsBtProductModel_Sku> prCommonSkus = pr.getCommonNotNull().getSkus();
-                    List<String> prCommonSkuCodeList = (prCommonSkus == null) ?
-                            new ArrayList<>() : prCommonSkus.stream().map(p -> p.getSkuCode()).collect(Collectors.toList());
-                    // 保存子店过来的P928.skus，去掉拆分到其他产品中的skuCode列表
-                    List<BaseMongoMap<String, Object>> correctPlatformSkus = new ArrayList<>();
-                    // 取得子店的平台(P928)数据
-                    CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
-                    fromPlatform.getSkus().forEach(p -> {
-                        // 在common.skus里面有的sku才会加进来(已拆分出去的sku不会加进来)
-                        if (prCommonSkuCodeList.contains(p.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
-                            correctPlatformSkus.add(p);
-                        }
-                    });
-                    // 设置分平台信息(P28,P29,P32等,cartId不一样，其他都一样)
-                    for (Integer cartId : cartIds) {
-                        CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cartId);
-                        if (platformCart == null) {
-                            CmsBtProductModel_Platform_Cart newPlatform = new CmsBtProductModel_Platform_Cart();
-                            newPlatform.putAll(fromPlatform);
-                            // 如果主店商品里面没有这个cartId的platform,则新加
-                            newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-                            newPlatform.setpCatId(null);
-                            newPlatform.setpCatPath(null);
-                            newPlatform.setpBrandId(null);
-                            newPlatform.setpBrandName(null);
-                            newPlatform.setCartId(cartId);
-                            // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
-                            newPlatform.setSkus(correctPlatformSkus);
-
-                            // 设定是否主商品
-                            CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
-                                    finalProductModel1.getCommon().getFields().getCode(), cartId);
-                            if (group == null) {
-                                newPlatform.setpIsMain(0);
-                            } else {
-                                newPlatform.setpIsMain(1);
+                        // ****************platform.PXX.skus的更新(有的sku可能在拆分后的product中)****************
+                        final CmsBtProductModel finalProductModel1 = productModel;
+                        // 子店产品中的一部分sku可能已经在主店中被拆分到其他产品中去了，所以不能直接用子店产品的PXX.skus设置
+                        // 由于前面已经更新了pr.common.skus(该加的sku也都加了)，所以这里根据pr.common.skus里面有的skuCode过滤就行了
+                        // 当前产品的正确common.skuCode列表
+                        List<CmsBtProductModel_Sku> prCommonSkus = pr.getCommonNotNull().getSkus();
+                        List<String> prCommonSkuCodeList = (prCommonSkus == null) ?
+                                new ArrayList<>() : prCommonSkus.stream().map(p -> p.getSkuCode()).collect(Collectors.toList());
+                        // 保存子店过来的P928.skus，去掉拆分到其他产品中的skuCode列表
+                        List<BaseMongoMap<String, Object>> correctPlatformSkus = new ArrayList<>();
+                        // 取得子店的平台(P928)数据
+                        CmsBtProductModel_Platform_Cart fromPlatform = finalProductModel1.getPlatform(sxWorkLoadBean.getCartId());
+                        fromPlatform.getSkus().forEach(p -> {
+                            // 在common.skus里面有的sku才会加进来(已拆分出去的sku不会加进来)
+                            if (prCommonSkuCodeList.contains(p.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))) {
+                                correctPlatformSkus.add(p);
                             }
+                        });
+                        // 设置分平台信息(P28,P29,P32等,cartId不一样，其他都一样)
+                        for (Integer cartId : cartIds) {
+                            CmsBtProductModel_Platform_Cart platformCart = pr.getPlatform(cartId);
+                            if (platformCart == null) {
+                                CmsBtProductModel_Platform_Cart newPlatform = new CmsBtProductModel_Platform_Cart();
+                                newPlatform.putAll(fromPlatform);
+                                // 如果主店商品里面没有这个cartId的platform,则新加
+                                newPlatform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                                newPlatform.setpCatId(null);
+                                newPlatform.setpCatPath(null);
+                                newPlatform.setpBrandId(null);
+                                newPlatform.setpBrandName(null);
+                                newPlatform.setCartId(cartId);
+                                // 重新设置newPlatform的skus，因为fromPlatform里面过来的是全部的sku，要去掉拆分到其他产品的sku
+                                newPlatform.setSkus(correctPlatformSkus);
 
-                            pr.getPlatforms().put("P" + StringUtils.toString(cartId), newPlatform);
+                                // 设定是否主商品(根据主店商品code来判断)
+                                CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
+                                        pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
+                                if (group == null) {
+                                    newPlatform.setpIsMain(0);
+                                } else {
+                                    newPlatform.setpIsMain(1);
+                                }
+
+                                pr.getPlatforms().put("P" + StringUtils.toString(cartId), newPlatform);
 //                            productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), newPlatform, getTaskName());
 
-                            // 看看拆分后的产品中有没有当前平台的分平台信息，如果没有的话新增该分平台信息
-                            // 例如：以前只有P28平台，配置表里面追加了一个29平台，要把P28复制一下生成P29平台信息)
-                            // 拆分后的产品的PXX.skus不能设置为correctPlatformSkus，因为这个是给被拆分产品用的(新追加的sku会追加到被拆分产品中)
-                            if (ListUtils.notNull(originalCodeProductList)) {
-                                for (CmsBtProductModel prodObj : originalCodeProductList) {
-                                    CmsBtProductModel_Platform_Cart currentOriginalPlatformCart = prodObj.getPlatform(cartId);
-                                    if (currentOriginalPlatformCart == null) {
-                                        // 如果拆分后产品中没有当前分平台信息的话，要复制追加一下
-                                        for (Integer tempCartId : cartIds) {
-                                            CmsBtProductModel_Platform_Cart tempPlatformCart = prodObj.getPlatform(tempCartId);
-                                            if (tempPlatformCart != null) {
-                                                // 这里一定要新建一个分平台信息，不新建的话，会跟复制元共享同一个对象，不能改cartId(一改就所有PXX都会改)
-                                                CmsBtProductModel_Platform_Cart tempNewPlatform = new CmsBtProductModel_Platform_Cart();
-                                                tempNewPlatform.putAll(tempPlatformCart);
-                                                // 新增当前cartId的分平台信息(如:P29)(里面会自动设置cartId的)
-                                                prodObj.setPlatform(cartId, tempNewPlatform);
-                                                break;
+                                // 看看拆分后的产品中有没有当前平台的分平台信息，如果没有的话新增该分平台信息
+                                // 例如：以前只有P28平台，配置表里面追加了一个29平台，要把P28复制一下生成P29平台信息)
+                                // 拆分后的产品的PXX.skus不能设置为correctPlatformSkus，因为这个是给被拆分产品用的(新追加的sku会追加到被拆分产品中)
+                                if (ListUtils.notNull(originalCodeProductList)) {
+                                    for (CmsBtProductModel prodObj : originalCodeProductList) {
+                                        CmsBtProductModel_Platform_Cart currentOriginalPlatformCart = prodObj.getPlatform(cartId);
+                                        if (currentOriginalPlatformCart == null) {
+                                            // 如果拆分后产品中没有当前分平台信息的话，要复制追加一下
+                                            for (Integer tempCartId : cartIds) {
+                                                CmsBtProductModel_Platform_Cart tempPlatformCart = prodObj.getPlatform(tempCartId);
+                                                if (tempPlatformCart != null) {
+                                                    // 这里一定要新建一个分平台信息，不新建的话，会跟复制元共享同一个对象，不能改cartId(一改就所有PXX都会改)
+                                                    CmsBtProductModel_Platform_Cart tempNewPlatform = new CmsBtProductModel_Platform_Cart();
+                                                    tempNewPlatform.putAll(tempPlatformCart);
+                                                    // 新增当前cartId的分平台信息(如:P29)(里面会自动设置cartId的)
+                                                    prodObj.setPlatform(cartId, tempNewPlatform);
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                        } else {
-                            // 设定是否主商品
-                            CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
-                                    finalProductModel1.getCommon().getFields().getCode(), cartId);
-                            if (group == null) {
-                                platformCart.setpIsMain(0);
                             } else {
-                                platformCart.setpIsMain(1);
-                            }
+                                // 设定是否主商品(根据主店商品code来判断)
+                                CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(usJoiChannelId,
+                                        pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
+                                if (group == null) {
+                                    platformCart.setpIsMain(0);
+                                } else {
+                                    platformCart.setpIsMain(1);
+                                }
 
-                            if (ListUtils.isNull(platformCart.getSkus())) {
+                                if (ListUtils.isNull(platformCart.getSkus())) {
 //                              // 设置主店产品的PXX.skus信息
-                                platformCart.setSkus(correctPlatformSkus);
-                            } else {
-                                for (BaseMongoMap<String, Object> newSku : fromPlatform.getSkus()) {
-                                    boolean updateFlg = false;
-                                    // 取得当前循环到的子店sku的skuCode
-                                    String currentSkuCode = newSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
-                                    if (platformCart.getSkus() != null) {
-                                        // newSku是子店的sku, oldSku是从USJOI主店根据code(不是originalCode)里面查出来的sku
-                                        for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
-                                            if (oldSku.get("skuCode").toString().equalsIgnoreCase(currentSkuCode)) {
-                                                // delete by desmond 2016/09/08 start DOC-128 主店的SKU价格变为调用共通价格计算重新计算
+                                    platformCart.setSkus(correctPlatformSkus);
+                                } else {
+                                    for (BaseMongoMap<String, Object> newSku : fromPlatform.getSkus()) {
+                                        boolean updateFlg = false;
+                                        // 取得当前循环到的子店sku的skuCode
+                                        String currentSkuCode = newSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                                        if (platformCart.getSkus() != null) {
+                                            // newSku是子店的sku, oldSku是从USJOI主店根据code(不是originalCode)里面查出来的sku
+                                            for (BaseMongoMap<String, Object> oldSku : platformCart.getSkus()) {
+                                                if (oldSku.get("skuCode").toString().equalsIgnoreCase(currentSkuCode)) {
+                                                    // delete by desmond 2016/09/08 start DOC-128 主店的SKU价格变为调用共通价格计算重新计算
 //                                                // 在更新前的PXX.skus找到对应的新skuCode的时候,更新价格等平台sku属性(不更新priceSale)
 //                                                oldSku.put("originalPriceMsrp", newSku.get("originalPriceMsrp"));
 //                                                if (usjoiIsAutoSyncPriceMsrp) {
@@ -704,73 +742,73 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //                                                String priceDiffFlgValue = productSkuService.getPriceDiffFlg(usJoiChannelId, oldSku);
 //                                                // 最终售价变化状态（价格为-1:空，等于指导价:1，比指导价低:2，比指导价高:3，向上击穿警告:4，向下击穿警告:5）
 //                                                oldSku.put(priceDiffFlg.name(), priceDiffFlgValue);
-                                                // delete by desmond 2016/09/08 end
+                                                    // delete by desmond 2016/09/08 end
 
-                                                updateFlg = true;
-                                                break;
-                                            }
-                                        }
-                                    }
-
-                                    // 如果在当前产品里没找到，看一下拆分后的产品中有没有，有的话也是更新，不能新增sku的
-                                    // 如果没有在usjoi产品的commom.skus找到子店对应的skuCode，再用originalCode产品里面查找该skucode,找到就更新到originalCode的产品中的sku
-                                    if (!updateFlg && ListUtils.notNull(originalCodeProductList)) {
-                                        for (CmsBtProductModel prodObj : originalCodeProductList) {
-                                            // 因为分平台PXX下面的skuCode肯定会存在common.skus里面，所以直接用common.skus判断
-                                            List<CmsBtProductModel_Sku> prodCommonSkusObj = prodObj.getCommonNotNull().getSkus();
-                                            if (ListUtils.notNull(prodCommonSkusObj) && prodCommonSkusObj.stream().filter(p -> currentSkuCode.equals(p.getSkuCode())).count() > 0) {
-                                                // 看看当前子店的sku(newSku)在拆分后产品里是否存在，存在的话就不能做追加
-                                                CmsBtProductModel_Sku prodCommonSku = prodCommonSkusObj.stream().filter(p -> currentSkuCode.equals(p.getSkuCode())).findFirst().get();
-                                                if (prodCommonSku != null) {
-                                                    // 找到了也不用做更新，因为PXX.skus下面只有一个平台相关价格属性，这个会再后面调用价格计算共通方法自动把美金价格算成人民币价格设置的
                                                     updateFlg = true;
-                                                    // 看看拆分后的产品中有没有当前平台的分平台信息，如果没有的话新增该分平台信息
-                                                    // 例如：以前只有P28平台，配置表里面追加了一个29平台，要把P28复制一下生成P29平台信息)
-                                                    CmsBtProductModel_Platform_Cart currentOriginalPlatformCart = prodObj.getPlatform(cartId);
-                                                    if (currentOriginalPlatformCart == null) {
-                                                        // 如果拆分后产品中没有当前分平台信息的话，要复制追加一下
-                                                        for (Integer tempCartId : cartIds) {
-                                                            CmsBtProductModel_Platform_Cart tempPlatformCart = prodObj.getPlatform(tempCartId);
-                                                            if (tempPlatformCart != null) {
-                                                                // 这里一定要新建一个分平台信息，不新建的话，会跟复制元共享同一个对象，不能改cartId(一改就所有PXX都会改)
-                                                                CmsBtProductModel_Platform_Cart tempNewPlatform = new CmsBtProductModel_Platform_Cart();
-                                                                tempNewPlatform.putAll(tempPlatformCart);
-                                                                // 新增当前cartId的分平台信息(如:P29)(里面会自动设置cartId的)
-                                                                prodObj.setPlatform(cartId, tempNewPlatform);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    // 正常情况下，一个skuCode应该只存在一个产品中,所以找到就退出
                                                     break;
                                                 }
                                             }
                                         }
-                                    }
 
-                                    if (!updateFlg) {
-                                        // 只有当当前code和originalCode里面都没有找到该skuCode，才会把它加到当前code中
-                                        platformCart.getSkus().add(newSku);
-                                    }
+                                        // 如果在当前产品里没找到，看一下拆分后的产品中有没有，有的话也是更新，不能新增sku的
+                                        // 如果没有在usjoi产品的commom.skus找到子店对应的skuCode，再用originalCode产品里面查找该skucode,找到就更新到originalCode的产品中的sku
+                                        if (!updateFlg && ListUtils.notNull(originalCodeProductList)) {
+                                            for (CmsBtProductModel prodObj : originalCodeProductList) {
+                                                // 因为分平台PXX下面的skuCode肯定会存在common.skus里面，所以直接用common.skus判断
+                                                List<CmsBtProductModel_Sku> prodCommonSkusObj = prodObj.getCommonNotNull().getSkus();
+                                                if (ListUtils.notNull(prodCommonSkusObj) && prodCommonSkusObj.stream().filter(p -> currentSkuCode.equals(p.getSkuCode())).count() > 0) {
+                                                    // 看看当前子店的sku(newSku)在拆分后产品里是否存在，存在的话就不能做追加
+                                                    CmsBtProductModel_Sku prodCommonSku = prodCommonSkusObj.stream().filter(p -> currentSkuCode.equals(p.getSkuCode())).findFirst().get();
+                                                    if (prodCommonSku != null) {
+                                                        // 找到了也不用做更新，因为PXX.skus下面只有一个平台相关价格属性，这个会再后面调用价格计算共通方法自动把美金价格算成人民币价格设置的
+                                                        updateFlg = true;
+                                                        // 看看拆分后的产品中有没有当前平台的分平台信息，如果没有的话新增该分平台信息
+                                                        // 例如：以前只有P28平台，配置表里面追加了一个29平台，要把P28复制一下生成P29平台信息)
+                                                        CmsBtProductModel_Platform_Cart currentOriginalPlatformCart = prodObj.getPlatform(cartId);
+                                                        if (currentOriginalPlatformCart == null) {
+                                                            // 如果拆分后产品中没有当前分平台信息的话，要复制追加一下
+                                                            for (Integer tempCartId : cartIds) {
+                                                                CmsBtProductModel_Platform_Cart tempPlatformCart = prodObj.getPlatform(tempCartId);
+                                                                if (tempPlatformCart != null) {
+                                                                    // 这里一定要新建一个分平台信息，不新建的话，会跟复制元共享同一个对象，不能改cartId(一改就所有PXX都会改)
+                                                                    CmsBtProductModel_Platform_Cart tempNewPlatform = new CmsBtProductModel_Platform_Cart();
+                                                                    tempNewPlatform.putAll(tempPlatformCart);
+                                                                    // 新增当前cartId的分平台信息(如:P29)(里面会自动设置cartId的)
+                                                                    prodObj.setPlatform(cartId, tempNewPlatform);
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                        // 正常情况下，一个skuCode应该只存在一个产品中,所以找到就退出
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (!updateFlg) {
+                                            // 只有当当前code和originalCode里面都没有找到该skuCode，才会把它加到当前code中
+                                            platformCart.getSkus().add(newSku);
+                                        }
 //                                    platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
 //                                    platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());
 //                                    platformCart.setpPriceSaleSt(newPlatform.getpPriceSaleSt());
 //                                    platformCart.setpPriceSaleEd(newPlatform.getpPriceSaleEd());
+                                    }
                                 }
-                            }
 //                            productService.updateProductPlatform(usJoiChannelId, pr.getProdId(), platformCart, getTaskName());
+                            }
                         }
-                    }
 
 //                    if (pr.getCommon() == null || pr.getCommon().size() == 0) {
 //                        // 共通方法里面有Approved的时候，自动插入USJOI(928,929)->平台(京东国际匠心界，悦境)上新workload记录
 //                        productService.updateProductCommon(usJoiChannelId, pr.getProdId(), productModel.getCommon(), getTaskName(), false);
 //                    }
-                    if (pr.getPlatform(0) == null) {
-                        CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
-                        // 新规作成P0平台信息
-                        CmsBtProductModel_Platform_Cart p0 = getPlatformP0(groupModel, productModel);
-                        pr.getPlatforms().put("P0", p0);
+                        if (pr.getPlatform(0) == null) {
+                            CmsBtProductGroupModel groupModel = productGroupService.selectMainProductGroupByCode(usJoiChannelId, productModel.getCommon().getFields().getCode(), 0);
+                            // 新规作成P0平台信息
+                            CmsBtProductModel_Platform_Cart p0 = getPlatformP0(groupModel, productModel);
+                            pr.getPlatforms().put("P0", p0);
 
 //                        HashMap<String, Object> queryMap = new HashMap<>();
 //                        queryMap.put("prodId", pr.getProdId());
@@ -783,20 +821,24 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //                        model.setQueryMap(queryMap);
 //                        bulkList.add(model);
 //                        cmsBtProductDao.bulkUpdateWithMap(usJoiChannelId, bulkList, null, "$set");
-                    }
+                        }
 
-                    // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
-                    pr = doSetPrice(pr);
+                        // 更新价格相关项目(根据主店配置的税号，公式等计算主店产品的SKU人民币价格)
+                        pr = doSetPrice(pr);
 
-                    // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
-                    // productService.updateProduct(channelId, requestModel);
-                    int updCnt = productService.updateProductFeedToMaster(usJoiChannelId, pr, getTaskName(), "子店->USJOI主店导入");
-                    if (updCnt == 0) {
-                        // 有出错, 跳过
-                        String errMsg = String.format("子店->USJOI主店产品导入:更新:编辑商品的时候排他错误:[orgChannelId=%s]" +
-                                " [usjoiChannelId=%s] [code=%s]", pr.getOrgChannelId(), usJoiChannelId, pr.getCommon().getFields().getCode());
-                        $error(errMsg);
-                        throw new BusinessException(errMsg);
+                        // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
+                        // productService.updateProduct(channelId, requestModel);
+                        int updCnt = productService.updateProductFeedToMaster(usJoiChannelId, pr, getTaskName(), "子店->USJOI主店导入");
+                        if (updCnt == 0) {
+                            // 有出错, 跳过
+                            String errMsg = String.format("子店->USJOI主店产品导入:更新:编辑商品的时候排他错误:[orgChannelId=%s]" +
+                                    " [usjoiChannelId=%s] [code=%s]", pr.getOrgChannelId(), usJoiChannelId, pr.getCommon().getFields().getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+
+                        // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
+                        targetProductList.add(pr);
                     }
 
                     // 更新拆分后的产品的价格相关项目,并更新mongoDB的Product表
@@ -813,8 +855,6 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                     // 插入主店上新workload表
                     insertWorkload(productModel, ccAutoSyncCarts, ccAutoSyncCartList);
 
-                    // 将USJOI店的产品加入更新对象产品列表中（取得USJOI店的品牌，产品分类和适用人群）
-                    targetProductList.add(pr);
                     // 虽然这里拆分后的产品只是做一下更新sku信息而已，也加进去吧，万一产分后的品牌等没有的话，也可以追加进去了
                     if (ListUtils.notNull(originalCodeProductList)) {
                         originalCodeProductList.forEach(p -> {
@@ -830,6 +870,12 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             // 记录商品价格变动履历,并向Mq发送消息同步sku,code,group价格范围
 //          addPriceHistoryAndSyncPriceScope(usJoiChannelId, targetProductList);
             // delete by desmond 2016/09/06 end
+
+            // 新增更新USJOI主店产品结束之后，重新计算一下每个产品(包含code,originalCode)的skuCnt
+            List<String> productCodes = productModels.stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
+            if (ListUtils.notNull(productCodes)) {
+                doSetSkuCnt(usJoiChannelId, productCodes);
+            }
 
             // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
             insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
@@ -1442,6 +1488,84 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         }
 
         return imageType;
+    }
+
+    /**
+     * 重新计算product的common.skus的sku个数设置product.common.fields.skuCnt
+     * 除了计算本次子店->USJOI主店导入的对象Product,还包含拆分后的Product,里面会自动去查找拆分后的Product
+     *
+     * @param usjoiChannelId  usjoi主店渠道id
+     * @param productCodeList 子店->主店导入对象Product列表(不包含拆分后的Product,里面会自动去查找拆分后的Product)
+     */
+    protected void doSetSkuCnt(String usjoiChannelId, List<String> productCodeList) {
+        if (ListUtils.isNull(productCodeList)) return;
+
+        // 对象产品code列表(大于等于productModels列表值,包含code或originalCode一致的产品code)
+        List<String> codeList = new ArrayList<>();
+        productCodeList.forEach(code -> {
+            // 重复的code不用添加
+            if (!codeList.contains(code)) codeList.add(code);
+        });
+
+        // 主店的产品运营可能会把一个产品的sku拆分到另一个产品中去(根据originalCode建立关联关系)
+        if (ListUtils.notNull(codeList)) {
+            // 查询所有originalCode在对象productCode列表中的产品信息列表
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.setQuery("{'common.fields.originalCode':{$in:#}}");
+            queryObj.setParameters(codeList);
+            queryObj.setProjectionExt("common.fields.code");
+            List<CmsBtProductModel> originalCodeProductList = productService.getList(usjoiChannelId, queryObj);
+            if (ListUtils.notNull(originalCodeProductList)) {
+                // 取得originalCode=对象code的产品的common.fields.code并加入待重新计算skuCnt的code列表
+                List<String> originalCodeList = originalCodeProductList.stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+                if (ListUtils.notNull(originalCodeList)) {
+                    originalCodeList.forEach(code -> {
+                        // 重复的code不用添加
+                        if (!codeList.contains(code)) codeList.add(code);
+                    });
+                }
+            }
+        }
+
+        // 重新计算每个产品的common.skus的个数，并更新到common.fields.skuCnt中
+        if (ListUtils.notNull(codeList)) {
+            // 批量更新USJOI主店product表的common.skuCnt的值
+            BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, usjoiChannelId);
+
+            BulkWriteResult rs;
+            JongoQuery queryObj = new JongoQuery();
+
+            for (String productCode : codeList) {
+                // 取得商品信息
+                queryObj.setQuery("{'common.fields.code':#}");
+                queryObj.setParameters(productCode);
+                queryObj.setProjectionExt("common.fields.skuCnt", "common.skus");
+                CmsBtProductModel prodObj = cmsBtProductDao.selectOneWithQuery(queryObj, usjoiChannelId);
+                if (prodObj == null) {
+                    $warn("UploadToUSJoiService 找不到商品code [ChannelId=%s] [ProductCode=%d]", usjoiChannelId, productCode);
+                } else {
+                    int skuCnt = prodObj.getCommonNotNull().getFieldsNotNull().getSkuCnt();
+                    int reallySkuCnt = prodObj.getCommonNotNull().getSkus().size();
+                    // 目前的skuCnt和真实的reallySkuCnt不一致时，才做更新(如果skuCnt数没有变化，就不用更新了)
+                    if (skuCnt != reallySkuCnt) {
+                        JongoUpdate updObj = new JongoUpdate();
+                        updObj.setQuery("{'common.fields.code':#}");
+                        updObj.setQueryParameters(productCode);
+                        updObj.setUpdate("{$set:{'common.fields.skuCnt':#,'modified':#,'modifier':#}}");
+                        updObj.setUpdateParameters(reallySkuCnt, DateTimeUtil.getNowTimeStamp(), getTaskName());
+                        rs = bulkList.addBulkJongo(updObj);
+                        if (rs != null) {
+                            $debug("UploadToUSJoiService [ChannelId=%s] [ProductCode=%s] [skuCnt更新结果=%s]", usjoiChannelId, productCode, rs.toString());
+                        }
+                    }
+                }
+            }
+            rs = bulkList.execute();
+            if (rs != null) {
+                $debug("UploadToUSJoiService [ChannelId=%s] [skuCnt更新结果=%s]", usjoiChannelId, rs.toString());
+            }
+        }
+
     }
 
     /**

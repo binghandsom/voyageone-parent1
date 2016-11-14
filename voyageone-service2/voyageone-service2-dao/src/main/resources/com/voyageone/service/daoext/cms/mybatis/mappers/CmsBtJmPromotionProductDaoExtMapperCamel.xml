@@ -119,7 +119,7 @@
                       )
             </if>
             <if test="listBrandName!=null and listBrandName.size()!=0">
-                and  b.brand_name in <foreach item="item" index="i" collection="listBrandName"
+                and  b.vo_brand_name in <foreach item="item" index="i" collection="listBrandName"
                                               open="(" separator="," close=")">
                 #{item}
             </foreach>
@@ -488,6 +488,14 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
         SELECT * from  cms_bt_jm_promotion_product
         WHERE synch_status!=2  and   id in
         <foreach item="item" index="i" collection="listPromotionProductId"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="selectNotSynchListByProductCodes" resultMap="ResultMap">
+        SELECT * from  cms_bt_jm_promotion_product
+        WHERE synch_status!=2  and cms_bt_jm_promotion_id=#{jmPromotionId}  and  product_code in
+        <foreach item="item" index="i" collection="listProductCode"
                  open="(" separator="," close=")">
             #{item}
         </foreach>

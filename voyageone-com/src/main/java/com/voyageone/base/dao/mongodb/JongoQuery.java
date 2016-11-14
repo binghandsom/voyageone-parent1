@@ -1,7 +1,7 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.util.JSON;
 import com.voyageone.base.dao.mongodb.support.VOBsonQueryFactory;
-import com.voyageone.common.util.JacksonUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
@@ -144,7 +144,7 @@ public class JongoQuery extends BaseCondition {
     }
 
     public JongoQuery setQuery(Criteria criteria) {
-        setQuery(JacksonUtil.bean2Json(criteria.getCriteriaObject()));
+        setQuery(JSON.serialize(criteria.getCriteriaObject()));
         return this;
     }
 

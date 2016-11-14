@@ -186,6 +186,8 @@ define([
                 var itemVal = '';
                 if ("comment" == data.propId) {
                     itemVal = prodInfo.common.comment;
+                } else if ('created' == data.propId) {
+                	itemVal = prodInfo.created;
                 } else {
                     itemVal = prodInfo.common.fields[data.propId];
                 }
@@ -239,28 +241,28 @@ define([
             var selBiDataArr = [];
             _.forEach(selBiDataList, function (data) {
                 var selValue = data.value;
-                var dotIdx = selValue.indexOf(".", 6);
-                var itemValObj = prodInfo.bi[selValue.substring(3, dotIdx)]; // 取到sum一级
-                var itemVal = null;
-                if (itemValObj == undefined) {
-                    itemVal = "";
-                } else {
-                    dotIdx ++;
-                    var lastdotIdx = selValue.indexOf(".", dotIdx);
-                    itemValObj = itemValObj[selValue.substring(dotIdx, lastdotIdx)];    // bi分类
-                    if (itemValObj == undefined) {
-                        itemVal = "";
-                    } else {
-                        lastdotIdx = selValue.lastIndexOf(".");
-                        itemVal = itemValObj[selValue.substring(lastdotIdx + 1)];    // 各平台
-                        if (itemVal == undefined) {
-                            itemVal = "";
-                        }
-                    }
+                var itemVal = getObjectValue(prodInfo, selValue);
+                // 处理发布时间格式
+                if (selValue.indexOf('.pPublishTime') != -1 && angular.isString(itemVal)) {
+                	itemVal = itemVal.substring(0, 19);
                 }
                 selBiDataArr.push({value: itemVal});
             });
             prodInfo.selBiDataArr = selBiDataArr;
+            
+            // 解析对象值
+            function getObjectValue(object, name) {
+            	var value = angular.copy(object);
+            	var names = name.split('.');
+            	for (var i = 0; i < names.length; i++) {
+            		if (value.hasOwnProperty(names[i])) {
+            			value = value[names[i]];
+            		} else {
+            			return '';
+            		}
+            	}
+            	return value;
+            }
         }
 
         /**
@@ -278,6 +280,8 @@ define([
             _.forEach(data.groupList, function (groupInfo, index) {
                 _resetProdInfo(groupInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
+                _resetCartInfo(groupInfo);
+               
                 // 初始化数据选中需要的数组
                 tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.common.fields["code"], "prodIds": data.grpProdIdList[index]});
 
@@ -305,94 +309,7 @@ define([
             _.forEach(data.productList, function (productInfo, index) {
                 _resetProdInfo(productInfo, commonProps, customProps, selSalesTypes, selBiDataList);
 
-                productInfo.carts = [];
-                if (productInfo.platforms) {
-                    var ptms = [];
-                    _.forEach(productInfo.platforms, function (data) {
-                        ptms.push(data);
-                    });
-                    productInfo.platforms = ptms.sort(function (a, b) {
-                        return a.cartId > b.cartId;
-                    });
-
-                    _.forEach(productInfo.platforms, function (data) {
-                        if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
-                            return;
-                        }
-                        var cartItem = {};
-                        cartItem.cartId = parseInt(data.cartId);
-                        cartItem.platformStatus = data.pStatus;
-                        cartItem.publishTime = data.pPublishTime;
-                        cartItem.numiid = data.pNumIId;
-                        // 设置产品状态显示区域的css(背景色)
-                        var cssVal = '';
-                        var statusTxt = '';
-                        var publishError = false;
-                        cartItem.cssVal = {};
-
-                        if (data.status == 'Approved') {
-                            if (data.pStatus == 'OnSale') {
-                                cssVal = 'DeepSkyBlue';
-                                statusTxt = 'OnSale';
-                            } else if (data.pStatus == 'InStock') {
-                                cssVal = 'Orange';
-                                statusTxt = 'InStock';
-                            } else if (data.pStatus == 'WaitingPublish') {
-                                cssVal = 'Chocolate';
-                                statusTxt = 'WaitingPublish';
-                            } else {
-                                cssVal = 'YellowGreen';
-                                statusTxt = 'Approved';
-                            }
-                        } else if (data.status == 'Ready') {
-                            cssVal = 'yellow';
-                            statusTxt = 'Ready';
-                        } else {
-                            cssVal = 'DarkGray';
-                            statusTxt = 'Pendding';
-                        }
-
-                        if (data.pPublishError == 'Error') {
-                            cssVal = 'red';
-                            publishError = true;
-                        }
-
-                        if (cssVal) {
-                            cartItem.cssVal = { "background-color" : cssVal };
-                        }
-                        cartItem.statusTxt = statusTxt;
-                        cartItem.publishError = publishError;
-
-                        // 设置产品跳转URL
-                        var cartInfo = Carts.valueOf(cartItem.cartId);
-                        if (cartInfo == null || cartInfo == undefined) {
-                            cartItem._purl = '';
-                            cartItem._pname = '';
-                        } else {
-                            if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined || data.status != 'Approved') {
-                                cartItem._purl = '';
-                            } else {
-                                if (cartItem.cartId == 27) {
-                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid + '.html';
-                                } else {
-                                    cartItem._purl = cartInfo.pUrl + cartItem.numiid;
-                                }
-                            }
-                            cartItem._pname = cartInfo.name;
-                        }
-                        var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus, data.status);
-                        if (stsCnVal) {
-                            cartItem._pTxt = cartItem._pname + ':' + stsCnVal;
-                        } else {
-                            cartItem._pTxt = cartItem._pname;
-                        }
-                        if (data.pIsMain == '1') {
-                            cartItem._isMain = true;
-                        }
-
-                        productInfo.carts.push(cartItem);
-                    });
-                }
+                _resetCartInfo(productInfo);
 
                 // 初始化数据选中需要的数组
                 tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
@@ -417,7 +334,101 @@ define([
 
             return data;
         }
+        
+        function _resetCartInfo(productInfo){
 
+            productInfo.carts = [];
+            if (productInfo.platforms) {
+                var ptms = [];
+                _.forEach(productInfo.platforms, function (data) {
+                    ptms.push(data);
+                });
+                productInfo.platforms = ptms.sort(function (a, b) {
+                    return a.cartId > b.cartId;
+                });
+
+                _.forEach(productInfo.platforms, function (data) {
+                    if (data.cartId == undefined || data.cartId == '' || data.cartId == null) {
+                        return;
+                    }
+                    var cartItem = {};
+                    cartItem.cartId = parseInt(data.cartId);
+                    cartItem.platformStatus = data.pStatus;
+                    cartItem.publishTime = data.pPublishTime;
+                    cartItem.numiid = data.pNumIId;
+                    cartItem.mallId = data.pPlatformMallId;
+                    // 设置产品状态显示区域的css(背景色)
+                    var cssVal = '';
+                    var statusTxt = '';
+                    var publishError = false;
+                    cartItem.cssVal = {};
+
+                    if (data.status == 'Approved') {
+                        if (data.pStatus == 'OnSale') {
+                            cssVal = 'DeepSkyBlue';
+                            statusTxt = 'OnSale';
+                        } else if (data.pStatus == 'InStock') {
+                            cssVal = 'Orange';
+                            statusTxt = 'InStock';
+                        } else if (data.pStatus == 'WaitingPublish') {
+                            cssVal = 'Chocolate';
+                            statusTxt = 'WaitingPublish';
+                        } else {
+                            cssVal = 'YellowGreen';
+                            statusTxt = 'Approved';
+                        }
+                    } else if (data.status == 'Ready') {
+                        cssVal = 'yellow';
+                        statusTxt = 'Ready';
+                    } else {
+                        cssVal = 'DarkGray';
+                        statusTxt = 'Pendding';
+                    }
+
+                    if (data.pPublishError == 'Error') {
+                        cssVal = 'red';
+                        publishError = true;
+                    }
+
+                    if (cssVal) {
+                        cartItem.cssVal = { "background-color" : cssVal };
+                    }
+                    cartItem.statusTxt = statusTxt;
+                    cartItem.publishError = publishError;
+
+                    // 设置产品跳转URL
+                    var cartInfo = Carts.valueOf(cartItem.cartId);
+                    if (cartInfo == null || cartInfo == undefined) {
+                        cartItem._purl = '';
+                        cartItem._pname = '';
+                    } else {
+                        if (cartItem.numiid == null || cartItem.numiid == '' || cartItem.numiid == undefined || data.status != 'Approved') {
+                            cartItem._purl = '';
+                        } else {
+                            if (cartItem.cartId == 27) {
+                                cartItem._purl = cartInfo.pUrl + cartItem.mallId + '.html';
+                            } else {
+                                cartItem._purl = cartInfo.pUrl + cartItem.numiid;
+                            }
+                        }
+                        cartItem._pname = cartInfo.name;
+                    }
+                    var stsCnVal = PlatformStatus.getStsTxt(data.pStatus, data.pReallyStatus, data.status);
+                    if (stsCnVal) {
+                        cartItem._pTxt = cartItem._pname + ':' + stsCnVal;
+                    } else {
+                        cartItem._pTxt = cartItem._pname;
+                    }
+                    if (data.pIsMain == '1') {
+                        cartItem._isMain = true;
+                    }
+
+                    productInfo.carts.push(cartItem);
+                });
+            }
+        
+        }
+        
         /**
          * 设置sku的销售渠道信息
          * @param platforms

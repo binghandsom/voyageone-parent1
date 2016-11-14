@@ -11,17 +11,8 @@ import java.util.List;
 public class CmsBtJmImageTemplateModel extends BaseMongoModel {
     private String imageType;
     private String name;
-    private List<String> templateUrls;
-    private List<String> parameters;
+    private List<CmsBtJmImageTemplateModel_TemplateUrls> templateUrls;
     private String dateFormat;
-
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
-    }
 
     public String getImageType() {
         return imageType;
@@ -39,19 +30,19 @@ public class CmsBtJmImageTemplateModel extends BaseMongoModel {
         this.name = name;
     }
 
-    public List<String> getTemplateUrls() {
+    public List<CmsBtJmImageTemplateModel_TemplateUrls> getTemplateUrls() {
         return templateUrls;
     }
 
-    public void setTemplateUrls(List<String> templateUrls) {
+    public void setTemplateUrls(List<CmsBtJmImageTemplateModel_TemplateUrls> templateUrls) {
         this.templateUrls = templateUrls;
     }
 
-    public List<String> getParameters() {
-        return parameters;
+    public String getDateFormat() {
+        return dateFormat;
     }
 
-    public void setParameters(List<String> parameters) {
-        this.parameters = parameters;
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
     }
 }

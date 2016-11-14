@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.wms;
 
+import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.stereotype.Repository;
 
@@ -43,5 +44,12 @@ public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.Serv
         params.put("itemCodeNew", itemCodeNew);
         params.put("modifier", modifier);
         return update("wms_bt_inventory_center_logic_updateCodeForMove", params);
+    }
+
+    public List<WmsBtInventoryCenterLogicModel> getInventoryByCode(String channelId, List<ProductImportBean> codeList) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("codeList", codeList);
+        return selectList("wms_bt_inventory_center_logic_selectLogicInventory_bycode", params);
     }
 }

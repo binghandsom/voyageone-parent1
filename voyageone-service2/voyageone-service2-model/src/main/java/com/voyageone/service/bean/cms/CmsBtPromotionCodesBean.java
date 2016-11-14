@@ -40,11 +40,11 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private Double msrp;
 
-    private Integer tagId;
+   // private Integer tagId;
 
-    private String tagPath;
+   // private String tagPath;
 
-    private String tagPathName;
+  //  private String tagPathName;
 
     private Double msrpUS;
 
@@ -66,6 +66,43 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
    private double minMsrpRmb;
    private double maxRetailPrice;
    private double minRetailPrice;
+    private List<String> tagNameList;
+    private double maxSalePrice;
+   private double minSalePrice;
+   private double maxPromotionPrice;
+   private double minPromotionPrice;
+   private double maxMsrpUsd;
+   private double minMsrpUsd;
+    private List<CmsBtPromotionSkuBean> skus;
+
+    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
+        super(productInfo, groupModel, promotionId, operator);
+        this.setProductId(productInfo.getProdId());
+        this.setProductCode(productInfo.getCommon().getFields().getCode());
+        this.setProductName(StringUtils.isEmpty(productInfo.getCommon().getFields().getOriginalTitleCn()) ? productInfo.getCommon().getFields().getProductNameEn() : productInfo.getCommon().getFields().getOriginalTitleCn());
+//        this.setProductName(productInfo.getFields().getProductNameEn());
+        CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(cartId);
+        if (ptfObj == null) {
+            return;
+        }
+        if (ptfObj.getSkus() == null || ptfObj.getSkus().isEmpty()) {
+            return;
+        }
+        this.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
+        this.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
+        this.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));
+    }
+
+    public CmsBtPromotionCodesBean() {
+    }
+
+    public List<String> getTagNameList() {
+        return tagNameList;
+    }
+
+    public void setTagNameList(List<String> tagNameList) {
+        this.tagNameList = tagNameList;
+    }
 
     public double getMaxMsrpRmb() {
         return maxMsrpRmb;
@@ -145,35 +182,6 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     public void setMinMsrpUsd(double minMsrpUsd) {
         this.minMsrpUsd = minMsrpUsd;
-    }
-
-    private double maxSalePrice;
-   private double minSalePrice;
-   private double maxPromotionPrice;
-   private double minPromotionPrice;
-   private double maxMsrpUsd;
-   private double minMsrpUsd;
-    private List<CmsBtPromotionSkuBean> skus;
-
-    public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
-        super(productInfo, groupModel, promotionId, operator);
-        this.setProductId(productInfo.getProdId());
-        this.setProductCode(productInfo.getCommon().getFields().getCode());
-        this.setProductName(StringUtils.isEmpty(productInfo.getCommon().getFields().getOriginalTitleCn()) ? productInfo.getCommon().getFields().getProductNameEn() : productInfo.getCommon().getFields().getOriginalTitleCn());
-//        this.setProductName(productInfo.getFields().getProductNameEn());
-        CmsBtProductModel_Platform_Cart ptfObj = productInfo.getPlatform(cartId);
-        if (ptfObj == null) {
-            return;
-        }
-        if (ptfObj.getSkus() == null || ptfObj.getSkus().isEmpty()) {
-            return;
-        }
-        this.setSalePrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceSale"));
-        this.setRetailPrice(ptfObj.getSkus().get(0).getDoubleAttribute("priceRetail"));
-        this.setMsrp(ptfObj.getSkus().get(0).getDoubleAttribute("priceMsrp"));
-    }
-
-    public CmsBtPromotionCodesBean() {
     }
 
     public Long getProductId() {
@@ -272,21 +280,21 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
         this.msrp = msrp;
     }
 
-    public Integer getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
-    }
-
-    public String getTagPath() {
-        return tagPath;
-    }
-
-    public void setTagPath(String tagPath) {
-        this.tagPath = tagPath;
-    }
+//    public Integer getTagId() {
+//        return tagId;
+//    }
+//
+//    public void setTagId(Integer tagId) {
+//        this.tagId = tagId;
+//    }
+//
+//    public String getTagPath() {
+//        return tagPath;
+//    }
+//
+//    public void setTagPath(String tagPath) {
+//        this.tagPath = tagPath;
+//    }
 
     public Double getRetailPrice() {
         return retailPrice;
@@ -296,13 +304,13 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
         this.retailPrice = retailPrice;
     }
 
-    public String getTagPathName() {
-        return tagPathName;
-    }
-
-    public void setTagPathName(String tagPathName) {
-        this.tagPathName = tagPathName;
-    }
+//    public String getTagPathName() {
+//        return tagPathName;
+//    }
+//
+//    public void setTagPathName(String tagPathName) {
+//        this.tagPathName = tagPathName;
+//    }
 
     public Double getMsrpUS() {
         return msrpUS;

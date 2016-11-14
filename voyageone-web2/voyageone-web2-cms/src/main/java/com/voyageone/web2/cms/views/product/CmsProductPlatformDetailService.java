@@ -179,8 +179,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
                 image.put("qty",product.getCommon().getFields().getQuantity());
-                image.put("priceSaleSt",product.getPlatform(cartId).getpPriceSaleSt());
-                image.put("priceSaleEd",product.getPlatform(cartId).getpPriceSaleEd());
+                if(product.getPlatform(cartId) != null) {
+                    image.put("priceSaleSt", product.getPlatform(cartId).getpPriceSaleSt());
+                    image.put("priceSaleEd", product.getPlatform(cartId).getpPriceSaleEd());
+                }
                 images.add(image);
             }
         });
@@ -270,7 +272,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true);
+        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, false);
 
     }
 

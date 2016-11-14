@@ -419,6 +419,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
 
             // 更新特价宝
+            sxData.getPlatform().setNumIId(numIId);
             updateTeJiaBaoPromotion(sxData);
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
@@ -599,16 +600,23 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //      匹配成功的品牌，会出现在商品详情页面;
         //      如果无法匹配，且商家希望显示品牌的，建议商家通过商家后台申请新品牌。
         String valBrand = "";
-        if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
-                && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
-            // common中的品牌 (格式：<value>nike</value>)
-            valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+        // 优先使用cms_mt_brands_mapping表中的匹配过的天猫平台上已有的品牌id(格式:<value>"{\"brand_id\":\"93764828\"}"</value>)
+        if (!StringUtils.isEmpty(sxData.getBrandCode())) {
+            valBrand = "{\"brand_id\":\"" + sxData.getBrandCode() + "\"}";
+        } else {
+            // 如果没找到匹配过的天猫平台品牌id，就用feed中带过来的brand，让平台自己去匹配
+            if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
+                    && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
+                // common中的品牌 (格式：<value>nike</value>)
+                valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+            }
         }
         productInfoMap.put("brand", valBrand);
 
         // 为什么要这段内容呢， 因为发生了一件很奇怪的事情， 曾经上新成功的商品， 更新的时候提示说【id:xxx还没有成为品牌】
         // 所以使用之前上过的品牌
-        {
+        // TODO:目前好像只有024这家店有这个问题， 明天再查一下
+        if (sxData.getChannelId().equals("024")) {
             // 如果已经上新过了的话， 使用曾经上新过的品牌
             if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
                 String numIId = sxData.getPlatform().getNumIId();
@@ -658,10 +666,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //         start_from为货源地;
         // 格式:<value>{"weight":"1.5","volume":"0.0001","template_id":"243170100","province":"美国","city":"美国"}</value>
         Map<String, Object> paramLogistics = new HashMap<>();
-        // 物流重量 // TODO 这里要改进
-        paramLogistics.put("weight", getValueFromPage("logistics_weight", "1", mainProductPlatformCart));
-        // 物流体积 // TODO 这里是要改成从condition表获取
-        paramLogistics.put("volume", getValueFromPage("logistics_volume", "1", mainProductPlatformCart));
+        // 物流重量
+        paramLogistics.put("weight", getValueFromPageOrCondition("logistics_weight", "", mainProductPlatformCart, sxData, shopProp));
+        // 物流体积
+        paramLogistics.put("volume", getValueFromPageOrCondition("logistics_volume", "", mainProductPlatformCart, sxData, shopProp));
         // 物流模板ID
         paramLogistics.put("template_id", getValueFromPageOrCondition("logistics_template_id", "", mainProductPlatformCart, sxData, shopProp));
         // 省(国家)
@@ -705,17 +713,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 主要币种代码：人民币/CNY 港币/HKD 新台币/TWD 美元/USD 英镑/GBP 日元/JPY 韩元/KRW 欧元/EUR 加拿大元/CAD
         //             澳元/AUD 新西兰元/NZD
         paramExtends.put("currency_type", getValueFromPageOrCondition("extends_currency_type", "", mainProductPlatformCart, sxData, shopProp));
-        // 是否需要自动翻译(必填)  (如果标题是中文，那么就是false，否则就是true)
+        // 是否需要自动翻译(必填)  (如果有配置优先使用配置项目，没有配置的时候如果标题是中文，那么就是false，否则就是true)
         String extends_translate = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
-                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
-            extends_translate = "false";
-        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
-            extends_translate = "false";
-        } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
-            extends_translate = "false";
-        } else {
-            extends_translate = "true";
+        // 优先使用画面选择的是否自动翻译，再解析cms_mt_channel_condition_config表中的数据字典取得"项目名_XX"(XX为cartId)对应的值
+        extends_translate = getValueFromPageOrCondition("extends_translate", "", mainProductPlatformCart, sxData, shopProp);
+        if (!"true".equalsIgnoreCase(extends_translate) && !"false".equalsIgnoreCase(extends_translate)) {
+            // cms_mt_channel_condition_config表中配置的"extends_translate"的值不是"true"或"false"时
+            if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                    && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
+                extends_translate = "false";
+            } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
+                extends_translate = "false";
+            } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
+                extends_translate = "false";
+            } else {
+                extends_translate = "true";
+            }
         }
         paramExtends.put("translate", extends_translate);
         // 商品原始语言(必填)

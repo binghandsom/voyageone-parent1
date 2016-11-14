@@ -173,13 +173,17 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
             if (ListUtils.isNull(conditionPropValueModels)) {
                 // Condition表未设定,直接翻译
                 List<String> transBaiduOrg = new ArrayList<>();
-                transBaiduOrg.add(sxData.getMainProduct().getCommon().getFields().getProductNameEn());
+                // 20161109 tom 品牌不翻译
+                String brandEn = sxData.getMainProduct().getCommon().getFields().getBrand();
+                String nameEn = sxData.getMainProduct().getCommon().getFields().getProductNameEn();
+                nameEn = nameEn.replaceAll("(?i)" + brandEn, ""); // 删掉英文标题里的品牌（忽略大小写）
+                transBaiduOrg.add(nameEn);
                 List<String> transBaiduCn = sxProductService.transBaidu(transBaiduOrg);
                 if (ListUtils.isNull(transBaiduCn)) {
                     throw new BusinessException("百度翻译失败!");
                 }
                 // 回写product表
-                updateTitle(channelId, String.valueOf(cartId), code, transBaiduCn.get(0));
+                updateTitle(channelId, String.valueOf(cartId), code, brandEn + " " + transBaiduCn.get(0)); // 在翻译之后的内容前， 加上品牌
             } else {
                 // Condition表设定了
                 ShopBean shopBean = Shops.getShop(channelId, cartId);

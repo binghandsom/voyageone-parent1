@@ -78,4 +78,12 @@ public class MqSenderTest extends TestCase {
         message.put("active", "start");
         sender.sendMessage("voTopicExchange", "VOMQServiceControlQueue.routingkey.1", message, false, false, false);
     }
+
+    @Test
+    public void testStartMqdelay() throws Exception {
+        Map<String, Object> message = new HashMap<>();
+        message.put("mqService", "CmsFeedExportService");
+        message.put("active", "start");
+        sender.sendMessage("MQ_james_job", message,100000);
+    }
 }

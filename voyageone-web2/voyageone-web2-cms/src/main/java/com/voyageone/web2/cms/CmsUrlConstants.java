@@ -204,6 +204,7 @@ public interface CmsUrlConstants {
                 String TMALL_JUHUASUAN_EXPORT = "tmallJuhuasuanExport";
 
                 String TMALL_PROMOTION_EXPORT = "tmallPromotionExport";
+                String UpdatePromotionProductTag="updatePromotionProductTag";
             }
         }
 
@@ -343,6 +344,7 @@ public interface CmsUrlConstants {
             String EXPORT_DOWNLOAD = "exportDownload";
 
 			String GET_SKU_INVENTORY = "getSkuInventory";
+
         }
 
         interface FEED {
@@ -482,6 +484,10 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
             String SET_PRODUCT_FIELDS = "setProductFields";
             String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
+            String INTELLIGENT_PUBLISH = "intelligentPublish";
+            String BULK_SET_CATEGORY = "bulkSetCategory";
+            String BULK_SET_PLATFORM_FIELDS = "bulkSetPlatformFields";
+            String GET_PLATFROM_POP_OPTIONS = "getPlatfromPopOptions";
         }
 
         interface ADD_TO_PROMOTION {
@@ -491,6 +497,12 @@ public interface CmsUrlConstants {
             String GET_PROM_TAGS = "getPromotionTags";
             String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
+        }
+        interface  AddProductToPromotion
+        {
+            String ROOT = "/cms/pop/add_product_to_promotion/";
+            String Save = "save";
+            String Init="init";
         }
 
         interface PRICE_LOG {

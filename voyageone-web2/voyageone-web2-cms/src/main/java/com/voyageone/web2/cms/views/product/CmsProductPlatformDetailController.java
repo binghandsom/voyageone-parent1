@@ -1,28 +1,23 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.CmsConstants;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.web2.base.ajax.AjaxResponse;
+import com.voyageone.web2.cms.CmsController;
+import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 
 /**
  * Created by lewis on 15-12-16.
@@ -41,6 +36,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
     @Autowired
     private CmsBtPriceConfirmLogService cmsBtPriceConfirmLogService;
+    
+    @Autowired
+    private CmsAdvanceSearchService cmsAdvanceSearchService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
@@ -52,6 +50,7 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
+        result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
 
         return success(result);
     }

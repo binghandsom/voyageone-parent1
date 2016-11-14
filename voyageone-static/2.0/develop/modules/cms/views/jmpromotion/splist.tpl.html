@@ -2,7 +2,7 @@
 	<uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
 		<uib-accordion-group is-open="vm.status.open">
 			<uib-accordion-heading>
-				<i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_PROMOTION_LIST' | translate}}
+				<i class="glyphicon glyphicon-star"></i>&nbsp; 聚美国际活动
 				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
 			</uib-accordion-heading>
 			<div class="container-fluid m-t-sm m-b-md">
@@ -20,7 +20,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">主品牌</label>
 								<div class="col-sm-7">
-									<select class="form-control" chosen ng-model="searchInfo.jmBrandName" ng-options="brand.value as brand.value for brand in vm.jmMasterBrandList">
+									<select class="form-control" multiple chosen ng-model="searchInfo.jmBrandName" ng-options="brand.value as brand.value for brand in vm.jmMasterBrandList">
 										<option value="" translate="TXT_SELECT_NO_VALUE"></option>
 									</select>
 								</div>
