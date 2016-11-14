@@ -83,7 +83,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
      * @param searchBean
      * @return
      */
-    private List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean) {
+    public List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean) {
         return cmsBtShelvesTemplateDao.selectList(searchBean);
 
     }

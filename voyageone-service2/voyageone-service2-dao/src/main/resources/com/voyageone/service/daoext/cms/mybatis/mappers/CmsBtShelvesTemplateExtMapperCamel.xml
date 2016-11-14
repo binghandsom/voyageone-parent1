@@ -9,10 +9,28 @@
         `html_small_image`, `html_foot`, `html_clearfix1`, `html_clearfix2`, `html_last_image`,
         `html_image_template`, `creater`, `created`, `modifier`, `modified`, `deleted`
     </sql>
-    
+
     <select id="select_cms_bt_shelves_template" resultMap="BaseResultMap" parameterType="com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean">
-        SELECT <include refid="Base_Column_List" /> FROM cms_bt_shelves
+        select
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        <where >
+            <if test="templateName != null" >
+                and `template_name` like concat('%', #{templateName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="clientType != null" >
+                and `client_type` = #{clientType,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
 
-
+        </where>
     </select>
 </mapper>
