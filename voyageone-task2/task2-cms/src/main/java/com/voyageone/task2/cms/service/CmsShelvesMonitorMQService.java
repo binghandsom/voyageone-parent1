@@ -12,73 +12,109 @@ import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.map.HashedMap;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by james on 2016/11/11.
  */
 @Service
-public class CmsShelvesMonitorService extends BaseMQCmsService {
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_ShelvesMonitorJob)
+public class CmsShelvesMonitorMQService extends BaseMQCmsService {
+
+
+    private final CmsBtShelvesService cmsBtShelvesService;
+
+    private final CmsBtShelvesProductService cmsBtShelvesProductService;
+
+    private final TbProductService tbProductService;
+
+    private final ProductService productService;
+
+    private final MqSender sender;
 
     @Autowired
-    private CmsBtShelvesService cmsBtShelvesService;
-
-    @Autowired
-    private CmsBtShelvesProductService cmsBtShelvesProductService;
-
-    @Autowired
-    private TbProductService tbProductService;
-
-    @Autowired
-    private ProductService productService;
+    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, MqSender sender, CmsBtShelvesService cmsBtShelvesService) {
+        this.cmsBtShelvesProductService = cmsBtShelvesProductService;
+        this.tbProductService = tbProductService;
+        this.productService = productService;
+        this.sender = sender;
+        this.cmsBtShelvesService = cmsBtShelvesService;
+    }
 
     @Override
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
+        if(shelvesId != null) {
+            CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
+            List<CmsBtShelvesProductModel> cmsBtShelvesProducts = cmsBtShelvesProductService.getByShelvesId(shelvesId);
+            if(!ListUtils.isNull(cmsBtShelvesProducts) && cmsBtShelvesModel != null) {
+                Map<String, List<CmsBtShelvesProductModel>> numIidGroup = new HashedMap();
 
-        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
+                // 按numiid进行分组
+                cmsBtShelvesProducts.forEach(cmsBtShelvesProductModel -> {
+                    if (!StringUtil.isEmpty(cmsBtShelvesProductModel.getNumIid())) {
+                        if (numIidGroup.containsKey(cmsBtShelvesProductModel.getNumIid())) {
+                            numIidGroup.get(cmsBtShelvesProductModel.getNumIid()).add(cmsBtShelvesProductModel);
+                        } else {
+                            List<CmsBtShelvesProductModel> temp = new ArrayList<CmsBtShelvesProductModel>();
+                            temp.add(cmsBtShelvesProductModel);
+                            numIidGroup.put(cmsBtShelvesProductModel.getNumIid(), temp);
+                        }
+                    }
+                });
+                ExecutorService es  = Executors.newFixedThreadPool(5);
+                numIidGroup.forEach((s, cmsBtShelvesProductModels) -> syuPlatformInfo(cmsBtShelvesModel.getChannelId(),cmsBtShelvesModel.getCartId(),s,cmsBtShelvesProductModels));
+                es.shutdown();
+                es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
-        List<CmsBtShelvesProductModel> cmsBtShelvesProducts = cmsBtShelvesProductService.getByShelvesId(shelvesId);
-
-        Map<String, List<CmsBtShelvesProductModel>> numIidGroup = new HashedMap();
-
-        cmsBtShelvesProducts.forEach(cmsBtShelvesProductModel -> {
-            if (!StringUtil.isEmpty(cmsBtShelvesProductModel.getNumIid())) {
-                if (numIidGroup.containsKey(cmsBtShelvesProductModel.getNumIid())) {
-                    numIidGroup.get(cmsBtShelvesProductModel.getNumIid()).add(cmsBtShelvesProductModel);
-                } else {
-                    List<CmsBtShelvesProductModel> temp = new ArrayList<CmsBtShelvesProductModel>();
-                    temp.add(cmsBtShelvesProductModel);
-                    numIidGroup.put(cmsBtShelvesProductModel.getNumIid(), temp);
-                }
+                // 只更新货架的最后更新时间
+                CmsBtShelvesModel shelvesModel = new CmsBtShelvesModel();
+                shelvesModel.setId(cmsBtShelvesModel.getId());
+                shelvesModel.setLastUpdate(new Date());
+                cmsBtShelvesService.update(shelvesModel);
             }
-        });
+            sendMq(messageMap);
+        }
     }
 
-    public void syuPlatformInfo(String channelId, Integer cartId, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
+    private void syuPlatformInfo(String channelId, Integer cartId, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
             syuPlatformInfoTM(channelId, shopBean, numiid, cmsBtShelvesProductModels);
         }
 
+        // 更新数据库
+        cmsBtShelvesProductService.updatePlatformStatus(cmsBtShelvesProductModels);
+
+
     }
 
-    public void syuPlatformInfoTM(String channelId, ShopBean shopBean, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+    private void syuPlatformInfoTM(String channelId, ShopBean shopBean, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
 
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
@@ -112,17 +148,16 @@ public class CmsShelvesMonitorService extends BaseMQCmsService {
                 }
                 setInfo(channelId, itemStatus.getDefaultValue(), resultList, cmsBtShelvesProductModels);
             }
-        } catch (ApiException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (TopSchemaException e) {
-            e.printStackTrace();
+            $error(e);
         }
     }
-    public void setInfo(String channelId, String itemStatus, List<SkuBean> resultList, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
+    private void setInfo(String channelId, String itemStatus, List<SkuBean> resultList, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
             cmsBtShelvesProductModel.setStatus(Integer.parseInt(itemStatus));
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtShelvesProductModel.getProductCode());
-
+            cmsBtShelvesProductModel.setCmsInventory(cmsBtProductModel.getCommon().getFields().getQuantity());
             cmsBtProductModel.getCommon().getSkus().forEach(cmsBtProductModel_sku -> {
                 SkuBean sku = resultList.stream().filter(skuBean -> skuBean.equals(cmsBtProductModel_sku.getSkuCode())).findFirst().orElse(null);
                 if(sku != null){
@@ -131,7 +166,13 @@ public class CmsShelvesMonitorService extends BaseMQCmsService {
                 }
             });
         });
-        return;
+    }
+
+    private void sendMq(Map<String, Object> messageMap){
+        Integer shelvesId = (Integer) messageMap.get("shelvesId");
+        if(CacheHelper.getValueOperation().get("ShelvesMonitor_"+ shelvesId) != null){
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 500);
+        }
     }
 
     public static class SkuBean {

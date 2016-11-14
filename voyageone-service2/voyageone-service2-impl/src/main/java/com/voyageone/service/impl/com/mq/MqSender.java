@@ -33,7 +33,11 @@ public class MqSender extends BaseService {
      * @param messageMap 消息内容
      */
     public void sendMessage(String routingKey, Map<String, Object> messageMap) {
-        sendMessage(routingKey, messageMap, true);
+        sendMessage(routingKey, messageMap, true, null);
+    }
+
+    public void sendMessage(String routingKey, Map<String, Object> messageMap, Integer delay) {
+        sendMessage(routingKey, messageMap, true, delay);
     }
 
     /**
@@ -43,10 +47,15 @@ public class MqSender extends BaseService {
      * @param messageMap 消息内容
      * @param isBackMessage  出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
      */
-    public void sendMessage(String routingKey, Map<String, Object> messageMap, boolean isBackMessage) {
-        sendMessage(null, routingKey, messageMap, isBackMessage, isLocal(), true);
+    public void sendMessage(String routingKey, Map<String, Object> messageMap, boolean isBackMessage, Integer delay) {
+        sendMessage(null, routingKey, messageMap, isBackMessage, isLocal(), true, delay);
     }
 
+
+    public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap,
+                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue) {
+        sendMessage(exchange,routingKey,messageMap,isBackMessage,isLoad,isDeclareQueue,null);
+    }
     /**
      * 发送消息
      *
@@ -56,9 +65,10 @@ public class MqSender extends BaseService {
      * @param isBackMessage  出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
      * @param isLoad          是否为开发环境
      * @param isDeclareQueue 是否检测消息定义存在
+     * @param delay             延迟发送时间 毫秒
      */
     public void sendMessage(String exchange, String routingKey, Map<String, Object> messageMap,
-                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue) {
+                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue, Integer delay) {
         try {
             // isload add ipaddress to routingKey
             if (isLoad && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
@@ -87,7 +97,13 @@ public class MqSender extends BaseService {
             final int finalRetryTimes = retryTimes;
             Message message = new Message(JacksonUtil.bean2Json(messageMap).getBytes(StandardCharsets.UTF_8), new MessageProperties() {{
                 setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
+
+                if(delay != null && delay > 0){
+                    setHeader("x-delay", delay);
+                }
             }});
+
+
 
             AmqpTemplate amqpTemplate = SpringContext.getBean(AmqpTemplate.class);
             if (amqpTemplate == null) {
