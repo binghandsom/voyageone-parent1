@@ -15,7 +15,8 @@ define([
     './master.component.ctl',
     './jgj.component.ctl',
     './gw.component.ctl',
-    './dl.component.ctl'
+    './dl.component.ctl',
+    './inventory.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {

@@ -1,0 +1,379 @@
+<div class="product-shema-detail" ng-init="initial();">
+    <div class="form-horizontal" name="productFieldForm" novalidate ng-controller="popupCtrl">
+        <div class="container-fluid" id="skuproperty">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover-new table-hover table_main table_compare" ng-style="{'width':showDetail?'1950px':''}">
+                            <thead>
+                            <tr>
+                                <th class="text-center" ng-attr-colspan="{{generalLength}}">基础信息</th>
+                                <th class="text-center table_compare_before" ng-attr-colspan="{{CNPrivateLength}}">(国内)自营</th>
+                                <th class="text-center table_compare_before" ng-attr-colspan="{{CNThirdPartyLength}}">(国内)非自营</th>
+                                <th class="text-center table_compare_after" ng-attr-colspan="{{USPrivateLength}}">(国际)自营</th>
+                                <th class="text-center table_compare_after" ng-attr-colspan="{{USThirdPartyLength}}">(国际)非自营</th>
+                                <th class="text-center" colspan="3"></th>
+                            </tr>
+                            <tr>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 117px;">
+                                    <label class="pull-left" style="margin-bottom: 0">
+                                        <i ng-class="{'fa fa-plus-circle':!showDetail,'fa fa-minus-circle':showDetail}" ng-click="showDetail=!showDetail;count(showDetail)"></i>
+                                    </label>
+                                    SKU</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
+                                    <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存</th>
+                                <th class="text-center table_compare_before" style="width: 88px;">库存总量</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">TM</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">HM</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">ASC</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">SL</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">IK</th>
+                                <th class="text-center table_compare_before" style="width: 88px;">库存总量</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">GA</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">TST</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">WHS</th>
+                                <th class="text-center table_compare_after" style="width: 88px;">库存总量</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">LA</th>
+                                <th class="text-center table_compare_after" style="width: 88px;">库存总量</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">KSS</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">LAK</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">ASC</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">SL</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">IK</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">GA</th>
+                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">TST</th>
+                                <th class="text-center" style="width: 65px;">CH</th>
+                                <th class="text-center" style="width: 72px;">On Hold</th>
+                                <th class="text-center" style="width: 87px;">New Order</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-001</td>
+                                <td class="text-center v-middle">S</td>
+                                    <td ng-if="showDetail" class="text-center v-middle">S</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-002</td>
+                                <td class="text-center v-middle">M</td>
+                                <td ng-if="showDetail" class="text-center v-middle">M</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-003</td>
+                                <td class="text-center v-middle">L</td>
+                                <td ng-if="showDetail" class="text-center v-middle">L</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-004</td>
+                                <td class="text-center v-middle">XL</td>
+                                <td ng-if="showDetail" class="text-center v-middle">XL</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-005</td>
+                                <td class="text-center v-middle">XXL</td>
+                                <td ng-if="showDetail" class="text-center v-middle">XXL</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-006</td>
+                                <td class="text-center v-middle">XXXL</td>
+                                <td ng-if="showDetail" class="text-center v-middle">XXXL</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-007</td>
+                                <td class="text-center v-middle">XS</td>
+                                <td ng-if="showDetail" class="text-center v-middle">XS</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-008</td>
+                                <td class="text-center v-middle">XXS</td>
+                                <td ng-if="showDetail" class="text-center v-middle">XXS</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-009</td>
+                                <td class="text-center v-middle">S</td>
+                                <td ng-if="showDetail" class="text-center v-middle">S</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-left v-middle">001-123456-010</td>
+                                <td class="text-center v-middle">M</td>
+                                <td ng-if="showDetail" class="text-center v-middle">M</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
+                                <td class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-2) </td>
+                                <td class="text-right v-middle"> (-2) </td>
+                            </tr>
+                            <tr>
+                                <td class="text-center v-middle">Total</td>
+                                <td class="text-left v-middle"></td>
+                                <td ng-if="showDetail" class="text-right v-middle"></td>
+                                <td class="text-right v-middle">10,000</td>
+                                <td class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
+                                <td class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td class="text-right v-middle table_compare_after"> 10,000 </td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
+                                <td class="text-right v-middle">1,000</td>
+                                <td class="text-right v-middle"> (-20) </td>
+                                <td class="text-right v-middle"> (-20) </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

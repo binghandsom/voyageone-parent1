@@ -44,6 +44,11 @@
                 <tab-heading>{{'TXT_PRODUCT_SKU_DETAIL'|translate}}</tab-heading>
                 <sku-schema product-info="ctrl.product"></sku-schema>
             </uib-tab>
+            <!---------------------------------------------------SKU 库存 页面------------------------------------------------>
+            <uib-tab active="ctrl.inventory">
+                <tab-heading>SKU 库存</tab-heading>
+                <inventory-schema product-info="ctrl.product"></inventory-schema>
+            </uib-tab>
             <!---------------------------------------------------feed 产品详情页面------------------------------------------------>
             <uib-tab active="ctrl.feed">
                 <tab-heading>Feed详情</tab-heading>
