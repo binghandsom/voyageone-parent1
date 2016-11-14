@@ -199,7 +199,7 @@ public class TranslationTaskService extends BaseService {
 
         if (product == null) {
             Map<String, Object> map = mapList.get(0);
-            product = cmsBtProductDao.selectByCode( map.get("_id").toString(), channelId);
+            product = cmsBtProductDao.selectById( map.get("_id").toString(), channelId);
         }
         // 查找Group和同组商品信息
         String code = product.getPlatform(0).getMainProductCode();
