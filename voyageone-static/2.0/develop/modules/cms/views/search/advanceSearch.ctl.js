@@ -36,9 +36,7 @@ define([
             groupList: [],
             productList: [],
             currTab: "product",
-            status: {
-                open: true
-            },
+            status: {open: true},
             groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
@@ -50,11 +48,9 @@ define([
             _cart_tab_act: false
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
-
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function () {
-            //$scope.vm.status.open = false;//收缩搜索栏
             search();
             $scope.vm._selall = false;
         };
@@ -151,7 +147,7 @@ define([
         /**
          * 清空画面上显示的数据
          */
-        function clear() {
+        function clear(child) {
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
@@ -189,6 +185,13 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
             $scope.vm._freeTags = null;
+
+            if(child.columnArrow){
+                _.forEach(child.columnArrow, function (value, key) {
+                    child.columnArrow[key] = null;
+                });
+            }
+
         }
 
         /**
@@ -1245,6 +1248,23 @@ define([
                     });
                 });
             }
+        };
+
+        /**
+         * 高级检索加入活动
+         */
+        $scope.popJoinPromotion = function (cartBean) {
+
+            _chkProductSel(cartBean.value, function (cartId, selList, context) {
+                popups.openJoinPromotion(_.extend({
+                    cartBean: cartBean,
+                    selList: selList
+                }, context)).then(function (context) {
+
+                });
+            }, {'isSelAll': $scope.vm._selall ? 1 : 0});
+
+
         };
 
 

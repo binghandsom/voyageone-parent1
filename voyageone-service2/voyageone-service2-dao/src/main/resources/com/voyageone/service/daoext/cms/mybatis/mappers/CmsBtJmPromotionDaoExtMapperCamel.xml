@@ -354,5 +354,23 @@
         </set>
         where `id` = #{id,jdbcType=INTEGER}
     </update>
+   
+     <select id="selectAddPromotionList" resultType="MapModel">
 
+      SELECT a.`id`,a.`name`,a.`ref_tag_id`,COUNT(c.id) AS productCount  FROM cms_bt_jm_promotion a JOIN cms_bt_promotion b ON a.id = b.promotion_id
+     left JOIN  `cms_bt_jm_promotion_product` AS c ON  a.`id`=c.`cms_bt_jm_promotion_id`    AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator="," close=")">
+         #{item}
+     </foreach>
+        WHERE
+        a.channel_id =#{channelId}
+        AND b.activity_end >= NOW()
+        AND b.promotion_status = 1
+        AND b.active = 1
+        AND a.active = 1
+        AND b.cart_id =#{cartId}
+
+        GROUP BY a.id
+        ORDER BY a.id DESC
+
+     </select>
 </mapper>

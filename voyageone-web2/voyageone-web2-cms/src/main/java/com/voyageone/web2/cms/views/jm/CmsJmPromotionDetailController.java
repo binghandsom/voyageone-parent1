@@ -19,6 +19,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -280,13 +281,15 @@ public class CmsJmPromotionDetailController extends CmsController {
     //修改单个商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
     public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
-        service3.updatePromotionProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        service3.updatePromotionProductTag(parameter, userSessionBean.getSelChannelId(),userSessionBean.getUserName());
         return success(null);
     }
     //批量修改商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
     public int updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
-        return service3.updatePromotionListProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        return service3.updatePromotionListProductTag(parameter,userSessionBean.getSelChannelId(), userSessionBean.getUserName());
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
@@ -367,6 +370,18 @@ public class CmsJmPromotionDetailController extends CmsController {
         return success(true);
     }
 
+    /**
+     * 设置聚美活动各阶段的状态
+     */
+    @RequestMapping("setJmPromotionStepStatus")
+    public AjaxResponse setJmPromotionStepStatus(@RequestBody Map<String, Object> param) {
+        btJmPromotionService.setJmPromotionStepStatus((Integer) param.get("jmPromId"),
+                CmsBtJmPromotionService.JmPromotionStepNameEnum.valueOf((String) param.get("stepName")),
+                CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
+                getUser().getUserName());
+        return success(true);
+    }
+
     private static class SaveProductSort {
         Integer tagId;
         List<JmProduct> jmProductList;
@@ -386,18 +401,6 @@ public class CmsJmPromotionDetailController extends CmsController {
         public void setJmProductList(List<JmProduct> jmProductList) {
             this.jmProductList = jmProductList;
         }
-    }
-
-    /**
-     * 设置聚美活动各阶段的状态
-     */
-    @RequestMapping("setJmPromotionStepStatus")
-    public AjaxResponse setJmPromotionStepStatus(@RequestBody Map<String, Object> param) {
-        btJmPromotionService.setJmPromotionStepStatus((Integer) param.get("jmPromId"),
-                CmsBtJmPromotionService.JmPromotionStepNameEnum.valueOf((String) param.get("stepName")),
-                CmsBtJmPromotionService.JmPromotionStepStatusEnum.valueOf((String) param.get("stepStatus")),
-                getUser().getUserName());
-        return success(true);
     }
 
     public static class SavePromotionTagModules {

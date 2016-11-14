@@ -492,6 +492,14 @@ WHERE `update_status`=1 AND  `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
             #{item}
         </foreach>
     </select>
+    <select id="selectNotSynchListByProductCodes" resultMap="ResultMap">
+        SELECT * from  cms_bt_jm_promotion_product
+        WHERE synch_status!=2  and cms_bt_jm_promotion_id=#{jmPromotionId}  and  product_code in
+        <foreach item="item" index="i" collection="listProductCode"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
     <update id="updateSynch2ErrorMsg">
         update cms_bt_jm_promotion_product
         set  error_msg=#{errorMsg}

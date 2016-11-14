@@ -428,6 +428,13 @@ define([
                 "controller": 'popCodeDetailCtl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "joinPromotion": {
+                "templateUrl": "views/pop/search/joinPromotion.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/joinPromotion.ctl",
+                "controller": 'joinPromotionCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'md'
             }
 
         },
@@ -546,17 +553,6 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
-            },
-            "skuMoveConfirm": {
-                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
-                "controller": 'SkuMoveConfirmController as ctrl'
-            },
-            "moveResult": {
-                "templateUrl": "views/pop/product/move_result.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
-                "controller": 'MoveResultController as ctrl',
-                "size": 'sm'
             }
         },
         confirmProductRefresh: {
@@ -1323,9 +1319,11 @@ define([
             return openModal(popActions.jumei.promotion.imageBatchUpload, context)
         };
 
-        /**移动SKU确认*/
-        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
-            return openModal(popActions.product.skuMoveConfirm, context);
+        /**
+         * 高级检索加入活动
+         */
+        $scope.openJoinPromotion = function openJoinPromotion(context) {
+            return openModal(popActions.search.joinPromotion, context)
         };
 
         /**移动SKU的结果确认*/
