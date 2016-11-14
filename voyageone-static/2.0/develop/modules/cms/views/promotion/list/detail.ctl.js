@@ -67,17 +67,48 @@ define([
             //searchSku();
         };
         //处理tag sunpt
-        $scope.codeTagChange=function(code) {
-            var vm = $scope.vm;
-            var tag = _.find(vm.tagList, function (num) {
-                return num.id === code.tagId;
+        $scope.codeTagChange=function(m,oldTagNameList) {
+
+            //获取删除的tag
+            var delTagNameList = _.filter(oldTagNameList, function (tagName) {
+                return !_.contains(m.tagNameList, tagName);
             });
-            if(tag) {
-                code.tag = tag.tagName;
-                code.tagPathName = tag.tagPathName;
-                code.tagPath =tag.tagPath;
-                code.isUpdate = true;
-            }
+            //获取新增的tag
+            var addTagNameList = _.filter(m.tagNameList, function (tagName) {
+                return !_.contains(oldTagNameList, tagName);
+            });
+
+            // console.log("delTagNameList")
+            // console.log(delTagNameList)
+            // console.log("addTagNameList")
+            // console.log(addTagNameList)
+
+            var productTagList = [];
+            _.each(delTagNameList, function (tagName) {
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 0});
+            });
+            _.each(addTagNameList, function (tagName) {
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 2});
+            });
+
+            //console.log(productTagList);
+
+            var parameter = {};
+            parameter.tagList = productTagList;
+            parameter.id = m.id;
+            //console.log(parameter);
+            promotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
+                //   alert($translate.instant('TXT_SUCCESS'));
+            }, function (res) {
+                alert($translate.instant('TXT_FAIL'));
+            });
+
         }
         $scope.updateCode = function(code){
             delete code.isUpdate;

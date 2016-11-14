@@ -34,5 +34,9 @@ public class CmsBtJmPromotion3Service {
         }
         return new ArrayList<>();
     }
+
+    public CmsBtJmPromotionModel get(int id) {
+        return dao.select(id);
+    }
 }
 

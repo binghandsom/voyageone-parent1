@@ -40,11 +40,11 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private Double msrp;
 
-    private Integer tagId;
+   // private Integer tagId;
 
-    private String tagPath;
+   // private String tagPath;
 
-    private String tagPathName;
+  //  private String tagPathName;
 
     private Double msrpUS;
 
@@ -66,6 +66,17 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
    private double minMsrpRmb;
    private double maxRetailPrice;
    private double minRetailPrice;
+
+    public List<String> getTagNameList() {
+        return tagNameList;
+    }
+
+    public void setTagNameList(List<String> tagNameList) {
+        this.tagNameList = tagNameList;
+    }
+
+    private List<String> tagNameList;
+
 
     public double getMaxMsrpRmb() {
         return maxMsrpRmb;
@@ -272,21 +283,21 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
         this.msrp = msrp;
     }
 
-    public Integer getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Integer tagId) {
-        this.tagId = tagId;
-    }
-
-    public String getTagPath() {
-        return tagPath;
-    }
-
-    public void setTagPath(String tagPath) {
-        this.tagPath = tagPath;
-    }
+//    public Integer getTagId() {
+//        return tagId;
+//    }
+//
+//    public void setTagId(Integer tagId) {
+//        this.tagId = tagId;
+//    }
+//
+//    public String getTagPath() {
+//        return tagPath;
+//    }
+//
+//    public void setTagPath(String tagPath) {
+//        this.tagPath = tagPath;
+//    }
 
     public Double getRetailPrice() {
         return retailPrice;
@@ -296,13 +307,13 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
         this.retailPrice = retailPrice;
     }
 
-    public String getTagPathName() {
-        return tagPathName;
-    }
-
-    public void setTagPathName(String tagPathName) {
-        this.tagPathName = tagPathName;
-    }
+//    public String getTagPathName() {
+//        return tagPathName;
+//    }
+//
+//    public void setTagPathName(String tagPathName) {
+//        this.tagPathName = tagPathName;
+//    }
 
     public Double getMsrpUS() {
         return msrpUS;

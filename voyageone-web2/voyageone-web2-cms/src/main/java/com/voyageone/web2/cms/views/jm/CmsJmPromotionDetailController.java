@@ -19,6 +19,7 @@ import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -280,13 +281,15 @@ public class CmsJmPromotionDetailController extends CmsController {
     //修改单个商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionProductTag)
     public AjaxResponse updatePromotionProductTag(@RequestBody UpdatePromotionProductTagParameter parameter) {
-        service3.updatePromotionProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        service3.updatePromotionProductTag(parameter, userSessionBean.getSelChannelId(),userSessionBean.getUserName());
         return success(null);
     }
     //批量修改商品tag
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
     public int updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
-        return service3.updatePromotionListProductTag(parameter, getUser().getUserName());
+        UserSessionBean userSessionBean=getUser();
+        return service3.updatePromotionListProductTag(parameter,userSessionBean.getSelChannelId(), userSessionBean.getUserName());
     }
 
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.DETAIL.SelectChangeCountByPromotionId)
