@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
+import com.voyageone.service.daoext.cms.CmsBtShelvesTemplateDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +21,8 @@ public class CmsBtShelvesTemplateService extends BaseService {
 
     @Autowired
     private CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
+    @Autowired
+    private CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt;
 
     public void insert(CmsBtShelvesTemplateModel template) {
         checkModel(template, "insert");
@@ -84,7 +87,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
      * @return
      */
     public List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean) {
-        return cmsBtShelvesTemplateDao.selectList(searchBean);
+        return cmsBtShelvesTemplateDaoExt.search(searchBean);
 
     }
 
