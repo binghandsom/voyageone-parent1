@@ -172,12 +172,13 @@ public class TranslationTaskService extends BaseService {
                     aggregateList.add(new JongoAggregate("{ $sort : {\"common.fields.priorTranslateDate\" : 1, \"totalQuantity\" : -1}}"));
                     aggregateList.add(new JongoAggregate("{ $limit : 1}"));
                     mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
+                    // 如果优先翻译的数据,并且设置了翻译时间的获取不到,则获取未设置时间的任务
                     if (CollectionUtils.isEmpty(mapList)) {
                         aggregateList.remove(0);
                         aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\" : \"0\", \"common.fields.translateStatus\":\"2\", \"common.fields.priorTranslateDate\" : {$in : [null, \"\"]}}}"));
-                        aggregateList.remove(2);
                         aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
                         mapList = cmsBtProductDao.aggregateToMap(channelId, aggregateList);
+                        // 如果优先翻译的数据获取不到,则通过未翻译获取
                         if (CollectionUtils.isEmpty(mapList)) {
                             aggregateList.remove(0);
                             aggregateList.add(0, new JongoAggregate("{ $match : {\"lock\":\"0\", \"common.fields.translateStatus\":\"0\"}}"));
@@ -185,7 +186,13 @@ public class TranslationTaskService extends BaseService {
                         }
                     }
                 }
-            } else {
+                // 如果按照现有条件未获取到翻译任务,并且没有输入 模糊查询
+                if (CollectionUtils.isEmpty(mapList) && !StringUtils.isNullOrBlank2(keyWord)) {
+                    throw new BusinessException("根据输入的模糊查询["+keyWord+"]无法获取未翻译任务!");
+                }
+            }
+
+            if (CollectionUtils.isEmpty(mapList)) {
                 // 无分发规则
                 aggregateList.add(new JongoAggregate("{ $group : {_id : \"$platforms.P0.mainProductCode\", totalQuantity : {$sum : \"$common.fields.quantity\"}, codeCnt : {$sum : 1}}}"));
                 aggregateList.add(new JongoAggregate("{ $sort : {\"totalQuantity\" : -1}}"));
@@ -199,7 +206,7 @@ public class TranslationTaskService extends BaseService {
 
         if (product == null) {
             Map<String, Object> map = mapList.get(0);
-            product = cmsBtProductDao.selectById( map.get("_id").toString(), channelId);
+            product = cmsBtProductDao.selectByCode( map.get("_id").toString(), channelId);
         }
         // 查找Group和同组商品信息
         String code = product.getPlatform(0).getMainProductCode();
