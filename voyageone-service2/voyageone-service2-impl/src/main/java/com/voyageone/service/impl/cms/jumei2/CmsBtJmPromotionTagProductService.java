@@ -13,7 +13,10 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,7 +65,7 @@ public class CmsBtJmPromotionTagProductService {
     @VOTransactional
     public  void  updatePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
 
-        List<TagTreeNode> tagList=  parameter.getTagList().stream().map(m -> {
+        List<TagTreeNode> tagList = parameter.getTagList().stream().map(m -> {
             TagTreeNode tagTreeNode = new TagTreeNode();
             tagTreeNode.setId(m.getTagId());
             tagTreeNode.setName(m.getTagName());
@@ -70,13 +73,45 @@ public class CmsBtJmPromotionTagProductService {
             return tagTreeNode;
         }).collect(Collectors.toList());
 
-        updateJmPromotionTagProduct(tagList,channelId,parameter.getId(),userName);
+        updateJmPromotionTagProduct(tagList, channelId, parameter.getId(), userName);
 
         //更新mongo product tag
         CmsBtJmPromotionProductModel codesModel = cmsBtJmPromotionProductDao.select(parameter.getId());
+        codesModel.setPromotionTag(getPromotionTag(tagList, codesModel.getPromotionTag()));
+        cmsBtJmPromotionProductDao.update(codesModel);
         CmsBtJmPromotionModel promotionModel = cmsBtJmPromotionDao.select(codesModel.getCmsBtJmPromotionId());
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
         productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
+    }
+    public  String getPromotionTag(List<TagTreeNode> tagList,String oldPromotionTag) {
+        HashSet<String> hs = new HashSet<>();
+
+        if (!StringUtils.isEmpty(oldPromotionTag)) {
+
+            String[] oldTagList = oldPromotionTag.split("\\|");
+            for (String o : oldTagList) {
+                if (!StringUtils.isEmpty(o)) {
+                    hs.add(o);
+                }
+            }
+        }
+        tagList.forEach(f->{
+            if(f.getChecked()==2) {
+                hs.add(f.getName());
+            }
+            else if(f.getChecked()==0)
+            {
+                hs.remove(f.getName());
+            }
+        });
+        StringBuilder sb = new StringBuilder();
+        hs.stream().forEach(f -> {
+            sb.append("|").append(f);
+        });
+        if (sb.length() > 0) {
+            return sb.substring(1);
+        }
+        return "";
     }
     public CmsBtJmPromotionTagProductModel get(int jmPromotionProductId, int tagId) {
         Map<String, Object> map = new HashedMap();

@@ -363,7 +363,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setLimit(product.getLimit());
             saveInfo.jmProductModel.setProductNameEn(saveInfo.productInfo.getCommon().getFields().getProductNameEn());
             if (saveInfo.productInfo.getCommon().getFields().getImages1() != null && saveInfo.productInfo.getCommon().getFields().getImages1().size() > 0) {
-                if(saveInfo.productInfo.getCommon().getFields().getImages1().get(0).get("image1")!=null) {
+                if (saveInfo.productInfo.getCommon().getFields().getImages1().get(0).get("image1") != null) {
                     saveInfo.jmProductModel.setImage1(saveInfo.productInfo.getCommon().getFields().getImages1().get(0).get("image1").toString());
                 }
             }
@@ -387,7 +387,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             }
         }
         saveInfo.jmProductModel.setLimit(product.getLimit());
-        saveInfo.jmProductModel.setPromotionTag(product.getPromotionTag());
+
+        saveInfo.jmProductModel.setPromotionTag(getPromotionTag(product.getPromotionTag(), saveInfo.jmProductModel.getPromotionTag()));
+
         saveInfo.jmProductModel.setModifier(userName);
         saveInfo.jmProductModel.setModified(new Date());
         if (saveInfo.jmProductModel.getPromotionTag() == null) {
@@ -415,6 +417,35 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             saveInfo.jmProductModel.setSkuCount(saveInfo.jmSkuList.size());
         }
         saveInfo._importProduct = product;
+    }
+    public  String getPromotionTag(String newPromotionTag,String oldPromotionTag) {
+        HashSet<String> hs = new HashSet<>();
+        if (!StringUtils.isEmpty(newPromotionTag)) {
+            String[] newTagList = newPromotionTag.split("\\|");
+            for (String s : newTagList) {
+                if (!StringUtils.isEmpty(s)) {
+                    hs.add(s);
+                }
+            }
+        }
+
+        if (!StringUtils.isEmpty(oldPromotionTag)) {
+
+            String[] oldTagList = oldPromotionTag.split("\\|");
+            for (String o : oldTagList) {
+                if (!StringUtils.isEmpty(o)) {
+                    hs.add(o);
+                }
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        hs.stream().forEach(f -> {
+            sb.append("|").append(f);
+        });
+        if (sb.length() > 0) {
+            return sb.substring(1);
+        }
+        return "";
     }
     public BigDecimal getMaxMarketPrice(List<CmsBtJmPromotionSkuModel> skuList)
     {
@@ -648,6 +679,7 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
     }
 
     private void loadSaveTag(String promotionTag, ProductSaveInfo saveInfo, CmsBtJmPromotionModel model) {
+
         if (StringUtils.isEmpty(promotionTag)) {
             return;
         }
@@ -674,8 +706,8 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                         tagProductModel.setCreater("");
                         tagProductModel.setModifier("");
                         saveInfo.tagList.add(tagProductModel);
-                        if(saveInfo.productInfo !=null) {
-                            if(!saveInfo.productInfo.getTags().contains(tagModel.getTagPath())) {
+                        if (saveInfo.productInfo != null) {
+                            if (!saveInfo.productInfo.getTags().contains(tagModel.getTagPath())) {
                                 saveInfo.productInfo.getTags().add(tagModel.getTagPath());
                             }
                         }
@@ -686,10 +718,9 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
                 tagProductModel = null;
             }
         }
-        if(saveInfo.tagList.size()>0)
-        {
-          String fullTagId=String.format("-%s-", model.getRefTagId());
-            if(!saveInfo.productInfo.getTags().contains(fullTagId)) {
+        if (saveInfo.tagList.size() > 0) {
+            String fullTagId = String.format("-%s-", model.getRefTagId());
+            if (!saveInfo.productInfo.getTags().contains(fullTagId)) {
                 saveInfo.productInfo.getTags().add(fullTagId);
             }
         }
