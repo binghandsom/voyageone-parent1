@@ -911,6 +911,12 @@ public class ProductService extends BaseService {
             }
         });
 
+        // 设定类目状态
+        if(!StringUtil.isEmpty(platformModel.getpCatId()) && !StringUtil.isEmpty(platformModel.getpCatPath())){
+            platformModel.setpCatStatus("1");
+        }else{
+            platformModel.setpCatStatus("0");
+        }
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
