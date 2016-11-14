@@ -7,6 +7,7 @@ import com.voyageone.service.bean.cms.jumei.UpdateSkuDealPriceParameter;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExtCamel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import org.apache.commons.collections.map.HashedMap;
@@ -28,7 +29,8 @@ public class CmsBtJmPromotionSku3Service {
     CmsBtJmPromotionProductDao daoCmsBtJmPromotionProduct;
     @Autowired
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
-
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel daoExtCamelCmsBtPromotionCodes;
     public CmsBtJmPromotionSkuModel select(int id) {
         return dao.select(id);
     }
@@ -59,6 +61,11 @@ public class CmsBtJmPromotionSku3Service {
             daoCmsBtJmPromotionProduct.update(modelCmsBtJmPromotionProduct);
         }
         daoExtCmsBtJmPromotionProduct.updateAvgPriceByPromotionProductId(model.getCmsBtJmPromotionProductId());//更新平均价格
+        List<Integer> listJmPromotionProductId = new ArrayList<>();
+
+        listJmPromotionProductId.add(model.getCmsBtJmPromotionProductId());
+        daoExtCamelCmsBtPromotionCodes.updateJmPromotionPrice(model.getCmsBtJmPromotionId(), listJmPromotionProductId);//promotionPrice
+
         return result;
     }
 
