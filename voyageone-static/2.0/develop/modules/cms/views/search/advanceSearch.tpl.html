@@ -1151,8 +1151,8 @@
                                                 <td class="text-left mfb-xxt">
                                                     <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem)">{{fileItem}}<br></a>
                                                 </td>
-                                                <td class="text-left mfb-xxt">{{exportInfo.created}}</td>
-                                                <td class="text-left mfb-xxt">{{exportInfo.fileName?exportInfo.modified:''}}</td>
+                                                <td class="text-left mfb-xxt">{{exportInfo.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td><!--exportInfo.modified-->
+                                                <td class="text-left mfb-xxt">{{exportInfo.fileName ? exportInfo.modified: '' | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                                                 <td class="text-left mfb-xxt">{{exportInfo.creater}}</td>
                                                 <td class="text-center mfb-xxt">{{exportStatus[exportInfo.status]}}</td>
                                             </tr>
