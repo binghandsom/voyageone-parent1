@@ -8,6 +8,7 @@ import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.taobao.top.schema.field.SingleCheckField;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -69,12 +70,16 @@ public class CmsShelvesMonitorService extends BaseMQCmsService {
     }
 
     public void syuPlatformInfo(String channelId, Integer cartId, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
+        if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
+            syuPlatformInfoTM(channelId, shopBean, numiid, cmsBtShelvesProductModels);
+        }
 
     }
 
-    public void syuPlatformInfoTM(String channelId, Integer cartId, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
-        ShopBean shopBean = Shops.getShop(channelId, cartId);
+    public void syuPlatformInfoTM(String channelId, ShopBean shopBean, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
 //        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
