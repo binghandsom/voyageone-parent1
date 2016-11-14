@@ -216,14 +216,14 @@
                                     <vo-message target="ctrlEdit.promotionForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
                                 </td>
                                 <td class="text-center">
-                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="!tag.featured" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
+                                    <button type="button" title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="!tag.featured" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
                                     </button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
                         <div class="form-group">
-                            <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
+                            <button type="button" class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
                                     ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
                             </button>
                         </div>
