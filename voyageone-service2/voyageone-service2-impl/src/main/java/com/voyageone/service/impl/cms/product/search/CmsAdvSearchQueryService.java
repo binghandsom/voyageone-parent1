@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -290,7 +291,12 @@ public class CmsAdvSearchQueryService extends BaseService {
             
             // NumIID多项查询
             if (StringUtils.isNoneEmpty(searchValue.getNumIIds())) {
-                queryObject.addQuery("{'platforms.P#.pNumIId': {$in: #}}");
+            	// 聚美平台按MallID作为查询条件
+            	if (CartEnums.Cart.JM.getId().equals(String.valueOf(cartId))) {
+                    queryObject.addQuery("{'platforms.P#.pPlatformMallId': {$in: #}}");
+            	} else {
+                    queryObject.addQuery("{'platforms.P#.pNumIId': {$in: #}}");
+            	}
                 queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
             }
         }
