@@ -7,7 +7,6 @@ import com.taobao.api.response.*;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.bean.TbGetPicCategoryParam;
-import com.voyageone.components.tmall.bean.TbGetPictureParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -69,50 +68,16 @@ public class TbPictureService extends TbBase {
      * 获取图片信息
      * 淘宝接口名：taobao.picture.get
      * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:138
-     *
-     * @param shopBean 店铺
-     * @param param    查询参数
-     * @return 接口的返回信息
-     * @throws ApiException
-     */
-    public PictureGetResponse getPictures(ShopBean shopBean, TbGetPictureParam param) throws ApiException {
-
-        PictureGetRequest req = new PictureGetRequest();
-
-        req.setTitle(param.getTitle());
-
-        req.setUrls(param.getUrls());
-
-        req.setPageNo(param.getPageNo());
-
-        req.setPageSize(param.getPageSize());
-
-        req.setPictureCategoryId(param.getPictureCategoryId());
-
-        req.setPictureId(param.getPictureId());
-
-        return reqTaobaoApi(shopBean, req);
-    }
-
-    /**
-     * 获取图片信息
-     * 淘宝接口名：taobao.picture.get
-     *
-     * @param shopBean    店铺
-     * @param title       图片名
-     * @param category_id 目录 id
-     * @return 接口的返回信息
-     * @throws ApiException
      */
     public PictureGetResponse getPictures(ShopBean shopBean, String title, Long category_id) throws ApiException {
 
-        TbGetPictureParam param = new TbGetPictureParam();
+        PictureGetRequest req = new PictureGetRequest();
 
-        param.setTitle(title);
+        req.setTitle(title);
 
-        param.setPictureCategoryId(category_id);
+        req.setPictureCategoryId(category_id);
 
-        return getPictures(shopBean, param);
+        return reqTaobaoApi(shopBean, req);
     }
 
     /**
