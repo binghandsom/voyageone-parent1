@@ -14,17 +14,10 @@ import java.util.List;
 
 @Repository
 public interface CmsBtShelvesProductDaoExt {
-    List<CmsBtShelvesProductModel> selectList(Object map);
 
-    CmsBtShelvesProductModel selectOne(Object map);
+    int updateSort(CmsBtShelvesProductModel record);
 
-    int selectCount(Object map);
+    int updatePlatformStatus(CmsBtShelvesProductModel record);
 
-    CmsBtShelvesProductModel select(Integer id);
-
-    int insert(CmsBtShelvesProductModel record);
-
-    int update(CmsBtShelvesProductModel record);
-
-    int delete(Integer id);
+    int updatePlatformImage(CmsBtShelvesProductModel record);
 }
