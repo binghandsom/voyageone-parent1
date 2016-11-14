@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtShelvesProductDao;
+import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
@@ -17,11 +18,18 @@ import java.util.Map;
 @Service
 public class CmsBtShelvesProductService extends BaseService {
 
+    private final CmsBtShelvesProductDao cmsBtShelvesProductDao;
+
+    private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
+
     @Autowired
-    private CmsBtShelvesProductDao cmsBtShelvesProductDao;
+    public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao, CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt) {
+        this.cmsBtShelvesProductDao = cmsBtShelvesProductDao;
+        this.cmsBtShelvesProductDaoExt = cmsBtShelvesProductDaoExt;
+    }
 
     public List<CmsBtShelvesProductModel> getByShelvesId(Integer shelvesId){
-        Map<String, Object> param = new HashedMap();
+        HashedMap param = new HashedMap();
         param.put("shelvesId",shelvesId);
         return cmsBtShelvesProductDao.selectList(param);
     }
@@ -33,5 +41,26 @@ public class CmsBtShelvesProductService extends BaseService {
     public Integer insert(CmsBtShelvesProductModel cmsBtShelvesProductModel){
         cmsBtShelvesProductDao.insert(cmsBtShelvesProductModel);
         return cmsBtShelvesProductModel.getId();
+    }
+
+    /**
+     * 更新货架顺序
+     */
+    public void updateSort(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductDaoExt::updateSort);
+    }
+
+    /**
+     * 更新平台状态和库存
+     */
+    public void updatePlatformStatus(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductDaoExt::updatePlatformStatus);
+    }
+
+    /**
+     * 更新平台图片
+     */
+    public void updatePlatformImage(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductDaoExt::updatePlatformImage);
     }
 }
