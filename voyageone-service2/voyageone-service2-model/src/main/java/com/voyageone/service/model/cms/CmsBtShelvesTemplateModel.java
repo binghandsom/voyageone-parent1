@@ -98,6 +98,16 @@ public class CmsBtShelvesTemplateModel extends BaseModel {
      */
     protected String htmlImageTemplate;
 
+    /**
+     * 修改人
+     */
+    protected String modifer;
+
+    /**
+     * 逻辑删除：0未被删除，1被删除
+     */
+    protected Integer deleted;
+
     public String getTemplateName() {
         return templateName;
     }
@@ -232,5 +242,21 @@ public class CmsBtShelvesTemplateModel extends BaseModel {
 
     public void setHtmlImageTemplate(String htmlImageTemplate) {
         this.htmlImageTemplate = htmlImageTemplate == null ? null : htmlImageTemplate.trim();
+    }
+
+    public String getModifer() {
+        return modifer;
+    }
+
+    public void setModifer(String modifer) {
+        this.modifer = modifer == null ? null : modifer.trim();
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 }

@@ -26,5 +26,4 @@ public interface CmsBtShelvesTemplateDao {
     int update(CmsBtShelvesTemplateModel record);
 
     int delete(Integer id);
-
 }

@@ -54,6 +54,11 @@ public class CmsBtShelvesModel extends BaseModel {
      */
     protected Date lastUpdate;
 
+    /**
+     * 逻辑删除：0未被删除，1被删除
+     */
+    protected Integer deleted;
+
     public String getShelvesName() {
         return shelvesName;
     }
@@ -116,5 +121,13 @@ public class CmsBtShelvesModel extends BaseModel {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 }
