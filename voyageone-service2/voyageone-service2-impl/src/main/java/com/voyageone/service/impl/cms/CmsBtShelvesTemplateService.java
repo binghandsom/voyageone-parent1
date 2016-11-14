@@ -1,7 +1,6 @@
-package com.voyageone.service.impl.cms.shelves;
+package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.impl.BaseService;
@@ -47,7 +46,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
     }
 
     /**
-     * 新增或修改时校验对象阈值
+     * 新增或修改时校验对象
      * @param template
      * @param operType
      */

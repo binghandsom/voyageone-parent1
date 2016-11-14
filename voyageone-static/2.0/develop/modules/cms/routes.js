@@ -390,6 +390,12 @@ define(function () {
             "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
             "controllerUrl": "modules/cms/views/maintain/common/masterBrandApplication/index.ctl",
             "controller": "masterBrandApplicationController as ctrl"
+        },
+        "shelves-template": {
+            "hash": "/shelves/template/management",
+            "templateUrl": "views/shelves/template-manangement.tpl.html",
+            "controllerUrl": "modules/cms/views/shelves/template-manangement.ctl",
+            "controller": "shelvesTemplateController as ctrl"
         }
     };
 });

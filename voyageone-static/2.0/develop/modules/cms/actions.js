@@ -648,6 +648,11 @@ define(function () {
                 reviewed:"reviewedMasterBrandInfo",
                 edit:"editMasterBrandInfo",
                 mappingSearch:"mappingMasterBrandInfoToPlatform"
+            },
+            // 货架模板管理
+            "shelvesTemlateService": {
+                root:"/cms/shelves/template",
+                init:""
             }
         }
     };

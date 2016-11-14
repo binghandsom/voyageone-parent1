@@ -845,4 +845,11 @@ public interface CmsUrlConstants {
             }
         }
     }
+
+    interface SHELVES {
+        interface TEMPLATE {
+            String ROOT = "/cms/shelves/template";
+            String INIT = "init";
+        }
+    }
 }
