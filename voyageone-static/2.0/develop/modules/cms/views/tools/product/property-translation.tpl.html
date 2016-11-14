@@ -187,8 +187,6 @@
                                         <div class="col-sm-3">
                                             <div class="row text-right">
                                                 <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
-                                                <br>
-                                                <label class="control-label"><strong>库存</strong></label>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
@@ -198,8 +196,11 @@
                                                         <strong class="main" style="position: absolute;" ng-if="groupProduct.code == ctrl.vm.taskDetail.productCode"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                         <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{groupProduct.iamge}}" title="{{groupProduct.code}}"/>
                                                     </a>
-                                                    <div class="text-right"  style="border-right: 1px solid #ddd">
-                                                        {{groupProduct.inventory}}
+                                                    <div class="thumbInfo">
+                                                        <div class="row">
+                                                            <div class="col-md-5"><strong>库存:</strong></div>
+                                                            <div class="col-md-7 text-right ng-binding">{{groupProduct.inventory}}</div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
