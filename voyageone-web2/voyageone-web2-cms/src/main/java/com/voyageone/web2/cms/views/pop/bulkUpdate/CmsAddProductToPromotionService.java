@@ -18,6 +18,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.promotion.JMPromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -132,6 +133,8 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             }
         });
     }
+    @Autowired
+    PromotionService promotionService;
     void  addToJmPromotion(int promotionId, List<TagTreeNode> tagList, AddProductSaveParameter parameter, String modifier, CmsSessionBean cmsSession) {
         // 获取promotion信息
         CmsBtJmPromotionModel promotion = cmsBtJmPromotion3Service.get(promotionId);
@@ -160,8 +163,11 @@ public class CmsAddProductToPromotionService extends BaseViewService {
             request.setPromotionId(promotionId);
             request.setTagList(tagList);
             request.setAddProductSaveParameter(parameter);
-            if(promotionDetailService.check_addPromotionDetail(request)) {
-                jmPromotionDetailService.addPromotionDetail(request,promotion,modifier);
+            if (promotionDetailService.check_addPromotionDetail(request)) {
+                jmPromotionDetailService.addPromotionDetail(request, promotion, modifier);
+
+                CmsBtPromotionModel cmsBtPromotionModel = promotionService.getCmsBtPromotionModelByJmPromotionId(promotionId);
+                request.setPromotionId(cmsBtPromotionModel.getId());
                 promotionDetailService.addPromotionDetail(request, true);
             }
         });
