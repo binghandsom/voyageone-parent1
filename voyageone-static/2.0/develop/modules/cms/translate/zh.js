@@ -868,6 +868,11 @@ define(function () {
         "TXT_NO_CHECK_SKU": "请选择要移动的Sku",
         "TXT_CHECK_ALL_SKU": "不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行\"移动到其他Group\"操作",
         "TXT_CODE": "Code",
-        "TXT_GROUP_NUMIID": "商品页面编号"
+        "TXT_GROUP_NUMIID": "商品页面编号",
+        /**货架模板*/
+        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "刷图模板管理",
+        "TXT_SHELVES_TEMPLATE_TYPE" : "模板类型",
+        "TXT_SHELVES_TEMPLATE_NAME" : "模板名称",
+        "TXT_SHELVES_TEMPLATE_NEW" : "新建模板"
     };
 });

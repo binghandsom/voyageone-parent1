@@ -2,12 +2,11 @@
  * Created by dell on 2016/11/14.
  */
 define([
-        "cms",
-        "modules/cms/controller/popup.ctl"
+        "cms"
     ],function (cms) {
-        cms.controller("shelvesTemplateController", (function () {
+        cms.controller("ShelvesTemplateAddController", (function () {
 
-            function ShelvesTemplateController($scope, shelvesTemplateService, popups) {
+            function ShelvesTemplateAddController($scope, shelvesTemplateService, popups) {
                 $scope.vm = {
                     templates : [],
                     status : {
@@ -28,7 +27,7 @@ define([
                     popups.shelvesTemplateAdd();
                 }
             }
-            return ShelvesTemplateController;
+            return ShelvesTemplateAddController;
 
         })());
     }

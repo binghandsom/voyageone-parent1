@@ -11,9 +11,7 @@ import java.util.List;
  * Created by rex.wu on 2016/11/11.
  */
 @Repository
-public class CmsBtShelvesTemplateDaoExt extends ServiceBaseDao {
+public interface CmsBtShelvesTemplateDaoExt{
 
-    public List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean) {
-        return  selectList("select_cms_bt_shelves_template", searchBean);
-    }
+    List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean);
 }

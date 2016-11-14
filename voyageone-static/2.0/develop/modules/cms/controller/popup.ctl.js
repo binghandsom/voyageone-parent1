@@ -555,6 +555,13 @@ define([
                 "controller": 'ApproveConfirmController as ctrl'
             }
         },
+        "shelves" : {
+            "shelvesTemplateAdd" : {
+                "templateUrl": "views/pop/shelves/shelves-template-add.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-add.ctl",
+                "controller": 'ShelvesTemplateAddController as ctrl'
+            }
+        },
         confirmProductRefresh: {
             templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
             controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
@@ -1342,6 +1349,11 @@ define([
                 mappingInfo: mappingInfo
             });
         };
+
+        /**新建货架模板*/
+        $scope.shelvesTemplateAdd = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateAdd, context)
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 
