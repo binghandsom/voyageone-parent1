@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms;
+package com.voyageone.service.fields.cms;
 
 /**
  * 默认属性功能下，商品属性值强制重刷任务的状态
