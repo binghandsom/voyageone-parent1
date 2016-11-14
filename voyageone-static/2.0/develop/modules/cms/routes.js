@@ -393,8 +393,8 @@ define(function () {
         },
         "shelves-template": {
             "hash": "/shelves/template/management",
-            "templateUrl": "views/shelves/template-manangement.tpl.html",
-            "controllerUrl": "modules/cms/views/shelves/template-manangement.ctl",
+            "templateUrl": "views/shelves/template-management.tpl.html",
+            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",
             "controller": "shelvesTemplateController as ctrl"
         }
     };

@@ -1,0 +1,145 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <!--<uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">-->
+        <!--<uib-accordion-group is-open="vm.status.open">-->
+            <!--<uib-accordion-heading>-->
+                <!--<i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_PROMOTION_LIST' | translate}}-->
+                <!--<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>-->
+            <!--</uib-accordion-heading>-->
+            <!--<div class="container-fluid m-t-sm m-b-md">-->
+                <!--<div class="col-sm-12">-->
+                    <!--<div class="col-sm-4">-->
+                        <!--<div class="form-horizontal">-->
+                            <!--<div class="form-group" >-->
+                                <!--<label class="col-sm-4  control-label" translate="TXT_PLATFORM_TYPE"></label>-->
+                                <!--<div class="col-sm-7">-->
+                                    <!--<select class="form-control" ng-model="searchInfo.cartId">-->
+                                        <!--<option value='' translate="TXT_SELECT_NO_VALUE"></option>-->
+                                        <!--<option ng-repeat="platform in vm.platformTypeList" value={{platform.value}}>{{platform.name}}</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash;<div class="col-sm-3">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<div class="form-horizontal">&ndash;&gt;-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="col-sm-4 control-label" translate="TXT_CREATE_TIME"></label>-->
+                                <!--<div class="col-sm-8 form-inline">-->
+                                    <!--<div class="col-sm-5 input-group">-->
+                                        <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.createdStart"-->
+                                               <!--max-date="searchInfo.createdEnd" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />-->
+								              <!--<span class="input-group-btn">-->
+								                <!--<button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>-->
+								              <!--</span>-->
+                                    <!--</div>&nbsp;~&nbsp;-->
+                                    <!--<div class="col-sm-5 input-group">-->
+                                        <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.createdEnd"-->
+                                               <!--min-date="searchInfo.createdStart" date-model-format="yyyy-MM-dd" is-open="datePicker2" ng-required="true" close-text="Close" />-->
+								              <!--<span class="input-group-btn">-->
+								                <!--<button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>-->
+								              <!--</span>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div class="col-sm-4">-->
+                        <!--<div class="form-horizontal">-->
+                            <!--<div class="form-group" >-->
+                                <!--<label class="col-sm-4  control-label" translate="TXT_PROMOTION_STATUS"></label>-->
+                                <!--<div class="col-sm-7">-->
+                                    <!--<select class="form-control" ng-model="searchInfo.promotionStatus">-->
+                                        <!--<option value='' translate="TXT_SELECT_NO_VALUE"></option>-->
+                                        <!--<option ng-repeat="status in vm.promotionStatus" value={{status.value}}>{{status.name}}</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
+                            <!--</div><div class="form-group">-->
+                            <!--<label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>-->
+                            <!--<div class="col-sm-8 form-inline">-->
+                                <!--<div class="col-sm-5 input-group">-->
+                                    <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionStart"-->
+                                           <!--max-date="searchInfo.promotionEnd" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />-->
+								              <!--<span class="input-group-btn">-->
+								                <!--<button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>-->
+								              <!--</span>-->
+                                <!--</div>&nbsp;~&nbsp;-->
+                                <!--<div class="col-sm-5 input-group">-->
+                                    <!--<input type="text" class="form-control" uib-datepicker-popup ng-model="searchInfo.promotionEnd"-->
+                                           <!--min-date="searchInfo.promotionStart" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />-->
+								              <!--<span class="input-group-btn">-->
+								                <!--<button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>-->
+								              <!--</span>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <!--<div class="col-sm-4">-->
+                        <!--<div class="form-horizontal">-->
+                            <!--<div class="form-group">-->
+                                <!--<label class="col-sm-4 control-label" translate="TXT_PROMOTION_NAME"></label>-->
+                                <!--<div class="col-sm-7">-->
+                                    <!--<input class="form-control" ng-model="searchInfo.promotionName">-->
+                                <!--</div>-->
+                            <!--</div>-->
+
+                        <!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+                    <!--</div>-->
+                    <!--<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">-->
+                        <!--<div class="form-inline">-->
+                            <!--<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>-->
+                            <!--<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>-->
+                            <!--&lt;!&ndash;&lt;!&ndash;活动按钮组&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;<button class="btn btn-success" ng-click="openJmPromotionDetail({search:search},search)"><i class="fa fa-plus"></i>&nbsp;新建聚美专场</button>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;新建其他平台活动</button>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<button class="btn btn-primary" ng-click="openMrbStock('lg',vm.groupSelList)"><i class="fa fa-plus"></i>&nbsp;{{'TXT_SEPARATE_NEW_TASK'|translate}}</button>&ndash;&gt;-->
+                        <!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</uib-accordion-group>-->
+    <!--</uib-accordion>-->
+
+    <!-- .accordion -->
+    <div class="box">
+        <div class="box-body-new">
+            <!--<div class="btn-group" ng-controller="popupCtrl">-->
+                <!--<button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" ng-click="openJmPromotionDetail({search:search},search)">-->
+                    <!--新建聚美专场-->
+                <!--</button>-->
+                <!--<button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs" ng-click="openPromotion('md',vm.platformTypeList,null,search)">-->
+                    <!--新建其他平台活动-->
+                <!--</button>-->
+                <!--<button  type="button" class="btn btn-pop btn-default m-b-xs m-t-xs" ng-click="openMrbStock('lg',vm.groupSelList)">-->
+                    <!--{{'TXT_SEPARATE_NEW_TASK'|translate}}-->
+                <!--</button>-->
+            <!--</div>-->
+
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-x"></th>
+                    <th class="text-center" translate="TXT_SEQ"></th>
+                    <th class="text-left" translate="TXT_PROMOTION_NAME"></th>
+                    <th class="text-left" translate="TXT_STATUS"></th>
+                    <th class="text-left" translate="TXT_PLATFORM_TYPE"></th>
+                    <th class="text-left" translate="TXT_PROMOTION_TIME"></th>
+                    <th class="text-left" translate="TXT_PREHEATING_TIME"></th>
+                    <th class="text-left" translate="TXT_PRE_SALE_TIME"></th>
+                    <th class="text-center">操作</th>
+                    <th class="text-center" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody ng-if="vm.templates.length">
+
+                </tbody>
+            </table>
+            <div  if-no-rows="vm.promotionList.length"></div>
+        </div><!-- /.box-body -->
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="dataPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->

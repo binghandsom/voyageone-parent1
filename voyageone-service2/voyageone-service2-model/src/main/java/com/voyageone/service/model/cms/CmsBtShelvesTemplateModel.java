@@ -101,7 +101,7 @@ public class CmsBtShelvesTemplateModel extends BaseModel {
     /**
      * 逻辑删除：0未被删除，1被删除
      */
-    protected Integer deleted;
+    protected Integer active;
 
     public String getTemplateName() {
         return templateName;
@@ -239,11 +239,11 @@ public class CmsBtShelvesTemplateModel extends BaseModel {
         this.htmlImageTemplate = htmlImageTemplate == null ? null : htmlImageTemplate.trim();
     }
 
-    public Integer getDeleted() {
-        return deleted;
+    public Integer getActive() {
+        return active;
     }
 
-    public void setDeleted(Integer deleted) {
-        this.deleted = deleted;
+    public void setActive(Integer active) {
+        this.active = active;
     }
 }

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.shelves;
 
+import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -23,8 +24,8 @@ public class CmsShelvesTemplateController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SHELVES.TEMPLATE.INIT)
     public AjaxResponse init() {
-
-
-        return null;
+        CmsBtShelvesTemplateBean searBean = new CmsBtShelvesTemplateBean();
+        searBean.setChannelId(getUser().getSelChannelId());
+        return success(cmsBtShelvesTemplateService.search(searBean));
     }
 }

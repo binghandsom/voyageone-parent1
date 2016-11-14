@@ -650,9 +650,9 @@ define(function () {
                 mappingSearch:"mappingMasterBrandInfoToPlatform"
             },
             // 货架模板管理
-            "shelvesTemlateService": {
+            "shelvesTemplateService": {
                 root:"/cms/shelves/template",
-                init:""
+                init:"init"
             }
         }
     };
