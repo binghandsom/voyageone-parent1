@@ -4,8 +4,6 @@ import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
@@ -136,7 +134,7 @@ public class TranslationTaskService extends BaseService {
             throw new BusinessException("当前任务还未完成，不能领取新的任务！");
         }
 
-        //再查是否有过期任务，优先分配过期任务
+        //再查当前用户是否有过期任务，优先分配过期任务
         queryStr = String.format("{'lock':'0','common.fields.isMasterMain':1," +
                 "'common.fields.translateStatus':{$in:['0','2']}," +
                 "'common.fields.translator':'%s'}", userName);
