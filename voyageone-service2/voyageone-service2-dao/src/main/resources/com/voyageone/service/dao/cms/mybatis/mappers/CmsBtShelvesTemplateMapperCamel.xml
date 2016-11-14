@@ -6,7 +6,7 @@
         `id`, `template_name`, `template_type`, `client_type`, `cart_id`, `channel_id`, `remark`, 
         `num_per_line`, `html_head`, `html_module_title`, `html_module_search`, `html_big_image`, 
         `html_small_image`, `html_foot`, `html_clearfix1`, `html_clearfix2`, `html_last_image`, 
-        `html_image_template`, `creater`, `created`, `MODIFIER`, `modified`
+        `html_image_template`, `creater`, `created`, `modifier`, `modified`, `deleted`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -77,13 +77,16 @@
                 `created` = #{created,jdbcType=TIMESTAMP},
             </if>
             <if test="modifier != null" >
-                `MODIFIER` = #{modifier,jdbcType=VARCHAR},
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
             <if test="modified != null" >
                 `modified` = #{modified,jdbcType=TIMESTAMP},
             </if>
             <if test="modified == null" >
                 `modified` = now(),
+            </if>
+            <if test="deleted != null" >
+                `deleted` = #{deleted,jdbcType=INTEGER},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -157,10 +160,13 @@
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
             <if test="modifier != null" >
-                and `MODIFIER` = #{modifier,jdbcType=VARCHAR}
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="deleted != null" >
+                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
         limit 1
@@ -229,10 +235,13 @@
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
             <if test="modifier != null" >
-                and `MODIFIER` = #{modifier,jdbcType=VARCHAR}
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="deleted != null" >
+                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -298,10 +307,13 @@
                 and `created` = #{created,jdbcType=TIMESTAMP}
             </if>
             <if test="modifier != null" >
-                and `MODIFIER` = #{modifier,jdbcType=VARCHAR}
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="deleted != null" >
+                and `deleted` = #{deleted,jdbcType=INTEGER}
             </if>
         </where>
     </select>
@@ -365,12 +377,15 @@
             </if>
             `created`,
             <if test="modifier != null" >
-                `MODIFIER`,
+                `modifier`,
             </if>
             <if test="modifier == null and creater != null" >
-                `MODIFIER`,
+                `modifier`,
             </if>
             `modified`,
+            <if test="deleted != null" >
+                `deleted`,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="templateName != null" >
@@ -444,6 +459,9 @@
             </if>
             <if test="modified != null" >
                 #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="deleted != null" >
+                #{deleted,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
