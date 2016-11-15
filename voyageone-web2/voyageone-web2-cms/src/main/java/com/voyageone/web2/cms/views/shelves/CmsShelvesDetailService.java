@@ -81,7 +81,7 @@ class CmsShelvesDetailService extends BaseViewService {
             cmsBtShelvesProductModel.setProductCode(code);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
-            if (!imgList.isEmpty()) {
+            if (!imgList.isEmpty() && imgList.get(0).size() > 0) {
                 cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
             } else {
                 imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
@@ -89,6 +89,8 @@ class CmsShelvesDetailService extends BaseViewService {
                     cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
                 }
             }
+            cmsBtShelvesProductModel.setShelvesId(shelvesId);
+            cmsBtShelvesProductModel.setCreater(modifier);
             cmsBtShelvesProductModel.setModifier(modifier);
             cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
         });
@@ -136,6 +138,7 @@ class CmsShelvesDetailService extends BaseViewService {
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
             CmsBtShelvesProductModel oldShelvesProduct = cmsBtShelvesProductService.getByShelvesIdProductCode(cmsBtShelvesProductModel.getShelvesId(), cmsBtShelvesProductModel.getProductCode());
             if (null == oldShelvesProduct) {
+                cmsBtShelvesProductModel.setSort(999);
                 cmsBtShelvesProductService.insert(cmsBtShelvesProductModel);
             } else {
                 oldShelvesProduct.setSalePrice(cmsBtShelvesProductModel.getSalePrice());

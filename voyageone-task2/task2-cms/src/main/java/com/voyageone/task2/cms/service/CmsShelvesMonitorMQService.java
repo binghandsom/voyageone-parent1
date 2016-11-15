@@ -171,7 +171,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
     private void sendMq(Map<String, Object> messageMap){
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
         if(CacheHelper.getValueOperation().get("ShelvesMonitor_"+ shelvesId) != null){
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 500);
+            sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap, 30);
         }
     }
 

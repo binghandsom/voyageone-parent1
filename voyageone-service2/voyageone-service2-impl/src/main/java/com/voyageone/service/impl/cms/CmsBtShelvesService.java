@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
+import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +41,12 @@ public class CmsBtShelvesService extends BaseService {
 
     public List<CmsBtShelvesModel>selectList(Map map){
         return cmsBtShelvesDao.selectList(map);
+    }
+
+    public List<CmsBtShelvesModel>selectByChannelId(String channelId){
+        Map<String, Object> params = new HashedMap();
+        params.put("channelId",channelId);
+        params.put("active", CmsBtShelvesModelActive.ACTIVATE);
+        return cmsBtShelvesDao.selectList(params);
     }
 }
