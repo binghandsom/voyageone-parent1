@@ -6,7 +6,6 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
-import com.voyageone.service.dao.cms.CmsBtShelvesProductDao;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -16,6 +15,7 @@ import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.web2.base.BaseViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,16 +25,15 @@ import java.util.List;
 
 /**
  * Created by james on 2016/11/15.
+ *
+ * @version 2.10.0
+ * @since 2.10.0
  */
 @Service
-public class CmsShelvesDetailService {
-
+class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesService cmsBtShelvesService;
-
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
-
     private final PromotionCodeService promotionCodeService;
-
     private final ProductService productService;
 
     @Autowired
@@ -48,7 +47,7 @@ public class CmsShelvesDetailService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    public List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds) {
+    List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds) {
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeens = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
@@ -60,6 +59,43 @@ public class CmsShelvesDetailService {
             }
         });
         return cmsBtShelvesInfoBeens;
+    }
+
+    /**
+     * 产品加入货架
+     */
+    void addProducts(Integer shelvesId, List<String> productCodes, String modifier) {
+        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
+
+        if (cmsBtShelvesModel == null) {
+            throw new BusinessException("货架不存在");
+        }
+
+        List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = new ArrayList<>();
+        productCodes.forEach(code -> {
+            CmsBtProductModel productInfo = productService.getProductByCode(cmsBtShelvesModel.getChannelId(), code);
+            CmsBtShelvesProductModel cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
+            CmsBtProductModel_Platform_Cart platform = productInfo.getPlatform(cmsBtShelvesModel.getCartId());
+            if (platform != null) {
+                cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
+                cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
+            }
+            cmsBtShelvesProductModel.setProductCode(code);
+            cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
+            List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
+            if (!imgList.isEmpty()) {
+                cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
+            } else {
+                imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+                if (!imgList.isEmpty()) {
+                    cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
+                }
+            }
+            cmsBtShelvesProductModel.setModifier(modifier);
+            cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
+        });
+        //更新数据库
+        updateShelvesProduct(cmsBtShelvesProductModels);
     }
 
     /**
@@ -95,43 +131,6 @@ public class CmsShelvesDetailService {
         } else {
             return 0.0;
         }
-    }
-
-    /**
-     * 产品加入货架
-     */
-    public void addProducts(Integer shelvesId, List<String> productCodes, String modifier) {
-        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
-
-        if (cmsBtShelvesModel == null) {
-            throw new BusinessException("货架不存在");
-        }
-
-        List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = new ArrayList<>();
-        productCodes.forEach(code -> {
-            CmsBtProductModel productInfo = productService.getProductByCode(cmsBtShelvesModel.getChannelId(), code);
-            CmsBtShelvesProductModel cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
-            CmsBtProductModel_Platform_Cart platform = productInfo.getPlatform(cmsBtShelvesModel.getCartId());
-            if (platform != null) {
-                cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
-                cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
-            }
-            cmsBtShelvesProductModel.setProductCode(code);
-            cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
-            List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
-            if (!imgList.isEmpty()) {
-                cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
-            } else {
-                imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
-                if (!imgList.isEmpty()) {
-                    cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
-                }
-            }
-            cmsBtShelvesProductModel.setModifier(modifier);
-            cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
-        });
-        //更新数据库
-        updateShelvesProduct(cmsBtShelvesProductModels);
     }
 
     private void updateShelvesProduct(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
