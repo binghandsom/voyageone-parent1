@@ -34,7 +34,7 @@ define([
                     },
                     hsCodeOrigin: null,
                     sizeChartList:[],
-                    selectSizeChart:{}
+                    selectSizeChart:null
                 };
 
                 initialize();
@@ -98,7 +98,9 @@ define([
                         });
                     });
                 }
-
+                scope.sizeChartOnchange=function (selectSizeChart) {
+                    console.log(scope.vm.selectSizeChart);
+                }
                 /**
                  @description 类目popup
                  * @param productInfo
