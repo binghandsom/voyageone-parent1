@@ -1,0 +1,207 @@
+<div class="wrapper-md">
+
+    <script type="text/ng-template" id="shelves-template.html">
+        <div class="panel {{panelClass || 'panel-default'}}">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h5 style="margin:6px 0">
+                            <a href class="accordion-toggle" style="display:inline" ng-click="toggleOpen()"
+                               uib-accordion-transclude="heading">{{heading}}</a>
+                        </h5>
+                    </div>
+                    <div class="col-sm-7 text-right">
+                        <button class="btn btn-default">商品编辑</button>
+                        <button class="btn btn-default">全量清空</button>
+                        <button class="btn btn-default">预览</button>
+                        <button class="btn btn-default">复制代码</button>
+                        <span>&nbsp;</span>
+                        <a href="" class="btn fa-btn"><i class="fa fa-edit"></i></a>
+                        <a href="" class="btn fa-btn"><i class="fa fa-trash"></i></a>
+                        <a href="" class="btn fa-btn"><i class="fa fa-arrow-down"></i></a>
+                        <a href="" class="btn fa-btn"><i class="fa fa-arrow-up"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-collapse collapse" uib-collapse="!isOpen">
+                <div class="panel-body" ng-transclude></div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="shelves-item-template.html">
+        <div class="shelves-item">
+            <p><span class="label label-success">已上架</span><a href class="pull-right"><i
+                    class="fa fa-close"></i></a></p>
+            <p>Code：B0095-{{i}}</p>
+            <p>CMS 库存：5</p>
+            <p>平台库存：5</p>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="shelves-item-edit-template.html">
+        <div class="shelves-edit-item">
+            <span class="label label-success">已上架</span>
+            <a href class="a-close-btn pull-right"><i class="fa fa-close"></i></a>
+            <div class="pull-left">
+                <img src="http://10.0.0.59:99/HTML_CMS/VoyageOne/images/shelves_management/u19398.png">
+            </div>
+            <div class="pull-left">
+                <div>
+                    <div class="shelves-item-label">Code：</div><div class="shelves-item-value">B0095-{{i}}</div>
+                </div>
+                <div>
+                    <div class="shelves-item-label">CMS 库存：</div><div class="shelves-item-value">6</div>
+                </div>
+                <div>
+                    <div class="shelves-item-label">平台库存：</div><div class="shelves-item-value">8</div>
+                </div>
+                <div>
+                    <div class="shelves-item-label">最终售价：</div><div class="shelves-item-value price">100</div>
+                </div>
+                <div>
+                    <div class="shelves-item-label">活动价：</div><div class="shelves-item-value price empty">800</div>
+                </div>
+            </div>
+        </div>
+    </script>
+
+    <style>
+        .shelves-item,
+        .shelves-edit-item {
+            float: left;
+            padding: 5px 6px 0;
+            border: 1px solid #CCC;
+            box-shadow: #CCC 1px 1px 1px;
+            margin: 5px;
+        }
+        .shelves-item p,
+        .shelves-edit-item p {
+            margin-bottom:5px;
+        }
+        .shelves-item {
+            width: 252px;
+        }
+        .shelves-edit-item {
+            width: 300px;
+            position: relative;
+            padding: 5px 6px;
+        }
+        .shelves-edit-item img {
+            width:113px;
+            height:111px;
+        }
+        .shelves-edit-item .a-close-btn,
+        .shelves-edit-item .label {
+            position: absolute;
+        }
+        .shelves-edit-item .label {
+            left:5px;
+            top:5px;
+        }
+        .shelves-edit-item .a-close-btn{
+            right:5px;
+            top:3px;
+        }
+        .shelves-item-label,
+        .shelves-item-value {
+            float: left;
+            display: inline-block;
+            margin-bottom: 1px;
+            font-weight:bold;
+        }
+        .shelves-item-label {
+            width: 80px;
+            text-align: right;
+        }
+        .shelves-item-value.price {
+            color: #1f881f;
+        }
+        .shelves-item-value.price:before {
+            content: '￥';
+        }
+        .shelves-item-value.price.empty {
+            width:47px;
+            border:1px solid red;
+            color: red;
+        }
+        .shelves-item-value.price.empty:before {
+            content: '';
+        }
+        .shelves-item-value.price.empty:after {
+            content: '!';
+            float: right;
+            margin-right: -10px;
+        }
+    </style>
+
+    <uib-accordion class="vo_accordion vo_attr">
+        <uib-accordion-group heading="Static Header, initially expanded" is-open="true">
+            <form class="form-horizontal" novalidate>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">平台类型：</label>
+                    <div class="col-sm-2">
+                        <select chosen width="'100%'"></select>
+                    </div>
+                    <label class="col-sm-1 control-label">客户端类型：</label>
+                    <div class="col-sm-2">
+                        <select chosen width="'100%'"></select>
+                    </div>
+                    <label class="col-sm-2 control-label">平台库存：</label>
+                    <div class="col-sm-2">
+                        <div class="input-group">
+                            <div class="input-group-addon" style="padding:0">
+                                <select style="height:24px;border:0">
+                                    <option value="+">+</option>
+                                </select>
+                            </div>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+
+                    <label class="col-sm-1 control-label">上下架状态：</label>
+                    <div class="col-sm-2">
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="shelves-product-status">已上架</label>&nbsp; &nbsp;
+                            <label><input type="checkbox" name="shelves-product-status">已下架</label>
+                        </div>
+                    </div>
+                    <label class="col-sm-1 control-label">货架名称：</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control">
+                    </div>
+                    <label class="col-sm-2 control-label">Model/Code/Sku：</label>
+                    <div class="col-sm-3">
+                        <textarea class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="form-group text-center">
+                    <button class="btn btn-default">清除</button>
+                    <button class="btn btn-vo">搜索</button>
+                </div>
+            </form>
+        </uib-accordion-group>
+    </uib-accordion>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-sm-6">
+                <p class="form-control-static">最后一次上下架状态&平台库存刷新时间：2016-11-08 19:45</p>
+            </div>
+            <div class="col-sm-6 text-right">
+                <button class="btn btn-default">全部收起</button>
+                <button class="btn btn-default">全部展开</button>
+            </div>
+        </div>
+    </div>
+
+    <uib-accordion>
+        <uib-accordion-group heading="货架1" template-url="shelves-template.html">
+            <div class="row">
+                <div ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]" ng-include="'shelves-item-edit-template.html'">
+                </div>
+            </div>
+        </uib-accordion-group>
+    </uib-accordion>
+</div>
