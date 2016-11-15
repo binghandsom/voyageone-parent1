@@ -15,6 +15,7 @@
         <include refid="Base_Column_List" />
         from cms_bt_shelves_template
         <where >
+            `active` = 0
             <if test="templateName != null" >
                 and `template_name` like concat('%', #{templateName,jdbcType=VARCHAR}, '%')
             </if>
@@ -30,7 +31,24 @@
             <if test="channelId != null" >
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-
+            <if test="templateTypes != null and templateTypes.size() > 0">
+                and `template_type` in
+                <foreach item="item" index="index" collection="templateTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="clientTypes != null and clientTypes.size() > 0">
+                and `client_type` in
+                <foreach item="item" index="index" collection="clientTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="carts != null and carts.size() > 0">
+                and `cart_id` in
+                <foreach item="item" index="index" collection="carts" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
     </select>
 </mapper>

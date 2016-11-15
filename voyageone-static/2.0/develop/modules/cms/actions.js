@@ -663,7 +663,13 @@ define(function () {
             // 货架模板管理
             "shelvesTemplateService": {
                 root:"/cms/shelves/template",
-                init:"init"
+                init:"init",
+                add:"add",
+                edit:"edit",
+                delete:"delete",
+                search:"search",
+                detail:"detail"
+
             }
         }
     };

@@ -4,7 +4,7 @@
 define([
         "cms"
     ],function (cms) {
-        cms.controller("ShelvesTemplateAddController", (function () {
+        cms.controller("ShelvesTemplateEditController", (function () {
 
             function ShelvesTemplateAddController($scope, shelvesTemplateService, popups, context) {
                 $scope.vm = {
@@ -15,29 +15,25 @@ define([
                 $scope.vm.templateTypes = context.templateTypes;
                 $scope.vm.clientTypes = context.clientTypes;
                 $scope.vm.carts = context.carts;
+                $scope.modelBean = {};
                 $scope.layout = true;
                 $scope.single = false;
-                $scope.modelBean = {
-                    "templateType":"0",
-                    "numPerLine":1
-                };
-
                 $scope.initialize = function () {
                     init();
                 };
                 function init() {
-                    shelvesTemplateService.init().then(function (resp) {
-                        $scope.vm.templates = resp.data == null ? [] : resp.data;
-                    });
-                }
-
-                $scope.popNewShelvesTemplate = function () {
-                    popups.shelvesTemplateAdd();
-                }
-
-                $scope.addSubmit = function () {
-                    shelvesTemplateService.add($scope.modelBean).then(function (resp) {
-                        $scope.$close();
+                    shelvesTemplateService.detail({
+                        templateId:context.id
+                    }).then(function (resp) {
+                        $scope.modelBean = resp.data == null ? {} : resp.data;
+                        var templateType = $scope.modelBean.templateType;
+                        if (0 == templateType){
+                            $scope.layout = true;
+                            $scope.single = false;
+                        }else {
+                            $scope.layout = false;
+                            $scope.single = true;
+                        }
                     });
                 }
 
@@ -50,6 +46,12 @@ define([
                         $scope.layout = false;
                         $scope.single = true;
                     }
+                }
+
+                $scope.editSubmit = function () {
+                    shelvesTemplateService.edit($scope.modelBean).then(function (resp) {
+                        $scope.$close();
+                    });
                 }
             }
             return ShelvesTemplateAddController;
