@@ -60,7 +60,7 @@ public class CmsBtShelvesProductService extends BaseService {
     /**
      * 更新平台图片
      */
-    public void updatePlatformImage(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
-        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductDaoExt::updatePlatformImage);
+    public void updatePlatformImage(CmsBtShelvesProductModel cmsBtShelvesProductModels){
+        cmsBtShelvesProductDaoExt.updatePlatformImage(cmsBtShelvesProductModels);
     }
 }
