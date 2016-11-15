@@ -1801,6 +1801,50 @@ public class BackDoorController extends CmsController {
         return builder.toString();
     }
 
+    /**
+     * 从mongo的product表中获取mallId然后更新到jm_product表中
+     * @param channelId
+     * @return
+     */
+    @RequestMapping(value = "updateJmPromotionMallId", method = RequestMethod.GET)
+    public Object updateJmPromotionMallId (@RequestParam("channelId") String channelId) {
+
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"platforms.P27.pPlatformMallId\": {$exists: true}}");
+
+        List<String> updateList = new ArrayList<>();
+
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+
+        productList.forEach(productInfo -> {
+            String productCode = productInfo.getCommon().getFields().getCode();
+            String pPlatformMallId = productInfo.getPlatform(27).getAttribute("pPlatformMallId");
+
+            Map<String, Object> mapMapper = new HashMap<String, Object>();
+            mapMapper.put("productCode", productCode);
+            CmsBtJmProductModel jmProductModel = cmsBtJmProductDao.selectOne(mapMapper);
+            if (StringUtils.isEmpty(jmProductModel.getJumeiMallId())) {
+                jmProductModel.setJumeiMallId(pPlatformMallId);
+                cmsBtJmProductDao.update(jmProductModel);
+                updateList.add(productCode + "====" + pPlatformMallId);
+            }
+        });
+
+        StringBuilder builder = new StringBuilder("<body>");
+        builder.append("<h2>修改的jm_product</h2>");
+        System.out.println("<h2>修改的jm_product</h2>");
+        builder.append("<ul>");
+        updateList.forEach(groupCheckMessage -> {
+            builder.append("<li>").append(groupCheckMessage).append("</li>");
+            System.out.println(groupCheckMessage);
+        });
+        builder.append("</ul>");
+        builder.append("</body>");
+
+        return builder.toString();
+    }
+
+
     public class skuPlatformSizeAndQty {
         String skuCode;
         String platformSize;
