@@ -264,7 +264,7 @@
                 #{voCouponsMoney,jdbcType=DECIMAL},
             </if>
             <if test="brandLogo != null" >
-                #{brand_logo,jdbcType=DECIMAL},
+                #{brandLogo,jdbcType=DECIMAL},
             </if>
             <if test="isCheckedBrandLogo != null" >
                 #{isCheckedBrandLogo,jdbcType=DECIMAL},
