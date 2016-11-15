@@ -664,6 +664,14 @@ define(function () {
             "shelvesTemplateService": {
                 root:"/cms/shelves/template",
                 init:"init"
+            },
+            // 货架管理
+            shelvesService: {
+                root: "/cms/shelves/detail",
+                init: "init",
+                search: "search",
+                addProduct: "addProduct",
+                getShelvesInfo: "getShelvesInfo"
             }
         }
     };
