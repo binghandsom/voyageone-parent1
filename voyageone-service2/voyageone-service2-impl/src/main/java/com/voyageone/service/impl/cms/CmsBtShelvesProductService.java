@@ -29,9 +29,7 @@ public class CmsBtShelvesProductService extends BaseService {
     }
 
     public List<CmsBtShelvesProductModel> getByShelvesId(Integer shelvesId){
-        HashedMap param = new HashedMap();
-        param.put("shelvesId",shelvesId);
-        return cmsBtShelvesProductDao.selectList(param);
+        return cmsBtShelvesProductDaoExt.selectByShelvesId(shelvesId);
     }
 
     public int update(CmsBtShelvesProductModel cmsBtShelvesProductModel){
