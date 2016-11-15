@@ -405,29 +405,8 @@
                                                             <td class="mfb-xt text-center">{{m.originalSize}}</td>
                                                             <td class="mfb-xt text-center">{{m.adjustSize}}</td>
                                                             <td class="mfb-xt text-center">
-                                                                <label class="checkbox-inline c-checkbox" ng-if="m.usual==1">
-                                                                    <input type="checkbox" style="margin: 0;"  readonly="readonly" disabled="disabled" checked="checked" ><span class="fa fa-check"></span>
-                                                                </label>
-                                                                <label class="checkbox-inline c-checkbox" ng-if="m.usual!=1">
-                                                                    <input type="checkbox" style="margin: 0;" readonly="readonly" disabled="disabled" ><span class="fa fa-check"></span>
-                                                                </label>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="mfb-xt text-center">5</td>
-                                                            <td class="mfb-xt text-center">37</td>
-                                                            <td class="mfb-xt text-center">
-                                                                <label class="checkbox-inline c-checkbox">
-                                                                    <input type="checkbox" style="margin: 0;"><span class="fa fa-check"></span>
-                                                                </label>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="mfb-xt text-center">5</td>
-                                                            <td class="mfb-xt text-center">37</td>
-                                                            <td class="mfb-xt text-center">
-                                                                <label class="checkbox-inline c-checkbox">
-                                                                    <input type="checkbox" style="margin: 0;"><span class="fa fa-check"></span>
+                                                                <label class="checkbox-inline c-checkbox" >
+                                                                    <input type="checkbox" style="margin: 0;"  readonly="readonly" disabled="disabled" ng-checked="m.usual==1"  ><span class="fa fa-check"></span>
                                                                 </label>
                                                             </td>
                                                         </tr>
