@@ -225,7 +225,7 @@ public class TranslationTaskService extends BaseService {
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         String queryStr = String.format("{'common.fields.isMasterMain':1," +
-                "'common.fields.translateStatus':'0'," +
+                "'common.fields.translateStatus':{$in:['0', '2']}," +
                 "'common.fields.translator':'%s', " +
                 "'common.fields.translateTime':{'$gt':'%s'} }", userName, translateTimeStr);
 
