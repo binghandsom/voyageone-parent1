@@ -579,7 +579,8 @@ define(function () {
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
                         "getNoMatchList": "getNoMatchList",
-                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId"
+                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId",
+                        getProductSizeChartList:"getProductSizeChartList"
                     }
                 },
                 "sizeChartDetail": {
