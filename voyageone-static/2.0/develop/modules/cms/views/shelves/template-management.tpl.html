@@ -1,6 +1,6 @@
 <div class="wrapper-md" ng-init="initialize()">
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-        <uib-accordion-group is-open="vm.status.open">
+        <uib-accordion-group is-open="open">
             <uib-accordion-heading>
                 <i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_SHELVES_TEMPLATE_MANAGEMENT' | translate}}
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
@@ -12,8 +12,9 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <input type="checkbox" name="templateType" />布局模板
-                                    <input type="checkbox" name="templateType" />单品模板
+                                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.templateTypes">
+                                        <input type="checkbox" name="templateTypes"  ng-model="searchBean.templateTypes[key]" value="{{key}}"/>{{value}}
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -23,8 +24,9 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_VIEW_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <input type="checkbox" name="clientType" />PC端
-                                    <input type="checkbox" name="clientType" />APP端
+                                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.clientTypes">
+                                        <input type="checkbox" name="clientTypes"  ng-model="searchBean.clientTypes[key]" value="{{key}}"/>{{value}}端
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -34,9 +36,9 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_PLATFORM_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <input type="checkbox" name="cartId" />天猫
-                                    <input type="checkbox" name="cartId" />京东
-                                    <input type="checkbox" name="cartId" />聚美
+                                    <label class="checkbox-inline" ng-repeat="cart in vm.carts">
+                                        <input type="checkbox" name="cartId"  ng-model="searchBean.carts[cart.value]" value="{{cart.value}}"/>{{cart.name}}
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -47,15 +49,15 @@
                         <div class="form-group" >
                             <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_NAME"></label>
                             <div class="col-sm-7">
-                                <input type="templateName" />
+                                <input type="templateName" ng-model="searchBean.templateName" maxlength="255"/>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-12 text-center m-t-sm">
                     <div class="form-inline">
-                        <button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                        <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-vo" ng-click="searchShelvesTemplate()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
                         <button class="btn btn-vo" ng-click="popNewShelvesTemplate()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SHELVES_TEMPLATE_NEW' | translate}}</button>
                     </div><!-- .form-inline -->
                 </div>
@@ -79,8 +81,8 @@
                     <th class="text-left" tranate="TXT_ACTION"></th>
                 </tr>
                 </thead>
-                <tbody ng-if="vm.templates.length">
-                <tr ng-repeat="template in vm.templates">
+                <tbody ng-if="templates.length">
+                <tr ng-repeat="template in templates">
                     <td class="text-left">{{$index+1}}</td>
                     <td class="mfb-xt3 text-left">
                         {{template.cartId}}
@@ -90,10 +92,10 @@
                     <td class="text-left">{{template.templateType}}</td>
                     <td class="text-left">{{template.remark}}</td>
                     <td class="text-left">
-                        <button title="编辑" class="btn btn-success btn-xs" ng-click="popEditChannelConfig(config)" >
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="popEditShelvesTemplate(template)" >
                             <i class="fa fa-pencil"></i>
                         </button>&emsp;
-                        <button title="删除" class="btn btn-danger btn-xs" ng-click="delChannelConfig(config)">
+                        <button title="删除" class="btn btn-danger btn-xs" ng-click="deleteShelvesTemplate(template)">
                             <i class="fa  fa-trash-o"></i>
                         </button>
                     </td>
@@ -101,7 +103,7 @@
 
                 </tbody>
             </table>
-            <div  if-no-rows="vm.templates.length"></div>
+            <div  if-no-rows="templates.length"></div>
         </div><!-- /.box-body -->
         <div class="col-sm-12 m-t-lg m-b-lg">
             <vpagination config="dataPageOption"></vpagination>

@@ -6,6 +6,7 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="shelvesTemplateForm">
+            <input type="hidden" name="id" ng-model="modelBean.id" />
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
                 <div class="col-sm-8">
@@ -120,20 +121,20 @@
             </div>
 
             <!--<div class="row form-group">-->
-                <!--<label class="col-sm-3 control-label vo_reqfield" translate="TXT_CHANNEL_CONFIG_TYPE"></label>-->
-                <!--<div class="col-sm-8">-->
-                    <!--<input type="number" ngRequired class="form-control" required name="configType" ng-model="modelBean.configType" />-->
-                <!--</div>-->
+            <!--<label class="col-sm-3 control-label vo_reqfield" translate="TXT_CHANNEL_CONFIG_TYPE"></label>-->
+            <!--<div class="col-sm-8">-->
+            <!--<input type="number" ngRequired class="form-control" required name="configType" ng-model="modelBean.configType" />-->
+            <!--</div>-->
             <!--</div>-->
             <!--<div class="row form-group">-->
-                <!--<div class="col-sm-7 col-sm-offset-3">-->
-                    <!--<vo-message target="channelConfigForm.configType"></vo-message>-->
-                <!--</div>-->
+            <!--<div class="col-sm-7 col-sm-offset-3">-->
+            <!--<vo-message target="channelConfigForm.configType"></vo-message>-->
+            <!--</div>-->
             <!--</div>-->
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="addSubmit()" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-vo" ng-click="editSubmit()" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
     </div>
 </div>

@@ -873,6 +873,17 @@ define(function () {
         "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "刷图模板管理",
         "TXT_SHELVES_TEMPLATE_TYPE" : "模板类型",
         "TXT_SHELVES_TEMPLATE_NAME" : "模板名称",
-        "TXT_SHELVES_TEMPLATE_NEW" : "新建模板"
+        "TXT_SHELVES_TEMPLATE_NEW" : "新建模板",
+        "TXT_NUM_PERLINE" : "每行个数",
+        "TXT_HTML" : "HTML代码",
+        "TXT_HTML_HEAD" : "头部",
+        "TXT_HTML_TITLE" : "标题模块",
+        "TXT_HTML_SEARCH" : "搜索模块",
+        "TXT_HTML_CLEARFIX" : "清除浮动",
+        "TXT_HTML_BIG_IMAGE" : "大图模块",
+        "TXT_HTML_SMALL_IMAGE" : "小图模块",
+        "TXT_HTML_FOOT" : "尾部",
+        "TXT_HTML_LAST_IMAGE" : "最后一个小图模块",
+        "TXT_HTML_IMAGE_TEMPLATE" : "图片模板"
     };
 });
