@@ -203,11 +203,6 @@
                 <table class="table table-hover-new table-hover" style="table-layout: fixed; width: 1850px">
                     <thead>
                     <tr>
-                        <th class="mfb-xt3 text-left">
-                            <label class="checkbox-inline c-checkbox">
-                                <input type="checkbox"  ng-click="selectAll($event)" ng-true-value="true" ng-false-value="false"/>
-                                <span class="fa fa-check"></span></label>
-                        </th>
                         <th class="text-left">Product Image</th>
                         <th class="text-left">商品代码</th>
                         <th class="text-left">聚美商品名称</th>
@@ -229,11 +224,6 @@
                     </thead>
                     <tbody ng-if="vm.modelList.length">
                     <tr ng-repeat="model in vm.modelList" >
-                        <td class="mfb-xt3 text-left"><label class="checkbox-inline c-checkbox"><input type="checkbox"
-                                                                                                       ng-true-value="true"
-                                                                                                       ng-false-value="false"
-                                                                                                       ng-model="model.isChecked"><span
-                                class="fa fa-check"></span></label></td>
                         <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
                         <td class="text-left yellowLink"><a href="javascript:void(0)"  ng-click="openProductDetailWin(model)">
                             {{model.productCode}}  </a>
