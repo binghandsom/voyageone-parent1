@@ -863,5 +863,11 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/shelves/template";
             String INIT = "init";
         }
+        interface DETAIL {
+            String ROOT = "/cms/shelves/detail";
+            String INIT = "init";
+            String SEARCH = "search";
+            String GET_SHELVES_INFO = "getShelvesInfo";
+        }
     }
 }

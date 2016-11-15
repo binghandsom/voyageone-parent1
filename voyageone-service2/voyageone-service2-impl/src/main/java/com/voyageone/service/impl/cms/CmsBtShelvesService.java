@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2016/11/11.
@@ -28,5 +29,9 @@ public class CmsBtShelvesService extends BaseService {
     public Integer insert(CmsBtShelvesModel cmsBtShelvesModel){
         cmsBtShelvesDao.insert(cmsBtShelvesModel);
         return cmsBtShelvesModel.getId();
+    }
+
+    public List<CmsBtShelvesModel>selectList(Map map){
+        return cmsBtShelvesDao.selectList(map);
     }
 }
