@@ -135,7 +135,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
         target.setId(theone.getId());
         target.setModified(new Date());
         target.setModifier(user);
-        target.setActive(CmsBtShelvesTemplateModelActive.DEACTIVATE);
+        target.setActive(CmsBtShelvesTemplateModelActive.ACTIVATE);
         cmsBtShelvesTemplateDao.update(target);
     }
 
