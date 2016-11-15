@@ -1,8 +1,12 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.jd.open.api.sdk.domain.ware.Sku;
+import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -23,6 +27,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -47,6 +52,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -139,6 +145,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private JdSkuService jdSkuService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -634,6 +642,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 上新成功时状态回写操作
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
+
+                // 上新成功之后回写jdSkuId操作
+                updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -2285,5 +2296,86 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         return result;
+    }
+
+    /**
+     * 从京东平台取得skuId回写到mongDB的product中
+     */
+    public void updateSkuIds(ShopBean shop, String wareId, boolean updateFlg) {
+        if (shop == null || StringUtils.isEmpty(wareId)) return;
+
+        String channelId = shop.getOrder_channel_id();
+        String cartId = shop.getCart_id();
+        StringBuffer failCause = new StringBuffer("");
+        List<Sku> skus;
+
+        try {
+            // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
+            skus = jdSkuService.getSkusByWareId(shop, wareId, failCause);
+
+            if (ListUtils.isNull(skus)) return;
+
+            // 循环取得的sku信息列表，把jdSkuId批量更新到product中去
+            BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+            BulkWriteResult rs;
+            for (Sku sku : skus) {
+                JongoUpdate updObj = new JongoUpdate();
+                updObj.setQuery("{'platforms.P"+ cartId +".skus.skuCode':#}");
+                updObj.setQueryParameters(sku.getOuterId());
+                updObj.setUpdate("{$set:{'platforms.P"+ cartId +".skus.$.jdSkuId':#,'modified':#,'modifier':#}}");
+                updObj.setUpdateParameters(StringUtils.toString(sku.getSkuId()), DateTimeUtil.getNowTimeStamp(), getTaskName());
+                rs = bulkList.addBulkJongo(updObj);
+                if (rs != null) {
+                    $debug("京东上新成功之后回写jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, skuCode=%s, skuId=%s, jdSkuId更新结果=%s",
+                            channelId, cartId, wareId, sku.getOuterId(), StringUtils.toString(sku.getSkuId()), rs.toString());
+                }
+            }
+
+            rs = bulkList.execute();
+            if (rs != null) {
+                $debug("京东上新成功之后回写jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, jdSkuId更新结果=%s", channelId, cartId, wareId, rs.toString());
+            }
+
+            // 如果是更新商品且取得skuId没有出错时，看看wareId对应的jdSkuId非空sku中，哪些sku在京东平台上没有,把删除的sku的jdSkuId清空
+            if (updateFlg && StringUtils.isEmpty(failCause.toString())) {
+                // 先取得wareId对应的所有产品有jdSkuId的platforms.PXX.skus.skuCode
+                JongoQuery queryObj = new JongoQuery();
+                queryObj.setQuery("{'platforms.P"+ cartId +".pNumIId':#}");
+                queryObj.setParameters(wareId);
+                queryObj.setProjectionExt("platforms.P"+ cartId +".skus");
+                List<CmsBtProductModel> productList = cmsBtProductDao.select(queryObj, channelId);
+                if (ListUtils.notNull(productList)) {
+                    BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+                    BulkWriteResult rs2;
+                    for (CmsBtProductModel product : productList) {
+                        List<BaseMongoMap<String, Object>> prodPlatformSkus = product.getPlatformNotNull(NumberUtils.toInt(cartId)).getSkus();
+                        if (ListUtils.isNull(prodPlatformSkus)) continue;
+                        for (BaseMongoMap<String, Object> currentSku : prodPlatformSkus) {
+                            // 如果当前sku的jdSkuId不为空，并且在京东平台上取得的sku列表中不存在的时候，需要把数据库中的jdSkuId清空
+                            if (!StringUtils.isEmpty(currentSku.getStringAttribute("jdSkuId"))
+                                    && skus.stream().filter(p -> currentSku.getStringAttribute("skuCode").equals(p.getOuterId())).count() == 0) {
+                                // 构造更新语句
+                                JongoUpdate updObj = new JongoUpdate();
+                                updObj.setQuery("{'platforms.P"+ cartId +".skus.skuCode':#}");
+                                updObj.setQueryParameters(currentSku.getStringAttribute("skuCode"));
+                                updObj.setUpdate("{$set:{'platforms.P"+ cartId +".skus.$.jdSkuId':#,'modified':#,'modifier':#}}");
+                                updObj.setUpdateParameters("", DateTimeUtil.getNowTimeStamp(), getTaskName());
+                                rs2 = bulkList2.addBulkJongo(updObj);
+                                if (rs2 != null) {
+                                    $debug("京东上新回写jdSkuId之后，清空平台上已被删除的jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, skuCode=%s, jdSkuId清空更新结果=%s",
+                                            channelId, cartId, wareId, currentSku.getStringAttribute("skuCode"), rs.toString());
+                                }
+                            }
+                        }
+                    }
+                    rs2 = bulkList2.execute();
+                    if (rs2 != null) {
+                        $debug("京东上新回写jdSkuId之后，清空平台上已被删除的jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, jdSkuId清空更新结果=%s", channelId, cartId, wareId, rs2.toString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            $warn(String.format("京东上新成功之后，回写jdSkuId时出错！[wareId:%s] [errMsg:%s]", wareId, failCause.toString()));
+        }
     }
 }
