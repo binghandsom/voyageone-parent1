@@ -11,12 +11,18 @@ import java.util.Map;
 
 /**
  * Created by james on 2016/11/11.
+ *
+ * @version 2.10.0
+ * @since 2.10.0
  */
 @Service
 public class CmsBtShelvesService extends BaseService {
+    private final CmsBtShelvesDao cmsBtShelvesDao;
 
     @Autowired
-    private CmsBtShelvesDao cmsBtShelvesDao;
+    public CmsBtShelvesService(CmsBtShelvesDao cmsBtShelvesDao) {
+        this.cmsBtShelvesDao = cmsBtShelvesDao;
+    }
 
     public CmsBtShelvesModel getId(Integer id){
         return cmsBtShelvesDao.select(id);
