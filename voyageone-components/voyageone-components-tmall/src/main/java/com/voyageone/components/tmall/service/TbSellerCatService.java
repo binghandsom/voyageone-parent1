@@ -132,7 +132,7 @@ public class TbSellerCatService extends TbBase {
                 logger.error("调用天猫API:更新该店铺自定义类目:" + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:" + shop.getCart_id());
                 logger.error("ERROR CODE:" + response.getErrorCode() + ",ERROR MSG:" + response.getMsg());
                 logger.error("RESPONSE BODY:" + response.getBody());
-                return "";
+                throw new BusinessException(response.getSubMsg());
             } else {
                 return "" + response.getSellerCat().getCid();
             }
