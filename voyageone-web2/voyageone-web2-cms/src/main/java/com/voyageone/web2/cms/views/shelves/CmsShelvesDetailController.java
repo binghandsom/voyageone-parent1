@@ -35,6 +35,14 @@ public class CmsShelvesDetailController extends CmsController {
         return success(cmsBtShelvesService.selectList(params));
     }
 
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.ADD_PRODUCT)
+    public AjaxResponse addProduct(@RequestBody Map params){
+        Integer shelvesId = (Integer) params.get("shelvesId");
+        List<String> productCodes = (List<String>) params.get("productCodes");
+        cmsShelvesDetailService.addProducts(shelvesId, productCodes, getUser().getUserName());
+        return success(true);
+    }
+
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_INFO)
     public AjaxResponse getShelvesInfo(@RequestBody List<Integer> shelvesIds){
         return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds));

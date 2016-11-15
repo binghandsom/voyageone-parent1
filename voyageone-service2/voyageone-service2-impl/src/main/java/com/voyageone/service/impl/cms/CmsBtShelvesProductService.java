@@ -32,6 +32,12 @@ public class CmsBtShelvesProductService extends BaseService {
         return cmsBtShelvesProductDaoExt.selectByShelvesId(shelvesId);
     }
 
+    public CmsBtShelvesProductModel getByShelvesIdProductCode(Integer shelvesId, String code){
+        Map map = new HashedMap();
+        map.put("shelvesId",shelvesId);
+        map.put("productCode",code);
+        return cmsBtShelvesProductDao.selectOne(map);
+    }
     public int update(CmsBtShelvesProductModel cmsBtShelvesProductModel){
         return cmsBtShelvesProductDao.update(cmsBtShelvesProductModel);
     }

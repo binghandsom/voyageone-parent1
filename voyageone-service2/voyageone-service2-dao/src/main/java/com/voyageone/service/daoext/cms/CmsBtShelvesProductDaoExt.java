@@ -23,4 +23,5 @@ public interface CmsBtShelvesProductDaoExt {
     int updatePlatformStatus(CmsBtShelvesProductModel record);
 
     int updatePlatformImage(CmsBtShelvesProductModel record);
+
 }
