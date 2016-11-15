@@ -385,25 +385,31 @@
                                             <select class="form-control" ng-model="vm.selectSizeChart" ng-change ="sizeChartOnchange()" ng-options="m as m.sizeChartName for m in vm.sizeChartList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
-                                            <div ng-if="vm.selectSizeChart" ng-controller="popupCtrl">
+                                            <div  ng-controller="popupCtrl">
                                                 <div class="table-responsive">
                                                     <table class="table table-hover-new vo_table">
                                                         <thead>
                                                         <tr>
                                                             <th class="mfb-xt text-center">Origin Size</th>
                                                             <th class="mfb-xt text-center">Platfrom Size</th>
-                                                            <th class="mfb-xt text-center">
+                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart==null">
                                                                 <a href="#/image/size_chart_list" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
+                                                            </th>
+                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart">
+                                                                <a href="#/channel/sizechart/detail/{{vm.selectSizeChart.sizeChartId}}" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
                                                             </th>
                                                         </tr>
                                                         </thead>
-                                                        <tbody>
+                                                        <tbody ng-if="vm.selectSizeChart">
                                                         <tr ng-repeat="m in vm.selectSizeChart.sizeMap" >
                                                             <td class="mfb-xt text-center">{{m.originalSize}}</td>
                                                             <td class="mfb-xt text-center">{{m.adjustSize}}</td>
                                                             <td class="mfb-xt text-center">
-                                                                <label class="checkbox-inline c-checkbox">
-                                                                    <input type="checkbox" style="margin: 0;" ng-model="vm.sss"><span class="fa fa-check"></span>
+                                                                <label class="checkbox-inline c-checkbox" ng-if="m.usual==1">
+                                                                    <input type="checkbox" style="margin: 0;"  readonly="readonly" disabled="disabled" checked="checked" ><span class="fa fa-check"></span>
+                                                                </label>
+                                                                <label class="checkbox-inline c-checkbox" ng-if="m.usual!=1">
+                                                                    <input type="checkbox" style="margin: 0;" readonly="readonly" disabled="disabled" ><span class="fa fa-check"></span>
                                                                 </label>
                                                             </td>
                                                         </tr>
