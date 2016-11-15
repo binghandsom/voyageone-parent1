@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.shelves;
 
-import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -17,26 +16,31 @@ import java.util.Map;
 
 /**
  * Created by james on 2016/11/15.
+ *
+ * @version 2.10.0
+ * @since 2.10.0
  */
 @RestController
 @RequestMapping(method = RequestMethod.POST, value = CmsUrlConstants.SHELVES.DETAIL.ROOT)
 public class CmsShelvesDetailController extends CmsController {
+    private final CmsBtShelvesService cmsBtShelvesService;
+    private final CmsShelvesDetailService cmsShelvesDetailService;
 
     @Autowired
-    private CmsBtShelvesService cmsBtShelvesService;
-
-    @Autowired
-    private CmsShelvesDetailService cmsShelvesDetailService;
+    public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService, CmsBtShelvesService cmsBtShelvesService) {
+        this.cmsShelvesDetailService = cmsShelvesDetailService;
+        this.cmsBtShelvesService = cmsBtShelvesService;
+    }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
-    public AjaxResponse search(@RequestBody Map params) {
+    public AjaxResponse search(@RequestBody Map<String, Object> params) {
         params.put("channelId",getUser().getSelChannel());
         params.put("active", CmsBtShelvesModelActive.ACTIVATE);
         return success(cmsBtShelvesService.selectList(params));
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.ADD_PRODUCT)
-    public AjaxResponse addProduct(@RequestBody Map params){
+    public AjaxResponse addProduct(@RequestBody Map<String, Object> params){
         Integer shelvesId = (Integer) params.get("shelvesId");
         List<String> productCodes = (List<String>) params.get("productCodes");
         cmsShelvesDetailService.addProducts(shelvesId, productCodes, getUser().getUserName());
