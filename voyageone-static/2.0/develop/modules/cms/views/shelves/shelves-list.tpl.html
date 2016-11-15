@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" style="position:relative">
 
     <script type="text/ng-template" id="shelves-template.html">
         <div class="panel {{panelClass || 'panel-default'}}">
@@ -178,20 +178,23 @@
                     </div>
                 </div>
                 <div class="form-group text-center">
-                    <button class="btn btn-default">清除</button>
-                    <button class="btn btn-vo">搜索</button>
+                    <button type="button" class="btn btn-default">清除</button>
+                    <button type="button" class="btn btn-vo">搜索</button>
                 </div>
             </form>
         </uib-accordion-group>
     </uib-accordion>
     <div class="form-group">
         <div class="row">
+            <div class="col-sm-2">
+                <button type="button" class="btn btn-info" ng-click="ctrl.addShelves()">添加货架</button>
+            </div>
             <div class="col-sm-6">
                 <p class="form-control-static">最后一次上下架状态&平台库存刷新时间：2016-11-08 19:45</p>
             </div>
-            <div class="col-sm-6 text-right">
-                <button class="btn btn-default">全部收起</button>
-                <button class="btn btn-default">全部展开</button>
+            <div class="col-sm-4 text-right">
+                <button type="button" class="btn btn-default">全部收起</button>
+                <button type="button" class="btn btn-default">全部展开</button>
             </div>
         </div>
     </div>
@@ -204,4 +207,12 @@
             </div>
         </uib-accordion-group>
     </uib-accordion>
+
+    <sticky top-fix="180" style="position:absolute;top:180px;left:90%" drag>
+        <ul class="nav nav-pills nav-stacked" style="min-width:0;width:120px">
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="{{::'#jm-tag,,-60'}}">货架一</button>
+            </li>
+        </ul>
+    </sticky>
 </div>

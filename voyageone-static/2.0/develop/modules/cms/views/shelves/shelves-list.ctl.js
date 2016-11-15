@@ -1,13 +1,21 @@
 define([
-    'cms'
+    'cms',
+    'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    function ShelvesListController() {
+    function ShelvesListController(shelvesService, popups) {
+        // shelvesService.search();
+        // this.
+        var self = this;
 
+        self.popups = popups;
     }
 
     ShelvesListController.prototype = {
-
+        addShelves: function () {
+            this.popups.popNewShelves();
+        }
     };
 
-    cms.controller("ShelvesListController", [ShelvesListController]);
+    cms.controller('ShelvesListController', ['shelvesService', 'popups', ShelvesListController]);
 });
+
