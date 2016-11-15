@@ -29,11 +29,15 @@ public class CmsBtShelvesProductService extends BaseService {
     }
 
     public List<CmsBtShelvesProductModel> getByShelvesId(Integer shelvesId){
-        HashedMap param = new HashedMap();
-        param.put("shelvesId",shelvesId);
-        return cmsBtShelvesProductDao.selectList(param);
+        return cmsBtShelvesProductDaoExt.selectByShelvesId(shelvesId);
     }
 
+    public CmsBtShelvesProductModel getByShelvesIdProductCode(Integer shelvesId, String code){
+        Map map = new HashedMap();
+        map.put("shelvesId",shelvesId);
+        map.put("productCode",code);
+        return cmsBtShelvesProductDao.selectOne(map);
+    }
     public int update(CmsBtShelvesProductModel cmsBtShelvesProductModel){
         return cmsBtShelvesProductDao.update(cmsBtShelvesProductModel);
     }
@@ -60,7 +64,7 @@ public class CmsBtShelvesProductService extends BaseService {
     /**
      * 更新平台图片
      */
-    public void updatePlatformImage(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
-        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductDaoExt::updatePlatformImage);
+    public void updatePlatformImage(CmsBtShelvesProductModel cmsBtShelvesProductModels){
+        cmsBtShelvesProductDaoExt.updatePlatformImage(cmsBtShelvesProductModels);
     }
 }

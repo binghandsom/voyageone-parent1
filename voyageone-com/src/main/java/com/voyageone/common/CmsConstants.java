@@ -164,6 +164,9 @@ public class CmsConstants {
 
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
+
+        // 该店铺是否自动审批价格
+        String PLATFORM_IMAGE_DIRECTORY_ID = "platformImageDirectoryId";
     }
 
     public interface DataAmount {

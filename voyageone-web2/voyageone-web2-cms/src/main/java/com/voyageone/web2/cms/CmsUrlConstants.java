@@ -868,5 +868,12 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
             String DETAIL = "detail";
         }
+        interface DETAIL {
+            String ROOT = "/cms/shelves/detail";
+            String INIT = "init";
+            String SEARCH = "search";
+            String ADD_PRODUCT = "addProduct";
+            String GET_SHELVES_INFO = "getShelvesInfo";
+        }
     }
 }

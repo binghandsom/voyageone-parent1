@@ -64,9 +64,14 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_PlatformTitleTranslateJob = "voyageone_cms_batchjob_CmsPlatformTitleTranslateJob_queue";
 
     /**
-     * 平台标题翻译
+     * 货架监控
      */
     public static final String CMS_BATCH_ShelvesMonitorJob = "voyageone_cms_batchjob_ShelvesMonitor_queue";
+
+    /**
+     * 货架监控
+     */
+    public static final String CMS_BATCH_ShelvesImageUploadJob = "voyageone_cms_batchjob_ShelvesImageUpload_queue";
 
     /**
      * 同步产品sku的价格至code的group价格范围

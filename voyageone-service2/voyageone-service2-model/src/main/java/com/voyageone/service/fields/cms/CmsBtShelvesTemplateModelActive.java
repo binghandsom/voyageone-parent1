@@ -8,6 +8,6 @@ package com.voyageone.service.fields.cms;
  * @since 2.10.0
  */
 public interface CmsBtShelvesTemplateModelActive {
-    int ACTIVATE = 0;
-    int DEACTIVATE = 1;
+    int ACTIVATE = 1;
+    int DEACTIVATE = 0;
 }

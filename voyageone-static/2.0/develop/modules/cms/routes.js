@@ -396,6 +396,12 @@ define(function () {
             "templateUrl": "views/shelves/template-management.tpl.html",
             "controllerUrl": "modules/cms/views/shelves/template-management.ctl",
             "controller": "shelvesTemplateController as ctrl"
+        },
+        "shelves-list": {
+            "hash": "/shelves/management",
+            "templateUrl": "views/shelves/shelves-list.tpl.html",
+            "controllerUrl": "modules/cms/views/shelves/shelves-list.ctl",
+            "controller": "ShelvesListController as ctrl"
         }
     };
 });

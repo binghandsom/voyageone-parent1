@@ -669,7 +669,14 @@ define(function () {
                 delete:"delete",
                 search:"search",
                 detail:"detail"
-
+            },
+            // 货架管理
+            shelvesService: {
+                root: "/cms/shelves/detail",
+                init: "init",
+                search: "search",
+                addProduct: "addProduct",
+                getShelvesInfo: "getShelvesInfo"
             }
         }
     };
