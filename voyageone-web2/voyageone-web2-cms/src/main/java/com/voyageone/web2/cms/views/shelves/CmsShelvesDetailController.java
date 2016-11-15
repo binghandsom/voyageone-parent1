@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
+import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -30,7 +31,7 @@ public class CmsShelvesDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
     public AjaxResponse search(@RequestBody Map params) {
         params.put("channelId",getUser().getSelChannel());
-        cmsBtShelvesService.selectList(params);
+        params.put("active", CmsBtShelvesModelActive.ACTIVATE);
         return success(cmsBtShelvesService.selectList(params));
     }
 
