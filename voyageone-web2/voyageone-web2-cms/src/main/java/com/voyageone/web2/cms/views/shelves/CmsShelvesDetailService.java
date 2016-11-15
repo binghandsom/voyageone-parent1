@@ -48,17 +48,15 @@ class CmsShelvesDetailService extends BaseViewService {
      * 根据货架Id获取货架里的产品信息
      */
     List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds) {
-        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeens = new ArrayList<>();
+        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
-            if (cmsBtShelvesInfoBean != null) {
-                cmsBtShelvesInfoBean.setShelvesModel(cmsBtShelvesModel);
-                cmsBtShelvesInfoBean.setShelvesProductModels(getShelvesProductInfo(cmsBtShelvesModel));
-                cmsBtShelvesInfoBeens.add(cmsBtShelvesInfoBean);
-            }
+            cmsBtShelvesInfoBean.setShelvesModel(cmsBtShelvesModel);
+            cmsBtShelvesInfoBean.setShelvesProductModels(getShelvesProductInfo(cmsBtShelvesModel));
+            cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
         });
-        return cmsBtShelvesInfoBeens;
+        return cmsBtShelvesInfoBanList;
     }
 
     /**
