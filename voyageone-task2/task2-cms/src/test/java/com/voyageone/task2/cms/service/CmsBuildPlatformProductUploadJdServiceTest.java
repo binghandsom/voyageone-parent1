@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
@@ -58,5 +59,25 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         uploadJdService.doChannelConfigInit(likingChannelId, cartId, channelConfigValueMap);
 
         uploadJdService.uploadProduct(workload, shopProp, channelConfigValueMap);
+    }
+
+    @Test
+    public void testUpdateSkuIds() throws Exception {
+
+        String likingChannelId = "928";
+        int cartId = 28;
+
+//        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+        shopBean.setOrder_channel_id(likingChannelId);
+        shopBean.setCart_id(StringUtils.toString(cartId));
+        shopBean.setShop_name("京东国际匠心界全球购专营店");
+
+        String numIId = "1956342136";
+        uploadJdService.updateSkuIds(shopBean, numIId, true);
     }
 }
