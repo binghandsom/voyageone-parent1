@@ -44,11 +44,13 @@
 
     <update id="wms_bt_inventory_center_logic_updateCodeForMove" parameterType="HashMap">
         update wms_bt_inventory_center_logic set code=#{itemCodeNew},modified = now(),modifier =#{modifier}  where code=#{itemCodeOld} and order_channel_id=#{channelId}
+        <if test="skuList != null and skuList.size() > 0">
         and (sku in
-        <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
-            #{skuItem}
-        </foreach>
+          <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                #{skuItem}
+          </foreach>
         )
+        </if>
     </update>
 
     <select id="wms_bt_inventory_center_logic_selectLogicInventory_bycode" resultType="com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel" parameterType="Map" >
@@ -65,11 +67,12 @@
         FROM
         wms_bt_inventory_center_logic
         WHERE order_channel_id = #{channelId}
+        <if test="codeList != null and codeList.size() > 0">
             and code in
             <foreach collection="codeList" item="codeItem" open="(" separator="," close=")">
                 #{codeItem.productCode}
             </foreach>
-
+        </if>
         group by code
     </select>
 </mapper>
