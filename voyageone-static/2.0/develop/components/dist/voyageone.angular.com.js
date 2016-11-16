@@ -155,7 +155,16 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     tempHtml += "<br>";
                 }
             });
-        } else {
+        }
+        else if(values.isUseComplexTemplate == true){
+            $scope.dynamicPopover = {
+                type: values.type,
+                value1: values.value,
+                value2: values.value2,
+                value3: values.value3,
+                templateUrl: 'dynamicPopoverTemplate.html'
+            };
+        }else {
             tempHtml += values;
         }
         return tempHtml;
@@ -3199,6 +3208,9 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
 
 /*****************************/
 
+/**
+ * @description 格林威治时间转换为当地时区时间
+ */
 angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
 
     return function (input,format) {
@@ -3210,15 +3222,13 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
             return '';
         }
 
-
         input = typeof input === 'string' ? new Date(input) : input;
 
         miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
 
-
         return $filter('date')(new Date(miliTimes), format);
-    };
 
+    };
 
 });
 
