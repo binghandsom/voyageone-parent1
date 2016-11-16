@@ -418,7 +418,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         });
                     }
                     productAll.addAll(product);
-                    if (productAll.size() > 500) {
+                    if (productAll.size() > 0) {
                         executeMongoDB(productAll, productSucceeList, productFailAllList);
                     }
                 }
