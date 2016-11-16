@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.BaseService;
@@ -8,6 +9,7 @@ import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,14 @@ public class CmsBtShelvesService extends BaseService {
     }
 
     public Integer insert(CmsBtShelvesModel cmsBtShelvesModel) {
+        cmsBtShelvesModel.setActive(CmsBtShelvesModelActive.ACTIVATE);
+        cmsBtShelvesModel.setCreated(new Date());
+        cmsBtShelvesModel.setModified(new Date());
+
+        if (!checkName(cmsBtShelvesModel)) {
+            throw new BusinessException("该货架名称已存在");
+        }
+
         cmsBtShelvesDao.insert(cmsBtShelvesModel);
         return cmsBtShelvesModel.getId();
     }

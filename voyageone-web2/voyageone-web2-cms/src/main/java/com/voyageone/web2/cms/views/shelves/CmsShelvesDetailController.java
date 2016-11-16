@@ -10,17 +10,13 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by james on 2016/11/15.
@@ -46,16 +42,16 @@ public class CmsShelvesDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
     public AjaxResponse search(@RequestBody Map<String, Object> params) {
-        params.put("channelId",getUser().getSelChannelId());
+        params.put("channelId", getUser().getSelChannelId());
         params.put("active", CmsBtShelvesModelActive.ACTIVATE);
         return success(cmsBtShelvesService.selectList(params));
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.ADD_PRODUCT)
-    public AjaxResponse addProduct(@RequestBody Map<String, Object> params){
-        Integer shelvesId = (Integer) params.get("shelvesId");
-        List<String> productCodes = (List<String>) params.get("productCodes");
-        Integer isSelAll = (Integer) params.get("isSelAll");
+    public AjaxResponse addProduct(@RequestBody AddProduct params) {
+        Integer shelvesId = params.shelvesId;
+        List<String> productCodes = params.productCodes;
+        Integer isSelAll = params.isSelAll;
         if (isSelAll == null) {
             isSelAll = 0;
         }
@@ -64,65 +60,59 @@ public class CmsShelvesDetailController extends CmsController {
             productCodes = advanceSearchService.getProductCodeList(getUser().getSelChannelId(), getCmsSession());
         }
         if (productCodes == null || productCodes.isEmpty()) {
-
-            new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
+            throw new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
         }
         cmsShelvesDetailService.addProducts(shelvesId, productCodes, getUser().getUserName());
         return success(true);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_INFO)
-    public AjaxResponse getShelvesInfo(@RequestBody  Map<String, Object> params){
-        List<Integer> shelvesIds = (List<Integer>) params.get("shelvesIds");
-        Boolean isLoadPromotionPrice = params.get("isLoadPromotionPrice") == null?false: (Boolean) params.get("isLoadPromotionPrice");
-        return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds,isLoadPromotionPrice));
+    public AjaxResponse getShelvesInfo(@RequestBody GetShelvesInfo params) {
+        List<Integer> shelvesIds = params.shelvesIds;
+        Boolean isLoadPromotionPrice = params.isLoadPromotionPrice;
+        if (isLoadPromotionPrice == null)
+            isLoadPromotionPrice = false;
+        return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds, isLoadPromotionPrice));
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.CREATE_SHELVES)
-    public AjaxResponse createShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel){
+    public AjaxResponse createShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
         cmsBtShelvesModel.setChannelId(getUser().getSelChannelId());
-        cmsBtShelvesModel.setActive(CmsBtShelvesModelActive.ACTIVATE);
         cmsBtShelvesModel.setCreater(getUser().getUserName());
         cmsBtShelvesModel.setModifier(getUser().getUserName());
-        cmsBtShelvesModel.setCreated(new Date());
-        cmsBtShelvesModel.setModified(new Date());
-
-        Map<String,Object> map = new HashedMap();
-        map.put("channelId",cmsBtShelvesModel.getChannelId());
-        map.put("cartId", cmsBtShelvesModel.getCartId());
-        map.put("shelvesName", cmsBtShelvesModel.getShelvesName());
-        List<CmsBtShelvesModel> cmsBtShelvesModels = cmsBtShelvesService.selectList(map);
-        if(cmsBtShelvesModels != null){
-            throw new BusinessException("该货架名称已存在");
-        }
 
         cmsBtShelvesService.insert(cmsBtShelvesModel);
         return success(cmsBtShelvesModel);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.UPDATE_SHELVES)
-    public AjaxResponse updateShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel){
+    public AjaxResponse updateShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
         cmsBtShelvesModel.setModifier(getUser().getUserName());
         cmsBtShelvesModel.setModified(new Date());
 
-        Map<String,Object> map = new HashedMap();
-        map.put("channelId",cmsBtShelvesModel.getChannelId());
-        map.put("cartId", cmsBtShelvesModel.getCartId());
-        map.put("shelvesName", cmsBtShelvesModel.getShelvesName());
-        List<CmsBtShelvesModel> cmsBtShelvesModels = cmsBtShelvesService.selectList(map);
-        if(cmsBtShelvesModels != null){
-            if(cmsBtShelvesModels.stream().filter(cmsBtShelvesModel1 -> cmsBtShelvesModel1.getId() != cmsBtShelvesModel.getId()).count() > 0L){
-                throw new BusinessException("该货架名称已存在");
-            }
+        if (!cmsBtShelvesService.checkName(cmsBtShelvesModel)) {
+            throw new BusinessException("该货架名称已存在");
         }
-        cmsBtShelvesService.insert(cmsBtShelvesModel);
+
+        cmsBtShelvesService.update(cmsBtShelvesModel);
         return success(cmsBtShelvesModel);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.UPDATE_PRODUCT_SORT)
-    public AjaxResponse updateProductSort(@RequestBody List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+    public AjaxResponse updateProductSort(@RequestBody List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> cmsBtShelvesProductModel.setModifier(getUser().getUserName()));
         cmsBtShelvesProductService.updateSort(cmsBtShelvesProductModels);
         return success(true);
+    }
+
+    private static class AddProduct {
+        Integer shelvesId;
+        List<String> productCodes;
+        Integer isSelAll;
+    }
+
+    private static class GetShelvesInfo {
+        List<Integer> shelvesIds;
+        Boolean isLoadPromotionPrice;
     }
 }
