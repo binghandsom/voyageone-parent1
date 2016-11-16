@@ -7,11 +7,15 @@
                 <div class="form-group">
                     <label class="col-sm-1 control-label">平台类型：</label>
                     <div class="col-sm-4">
-                        <select chosen width="'100%'"></select>
+                        <select chosen width="'100%'" ng-model="ctrl.cart"
+                                ng-options="c.value as c.name for c in ctrl.cartList"
+                                ng-change="ctrl.getShelves()"></select>
                     </div>
                     <label class="col-sm-1 control-label">客户端类型：</label>
                     <div class="col-sm-4">
-                        <select chosen width="'100%'"></select>
+                        <select chosen width="'100%'" ng-model="ctrl.clientType"
+                                ng-options="v as k for (k,v) in ctrl.clientTypes"
+                                ng-change="ctrl.getShelves()"></select>
                     </div>
                 </div>
             </form>
@@ -58,13 +62,13 @@
             </div>
             <div class="text-center">
                 <button type="button" class="btn btn-default">清除</button>
-                <button type="button" class="btn btn-vo">搜索</button>
+                <button type="button" class="btn btn-vo" ng-disabled="!ctrl.shelves.length">搜索</button>
             </div>
         </div>
     </div>
 
-    <uib-accordion>
-        <uib-accordion-group heading="货架1" template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
+    <uib-accordion ng-if="ctrl.shelves.length">
+        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" ng-repeat="i in ctrl.shelves" template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
             <div class="row">
                 <div ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
@@ -75,8 +79,8 @@
 
     <sticky style="position:absolute;top:260px;right:0">
         <ul class="nav nav-pills nav-stacked" style="min-width:0;width:120px">
-            <li>
-                <button type="button" class="btn btn-default" scroll-to="{{::'#jm-tag,,-60'}}">货架一</button>
+            <li ng-repeat="i in ctrl.shelves">
+                <button type="button" class="btn btn-default" scroll-to="{{::'#s'+$index+',,-60'}}">{{i.shelvesName}}</button>
             </li>
             <li>
                 <hr>
