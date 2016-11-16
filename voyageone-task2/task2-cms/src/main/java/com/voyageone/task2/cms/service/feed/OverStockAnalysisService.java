@@ -66,22 +66,22 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         init();
-//
-//        zzWorkClear();
-//        int cnt = 0;
-//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-//            cnt = fullCopyTemp();
-//        }else {
-//            $info("产品信息插入开始");
-//            cnt = superFeedImport();
-//        }
-//        $info("产品信息插入完成 共" + cnt + "条数据");
-//        if (cnt > 0) {
-//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//                transformer.new Context(channel, this).transform();
-//            }
+
+        zzWorkClear();
+        int cnt = 0;
+        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+            cnt = fullCopyTemp();
+        }else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
+        $info("产品信息插入完成 共" + cnt + "条数据");
+        if (cnt > 0) {
+            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+                transformer.new Context(channel, this).transform();
+            }
             postNewProduct();
-//        }
+        }
     }
     @Override
     public int fullCopyTemp(){
@@ -102,7 +102,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(50);
+            request.setLimit(100);
             String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
@@ -366,7 +366,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 50;
+                offset = offset + 100;
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
