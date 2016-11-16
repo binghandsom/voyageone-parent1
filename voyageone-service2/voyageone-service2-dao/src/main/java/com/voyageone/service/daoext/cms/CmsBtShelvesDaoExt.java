@@ -1,6 +1,7 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 @Repository
 public interface CmsBtShelvesDaoExt {
 
-    List<CmsBtShelvesModel> selectByTemplateId(Integer templateId);
+    List<CmsBtShelvesModel> selectByTemplateId(@Param("templateId") Integer templateId);
 }

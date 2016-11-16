@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface CmsBtShelvesProductDaoExt {
@@ -23,5 +24,12 @@ public interface CmsBtShelvesProductDaoExt {
     int updatePlatformStatus(CmsBtShelvesProductModel record);
 
     int updatePlatformImage(CmsBtShelvesProductModel record);
+
+    /**
+     * K-V : shelvesIds-货架ID集合(必填), modifier 和 modified 非必填
+     * @param map
+     * @return
+     */
+    int clearImageByShelvesIds(Map<String, Object> map);
 
 }

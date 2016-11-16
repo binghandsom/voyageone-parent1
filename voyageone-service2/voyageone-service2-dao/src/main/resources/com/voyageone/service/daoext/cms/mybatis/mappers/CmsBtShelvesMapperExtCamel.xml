@@ -13,7 +13,7 @@
         SELECT
         <include refid="Base_Column_List" />
         FROM cms_bt_shelves
-        WHEN `single_template_id` = #{templateId,jdbcType=INTEGER}
+        WHEN `active`=1 and  `single_template_id` = #{templateId,jdbcType=INTEGER}
     </select>
 
 </mapper>
