@@ -796,7 +796,7 @@ public class PriceService extends BaseService {
     }
 
     /**
-     * 更新商品SKU的价格 （非天猫平台暂不实现）
+     * 更新商品SKU的价格
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
      * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
