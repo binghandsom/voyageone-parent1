@@ -63,9 +63,9 @@
     </sql>
 
     <sql id="Base_Column_List" >
-        `id`, `shelves_id`, `product_code`, `cms_inventory`, `cart_inventory`, `sale_price`, 
-        `status`, `image`, `num_iid`, `platform_image_url`, `platform_image_id`, `creater`, 
-        `created`, `modifier`, `modified`, `sort`
+        `id`, `shelves_id`, `product_code`, `product_name`, `cms_inventory`, `cart_inventory`, 
+        `sale_price`, `status`, `image`, `num_iid`, `platform_image_url`, `platform_image_id`, 
+        `creater`, `created`, `modifier`, `modified`, `sort`
     </sql>
 
     <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtShelvesProductExample" >
@@ -109,6 +109,9 @@
             </if>
             <if test="record.productCode != null" >
                 `product_code` = #{record.productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="record.productName != null" >
+                `product_name` = #{record.productName,jdbcType=VARCHAR},
             </if>
             <if test="record.cmsInventory != null" >
                 `cms_inventory` = #{record.cmsInventory,jdbcType=INTEGER},
@@ -160,6 +163,7 @@
         set `id` = #{record.id,jdbcType=INTEGER},
             `shelves_id` = #{record.shelvesId,jdbcType=INTEGER},
             `product_code` = #{record.productCode,jdbcType=VARCHAR},
+            `product_name` = #{record.productName,jdbcType=VARCHAR},
             `cms_inventory` = #{record.cmsInventory,jdbcType=INTEGER},
             `cart_inventory` = #{record.cartInventory,jdbcType=INTEGER},
             `sale_price` = #{record.salePrice,jdbcType=DOUBLE},
@@ -186,6 +190,9 @@
             </if>
             <if test="productCode != null" >
                 `product_code` = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null" >
+                `product_name` = #{productName,jdbcType=VARCHAR},
             </if>
             <if test="cmsInventory != null" >
                 `cms_inventory` = #{cmsInventory,jdbcType=INTEGER},
@@ -256,6 +263,9 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
             <if test="cmsInventory != null" >
                 and `cms_inventory` = #{cmsInventory,jdbcType=INTEGER}
             </if>
@@ -310,6 +320,9 @@
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
             </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
+            </if>
             <if test="cmsInventory != null" >
                 and `cms_inventory` = #{cmsInventory,jdbcType=INTEGER}
             </if>
@@ -360,6 +373,9 @@
             </if>
             <if test="productCode != null" >
                 and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="productName != null" >
+                and `product_name` = #{productName,jdbcType=VARCHAR}
             </if>
             <if test="cmsInventory != null" >
                 and `cms_inventory` = #{cmsInventory,jdbcType=INTEGER}
@@ -412,6 +428,9 @@
             <if test="productCode != null" >
                 `product_code`,
             </if>
+            <if test="productName != null" >
+                `product_name`,
+            </if>
             <if test="cmsInventory != null" >
                 `cms_inventory`,
             </if>
@@ -457,6 +476,9 @@
             </if>
             <if test="productCode != null" >
                 #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="productName != null" >
+                #{productName,jdbcType=VARCHAR},
             </if>
             <if test="cmsInventory != null" >
                 #{cmsInventory,jdbcType=INTEGER},

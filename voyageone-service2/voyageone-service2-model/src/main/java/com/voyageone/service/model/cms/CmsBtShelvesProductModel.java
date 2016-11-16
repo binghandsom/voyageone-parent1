@@ -23,6 +23,8 @@ public class CmsBtShelvesProductModel extends BaseModel {
      */
     protected String productCode;
 
+    protected String productName;
+
     /**
      * CMS库存
      */
@@ -82,6 +84,14 @@ public class CmsBtShelvesProductModel extends BaseModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode == null ? null : productCode.trim();
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName == null ? null : productName.trim();
     }
 
     public Integer getCmsInventory() {

@@ -60,7 +60,7 @@ class CmsShelvesDetailService extends BaseViewService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
+    public List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
 
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
@@ -108,6 +108,8 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
             }
             cmsBtShelvesProductModel.setProductCode(code);
+            String title = platform.getFields().getStringAttribute("title");
+            cmsBtShelvesProductModel.setProductName(title == null?"":title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
             if (!imgList.isEmpty() && imgList.get(0).size() > 0) {

@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesProductModel" />
     <sql id="Base_Column_List" >
-        `id`, `shelves_id`, `product_code`, `cms_inventory`, `cart_inventory`, `sale_price`,
+        `id`, `shelves_id`, `product_code`, `product_name`, `cms_inventory`, `cart_inventory`, `sale_price`,
         `status`, `image`, `num_iid`, `platform_image_url`, `platform_image_id`, `creater`,
         `created`, `modifier`, `modified`, `sort`
     </sql>
