@@ -8,10 +8,7 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CamelUtil;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -409,9 +406,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             List<CmsBtFeedInfoModel> product;
             try{
                 while (true) {
-                    int cnt = 0;
                     product = getFeedInfoByCategory(categorPath);
-                    cnt = product == null?0:product.size();
+                    if(ListUtils.isNull(product)) break;
                     $info("每棵树的信息取得结束");
 
                     String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
@@ -425,7 +421,6 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     if (productAll.size() > 500) {
                         executeMongoDB(productAll, productSucceeList, productFailAllList);
                     }
-                    if(cnt < 500 ) break;
                 }
             }catch (Exception e){
                 e.printStackTrace();
