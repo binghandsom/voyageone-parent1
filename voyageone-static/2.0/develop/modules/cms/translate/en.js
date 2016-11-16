@@ -887,6 +887,10 @@ define(function () {
         "TXT_HTML_FOOT" : "尾部",
         "TXT_HTML_LAST_IMAGE" : "最后一个小图模块",
         "TXT_HTML_IMAGE_TEMPLATE" : "图片模板",
-        "TXT_SHELVES_TEMPLATE_EDIT" : "编辑模板"
+        "TXT_SHELVES_TEMPLATE_EDIT" : "编辑模板",
+
+        /**菜单栏新增*/
+        "TXT_CURRENT_CHANNEL_SETTING" : "当前店铺设置",
+        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "货架模板一览"
     };
 });
