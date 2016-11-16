@@ -72,7 +72,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
                 sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
             }
-            redisTemplate.expire("ShelvesMonitor_" + shelvesId, 2, TimeUnit.MINUTES);
+            redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
