@@ -829,17 +829,19 @@ public class PriceService extends BaseService {
             $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
             throw new BusinessException("产品数据不全,缺少sku数据！");
         }
-
-        // 先要判断更新类型
-        ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
-        if (imsBtProductModel == null) {
-            $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
-            throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
-        }
-        String updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
-        if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
-            $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
-            throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
+        String updType=null;
+        if(PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())||PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
+            // 先要判断更新类型
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
+            if (imsBtProductModel == null) {
+                $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
+            }
+            updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
+            if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
+                $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
+                throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
+            }
         }
 
         // 判断上新时销售价用的是建议售价还是最终售价
@@ -892,7 +894,6 @@ public class PriceService extends BaseService {
             logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
         }
     }
-
     //聚美 更新商品价格
     private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
         List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>(skuList.size());
@@ -900,27 +901,25 @@ public class PriceService extends BaseService {
         Double maxPrice = null;
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtMallSkuPriceUpdateInfo();
-            updateData.setJumei_sku_no((String) skuObj.get("skuCode"));
+           String skuCode= (String) skuObj.get("skuCode");
+            if(StringUtils.isEmpty(skuCode))
+            {
+                continue;
+            }
+            updateData.setJumei_sku_no(skuCode);
             Double priceSale = null;
             if (priceConfigValue == null) {
                 priceSale = skuObj.getDoubleAttribute("priceSale");
             } else {
                 priceSale = skuObj.getDoubleAttribute(priceConfigValue);
             }
-            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
-                maxPrice = priceSale;
-            }
             Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
             updateData.setMall_price(priceSale);
             updateData.setMarket_price(priceRetail);
             list.add(updateData);
         }
-        if (!"s".equals(updType)) {
-            final Double skuPrice = maxPrice;
-            // 更新商品价格
-            list.forEach(f -> f.setMall_price(skuPrice));
-        }
         String errorMsg = "";
+        if(list.size()==0) return;
         List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
