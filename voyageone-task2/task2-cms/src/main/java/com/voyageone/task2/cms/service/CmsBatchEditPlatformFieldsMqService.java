@@ -4,8 +4,10 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -33,6 +35,9 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
 
     @Autowired
     private SxProductService sxProductService;
+
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     @Override
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -67,6 +72,7 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
                 if (CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(cmsBtProductModel_platform_cart.getStatus())) {
                     sxProductService.insertSxWorkLoad(channelId, new ArrayList<String>(Arrays.asList(code)), cartId, userName);
                 }
+                productStatusHistoryService.insert(channelId, code, cmsBtProductModel_platform_cart.getStatus(), cartId, EnumProductOperationType.BatchSetPlatformAttr, "批量设置平台共同属性", userName);
                 productService.insertProductHistory(channelId, cmsBtProductModel);
             }
         });
