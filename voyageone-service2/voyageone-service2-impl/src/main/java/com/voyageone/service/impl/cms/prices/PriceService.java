@@ -851,40 +851,7 @@ public class PriceService extends BaseService {
         }
         if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
             // 天猫平台直接调用API
-            Double maxPrice = null;
-            List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
-            for (BaseMongoMap skuObj : skuList) {
-                UpdateSkuPrice obj3 = new UpdateSkuPrice();
-                obj3.setOuterId((String) skuObj.get("skuCode"));
-                Double priceSale = null;
-                if (priceConfigValue == null) {
-                    priceSale = skuObj.getDoubleAttribute("priceSale");
-                } else {
-                    priceSale = skuObj.getDoubleAttribute(priceConfigValue);
-                }
-                if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
-                    maxPrice = priceSale;
-                }
-                obj3.setPrice(priceSale.toString());
-                list2.add(obj3);
-            }
-            if ("s".equals(updType)) {
-                // 更新sku价格
-                maxPrice = null;
-            } else {
-                // 更新商品价格
-                list2 = null;
-            }
-
-            try {
-                TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopObj, platObj.getpNumIId(), maxPrice, list2);
-                if (response != null) {
-                    logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
-                }
-            } catch (ApiException e) {
-                $error(String.format("PriceService 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
-                throw new BusinessException("调用天猫API更新商品SKU的价格失败！");
-            }
+            tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
             jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue, updType);
@@ -893,6 +860,40 @@ public class PriceService extends BaseService {
             jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
         }
     }
+
+    private void   tmUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType,String pNumIId) throws Exception {
+        Double maxPrice = null;
+        List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
+        for (BaseMongoMap skuObj : skuList) {
+            UpdateSkuPrice obj3 = new UpdateSkuPrice();
+            obj3.setOuterId((String) skuObj.get("skuCode"));
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                maxPrice = priceSale;
+            }
+            obj3.setPrice(priceSale.toString());
+            list2.add(obj3);
+        }
+        if ("s".equals(updType)) {
+            // 更新sku价格
+            maxPrice = null;
+        } else {
+            // 更新商品价格
+            list2 = null;
+        }
+
+        TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopBean, pNumIId, maxPrice, list2);
+        if (response != null) {
+            logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
+        }
+    }
+
+    //聚美 更新商品价格
     private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
         List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>(skuList.size());
         HtMallSkuPriceUpdateInfo updateData = null;
@@ -931,6 +932,7 @@ public class PriceService extends BaseService {
             throw new BusinessException("updateMallSkuPrice:" + errorMsg);
         }
     }
+    //京东更新商品价格
     private void   jdUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
         List<UpdateSkuPrice> list = new ArrayList<>(skuList.size());
         UpdateSkuPrice updateData = null;
