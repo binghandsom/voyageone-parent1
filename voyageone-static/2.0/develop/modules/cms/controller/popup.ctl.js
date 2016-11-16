@@ -436,7 +436,6 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             }
-
         },
         "system": {
             "channelsetting": {
