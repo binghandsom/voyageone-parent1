@@ -61,13 +61,14 @@ public class CmsShelvesDetailController extends CmsController {
 
             new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
         }
-
         cmsShelvesDetailService.addProducts(shelvesId, productCodes, getUser().getUserName());
         return success(true);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_INFO)
-    public AjaxResponse getShelvesInfo(@RequestBody List<Integer> shelvesIds){
-        return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds));
+    public AjaxResponse getShelvesInfo(@RequestBody  Map<String, Object> params){
+        List<Integer> shelvesIds = (List<Integer>) params.get("shelvesIds");
+        Boolean isLoadPromotionPrice = params.get("isLoadPromotionPrice") == null?false: (Boolean) params.get("isLoadPromotionPrice");
+        return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds,isLoadPromotionPrice));
     }
 }

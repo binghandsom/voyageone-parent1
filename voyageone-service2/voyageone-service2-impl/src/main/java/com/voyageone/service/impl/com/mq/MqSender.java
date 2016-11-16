@@ -34,7 +34,7 @@ public class MqSender extends BaseService {
      * @param messageMap 消息内容
      */
     public void sendMessage(String routingKey, Map<String, Object> messageMap) {
-        sendMessage(routingKey, messageMap, true, null);
+        sendMessage(routingKey, messageMap, true, 0);
     }
 
     public void sendMessage(String routingKey, Map<String, Object> messageMap, long delaySecond) {
@@ -49,7 +49,7 @@ public class MqSender extends BaseService {
      * @param isBackMessage 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
      * @param delaySecond    延迟发送时间 秒
      */
-    public void sendMessage(String routingKey, Map<String, Object> messageMap, boolean isBackMessage, Long delaySecond) {
+    public void sendMessage(String routingKey, Map<String, Object> messageMap, boolean isBackMessage, long delaySecond) {
         sendMessage(null, routingKey, messageMap, isBackMessage, isLocal(), true, delaySecond);
     }
 

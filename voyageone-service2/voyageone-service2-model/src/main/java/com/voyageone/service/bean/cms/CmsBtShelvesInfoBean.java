@@ -11,7 +11,7 @@ import java.util.List;
 public class CmsBtShelvesInfoBean {
     private CmsBtShelvesModel shelvesModel;
 
-    private List<CmsBtShelvesProductBean> shelvesProductModels;
+    private List<CmsBtShelvesProductModel> shelvesProductModels;
 
     public CmsBtShelvesModel getShelvesModel() {
         return shelvesModel;
@@ -21,11 +21,11 @@ public class CmsBtShelvesInfoBean {
         this.shelvesModel = shelvesModel;
     }
 
-    public List<CmsBtShelvesProductBean> getShelvesProductModels() {
+    public List<CmsBtShelvesProductModel> getShelvesProductModels() {
         return shelvesProductModels;
     }
 
-    public void setShelvesProductModels(List<CmsBtShelvesProductBean> shelvesProductModels) {
+    public void setShelvesProductModels(List<CmsBtShelvesProductModel> shelvesProductModels) {
         this.shelvesProductModels = shelvesProductModels;
     }
 }
