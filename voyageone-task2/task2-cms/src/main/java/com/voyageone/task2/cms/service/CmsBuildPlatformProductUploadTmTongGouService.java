@@ -744,7 +744,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         paramExtends.put("original_title", getValueFromPageOrCondition("extends_original_title", "", mainProductPlatformCart, sxData, shopProp));
         // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
         String extends_shop_cats = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+        if (mainProductPlatformCart != null
                 && ListUtils.notNull(mainProductPlatformCart.getSellerCats())) {
             List<String> sellerCatIdList = new ArrayList<>();
             for (CmsBtProductModel_SellerCat sellerCat : mainProductPlatformCart.getSellerCats()) {
