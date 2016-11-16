@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.tmall.service.TbItemService;
@@ -70,8 +71,8 @@ public class PriceService extends BaseService {
     @Autowired
     JumeiHtMallService jumeiHtMallService;
 
-    //@Autowired
-    //JdSkuService jdSkuService;
+    @Autowired
+    JdSkuService jdSkuService;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
@@ -889,6 +890,7 @@ public class PriceService extends BaseService {
             jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue, updType);
         } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- JdSkuService  京东平台 更新商品SKU的价格
+            jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
         }
     }
     private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
@@ -907,7 +909,9 @@ public class PriceService extends BaseService {
             if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
                 maxPrice = priceSale;
             }
+            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
             updateData.setMall_price(priceSale);
+            updateData.setMarket_price(priceRetail);
             list.add(updateData);
         }
         if (!"s".equals(updType)) {
@@ -926,5 +930,34 @@ public class PriceService extends BaseService {
         if (!StringUtil.isEmpty(errorMsg)) {
             throw new BusinessException("updateMallSkuPrice:" + errorMsg);
         }
+    }
+    private void   jdUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
+        List<UpdateSkuPrice> list = new ArrayList<>(skuList.size());
+        UpdateSkuPrice updateData = null;
+        Double maxPrice = null;
+        for (BaseMongoMap skuObj : skuList) {
+            updateData = new UpdateSkuPrice();
+            updateData.setOuterId((String) skuObj.get("skuCode"));
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                maxPrice = priceSale;
+            }
+            updateData.setPrice(priceSale.toString());
+            list.add(updateData);
+        }
+        if (!"s".equals(updType)) {
+            final Double skuPrice = maxPrice;
+            // 更新商品价格
+            list.forEach(f -> f.setPrice(skuPrice.toString()));
+        }
+
+        list.forEach(f->{
+            jdSkuService.updateSkuPriceByOuterId(shopBean,f.getOuterId(),f.getPrice().toString());
+        });
     }
 }
