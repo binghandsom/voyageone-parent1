@@ -1,6 +1,4 @@
 /**
- * @Description:
- *
  * @User: linanbin
  * @Version: 2.0.0, 15/12/24
  */
@@ -15,7 +13,8 @@ define([
     './master.component.ctl',
     './jgj.component.ctl',
     './gw.component.ctl',
-    './dl.component.ctl'
+    './dl.component.ctl',
+    './price.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {

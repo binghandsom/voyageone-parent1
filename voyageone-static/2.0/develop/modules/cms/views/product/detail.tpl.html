@@ -39,6 +39,11 @@
                 <tab-heading>Master产品详情</tab-heading>
                 <master-schema product-info="ctrl.product"></master-schema>
             </uib-tab>
+            <!---------------------------------------------------sku 价格一览页面---------------------------------------------->
+            <uib-tab active="ctrl.price = true">
+                <tab-heading>价格一览详情</tab-heading>
+                <price-schema product-info="ctrl.product"></price-schema>
+            </uib-tab>
             <!---------------------------------------------------SKU 属性 页面------------------------------------------------>
             <uib-tab active="ctrl.sku">
                 <tab-heading>{{'TXT_PRODUCT_SKU_DETAIL'|translate}}</tab-heading>
