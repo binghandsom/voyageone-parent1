@@ -46,7 +46,7 @@ public class CmsShelvesDetailController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
     public AjaxResponse search(@RequestBody Map<String, Object> params) {
-        params.put("channelId",getUser().getSelChannel());
+        params.put("channelId",getUser().getSelChannelId());
         params.put("active", CmsBtShelvesModelActive.ACTIVATE);
         return success(cmsBtShelvesService.selectList(params));
     }

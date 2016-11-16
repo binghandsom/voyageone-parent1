@@ -91,4 +91,21 @@
         `product_code` = #{productCode,jdbcType=VARCHAR},
     </update>
 
+    <update id="clearImageByShelvesIds" parameterType="java.util.Map">
+        update cms_bt_shelves_product
+        <set >
+            `platform_image_url` = '',
+            <if test="modifier != null and modifier != ''" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where `shelves_id` in
+        <foreach item="item" index="index" collection="shelvesIds" open="(" separator="," close=")">
+            ${item}
+        </foreach>
+    </update>
+
 </mapper>

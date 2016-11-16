@@ -8,6 +8,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.daoext.cms.CmsBtShelvesDaoExt;
+import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtShelvesTemplateDaoExt;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelActive;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelClientType;
@@ -23,9 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by rex.wu on 2016/11/11.
@@ -36,19 +35,21 @@ public class CmsBtShelvesTemplateService extends BaseService {
     private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
     private final CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt;
     private final CmsBtShelvesDaoExt cmsBtShelvesDaoExt;
+    private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
     private final MqSender sender;
 
     @Autowired
-    public CmsBtShelvesTemplateService(CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt, CmsBtShelvesDaoExt cmsBtShelvesDaoExt, MqSender sender) {
+    public CmsBtShelvesTemplateService(CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt, CmsBtShelvesDaoExt cmsBtShelvesDaoExt, CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt, MqSender sender) {
         this.cmsBtShelvesTemplateDao = cmsBtShelvesTemplateDao;
         this.cmsBtShelvesTemplateDaoExt = cmsBtShelvesTemplateDaoExt;
         this.cmsBtShelvesDaoExt = cmsBtShelvesDaoExt;
+        this.cmsBtShelvesProductDaoExt = cmsBtShelvesProductDaoExt;
         this.sender = sender;
     }
 
     public void insert(CmsBtShelvesTemplateModel template, String user, String channelId) {
-        checkModel(template, "add");
         template.setChannelId(channelId);
+        checkModel(template, "add");
         template.setCreater(user);
         template.setCreated(new Date());
         cmsBtShelvesTemplateDao.insert(template);
@@ -56,10 +57,10 @@ public class CmsBtShelvesTemplateService extends BaseService {
     }
 
     public void update(CmsBtShelvesTemplateModel template, String user) {
-        checkModel(template, "update");
-        template.setTemplateType(null); // 模板类型不可更改
         template.setModifier(user);
         template.setModified(new Date());
+        checkModel(template, "update");
+        template.setTemplateType(null); // 模板类型不可更改
         cmsBtShelvesTemplateDao.update(template);
     }
 
@@ -86,9 +87,6 @@ public class CmsBtShelvesTemplateService extends BaseService {
         Integer clientType = template.getClientType();
         Integer cartId = template.getCartId();
         String channelId = template.getChannelId();
-        if (templateType == null || !CmsBtShelvesTemplateModelTemplateType.KV.containsKey(templateType)) {
-            throw new BusinessException("请选择模板类型！");
-        }
         if (clientType == null || !CmsBtShelvesTemplateModelClientType.KV.containsKey(clientType)) {
             throw new BusinessException("请选择客户端类型！");
         }
@@ -98,22 +96,45 @@ public class CmsBtShelvesTemplateService extends BaseService {
         if (StringUtils.isBlank(templateName) || templateName.length() > 255) {
             throw new BusinessException("模板名称为空或输入值过长！");
         }
+        Map<String,Object> param = new HashedMap();
+        param.put("channelId", channelId);
+        param.put("templateName", templateName);
+        CmsBtShelvesTemplateModel existent = cmsBtShelvesTemplateDaoExt.selectByChannelIdAndName(param);
         if ("add".equals(operType)) {
+            if (templateType == null || !CmsBtShelvesTemplateModelTemplateType.KV.containsKey(templateType)) {
+                throw new BusinessException("请选择模板类型！");
+            }
+            if (existent != null) {
+                throw new BusinessException("模板名称已被占用！");
+            }
             template.setId(null);
         } else if ("update".equals(operType)) {
             CmsBtShelvesTemplateModel targetTemplate = null;
             if (id == null || (targetTemplate = cmsBtShelvesTemplateDao.select(id)) == null) {
                 throw new BusinessException("查询不到待编辑模板，请先选择正确的模板！");
             }
+            if (existent != null && existent.getId().intValue() != id) {
+                throw new BusinessException("模板名称已被占用！");
+            }
             String targetHtmlImageTemplate = targetTemplate.getHtmlImageTemplate() == null ? "" : targetTemplate.getHtmlImageTemplate();
             String thisHtmlImageTemplate = template.getHtmlImageTemplate() == null ? "" : template.getHtmlImageTemplate();
             if (!targetHtmlImageTemplate.equals(thisHtmlImageTemplate)) {
                 List<CmsBtShelvesModel> shelvesModels = cmsBtShelvesDaoExt.selectByTemplateId(id);
+                List<Integer> shelvesIds = null;
                 if (CollectionUtils.isNotEmpty(shelvesModels)) {
+                    shelvesIds = new ArrayList<Integer>();
+                    param.clear();
                     for (CmsBtShelvesModel shelves:shelvesModels) {
-                        Map<String,Object> param = new HashedMap();
+                        shelvesIds.add(shelves.getId());
                         param.put("shelvesId",shelves.getId());
                         sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
+                    }
+                    if (CollectionUtils.isNotEmpty(shelvesIds)) {
+                        param.clear();
+                        param.put("shelvesIds", shelvesIds);
+                        param.put("modified", template.getModified());
+                        param.put("modifier", template.getModifier());
+                        cmsBtShelvesProductDaoExt.clearImageByShelvesIds(param);
                     }
                 }
             }
@@ -164,7 +185,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
         target.setId(theone.getId());
         target.setModified(new Date());
         target.setModifier(user);
-        target.setActive(CmsBtShelvesTemplateModelActive.ACTIVATE);
+        target.setActive(CmsBtShelvesTemplateModelActive.DEACTIVATE);
         cmsBtShelvesTemplateDao.update(target);
     }
 
