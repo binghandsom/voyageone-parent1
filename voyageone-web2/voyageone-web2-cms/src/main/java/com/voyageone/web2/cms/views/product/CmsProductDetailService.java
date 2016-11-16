@@ -1501,7 +1501,7 @@ public class CmsProductDetailService extends BaseViewService {
         return common;
     }
 
-    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) {
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws Exception {
 
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();

@@ -239,7 +239,7 @@ public class CmsProductDetailController extends CmsController {
      * @params cartId：平台Id  prodId：产品编号   platform:平台信息
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_SKUPRICE)
-    public AjaxResponse updateSkuPrice(@RequestBody Map params) {
+    public AjaxResponse updateSkuPrice(@RequestBody Map params) throws Exception {
 
         String channelId = getUser().getSelChannelId();
         Assert.notNull(channelId).elseThrowDefaultWithTitle("channelId");
