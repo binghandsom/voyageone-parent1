@@ -5,6 +5,7 @@ import com.jd.open.api.sdk.JdClient;
 import com.jd.open.api.sdk.request.JdRequest;
 import com.jd.open.api.sdk.response.AbstractResponse;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.ComponentConstants;
 
@@ -69,6 +70,11 @@ public abstract class JdBase extends ComponentBase {
 	            T response = client.execute(request);
 
 	            if (response != null) {
+                    if (!StringUtils.isEmpty(response.getZhDesc())
+                            && response.getZhDesc().contains("平台连接后端服务不可用")
+                            && intApiErrorCount < maxTryCount - 1) {
+                        continue;
+                    }
 	                return response;
 	            }
 	            

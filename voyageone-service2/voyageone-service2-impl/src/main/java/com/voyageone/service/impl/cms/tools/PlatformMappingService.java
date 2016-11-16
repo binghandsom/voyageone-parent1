@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -234,7 +235,7 @@ public class PlatformMappingService extends BaseService {
                 break;
             case PlatformMappingService.CATEGORY_TYPE_SPECIFIC:
                 // 具体类目则按类目查询
-                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).is(cmsBtRefreshProductTaskModel.getCategoryPath());
+                criteria = new Criteria(String.format("platforms.P%s.pCatPath", cartId)).regex(Pattern.quote(cmsBtRefreshProductTaskModel.getCategoryPath()));
                 break;
             default:
                 return null;

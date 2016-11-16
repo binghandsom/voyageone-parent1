@@ -2,6 +2,8 @@ package com.voyageone.components.jumei;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
@@ -101,6 +103,42 @@ public class JumeiHtMallService extends JmBase {
         } else {
             return true;
         }
+    }
+
+    /**
+     * 批量修改聚美城SKU价格[MALL]
+     * 如果更新对象sku件数大于20件，自动循环多次每次更新20件sku
+     *
+     * @param shopBean 店铺信息
+     * @param updateData 更新内容
+     * @param failCause 用于保存错误信息
+     * @return 是否更新成功
+     */
+    public boolean updateMallSkuPriceBatch(ShopBean shopBean, List<HtMallSkuPriceUpdateInfo> updateData, StringBuffer failCause) throws Exception {
+
+        if (ListUtils.isNull(updateData)) {
+            String errMsg = "批量修改聚美商城SKU价格时，通过参数传入的更新对象SKU内容为空!";
+            failCause.append(errMsg);
+            return false;
+        }
+
+        // 批量修改商城SKU价格时，一次最多允许20个sku
+        boolean result = true;
+        List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(updateData, 20);
+        for(List<HtMallSkuPriceUpdateInfo> page : pageList) {
+            try {
+                boolean currentResult = updateMallSkuPrice(shopBean, page, failCause);
+                result = result && currentResult;
+            } catch (Exception e) {
+                failCause.append(e.getMessage());
+            }
+        }
+
+        if (result && !StringUtils.isEmpty(failCause.toString())) {
+            result = false;
+        }
+
+        return result;
     }
 
     /**
