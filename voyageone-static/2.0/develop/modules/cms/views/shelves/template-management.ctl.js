@@ -14,13 +14,11 @@ define([
                     clientTypes: {},
                     carts: {}
                 };
+
                 $scope.templates = [];
 
                 $scope.searchBean = {
                     templateName: ""
-                    // templateTypes:{},
-                    // clientTypes:{},
-                    // carts:{}
                 };
 
                 $scope.initialize = function () {

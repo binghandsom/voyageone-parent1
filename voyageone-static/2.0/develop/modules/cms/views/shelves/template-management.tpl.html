@@ -12,7 +12,7 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.templateTypes">
+                                    <label ng-repeat="(key,value) in vm.templateTypes">
                                         <input type="checkbox" name="templateTypes"  ng-model="searchBean.templateTypes[key]" value="{{key}}"/>{{value}}
                                     </label>
                                 </div>
@@ -24,7 +24,7 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_VIEW_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.clientTypes">
+                                    <label ng-repeat="(key,value) in vm.clientTypes">
                                         <input type="checkbox" name="clientTypes"  ng-model="searchBean.clientTypes[key]" value="{{key}}"/>{{value}}端
                                     </label>
                                 </div>
@@ -36,8 +36,8 @@
                             <div class="form-group" >
                                 <label class="col-sm-4  control-label" translate="TXT_PLATFORM_TYPE"></label>
                                 <div class="col-sm-7">
-                                    <label class="checkbox-inline" ng-repeat="cart in vm.carts">
-                                        <input type="checkbox" name="cartId"  ng-model="searchBean.carts[cart.value]" value="{{cart.value}}"/>{{cart.name}}
+                                    <label ng-repeat="(key,value) in vm.carts">
+                                        <input type="checkbox" name="carts"  ng-model="searchBean.carts[key]" value="{{key}}"/>{{value}}端
                                     </label>
                                 </div>
                             </div>
@@ -46,10 +46,12 @@
                 </div>
                 <div class="col-sm-12">
                     <div class="col-sm-4">
-                        <div class="form-group" >
-                            <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_NAME"></label>
-                            <div class="col-sm-7">
-                                <input type="templateName" ng-model="searchBean.templateName" maxlength="255"/>
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_NAME"></label>
+                                <div class="col-sm-7">
+                                    <input type="templateName" ng-model="searchBean.templateName" maxlength="255"/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -84,12 +86,10 @@
                 <tbody ng-if="templates.length">
                 <tr ng-repeat="template in templates">
                     <td class="text-left">{{$index+1}}</td>
-                    <td class="mfb-xt3 text-left">
-                        {{template.cartId}}
-                    </td>
-                    <td class="text-left">{{template.clientType}}</td>
+                    <td class="text-left">{{vm.carts[template.cartId]}}</td>
+                    <td class="text-left">{{vm.clientTypes[template.clientType]}}</td>
                     <td class="text-left">{{template.templateName}}</td>
-                    <td class="text-left">{{template.templateType}}</td>
+                    <td class="text-left">{{vm.templateTypes[template.templateType]}}</td>
                     <td class="text-left">{{template.remark}}</td>
                     <td class="text-left">
                         <button title="编辑" class="btn btn-success btn-xs" ng-click="popEditShelvesTemplate(template)" >
@@ -105,8 +105,5 @@
             </table>
             <div  if-no-rows="templates.length"></div>
         </div><!-- /.box-body -->
-        <div class="col-sm-12 m-t-lg m-b-lg">
-            <vpagination config="dataPageOption"></vpagination>
-        </div>
     </div>
 </div><!-- end .wrapper-md -->

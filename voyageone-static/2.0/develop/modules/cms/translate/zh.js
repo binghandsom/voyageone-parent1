@@ -884,6 +884,7 @@ define(function () {
         "TXT_HTML_SMALL_IMAGE" : "小图模块",
         "TXT_HTML_FOOT" : "尾部",
         "TXT_HTML_LAST_IMAGE" : "最后一个小图模块",
-        "TXT_HTML_IMAGE_TEMPLATE" : "图片模板"
+        "TXT_HTML_IMAGE_TEMPLATE" : "图片模板",
+        "TXT_SHELVES_TEMPLATE_EDIT" : "编辑模板"
     };
 });
