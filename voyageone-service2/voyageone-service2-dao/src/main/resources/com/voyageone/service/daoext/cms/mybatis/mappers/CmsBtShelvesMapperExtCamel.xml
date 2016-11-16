@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtShelvesDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesModel" />
+
+    <sql id="Base_Column_List" >
+        `id`, `shelves_name`, `cart_id`, `channel_id`, `client_type`, `layout_template_id`, 
+        `single_template_id`, `promotion_id`, `active`, `last_update`, `creater`, `created`, 
+        `modifier`, `modified`
+    </sql>
+
+    <select id="selectByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM cms_bt_shelves
+        WHEN `single_template_id` = #{templateId,jdbcType=INTEGER}
+    </select>
+
+</mapper>
