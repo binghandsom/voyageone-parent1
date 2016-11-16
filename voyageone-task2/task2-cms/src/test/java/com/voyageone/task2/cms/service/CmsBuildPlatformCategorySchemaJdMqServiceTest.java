@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
@@ -53,19 +52,21 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
     @Test
     public void testDoSetPlatformPropJdSub() throws Exception {
         String channelId = "928";
-        int cartId = 29;  // 京东国际Liking悦境店铺
-        String catId = "1538"; // 母婴>营养辅食>钙铁锌/维生素
+        int cartId = 28;  // 京东国际Liking匠心界店铺
+//        int cartId = 29;  // 京东国际Liking悦境店铺
+        String catId = "9744"; // 服饰内衣>内衣>男式内裤
 
-        ShopBean shopProp = Shops.getShop(channelId, StringUtils.toString(cartId));
-        if (shopProp == null) {
-            return;
-        }
-        shopProp.setApp_url("https://api.jd.com/routerjson");
-        shopProp.setAppKey("");
-        shopProp.setAppSecret("");
-        shopProp.setSessionKey("");  // 京东国际悦境店(SessionKey)
+//        ShopBean shopProp = Shops.getShop(channelId, StringUtils.toString(cartId));
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+        shopBean.setOrder_channel_id(channelId);
+        shopBean.setCart_id(StringUtils.toString(cartId));
+        shopBean.setShop_name("京东国际匠心界全球购专营店");
         // platformid一定要设成京东，否则默认为天猫（1）的话，expressionParser.parse里面会上传照片到天猫空间，出现异常
-        shopProp.setPlatform_id("2");
+        shopBean.setPlatform_id("2");
 
 
         // 取得类目属性叶子数据并去掉重复叶子类目
@@ -76,8 +77,8 @@ public class CmsBuildPlatformCategorySchemaJdMqServiceTest {
             if (//channelId.equals(platformCategoriesModel.getChannelId())
                     //&&
                catId.equals(platformCategoriesModel.getCatId())) {
-                // 取得propsItem属性
-                cmsBuildPlatformCategorySchemaJdMqService.doSetPlatformPropJdSub(shopProp, platformCategoriesModel);
+                // 取得propsItem属性(进去打个断点可以得到当前catId对应的propsItem属性值)
+                cmsBuildPlatformCategorySchemaJdMqService.doSetPlatformPropJdSub(shopBean, platformCategoriesModel);
             }
         }
 
