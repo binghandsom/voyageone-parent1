@@ -12,6 +12,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,14 @@ public class CmsShelvesTemplateController extends CmsController {
     public AjaxResponse init(@RequestBody CmsBtShelvesTemplateBean searchBean) {
         searchBean.setChannelId(getUser().getSelChannelId());
         UserSessionBean user = getUser();
-        List<TypeChannelBean> carts = TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
+        Map<String, String> carts = null;
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
+        if (CollectionUtils.isNotEmpty(cartList)) {
+            carts = new HashMap<String, String>();
+            for (TypeChannelBean cart:cartList) {
+                carts.put(cart.getValue(), cart.getName());
+            }
+        }
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("carts", carts);
         resultMap.put("searBean", searchBean);
