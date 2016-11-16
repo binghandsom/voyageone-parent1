@@ -6,6 +6,7 @@ import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rex.wu on 2016/11/11.
@@ -14,4 +15,6 @@ import java.util.List;
 public interface CmsBtShelvesTemplateDaoExt{
 
     List<CmsBtShelvesTemplateModel> search(CmsBtShelvesTemplateBean searchBean);
+
+    CmsBtShelvesTemplateModel selectByChannelIdAndName(Map<String, Object> params);
 }

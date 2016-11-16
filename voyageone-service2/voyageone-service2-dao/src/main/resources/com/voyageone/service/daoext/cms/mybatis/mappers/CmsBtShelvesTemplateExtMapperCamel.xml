@@ -51,4 +51,9 @@
             </if>
         </where>
     </select>
+    
+    <select id="selectByChannelIdAndName" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM cms_bt_shelves_template WHERE `active` = 1
+        AND `channel_id` = #{channelId, jdbcType=VARCHAR} AND `template_name` = #{templateName, jdbcType=VARCHAR}
+    </select>
 </mapper>

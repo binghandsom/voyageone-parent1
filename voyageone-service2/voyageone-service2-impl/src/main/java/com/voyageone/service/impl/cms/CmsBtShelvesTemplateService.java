@@ -48,8 +48,8 @@ public class CmsBtShelvesTemplateService extends BaseService {
     }
 
     public void insert(CmsBtShelvesTemplateModel template, String user, String channelId) {
-        checkModel(template, "add");
         template.setChannelId(channelId);
+        checkModel(template, "add");
         template.setCreater(user);
         template.setCreated(new Date());
         cmsBtShelvesTemplateDao.insert(template);
@@ -96,15 +96,25 @@ public class CmsBtShelvesTemplateService extends BaseService {
         if (StringUtils.isBlank(templateName) || templateName.length() > 255) {
             throw new BusinessException("模板名称为空或输入值过长！");
         }
+        Map<String,Object> param = new HashedMap();
+        param.put("channelId", channelId);
+        param.put("templateName", templateName);
+        CmsBtShelvesTemplateModel existent = cmsBtShelvesTemplateDaoExt.selectByChannelIdAndName(param);
         if ("add".equals(operType)) {
             if (templateType == null || !CmsBtShelvesTemplateModelTemplateType.KV.containsKey(templateType)) {
                 throw new BusinessException("请选择模板类型！");
+            }
+            if (existent != null) {
+                throw new BusinessException("模板名称已被占用！");
             }
             template.setId(null);
         } else if ("update".equals(operType)) {
             CmsBtShelvesTemplateModel targetTemplate = null;
             if (id == null || (targetTemplate = cmsBtShelvesTemplateDao.select(id)) == null) {
                 throw new BusinessException("查询不到待编辑模板，请先选择正确的模板！");
+            }
+            if (existent != null && existent.getId().intValue() != id) {
+                throw new BusinessException("模板名称已被占用！");
             }
             String targetHtmlImageTemplate = targetTemplate.getHtmlImageTemplate() == null ? "" : targetTemplate.getHtmlImageTemplate();
             String thisHtmlImageTemplate = template.getHtmlImageTemplate() == null ? "" : template.getHtmlImageTemplate();
@@ -113,7 +123,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
                 List<Integer> shelvesIds = null;
                 if (CollectionUtils.isNotEmpty(shelvesModels)) {
                     shelvesIds = new ArrayList<Integer>();
-                    Map<String,Object> param = new HashedMap();
+                    param.clear();
                     for (CmsBtShelvesModel shelves:shelvesModels) {
                         shelvesIds.add(shelves.getId());
                         param.put("shelvesId",shelves.getId());
