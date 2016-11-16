@@ -37,17 +37,6 @@ define([
                     });
                 }
 
-                $scope.selTemplateType = function () {
-                    var templateTypeVal = $scope.modelBean.templateType;
-                    if ("0" == templateTypeVal){
-                        $scope.layout = true;
-                        $scope.single = false;
-                    }else if("1" == templateTypeVal) {
-                        $scope.layout = false;
-                        $scope.single = true;
-                    }
-                }
-
                 $scope.editSubmit = function () {
                     shelvesTemplateService.edit($scope.modelBean).then(function (resp) {
                         $scope.$close();

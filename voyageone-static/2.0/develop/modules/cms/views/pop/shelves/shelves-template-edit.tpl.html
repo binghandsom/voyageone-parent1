@@ -10,8 +10,8 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
                 <div class="col-sm-8">
-                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.templateTypes">
-                        <input type="radio" name="templateType" required ng-click="selTemplateType()"  ng-model="modelBean.templateType" value="{{key}}"/>{{value}}
+                    <label class="checkbox-inline">
+                        <input type="radio" name="templateType" disabled ng-checked="true" ng-model="modelBean.templateType" value="{{modelBean.templateType}}"/>{{vm.templateTypes[modelBean.templateType]}}
                     </label>
                 </div>
             </div>

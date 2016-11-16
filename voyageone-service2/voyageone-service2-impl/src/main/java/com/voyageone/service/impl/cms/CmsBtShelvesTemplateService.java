@@ -7,18 +7,25 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
+import com.voyageone.service.daoext.cms.CmsBtShelvesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtShelvesTemplateDaoExt;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelActive;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelClientType;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelTemplateType;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by rex.wu on 2016/11/11.
@@ -26,10 +33,18 @@ import java.util.List;
 @Service
 public class CmsBtShelvesTemplateService extends BaseService {
 
+    private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
+    private final CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt;
+    private final CmsBtShelvesDaoExt cmsBtShelvesDaoExt;
+    private final MqSender sender;
+
     @Autowired
-    private CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
-    @Autowired
-    private CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt;
+    public CmsBtShelvesTemplateService(CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt, CmsBtShelvesDaoExt cmsBtShelvesDaoExt, MqSender sender) {
+        this.cmsBtShelvesTemplateDao = cmsBtShelvesTemplateDao;
+        this.cmsBtShelvesTemplateDaoExt = cmsBtShelvesTemplateDaoExt;
+        this.cmsBtShelvesDaoExt = cmsBtShelvesDaoExt;
+        this.sender = sender;
+    }
 
     public void insert(CmsBtShelvesTemplateModel template, String user, String channelId) {
         checkModel(template, "add");
@@ -42,6 +57,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
 
     public void update(CmsBtShelvesTemplateModel template, String user) {
         checkModel(template, "update");
+        template.setTemplateType(null); // 模板类型不可更改
         template.setModifier(user);
         template.setModified(new Date());
         cmsBtShelvesTemplateDao.update(template);
@@ -89,6 +105,19 @@ public class CmsBtShelvesTemplateService extends BaseService {
             if (id == null || (targetTemplate = cmsBtShelvesTemplateDao.select(id)) == null) {
                 throw new BusinessException("查询不到待编辑模板，请先选择正确的模板！");
             }
+            String targetHtmlImageTemplate = targetTemplate.getHtmlImageTemplate() == null ? "" : targetTemplate.getHtmlImageTemplate();
+            String thisHtmlImageTemplate = template.getHtmlImageTemplate() == null ? "" : template.getHtmlImageTemplate();
+            if (!targetHtmlImageTemplate.equals(thisHtmlImageTemplate)) {
+                List<CmsBtShelvesModel> shelvesModels = cmsBtShelvesDaoExt.selectByTemplateId(id);
+                if (CollectionUtils.isNotEmpty(shelvesModels)) {
+                    for (CmsBtShelvesModel shelves:shelvesModels) {
+                        Map<String,Object> param = new HashedMap();
+                        param.put("shelvesId",shelves.getId());
+                        sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
+                    }
+                }
+            }
+
         }
         // 模板类型不同，字段值不同
         if (templateType.intValue() == CmsBtShelvesTemplateModelTemplateType.LAYOUT) {
