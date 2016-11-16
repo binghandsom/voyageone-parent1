@@ -171,8 +171,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
                 //jmPromotionDetailService.delete(data.id).then(function () {
                 //    $scope.vm.modelList.splice(index, 1);
@@ -334,8 +332,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         };
@@ -369,8 +365,6 @@ define([
                 else {
                     alert($translate.instant('TXT_FAIL'));
                 }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.synchAllPrice = function () {
@@ -383,8 +377,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -419,8 +411,6 @@ define([
                 else {
                     alert($translate.instant('TXT_FAIL'));
                 }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.copyDealAll = function () {
@@ -434,8 +424,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -467,8 +455,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -489,8 +475,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -607,8 +591,6 @@ define([
             parameter.id = m.id;
             jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
                 //   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
             //$scope.vm.tagList.
             // alert(m.tagNameList.toString());
@@ -617,8 +599,6 @@ define([
         $scope.refreshPrice=function () {
             jmPromotionDetailService.refreshPrice($scope.vm.promotionId).then(function (res) {
                   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
 
         }
@@ -628,8 +608,6 @@ define([
             var parameter={jmPromotionProductId:item.id,remark:item.remark};
             jmPromotionDetailService.updateRemark(parameter).then(function (res) {
                 //   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
 
