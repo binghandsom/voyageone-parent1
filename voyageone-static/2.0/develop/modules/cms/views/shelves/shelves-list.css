@@ -1,0 +1,93 @@
+.shelves-item,
+.shelves-edit-item {
+    float: left;
+    padding: 5px 6px 0;
+    border: 1px solid #CCC;
+    box-shadow: #CCC 1px 1px 1px;
+    margin: 5px;
+}
+
+.shelves-item.empty,
+.shelves-edit-item.empty {
+    border: 1px solid red;
+}
+
+.shelves-item p,
+.shelves-edit-item p {
+    margin-bottom: 5px;
+}
+
+.shelves-item {
+    width: 252px;
+}
+
+.shelves-edit-item {
+    width: 300px;
+    position: relative;
+    padding: 5px 6px;
+}
+
+.shelves-edit-item img {
+    width: 113px;
+    height: 111px;
+}
+
+.shelves-edit-item .a-close-btn,
+.shelves-edit-item .label {
+    position: absolute;
+}
+
+.shelves-edit-item .label {
+    left: 0;
+    top: 0;
+    font-size: 14px;
+}
+
+.shelves-edit-item .a-close-btn {
+    right: 5px;
+    top: 1px;
+}
+
+.shelves-item-label,
+.shelves-item-value {
+    float: left;
+    display: inline-block;
+    margin-bottom: 1px;
+    font-weight: bold;
+}
+
+.shelves-item-label {
+    width: 80px;
+    text-align: right;
+}
+
+.shelves-item-value.price {
+    color: #262626;
+    background: #CCC;
+    width: 47px;
+    text-align: center;
+}
+
+.shelves-item-value.price:before {
+    content: '￥';
+}
+
+.shelves-item-value.price.empty {
+    border: 1px solid red;
+    color: red;
+}
+
+.shelves-item-value.price.empty:before {
+    content: '';
+}
+
+.shelves-item-value.price.empty:after {
+    content: '!';
+    float: right;
+    margin-right: -7px;
+}
+
+.panel-search {
+    background-color: #f8f8f8;
+    border-color: #d4cfcf;
+}

@@ -3,7 +3,9 @@ define([
 ], function (cms) {
 
     function NewShelvesPopupController(context, $uibModalInstance) {
+        var self = this;
 
+        self.$uibModalInstance = $uibModalInstance;
     }
 
     NewShelvesPopupController.prototype = {

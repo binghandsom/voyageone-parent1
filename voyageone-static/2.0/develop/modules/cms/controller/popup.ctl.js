@@ -1364,7 +1364,11 @@ define([
         /**新建货架模板*/
         $scope.shelvesTemplateAdd = function (context) {
             return openModal(popActions.shelves.shelvesTemplateAdd, context)
-        }
+        };
+
+        $scope.popNewShelves = function popNewShelves(context) {
+            return openModal(popActions.shelves.newShelves, context)
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 
