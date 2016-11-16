@@ -123,7 +123,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         List<Sku> skus;
         System.out.println("");
         System.out.println("=============================================================");
-        System.out.println("wareId      skuCode      jdSkuId");
+        System.out.println("wareId\tskuCode\tjdSkuId");
         System.out.println("----------------------------------");
         for (String wareId : wareIdArray) {
 
