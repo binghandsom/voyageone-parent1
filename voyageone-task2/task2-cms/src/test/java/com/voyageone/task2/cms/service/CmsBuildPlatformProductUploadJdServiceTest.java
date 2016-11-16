@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by desmond on 2016/6/17.
@@ -174,60 +175,80 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
             }
         });
 
+        List<String> successList = new ArrayList<>();
+        List<String> errorList = new ArrayList<>();
+
         StringBuilder sbUpdateSql = new StringBuilder();
         List<List<String>> pageList = CommonUtil.splitList(wareIdList, 100);
         List<Sku> skus;
         StringBuffer failCause = new StringBuffer("");
-        System.out.println("=============================================================");
-        for(List<String> page : pageList) {
-            for (String wareId : page) {
-                try {
-                    skus = jdSkuService.getSkusByWareId(shopBean, wareId, failCause);
 
-                    if (ListUtils.isNull(skus)) {
-                        System.out.println(String.format("wareId(%s)没取到skus信息!", wareId));
-                    }
-
-                    if (StringUtils.isEmpty(sbUpdateSql.toString())) {
-                        sbUpdateSql.append("// =============================================================\n");
-                    }
-
-                    skus.forEach(s -> {
-                        System.out.println(String.format("%s\t%s\t%s", wareId, s.getOuterId(), s.getSkuId()));
-                        // db.cms_bt_product_c012.update({'platforms.P23.skus.skuCode':'BAN1U761-E1S-M'},{$set:{'platforms.P23.skus.$.jdSkuId':'11110000'}})
-                        sbUpdateSql.append(String.format("db.cms_bt_product_c%s.update({'platforms.P%s.skus.skuCode':'%s'}," +
-                                        "{$set:{'platforms.P%s.skus.$.jdSkuId':'%s'}});\n", channelId, StringUtils.toString(cartId),
-                                StringUtils.toString(s.getOuterId()), StringUtils.toString(cartId), StringUtils.toString(s.getSkuId())));
-                    });
-                } catch (Exception e) {
-                    System.out.println("出现异常 wareId="+wareId);
-                }
-
-            }
-        }
-        if (!StringUtils.isEmpty(sbUpdateSql.toString())) {
-            sbUpdateSql.append("// =============================================================\n");
-        }
-        System.out.println("=============================================================");
-
-        String folder = "D:\\自动生成文件\\01_颜色尺寸sku\\";
+        String folder = "D:\\自动生成文件\\02_回写jdSkuId\\";
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String currentTime = df.format(System.currentTimeMillis());
         String sqlFileName = folder + "updateMongoDbJdSkuIds_" + channelId + "_" + cartId + "_" + currentTime + ".sql";
 
-        try {
-            File file = new File(sqlFileName);
-            // 文件不存在，创建文件
-            if (!file.exists()) {
-                file.createNewFile();
+        System.out.println("=============================================================");
+        System.out.println("件数    wareId      skuCode             jdSkuId");
+        System.out.println("---------------------------------------------------");
+        int currentBatchCnt = 1;
+        int currentCnt = 0;
+        int totalCnt = wareIdList.size();
+        for(List<String> page : pageList) {
+            sbUpdateSql.append("// ====第"+currentBatchCnt+"/"+pageList.size()+"批("+(currentCnt+1)+"~"+(currentCnt + page.size())+")件(总件数:"+totalCnt+"件)商品ID对应的jdSkuIds======\n");
+            for (String wareId : page) {
+                currentCnt++;
+                try {
+                    skus = jdSkuService.getSkusByWareId(shopBean, wareId, failCause);
+
+                    if (ListUtils.isNull(skus)) {
+                        System.out.println(String.format("第("+currentCnt+"/"+totalCnt+")条wareId(%s)没取到skus信息!", wareId));
+                    }
+
+                    for (Sku s : skus) {
+                        System.out.println(String.format(currentCnt+"/"+totalCnt+"\t%s\t%s\t%s", wareId, s.getOuterId(), s.getSkuId()));
+                        // db.cms_bt_product_c012.update({'platforms.P23.skus.skuCode':'BAN1U761-E1S-M'},{$set:{'platforms.P23.skus.$.jdSkuId':'11110000'}})
+                        sbUpdateSql.append(String.format("db.cms_bt_product_c%s.update({'platforms.P%s.skus.skuCode':'%s'}," +
+                                        "{$set:{'platforms.P%s.skus.$.jdSkuId':'%s'}});\n", channelId, StringUtils.toString(cartId),
+                                StringUtils.toString(s.getOuterId()), StringUtils.toString(cartId), StringUtils.toString(s.getSkuId())));
+                    }
+                    successList.add(wareId);
+                } catch (Exception e) {
+                    System.out.println("取得第"+currentCnt+"/"+totalCnt+"件商品id(wareId:"+wareId+")的jdSkuId时出现异常!");
+                    errorList.add(wareId);
+                }
+
             }
 
-            FileWriter fw = new FileWriter(file.getAbsoluteFile(), false);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(sbUpdateSql.toString());
-            bw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (currentBatchCnt == pageList.size()) {
+                // 最后一次加上完成说明
+                sbUpdateSql.append("// ====("+currentCnt+"/"+totalCnt+")件商品的jdSkuId全部取得完成==========================\n");
+            }
+
+            try {
+                File file = new File(sqlFileName);
+                // 文件不存在，创建文件
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                FileWriter fw = new FileWriter(file.getAbsoluteFile(), true);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(sbUpdateSql.toString());
+                bw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            sbUpdateSql.delete(0, sbUpdateSql.length());
+            currentBatchCnt++;
         }
+        System.out.println("==================================================================");
+        System.out.println("ChannelId:"+channelId+" CartId:"+cartId+"需要取得jdSkuId的商品(wareId)总件数为：" + totalCnt + "件");
+        System.out.println("1 成功取得jdSkuId商品件数\t" + successList.size()   + "件\t" + successList.stream().collect(Collectors.joining(",")));
+        System.out.println("2 未能成功取得jdSkuId商品件数\t" + errorList.size()   + "件\t" + errorList.stream().collect(Collectors.joining(",")));
+        System.out.println("==================================================================");
+        System.out.println("自动生成的jdSkuId更新SQL文： " + sqlFileName);
+
     }
 }
