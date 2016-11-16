@@ -128,12 +128,13 @@
                                         <li class="">
                                             <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
                                         </li>
-                                        <li>
-                                            <button ng-controller="showPopoverCtrl" popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
-                                                    uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left" class="btn btn-default btn-xs col-sm-12">
-                                                状态开关</button>
-                                        </li>
                                     </ul>
+                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-controller="showPopoverCtrl"
+                                            popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
+                                            uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left">
+                                        状态开关
+                                    </button>
+                                    <br>
                                     <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
                                     </button>
