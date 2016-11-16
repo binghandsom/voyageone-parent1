@@ -874,6 +874,7 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
             String CREATE_SHELVES= "createShelves";
             String UPDATE_SHELVES= "updateShelves";
+            String UPDATE_PRODUCT_SORT = "updateProductSort";
             String ADD_PRODUCT = "addProduct";
             String GET_SHELVES_INFO = "getShelvesInfo";
         }

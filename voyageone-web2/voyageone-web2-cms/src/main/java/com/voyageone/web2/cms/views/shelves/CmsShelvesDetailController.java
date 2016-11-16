@@ -2,8 +2,10 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
+import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
+import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -32,12 +34,14 @@ public class CmsShelvesDetailController extends CmsController {
     private final CmsBtShelvesService cmsBtShelvesService;
     private final CmsShelvesDetailService cmsShelvesDetailService;
     private final CmsAdvanceSearchService advanceSearchService;
+    private final CmsBtShelvesProductService cmsBtShelvesProductService;
 
     @Autowired
-    public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService, CmsBtShelvesService cmsBtShelvesService, CmsAdvanceSearchService advanceSearchService) {
+    public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService, CmsBtShelvesService cmsBtShelvesService, CmsAdvanceSearchService advanceSearchService, CmsBtShelvesProductService cmsBtShelvesProductService) {
         this.cmsShelvesDetailService = cmsShelvesDetailService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.advanceSearchService = advanceSearchService;
+        this.cmsBtShelvesProductService = cmsBtShelvesProductService;
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
@@ -113,5 +117,12 @@ public class CmsShelvesDetailController extends CmsController {
         }
         cmsBtShelvesService.insert(cmsBtShelvesModel);
         return success(cmsBtShelvesModel);
+    }
+
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.UPDATE_PRODUCT_SORT)
+    public AjaxResponse updateProductSort(@RequestBody List<CmsBtShelvesProductModel> cmsBtShelvesProductModels){
+        cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> cmsBtShelvesProductModel.setModifier(getUser().getUserName()));
+        cmsBtShelvesProductService.updateSort(cmsBtShelvesProductModels);
+        return success(true);
     }
 }
