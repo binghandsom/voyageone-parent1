@@ -870,10 +870,10 @@ public interface CmsUrlConstants {
         }
         interface DETAIL {
             String ROOT = "/cms/shelves/detail";
-            String INIT = "init";
             String SEARCH = "search";
             String CREATE_SHELVES= "createShelves";
             String UPDATE_SHELVES= "updateShelves";
+            String UPDATE_PRODUCT_SORT = "updateProductSort";
             String ADD_PRODUCT = "addProduct";
             String GET_SHELVES_INFO = "getShelvesInfo";
         }

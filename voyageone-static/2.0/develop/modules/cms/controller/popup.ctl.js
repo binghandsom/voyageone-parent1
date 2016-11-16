@@ -565,6 +565,12 @@ define([
                 "templateUrl": "views/pop/shelves/shelves-template-edit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-edit.ctl",
                 "controller": 'ShelvesTemplateEditController as ctrl'
+            },
+            newShelves: {
+                templateUrl: "views/pop/shelves/new-shelves.tpl.html",
+                controllerUrl: "modules/cms/views/pop/shelves/new-shelves.ctl",
+                controller: 'NewShelvesPopupController as $ctrl',
+                size: 'md'
             }
         },
         confirmProductRefresh: {
@@ -1359,9 +1365,10 @@ define([
         $scope.shelvesTemplateAdd = function (context) {
             return openModal(popActions.shelves.shelvesTemplateAdd, context)
         };
-        $scope.shelvesTemplateEdit = function (context) {
-            return openModal(popActions.shelves.shelvesTemplateEdit, context)
-        }
+
+        $scope.popNewShelves = function popNewShelves(context) {
+            return openModal(popActions.shelves.newShelves, context)
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 

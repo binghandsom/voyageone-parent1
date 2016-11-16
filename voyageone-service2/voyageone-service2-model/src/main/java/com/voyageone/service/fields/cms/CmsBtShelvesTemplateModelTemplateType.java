@@ -20,9 +20,10 @@ public class CmsBtShelvesTemplateModelTemplateType {
      */
     public static final int ITEM = 1;
 
-    public static final Map<Integer, String> KV = new HashMap<Integer, String>();
+    public static final Map<Integer, String> KV = new HashMap<>();
+
     static {
-        KV.put(0, "布局模板");
-        KV.put(1, "单品模板");
+        KV.put(LAYOUT, "布局模板");
+        KV.put(ITEM, "单品模板");
     }
 }

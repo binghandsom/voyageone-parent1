@@ -15,7 +15,7 @@
         <include refid="Base_Column_List" />
         from cms_bt_shelves_template
         <where >
-            `active` = 0
+            `active` = 1
             <if test="templateName != null" >
                 and `template_name` like concat('%', #{templateName,jdbcType=VARCHAR}, '%')
             </if>
