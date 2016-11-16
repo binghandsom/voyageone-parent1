@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtShelvesExample;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,8 +43,8 @@ public class CmsBtShelvesService extends BaseService {
         return cmsBtShelvesDao.selectList(map);
     }
 
-    public List<CmsBtShelvesModel> selectList(CmsBtShelvesModel example) {
-        return cmsBtShelvesDao.selectList(example);
+    public List<CmsBtShelvesModel> selectList(CmsBtShelvesModel exampleModel) {
+        return cmsBtShelvesDao.selectList(exampleModel);
     }
 
     public List<CmsBtShelvesModel> selectByChannelId(String channelId) {
@@ -51,5 +52,22 @@ public class CmsBtShelvesService extends BaseService {
         byChannelId.setChannelId(channelId);
         byChannelId.setActive(CmsBtShelvesModelActive.ACTIVATE);
         return selectList(byChannelId);
+    }
+
+    public boolean checkName(CmsBtShelvesModel exampleModel) {
+
+        CmsBtShelvesExample example = new CmsBtShelvesExample();
+
+        CmsBtShelvesExample.Criteria criteria = example.createCriteria()
+                .andChannelIdEqualTo(exampleModel.getChannelId())
+                .andCartIdEqualTo(exampleModel.getCartId())
+                .andShelvesNameEqualTo(exampleModel.getShelvesName());
+
+        Integer id = exampleModel.getId();
+
+        if (id != null)
+            criteria.andIdNotEqualTo(id);
+
+        return cmsBtShelvesDao.countByExample(example) < 1;
     }
 }
