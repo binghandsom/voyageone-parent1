@@ -57,6 +57,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
 
     public void update(CmsBtShelvesTemplateModel template, String user) {
         checkModel(template, "update");
+        template.setTemplateType(null); // 模板类型不可更改
         template.setModifier(user);
         template.setModified(new Date());
         cmsBtShelvesTemplateDao.update(template);
