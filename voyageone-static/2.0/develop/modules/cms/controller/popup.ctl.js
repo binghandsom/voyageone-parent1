@@ -1365,6 +1365,9 @@ define([
         $scope.shelvesTemplateAdd = function (context) {
             return openModal(popActions.shelves.shelvesTemplateAdd, context)
         };
+        $scope.shelvesTemplateEdit = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateEdit, context)
+        };
 
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
