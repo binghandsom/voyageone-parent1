@@ -19,6 +19,21 @@ define([
         }, {});
     }
 
+    /**判断是否可以模糊匹配上*/
+    function canMatchNode(treeNode, catName) {
+
+        if (treeNode.catName.indexOf(catName) >= 0)
+            return true;
+        else {
+            if (!treeNode.children && !treeNode.children.length)
+                return false;
+
+            return _.some(treeNode.children, function (item) {
+                return canMatchNode(item, catName);
+            });
+        }
+
+    }
 
     cms.controller('popAddChannelCategoryCtrl', (function () {
 
@@ -196,22 +211,6 @@ define([
 
             self.channelCategoryList = filterArr;
         };
-
-        /**判断是否可以模糊匹配上*/
-        function canMatchNode(treeNode, catName) {
-
-            if (treeNode.catName.indexOf(catName) >= 0)
-                return true;
-            else {
-                if (!treeNode.children && !treeNode.children.length)
-                    return false;
-
-                return _.some(treeNode.children, function (item) {
-                    return canMatchNode(item, catName);
-                });
-            }
-
-        }
 
         return PopAddChannelCategoryCtrl;
 
