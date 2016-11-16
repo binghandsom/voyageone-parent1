@@ -10,7 +10,8 @@
                             </button>
                             <ul uib-dropdown-menu>
                                 <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPrice(vm.mastData.productCode,vm.platform.skus,null,cartInfo.value)">
+                                    <a href="javascript:void(0)"
+                                       ng-click="openHistoryPrice(vm.mastData.productCode,vm.platform.skus,null,cartInfo.value)">
                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
                                     </a>
                                 </li>
@@ -25,7 +26,8 @@
                     <div class="vo_prodGallery" style="border-bottom: 1px solid #ddd;">
                         <div class="imageContainer">
                             <div class="imageWrapper">
-                                <img class="imageWrapper" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1">
+                                <img class="imageWrapper"
+                                     ng-src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1">
                             </div>
                         </div>
                     </div>
@@ -61,7 +63,12 @@
                                         Sales/销量&emsp;
                                     </label>
                                     <div class="col-md-7">
-                                        <select class="form-control"></select>
+                                        <select class="form-control">
+                                            <option value="">Total</option>
+                                            <option value="">7&nbsp;Days</option>
+                                            <option value="">30&nbsp;Days</option>
+                                            <option value="">Yearly</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -73,32 +80,62 @@
                     <div class="table-responsive">
                         <table class="table table-hover-new table-hover table_main" style="min-width:1200px">
                             <thead>
-                                <tr>
-                                    <th class="mfb-xt">Live</th>
-                                    <th class="mfb-xxt">Platform</th>
-                                    <th class="mfb-xxt">中国建议售价(当前)</th>
-                                    <th class="mfb-xxt">中国指导售价</th>
-                                    <th class="mfb-xxt">中国最终售价(当前)</th>
-                                    <th class="mfb-xxt">中国建议售价</th>
-                                    <th class="mfb-xxt">中国最终售价</th>
-                                    <th class="mfb-xxt">操作</th>
-                                    <th class="mfb-xxt">Inventory</th>
-                                    <th class="mfb-xxt">Sale QTY</th>
-                                </tr>
+                            <tr>
+                                <th class="mfb-xt text-left">Live</th>
+                                <th class="mfb-xxt text-center">Platform</th>
+                                <th class="mfb-xxt text-right">中国建议售价(当前)</th>
+                                <th class="mfb-xxt text-right">中国指导售价</th>
+                                <th class="mfb-xxt text-right">中国最终售价(当前)</th>
+                                <th class="mfb-xxt text-center">中国建议售价</th>
+                                <th class="mfb-xxt text-center">中国最终售价</th>
+                                <th class="mfb-xxt text-center">操作</th>
+                                <th class="mfb-xxt text-right">Inventory</th>
+                                <th class="mfb-xxt text-right">Sale QTY</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="mfb-xt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                    <td class="mfb-xxt"></td>
-                                </tr>
+                            <tr>
+                                <td class="mfb-xt text-left">
+                                    <input type="checkbox">
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    <platform-status data="{
+                                        cartId: 23,
+                                        cartName: 'TG',
+                                        status: 'Approved',
+                                        pStatus: 'OnSale',
+                                        pReallyStatus: 'OnSale',
+                                        pPublishError: '',
+                                        numberId: 525897623218
+                                    }"></platform-status>
+                                </td>
+                                <td class="mfb-xxt text-right">
+                                    1,099.00
+                                    ~
+                                    2,099.00
+                                </td>
+                                <td class="mfb-xxt text-right">
+                                    1,099.00
+                                    ~
+                                    2,099.00
+                                </td>
+                                <td class="mfb-xxt text-right">
+                                    1,099.00
+                                    ~
+                                    2,099.00
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    <input type="text" class="form-control text-right" placeholder="中国建议售价">
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    <input type="text" class="form-control text-right" placeholder="中国最终售价">
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    <button class="btn btn-success btn-pop">价格保存</button>
+                                </td>
+                                <td class="mfb-xxt  text-right"></td>
+                                <td class="mfb-xxt text-right"></td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
