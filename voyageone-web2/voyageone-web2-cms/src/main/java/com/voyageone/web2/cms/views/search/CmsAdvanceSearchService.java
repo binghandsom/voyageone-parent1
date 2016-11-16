@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import com.voyageone.service.impl.cms.CmsBtShelvesService;
+import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +89,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     private CmsBtExportTaskService cmsBtExportTaskService;
 
     @Autowired
+    private CmsBtShelvesService cmsBtShelvesService;
+
+    @Autowired
     private SxProductService sxProductService;
 
     /**
@@ -141,6 +146,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
         // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
+        Map<String, List> shelvesMap = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
@@ -150,8 +156,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 param.put("cartId", Integer.parseInt(cartBean.getValue()));
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
             }
+
+            shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelId(userInfo.getSelChannelId()));
         }
         masterData.put("promotionMap", promotionMap);
+
+        masterData.put("shelvesMap", shelvesMap);
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));

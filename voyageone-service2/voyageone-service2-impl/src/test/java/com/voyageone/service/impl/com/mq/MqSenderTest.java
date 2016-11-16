@@ -84,6 +84,7 @@ public class MqSenderTest extends TestCase {
         Map<String, Object> message = new HashMap<>();
         message.put("mqService", "CmsFeedExportService");
         message.put("active", "start");
-        sender.sendMessage("MQ_james_job", message,100000);
+        sender.sendMessage("MQ_james_job", message,5);
+        sender.sendMessage("MQ_james_job", message,5);
     }
 }
