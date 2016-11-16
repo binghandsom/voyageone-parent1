@@ -3,10 +3,12 @@ package com.voyageone.web2.cms.views.shelves;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
+import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +31,6 @@ import java.util.Map;
 public class CmsShelvesDetailController extends CmsController {
     private final CmsBtShelvesService cmsBtShelvesService;
     private final CmsShelvesDetailService cmsShelvesDetailService;
-
     private final CmsAdvanceSearchService advanceSearchService;
 
     @Autowired
@@ -70,5 +72,46 @@ public class CmsShelvesDetailController extends CmsController {
         List<Integer> shelvesIds = (List<Integer>) params.get("shelvesIds");
         Boolean isLoadPromotionPrice = params.get("isLoadPromotionPrice") == null?false: (Boolean) params.get("isLoadPromotionPrice");
         return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds,isLoadPromotionPrice));
+    }
+
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.CREATE_SHELVES)
+    public AjaxResponse createShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel){
+        cmsBtShelvesModel.setChannelId(getUser().getSelChannelId());
+        cmsBtShelvesModel.setActive(CmsBtShelvesModelActive.ACTIVATE);
+        cmsBtShelvesModel.setCreater(getUser().getUserName());
+        cmsBtShelvesModel.setModifier(getUser().getUserName());
+        cmsBtShelvesModel.setCreated(new Date());
+        cmsBtShelvesModel.setModified(new Date());
+
+        Map<String,Object> map = new HashedMap();
+        map.put("channelId",cmsBtShelvesModel.getChannelId());
+        map.put("cartId", cmsBtShelvesModel.getCartId());
+        map.put("shelvesName", cmsBtShelvesModel.getShelvesName());
+        List<CmsBtShelvesModel> cmsBtShelvesModels = cmsBtShelvesService.selectList(map);
+        if(cmsBtShelvesModels != null){
+            throw new BusinessException("该货架名称已存在");
+        }
+
+        cmsBtShelvesService.insert(cmsBtShelvesModel);
+        return success(cmsBtShelvesModel);
+    }
+
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.UPDATE_SHELVES)
+    public AjaxResponse updateShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel){
+        cmsBtShelvesModel.setModifier(getUser().getUserName());
+        cmsBtShelvesModel.setModified(new Date());
+
+        Map<String,Object> map = new HashedMap();
+        map.put("channelId",cmsBtShelvesModel.getChannelId());
+        map.put("cartId", cmsBtShelvesModel.getCartId());
+        map.put("shelvesName", cmsBtShelvesModel.getShelvesName());
+        List<CmsBtShelvesModel> cmsBtShelvesModels = cmsBtShelvesService.selectList(map);
+        if(cmsBtShelvesModels != null){
+            if(cmsBtShelvesModels.stream().filter(cmsBtShelvesModel1 -> cmsBtShelvesModel1.getId() != cmsBtShelvesModel.getId()).count() > 0L){
+                throw new BusinessException("该货架名称已存在");
+            }
+        }
+        cmsBtShelvesService.insert(cmsBtShelvesModel);
+        return success(cmsBtShelvesModel);
     }
 }

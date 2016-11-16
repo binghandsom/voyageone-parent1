@@ -50,7 +50,7 @@ public class CmsBtShelvesModel extends BaseModel {
     protected Integer promotionId;
 
     /**
-     * 逻辑删除：0未被删除，1被删除
+     * 逻辑删除：1未被删除，0被删除
      */
     protected Integer active;
 
