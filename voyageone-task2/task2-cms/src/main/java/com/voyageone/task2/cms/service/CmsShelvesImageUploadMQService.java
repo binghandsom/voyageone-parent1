@@ -18,6 +18,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     @Override
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
+
         if(shelvesId != null) {
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
             List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesProductService.getByShelvesId(shelvesId);

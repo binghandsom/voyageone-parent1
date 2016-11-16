@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -10,18 +11,24 @@ import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseViewService;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by james on 2016/11/15.
@@ -35,6 +42,12 @@ class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final PromotionCodeService promotionCodeService;
     private final ProductService productService;
+    @Autowired
+    private MqSender sender;
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
+
 
     @Autowired
     public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService, CmsBtShelvesService cmsBtShelvesService, PromotionCodeService promotionCodeService, ProductService productService) {
@@ -47,13 +60,29 @@ class CmsShelvesDetailService extends BaseViewService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds) {
+    List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
+
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
+
+            //更新redis监控标志位的超时时间
+            if(CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null){
+                Map<String, Object> messageMap = new HashedMap();
+                messageMap.put("shelvesId",shelvesId);
+                CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
+                sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
+            }
+            redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
+
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
             cmsBtShelvesInfoBean.setShelvesModel(cmsBtShelvesModel);
-            cmsBtShelvesInfoBean.setShelvesProductModels(getShelvesProductInfo(cmsBtShelvesModel));
+
+            if(isLoadPromotionPrice){
+                cmsBtShelvesInfoBean.setShelvesProductModels(getShelvesProductInfo(cmsBtShelvesModel));
+            }else{
+                cmsBtShelvesInfoBean.setShelvesProductModels(cmsBtShelvesProductService.getByShelvesId(cmsBtShelvesModel.getId()));
+            }
             cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
         });
         return cmsBtShelvesInfoBanList;
@@ -101,10 +130,10 @@ class CmsShelvesDetailService extends BaseViewService {
     /**
      * 根据货架产品信息包含活动价格
      */
-    private List<CmsBtShelvesProductBean> getShelvesProductInfo(CmsBtShelvesModel cmsBtShelvesModel) {
+    private List<CmsBtShelvesProductModel> getShelvesProductInfo(CmsBtShelvesModel cmsBtShelvesModel) {
         List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesProductService.getByShelvesId(cmsBtShelvesModel.getId());
         if (!ListUtils.isNull(cmsBtShelvesProductModels)) {
-            List<CmsBtShelvesProductBean> cmsBtShelvesProductBeens = new ArrayList<>(cmsBtShelvesProductModels.size());
+            List<CmsBtShelvesProductModel> cmsBtShelvesProductBeens = new ArrayList<>(cmsBtShelvesProductModels.size());
             List<CmsBtPromotionCodesBean> cmsBtPromotionCodes = null;
             if (cmsBtShelvesModel.getPromotionId() != null && cmsBtShelvesModel.getPromotionId() > 0) {
                 cmsBtPromotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(cmsBtShelvesModel.getPromotionId(), cmsBtShelvesModel.getChannelId());
@@ -118,7 +147,6 @@ class CmsShelvesDetailService extends BaseViewService {
                     cmsBtShelvesProductBean.setPromotionPrice(getPromotionPrice(item.getProductCode(), finalCmsBtPromotionCodes));
                 }
             });
-
             return cmsBtShelvesProductBeens;
         }
         return new ArrayList<>();
