@@ -2,15 +2,10 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
-import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -19,15 +14,11 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.BaseViewService;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,42 +31,41 @@ import java.util.concurrent.TimeUnit;
 class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesService cmsBtShelvesService;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
-    private final PromotionCodeService promotionCodeService;
     private final ProductService productService;
-    @Autowired
-    private MqSender sender;
-    @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
-
-
+    private final MqSender sender;
+    private final RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
-    public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService, CmsBtShelvesService cmsBtShelvesService, PromotionCodeService promotionCodeService, ProductService productService) {
+    public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService,
+                                   CmsBtShelvesService cmsBtShelvesService,
+                                   ProductService productService, RedisTemplate<Object, Object> redisTemplate,
+                                   MqSender sender) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.cmsBtShelvesService = cmsBtShelvesService;
-        this.promotionCodeService = promotionCodeService;
         this.productService = productService;
+        this.redisTemplate = redisTemplate;
+        this.sender = sender;
     }
 
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    public List<CmsBtShelvesInfoBean> getShelvesInfo(String channelId, List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
+    List<CmsBtShelvesInfoBean> getShelvesInfo(List<Integer> shelvesIds, Boolean isLoadPromotionPrice) {
 
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBanList = new ArrayList<>();
         shelvesIds.forEach(shelvesId -> {
 
             //更新redis监控标志位的超时时间
-            if(CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null){
-                Map<String, Object> messageMap = new HashedMap();
-                messageMap.put("shelvesId",shelvesId);
+            if (CacheHelper.getValueOperation().get("ShelvesMonitor_" + shelvesId) == null) {
+                Map<String, Object> messageMap = new HashMap<>();
+                messageMap.put("shelvesId", shelvesId);
                 CacheHelper.getValueOperation().set("ShelvesMonitor_" + shelvesId, shelvesId);
                 sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesMonitorJob, messageMap);
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, isLoadPromotionPrice);
-            if(cmsBtShelvesInfoBean != null){
+            if (cmsBtShelvesInfoBean != null) {
                 cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
             }
         });
@@ -101,9 +91,11 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
             }
+            if (platform == null)
+                return;
             cmsBtShelvesProductModel.setProductCode(code);
             String title = platform.getFields().getStringAttribute("title");
-            cmsBtShelvesProductModel.setProductName(title == null?"":title);
+            cmsBtShelvesProductModel.setProductName(title == null ? "" : title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
             if (!imgList.isEmpty() && imgList.get(0).size() > 0) {
