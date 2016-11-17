@@ -1,11 +1,9 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsBtSizeChart.GetProductSizeChartListParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtSizeChartDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSizeChartImageGroupModel;
@@ -54,6 +52,20 @@ public class SizeChartService extends BaseService {
         return cmsBtSizeChartDao.select(queryObject);
     }
 
+    public List<CmsBtSizeChartModel> getProductSizeChartList(GetProductSizeChartListParameter parameter) {
+
+        List<String> brandNameList = new ArrayList<>();
+        brandNameList.add(parameter.getBrandName());
+        List<String> productTypeList = new ArrayList<>();
+        productTypeList.add(parameter.getProductType());
+        List<String> sizeTypeList = new ArrayList<>();
+        sizeTypeList.add(parameter.getSizeType());
+
+        String query = getSearchQuery(parameter.getChannelId(), null, null, null, null, brandNameList, productTypeList, sizeTypeList);
+
+        return cmsBtSizeChartDao.select(query);
+
+    }
     /**
      * 按照填写的条件去数据库检索记录
      *

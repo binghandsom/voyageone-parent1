@@ -368,17 +368,72 @@
                                 </uib-tabset>
 
                                 <div class="wrapper-sm m-t-xs" style="margin-top: -10px;">
-                                    <h5 class="text-vo font-bold">SKU库存明细</h5>
-                                    <hr style="margin-top:0px;margin-bottom:10px"/>
-                                    <div>
-                                        <div class="form-group" ng-repeat="invObj in vm.mastData.inventoryList">
-                                            <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skucode}}</label>
-                                            <div class="col-sm-2 text-left">
-                                                <input type="text" class="form-control" ng-model="invObj.skyqty" disabled>
+                                    <uib-tabset class="tab-container vo_nav-tabs">
+                                        <uib-tab>
+                                            <tab-heading>库存明细</tab-heading>
+                                            <div>
+                                                <div class="form-group" ng-repeat="invObj in vm.mastData.inventoryList">
+                                                    <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skucode}}</label>
+                                                    <div class="col-sm-2 text-left">
+                                                        <input type="text" class="form-control" ng-model="invObj.skyqty" disabled>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </uib-tab>
+                                        <uib-tab>
+                                            <tab-heading>尺码表 <i ng-if="vm.sizeChartList.length>0" class="fa fa-warning" style="color: red;"></i></tab-heading>
+                                            <select class="form-control" ng-model="vm.selectSizeChart" ng-change ="sizeChartOnchange()" ng-options="m as m.sizeChartName for m in vm.sizeChartList">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
+                                            <div  ng-controller="popupCtrl">
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover-new vo_table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="mfb-xt text-center">Origin Size</th>
+                                                            <th class="mfb-xt text-center">Platfrom Size</th>
+                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart==null">
+                                                                <a href="#/image/size_chart_list" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
+                                                            </th>
+                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart">
+                                                                <a href="#/channel/sizechart/detail/{{vm.selectSizeChart.sizeChartId}}" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody ng-if="vm.selectSizeChart">
+                                                        <tr ng-repeat="m in vm.selectSizeChart.sizeMap" >
+                                                            <td class="mfb-xt text-center">{{m.originalSize}}</td>
+                                                            <td class="mfb-xt text-center">{{m.adjustSize}}</td>
+                                                            <td class="mfb-xt text-center">
+                                                                <label class="checkbox-inline c-checkbox" >
+                                                                    <input type="checkbox" style="margin: 0;"  readonly="readonly" disabled="disabled" ng-checked="m.usual==1"  ><span class="fa fa-check"></span>
+                                                                </label>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div ng-if="select==2" ng-controller="popupCtrl">
+                                                <img src="http://image.voyageone.com.cn/cms/size/010/20160624044440.jpg" alt=""  ng-click="openImgGroupListImg('http://image.voyageone.com.cn/cms/size/010/20160624044440.jpg')">
+                                            </div>
+                                        </uib-tab>
+                                        <uib-tab>
+                                            <tab-heading>备注 <i ng-if="vm.productComm.comment!=null&&vm.productComm.comment!=''" class="fa fa-warning" style="color: orange;"></i></tab-heading>
+                                            <div>
+                                                <div class="row form-group">
+                                                    <label class="col-md-3 control-label">商品相关备注</label>
+                                                </div>
+                                                <div class="row form-group">
+                                                    <div class="col-md-12">
+                                                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="vm.productComm.comment"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </uib-tab>
+                                    </uib-tabset>
                                 </div>
+
                             </div>
                         </div>
                     </div>

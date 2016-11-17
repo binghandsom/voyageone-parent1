@@ -7,7 +7,7 @@ define([
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
 ], function (cms, carts) {
-    cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
+    cms.directive("masterSchema", function (productDetailService,sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
@@ -32,7 +32,9 @@ define([
                         "images8": [],
                         "images9": []
                     },
-                    hsCodeOrigin: null
+                    hsCodeOrigin: null,
+                    sizeChartList:[],
+                    selectSizeChart:null
                 };
 
                 initialize();
@@ -42,7 +44,7 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.copyCommonProperty = copyCommonProperty;
                 scope.goDetail = goDetail;
-
+                
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -83,9 +85,22 @@ define([
                         if (!scope.vm.mastData.isMain) {
                             alert("本商品不是平台主商品，如果您需要在天猫或者京东上新，您所修改的信息不会同步到平台上，图片除外。");
                         }
+                        var parameterGetProductSizeChartList={};
+
+                        parameterGetProductSizeChartList.brandName=scope.productInfo.masterField.brand;
+                        parameterGetProductSizeChartList.productType=scope.productInfo.masterField.productType;
+                        parameterGetProductSizeChartList.sizeType=scope.productInfo.masterField.sizeType;
+
+                        console.log(parameterGetProductSizeChartList);
+
+                        sizeChartService.getProductSizeChartList(parameterGetProductSizeChartList).then(function (res) {
+                            scope.vm.sizeChartList=res.data;
+                        });
                     });
                 }
-
+                scope.sizeChartOnchange=function (selectSizeChart) {
+                    console.log(scope.vm.selectSizeChart);
+                }
                 /**
                  @description 类目popup
                  * @param productInfo
@@ -288,6 +303,30 @@ define([
 
                     window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓", args[args.length - 1]));
 
+                }
+
+                /**全schema中通过name递归查找field*/
+                function searchField(fieldName, schema) {
+
+                    var result = null;
+
+                    _.find(schema, function (field) {
+
+                        if (field.name === fieldName) {
+                            result = field;
+                            return true;
+                        }
+
+                        if (field.fields && field.fields.length) {
+                            result = searchField(fieldName, field.fields);
+                            if (result)
+                                return true;
+                        }
+
+                        return false;
+                    });
+
+                    return result;
                 }
 
             }
