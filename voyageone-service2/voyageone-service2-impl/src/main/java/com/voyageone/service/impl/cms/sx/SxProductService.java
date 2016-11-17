@@ -1089,7 +1089,7 @@ public class SxProductService extends BaseService {
             // modified by morse.lu 2016/10/26 start
             // liking 不允许手动填写别名
 //            if (!StringUtils.isEmpty(sizeNick)) {
-            if (cartId != CartEnums.Cart.LIKING.getValue() && !StringUtils.isEmpty(sizeNick)) {
+            if (cartId != CartEnums.Cart.LIKING.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
                 // modified by morse.lu 2016/10/26 end
                 // 直接用Nick
                 sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
