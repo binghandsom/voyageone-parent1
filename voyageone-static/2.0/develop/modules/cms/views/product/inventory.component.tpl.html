@@ -27,7 +27,7 @@
                                 <!-- (国内)自营 -->
                                 <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
                                 <!-- (国内)非自营 -->
-                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{tblData.header.inNOwn.length}}{{attr.title ? attr.title : attr.name}}</th>
+                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
                                 <!-- (国际)自营 -->
                                 <th ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
                                 <!-- (国际)非自营 -->
@@ -46,7 +46,7 @@
                                 <td ng-if="showDetail" class="text-center v-middle">{{skuDetail.base.saleSize}}</td>
                                 <td class="text-right v-middle">{{skuDetail.base.total}}</td>
                                 <!-- (国内)自营 -->
-                                <td ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{tblData.header.inOwn.length}}{{skuDetail.inOwn[attr.name]}}</td>
+                                <td ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.inOwn[attr.name]}}</td>
                                 <!-- (国内)非自营 -->
                                 <td ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.inNOwn[attr.name]}}</td>
                                 <!-- (国际)自营 -->
