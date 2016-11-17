@@ -283,7 +283,7 @@ public class PromotionDetailService extends BaseService {
             codesModel.setModelId(groupModel.getGroupId().intValue());
         }
 
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
         if (!imgList.isEmpty()) {
             codesModel.setImageUrl1(imgList.get(0).getName());
         } else {
