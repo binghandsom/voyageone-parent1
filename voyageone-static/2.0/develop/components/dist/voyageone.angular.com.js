@@ -1,11 +1,9 @@
-
-
 /*****************************/
 
 /**
  * angular component head file。
  * 声明各个组件的父模块
- * 
+ *
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -126,14 +124,14 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope, $searchAdvanceService2, $promotionHistoryService) {
 
     $scope.templateAction = {
-        "promotionDetailPopover":{
+        "promotionDetailPopover": {
             templateUrl: 'promotionDetailTemplate.html',
             title: 'Title'
         },
-        "advanceSkuPopover":{
+        "advanceSkuPopover": {
             templateUrl: 'advanceSkuTemplate.html',
             title: 'Title'
         }
@@ -164,20 +162,20 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(code, skus , entity){
+    function popoverAdvanceSku(code, skus, entity) {
 
-        if(entity.isOpen){
+        if (entity.isOpen) {
             entity.isOpen = false;
             return;
         }
         entity.isOpen = true;
 
-        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+        $searchAdvanceService2.getSkuInventory(code).then(function (resp) {
             var skuDetails = [],
                 skuInventories = resp.data;
-            _.forEach(skus, function(sku) {
+            _.forEach(skus, function (sku) {
                 var inventory = null;
-                _.forEach(skuInventories, function(skuInventory) {
+                _.forEach(skuInventories, function (skuInventory) {
                     if (skuInventory.sku == sku.skuCode) {
                         inventory = skuInventory.qtyChina;
                         return false;
@@ -198,15 +196,15 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(code,entity){
+    function popoverPromotionDetail(code, entity) {
 
-        if(entity.isOpen){
+        if (entity.isOpen) {
             entity.isOpen = false;
             return;
         }
         entity.isOpen = true;
 
-        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function (resp) {
             $scope.promotionDetail = resp.data;
         });
 
@@ -339,15 +337,15 @@ angular.module("voyageone.angular.directives").directive("enterClick", function 
  */
 angular.module("voyageone.angular.directives").directive("fileStyle", function () {
 
-    function FileStyleController($scope,$element){
+    function FileStyleController($scope, $element) {
         this.scope = $scope;
         this.element = $element;
     }
 
-    FileStyleController.prototype.init = function(attrs){
+    FileStyleController.prototype.init = function (attrs) {
         var options;
 
-        if(attrs.fileStyle != null && attrs.fileStyle != "")
+        if (attrs.fileStyle != null && attrs.fileStyle != "")
             options = eval("(" + attrs.fileStyle + ")");
 
         this.element.filestyle(options);
@@ -355,10 +353,10 @@ angular.module("voyageone.angular.directives").directive("fileStyle", function (
 
     return {
         restrict: "A",
-        scope:true,
+        scope: true,
         controller: FileStyleController,
         controllerAs: 'styleCtrl',
-        link: function($scope,$element,$attrs){
+        link: function ($scope, $element, $attrs) {
             $scope.styleCtrl.init($attrs);
         }
     };
@@ -484,11 +482,11 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 return;
 
             //默认为2位
-            var scale , _length;
+            var scale, _length;
 
-            var _numArr =  attr.scale.split(",");
+            var _numArr = attr.scale.split(",");
 
-            if(_numArr.length !== 2){
+            if (_numArr.length !== 2) {
 
                 console.warn("scale格式为{ 位数 },{ 精度 } 默认值=》位数：15位，精度为小数点2位。");
 
@@ -496,7 +494,7 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 _length = 15;
                 scale = 2;
 
-            }else{
+            } else {
 
                 _length = _numArr[0];
                 scale = _numArr[1];
@@ -507,7 +505,7 @@ angular.module("voyageone.angular.directives").directive("input", function () {
 
                 var regex;
 
-                if(scale != 0)
+                if (scale != 0)
                     regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
                 else
                     regex = new RegExp("^\\d+$");
@@ -519,11 +517,11 @@ angular.module("voyageone.angular.directives").directive("input", function () {
                 ngModelController.$setViewValue(this.value.substr(0, this.value.length - 1));
                 ngModelController.$render();
 
-            }).on("keypress",function(event){
+            }).on("keypress", function (event) {
 
                 var _value = angular.copy(this.value);
 
-                if(_value.toString().length >= _length){
+                if (_value.toString().length >= _length) {
                     event.preventDefault();
                 }
 
@@ -717,43 +715,42 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
  * @version: 2.3.0, 2016-7-1
  */
 'use strict';
-angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function($window) {
+angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function ($window) {
 
-        var helper = {
-            support: !!($window.FileReader && $window.CanvasRenderingContext2D),
-            isFile: function(item) {
-                return angular.isObject(item) && item instanceof $window.File;
-            },
-            isImage: function(file) {
-                var type =  '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        };
+    var helper = {
+        support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+        isFile: function (item) {
+            return angular.isObject(item) && item instanceof $window.File;
+        },
+        isImage: function (file) {
+            var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    };
 
-        return {
-            restrict: 'A',
-            link: function(scope, element, attributes) {
-                if (!helper.support) return;
+    return {
+        restrict: 'A',
+        link: function (scope, element, attributes) {
+            if (!helper.support) return;
 
-                var params = scope.$eval(attributes.ngThumb);
+            var params = scope.$eval(attributes.ngThumb);
 
-                if (!helper.isImage(params.file)) return;
+            if (!helper.isImage(params.file)) return;
 
-                var fileReader = new FileReader();
+            var fileReader = new FileReader();
 
-                fileReader.readAsDataURL(params.file);
+            fileReader.readAsDataURL(params.file);
 
-                fileReader.onload = function (event) {
-                    scope.$apply(function () {
-                        attributes.$set('src', event.target.result);
-                    });
-                };
+            fileReader.onload = function (event) {
+                scope.$apply(function () {
+                    attributes.$set('src', event.target.result);
+                });
+            };
 
 
-            }
-        };
-    }]);
-
+        }
+    };
+}]);
 
 
 /*****************************/
@@ -1753,7 +1750,6 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
                 if (showName)
                     container.append(angular.element('<s-header>'));
-
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
                 innerElement = angular.element('<div class="s-wrapper">');
                 container.append(innerElement);
@@ -3201,11 +3197,11 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
 
 angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
 
-    return function (input,format) {
+    return function (input, format) {
 
         var miliTimes;
 
-        if (!input){
+        if (!input) {
             console.warn("没有要转换的日期");
             return '';
         }
@@ -3355,7 +3351,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-                        
+
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3364,7 +3360,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-                        
+
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3497,7 +3493,6 @@ AjaxService.prototype.post = function (url, data, option) {
 
     return defer.promise;
 };
-
 
 
 /*****************************/
@@ -3690,12 +3685,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-    
+
     languages: {
         en: "en",
         zh: "zh"
     },
-    
+
     /**
      * set the web side language type.
      */
@@ -3706,7 +3701,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-    
+
     /**
      * get the browser language type.
      * @returns {string}
