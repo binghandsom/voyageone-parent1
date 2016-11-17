@@ -106,9 +106,9 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     }
 
     private void uploadImageTm(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
-        shopBean.setAppKey("21008948");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
+//        shopBean.setAppKey("21008948");
+//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+//        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
         try {
             PictureUploadResponse pictureUploadResponse = null;
 
@@ -139,10 +139,10 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     }
 
     private void uploadImageJd(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
-        shopBean.setApp_url("https://api.jd.com/routerjson");
-        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
-        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
-        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
+//        shopBean.setApp_url("https://api.jd.com/routerjson");
+//        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
+//        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+//        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
         try {
             ImgzonePictureUploadResponse pictureUploadResponse = null;
 
