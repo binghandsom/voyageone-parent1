@@ -34,7 +34,8 @@
         </set>
         where
             `shelves_id` = #{shelvesId,jdbcType=INTEGER},
-            `product_code` = #{productCode,jdbcType=VARCHAR},
+        and
+            `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
 
     <update id="updatePlatformStatus" parameterType="com.voyageone.service.model.cms.CmsBtShelvesProductModel" >
@@ -61,7 +62,8 @@
         </set>
         where
         `shelves_id` = #{shelvesId,jdbcType=INTEGER},
-        `product_code` = #{productCode,jdbcType=VARCHAR},
+        and
+        `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
 
     <update id="updatePlatformImage" parameterType="com.voyageone.service.model.cms.CmsBtShelvesProductModel" >
@@ -80,15 +82,16 @@
                 `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
             <if test="modified != null" >
-                `modified` = #{modified,jdbcType=TIMESTAMP},
+                `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
             <if test="modified == null" >
-                `modified` = now(),
+                `modified` = now()
             </if>
         </set>
         where
         `shelves_id` = #{shelvesId,jdbcType=INTEGER},
-        `product_code` = #{productCode,jdbcType=VARCHAR},
+        and
+        `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
 
     <update id="clearImageByShelvesIds" parameterType="java.util.Map">
