@@ -626,6 +626,8 @@ public interface CmsUrlConstants {
             String MOVE_SKU_PREVIEW = "moveSkuPreview";
 
             String MOVE_SKU = "moveSku";
+
+			String GET_SKU_STOCK_INFO = "getSkuStockInfo";
         }
 
         interface HISTORY {

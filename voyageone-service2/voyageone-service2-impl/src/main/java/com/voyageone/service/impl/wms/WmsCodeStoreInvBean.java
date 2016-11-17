@@ -65,7 +65,7 @@ public class WmsCodeStoreInvBean {
             return gbNOwn;
         }
 
-        List<String> getOrder(){
+        public List<String> getOrder(){
             return HEAD_ORDER;
         }
     }
@@ -155,9 +155,17 @@ public class WmsCodeStoreInvBean {
                 return origSize;
             }
 
-            public String getSaleSize() {
+            public void setOrigSize(String origSize) {
+				this.origSize = origSize;
+			}
+
+			public String getSaleSize() {
                 return saleSize;
             }
+
+			public void setSaleSize(String saleSize) {
+				this.saleSize = saleSize;
+			}
 
             public int getTotal() {
                 return total;

@@ -4,109 +4,58 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-hover-new table-hover table_main table_compare" ng-style="{'width':showDetail?'1950px':''}">
+                        <table class="table table-hover-new table-hover table_main table_compare">
                             <thead>
                             <tr>
-                                <th class="text-center" ng-attr-colspan="{{thEntity.generalLength}}">基础信息</th>
-                                <th class="text-center table_compare_before" ng-attr-colspan="{{thEntity.CNPrivateLength}}">(国内)自营</th>
-                                <th class="text-center table_compare_before" ng-attr-colspan="{{thEntity.CNThirdPartyLength}}">(国内)非自营</th>
-                                <th class="text-center table_compare_after" ng-attr-colspan="{{thEntity.USPrivateLength}}">(国际)自营</th>
-                                <th class="text-center table_compare_after" ng-attr-colspan="{{thEntity.USThirdPartyLength}}">(国际)非自营</th>
+                                <th class="text-center" ng-attr-colspan="{{thConfig.baseColumns}}">基础信息</th>
+                                <th class="text-center table_compare_before" ng-attr-colspan="{{thConfig.inOwnColumns}}">(国内)自营</th>
+                                <th class="text-center table_compare_before" ng-attr-colspan="{{thConfig.inNOwnColumns}}">(国内)非自营</th>
+                                <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbOwnColumns}}">(国际)自营</th>
+                                <th class="text-center table_compare_after" ng-attr-colspan="{{thConfig.gbNOwnColumns}}">(国际)非自营</th>
                                 <th class="text-center" colspan="3"></th>
                             </tr>
                             <tr>
+                            	<!-- 基础信息 -->
                                 <th class="text-center" style="border: 1px solid #ccc;width: 117px;">
                                     <label class="pull-left" style="margin-bottom: 0">
                                         <i ng-class="{'fa fa-plus-circle':!showDetail,'fa fa-minus-circle':showDetail}" ng-click="showDetail=!showDetail;count(showDetail)"></i>
                                     </label>
                                     SKU</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
-                                    <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
+                                <th ng-if="showDetail" style="border: 1px solid #ccc;width: 88px;" class="text-center">销售尺码</th>
                                 <th class="text-center" style="border: 1px solid #ccc;width: 50px;">库存</th>
-                                <th class="text-center table_compare_before" style="width: 88px;">库存总量</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">TM</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">HM</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">ASC</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">SL</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">IK</th>
-                                <th class="text-center table_compare_before" style="width: 88px;">库存总量</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">GA</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">TST</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_before" style="">WHS</th>
-                                <th class="text-center table_compare_after" style="width: 88px;">库存总量</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">LA</th>
-                                <th class="text-center table_compare_after" style="width: 88px;">库存总量</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">KSS</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">LAK</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">ASC</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">SL</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">IK</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">GA</th>
-                                    <th ng-if="showDetail" class="text-center table_compare_after" style="">TST</th>
+                                <!-- (国内)自营 -->
+                                <th ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
+                                <!-- (国内)非自营 -->
+                                <th ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_before" ng-style="{'width': '88px'}">{{tblData.header.inNOwn.length}}{{attr.title ? attr.title : attr.name}}</th>
+                                <!-- (国际)自营 -->
+                                <th ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
+                                <!-- (国际)非自营 -->
+                                <th ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'" class="text-center table_compare_after" ng-style="{'width': '88px'}">{{attr.title ? attr.title : attr.name}}</th>
                                 <th class="text-center" style="width: 65px;">CH</th>
                                 <th class="text-center" style="width: 72px;">On Hold</th>
                                 <th class="text-center" style="width: 87px;">New Order</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="text-left v-middle">001-123456-001</td>
-                                <td class="text-center v-middle">S</td>
-                                    <td ng-if="showDetail" class="text-center v-middle">S</td>
-                                <td class="text-right v-middle">1,000</td>
-                                <td class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                <td class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_before">1,000</td>
-                                <td class="text-right v-middle table_compare_after">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                <td class="text-right v-middle table_compare_after"> 1,000 </td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000(-1)</td>
-                                    <td ng-if="showDetail" class="text-right v-middle table_compare_after">1,000</td>
-                                <td class="text-right v-middle">1,000</td>
-                                <td class="text-right v-middle"> (-2) </td>
-                                <td class="text-right v-middle"> (-2) </td>
-                            </tr>
-
-                            <tr>
-                                <td class="text-center v-middle">Total</td>
-                                <td class="text-left v-middle"></td>
-                                <td ng-if="showDetail" class="text-right v-middle"></td>
-                                <td class="text-right v-middle">10,000</td>
-                                <td class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_before">10,000</td>
-                                <td class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td class="text-right v-middle table_compare_after"> 10,000 </td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td ng-if="showDetail" class="text-right v-middle table_compare_after">10,000</td>
-                                <td class="text-right v-middle">1,000</td>
-                                <td class="text-right v-middle"> (-20) </td>
-                                <td class="text-right v-middle"> (-20) </td>
+                            <tr ng-repeat="skuDetail in tblData.stocks">
+                            	<!-- 基础信息 -->
+                            	<td ng-if="!$last" class="text-left v-middle">{{skuDetail.base.sku}}</td>
+                            	<td ng-if="$last" class="text-center v-middle">Total</td>
+                                <td class="text-center v-middle">{{skuDetail.base.origSize}}</td>
+                                <td ng-if="showDetail" class="text-center v-middle">{{skuDetail.base.saleSize}}</td>
+                                <td class="text-right v-middle">{{skuDetail.base.total}}</td>
+                                <!-- (国内)自营 -->
+                                <td ng-repeat="attr in tblData.header.inOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{tblData.header.inOwn.length}}{{skuDetail.inOwn[attr.name]}}</td>
+                                <!-- (国内)非自营 -->
+                                <td ng-repeat="attr in tblData.header.inNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.inNOwn[attr.name]}}</td>
+                                <!-- (国际)自营 -->
+                                <td ng-repeat="attr in tblData.header.gbOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbOwn[attr.name]}}</td>
+                                <!-- (国际)非自营 -->
+                                <td ng-repeat="attr in tblData.header.gbNOwn" ng-if="showDetail || attr.name == 'total'" class="text-right v-middle">{{skuDetail.gbNOwn[attr.name]}}</td>
+                                <td class="text-right v-middle">{{skuDetail.order.ch}}</td>
+                                <td class="text-right v-middle">{{skuDetail.order.onHold}}</td>
+                                <td class="text-right v-middle">{{skuDetail.order.newOrder}}</td>
                             </tr>
                             </tbody>
                         </table>
