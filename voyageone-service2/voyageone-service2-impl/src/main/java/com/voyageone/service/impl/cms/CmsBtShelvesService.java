@@ -68,13 +68,6 @@ public class CmsBtShelvesService extends BaseService {
         return cmsBtShelvesDao.selectList(exampleModel);
     }
 
-    public List<CmsBtShelvesModel> selectByChannelId(String channelId) {
-        CmsBtShelvesModel byChannelId = new CmsBtShelvesModel();
-        byChannelId.setChannelId(channelId);
-        byChannelId.setActive(CmsBtShelvesModelActive.ACTIVATE);
-        return selectList(byChannelId);
-    }
-
     public boolean checkName(CmsBtShelvesModel exampleModel) {
 
         CmsBtShelvesExample example = new CmsBtShelvesExample();
@@ -93,12 +86,13 @@ public class CmsBtShelvesService extends BaseService {
 
         return cmsBtShelvesDao.countByExample(example) < 1;
     }
-    public List<CmsBtShelvesModel>selectByChannelIdCart(String channelId, Integer cartId){
-        Map<String, Object> params = new HashMap();
-        params.put("channelId",channelId);
-        params.put("cartId",cartId);
-        params.put("active", CmsBtShelvesModelActive.ACTIVATE);
-        return cmsBtShelvesDao.selectList(params);
+
+    public List<CmsBtShelvesModel> selectByChannelIdCart(String channelId, Integer cartId) {
+        CmsBtShelvesModel byChannelAndCart = new CmsBtShelvesModel();
+        byChannelAndCart.setChannelId(channelId);
+        byChannelAndCart.setCartId(cartId);
+        byChannelAndCart.setActive(CmsBtShelvesModelActive.ACTIVATE);
+        return selectList(byChannelAndCart);
     }
 
     /**
