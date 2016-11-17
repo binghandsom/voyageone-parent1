@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface CmsBtShelvesDaoExt {
 
-    List<CmsBtShelvesModel> selectByTemplateId(@Param("templateId") Integer templateId);
+    List<CmsBtShelvesModel> selectByTemplateId(Integer templateId);
 }
