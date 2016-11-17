@@ -10,10 +10,8 @@
     </sql>
 
     <select id="selectByTemplateId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
-        SELECT
-        <include refid="Base_Column_List" />
-        FROM cms_bt_shelves
-        WHEN `active`=1 and  `single_template_id` = #{templateId,jdbcType=INTEGER}
+        SELECT <include refid="Base_Column_List" /> FROM cms_bt_shelves
+        WHERE `active`=1 and `single_template_id` = #{templateId,jdbcType=INTEGER}
     </select>
 
 </mapper>

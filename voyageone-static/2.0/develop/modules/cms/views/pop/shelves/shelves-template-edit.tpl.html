@@ -2,7 +2,7 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title">&nbsp;<i class="fa fa-plus" translate="TXT_SHELVES_TEMPLATE_EDIT"></i></h5>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-plus" translate="TXT_SHELVES_TEMPLATE_NEW"></i></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="shelvesTemplateForm">
@@ -59,82 +59,81 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label" translate="TXT_HTML"></label>
             </div>
+            <!-- 头部 -->
             <div class="row form-group" ng-show="layout">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_HEAD"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_HEAD"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlHead" ng-model="modelBean.htmlHead" />
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlHead" ng-model="modelBean.htmlHead" />
                 </div>
             </div>
+            <!-- 标题模块 -->
             <div class="row form-group" ng-show="layout">
                 <label class="col-sm-3 control-label" translate="TXT_HTML_TITLE"></label>
                 <div class="col-sm-8">
                     <textarea class="form-control" name="htmlModuleTitle" ng-model="modelBean.htmlModuleTitle" />
                 </div>
             </div>
+            <!-- 搜索模块 -->
             <div class="row form-group" ng-show="layout">
                 <label class="col-sm-3 control-label" translate="TXT_HTML_SEARCH"></label>
                 <div class="col-sm-8">
                     <textarea class="form-control" name="htmlModuleSearch" ng-model="modelBean.htmlModuleSearch" />
                 </div>
             </div>
+            <!-- 清除浮动 -->
             <div class="row form-group" ng-show="layout">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_CLEARFIX"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_CLEARFIX"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlClearfix1" ng-model="modelBean.htmlClearfix1" />
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlClearfix1" ng-model="modelBean.htmlClearfix1" />
                 </div>
             </div>
+            <!-- 大图模块 -->
             <div class="row form-group" ng-show="layout">
                 <label class="col-sm-3 control-label" translate="TXT_HTML_BIG_IMAGE"></label>
                 <div class="col-sm-8">
                     <textarea class="form-control" name="htmlBigImage" ng-model="modelBean.htmlBigImage" />
                 </div>
             </div>
+            <!-- 小图模块 -->
             <div class="row form-group">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_SMALL_IMAGE"></label>
+                <label class="col-sm-3 control-label" ng-class="{vo_reqfield:commonRequired}" translate="TXT_HTML_SMALL_IMAGE"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlSmallImage" ng-model="modelBean.htmlSmallImage" />
+                    <textarea class="form-control" ng-required="commonRequired" name="htmlSmallImage" ng-model="modelBean.htmlSmallImage" />
                 </div>
             </div>
+            <!-- 清除浮动 -->
             <div class="row form-group" ng-show="layout">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_CLEARFIX"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_CLEARFIX"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlClearfix2" ng-model="modelBean.htmlClearfix2" />
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlClearfix2" ng-model="modelBean.htmlClearfix2" />
                 </div>
             </div>
+            <!-- 尾部 -->
             <div class="row form-group" ng-show="layout">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_FOOT"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_FOOT"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlFoot" ng-model="modelBean.htmlFoot" />
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlFoot" ng-model="modelBean.htmlFoot" />
                 </div>
             </div>
+            <!-- 最后一个小图模块 -->
             <div class="row form-group" ng-show="single">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_LAST_IMAGE"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_LAST_IMAGE"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlLastImage" ng-model="modelBean.htmlLastImage" />
+                    <textarea class="form-control" ng-required="singleRequired" name="htmlLastImage" ng-model="modelBean.htmlLastImage" />
                 </div>
             </div>
+            <!-- 图片模板 -->
             <div class="row form-group" ng-show="single">
-                <label class="col-sm-3 control-label" translate="TXT_HTML_IMAGE_TEMPLATE"></label>
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_IMAGE_TEMPLATE"></label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" name="htmlImageTemplate" ng-model="modelBean.htmlImageTemplate" />
+                    <textarea class="form-control" ng-required="singleRequired" ng-change="checkPreview()" name="htmlImageTemplate" ng-model="modelBean.htmlImageTemplate" />
                 </div>
             </div>
-
-            <!--<div class="row form-group">-->
-            <!--<label class="col-sm-3 control-label vo_reqfield" translate="TXT_CHANNEL_CONFIG_TYPE"></label>-->
-            <!--<div class="col-sm-8">-->
-            <!--<input type="number" ngRequired class="form-control" required name="configType" ng-model="modelBean.configType" />-->
-            <!--</div>-->
-            <!--</div>-->
-            <!--<div class="row form-group">-->
-            <!--<div class="col-sm-7 col-sm-offset-3">-->
-            <!--<vo-message target="channelConfigForm.configType"></vo-message>-->
-            <!--</div>-->
-            <!--</div>-->
         </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
         <button class="btn btn-vo" ng-click="editSubmit()" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-default-green" ng-show="previewFlag" ng-click="preview()">预览</button>
     </div>
 </div>

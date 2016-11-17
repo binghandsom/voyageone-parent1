@@ -15,12 +15,16 @@ define([
                 $scope.vm.templateTypes = context.templateTypes;
                 $scope.vm.clientTypes = context.clientTypes;
                 $scope.vm.carts = context.carts;
-                $scope.layout = true;
-                $scope.single = false;
+                // 默认新建【布局模板】，每行个数为【1】
                 $scope.modelBean = {
                     "templateType":"0",
                     "numPerLine":1
                 };
+                $scope.layout = true; // ng-show 默认显示【布局模板】输入框
+                $scope.single = false; // ng-show 默认不显示【单品模板】输入框
+                $scope.layoutRequired = true;
+                $scope.singleRequired = false;
+                $scope.commonRequired = false;
 
                 $scope.initialize = function () {
                     init();
@@ -43,12 +47,18 @@ define([
 
                 $scope.selTemplateType = function () {
                     var templateTypeVal = $scope.modelBean.templateType;
-                    if ("0" == templateTypeVal){
+                    if ("0" == templateTypeVal){ // 布局模板
                         $scope.layout = true;
                         $scope.single = false;
-                    }else if("1" == templateTypeVal) {
+                        $scope.layoutRequired = true;
+                        $scope.singleRequired = false;
+                        $scope.commonRequired = false;
+                    }else if("1" == templateTypeVal) { // 单品模板
                         $scope.layout = false;
                         $scope.single = true;
+                        $scope.layoutRequired = false;
+                        $scope.singleRequired = true;
+                        $scope.commonRequired = true;
                     }
                 }
             }
