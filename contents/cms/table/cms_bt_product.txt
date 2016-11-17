@@ -66,7 +66,7 @@
     * usageCn ->20160627,使用说明中文
     * appSwitch ->20160628,App端启用开关(用于控制所有平台的)
     * commissionRate ->20160713,VO佣金费率,商品级
-    * skuCnt                       <-翻译时间(sku的件数，用于高级检索 CMSDOC-209)
+    * skuCnt                       <-sku的件数(用于高级检索 CMSDOC-209)
   * skus[]
     * skuCode
     * barcode
@@ -133,6 +133,7 @@
       * cName
       * cNames
   * P26  ->京东国际
+      * jdSkuId       ->京东skuId(京东上新成功之后会从平台上取得京东skuId并回写到jdSkuId)
   * P27  ->聚美
 	* cartId
 	* pCatId
