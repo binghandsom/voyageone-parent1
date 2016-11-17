@@ -256,7 +256,7 @@ public class CmsProductDetailController extends CmsController {
 
         cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
 
-        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
+        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform),true);
 
         return success(null);
     }
