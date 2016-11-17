@@ -73,7 +73,7 @@ public class CmsShelvesDetailController extends CmsController {
         Boolean isLoadPromotionPrice = params.isLoadPromotionPrice;
         if (isLoadPromotionPrice == null)
             isLoadPromotionPrice = false;
-        return success(cmsShelvesDetailService.getShelvesInfo(getUser().getSelChannelId(), shelvesIds, isLoadPromotionPrice));
+        return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice));
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.CREATE_SHELVES)
