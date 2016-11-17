@@ -1011,7 +1011,9 @@ public class PriceService extends BaseService {
         }
 
         list.forEach(f->{
-            jdSkuService.updateSkuPriceByOuterId(shopBean,f.getOuterId(),f.getPrice().toString());
+            if(!StringUtils.isEmpty(f.getOuterId())) {
+                jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
+            }
         });
     }
 }
