@@ -70,7 +70,9 @@
     <p>最后一次上下架状态&平台库存刷新时间：2016-11-08 19:45</p>
 
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
-        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" is-open="i.$isOpen" ng-repeat="i in ctrl.shelves" template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
+        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" is-open="i.$isOpen"
+                             ng-repeat="i in ctrl.shelves"
+                             template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
             <div class="row">
                 <div ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">

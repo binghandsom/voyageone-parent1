@@ -2,11 +2,12 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    function ShelvesListController(shelvesService, popups, menuService) {
+    function ShelvesListController(shelvesService, popups, menuService, $scope) {
         var self = this;
 
         self.shelvesService = shelvesService;
         self.popups = popups;
+        self.$scope = $scope;
 
         menuService.getPlatformType().then(function (data) {
             self.cartList = data.filter(function (i) {
@@ -37,8 +38,38 @@ define([
                 return;
             }
 
-            shelvesService.search(params).then(function (resp) {
-                self.shelves = resp.data;
+            return shelvesService.search(params).then(function (resp) {
+                if (self.shelves) {
+                    self.shelves.forEach(function (s) {
+                        s.stopIsOpenWatch();
+                    });
+                }
+
+                (self.shelves = resp.data).forEach(function (s) {
+                    self.watchShelvesIsOpen(s);
+                });
+            });
+        },
+        getShelvesInfo: function() {
+            var self = this;
+            var shelves = self.shelves;
+            var shelvesService = self.shelvesService;
+
+            var needInfoShelvesId = shelves.filter(function (s) {
+                return s.$isOpen;
+            }).map(function (s) {
+                return s.id;
+            });
+
+            if (!needInfoShelvesId.length)
+                return;
+
+            shelvesService.getShelvesInfo({
+                shelvesIds: needInfoShelvesId,
+                isLoadPromotionPrice: false
+            }).then(function (resp) {
+                var infoBeanList = resp.data;
+                console.log(infoBeanList);
             });
         },
         addShelves: function () {
@@ -55,6 +86,21 @@ define([
                 self.shelves.push(insertedModel);
             });
         },
+        watchShelvesIsOpen: function (shelves) {
+            var self = this;
+            var $scope = self.$scope;
+
+            if (shelves.stopIsOpenWatch)
+                return;
+
+            shelves.stopIsOpenWatch = $scope.$watch(function () {
+                return shelves.$isOpen;
+            }, function ($isOpen) {
+                if ($isOpen) {
+                    self.getShelvesInfo();
+                }
+            });
+        },
         expandAll: function () {
             this.shelves.forEach(function (s) {
                 s.$isOpen = true;
@@ -67,6 +113,6 @@ define([
         }
     };
 
-    cms.controller('ShelvesListController', ['shelvesService', 'popups', 'menuService', ShelvesListController]);
+    cms.controller('ShelvesListController', ShelvesListController);
 });
 
