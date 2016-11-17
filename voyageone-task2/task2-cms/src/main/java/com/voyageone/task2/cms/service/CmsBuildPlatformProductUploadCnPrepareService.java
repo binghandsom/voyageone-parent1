@@ -501,8 +501,9 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
         for (CmsBtProductModel product : sxData.getProductList()) {
             // 循环group下所有code
-
-            for (BaseMongoMap<String, Object> sku : product.getPlatform(sxData.getCartId()).getSkus()) {
+            List<String> listSkuCode = product.getPlatform(sxData.getCartId()).getSkus().stream().map(sku -> sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())).collect(Collectors.toList());
+//            for (BaseMongoMap<String, Object> sku : product.getPlatform(sxData.getCartId()).getSkus()) {
+            for (String skuCode : listSkuCode) {
                 List<Field> fieldList;
                 try {
                     // 将取得的产品Schema xml转换为List<Field>
@@ -515,11 +516,27 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                     throw new BusinessException(errMsg);
                 }
 
-                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+//                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                 fieldList = constructEachSkuPlatformProps(fieldList, mapSku.get(skuCode), product, skuInventoryMap.get(skuCode), sxData.getCartId());
 
                 if (ListUtils.notNull(fieldList)) {
                     listSku.add(fieldList);
+                }
+            }
+
+            // 有相同尺码的话报错
+            int cntSizeSx = sxData.getSkuList().stream().filter(sku -> listSkuCode.contains(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))).map(
+                    sku -> sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name())
+            ).collect(Collectors.toSet()).size(); // 转set去重复
+            if (cntSizeSx != listSkuCode.size()) {
+                throw new BusinessException(String.format("code[%s]里有转换后相同的尺码的sku!", product.getCommon().getFields().getCode()));
+            }
+            if (sxData.getCartId() != CartEnums.Cart.CN.getValue()) {
+                int cntSize = sxData.getSkuList().stream().filter(sku -> listSkuCode.contains(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))).map(
+                        sku -> getSkuSize(product, sxData.getCartId(), sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))
+                ).collect(Collectors.toSet()).size(); // 转set去重复
+                if (cntSize != listSkuCode.size()) {
+                    throw new BusinessException(String.format("code[%s]里有相同的尺码的sku!", product.getCommon().getFields().getCode()));
                 }
             }
         }
@@ -601,7 +618,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 String field_id = "Eursize";
                 Field field = fieldsMap.get(field_id);
 
-                ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
+                ((InputField) field).setValue(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
 
                 if (!hasChange && !((InputField) field).getValue().equals(oldSxCnSkuModel.getSize())) {
                     hasChange = true;
