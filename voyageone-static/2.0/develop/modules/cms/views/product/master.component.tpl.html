@@ -109,12 +109,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>商品相关备注</strong></label>
-                                <div class="col-md-8">
-                                    <textarea type="text" rows="4" class="form-control no-resize" ng-model="vm.productComm.comment"></textarea>
-                                </div>
-                            </div>
                         </div>
                         <!----------------------------------------右侧悬浮框-------------------------------------------->
                         <div class="col-sm-2">
@@ -381,8 +375,8 @@
                                             </div>
                                         </uib-tab>
                                         <uib-tab>
-                                            <tab-heading>尺码表 <i ng-if="vm.sizeChartList.length>0" class="fa fa-warning" style="color: red;"></i></tab-heading>
-                                            <select class="form-control" ng-model="vm.selectSizeChart" ng-change ="sizeChartOnchange()" ng-options="m as m.sizeChartName for m in vm.sizeChartList">
+                                            <tab-heading>尺码表 <i ng-if="!vm.productComm.sizeChart" class="fa fa-warning" style="color: red;"></i></tab-heading>
+                                            <select class="form-control" ng-model="vm.productComm.sizeChart" ng-change ="vm.selectSizeChart = m" ng-options="m.sizeChartId as m.sizeChartName for m in vm.sizeChartList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                             <div  ng-controller="popupCtrl">
@@ -392,11 +386,11 @@
                                                         <tr>
                                                             <th class="mfb-xt text-center">Origin Size</th>
                                                             <th class="mfb-xt text-center">Platfrom Size</th>
-                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart==null">
+                                                            <th class="mfb-xt text-center" ng-if="vm.productComm.sizeChart==null">
                                                                 <a href="#/image/size_chart_list" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
                                                             </th>
-                                                            <th class="mfb-xt text-center" ng-if="vm.selectSizeChart">
-                                                                <a href="#/channel/sizechart/detail/{{vm.selectSizeChart.sizeChartId}}" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
+                                                            <th class="mfb-xt text-center" ng-if="vm.productComm.sizeChart">
+                                                                <a href="#/channel/sizechart/detail/{{vm.productComm.sizeChart}}" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
                                                             </th>
                                                         </tr>
                                                         </thead>
@@ -413,9 +407,6 @@
                                                         </tbody>
                                                     </table>
                                                 </div>
-                                            </div>
-                                            <div ng-if="select==2" ng-controller="popupCtrl">
-                                                <img src="http://image.voyageone.com.cn/cms/size/010/20160624044440.jpg" alt=""  ng-click="openImgGroupListImg('http://image.voyageone.com.cn/cms/size/010/20160624044440.jpg')">
                                             </div>
                                         </uib-tab>
                                         <uib-tab>

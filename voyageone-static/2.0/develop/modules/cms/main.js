@@ -8,6 +8,7 @@
 
 require.config({
     baseUrl: '../../',
+    urlArgs: "version=2.9.0",
     paths: {
         'voyageone-angular-com': 'components/dist/voyageone.angular.com',
         'voyageone-com': 'components/dist/voyageone.com',
