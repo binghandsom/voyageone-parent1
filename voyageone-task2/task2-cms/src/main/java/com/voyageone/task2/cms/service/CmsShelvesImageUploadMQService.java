@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service;
 
+import com.jd.open.api.sdk.request.imgzone.ImgzonePictureUploadRequest;
+import com.jd.open.api.sdk.response.AbstractResponse;
+import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.PictureReplaceResponse;
 import com.taobao.api.response.PictureUploadResponse;
@@ -12,8 +15,11 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
+import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
@@ -51,22 +57,19 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
 
-    private final CmsBtShelvesService cmsBtShelvesService;
-
     private final TbPictureService tbPictureService;
 
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
 
-    private final PromotionCodeService promotionCodeService;
+    private final JdImgzoneService jdImgzoneService;
 
 
     @Autowired
-    public CmsShelvesImageUploadMQService(CmsBtShelvesService cmsBtShelvesService, CmsBtShelvesProductService cmsBtShelvesProductService, TbPictureService tbPictureService, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, PromotionCodeService promotionCodeService) {
-        this.cmsBtShelvesService = cmsBtShelvesService;
+    public CmsShelvesImageUploadMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbPictureService tbPictureService, CmsBtShelvesTemplateService cmsBtShelvesTemplateService,JdImgzoneService jdImgzoneService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbPictureService = tbPictureService;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
-        this.promotionCodeService = promotionCodeService;
+        this.jdImgzoneService = jdImgzoneService;
     }
 
     @Override
@@ -74,48 +77,46 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
 
         if (shelvesId != null) {
-            CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
-            List<CmsBtPromotionCodesBean> cmsBtPromotionCodes = null;
-            if (cmsBtShelvesModel.getPromotionId() != null && cmsBtShelvesModel.getPromotionId() > 0) {
-                cmsBtPromotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(cmsBtShelvesModel.getPromotionId(), cmsBtShelvesModel.getChannelId());
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId,true);
+            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtShelvesInfoBean.getShelvesModel().getChannelId(), CmsConstants.ChannelConfig.PLATFORM_IMAGE_DIRECTORY_ID, cmsBtShelvesInfoBean.getShelvesModel().getCartId().toString());
+            if (cmsChannelConfigBean == null || StringUtil.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                throw new BusinessException("图片分类目录没有配置");
             }
-            final List<CmsBtPromotionCodesBean>  promotionCodes = cmsBtPromotionCodes;
-            CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel = cmsBtShelvesTemplateService.select(cmsBtShelvesModel.getSingleTemplateId());
+            final String picCatId = cmsChannelConfigBean.getConfigValue1();
+            final CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel = cmsBtShelvesTemplateService.select(cmsBtShelvesInfoBean.getShelvesModel().getSingleTemplateId());
             if (cmsBtShelvesTemplateModel != null) {
-                List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesProductService.getByShelvesId(shelvesId);
+                final ShopBean shopBean = Shops.getShop(cmsBtShelvesInfoBean.getShelvesModel().getChannelId(), cmsBtShelvesInfoBean.getShelvesModel().getCartId());
+                List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesInfoBean.getShelvesProductModels();
                 cmsBtShelvesProductModels = cmsBtShelvesProductModels.stream().filter(cmsBtShelvesProductModel -> StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageUrl())).collect(Collectors.toList());
                 ExecutorService es = Executors.newFixedThreadPool(5);
-                cmsBtShelvesProductModels.forEach(item -> uploadImage(cmsBtShelvesModel, item, cmsBtShelvesTemplateModel, promotionCodes));
+                cmsBtShelvesProductModels.forEach(item -> es.execute(()->uploadImage(shopBean, (CmsBtShelvesProductBean)item, cmsBtShelvesTemplateModel, picCatId)));
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             }
         }
     }
 
-    private void uploadImage(CmsBtShelvesModel cmsBtShelvesModel, CmsBtShelvesProductModel cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, List<CmsBtPromotionCodesBean> cmsBtPromotionCodes) {
-        ShopBean shopBean = Shops.getShop(cmsBtShelvesModel.getChannelId(), cmsBtShelvesModel.getCartId());
-
+    private void uploadImage(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
 
         if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())) {
-            uploadImageTm(shopBean, cmsBtShelvesModel, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel, cmsBtPromotionCodes);
+            uploadImageTm(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
+        }else if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())){
+            uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
         }
     }
 
-    private void uploadImageTm(ShopBean shopBean, CmsBtShelvesModel cmsBtShelvesModel, CmsBtShelvesProductModel cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, List<CmsBtPromotionCodesBean> cmsBtPromotionCodes) {
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(shopBean.getOrder_channel_id(), CmsConstants.ChannelConfig.PLATFORM_IMAGE_DIRECTORY_ID, shopBean.getCart_id());
-        if (cmsChannelConfigBean == null || StringUtil.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-            throw new BusinessException("图片分类目录没有配置");
-        }
+    private void uploadImageTm(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
+        shopBean.setAppKey("21008948");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
         try {
             PictureUploadResponse pictureUploadResponse = null;
 
-            String imageUrl = getImageUrl(cmsBtShelvesModel,cmsBtShelvesProductModel,cmsBtShelvesTemplateModel,cmsBtPromotionCodes);
+            String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
             // 图片是否传过
             if (StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 //没有传过 上传
-                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), cmsChannelConfigBean.getConfigValue1());
-                cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPicture().getPictureId() + "");
-                cmsBtShelvesProductModel.setPlatformImageUrl(pictureUploadResponse.getPicture().getPicturePath());
+                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
             } else {
                 try {
                     // 删除
@@ -123,7 +124,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                 } catch (Exception e) {
                     $error(e);
                 }
-                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), cmsChannelConfigBean.getConfigValue1());
+                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
             }
             if (pictureUploadResponse != null && pictureUploadResponse.getPicture() != null) {
                 cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPicture().getPictureId() + "");
@@ -137,30 +138,59 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 
     }
 
-    public String getImageUrl(CmsBtShelvesModel cmsBtShelvesModel, CmsBtShelvesProductModel cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, List<CmsBtPromotionCodesBean> cmsBtPromotionCodes) {
+    private void uploadImageJd(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
+        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
+        try {
+            ImgzonePictureUploadResponse pictureUploadResponse = null;
+
+            String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
+            // 图片是否传过
+            if (!StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
+                try {
+                    // 删除
+                    jdImgzoneService.deletePictures(shopBean, cmsBtShelvesProductModel.getPlatformImageId());
+                } catch (Exception e) {
+                    $error(e);
+                }
+            }
+             pictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, downImage(imageUrl), picCatId,cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
+
+            if (pictureUploadResponse != null && !StringUtil.isEmpty(pictureUploadResponse.getPictureId())) {
+                cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPictureId() + "");
+                cmsBtShelvesProductModel.setPlatformImageUrl(pictureUploadResponse.getPictureUrl());
+                cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            $error(e);
+        }
+
+    }
+
+    private String getImageUrl(CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel) {
         String tmeplate = "";
         if (!StringUtil.isEmpty(cmsBtShelvesTemplateModel.getHtmlImageTemplate())) {
             tmeplate = cmsBtShelvesTemplateModel.getHtmlImageTemplate();
-            if (tmeplate.indexOf("{yuanjia}") > -1) {
+            if (tmeplate.contains("{yuanjia}")) {
                 tmeplate = tmeplate.replace("{yuanjia}", cmsBtShelvesProductModel.getSalePrice().intValue() + "");
             }
-            if (tmeplate.indexOf("{image}") > -1) {
+            if (tmeplate.contains("{image}")) {
                 tmeplate = tmeplate.replace("{image}", cmsBtShelvesProductModel.getImage());
             }
-            if (tmeplate.indexOf("{name}") > -1) {
+            if (tmeplate.contains("{name}")) {
                 try {
-                    tmeplate = tmeplate.replace("{name}", URLEncoder.encode(cmsBtShelvesProductModel.getProductName().toString(), "UTF-8"));
+                    tmeplate = tmeplate.replace("{name}", URLEncoder.encode(cmsBtShelvesProductModel.getProductName(), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
-            if (tmeplate.indexOf("{promotionPrice}") > -1) {
+            if (tmeplate.contains("{promotionPrice}")) {
                 Double promitonPrice = 0.0;
-                if (!ListUtils.isNull(cmsBtPromotionCodes)) {
-                    CmsBtPromotionCodesBean cmsBtPromotion = cmsBtPromotionCodes.stream().filter(cmsBtPromotionCodesBean -> cmsBtPromotionCodesBean.getProductCode().equalsIgnoreCase(cmsBtShelvesProductModel.getProductCode())).findFirst().orElse(null);
-                    if (cmsBtPromotion != null && cmsBtPromotion.getPromotionPrice() != null) {
-                        promitonPrice = cmsBtPromotion.getPromotionPrice();
-                    }
+                if (cmsBtShelvesProductModel.getPromotionPrice() != null) {
+                    promitonPrice = cmsBtShelvesProductModel.getPromotionPrice();
                 }
                 tmeplate = tmeplate.replace("{promotionPrice}", promitonPrice.intValue() + "");
             }
@@ -168,7 +198,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         return tmeplate;
     }
 
-    public byte[] downImage(String imageUrl) {
+    private byte[] downImage(String imageUrl) {
         long threadNo = Thread.currentThread().getId();
         //如果promotionImagesList为空的时，不做处理
         byte[] buffer = new byte[1024 * 10];

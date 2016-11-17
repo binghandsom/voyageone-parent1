@@ -33,7 +33,7 @@
             </if>
         </set>
         where
-            `shelves_id` = #{shelvesId,jdbcType=INTEGER},
+            `shelves_id` = #{shelvesId,jdbcType=INTEGER}
         and
             `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
@@ -61,7 +61,7 @@
             </if>
         </set>
         where
-        `shelves_id` = #{shelvesId,jdbcType=INTEGER},
+        `shelves_id` = #{shelvesId,jdbcType=INTEGER}
         and
         `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
@@ -89,7 +89,7 @@
             </if>
         </set>
         where
-        `shelves_id` = #{shelvesId,jdbcType=INTEGER},
+        `shelves_id` = #{shelvesId,jdbcType=INTEGER}
         and
         `product_code` = #{productCode,jdbcType=VARCHAR}
     </update>
