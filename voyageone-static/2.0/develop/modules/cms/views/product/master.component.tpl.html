@@ -376,7 +376,7 @@
                                         </uib-tab>
                                         <uib-tab>
                                             <tab-heading>尺码表 <i ng-if="!vm.productComm.sizeChart" class="fa fa-warning" style="color: red;"></i></tab-heading>
-                                            <select class="form-control" ng-model="vm.productComm.sizeChart" ng-change ="vm.selectSizeChart = m" ng-options="m.sizeChartId as m.sizeChartName for m in vm.sizeChartList">
+                                            <select class="form-control" ng-model="vm.productComm.sizeChart" ng-change ="selectSizeChartChange()" ng-options="m.sizeChartId as m.sizeChartName for m in vm.sizeChartList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                             <div  ng-controller="popupCtrl">

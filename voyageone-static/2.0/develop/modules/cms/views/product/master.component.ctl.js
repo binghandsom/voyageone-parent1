@@ -37,6 +37,13 @@ define([
                     selectSizeChart:null
                 };
 
+                scope.selectSizeChartChange=function () {
+                    var sizeChartId=scope.vm.productComm.sizeChart;
+                    scope.vm.selectSizeChart= _.find(scope.vm.sizeChartList,function (f) {
+                       return f.sizeChartId==sizeChartId;
+                    })
+
+                }
                 initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
@@ -95,6 +102,7 @@ define([
 
                         sizeChartService.getProductSizeChartList(parameterGetProductSizeChartList).then(function (res) {
                             scope.vm.sizeChartList=res.data;
+                            scope.selectSizeChartChange();
                         });
                     });
                 }
