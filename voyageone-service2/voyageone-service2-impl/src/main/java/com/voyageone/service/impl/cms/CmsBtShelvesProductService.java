@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -10,34 +9,32 @@ import com.voyageone.service.dao.cms.CmsBtShelvesProductDao;
 import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by james on 2016/11/11.
+ *
+ * @version 2.10.0
+ * @since 2.10.0
  */
 @Service
 public class CmsBtShelvesProductService extends BaseService {
-
     private final CmsBtShelvesProductDao cmsBtShelvesProductDao;
-
     private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
-
     private final CmsBtShelvesService cmsBtShelvesService;
-
     private final PromotionCodeService promotionCodeService;
 
     @Autowired
-    public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao, CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt, CmsBtShelvesService cmsBtShelvesService, PromotionCodeService promotionCodeService) {
+    public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao,
+                                      CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt,
+                                      CmsBtShelvesService cmsBtShelvesService,
+                                      PromotionCodeService promotionCodeService) {
         this.cmsBtShelvesProductDao = cmsBtShelvesProductDao;
         this.cmsBtShelvesProductDaoExt = cmsBtShelvesProductDaoExt;
         this.cmsBtShelvesService = cmsBtShelvesService;
@@ -49,10 +46,11 @@ public class CmsBtShelvesProductService extends BaseService {
     }
 
     public CmsBtShelvesProductModel getByShelvesIdProductCode(Integer shelvesId, String code) {
-        Map map = new HashedMap();
-        map.put("shelvesId", shelvesId);
-        map.put("productCode", code);
-        return cmsBtShelvesProductDao.selectOne(map);
+        CmsBtShelvesProductModel byShelvesIdAndCode = new CmsBtShelvesProductModel();
+        byShelvesIdAndCode.setShelvesId(shelvesId);
+        byShelvesIdAndCode.setProductCode(code);
+
+        return cmsBtShelvesProductDao.selectOne(byShelvesIdAndCode);
     }
 
     public int update(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
@@ -84,7 +82,6 @@ public class CmsBtShelvesProductService extends BaseService {
     public void updatePlatformImage(CmsBtShelvesProductModel cmsBtShelvesProductModels) {
         cmsBtShelvesProductDaoExt.updatePlatformImage(cmsBtShelvesProductModels);
     }
-
 
     /**
      * 根据货架Id获取货架里的产品信息
