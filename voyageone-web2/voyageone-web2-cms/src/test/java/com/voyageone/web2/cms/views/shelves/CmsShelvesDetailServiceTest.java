@@ -58,7 +58,9 @@ public class CmsShelvesDetailServiceTest {
             images.add("h:/20161026-240x342-jiarugouwuche2.png");
             images.add("h:/20161026-240x342-jiarugouwuche2.png");
             images.add("h:/20161026-240x342-jiarugouwuche2.png");
-            creatImage(images,2);
+            byte[]  a = creatImage(images,2);
+            Integer i=0;
+            i++;
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -84,8 +86,10 @@ public class CmsShelvesDetailServiceTest {
                     temp.close();
                 }
             }
+            ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream();
             // Save as new image
-            ImageIO.write(combined, "PNG", new File("h:/", "custom.png"));
+            ImageIO.write(combined, "PNG", bufferedOutputStream);
+            return bufferedOutputStream.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
         }

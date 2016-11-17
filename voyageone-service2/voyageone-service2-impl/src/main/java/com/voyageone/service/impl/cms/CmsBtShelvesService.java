@@ -32,6 +32,7 @@ public class CmsBtShelvesService extends BaseService {
     private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
     private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
 
+    @Autowired
     public CmsBtShelvesService(CmsBtShelvesDao cmsBtShelvesDao, CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt) {
         this.cmsBtShelvesDao = cmsBtShelvesDao;
         this.cmsBtShelvesTemplateDao = cmsBtShelvesTemplateDao;
