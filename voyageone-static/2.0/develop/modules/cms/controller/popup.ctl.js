@@ -444,9 +444,8 @@ define([
                 "controllerUrl": "modules/cms/views/pop/search/joinPromotion.ctl",
                 "controller": 'joinPromotionCtl as ctrl',
                 "backdrop": 'static',
-                "size": 'md'
+                "size": 'lg'
             }
-
         },
         "system": {
             "channelsetting": {
