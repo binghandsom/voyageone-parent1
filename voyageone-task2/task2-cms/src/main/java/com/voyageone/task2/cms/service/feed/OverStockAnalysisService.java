@@ -8,10 +8,7 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.CamelUtil;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.components.overstock.bean.OverstockMultipleRequest;
 import com.voyageone.components.overstock.service.OverstockProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -69,22 +66,22 @@ public class OverStockAnalysisService extends BaseAnalysisService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         init();
-//
-//        zzWorkClear();
-//        int cnt = 0;
-//        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
-//            cnt = fullCopyTemp();
-//        }else {
-//            $info("产品信息插入开始");
-//            cnt = superFeedImport();
-//        }
-//        $info("产品信息插入完成 共" + cnt + "条数据");
-//        if (cnt > 0) {
-//            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
-//                transformer.new Context(channel, this).transform();
-//            }
+
+        zzWorkClear();
+        int cnt = 0;
+        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+            cnt = fullCopyTemp();
+        }else {
+            $info("产品信息插入开始");
+            cnt = superFeedImport();
+        }
+        $info("产品信息插入完成 共" + cnt + "条数据");
+        if (cnt > 0) {
+            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+                transformer.new Context(channel, this).transform();
+            }
             postNewProduct();
-//        }
+        }
     }
     @Override
     public int fullCopyTemp(){
@@ -105,7 +102,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
         List<SuperFeedOverStockBean> superfeed = new ArrayList<>();
         while (true) {
             request.setOffset(offset);
-            request.setLimit(50);
+            request.setLimit(100);
             String sku = "";
             try {
                 Result<ProductsType> result = overstockProductService.queryForMultipleProducts(request);
@@ -369,7 +366,7 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                     $info("queryForMultipleProducts error; offset = " + offset + " statusCode = " + statusCode);
                     break;
                 }
-                offset = offset + 50;
+                offset = offset + 100;
             } catch (Exception e) {
                 $info("OverStock产品文件读入失败");
                 logIssue("cms 数据导入处理", "OverStock产品文件读入失败 " + e.getMessage());
@@ -409,9 +406,8 @@ public class OverStockAnalysisService extends BaseAnalysisService {
             List<CmsBtFeedInfoModel> product;
             try{
                 while (true) {
-                    int cnt = 0;
                     product = getFeedInfoByCategory(categorPath);
-                    cnt = product == null?0:product.size();
+                    if(ListUtils.isNull(product)) break;
                     $info("每棵树的信息取得结束");
 
                     String categorySplit = Feeds.getVal1(channel, FeedEnums.Name.category_split);
@@ -422,10 +418,9 @@ public class OverStockAnalysisService extends BaseAnalysisService {
                         });
                     }
                     productAll.addAll(product);
-                    if (productAll.size() > 500) {
+                    if (productAll.size() > 0) {
                         executeMongoDB(productAll, productSucceeList, productFailAllList);
                     }
-                    if(cnt < 500 ) break;
                 }
             }catch (Exception e){
                 e.printStackTrace();
