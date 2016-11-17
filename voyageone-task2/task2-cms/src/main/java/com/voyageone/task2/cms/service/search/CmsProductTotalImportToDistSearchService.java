@@ -29,7 +29,7 @@ import java.util.*;
 @Service
 public class CmsProductTotalImportToDistSearchService extends BaseCronTaskService {
 
-    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 100;
+    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 1000;
 
     private static final String CMS_CHANNEL_ID = "928";
     @Autowired
@@ -68,7 +68,7 @@ public class CmsProductTotalImportToDistSearchService extends BaseCronTaskServic
     void importDataToSearchFromMongo(String channelId, Map<String, Integer> brandCatsCntSumMap) {
         long currentTime = System.currentTimeMillis();
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setProjection("{'_id':1, 'channelId':1, 'created':1, 'common.fields':1, 'sales.codeSum30':1, 'bi.sum30':1}");
+        queryObject.setProjection("{'_id':1, 'channelId':1, 'created':1, 'common.fields':1, 'platforms.P28.skus':1, 'sales.codeSum30':1, 'bi.sum30':1}");
         Iterator<CmsBtProductModel> it = cmsBtProductDao.selectCursor(queryObject, channelId);
 
         List<SolrUpdateBean> beans = new ArrayList<>();

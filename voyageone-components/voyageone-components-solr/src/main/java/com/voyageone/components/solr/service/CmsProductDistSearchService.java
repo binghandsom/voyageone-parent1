@@ -1,5 +1,7 @@
 package com.voyageone.components.solr.service;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -107,7 +109,6 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 }
                 model.addCatCn(replaceBlank(catCn));
 
-                model.setSalePrice(fields.getPriceRetailSt());
                 List<CmsBtProductModel_Field_Image> productImageList = fields.getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
                 if (productImageList != null && !productImageList.isEmpty()) {
                     model.setImageLink(productImageList.get(0).getName());
@@ -124,13 +125,14 @@ public class CmsProductDistSearchService extends BaseSearchService {
                 if (codeSum30Model != null) {
                     Object count = codeSum30Model.get("cartId0");
                     if (count instanceof Integer) {
-                        saleCount = saleCount + ((Integer)count);
+                        saleCount = saleCount + ((Integer) count);
                     } else if (count instanceof Long) {
                         saleCount = saleCount + ((Long) count).intValue();
                     }
                 }
             }
             model.setSaleCount(saleCount);
+
 
             //pv sum
             int pv = 0;
@@ -152,7 +154,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     if (pvMap != null) {
                         for (Object pvObj : pvMap.values()) {
                             if (pvObj instanceof Integer) {
-                                pvSum = pvSum + ((Integer)pvObj);
+                                pvSum = pvSum + ((Integer) pvObj);
                             } else if (pvObj instanceof Long) {
                                 pvSum = pvSum + (Long) pvObj;
                             }
@@ -165,19 +167,43 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     if (uvMap != null) {
                         for (Object uvObj : uvMap.values()) {
                             if (uvObj instanceof Integer) {
-                                uvSum = uvSum + ((Integer)uvObj);
+                                uvSum = uvSum + ((Integer) uvObj);
                             } else if (uvObj instanceof Long) {
                                 uvSum = uvSum + (Long) uvObj;
                             }
                         }
                     }
 
-                    pv = ((Long)pvSum).intValue();
-                    uv = ((Long)pvSum).intValue();
+                    pv = ((Long) pvSum).intValue();
+                    uv = ((Long) pvSum).intValue();
                 }
             }
             model.setPv(pv);
             model.setUv(uv);
+        }
+
+        //price
+        CmsBtProductModel_Platform_Cart paltform = cmsBtProductModel.getPlatform(CartEnums.Cart.JGJ);
+        List<BaseMongoMap<String, Object>> skus = null;
+        if (paltform != null) {
+            skus = paltform.getSkus();
+        }
+
+        if (skus != null && !skus.isEmpty()) {
+            double price = 0;
+            for (BaseMongoMap<String, Object> sku : skus) {
+                if (sku.getAttribute("priceSale") != null && sku.getDoubleAttribute("priceSale") > 0) {
+                    if (price == 0 || sku.getDoubleAttribute("priceSale") < price) {
+                        price = sku.getDoubleAttribute("priceSale");
+                    }
+                }
+            }
+            model.setSalePrice(price);
+        }
+
+        // price 取得不到时,不加入Solr
+        if (model.getSalePrice() == null || model.getSalePrice() <= 0) {
+            return null;
         }
 
         if (lastVer != null) {
@@ -277,12 +303,12 @@ public class CmsProductDistSearchService extends BaseSearchService {
             Document salesDoc = (Document) objectDoc.get("sales");
             if (salesDoc != null) {
                 @SuppressWarnings("unchecked")
-                Document codeSum30Model = (Document)salesDoc.get(CmsBtProductModel_Sales.CODE_SUM_30);
+                Document codeSum30Model = (Document) salesDoc.get(CmsBtProductModel_Sales.CODE_SUM_30);
                 //noinspection Duplicates
                 if (codeSum30Model != null) {
                     Object count = codeSum30Model.get("cartId0");
                     if (count instanceof Integer) {
-                        saleCount = saleCount + ((Integer)count);
+                        saleCount = saleCount + ((Integer) count);
                     } else if (count instanceof Long) {
                         saleCount = saleCount + ((Long) count).intValue();
                     }
@@ -309,7 +335,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     if (pvMap != null) {
                         for (Object pvObj : pvMap.values()) {
                             if (pvObj instanceof Integer) {
-                                pvSum = pvSum + ((Integer)pvObj);
+                                pvSum = pvSum + ((Integer) pvObj);
                             } else if (pvObj instanceof Long) {
                                 pvSum = pvSum + (Long) pvObj;
                             }
@@ -322,19 +348,50 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     if (uvMap != null) {
                         for (Object uvObj : uvMap.values()) {
                             if (uvObj instanceof Integer) {
-                                uvSum = uvSum + ((Integer)uvObj);
+                                uvSum = uvSum + ((Integer) uvObj);
                             } else if (uvObj instanceof Long) {
                                 uvSum = uvSum + (Long) uvObj;
                             }
                         }
                     }
 
-                    pv = ((Long)pvSum).intValue();
-                    uv = ((Long)pvSum).intValue();
+                    pv = ((Long) pvSum).intValue();
+                    uv = ((Long) pvSum).intValue();
                 }
             }
             model.setPv(pv);
             model.setUv(uv);
+        }
+
+        //price
+        Document platforms = (Document) objectDoc.get("platforms");
+        List<Document> skus = null;
+        if (platforms != null) {
+            Document platform = (Document) platforms.get("P28");
+            if (platform != null) {
+                //noinspection unchecked
+                skus = (List<Document>) platforms.get("skus");
+            }
+        }
+        if (skus != null && !skus.isEmpty()) {
+            double price = 0;
+            for (Document sku : skus) {
+                Object objPriceSale = sku.get("priceSale");
+                if (objPriceSale != null) {
+                    Double priceSale = convertToDouble(objPriceSale);
+                    if (priceSale > 0) {
+                        if (price == 0 || priceSale < price) {
+                            price = priceSale;
+                        }
+                    }
+                }
+            }
+            model.setSalePrice(price);
+        }
+
+        // price 取得不到时,不加入Solr
+        if (model.getSalePrice() == null || model.getSalePrice() <= 0) {
+            return null;
         }
 
         if (lastVer != null) {
