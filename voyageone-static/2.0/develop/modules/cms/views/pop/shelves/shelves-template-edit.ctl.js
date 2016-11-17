@@ -59,7 +59,22 @@ define([
                 }
 
                 $scope.preview = function () {
-                    var htmlImageTemplate = $scope.modelBean.htmlImageTemplate;
+                    // var htmlImageTemplate = $scope.modelBean.htmlImageTemplate;
+                    // var imageTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/20161026-240x342-jiarugouwuche?$sn_240x342$&$yuanjia={yuanjia}&$shiyijia={shiyijia}&$product={image}&$name={name}";
+                    var imageTemplate = $scope.modelBean.htmlImageTemplate;
+                    if (imageTemplate.indexOf("{yuanjia}") != -1) {
+                        imageTemplate = imageTemplate.replace("{yuanjia}", "1299");
+                    }
+                    if (imageTemplate.indexOf("{image}") != -1) {
+                        imageTemplate = imageTemplate.replace("{image}", "sneakerhead/290-250");
+                    }
+                    if (imageTemplate.indexOf("{name}") != -1) {
+                        imageTemplate = imageTemplate.replace("{name}", encodeURIComponent("天天搞机-魅蓝5全球首发"));
+                    }
+                    if (imageTemplate.indexOf("{promotionPrice}") != -1) {
+                        imageTemplate = imageTemplate.replace("{promotionPrice}", "799");
+                    }
+                    window.open(imageTemplate);
                 }
 
                 $scope.checkPreview = function () {
@@ -75,3 +90,6 @@ define([
         })());
     }
 );
+
+
+
