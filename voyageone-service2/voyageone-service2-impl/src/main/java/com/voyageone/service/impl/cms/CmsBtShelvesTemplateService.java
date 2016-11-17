@@ -32,6 +32,9 @@ import java.util.*;
 @Service
 public class CmsBtShelvesTemplateService extends BaseService {
 
+    private static final String SHELVES_ADD = "add";
+    private static final String SHELVES_EDIT = "edit";
+
     private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
     private final CmsBtShelvesTemplateDaoExt cmsBtShelvesTemplateDaoExt;
     private final CmsBtShelvesDaoExt cmsBtShelvesDaoExt;
@@ -49,7 +52,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
 
     public void insert(CmsBtShelvesTemplateModel template, String user, String channelId) {
         template.setChannelId(channelId);
-        checkModel(template, "add");
+        checkModel(template, SHELVES_ADD);
         template.setCreater(user);
         template.setCreated(new Date());
         cmsBtShelvesTemplateDao.insert(template);
@@ -59,7 +62,7 @@ public class CmsBtShelvesTemplateService extends BaseService {
     public void update(CmsBtShelvesTemplateModel template, String user) {
         template.setModifier(user);
         template.setModified(new Date());
-        checkModel(template, "update");
+        checkModel(template, SHELVES_EDIT);
         template.setTemplateType(null); // 模板类型不可更改
         cmsBtShelvesTemplateDao.update(template);
     }
@@ -82,40 +85,72 @@ public class CmsBtShelvesTemplateService extends BaseService {
      */
     public void checkModel(CmsBtShelvesTemplateModel template, String operType) {
         Integer id = template.getId();
+        String channelId = template.getChannelId();
         String templateName = template.getTemplateName();
         Integer templateType = template.getTemplateType();
         Integer clientType = template.getClientType();
         Integer cartId = template.getCartId();
-        String channelId = template.getChannelId();
+        Integer numPerLin = template.getNumPerLine();
+        String htmlHead = template.getHtmlHead();
+        String htmlFoot = template.getHtmlFoot();
+        String htmlClearfix1 = template.getHtmlClearfix1();
+        String htmlClearfix2 = template.getHtmlClearfix2();
+        String htmlSmallImage = template.getHtmlSmallImage();
+        String htmlLastImage = template.getHtmlLastImage();
+        String htmlImageTemplate = template.getHtmlImageTemplate();
+        if (StringUtils.isBlank(templateName) || templateName.length() > 255) {
+            throw new BusinessException("模板名称为空或输入值过长！");
+        }
         if (clientType == null || !CmsBtShelvesTemplateModelClientType.KV.containsKey(clientType)) {
             throw new BusinessException("请选择客户端类型！");
         }
         if (cartId == null) { // TODO 校验平台类型ID是否存在
             throw new BusinessException("请选择平台类型！");
         }
-        if (StringUtils.isBlank(templateName) || templateName.length() > 255) {
-            throw new BusinessException("模板名称为空或输入值过长！");
-        }
         Map<String,Object> param = new HashedMap();
         param.put("channelId", channelId);
         param.put("templateName", templateName);
         CmsBtShelvesTemplateModel existent = cmsBtShelvesTemplateDaoExt.selectByChannelIdAndName(param);
-        if ("add".equals(operType)) {
+        CmsBtShelvesTemplateModel targetTemplate = null;
+        if (SHELVES_ADD.equals(operType)) {
             if (templateType == null || !CmsBtShelvesTemplateModelTemplateType.KV.containsKey(templateType)) {
                 throw new BusinessException("请选择模板类型！");
             }
             if (existent != null) {
                 throw new BusinessException("模板名称已被占用！");
             }
-            template.setId(null);
-        } else if ("update".equals(operType)) {
-            CmsBtShelvesTemplateModel targetTemplate = null;
+        } else if (SHELVES_EDIT.equals(operType)) {
             if (id == null || (targetTemplate = cmsBtShelvesTemplateDao.select(id)) == null) {
-                throw new BusinessException("查询不到待编辑模板，请先选择正确的模板！");
+                throw new BusinessException("模板不存在，请先选择正确的模板！");
             }
             if (existent != null && existent.getId().intValue() != id) {
                 throw new BusinessException("模板名称已被占用！");
             }
+            template.setTemplateType(targetTemplate.getTemplateType());
+        }
+        // 根据不同的模板类型，校验不同的属性值
+        if (templateType.intValue() == CmsBtShelvesTemplateModelTemplateType.LAYOUT) {
+            if (numPerLin == null || numPerLin.intValue() < 1) {
+                throw new BusinessException("请输入布局模板每行个数!");
+            }
+            if (StringUtils.isBlank(htmlHead) || StringUtils.isBlank(htmlFoot) || StringUtils.isBlank(htmlClearfix1) || StringUtils.isBlank(htmlClearfix2)) {
+                throw new BusinessException("请输入布局模板的必填项!");
+            }
+            template.setHtmlLastImage("");
+            template.setHtmlImageTemplate("");
+        }else {
+            if (StringUtils.isBlank(htmlSmallImage) || StringUtils.isBlank(htmlLastImage) || StringUtils.isBlank(htmlImageTemplate)) {
+                throw new BusinessException("请输入单品模板的必填项!");
+            }
+            template.setHtmlHead("");
+            template.setHtmlModuleTitle("");
+            template.setHtmlModuleSearch("");
+            template.setHtmlClearfix1("");
+            template.setHtmlClearfix2("");
+            template.setHtmlBigImage("");
+            template.setHtmlFoot("");
+        }
+        if (SHELVES_EDIT.equals(operType)) {
             String targetHtmlImageTemplate = targetTemplate.getHtmlImageTemplate() == null ? "" : targetTemplate.getHtmlImageTemplate();
             String thisHtmlImageTemplate = template.getHtmlImageTemplate() == null ? "" : template.getHtmlImageTemplate();
             if (!targetHtmlImageTemplate.equals(thisHtmlImageTemplate)) {
@@ -138,20 +173,6 @@ public class CmsBtShelvesTemplateService extends BaseService {
                     }
                 }
             }
-
-        }
-        // 模板类型不同，字段值不同
-        if (templateType.intValue() == CmsBtShelvesTemplateModelTemplateType.LAYOUT) {
-            template.setHtmlLastImage("");
-            template.setHtmlImageTemplate("");
-        }else {
-            template.setHtmlHead("");
-            template.setHtmlModuleTitle("");
-            template.setHtmlModuleSearch("");
-            template.setHtmlClearfix1("");
-            template.setHtmlClearfix2("");
-            template.setHtmlBigImage("");
-            template.setHtmlFoot("");
         }
     }
 

@@ -184,7 +184,8 @@ define(function () {
                     getEditModel: "getEditModel",
                     saveEditModel: "saveEditModel",
                     deleteByPromotionId: "deleteByPromotionId",
-                    setPromotionStatus: "setPromotionStatus"
+                    setPromotionStatus: "setPromotionStatus",
+                    getPromotionSimpleList: "getPromotionSimpleList"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -674,6 +675,9 @@ define(function () {
             shelvesService: {
                 root: "/cms/shelves/detail",
                 search: "search",
+                createShelves: "createShelves",
+                updateShelves: "updateShelves",
+                updateProductSort: "updateProductSort",
                 addProduct: "addProduct",
                 getShelvesInfo: "getShelvesInfo"
             }
