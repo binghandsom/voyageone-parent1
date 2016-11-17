@@ -31,4 +31,9 @@
     </foreach>
     )
   </update>
+
+  <select id="wms_bt_item_details_selectSkusOfCode" resultType="com.voyageone.service.bean.wms.ItemDetailsBean">
+      select * from wms_bt_item_details where order_channel_id=#{channelId} and itemcode=#{code};
+  </select>
+
 </mapper>
