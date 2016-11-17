@@ -158,12 +158,12 @@ public class CmsBtShelvesTemplateService extends BaseService {
                 List<Integer> shelvesIds = null;
                 if (CollectionUtils.isNotEmpty(shelvesModels)) {
                     shelvesIds = new ArrayList<Integer>();
-                    param.clear();
-                    for (CmsBtShelvesModel shelves:shelvesModels) {
-                        shelvesIds.add(shelves.getId());
-                        param.put("shelvesId",shelves.getId());
-                        sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
-                    }
+//                    param.clear();
+//                    for (CmsBtShelvesModel shelves:shelvesModels) {
+//                        shelvesIds.add(shelves.getId());
+//                        param.put("shelvesId",shelves.getId());
+//                        sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
+//                    }
                     if (CollectionUtils.isNotEmpty(shelvesIds)) {
                         param.clear();
                         param.put("shelvesIds", shelvesIds);
