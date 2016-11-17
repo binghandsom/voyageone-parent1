@@ -633,6 +633,15 @@ public class PromotionDetailService extends BaseService {
     @VOTransactional
     public void delPromotionCode(List<CmsBtPromotionCodesBean> promotionModes, String channelId, String operator) {
         if(promotionModes.size()==0) return;
+
+        CmsBtPromotionModel promotionModel = promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
+
+        Date  activityStart= DateTimeUtil.parse(promotionModel.getActivityStart(),"yyyy-MM-dd");
+
+        if(DateTimeUtilBeijing.toLocalTime(activityStart)<new Date().getTime())
+        {
+            throw  new  BusinessException("活动已经开始不能删除");
+        }
         List<String> codeList=new ArrayList<>();
 
         for (CmsBtPromotionCodesBean item : promotionModes) {
@@ -670,7 +679,6 @@ public class PromotionDetailService extends BaseService {
         }
 
         //批量删除tag
-        CmsBtPromotionModel   promotionModel= promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
         promotionCodesTagService.deleteListByPromotionId_Codes(channelId,promotionModel.getPromotionId(),codeList,promotionModel.getRefTagId());
     }
 
