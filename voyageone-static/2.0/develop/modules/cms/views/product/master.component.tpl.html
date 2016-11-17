@@ -128,9 +128,13 @@
                                         <li class="">
                                             <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
                                         </li>
-                                        <li>
-                                        </li>
                                     </ul>
+                                    <button type="button" class="btn btn-nav btn-nav-pop" ng-controller="showPopoverCtrl"
+                                            popover-html="showInfo({value:'sas',isUseComplexTemplate:true,type:'1Columns'})"
+                                            uib-popover-template="dynamicPopover.templateUrl" type="button" popover-placement="left">
+                                        状态开关
+                                    </button>
+                                    <br>
                                     <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
                                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
                                     </button>
@@ -387,3 +391,46 @@
         </div>
     </div>
 </div>
+
+<script type="text/ng-template" id="dynamicPopoverTemplate.html">
+    <div class="row" style="min-width: 241px;">
+        <div class="row">
+            <div class="col-sm-8" style="color: #000">
+                <label class="control-label"> APP端启用开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+            </div>
+            <div class="col-sm-4">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1">
+                    <label class="onoffswitch-label" for="myonoffswitch1">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-8" style="color: #000">
+                <label class="control-label"> 翻译完成开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+            </div>
+            <div class="col-sm-4">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2">
+                    <label class="onoffswitch-label" for="myonoffswitch2">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="col-sm-8" style="color: #000">
+                <label class="control-label"> Lock开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+            </div>
+            <div class="col-sm-4">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4">
+                    <label class="onoffswitch-label" for="myonoffswitch4">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

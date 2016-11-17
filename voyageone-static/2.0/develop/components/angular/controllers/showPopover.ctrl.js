@@ -33,7 +33,16 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     tempHtml += "<br>";
                 }
             });
-        } else {
+        }
+        else if(values.isUseComplexTemplate == true){
+            $scope.dynamicPopover = {
+                type: values.type,
+                value1: values.value,
+                value2: values.value2,
+                value3: values.value3,
+                templateUrl: 'dynamicPopoverTemplate.html'
+            };
+        }else {
             tempHtml += values;
         }
         return tempHtml;
