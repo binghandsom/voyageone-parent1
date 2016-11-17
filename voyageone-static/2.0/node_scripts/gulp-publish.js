@@ -79,6 +79,7 @@ gulp.task(tasks.publish.modules, function () {
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     gulp.src(publish.modules.js)
+        .pipe(replace('version=', 'v='+ Date.parse(new Date())))
         .pipe(requireMin(searchMin))
         .pipe(ngAnnotate())
         .pipe(uglify())
@@ -86,6 +87,7 @@ gulp.task(tasks.publish.modules, function () {
 
     // 压缩html文件
     gulp.src(publish.modules.html)
+        .pipe(replace('version=', 'v='+ Date.parse(new Date())))
         .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
         .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.modules));
