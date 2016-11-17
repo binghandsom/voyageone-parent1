@@ -165,7 +165,7 @@ public class JdSkuService extends JdBase {
                 if (response != null) {
                     // 京东返回正常的场合
                     if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                        // 返回图片列表
+                        // 返回SKU对象列表
                         skus.addAll(response.getSkus());
                     } else {
                         // 京东返回失败的场合
@@ -215,7 +215,7 @@ public class JdSkuService extends JdBase {
             if (response != null) {
                 // 京东返回正常的场合
                 if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
-                    // 返回图片列表
+                    // 返回SKU信息
                     resultSku = response.getSku();
                 } else {
                     // 京东返回失败的场合
