@@ -74,16 +74,10 @@ class CmsShelvesDetailService extends BaseViewService {
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 
-            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
-            CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
-            cmsBtShelvesInfoBean.setShelvesModel(cmsBtShelvesModel);
-
-            if(isLoadPromotionPrice){
-                cmsBtShelvesInfoBean.setShelvesProductModels(getShelvesProductInfo(cmsBtShelvesModel));
-            }else{
-                cmsBtShelvesInfoBean.setShelvesProductModels(cmsBtShelvesProductService.getByShelvesId(cmsBtShelvesModel.getId()));
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, isLoadPromotionPrice);
+            if(cmsBtShelvesInfoBean != null){
+                cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
             }
-            cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
         });
         return cmsBtShelvesInfoBanList;
     }
@@ -129,40 +123,6 @@ class CmsShelvesDetailService extends BaseViewService {
         updateShelvesProduct(cmsBtShelvesProductModels);
     }
 
-    /**
-     * 根据货架产品信息包含活动价格
-     */
-    private List<CmsBtShelvesProductModel> getShelvesProductInfo(CmsBtShelvesModel cmsBtShelvesModel) {
-        List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesProductService.getByShelvesId(cmsBtShelvesModel.getId());
-        if (!ListUtils.isNull(cmsBtShelvesProductModels)) {
-            List<CmsBtShelvesProductModel> cmsBtShelvesProductBeens = new ArrayList<>(cmsBtShelvesProductModels.size());
-            List<CmsBtPromotionCodesBean> cmsBtPromotionCodes = null;
-            if (cmsBtShelvesModel.getPromotionId() != null && cmsBtShelvesModel.getPromotionId() > 0) {
-                cmsBtPromotionCodes = promotionCodeService.getPromotionCodeListByIdOrgChannelId(cmsBtShelvesModel.getPromotionId(), cmsBtShelvesModel.getChannelId());
-            }
-            List<CmsBtPromotionCodesBean> finalCmsBtPromotionCodes = cmsBtPromotionCodes;
-            cmsBtShelvesProductModels.forEach(item -> {
-                CmsBtShelvesProductBean cmsBtShelvesProductBean = new CmsBtShelvesProductBean();
-                BeanUtils.copy(item, cmsBtShelvesProductBean);
-                cmsBtShelvesProductBeens.add(cmsBtShelvesProductBean);
-                if (finalCmsBtPromotionCodes != null) {
-                    cmsBtShelvesProductBean.setPromotionPrice(getPromotionPrice(item.getProductCode(), finalCmsBtPromotionCodes));
-                }
-            });
-            return cmsBtShelvesProductBeens;
-        }
-        return new ArrayList<>();
-    }
-
-    private Double getPromotionPrice(String code, List<CmsBtPromotionCodesBean> cmsBtPromotionCodes) {
-        CmsBtPromotionCodesBean promotionCodesBean = cmsBtPromotionCodes.stream().filter(cmsBtPromotionCodesBean -> cmsBtPromotionCodesBean.getProductCode().equalsIgnoreCase(code)).findFirst().orElse(null);
-        if (promotionCodesBean != null) {
-            return promotionCodesBean.getPromotionPrice();
-        } else {
-            return 0.0;
-        }
-    }
-
     private void updateShelvesProduct(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
 
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
@@ -172,6 +132,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductService.insert(cmsBtShelvesProductModel);
             } else {
                 oldShelvesProduct.setSalePrice(cmsBtShelvesProductModel.getSalePrice());
+                oldShelvesProduct.setProductName(cmsBtShelvesProductModel.getProductName());
                 oldShelvesProduct.setNumIid(cmsBtShelvesProductModel.getNumIid());
                 oldShelvesProduct.setModifier(cmsBtShelvesProductModel.getModifier());
                 oldShelvesProduct.setModified(new Date());

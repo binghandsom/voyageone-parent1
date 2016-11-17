@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -29,7 +32,8 @@ public class CmsShelvesDetailServiceTest {
 
 //        CacheHelper.getValueOperation().set("ShelvesMonitor_" + 1, 1, 10, TimeUnit.SECONDS);
 
-        cmsShelvesDetailService.getShelvesInfo("010", Arrays.asList(1),false);
+        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo("010", Arrays.asList(1),false);
+        System.out.print(JacksonUtil.bean2Json(cmsBtShelvesInfoBeen));
     }
 
 }

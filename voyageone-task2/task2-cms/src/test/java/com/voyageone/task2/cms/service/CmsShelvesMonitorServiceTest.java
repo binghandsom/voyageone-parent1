@@ -46,7 +46,7 @@ public class CmsShelvesMonitorServiceTest {
         cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
         cmsBtShelvesProductModel.setProductCode("15447387-GRAPEFIZZACCENT");
         cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
-        cmsShelvesMonitorMQService.setInfo("018","1",resultList,cmsBtShelvesProductModels);
+//        cmsShelvesMonitorMQService.setInfo("018","1",resultList,cmsBtShelvesProductModels);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class CmsShelvesMonitorServiceTest {
         cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
         cmsBtShelvesProductModel.setProductCode("15447387-GRAPEFIZZACCENT");
         cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
-        cmsShelvesMonitorMQService.syuPlatformInfo("018",23,"536204642617",cmsBtShelvesProductModels);
+//        cmsShelvesMonitorMQService.syuPlatformInfo("018",23,"536204642617",cmsBtShelvesProductModels);
     }
 
 }
