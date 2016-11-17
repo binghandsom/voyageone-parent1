@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.shelves;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
@@ -107,13 +108,13 @@ public class CmsShelvesDetailController extends CmsController {
     }
 
     private static class AddProduct {
-        Integer shelvesId;
-        List<String> productCodes;
-        Integer isSelAll;
+        @JsonProperty("shelvesId") Integer shelvesId;
+        @JsonProperty("productCodes") List<String> productCodes;
+        @JsonProperty("isSelAll") Integer isSelAll;
     }
 
     private static class GetShelvesInfo {
-        List<Integer> shelvesIds;
-        Boolean isLoadPromotionPrice;
+        @JsonProperty("shelvesIds") List<Integer> shelvesIds;
+        @JsonProperty("isLoadPromotionPrice") Boolean isLoadPromotionPrice;
     }
 }
