@@ -69,7 +69,15 @@ define([
                 isLoadPromotionPrice: false
             }).then(function (resp) {
                 var infoBeanList = resp.data;
-                console.log(infoBeanList);
+                var map = {};
+                shelves.forEach(function (s) {
+                    map[s.id] = s;
+                });
+                infoBeanList.forEach(function (i) {
+                    var s = i.shelvesModel;
+                    angular.merge(map[s.id], s);
+                    map[s.id].products = i.shelvesProductModels;
+                });
             });
         },
         addShelves: function () {

@@ -74,8 +74,8 @@
                              ng-repeat="i in ctrl.shelves"
                              template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
             <div class="row">
-                <div ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
-                     ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
+                <div ng-repeat="p in i.products"
+                     ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
                 </div>
             </div>
         </uib-accordion-group>

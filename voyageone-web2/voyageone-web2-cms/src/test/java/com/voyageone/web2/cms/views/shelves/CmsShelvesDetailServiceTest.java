@@ -32,7 +32,7 @@ public class CmsShelvesDetailServiceTest {
 
 //        CacheHelper.getValueOperation().set("ShelvesMonitor_" + 1, 1, 10, TimeUnit.SECONDS);
 
-        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo("010", Arrays.asList(1),false);
+        List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo(Arrays.asList(1),false);
         System.out.print(JacksonUtil.bean2Json(cmsBtShelvesInfoBeen));
     }
 
