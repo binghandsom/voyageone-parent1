@@ -101,6 +101,10 @@ public class CmsBtShelvesProductService extends BaseService {
         return cmsBtShelvesInfoBean;
     }
 
+    public void delete(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
+        cmsBtShelvesProductDao.delete(cmsBtShelvesProductModel.getId());
+    }
+
     /**
      * 根据货架产品信息包含活动价格
      */
