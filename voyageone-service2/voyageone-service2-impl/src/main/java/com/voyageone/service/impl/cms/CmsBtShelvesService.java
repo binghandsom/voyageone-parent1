@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,7 +84,7 @@ public class CmsBtShelvesService extends BaseService {
         return cmsBtShelvesDao.countByExample(example) < 1;
     }
     public List<CmsBtShelvesModel>selectByChannelIdCart(String channelId, Integer cartId){
-        Map<String, Object> params = new HashedMap();
+        Map<String, Object> params = new HashMap();
         params.put("channelId",channelId);
         params.put("cartId",cartId);
         params.put("active", CmsBtShelvesModelActive.ACTIVATE);

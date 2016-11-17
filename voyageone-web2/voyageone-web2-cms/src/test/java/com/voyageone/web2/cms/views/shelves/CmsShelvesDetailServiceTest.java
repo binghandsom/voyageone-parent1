@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.shelves;
 
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import org.junit.Test;
@@ -11,6 +14,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +33,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
 public class CmsShelvesDetailServiceTest {
 
+
     @Autowired
     CmsShelvesDetailService cmsShelvesDetailService;
     @Test
@@ -34,6 +43,53 @@ public class CmsShelvesDetailServiceTest {
 
         List<CmsBtShelvesInfoBean> cmsBtShelvesInfoBeen = cmsShelvesDetailService.getShelvesInfo(Arrays.asList(1),false);
         System.out.print(JacksonUtil.bean2Json(cmsBtShelvesInfoBeen));
+    }
+
+    @Test
+    public void getAppImage() throws Exception {
+
+        try {
+            List<String> images = new ArrayList<>();
+            images.add("h:/20161026-240x342-jiarugouwuche.png");
+            images.add("h:/20161026-240x342-jiarugouwuche.png");
+            images.add("h:/20161026-240x342-jiarugouwuche.png");
+            images.add("h:/20161026-240x342-jiarugouwuche.png");
+            images.add("h:/20161026-240x342-jiarugouwuche2.png");
+            images.add("h:/20161026-240x342-jiarugouwuche2.png");
+            images.add("h:/20161026-240x342-jiarugouwuche2.png");
+            images.add("h:/20161026-240x342-jiarugouwuche2.png");
+            creatImage(images,2);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public byte[] creatImage(List<String> urls, int col){
+
+        try {
+            InputStream imagein = new FileInputStream(urls.get(0));
+            BufferedImage image = ImageIO.read(imagein);
+            imagein.close();
+
+            Integer width = image.getWidth();
+            Integer height = image.getHeight();
+            List<List<String>> urlSplit = CommonUtil.splitList(urls,col);
+            BufferedImage combined = new BufferedImage(width * col , height*urlSplit.size(), BufferedImage.TYPE_INT_RGB);
+            Graphics g = combined.getGraphics();
+            for(int i = 0;i<urlSplit.size(); i++){
+                for(int j = 0;j<urlSplit.get(i).size(); j++){
+                    InputStream temp = new FileInputStream(urlSplit.get(i).get(j));
+                    BufferedImage imageTemp = ImageIO.read(temp);
+                    g.drawImage(imageTemp, j*width, i*height, null);
+                    temp.close();
+                }
+            }
+            // Save as new image
+            ImageIO.write(combined, "PNG", new File("h:/", "custom.png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

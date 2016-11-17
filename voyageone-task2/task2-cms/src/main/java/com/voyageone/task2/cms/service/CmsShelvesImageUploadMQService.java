@@ -174,25 +174,25 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         String tmeplate = "";
         if (!StringUtil.isEmpty(cmsBtShelvesTemplateModel.getHtmlImageTemplate())) {
             tmeplate = cmsBtShelvesTemplateModel.getHtmlImageTemplate();
-            if (tmeplate.contains("{yuanjia}")) {
-                tmeplate = tmeplate.replace("{yuanjia}", cmsBtShelvesProductModel.getSalePrice().intValue() + "");
+            if (tmeplate.contains("@price")) {
+                tmeplate = tmeplate.replace("@price", cmsBtShelvesProductModel.getSalePrice().intValue() + "");
             }
-            if (tmeplate.contains("{image}")) {
-                tmeplate = tmeplate.replace("{image}", cmsBtShelvesProductModel.getImage());
+            if (tmeplate.contains("@img-1")) {
+                tmeplate = tmeplate.replace("@img-1", cmsBtShelvesProductModel.getImage());
             }
-            if (tmeplate.contains("{name}")) {
+            if (tmeplate.contains("@name")) {
                 try {
-                    tmeplate = tmeplate.replace("{name}", URLEncoder.encode(cmsBtShelvesProductModel.getProductName(), "UTF-8"));
+                    tmeplate = tmeplate.replace("@name", URLEncoder.encode(cmsBtShelvesProductModel.getProductName(), "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
-            if (tmeplate.contains("{promotionPrice}")) {
+            if (tmeplate.contains("@sale_price")) {
                 Double promitonPrice = 0.0;
                 if (cmsBtShelvesProductModel.getPromotionPrice() != null) {
                     promitonPrice = cmsBtShelvesProductModel.getPromotionPrice();
                 }
-                tmeplate = tmeplate.replace("{promotionPrice}", promitonPrice.intValue() + "");
+                tmeplate = tmeplate.replace("@sale_price", promitonPrice.intValue() + "");
             }
         }
         return tmeplate;

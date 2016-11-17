@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.shelves;
 
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -21,7 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -97,9 +108,11 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
 
                 if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
-                    title = platform.getFields().getStringAttribute("title");
+                    if(platform.getFields() != null)
+                        title = platform.getFields().getStringAttribute("title");
                 }else{
-                    title = platform.getFields().getStringAttribute("productTitle");
+                    if(platform.getFields() != null)
+                        title = platform.getFields().getStringAttribute("productTitle");
                 }
             }
 
@@ -137,7 +150,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 oldShelvesProduct.setNumIid(cmsBtShelvesProductModel.getNumIid());
                 oldShelvesProduct.setModifier(cmsBtShelvesProductModel.getModifier());
                 oldShelvesProduct.setModified(new Date());
-                if (!oldShelvesProduct.getImage().equalsIgnoreCase(cmsBtShelvesProductModel.getImage())) {
+                if (oldShelvesProduct.getImage() ==null || !oldShelvesProduct.getImage().equalsIgnoreCase(cmsBtShelvesProductModel.getImage())) {
                     oldShelvesProduct.setImage(cmsBtShelvesProductModel.getImage());
                     oldShelvesProduct.setPlatformImageUrl("");
                 }
