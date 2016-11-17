@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
@@ -82,20 +85,26 @@ class CmsShelvesDetailService extends BaseViewService {
             throw new BusinessException("货架不存在");
         }
 
+        ShopBean shopBean = Shops.getShop(cmsBtShelvesModel.getChannelId(), cmsBtShelvesModel.getCartId());
         List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = new ArrayList<>();
         productCodes.forEach(code -> {
             CmsBtProductModel productInfo = productService.getProductByCode(cmsBtShelvesModel.getChannelId(), code);
             CmsBtShelvesProductModel cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
             CmsBtProductModel_Platform_Cart platform = productInfo.getPlatform(cmsBtShelvesModel.getCartId());
+            String title = "";
             if (platform != null) {
                 cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
+
+                if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
+                    title = platform.getFields().getStringAttribute("title");
+                }else{
+                    title = platform.getFields().getStringAttribute("productTitle");
+                }
             }
-            if (platform == null)
-                return;
+
             cmsBtShelvesProductModel.setProductCode(code);
-            String title = platform.getFields().getStringAttribute("title");
-            cmsBtShelvesProductModel.setProductName(title == null ? "" : title);
+            cmsBtShelvesProductModel.setProductName(title == null?"":title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
             if (!imgList.isEmpty() && imgList.get(0).size() > 0) {

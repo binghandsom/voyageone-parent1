@@ -15,5 +15,5 @@ public interface CmsBtShelvesProductModelStatus {
     /**
      * 商品已下架
      */
-    int OFF = 0;
+    int OFF = 1;
 }

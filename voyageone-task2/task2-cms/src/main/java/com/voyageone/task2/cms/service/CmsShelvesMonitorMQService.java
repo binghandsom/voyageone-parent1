@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.service;
 
+import com.jd.open.api.sdk.domain.ware.Sku;
+import com.jd.open.api.sdk.response.ware.WareListResponse;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
@@ -14,7 +16,9 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.service.fields.cms.CmsBtShelvesProductModelStatus;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -56,13 +60,16 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 
     private final MqSender sender;
 
+    private final JdWareService jdWareService;
+
     @Autowired
-    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, MqSender sender, CmsBtShelvesService cmsBtShelvesService) {
+    public CmsShelvesMonitorMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbProductService tbProductService, ProductService productService, MqSender sender, CmsBtShelvesService cmsBtShelvesService, JdWareService jdWareService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbProductService = tbProductService;
         this.productService = productService;
         this.sender = sender;
         this.cmsBtShelvesService = cmsBtShelvesService;
+        this.jdWareService = jdWareService;
     }
 
     @Override
@@ -106,6 +113,8 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 
         if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
             syuPlatformInfoTM(channelId, shopBean, numiid, cmsBtShelvesProductModels);
+        }else if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())){
+            syuPlatformInfoJD(channelId, shopBean, numiid, cmsBtShelvesProductModels);
         }
 
         // 更新数据库
@@ -146,16 +155,41 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
                         resultList.add(sku);
                     });
                 }
-                setInfo(channelId, itemStatus.getDefaultValue(), resultList, cmsBtShelvesProductModels);
+                setInfo(channelId, "0".equalsIgnoreCase(itemStatus.getDefaultValue())?0:1, resultList, cmsBtShelvesProductModels);
             }
         } catch (Exception e) {
             e.printStackTrace();
             $error(e);
         }
     }
-    private void setInfo(String channelId, String itemStatus, List<SkuBean> resultList, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
+
+    private void syuPlatformInfoJD(String channelId, ShopBean shopBean, String numiid, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
+
+//        shopBean.setApp_url("https://api.jd.com/routerjson");
+//        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
+//        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
+//        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
+        try {
+            WareListResponse wareListResponse = jdWareService.getJdProduct(shopBean, numiid, "ware_id,skus");
+            int itemStatus = CmsBtShelvesProductModelStatus.OFF;
+            List<SkuBean> resultList = new ArrayList<>();
+            if (wareListResponse != null) {
+                for (Sku item:wareListResponse.getWareList().get(0).getSkus()){
+                    SkuBean skuBean = new SkuBean(item.getOuterId(), (int) item.getStockNum());
+                    if(skuBean.getQty() > 0) itemStatus =  CmsBtShelvesProductModelStatus.ON;
+                    resultList.add(skuBean);
+                };
+            }
+            setInfo(channelId, itemStatus, resultList, cmsBtShelvesProductModels);
+        } catch (Exception e) {
+            e.printStackTrace();
+            $error(e);
+        }
+    }
+    private void setInfo(String channelId, int itemStatus, List<SkuBean> resultList, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
-            cmsBtShelvesProductModel.setStatus(Integer.parseInt(itemStatus));
+            cmsBtShelvesProductModel.setStatus(itemStatus);
+
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtShelvesProductModel.getProductCode());
             cmsBtShelvesProductModel.setCmsInventory(cmsBtProductModel.getCommon().getFields().getQuantity());
             cmsBtProductModel.getCommon().getSkus().forEach(cmsBtProductModel_sku -> {
