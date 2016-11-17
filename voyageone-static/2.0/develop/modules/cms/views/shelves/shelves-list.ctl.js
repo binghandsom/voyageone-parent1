@@ -42,7 +42,28 @@ define([
             });
         },
         addShelves: function () {
-            this.popups.popNewShelves();
+            var self = this;
+            var context = {
+                cartName: self.cartList.find(function (i) {
+                    return i.value === self.cart;
+                }).name,
+                cartId: +self.cart,
+                clientName: self.clientType === self.clientTypes.PC ? "PC" : "APP",
+                clientType: self.clientType
+            };
+            this.popups.popNewShelves(context).then(function (insertedModel) {
+                self.shelves.push(insertedModel);
+            });
+        },
+        expandAll: function () {
+            this.shelves.forEach(function (s) {
+                s.$isOpen = true;
+            });
+        },
+        collapseAll: function () {
+            this.shelves.forEach(function (s) {
+                s.$isOpen = false;
+            });
         }
     };
 

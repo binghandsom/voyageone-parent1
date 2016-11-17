@@ -91,3 +91,8 @@
     background-color: #f8f8f8;
     border-color: #d4cfcf;
 }
+
+.nav-stacked li {
+    min-width: 0;
+    padding-right: 5px;
+}

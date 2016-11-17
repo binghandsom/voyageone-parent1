@@ -67,8 +67,10 @@
         </div>
     </div>
 
-    <uib-accordion ng-if="ctrl.shelves.length">
-        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" ng-repeat="i in ctrl.shelves" template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
+    <p>最后一次上下架状态&平台库存刷新时间：2016-11-08 19:45</p>
+
+    <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
+        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" is-open="i.$isOpen" ng-repeat="i in ctrl.shelves" template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
             <div class="row">
                 <div ng-repeat="i in [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
@@ -77,8 +79,8 @@
         </uib-accordion-group>
     </uib-accordion>
 
-    <sticky style="position:absolute;top:260px;right:0">
-        <ul class="nav nav-pills nav-stacked" style="min-width:0;width:120px">
+    <sticky style="position:absolute;top:300px;right:0">
+        <ul class="nav nav-pills nav-stacked" style="min-width:0;width:auto">
             <li ng-repeat="i in ctrl.shelves">
                 <button type="button" class="btn btn-default" scroll-to="{{::'#s'+$index+',,-60'}}">{{i.shelvesName}}</button>
             </li>
@@ -89,10 +91,10 @@
                 <button type="button" class="btn btn-info" ng-click="ctrl.addShelves()">新建货架</button>
             </li>
             <li>
-                <button type="button" class="btn btn-default">全部收起</button>
+                <button type="button" class="btn btn-default" ng-click="ctrl.collapseAll()">全部收起</button>
             </li>
             <li>
-                <button type="button" class="btn btn-default">全部展开</button>
+                <button type="button" class="btn btn-default" ng-click="ctrl.expandAll()">全部展开</button>
             </li>
         </ul>
     </sticky>

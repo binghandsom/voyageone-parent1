@@ -68,6 +68,7 @@ public class CmsBtShelvesService extends BaseService {
 
         CmsBtShelvesExample example = new CmsBtShelvesExample();
 
+        // where channelId = ? and cartId = ? and shelvesName = ?
         CmsBtShelvesExample.Criteria criteria = example.createCriteria()
                 .andChannelIdEqualTo(exampleModel.getChannelId())
                 .andCartIdEqualTo(exampleModel.getCartId())
@@ -75,6 +76,7 @@ public class CmsBtShelvesService extends BaseService {
 
         Integer id = exampleModel.getId();
 
+        // and id != ?
         if (id != null)
             criteria.andIdNotEqualTo(id);
 

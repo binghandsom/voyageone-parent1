@@ -1,9 +1,11 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.PageQueryParameters;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,11 +31,14 @@ import java.util.Map;
 public class CmsPromotionIndexController extends CmsController {
     private final CmsPromotionIndexService cmsPromotionService;
     private final PromotionService promotionService;
+    private final CmsBtJmPromotionService cmsBtJmPromotionService;
 
     @Autowired
-    public CmsPromotionIndexController(PromotionService promotionService, CmsPromotionIndexService cmsPromotionService) {
+    public CmsPromotionIndexController(PromotionService promotionService, CmsPromotionIndexService cmsPromotionService,
+                                       CmsBtJmPromotionService cmsBtJmPromotionService) {
         this.promotionService = promotionService;
         this.cmsPromotionService = cmsPromotionService;
+        this.cmsBtJmPromotionService = cmsBtJmPromotionService;
     }
 
     @RequestMapping(PROMOTION.LIST.INDEX.INIT)
@@ -124,5 +130,26 @@ public class CmsPromotionIndexController extends CmsController {
         String filename = String.format("%s(%s).xlsx", promotionName, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
 
         return genResponseEntityFromBytes(filename, data);
+    }
+
+    /**
+     * @since 2.10.0
+     */
+    @RequestMapping("getPromotionSimpleList")
+    public AjaxResponse getPromotionSimpleList(@RequestBody Map<String, Object> paramMap) {
+        Integer cartId = (Integer) paramMap.get("cartId");
+        boolean isJm = Integer.valueOf(CartEnums.Cart.JM.getId()).equals(cartId);
+
+        Object result;
+
+        if (isJm) {
+            result = cmsBtJmPromotionService.getJMActivePromotions(CartEnums.Cart.JM.getValue(), getUser().getSelChannelId());
+        } else {
+            Map<String, Object> param = new HashMap<>();
+            param.put("cartId", cartId);
+            result = promotionService.getPromotions4AdvSearch(getUser().getSelChannelId(), param);
+        }
+
+        return success(result);
     }
 }

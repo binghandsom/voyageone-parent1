@@ -41,10 +41,11 @@ public class CmsShelvesDetailController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
-    public AjaxResponse search(@RequestBody Map<String, Object> params) {
-        params.put("channelId", getUser().getSelChannelId());
-        params.put("active", CmsBtShelvesModelActive.ACTIVATE);
-        return success(cmsBtShelvesService.selectList(params));
+    public AjaxResponse search(@RequestBody CmsBtShelvesModel example) {
+        example.setChannelId(getUser().getSelChannelId());
+        example.setActive(CmsBtShelvesModelActive.ACTIVATE);
+
+        return success(cmsBtShelvesService.selectList(example));
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.ADD_PRODUCT)
