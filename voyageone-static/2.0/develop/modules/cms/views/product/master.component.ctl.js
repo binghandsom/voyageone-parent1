@@ -7,6 +7,11 @@ define([
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
 ], function (cms, carts) {
+
+    var mConfig = {
+        bigImageUrl:'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
+    };
+
     cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
@@ -42,6 +47,7 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.copyCommonProperty = copyCommonProperty;
                 scope.goDetail = goDetail;
+                scope.simpleImgDown = simpleImgDown;
 
                 /**
                  * 获取京东页面初始化数据
@@ -286,8 +292,23 @@ define([
                     if (args.length == 0)
                         return;
 
-                    window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓", args[args.length - 1]));
+                    window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
 
+                }
+
+                //element
+                function simpleImgDown(imgName,$event){
+                    var jq = angular.element,
+                        _aTag;
+
+                    imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                    _aTag =  jq('<a download>').attr({'href':imgName});
+
+                    jq('body').append(_aTag);
+                    _aTag[0].click();
+                    _aTag.remove();
+
+                    $event.stopPropagation();
                 }
 
             }

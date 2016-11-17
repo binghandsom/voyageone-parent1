@@ -6314,6 +6314,21 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
     opacity:1;
 }
 
+.btn-upLoad {
+    color: #ffffff !important;
+    background-color: #23b7e5;
+    border-color: #23b7e5;
+    filter:alpha(opacity=60);
+    opacity:0.4;
+}
+.btn-upLoad:hover {
+    color: #ffffff !important;
+    background-color: #23b7e5;
+    border-color: #23b7e5;
+    filter:alpha(opacity=60);
+    opacity:1;
+}
+
 /*NEW CMS*/
 .channel-main-con{
     margin:0 auto;
