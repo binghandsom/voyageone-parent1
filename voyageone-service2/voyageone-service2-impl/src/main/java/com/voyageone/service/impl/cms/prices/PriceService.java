@@ -20,8 +20,12 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
+import com.voyageone.components.jumei.JumeiHtDealService;
 import com.voyageone.components.jumei.JumeiHtMallService;
+import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
 import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
+import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
@@ -73,6 +77,9 @@ public class PriceService extends BaseService {
 
     @Autowired
     JdSkuService jdSkuService;
+
+    @Autowired
+    JumeiHtDealService serviceJumeiHtDeal;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
@@ -794,13 +801,15 @@ public class PriceService extends BaseService {
             return roundDouble(price, roundUp);
         }
     }
-
+    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) throws Exception {
+        updateSkuPrice(channleId, cartId, productModel,false);
+    }
     /**
      * 更新商品SKU的价格
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
      * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
-    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) throws Exception {
+    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel,boolean isUpdateJmDealPrice) throws Exception {
         logger.info("PriceService　更新商品SKU的价格 ");
         ShopBean shopObj = Shops.getShop(channleId, Integer.toString(cartId));
         CartBean cartObj = Carts.getCart(cartId);
@@ -829,8 +838,8 @@ public class PriceService extends BaseService {
             $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
             throw new BusinessException("产品数据不全,缺少sku数据！");
         }
-        String updType=null;
-        if(PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())||PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
+        String updType = null;
+        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // 先要判断更新类型
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
             if (imsBtProductModel == null) {
@@ -856,7 +865,12 @@ public class PriceService extends BaseService {
             tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
-            jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue, updType);
+
+            if (isUpdateJmDealPrice) {
+                jm_UpdateDealPriceBatch(shopObj, skuList, priceConfigValue);
+            }
+            jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue);
+
         } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- JdSkuService  京东平台 更新商品SKU的价格
             jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
@@ -894,11 +908,50 @@ public class PriceService extends BaseService {
             logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
         }
     }
+
+    private void   jm_UpdateDealPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue) throws Exception {
+        List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>(skuList.size());
+        HtDeal_UpdateDealPriceBatch_UpdateData updateData = null;
+        for (BaseMongoMap skuObj : skuList) {
+            updateData = new HtDeal_UpdateDealPriceBatch_UpdateData();
+            String skuCode = (String) skuObj.get("skuCode");
+            if (StringUtils.isEmpty(skuCode)) {
+                continue;
+            }
+            updateData.setJumei_sku_no(skuCode);
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+            updateData.setDeal_price(priceSale);
+            updateData.setMarket_price(priceRetail);
+            list.add(updateData);
+        }
+        String errorMsg = "";
+        if (list.size() == 0) {
+            return;
+        }
+        HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
+        List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list, 10);
+        for (List<HtDeal_UpdateDealPriceBatch_UpdateData> page : pageList) {
+            request.setUpdate_data(page);
+            HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
+            if (!response.is_Success()) {
+                errorMsg += response.getErrorMsg();
+            }
+        }
+        if (!StringUtil.isEmpty(errorMsg)) {
+            throw new BusinessException("jm_UpdateDealPriceBatch:" + errorMsg);
+        }
+    }
+
     //聚美 更新商品价格
-    private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
+    private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue) throws Exception {
         List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>(skuList.size());
         HtMallSkuPriceUpdateInfo updateData = null;
-        Double maxPrice = null;
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtMallSkuPriceUpdateInfo();
            String skuCode= (String) skuObj.get("skuCode");

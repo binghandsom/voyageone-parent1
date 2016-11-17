@@ -1500,8 +1500,10 @@ public class CmsProductDetailService extends BaseViewService {
 
         return common;
     }
-
     public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws Exception {
+
+    }
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform,boolean isUpdateJmDealPrice) throws Exception {
 
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1525,6 +1527,6 @@ public class CmsProductDetailService extends BaseViewService {
 
         //刷新价格
         CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
-        priceService.updateSkuPrice(channelId, cartId, productInfo);
+        priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
     }
 }
