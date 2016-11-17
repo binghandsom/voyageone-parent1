@@ -157,7 +157,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
             }
 
-            shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelId(userInfo.getSelChannelId()));
+            shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
         }
         masterData.put("promotionMap", promotionMap);
 

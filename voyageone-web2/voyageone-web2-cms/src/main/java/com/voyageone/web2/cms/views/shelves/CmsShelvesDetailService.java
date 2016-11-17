@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.shelves;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.ListUtils;
@@ -92,6 +95,7 @@ class CmsShelvesDetailService extends BaseViewService {
             throw new BusinessException("货架不存在");
         }
 
+        ShopBean shopBean = Shops.getShop(cmsBtShelvesModel.getChannelId(), cmsBtShelvesModel.getCartId());
         List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = new ArrayList<>();
         productCodes.forEach(code -> {
             CmsBtProductModel productInfo = productService.getProductByCode(cmsBtShelvesModel.getChannelId(), code);
@@ -102,7 +106,14 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
             }
             cmsBtShelvesProductModel.setProductCode(code);
-            String title = platform.getFields().getStringAttribute("title");
+
+            String title;
+            if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
+                title = platform.getFields().getStringAttribute("title");
+            }else{
+                title = platform.getFields().getStringAttribute("productTitle");
+            }
+
             cmsBtShelvesProductModel.setProductName(title == null?"":title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();

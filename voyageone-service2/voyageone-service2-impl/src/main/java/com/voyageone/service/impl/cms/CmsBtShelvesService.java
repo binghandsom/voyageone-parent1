@@ -49,4 +49,11 @@ public class CmsBtShelvesService extends BaseService {
         params.put("active", CmsBtShelvesModelActive.ACTIVATE);
         return cmsBtShelvesDao.selectList(params);
     }
+    public List<CmsBtShelvesModel>selectByChannelIdCart(String channelId, Integer cartId){
+        Map<String, Object> params = new HashedMap();
+        params.put("channelId",channelId);
+        params.put("cartId",cartId);
+        params.put("active", CmsBtShelvesModelActive.ACTIVATE);
+        return cmsBtShelvesDao.selectList(params);
+    }
 }
