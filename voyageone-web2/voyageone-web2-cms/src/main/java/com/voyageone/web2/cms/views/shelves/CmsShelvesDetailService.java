@@ -91,21 +91,19 @@ class CmsShelvesDetailService extends BaseViewService {
             CmsBtProductModel productInfo = productService.getProductByCode(cmsBtShelvesModel.getChannelId(), code);
             CmsBtShelvesProductModel cmsBtShelvesProductModel = new CmsBtShelvesProductModel();
             CmsBtProductModel_Platform_Cart platform = productInfo.getPlatform(cmsBtShelvesModel.getCartId());
+            String title = "";
             if (platform != null) {
                 cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
+
+                if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
+                    title = platform.getFields().getStringAttribute("title");
+                }else{
+                    title = platform.getFields().getStringAttribute("productTitle");
+                }
             }
-            if (platform == null)
-                return;
+
             cmsBtShelvesProductModel.setProductCode(code);
-
-            String title;
-            if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
-                title = platform.getFields().getStringAttribute("title");
-            }else{
-                title = platform.getFields().getStringAttribute("productTitle");
-            }
-
             cmsBtShelvesProductModel.setProductName(title == null?"":title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
