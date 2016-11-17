@@ -45,18 +45,22 @@ define([
                     });
                 }
 
-                (self.shelves = resp.data).forEach(function (s) {
-                    self.watchShelvesIsOpen(s);
+                self.shelves = resp.data;
+
+                self.getShelvesInfo(true).then(function () {
+                    self.shelves.forEach(function (s) {
+                        self.watchShelvesIsOpen(s);
+                    });
                 });
             });
         },
-        getShelvesInfo: function() {
+        getShelvesInfo: function(force) {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
 
             var needInfoShelvesId = shelves.filter(function (s) {
-                return s.$isOpen;
+                return force || s.$isOpen;
             }).map(function (s) {
                 return s.id;
             });
@@ -64,7 +68,7 @@ define([
             if (!needInfoShelvesId.length)
                 return;
 
-            shelvesService.getShelvesInfo({
+            return shelvesService.getShelvesInfo({
                 shelvesIds: needInfoShelvesId,
                 isLoadPromotionPrice: false
             }).then(function (resp) {
@@ -78,6 +82,7 @@ define([
                     angular.merge(map[s.id], s);
                     map[s.id].products = i.shelvesProductModels;
                 });
+                self.lastShelvesInfoTime = new Date();
             });
         },
         addShelves: function () {

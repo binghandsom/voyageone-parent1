@@ -67,7 +67,7 @@
         </div>
     </div>
 
-    <p>最后一次上下架状态&平台库存刷新时间：2016-11-08 19:45</p>
+    <p>最后一次上下架状态&平台库存刷新时间：<span>{{ctrl.lastShelvesInfoTime | date: 'yyyy-MM-dd HH:mm:ss'}}</span></p>
 
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
         <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" is-open="i.$isOpen"
