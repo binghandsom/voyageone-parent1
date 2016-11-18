@@ -63,7 +63,7 @@
                                         Sales/销量&emsp;
                                     </label>
                                     <div class="col-md-7">
-                                        <select class="form-control" ng-model="vm.selectSales">
+                                        <select class="form-control" ng-change="selectSalesOnChange()"  ng-model="vm.selectSales">
                                             <option value="codeSumAll">Total</option>
                                             <option value="codeSum7">7&nbsp;Days</option>
                                             <option value="codeSum30">30&nbsp;Days</option>
@@ -135,7 +135,7 @@
                                     <button class="btn btn-success btn-pop">价格保存</button>
                                 </td>
                                 <td class="mfb-xxt  text-right"></td>
-                                <td class="mfb-xxt text-right">{{saleQty}}</td>
+                                <td class="mfb-xxt text-right">{{item.saleQty}}</td>
                             </tr>
                             </tbody>
                         </table>
