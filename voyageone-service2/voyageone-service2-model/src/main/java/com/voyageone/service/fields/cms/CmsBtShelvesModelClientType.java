@@ -8,6 +8,6 @@ package com.voyageone.service.fields.cms;
  * @since 2.10.0
  */
 public interface CmsBtShelvesModelClientType {
-    int PC = 1;
     int APP = 2;
+    int PC = 1;
 }

@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
@@ -12,11 +13,11 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -75,6 +76,15 @@ public class CmsShelvesDetailController extends CmsController {
         if (isLoadPromotionPrice == null)
             isLoadPromotionPrice = false;
         return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice));
+    }
+
+    public ResponseEntity<byte[]> doExportAppImage(@RequestBody Integer shelvesId) throws Exception {
+
+        byte[] data = cmsShelvesDetailService.exportAppImage(shelvesId);
+
+        String filename = String.format("橱窗app图-%d(%s).xlsx", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
+
+        return genResponseEntityFromBytes(filename, data);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.CREATE_SHELVES)

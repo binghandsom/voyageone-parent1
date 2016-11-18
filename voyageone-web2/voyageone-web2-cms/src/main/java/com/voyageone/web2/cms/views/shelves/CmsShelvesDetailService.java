@@ -4,15 +4,19 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
+import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
+import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -21,9 +25,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by james on 2016/11/15.
@@ -35,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesService cmsBtShelvesService;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
+    private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
     private final ProductService productService;
     private final MqSender sender;
     private final RedisTemplate<Object, Object> redisTemplate;
@@ -43,12 +56,13 @@ class CmsShelvesDetailService extends BaseViewService {
     public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService,
                                    CmsBtShelvesService cmsBtShelvesService,
                                    ProductService productService, RedisTemplate<Object, Object> redisTemplate,
-                                   MqSender sender) {
+                                   MqSender sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.productService = productService;
         this.redisTemplate = redisTemplate;
         this.sender = sender;
+        this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
     }
 
     /**
@@ -97,17 +111,17 @@ class CmsShelvesDetailService extends BaseViewService {
                 cmsBtShelvesProductModel.setNumIid(platform.getpNumIId());
                 cmsBtShelvesProductModel.setSalePrice(platform.getpPriceSaleEd());
 
-                if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())){
-                    if(platform.getFields() != null)
+                if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())) {
+                    if (platform.getFields() != null)
                         title = platform.getFields().getStringAttribute("title");
-                }else{
-                    if(platform.getFields() != null)
+                } else {
+                    if (platform.getFields() != null)
                         title = platform.getFields().getStringAttribute("productTitle");
                 }
             }
 
             cmsBtShelvesProductModel.setProductCode(code);
-            cmsBtShelvesProductModel.setProductName(title == null?"":title);
+            cmsBtShelvesProductModel.setProductName(title == null ? "" : title);
             cmsBtShelvesProductModel.setCmsInventory(productInfo.getCommon().getFields().getQuantity());
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
             if (!imgList.isEmpty() && imgList.get(0).size() > 0) {
@@ -127,6 +141,32 @@ class CmsShelvesDetailService extends BaseViewService {
         updateShelvesProduct(cmsBtShelvesProductModels);
     }
 
+    byte[] exportAppImage(Integer shelvesId) {
+        CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, false);
+        if (cmsBtShelvesInfoBean.getShelvesModel() != null && cmsBtShelvesInfoBean.getShelvesProductModels() != null) {
+            CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel = cmsBtShelvesTemplateService.selectById(cmsBtShelvesInfoBean.getShelvesModel().getLayoutTemplateId());
+            if (cmsBtShelvesTemplateModel.getNumPerLine() != null && cmsBtShelvesTemplateModel.getNumPerLine() > 0) {
+                List<String> imageNames = cmsBtShelvesInfoBean.getShelvesProductModels()
+                        .stream()
+                        .filter(item -> !StringUtil.isEmpty(item.getPlatformImageUrl()))
+                        .map(item -> String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId, item.getProductCode()))
+                        .collect(Collectors.toList());
+                if (imageNames.size() == 0) {
+                    throw new BusinessException("货架中没有商品");
+                }
+
+                return createAppImage(imageNames, cmsBtShelvesTemplateModel.getNumPerLine());
+            } else {
+                throw new BusinessException("货架模板不正确");
+            }
+
+        } else {
+            throw new BusinessException("没有找到对应的货架");
+        }
+
+
+    }
+
     private void updateShelvesProduct(List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
 
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
@@ -140,7 +180,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 oldShelvesProduct.setNumIid(cmsBtShelvesProductModel.getNumIid());
                 oldShelvesProduct.setModifier(cmsBtShelvesProductModel.getModifier());
                 oldShelvesProduct.setModified(new Date());
-                if (oldShelvesProduct.getImage() ==null || !oldShelvesProduct.getImage().equalsIgnoreCase(cmsBtShelvesProductModel.getImage())) {
+                if (oldShelvesProduct.getImage() == null || !oldShelvesProduct.getImage().equalsIgnoreCase(cmsBtShelvesProductModel.getImage())) {
                     oldShelvesProduct.setImage(cmsBtShelvesProductModel.getImage());
                     oldShelvesProduct.setPlatformImageUrl("");
                 }
@@ -148,4 +188,50 @@ class CmsShelvesDetailService extends BaseViewService {
             }
         });
     }
+
+
+    private byte[] createAppImage(List<String> urls, int col) {
+        int spacingX = 25;
+        int spacingY = 25;
+        try {
+            InputStream imagein = new FileInputStream(urls.get(0));
+            BufferedImage image = ImageIO.read(imagein);
+            imagein.close();
+
+            Integer width = image.getWidth();
+            Integer height = image.getHeight();
+            List<List<String>> urlSplit = CommonUtil.splitList(urls, col);
+            BufferedImage combined = new BufferedImage(width * col + (col - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_RGB);
+            Graphics g = combined.getGraphics();
+            for (int i = 0; i < urlSplit.size(); i++) {
+                int y;
+                if (i > 0) {
+                    y = i * (height + spacingY);
+                } else {
+                    y = i * height;
+                }
+                for (int j = 0; j < urlSplit.get(i).size(); j++) {
+                    InputStream temp = new FileInputStream(urlSplit.get(i).get(j));
+                    BufferedImage imageTemp = ImageIO.read(temp);
+
+                    int x;
+                    if (j > 0) {
+                        x = j * (width + spacingX);
+                    } else {
+                        x = j * width;
+                    }
+                    g.drawImage(imageTemp, x, y, null);
+                    temp.close();
+                }
+            }
+            ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream();
+            // Save as new image
+            ImageIO.write(combined, "PNG", bufferedOutputStream);
+            return bufferedOutputStream.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

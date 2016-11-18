@@ -32,6 +32,15 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
 public class CmsShelvesDetailServiceTest {
+    @Test
+    public void exportAppImage() throws Exception {
+        byte[]imageBuf = cmsShelvesDetailService.exportAppImage(1);
+        try(FileOutputStream fileOutputStream = new FileOutputStream((new File("H:\\shelves\\merge.png")))) {
+            fileOutputStream.write(imageBuf);
+        }catch (Exception e){
+
+        }
+    }
 
 
     @Autowired

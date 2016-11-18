@@ -14,12 +14,14 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
+import com.voyageone.service.fields.cms.CmsBtShelvesModelClientType;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
@@ -34,10 +36,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -89,20 +88,46 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                 List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesInfoBean.getShelvesProductModels();
                 cmsBtShelvesProductModels = cmsBtShelvesProductModels.stream().filter(cmsBtShelvesProductModel -> StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageUrl())).collect(Collectors.toList());
                 ExecutorService es = Executors.newFixedThreadPool(5);
-                cmsBtShelvesProductModels.forEach(item -> es.execute(()->uploadImage(shopBean, (CmsBtShelvesProductBean)item, cmsBtShelvesTemplateModel, picCatId)));
+                if(cmsBtShelvesInfoBean.getShelvesModel().getClientType() == CmsBtShelvesModelClientType.APP){
+                    String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
+                    FileUtils.mkdirPath(path);
+                }
+                cmsBtShelvesProductModels.forEach(item -> es.execute(()->uploadImage(shopBean, cmsBtShelvesInfoBean.getShelvesModel(), (CmsBtShelvesProductBean)item, cmsBtShelvesTemplateModel, picCatId)));
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             }
         }
     }
 
-    private void uploadImage(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
+    private void uploadImage(ShopBean shopBean, CmsBtShelvesModel shelvesModel, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
 
-        if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())) {
-            uploadImageTm(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
-        }else if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())){
-            uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
+        if(shelvesModel.getClientType() == CmsBtShelvesModelClientType.PC){
+            if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())) {
+                uploadImageTm(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
+            }else if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())){
+                uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
+            }
+        }else{
+            String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesModel.getId());
+            uploadLocal(path, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         }
+
+    }
+
+    private void uploadLocal(String path, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel){
+        String saveFile = String.format("%s/%s.jpg", path, cmsBtShelvesProductModel.getProductCode());
+        String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
+        byte[] imageBuf = downImage(imageUrl);
+        try(FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
+            fileOutputStream.write(imageBuf);
+            cmsBtShelvesProductModel.setPlatformImageId(cmsBtShelvesProductModel.getProductCode());
+            cmsBtShelvesProductModel.setPlatformImageUrl(saveFile);
+            cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            $error(e);
+        }
+
     }
 
     private void uploadImageTm(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
