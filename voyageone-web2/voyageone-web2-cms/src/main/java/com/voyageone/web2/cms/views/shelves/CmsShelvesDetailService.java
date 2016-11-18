@@ -200,7 +200,7 @@ class CmsShelvesDetailService extends BaseViewService {
             Integer width = image.getWidth();
             Integer height = image.getHeight();
             List<List<String>> urlSplit = CommonUtil.splitList(urls, numPerLine);
-            BufferedImage combined = new BufferedImage(width * numPerLine + (numPerLine - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_RGB);
+            BufferedImage combined = new BufferedImage(width * numPerLine + (numPerLine - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_ARGB);
             Graphics g = combined.getGraphics();
             for (int i = 0; i < urlSplit.size(); i++) {
                 int y;
