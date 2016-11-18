@@ -102,6 +102,7 @@ public class CmsShelvesDetailController extends CmsController {
     public AjaxResponse updateShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
         cmsBtShelvesModel.setModifier(getUser().getUserName());
         cmsBtShelvesModel.setModified(new Date());
+        cmsBtShelvesModel.setChannelId(getUser().getSelChannelId());
 
         if (!cmsBtShelvesService.checkName(cmsBtShelvesModel)) {
             throw new BusinessException("该货架名称已存在");

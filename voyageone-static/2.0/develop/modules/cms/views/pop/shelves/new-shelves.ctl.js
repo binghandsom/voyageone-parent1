@@ -12,6 +12,10 @@ define([
         self.shelvesService = shelvesService;
 
         self.getTemplate();
+
+        angular.extend(self, context);
+
+        self.usePromoPrice = !!context.promotionId;
     }
 
     NewShelvesPopupController.prototype = {
@@ -72,13 +76,23 @@ define([
                 cartId: context.cartId,
                 clientType: context.clientType,
                 layoutTemplateId: self.layoutTemplateId,
-                singleTemplateId: self.singleTemplateId,
-                promotionId: self.promotionId
+                singleTemplateId: self.singleTemplateId
             };
 
-            shelvesService.createShelves(shelvesModel).then(function (resp) {
-                self.$uibModalInstance.close(resp.data);
-            });
+            if (self.usePromoPrice) {
+                shelvesModel.promotionId = self.promotionId;
+            }
+
+            if (context.id) {
+                shelvesModel.id = context.id;
+                shelvesService.updateShelves(shelvesModel).then(function (resp) {
+                    self.$uibModalInstance.close(resp.data);
+                });
+            } else {
+                shelvesService.createShelves(shelvesModel).then(function (resp) {
+                    self.$uibModalInstance.close(resp.data);
+                });
+            }
         },
 
         cancel: function () {

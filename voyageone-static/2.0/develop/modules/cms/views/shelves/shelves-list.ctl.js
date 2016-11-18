@@ -2,13 +2,14 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    function ShelvesListController(shelvesService, popups, menuService, $scope, notify) {
+    function ShelvesListController(shelvesService, popups, menuService, $scope, notify, confirm) {
         var self = this;
 
         self.shelvesService = shelvesService;
         self.popups = popups;
         self.$scope = $scope;
         self.notify = notify;
+        self.confirm = confirm;
 
         menuService.getPlatformType().then(function (data) {
             self.cartList = data.filter(function (i) {
@@ -86,16 +87,25 @@ define([
                 self.lastShelvesInfoTime = new Date();
             });
         },
-        addShelves: function () {
+        addShelves: function (s) {
             var self = this;
-            var context = {
-                cartName: self.cartList.find(function (i) {
-                    return i.value === self.cart;
-                }).name,
-                cartId: +self.cart,
-                clientName: self.clientType === self.clientTypes.PC ? "PC" : "APP",
-                clientType: self.clientType
-            };
+            var context;
+
+            if (!s) {
+                context = {
+                    cartId: +self.cart,
+                    clientType: self.clientType
+                };
+            } else {
+                context = angular.extend({}, s);
+            }
+
+            context.cartName = self.cartList.find(function (i) {
+                return i.value === self.cart;
+            }).name;
+
+            context.clientName = self.clientType === self.clientTypes.PC ? "PC" : "APP";
+
             this.popups.popNewShelves(context).then(function (insertedModel) {
                 self.shelves.push(insertedModel);
             });
@@ -126,24 +136,29 @@ define([
             });
         },
         removeAll: function (s) {
-            s.products = [];
             var self = this;
             var shelvesService = self.shelvesService;
 
-            shelvesService.clearProduct({
-                shelvesId: s.id
-            }).then(function () {
-                self.notify.success('TXT_SUCCESS');
+            self.confirm('确定要删除[ ' + s.shelvesName + ' ]货架的<strong>所有商品</strong>么？').then(function () {
+                s.products = [];
+
+                shelvesService.clearProduct({
+                    shelvesId: s.id
+                }).then(function () {
+                    self.notify.success('TXT_SUCCESS');
+                });
             });
         },
         deleteShelves: function(s, i) {
             var self = this;
             var shelvesService = self.shelvesService;
 
-            self.shelves.splice(i, 1);
+            self.confirm('确定要删除[ ' + s.shelvesName + ' ]货架么？').then(function () {
+                self.shelves.splice(i, 1);
 
-            shelvesService.deleteShelves(s).then(function () {
-                self.notify.success('TXT_SUCCESS');
+                shelvesService.deleteShelves(s).then(function () {
+                    self.notify.success('TXT_SUCCESS');
+                });
             });
         },
         expandAll: function () {
