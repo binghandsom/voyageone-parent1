@@ -23,6 +23,12 @@
     border-radius: 0;
 }
 
+.a-close-btn {
+    position: absolute;
+    right: 5px;
+    top: 1px;
+}
+
 .shelves-item p,
 .shelves-edit-item p {
     margin-bottom: 5px;
@@ -30,12 +36,12 @@
 
 .shelves-item {
     width: 252px;
-    padding-top: 17px;
+    padding-top: 25px;
     padding-left: 10px;
 }
 
 .shelves-edit-item {
-    width: 300px;
+    width: 252px;
     padding: 5px 6px;
 }
 
@@ -53,18 +59,13 @@
     cursor: move;
 }
 
-.shelves-edit-item .a-close-btn {
-    right: 5px;
-    top: 1px;
-}
-
 .shelves-item-label,
 .shelves-item-value {
     float: left;
     display: inline-block;
     margin-bottom: 1px;
     font-weight: bold;
-    max-width: 118px;
+    max-width: 70px;
 }
 
 .shelves-item-label {
@@ -112,5 +113,9 @@
 
 .nav-stacked li {
     min-width: 0;
-    padding-right: 5px;
+    padding-right: 10px;
+}
+
+.button-bar .pull-left {
+    margin-right: 10px;
 }

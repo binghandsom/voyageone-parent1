@@ -157,6 +157,25 @@ define([
                 }
             });
         },
+        sortProduct: function(s) {
+            var self = this;
+            var shelvesService = self.shelvesService;
+
+            if (s.$e) {
+                var needSaveSort = s.products.some(function (p, index) {
+                    return p.sort != index;
+                });
+                if (needSaveSort) {
+                    s.products.forEach(function (p, index) {
+                        p.sort = index;
+                    });
+                    shelvesService.updateProductSort(s.products).then(function () {
+                        self.notify.success('TXT_SUCCESS');
+                    });
+                }
+            }
+            s.$e=!s.$e;
+        },
         removeOne: function (s, i) {
             var removed = s.products.splice(i, 1);
             var removedItem = removed[0];

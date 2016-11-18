@@ -77,14 +77,19 @@
                     <i class="fa {{i.$isOpen?'fa-minus':'fa-plus'}}"></i>&nbsp;{{i.shelvesName}}
                 </h5>
             </uib-accordion-heading>
-            <div>
-                <button class="btn btn-default" ng-click="i.$e=!i.$e">{{i.$e?'保存并退出':'商品编辑'}}</button>
-                <button class="btn btn-default" ng-click="ctrl.removeAll(i)">全量清空</button>
-                <button class="btn btn-default">预览</button>
-                <button class="btn btn-default">复制代码</button>
-                <span>&nbsp;</span>
-                <a href="" class="btn fa-btn" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i></a>
-                <a href="" class="btn fa-btn" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i></a>
+            <div class="clearfix button-bar">
+                <div class="pull-left">
+                    <button class="btn btn-default" ng-click="ctrl.sortProduct(i)">{{i.$e?'保存并退出':'排序商品'}}</button>
+                    <button class="btn btn-danger" ng-click="ctrl.removeAll(i)"><i class="fa fa-trash"></i>&nbsp;全量清空</button>
+                </div>
+                <div ng-if="!i.$e" class="pull-left">
+                    <button class="btn btn-default">预览</button>
+                    <button class="btn btn-default">复制代码</button>
+                </div>
+                <div ng-if="!i.$e" class="pull-left">
+                    <button type="button" class="btn btn-default" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i>&nbsp;编辑货架</button>
+                    <button type="button" class="btn btn-danger" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i>&nbsp;删除货架</button>
+                </div>
             </div>
             <div class="row" sv-root sv-part="i.products">
                 <div ng-repeat="p in i.products" sv-element class="clearfix pull-left"
