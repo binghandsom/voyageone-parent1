@@ -137,4 +137,13 @@ public class CmsBtShelvesService extends BaseService {
         }
         return null;
     }
+
+    public void delete(CmsBtShelvesModel cmsBtShelvesModel) {
+        CmsBtShelvesModel example = new CmsBtShelvesModel();
+        example.setId(cmsBtShelvesModel.getId());
+        example.setActive(CmsBtShelvesModelActive.DEACTIVATE);
+        example.setModifier(cmsBtShelvesModel.getModifier());
+        example.setModified(new Date());
+        update(example);
+    }
 }

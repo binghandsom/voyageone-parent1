@@ -2,12 +2,13 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    function ShelvesListController(shelvesService, popups, menuService, $scope) {
+    function ShelvesListController(shelvesService, popups, menuService, $scope, notify) {
         var self = this;
 
         self.shelvesService = shelvesService;
         self.popups = popups;
         self.$scope = $scope;
+        self.notify = notify;
 
         menuService.getPlatformType().then(function (data) {
             self.cartList = data.filter(function (i) {
@@ -112,6 +113,37 @@ define([
                 if ($isOpen) {
                     self.getShelvesInfo();
                 }
+            });
+        },
+        removeOne: function (s, i) {
+            var removed = s.products.splice(i, 1);
+            var removedItem = removed[0];
+            var self = this;
+            var shelvesService = self.shelvesService;
+
+            shelvesService.removeProduct(removedItem).then(function () {
+                self.notify.success('TXT_SUCCESS');
+            });
+        },
+        removeAll: function (s) {
+            s.products = [];
+            var self = this;
+            var shelvesService = self.shelvesService;
+
+            shelvesService.clearProduct({
+                shelvesId: s.id
+            }).then(function () {
+                self.notify.success('TXT_SUCCESS');
+            });
+        },
+        deleteShelves: function(s, i) {
+            var self = this;
+            var shelvesService = self.shelvesService;
+
+            self.shelves.splice(i, 1);
+
+            shelvesService.deleteShelves(s).then(function () {
+                self.notify.success('TXT_SUCCESS');
             });
         },
         expandAll: function () {

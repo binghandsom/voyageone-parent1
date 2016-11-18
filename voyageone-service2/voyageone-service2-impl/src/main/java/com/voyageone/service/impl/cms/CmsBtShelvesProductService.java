@@ -10,6 +10,7 @@ import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
+import com.voyageone.service.model.cms.CmsBtShelvesProductExample;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -103,6 +104,12 @@ public class CmsBtShelvesProductService extends BaseService {
 
     public void delete(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
         cmsBtShelvesProductDao.delete(cmsBtShelvesProductModel.getId());
+    }
+
+    public void deleteByShelvesId(Integer shelvesId) {
+        CmsBtShelvesProductExample example = new CmsBtShelvesProductExample();
+        example.createCriteria().andShelvesIdEqualTo(shelvesId);
+        cmsBtShelvesProductDao.deleteByExample(example);
     }
 
     /**

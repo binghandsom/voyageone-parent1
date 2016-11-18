@@ -679,7 +679,10 @@ define(function () {
                 updateShelves: "updateShelves",
                 updateProductSort: "updateProductSort",
                 addProduct: "addProduct",
-                getShelvesInfo: "getShelvesInfo"
+                getShelvesInfo: "getShelvesInfo",
+                removeProduct: "removeProduct",
+                clearProduct: "clearProduct",
+                deleteShelves: "deleteShelves"
             }
         }
     };

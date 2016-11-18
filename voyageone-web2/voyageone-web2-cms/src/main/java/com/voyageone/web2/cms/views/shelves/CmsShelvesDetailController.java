@@ -107,6 +107,25 @@ public class CmsShelvesDetailController extends CmsController {
         return success(true);
     }
 
+    @RequestMapping("removeProduct")
+    public AjaxResponse removeProduct(@RequestBody CmsBtShelvesProductModel cmsBtShelvesProductModel) {
+        cmsBtShelvesProductService.delete(cmsBtShelvesProductModel);
+        return success(true);
+    }
+
+    @RequestMapping("clearProduct")
+    public AjaxResponse clearProduct(@RequestBody CmsBtShelvesProductModel cmsBtShelvesProductModel) {
+        cmsBtShelvesProductService.deleteByShelvesId(cmsBtShelvesProductModel.getShelvesId());
+        return success(true);
+    }
+
+    @RequestMapping("deleteShelves")
+    public AjaxResponse deleteShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
+        cmsBtShelvesModel.setModifier(getUser().getUserName());
+        cmsBtShelvesService.delete(cmsBtShelvesModel);
+        return success(true);
+    }
+
     private static class AddProduct {
         @JsonProperty("shelvesId") Integer shelvesId;
         @JsonProperty("productCodes") List<String> productCodes;

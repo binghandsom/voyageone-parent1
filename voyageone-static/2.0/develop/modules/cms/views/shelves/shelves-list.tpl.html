@@ -70,9 +70,22 @@
     <p>最后一次上下架状态&平台库存刷新时间：<span>{{ctrl.lastShelvesInfoTime | date: 'yyyy-MM-dd HH:mm:ss'}}</span></p>
 
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
-        <uib-accordion-group id="s{{$index}}" heading="{{i.shelvesName}}" is-open="i.$isOpen"
-                             ng-repeat="i in ctrl.shelves"
-                             template-url="/modules/cms/views/shelves/shelves-list-accordion.tpl.html">
+        <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen"
+                             ng-repeat="i in ctrl.shelves">
+            <uib-accordion-heading>
+                <h5 style="margin:6px 0">
+                    <i class="fa {{i.$isOpen?'fa-minus':'fa-plus'}}"></i>&nbsp;{{i.shelvesName}}
+                </h5>
+            </uib-accordion-heading>
+            <div>
+                <button class="btn btn-default">商品编辑</button>
+                <button class="btn btn-default" ng-click="ctrl.removeAll(i)">全量清空</button>
+                <button class="btn btn-default">预览</button>
+                <button class="btn btn-default">复制代码</button>
+                <span>&nbsp;</span>
+                <a href="" class="btn fa-btn"><i class="fa fa-edit"></i></a>
+                <a href="" class="btn fa-btn" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i></a>
+            </div>
             <div class="row">
                 <div ng-repeat="p in i.products"
                      ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
