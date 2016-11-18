@@ -78,11 +78,12 @@ public class CmsShelvesDetailController extends CmsController {
         return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice));
     }
 
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.EXPORT_APP_IMAGE)
     public ResponseEntity<byte[]> doExportAppImage(@RequestBody Integer shelvesId) throws Exception {
 
         byte[] data = cmsShelvesDetailService.exportAppImage(shelvesId);
 
-        String filename = String.format("橱窗app图-%d(%s).xlsx", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
+        String filename = String.format("橱窗app图-%d(%s).png", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
 
         return genResponseEntityFromBytes(filename, data);
     }
