@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
-import com.voyageone.service.dao.cms.CmsBtShelvesProductDao;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -97,6 +95,7 @@ public class CmsBtShelvesService extends BaseService {
 
     /**
      * 根据货架生成HTML代码
+     *
      * @param shelvesId
      * @return
      * @author rex.wu
@@ -122,7 +121,7 @@ public class CmsBtShelvesService extends BaseService {
                 String singleHtml = "";
                 if (i % numPerLine == 0) { // 追加最后一个小图模块
                     singleHtml = singleTemplate.getHtmlLastImage();
-                }else { // 追加小图模块
+                } else { // 追加小图模块
                     singleHtml = singleTemplate.getHtmlSmallImage();
                 }
                 // TODO 暂时测试，天猫平台商品详情页链接
