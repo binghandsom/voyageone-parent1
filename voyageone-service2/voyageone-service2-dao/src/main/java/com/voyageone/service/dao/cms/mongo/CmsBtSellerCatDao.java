@@ -32,6 +32,13 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
 
     }
 
+    public CmsBtSellerCatModel selectByRootCatPath(String channelId, int cartId, String catPath) {
+
+        String queryStr = "{\"channelId\":\"" + channelId + "\"" + ",\"cartId\"" + ":" + cartId + ",\"catPath\"" + ":\"" + catPath + "\"}";
+
+        return selectOneWithQuery(queryStr);
+    }
+
     /**
      *
      * @param channelId
