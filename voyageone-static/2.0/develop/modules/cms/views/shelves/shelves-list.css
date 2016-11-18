@@ -5,11 +5,21 @@
     border: 1px solid #CCC;
     box-shadow: #CCC 1px 1px 1px;
     margin: 5px;
+    position: relative;
 }
 
 .shelves-item.empty,
 .shelves-edit-item.empty {
     border: 1px solid red;
+}
+
+.shelves-item .label,
+.shelves-edit-item .label {
+    left: 0;
+    top: 0;
+    position: absolute;
+    font-size: 14px;
+    border-radius: 0;
 }
 
 .shelves-item p,
@@ -19,28 +29,23 @@
 
 .shelves-item {
     width: 252px;
+    padding-top: 17px;
+    padding-left: 10px;
 }
 
 .shelves-edit-item {
     width: 300px;
-    position: relative;
     padding: 5px 6px;
 }
 
+.img {
+    line-height: 100px;
+    vertical-align: middle;
+    width: 65px;
+}
+
 .shelves-edit-item img {
-    width: 113px;
-    height: 111px;
-}
-
-.shelves-edit-item .a-close-btn,
-.shelves-edit-item .label {
-    position: absolute;
-}
-
-.shelves-edit-item .label {
-    left: 0;
-    top: 0;
-    font-size: 14px;
+    width: 100%;
 }
 
 .shelves-edit-item .a-close-btn {
@@ -54,6 +59,7 @@
     display: inline-block;
     margin-bottom: 1px;
     font-weight: bold;
+    max-width: 118px;
 }
 
 .shelves-item-label {
@@ -61,15 +67,21 @@
     text-align: right;
 }
 
+.shelves-item-label.code {
+    height: 36px;
+}
+
 .shelves-item-value.price {
     color: #262626;
     background: #CCC;
-    width: 47px;
+    min-width: 40px;
     text-align: center;
+    padding: 0 10px;
 }
 
 .shelves-item-value.price:before {
     content: '￥';
+    margin-left: -4px;
 }
 
 .shelves-item-value.price.empty {
@@ -84,7 +96,7 @@
 .shelves-item-value.price.empty:after {
     content: '!';
     float: right;
-    margin-right: -7px;
+    margin-right: -20px;
 }
 
 .panel-search {

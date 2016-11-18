@@ -47,42 +47,69 @@ define([
                     });
                 }
 
-                self.shelves = resp.data;
-
-                self.getShelvesInfo(true).then(function () {
-                    self.shelves.forEach(function (s) {
-                        self.watchShelvesIsOpen(s);
-                    });
+                (self.shelves = resp.data).forEach(function (s) {
+                    self.watchShelvesIsOpen(s);
                 });
             });
         },
-        getShelvesInfo: function(force) {
+        getShelvesInfo: function(s) {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
 
-            var needInfoShelvesId = shelves.filter(function (s) {
-                return force || s.$isOpen;
-            }).map(function (s) {
-                return s.id;
-            });
+            var needInfoShelvesId;
+            var p = false;
+
+            // 如果有指定货架，就只查询这一个
+            if (s) {
+                needInfoShelvesId = [s.id];
+            } else {
+                needInfoShelvesId = shelves.filter(function (_s) {
+                    return _s.$isOpen;
+                }).map(function (_s) {
+                    return _s.id;
+                });
+            }
+
+            // 如果该货架没有加载过价格，就加载，并标记不需要再次加载
+            if (!s.$pMap) {
+                p = true;
+            }
 
             if (!needInfoShelvesId.length)
                 return;
 
             return shelvesService.getShelvesInfo({
                 shelvesIds: needInfoShelvesId,
-                isLoadPromotionPrice: false
+                isLoadPromotionPrice: p
             }).then(function (resp) {
                 var infoBeanList = resp.data;
                 var map = {};
+
                 shelves.forEach(function (s) {
                     map[s.id] = s;
                 });
+
                 infoBeanList.forEach(function (i) {
                     var s = i.shelvesModel;
-                    angular.merge(map[s.id], s);
-                    map[s.id].products = i.shelvesProductModels;
+                    var pList = i.shelvesProductModels;
+                    s = angular.merge(map[s.id], s);
+                    s.products = pList;
+
+                    var pMap;
+
+                    // 保存价格到 $pMap
+                    if (!s.$pMap) {
+                        pMap = s.$pMap = {};
+                        pList.forEach(function (p) {
+                            pMap[p.productCode] = p.promotionPrice;
+                        });
+                    } else {
+                        pMap = s.$pMap;
+                        pList.forEach(function (p) {
+                            p.promotionPrice = pMap[p.productCode];
+                        });
+                    }
                 });
                 self.lastShelvesInfoTime = new Date();
             });
@@ -110,18 +137,23 @@ define([
                 self.shelves.push(insertedModel);
             });
         },
-        watchShelvesIsOpen: function (shelves) {
+        watchShelvesIsOpen: function (s) {
             var self = this;
             var $scope = self.$scope;
 
-            if (shelves.stopIsOpenWatch)
+            if (s.stopIsOpenWatch)
                 return;
 
-            shelves.stopIsOpenWatch = $scope.$watch(function () {
-                return shelves.$isOpen;
+            s.stopIsOpenWatch = $scope.$watch(function () {
+                return s.$isOpen;
             }, function ($isOpen) {
                 if ($isOpen) {
-                    self.getShelvesInfo();
+                    self.getShelvesInfo(s);
+                } else {
+                    // 使用 setTimeout 来延迟执行
+                    setTimeout(function () {
+                        s.$e = false;
+                    }, 0);
                 }
             });
         },

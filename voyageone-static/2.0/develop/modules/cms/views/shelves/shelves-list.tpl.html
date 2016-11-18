@@ -78,7 +78,7 @@
                 </h5>
             </uib-accordion-heading>
             <div>
-                <button class="btn btn-default">商品编辑</button>
+                <button class="btn btn-default" ng-click="i.$e=!i.$e">{{i.$e?'保存并退出':'商品编辑'}}</button>
                 <button class="btn btn-default" ng-click="ctrl.removeAll(i)">全量清空</button>
                 <button class="btn btn-default">预览</button>
                 <button class="btn btn-default">复制代码</button>
@@ -88,7 +88,7 @@
             </div>
             <div class="row">
                 <div ng-repeat="p in i.products"
-                     ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
+                     ng-include="'/modules/cms/views/shelves/shelves-item'+(i.$e?'-edit':'')+'.tpl.html'">
                 </div>
             </div>
         </uib-accordion-group>
