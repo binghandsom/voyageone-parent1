@@ -168,4 +168,19 @@ public class CmsShelvesDetailController extends CmsController {
         @JsonProperty("shelvesIds") List<Integer> shelvesIds;
         @JsonProperty("isLoadPromotionPrice") Boolean isLoadPromotionPrice;
     }
+
+    /**
+     * 获取货架HTML代码
+     * @param params
+     *  shelvesId：货架ID
+     *  preview: 1 或者 0， 1：单品模板图片URL根据单品模板拼接的html代码获取，0单品图片URL直接拿货架商品的第三方平台图片地址
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_HTML)
+    public AjaxResponse getShelvesHtml(@RequestBody Map<String, Integer> params){
+        Integer shelvesId = params.get("shelvesId");
+        Integer preview = params.get("preview") == null ? 0 : params.get("preview");
+        String html = cmsBtShelvesService.generateHtml(shelvesId, preview == 1);
+        return success(html);
+    }
 }

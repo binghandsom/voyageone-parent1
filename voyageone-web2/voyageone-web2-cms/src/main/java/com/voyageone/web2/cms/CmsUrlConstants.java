@@ -877,6 +877,7 @@ public interface CmsUrlConstants {
             String ADD_PRODUCT = "addProduct";
             String EXPORT_APP_IMAGE ="exportAppImage";
             String GET_SHELVES_INFO = "getShelvesInfo";
+            String GET_SHELVES_HTML = "getShelvesHtml";
         }
     }
 }
