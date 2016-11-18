@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
@@ -15,6 +16,7 @@ import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,12 +108,23 @@ public class CmsBtShelvesProductService extends BaseService {
 
     public void delete(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
         cmsBtShelvesProductDao.delete(cmsBtShelvesProductModel.getId());
+
+        String fileName = String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesProductModel.getShelvesId(),cmsBtShelvesProductModel.getProductCode());
+        try{
+            FileUtils.delFile(fileName);
+        }catch (Exception e){
+        }
     }
 
     public void deleteByShelvesId(Integer shelvesId) {
         CmsBtShelvesProductExample example = new CmsBtShelvesProductExample();
         example.createCriteria().andShelvesIdEqualTo(shelvesId);
         cmsBtShelvesProductDao.deleteByExample(example);
+        String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
+        try{
+            FileUtils.deleteAllFilesOfDir(new File(fileName));
+        }catch (Exception e){
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import org.junit.Test;
@@ -34,6 +35,7 @@ import static org.junit.Assert.*;
 public class CmsShelvesDetailServiceTest {
     @Test
     public void exportAppImage() throws Exception {
+        FileUtils.deleteAllFilesOfDir(new File("H:\\shelves\\shelves1"));
         byte[]imageBuf = cmsShelvesDetailService.exportAppImage(1);
         try(FileOutputStream fileOutputStream = new FileOutputStream((new File("H:\\shelves\\merge.png")))) {
             fileOutputStream.write(imageBuf);

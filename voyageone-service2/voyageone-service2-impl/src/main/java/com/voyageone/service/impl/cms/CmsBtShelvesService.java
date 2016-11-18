@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
 import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
@@ -14,6 +15,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -144,5 +146,11 @@ public class CmsBtShelvesService extends BaseService {
         example.setModifier(cmsBtShelvesModel.getModifier());
         example.setModified(new Date());
         update(example);
+
+        String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesModel.getId());
+        try{
+            FileUtils.deleteAllFilesOfDir(new File(fileName));
+        }catch (Exception e){
+        }
     }
 }
