@@ -379,10 +379,12 @@ public class PriceService extends BaseService {
                     throw new PriceCalculateException("没有为渠道 %s (%s) 的(SKU) %s 找到可用的商品重量", channelId, cartId, skuCodeValue);
             }
             CmsChannelConfigBean defaultPackageWeightConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.DEFAULT_PACKAGE_WEIGHT);
+            Double defaultPackageWeight = 0D;
             if (defaultPackageWeightConfig == null || StringUtils.isEmpty(defaultPackageWeightConfig.getConfigValue1())
-                    || !StringUtils.isNumeric(defaultPackageWeightConfig.getConfigValue1()) || (weight = Double.valueOf(defaultPackageWeightConfig.getConfigValue1())) <= 0) {
-                weight = CmsConstants.ChannelConfig.DEFAULT_PACKAGE_WEIGHT_VAL;
+                    || !StringUtils.isNumeric(defaultPackageWeightConfig.getConfigValue1()) || (defaultPackageWeight = Double.valueOf(defaultPackageWeightConfig.getConfigValue1())) < 0) {
+                defaultPackageWeight = CmsConstants.ChannelConfig.DEFAULT_PACKAGE_WEIGHT_VAL;
             }
+            weight = Double.sum(weight, defaultPackageWeight);
 
             // 公式参数: 获取运费
             Double shippingFee = feeShippingService.getShippingFee(shippingType, weight);
