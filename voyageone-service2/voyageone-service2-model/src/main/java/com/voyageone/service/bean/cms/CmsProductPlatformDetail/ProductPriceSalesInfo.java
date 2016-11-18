@@ -11,6 +11,35 @@ public class ProductPriceSalesInfo {
     List<ProductPrice> productPriceList;
 
     Map<String, Map<String, Object>> sales;
+    String brand;
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    int quantity;
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getProductNameEn() {
+        return productNameEn;
+    }
+
+    public void setProductNameEn(String productNameEn) {
+        this.productNameEn = productNameEn;
+    }
+
+    String productNameEn;
 
 
     public List<ProductPrice> getProductPriceList() {

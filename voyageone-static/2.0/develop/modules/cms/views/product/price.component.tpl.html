@@ -37,13 +37,13 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Product Name</label>
                             <div class="col-sm-6">
-                                <input class="form-control">
+                                <input class="form-control" value="{{vm.model.productNameEn}}"  />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Brand</label>
                             <div class="col-sm-6">
-                                <input class="form-control">
+                                <input class="form-control"   value="{{vm.model.brand}}" />
                             </div>
                         </div>
                     </form>
@@ -134,7 +134,7 @@
                                 <td class="mfb-xxt text-center">
                                     <button class="btn btn-success btn-pop">价格保存</button>
                                 </td>
-                                <td class="mfb-xxt  text-right"></td>
+                                <td class="mfb-xxt  text-right">{{vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
                             </tr>
                             </tbody>

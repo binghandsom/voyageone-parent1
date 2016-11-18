@@ -64,6 +64,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         ProductPriceSalesInfo productPriceSalesInfo = new ProductPriceSalesInfo();
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+        productPriceSalesInfo.setBrand(cmsBtProduct.getCommon().getFields().getBrand());
+        productPriceSalesInfo.setProductNameEn(cmsBtProduct.getCommon().getFields().getProductNameEn());
+
+        productPriceSalesInfo.setQuantity(cmsBtProduct.getCommon().getFields().getQuantity());
 
         List<ProductPrice> productPriceList=new ArrayList<>();
 

@@ -20,12 +20,15 @@ define([
                 scope.vm = {
                     selectSales: "codeSumAll",
                     productPriceList: []
+                    ,model:{}
                 };
                 initialize();
                 function initialize() {
+                    console.log(scope.productInfo);
                     $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
                         console.log(resp.data);
                         scope.vm.productPriceList = resp.data.productPriceList;
+                        scope.vm.model = resp.data;
                         scope.sales = resp.data.sales;
                         scope.selectSalesOnChange();
                     });
