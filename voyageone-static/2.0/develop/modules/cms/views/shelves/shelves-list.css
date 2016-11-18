@@ -6,6 +6,7 @@
     box-shadow: #CCC 1px 1px 1px;
     margin: 5px;
     position: relative;
+    background-color: white;
 }
 
 .shelves-item.empty,
@@ -48,6 +49,10 @@
     width: 100%;
 }
 
+.shelves-edit-item .label {
+    cursor: move;
+}
+
 .shelves-edit-item .a-close-btn {
     right: 5px;
     top: 1px;
@@ -77,6 +82,7 @@
     min-width: 40px;
     text-align: center;
     padding: 0 10px;
+    border: 1px solid white;
 }
 
 .shelves-item-value.price:before {
@@ -85,7 +91,7 @@
 }
 
 .shelves-item-value.price.empty {
-    border: 1px solid red;
+    border-color: red;
     color: red;
 }
 

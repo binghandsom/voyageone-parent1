@@ -86,8 +86,8 @@
                 <a href="" class="btn fa-btn" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i></a>
                 <a href="" class="btn fa-btn" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i></a>
             </div>
-            <div class="row">
-                <div ng-repeat="p in i.products"
+            <div class="row" sv-root sv-part="i.products">
+                <div ng-repeat="p in i.products" sv-element class="clearfix pull-left"
                      ng-include="'/modules/cms/views/shelves/shelves-item'+(i.$e?'-edit':'')+'.tpl.html'">
                 </div>
             </div>
