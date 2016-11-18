@@ -59,17 +59,17 @@ define([
                     if (!flag) {
                         confirm("要删除关联此模板的货架商品图片吗？").then(
                             function () {
-                                shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : 1})).then(function (resp) {
+                                shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : "1"})).then(function (resp) {
                                     $scope.$close();
                                 });
                             }, function () {
-                                shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : 0})).then(function (resp) {
+                                shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : "0"})).then(function (resp) {
                                     $scope.$close();
                                 });
                             }
                         );
                     }else {
-                        shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : 0})).then(function (resp) {
+                        shelvesTemplateService.edit(_.extend($scope.modelBean, {"clear" : "0"})).then(function (resp) {
                             $scope.$close();
                         });
                     }
