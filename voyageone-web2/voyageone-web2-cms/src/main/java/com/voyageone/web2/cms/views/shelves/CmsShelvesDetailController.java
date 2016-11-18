@@ -82,7 +82,7 @@ public class CmsShelvesDetailController extends CmsController {
 
         byte[] data = cmsShelvesDetailService.exportAppImage(shelvesId);
 
-        String filename = String.format("橱窗app图-%d(%s).xlsx", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
+        String filename = String.format("橱窗app图-%d(%s).png", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
 
         return genResponseEntityFromBytes(filename, data);
     }
