@@ -45,7 +45,7 @@ define([
                 	.then(function(resp) {
                 		var tblData = resp.data;
                 		countTotalStock(tblData);
-                		resetHeader(tblData.header);
+                		resetHeaderView(tblData.header);
                 		scope.tblData = tblData;
                 		// 重新设置表头的合并列
                         angular.extend(_inventConfig.expandTh, {
@@ -58,25 +58,39 @@ define([
                 }
                 
                 function countTotalStock(tblData) {
-                	var copyHeader = angular.copy(tblData.header);
-                	// 删除不需要统计的表头
-                	copyHeader.base.splice(0, 3);
-                	// 统计库存信息
-                	var totalStock = {};
-                	angular.forEach(copyHeader, function(items, key) {
-                		totalStock[key] = {};
-                		angular.forEach(items, function(item) {
-                			var countTotal = 0;
-                			angular.forEach(tblData.stocks, function(stock) {
-                				countTotal = stock[key][item] ? stock[key][item] : 0;
-                			});
-            				totalStock[key][item] = countTotal;
-                		});
-                	});
-                	tblData.stocks.push(totalStock);
+                	if (tblData.stocks.length > 0) {
+                    	var copyHeader = angular.copy(tblData.header);
+                    	var stockHeader = angular.copy(tblData.header);
+                    	// 删除不需要统计的表头
+                    	copyHeader.base.splice(0, 3);
+                    	// 统计库存信息
+                    	var totalStock = {};
+                    	angular.forEach(copyHeader, function(items, key) {
+                    		totalStock[key] = {};
+                    		angular.forEach(items, function(item) {
+                    			var countTotal = 0;
+                    			angular.forEach(tblData.stocks, function(stock) {
+                    				if (!angular.isDefined(stock[key][item])) {
+                    					stock[key][item] = 0;
+                    				}
+                    				countTotal += stock[key][item];
+                    			});
+                    			
+                    			// 保存库存为0的总库存，删除其他库存为0的仓库
+                    			if (item != 'total' && countTotal == 0) {
+                    				stockHeader[key].splice(stockHeader[key].indexOf(item), 1);
+                    			} else if (countTotal != 0){
+                    				totalStock[key][item] = countTotal;
+                    			}
+                    		});
+                    	});
+                    	
+                    	tblData.header = stockHeader;
+                    	tblData.stocks.push(totalStock);
+                	}
                 }
                 
-                function resetHeader(header) {
+                function resetHeaderView(header) {
                 	var copyHeader = angular.copy(header);
                 	// 重置表头信息，以便页面显示
                 	angular.forEach(copyHeader, function(items, key) {
