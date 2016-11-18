@@ -16,29 +16,33 @@ define([
                 //sales:{}
             },
             link: function (scope) {
-                scope.sales={};
+                scope.sales = {};
                 scope.vm = {
-                    selectSales:"codeSumAll",
-                    productPriceList:[]
+                    selectSales: "codeSumAll",
+                    productPriceList: []
                 };
                 initialize();
                 function initialize() {
                     $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
-                      console.log(resp.data);
-                        scope.vm.productPriceList=resp.data.productPriceList;
-                        scope.sales=resp.data.sales;
+                        console.log(resp.data);
+                        scope.vm.productPriceList = resp.data.productPriceList;
+                        scope.sales = resp.data.sales;
+                        scope.selectSalesOnChange();
                     });
                 }
-                scope.selectSalesOnChange=function () {
-                    console.log(scope.vm.selectSales);
-                    //console.log(scope.sales);
+                scope.selectSalesOnChange = function () {
+                   // console.log(scope.vm.selectSales);
                     var cartSales = scope.sales[scope.vm.selectSales];
                     if (cartSales) {
-                        console.log(cartSales);
+                      //  console.log(cartSales);
                         scope.vm.productPriceList.forEach(function (f) {
-                           f.saleQty=cartSales["cartId"+f.cartId];
+                            f.saleQty = cartSales["cartId" + f.cartId];
                         });
-                        console.log(scope.vm.productPriceList);
+                    }
+                    else {
+                        scope.vm.productPriceList.forEach(function (f) {
+                            f.saleQty = 0;
+                        });
                     }
                 }
             }
