@@ -29,7 +29,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.*;
@@ -190,7 +189,7 @@ class CmsShelvesDetailService extends BaseViewService {
     }
 
 
-    private byte[] createAppImage(List<String> urls, int col) {
+    private byte[] createAppImage(List<String> urls, int numPerLine) {
         int spacingX = 25;
         int spacingY = 25;
         try {
@@ -200,8 +199,8 @@ class CmsShelvesDetailService extends BaseViewService {
 
             Integer width = image.getWidth();
             Integer height = image.getHeight();
-            List<List<String>> urlSplit = CommonUtil.splitList(urls, col);
-            BufferedImage combined = new BufferedImage(width * col + (col - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_RGB);
+            List<List<String>> urlSplit = CommonUtil.splitList(urls, numPerLine);
+            BufferedImage combined = new BufferedImage(width * numPerLine + (numPerLine - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_RGB);
             Graphics g = combined.getGraphics();
             for (int i = 0; i < urlSplit.size(); i++) {
                 int y;
