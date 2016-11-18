@@ -560,7 +560,7 @@ public interface CmsUrlConstants {
 
         interface DETAIL {
             String ROOT = "/cms/product/detail";
-
+            String GetProductPriceSales="getProductPriceSales";
             String GET_PRODUCT_INFO = "getProductInfo";
 
             String UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";

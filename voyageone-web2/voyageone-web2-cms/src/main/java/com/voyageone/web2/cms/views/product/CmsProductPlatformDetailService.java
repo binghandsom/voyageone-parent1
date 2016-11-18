@@ -15,6 +15,8 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPrice;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
@@ -26,12 +28,10 @@ import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,14 +59,71 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     private SxProductService sxProductService;
 
-    /**
-     * 获取产品平台信息
-     *
-     * @param channelId channelId
-     * @param prodId    prodId
-     * @param cartId    cartId
-     * @return 产品平台信息
-     */
+    public ProductPriceSalesInfo getProductPriceSales(String channelId, Long prodId) {
+
+        ProductPriceSalesInfo productPriceSalesInfo = new ProductPriceSalesInfo();
+
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+
+        List<ProductPrice> productPriceList=new ArrayList<>();
+
+        cmsBtProduct.getPlatforms().values().forEach(f -> {
+
+            if(f.getCartId()!=0) {
+                ProductPrice productPrice = new ProductPrice();
+
+                productPrice.setStatus(f.getStatus());
+                productPrice.setpStatus(f.getpStatus().name());
+                productPrice.setpPublishError(f.getpPublishError());
+                productPrice.setStatus(f.getStatus());
+                productPrice.setpReallyStatus(f.getpReallyStatus());
+                productPrice.setNumberId(f.getpNumIId());
+
+                productPrice.setPriceMsrpEd(f.getpPriceMsrpEd());
+                productPrice.setPriceMsrpSt(f.getpPriceMsrpSt());
+
+                productPrice.setPriceRetailEd(f.getpPriceRetailEd());
+                productPrice.setPriceRetailSt(f.getpPriceRetailSt());
+
+                productPrice.setPriceSaleEd(f.getpPriceSaleEd());
+                productPrice.setPriceSaleSt(f.getpPriceSaleSt());
+
+                productPrice.setCartId(f.getCartId());
+
+                CartEnums.Cart cart=CartEnums.Cart.getValueByID(f.getCartId().toString());
+                if(cart!=null) {
+                    productPrice.setCartName(cart.name());
+                    productPriceList.add(productPrice);
+                }
+            }
+
+        });
+
+
+        Map<String, Map<String, Object>> map = new HashedMap();
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_7, cmsBtProduct.getSales().getCodeSum7());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_30, cmsBtProduct.getSales().getCodeSum30());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_ALL, cmsBtProduct.getSales().getCodeSumAll());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, cmsBtProduct.getSales().getCodeSumYear());
+
+        productPriceSalesInfo.setSales(map);
+
+        productPriceSalesInfo.setProductPriceList(productPriceList);
+
+        return productPriceSalesInfo;
+    }
+        /**
+         * 获取产品平台信息
+         *
+         * @param channelId channelId
+         * @param prodId    prodId
+         * @param cartId    cartId
+         * @return 产品平台信息
+         */
     public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId, String language) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);

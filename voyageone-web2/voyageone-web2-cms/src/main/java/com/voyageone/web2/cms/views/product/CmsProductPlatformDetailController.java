@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.product;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +41,10 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductPriceSales)
+    public AjaxResponse getProductPriceSales(@RequestBody Long prodId) {
+        return success(cmsProductPlatformDetailService.getProductPriceSales(getUser().getSelChannelId(),prodId));
+    }
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));

@@ -63,11 +63,11 @@
                                         Sales/销量&emsp;
                                     </label>
                                     <div class="col-md-7">
-                                        <select class="form-control">
-                                            <option value="">Total</option>
-                                            <option value="">7&nbsp;Days</option>
-                                            <option value="">30&nbsp;Days</option>
-                                            <option value="">Yearly</option>
+                                        <select class="form-control" ng-model="vm.selectSales">
+                                            <option value="codeSumAll">Total</option>
+                                            <option value="codeSum7">7&nbsp;Days</option>
+                                            <option value="codeSum30">30&nbsp;Days</option>
+                                            <option value="codeSumYear">Yearly</option>
                                         </select>
                                     </div>
                                 </div>
@@ -94,35 +94,36 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
+                            <tr  ng-repeat="item in vm.productPriceList" >
                                 <td class="mfb-xt text-left">
                                     <input type="checkbox">
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     <platform-status data="{
-                                        cartId: 23,
-                                        cartName: 'TG',
-                                        status: 'Approved',
-                                        pStatus: 'OnSale',
-                                        pReallyStatus: 'OnSale',
-                                        pPublishError: '',
-                                        numberId: 525897623218
+                                        cartId: item.cartId,
+                                        cartName: item.cartName,
+                                        status: item.status,
+                                        pStatus: item.pStatus,
+                                        pReallyStatus: item.pReallyStatus,
+                                        pPublishError: item.pPublishError,
+                                        numberId: item.numberId
                                     }"></platform-status>
                                 </td>
+
                                 <td class="mfb-xxt text-right">
-                                    1,099.00
+                                    {{item.priceMsrpSt}}
                                     ~
-                                    2,099.00
+                                    {{item.priceMsrpEd}}
                                 </td>
                                 <td class="mfb-xxt text-right">
-                                    1,099.00
+                                    {{item.priceRetailSt}}
                                     ~
-                                    2,099.00
+                                    {{item.priceRetailEd}}
                                 </td>
                                 <td class="mfb-xxt text-right">
-                                    1,099.00
+                                    {{item.priceSaleSt}}
                                     ~
-                                    2,099.00
+                                    {{item.priceSaleEd}}
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     <input type="text" class="form-control text-right" placeholder="中国建议售价">
@@ -134,7 +135,7 @@
                                     <button class="btn btn-success btn-pop">价格保存</button>
                                 </td>
                                 <td class="mfb-xxt  text-right"></td>
-                                <td class="mfb-xxt text-right"></td>
+                                <td class="mfb-xxt text-right">{{saleQty}}</td>
                             </tr>
                             </tbody>
                         </table>
