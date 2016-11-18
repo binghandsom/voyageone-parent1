@@ -11,6 +11,7 @@ import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.query.SimpleQueryCursor;
+import com.voyageone.components.solr.utils.CmsProductBrandConvertUtils;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
@@ -90,7 +91,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
                     model.setColor(replaceBlank(fields.getColor()));
                 }
                 if (!StringUtils.isEmpty(fields.getBrand())) {
-                    model.setBrandEn(replaceBlank(fields.getBrand()));
+                    model.setBrandEn(CmsProductBrandConvertUtils.convertBrand(replaceBlank(fields.getBrand())));
                 }
 
                 //private String brandCn;
@@ -266,7 +267,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
                 String brand = (String) fieldsDoc.get("brand");
                 if (!StringUtils.isEmpty(brand)) {
-                    model.setBrandEn(replaceBlank(brand));
+                    model.setBrandEn(CmsProductBrandConvertUtils.convertBrand(replaceBlank(brand)));
                 }
 
                 //private String brandCn;
@@ -476,7 +477,7 @@ public class CmsProductDistSearchService extends BaseSearchService {
 
             String brand = (String) getDataFromDocument(setDoc, "common.fields.brand");
             if (!StringUtils.isEmpty(brand)) {
-                model.setBrandEn(replaceBlank(brand));
+                model.setBrandEn(CmsProductBrandConvertUtils.convertBrand(replaceBlank(brand)));
             }
 
             //private String brandCn;

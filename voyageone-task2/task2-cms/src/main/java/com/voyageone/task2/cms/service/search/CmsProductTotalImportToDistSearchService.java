@@ -29,7 +29,7 @@ import java.util.*;
 @Service
 public class CmsProductTotalImportToDistSearchService extends BaseCronTaskService {
 
-    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 1000;
+    private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 100;
 
     private static final String CMS_CHANNEL_ID = "928";
     @Autowired
