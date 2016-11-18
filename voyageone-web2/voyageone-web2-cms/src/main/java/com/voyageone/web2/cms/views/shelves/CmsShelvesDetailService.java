@@ -190,8 +190,8 @@ class CmsShelvesDetailService extends BaseViewService {
 
 
     private byte[] createAppImage(List<String> urls, int numPerLine) {
-        int spacingX = 25;
-        int spacingY = 25;
+        int spacingX = 5;
+        int spacingY = 5;
         try {
             InputStream imagein = new FileInputStream(urls.get(0));
             BufferedImage image = ImageIO.read(imagein);
