@@ -2,7 +2,7 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
-    function ShelvesListController(shelvesService, popups, menuService, $scope, notify, confirm) {
+    function ShelvesListController(shelvesService, popups, menuService, $scope, notify, confirm, cActions) {
         var self = this;
 
         self.shelvesService = shelvesService;
@@ -10,10 +10,11 @@ define([
         self.$scope = $scope;
         self.notify = notify;
         self.confirm = confirm;
+        self.downloadAppUrl = cActions.cms.shelvesService.root + "/exportAppImage";
 
         menuService.getPlatformType().then(function (data) {
             self.cartList = data.filter(function (i) {
-                return i.value >= 20 && i .value < 900;
+                return i.value >= 20 && i.value < 900;
             });
 
             self.cart = self.cartList[0].value;
@@ -52,7 +53,7 @@ define([
                 });
             });
         },
-        getShelvesInfo: function(s) {
+        getShelvesInfo: function (s) {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
@@ -157,7 +158,7 @@ define([
                 }
             });
         },
-        sortProduct: function(s) {
+        sortProduct: function (s) {
             var self = this;
             var shelvesService = self.shelvesService;
 
@@ -174,7 +175,7 @@ define([
                     });
                 }
             }
-            s.$e=!s.$e;
+            s.$e = !s.$e;
         },
         removeOne: function (s, i) {
             var removed = s.products.splice(i, 1);
@@ -200,7 +201,7 @@ define([
                 });
             });
         },
-        deleteShelves: function(s, i) {
+        deleteShelves: function (s, i) {
             var self = this;
             var shelvesService = self.shelvesService;
 
@@ -211,6 +212,35 @@ define([
                     self.notify.success('TXT_SUCCESS');
                 });
             });
+        },
+        releaseImage: function(s) {
+            var self = this;
+            self.shelvesService.releaseImage(s.id).then(function () {
+                self.notify.success('TXT_SUCCESS');
+            });
+        },
+        canPreview: function (s) {
+            return s.products && s.products.every(function (p) {
+                return !!p.platformImageUrl;
+            });
+        },
+        preview: function (s) {
+            switch (s.clientType) {
+                case this.clientTypes.APP:
+                    this.release(s);
+                    break;
+                case this.clientTypes.PC:
+                    break;
+            }
+        },
+        release: function (s) {
+            switch (s.clientType) {
+                case this.clientTypes.APP:
+                    window.open(this.downloadAppUrl + "?shelvesId=" + s.id);
+                    break;
+                case this.clientTypes.PC:
+                    break;
+            }
         },
         expandAll: function () {
             this.shelves.forEach(function (s) {

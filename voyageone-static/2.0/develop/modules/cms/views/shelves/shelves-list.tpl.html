@@ -81,10 +81,11 @@
                 <div class="pull-left">
                     <button class="btn btn-default" ng-click="ctrl.sortProduct(i)">{{i.$e?'保存并退出':'排序商品'}}</button>
                     <button class="btn btn-danger" ng-click="ctrl.removeAll(i)"><i class="fa fa-trash"></i>&nbsp;全量清空</button>
+                    <button class="btn btn-default" ng-disabled="ctrl.canPreview(i)" ng-click="ctrl.releaseImage(i)">上传</button>
                 </div>
                 <div ng-if="!i.$e" class="pull-left">
-                    <button class="btn btn-default">预览</button>
-                    <button class="btn btn-default">复制代码</button>
+                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.preview(i)">预览</button>
+                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.release(i)">{{i.clientType===ctrl.clientTypes.APP?'下载图片':'复制代码'}}</button>
                 </div>
                 <div ng-if="!i.$e" class="pull-left">
                     <button type="button" class="btn btn-default" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i>&nbsp;编辑货架</button>
