@@ -128,7 +128,8 @@ define(function () {
                     moveSkuInit:"moveSkuInit",
                     moveSkuSearch:"moveSkuSearch",
                     moveSkuPreview:"moveSkuPreview",
-                    moveSku:"moveSku"
+                    moveSku:"moveSku",
+                    restoreImg:"restoreImg"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

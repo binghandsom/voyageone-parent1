@@ -421,11 +421,11 @@ s-field textarea.s-html {
 /**产品详情*/
 .product-shema-detail .nav span {
     display: inline-block;
-    /* width: 135px; */
-    height: 22px;
-    /* background: #23ad44; */
+    width: 135px;
+    height: 27px;
+    background: #23ad44;
     color: white;
-    text-align: left;
+    text-align: center;
     line-height: 24px;
 }
 

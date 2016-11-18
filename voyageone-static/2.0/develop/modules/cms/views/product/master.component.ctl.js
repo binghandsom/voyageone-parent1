@@ -138,17 +138,7 @@ define([
                         var imgType = null;
                         angular.forEach(context, function (item) {
                             imgType = item.imageType;
-                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
-                        });
-
-                        _.map(scope.vm.productComm.schemaFields, function (item) {
-                            if (item.id == imgType) {
-                                item.complexValues.splice(0, item.complexValues.length);
-                                angular.forEach(context[context.length - 1].imageSchema[0].complexValues, function (image) {
-                                    item.complexValues.push(image);
-                                });
-
-                            }
+                            scope.vm.productComm.fields[imgType].push(item.imageName);
                         });
 
                     });
