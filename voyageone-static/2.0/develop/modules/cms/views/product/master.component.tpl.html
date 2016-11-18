@@ -61,7 +61,7 @@
                                 <label class="col-md-2 control-label"></label>
                                 <div class="col-md-8">
                                     <label class="control-label">
-                                        <a class="text-warnings" href="http://www.jewelry.com/7-8-ct-natural-amethyst-bangle-bracelet-with-diamond-in-sterling-silver-over-brass-sku-51a0hc13e1-00lcnb0" target="_blank">品牌方商品链接</a>
+                                        <a class="text-warnings" ng-href="{{vm.productComm.fields.clientProductUrl}}" target="_blank">品牌方商品链接</a>
                                     </label>
                                 </div>
                             </div>
@@ -90,12 +90,12 @@
                                         <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
                                             <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" ng-if="image.productCode == productInfo.masterField.code" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                                <img class="thumb-group" ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
                                             <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
+                                                <img class="thumb-group" ng-src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
@@ -108,7 +108,7 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                    <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                    <button class="col-md-2 btn btn-default" ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)" disabled><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
                                 </button>
                                 <div class="col-md-8">
                                     <input class="form-control"  ng-model="vm.productComm.catPath" disabled>
@@ -120,19 +120,19 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>Model</strong></label>
                                 <div class="col-md-8 control-label text-left">
-                                    123456789
+                                    {{vm.productComm.fields.model}}
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>Product Code</strong></label>
                                 <div class="col-md-8 control-label text-left">
-                                    123456789-123-111
+                                    {{vm.productComm.fields.code}}
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <button class="col-md-2 btn btn-default"><span>Master Brand</span></button>
+                                <button class="col-md-2 btn btn-default" disabled><span>Master Brand</span></button>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-value="luckyvitamin.com" disabled>
+                                    <input class="form-control" ng-model="vm.productComm.fields.brand" disabled>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +200,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images1" sv-on-sort="sortImg('images1',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images1" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image1)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
                                                         </a>
                                                     </div>
                                                 </div>
@@ -218,7 +218,7 @@
                                                     <div class="col-md-3"  ng-repeat="image in vm.productComm.fields.images6 | filter : {image6:''}" sv-element="opts"
                                                          ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image6)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image6}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image6)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images6',image.image6,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image6,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -240,7 +240,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images7" sv-on-sort="sortImg('images7',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images7 | filter : {images7:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.images7)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.images7}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.images7)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.images7)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images7',image.images7,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.images7,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -263,7 +263,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images2" sv-on-sort="sortImg('images2',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images2 | filter : {image2:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image2}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image2)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images2',image.image2,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image2,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -286,7 +286,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images3" sv-on-sort="sortImg('images3',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images3 | filter : {image3:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image3}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image3)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images3',image.image3,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image3,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -309,7 +309,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images4" sv-on-sort="sortImg('images4',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images4 | filter : {image4:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image4}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image4)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images4',image.image4,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image4,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -332,7 +332,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images5" sv-on-sort="sortImg('images5',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images5 | filter : {image5:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image5}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image5)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images5',image.image5,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image5,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -355,7 +355,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images8" sv-on-sort="sortImg('images8',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images8 | filter : {image8:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image8}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image8)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images8',image.image8,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image8,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -378,7 +378,7 @@
                                                 <div class="row" sv-root sv-part="vm.productComm.fields.images9" sv-on-sort="sortImg('images9',$event)">
                                                     <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images9 | filter : {image9:''}" sv-element="opts" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image9)">
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image9}" style="height: 88px">
-                                                            <img class="thumb-group" src="{{$root.imageUrl.replace('%s', image.image9)}}">
+                                                            <img class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images9',image.image9,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image9,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
