@@ -190,7 +190,11 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             queryMap.put("common.fields.code", s);
             // added by morse.lu 2016/07/18 start
             CmsBtProductModel product = cmsBtProductDao.selectByCode(s, channelId);
-            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+            List<String> listSkuCode = product.getCommon().getSkus().stream().map(sku -> sku.getSkuCode().toLowerCase()).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 end
             // added by morse.lu 2016/07/18 end
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
@@ -203,7 +207,10 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                     List<Map<String, Object>> upValSku = new ArrayList<>();
                     List<Map<String, Object>> listVal = (List) o;
                     listVal.forEach(skuVal -> {
-                        if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
+                        // modified by morse.lu 2016/11/18 start
+                        // 全小写比较skuCode
+//                        if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
+                        if (listSkuCode.contains(skuVal.get("sku_outerId").toString().toLowerCase())) {
                             upValSku.add(skuVal);
                             hasPublishSku[1] = true;
                         }

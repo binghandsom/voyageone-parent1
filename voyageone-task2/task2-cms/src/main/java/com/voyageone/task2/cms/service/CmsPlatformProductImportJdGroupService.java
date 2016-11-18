@@ -258,7 +258,11 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         cmsBtProductGroup.getProductCodes().forEach(productCode -> {
             CmsBtProductModel productModel = cmsBtProductDao.selectByCode(productCode, channelId);
             productModel.getCommon().getSkus().forEach(sku -> {
-                String skucode = sku.getSkuCode();
+                // modified by morse.lu 2016/11/18 start
+                // 全小写比较skuCode
+//                String skucode = sku.getSkuCode();
+                String skucode = sku.getSkuCode().toLowerCase();
+                // modified by morse.lu 2016/11/18 end
                 if (jdSkuList.contains(skucode)) {
                     jdSkuList.remove(skucode);
                 }
@@ -297,7 +301,11 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         if (ListUtils.isNull(ware.getSkus())) {
             return Collections.emptyList();
         } else {
-            return ware.getSkus().stream().map(sku -> sku.getOuterId()).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            return ware.getSkus().stream().map(sku -> sku.getOuterId()).collect(Collectors.toList());
+            return ware.getSkus().stream().map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 end
         }
     }
 
@@ -310,7 +318,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         for (String skuCode : jdSkuList) {
             // 剩下的是京东上有，但是group表里没有的sku
             // 那么把这些sku对应的code移到这个group下
-            CmsBtProductModel productModel = cmsBtProductDao.selectBySku(skuCode, channelId);
+            CmsBtProductModel productModel = cmsBtProductDao.selectBySkuIgnoreCase(skuCode, channelId);
             if (productModel == null) {
                 throw new BusinessException(String.format("京东上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
             }

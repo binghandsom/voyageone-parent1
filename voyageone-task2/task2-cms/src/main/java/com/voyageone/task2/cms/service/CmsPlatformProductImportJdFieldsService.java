@@ -16,13 +16,14 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtSellerCatDao cmsBtSellerCatDao;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -72,11 +75,14 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
+        List<CmsBtSellerCatModel> listSellerCatTree = cmsBtSellerCatDao.selectByChannelCart(channelId, Integer.valueOf(cartId));
+        List<CmsBtSellerCatModel> listSellerCat = getAllSellerCat(listSellerCatTree);
+
         for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
             try {
                 $info(String.format("%s-%s京东属性取得 %d/%d", channelId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
-                doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId));
+                doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), listSellerCat);
                 $info(String.format("numIId[%s]取得成功!", item.getNumIId()));
             } catch (Exception e) {
                 if (e instanceof BusinessException) {
@@ -87,14 +93,32 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         }
     }
 
-    private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId) {
-        String wareId = cmsBtProductGroup.getNumIId();
-        // 获取商品信息(360buy.ware.get)
-        Ware ware = jdWareService.getWareInfo(shopBean, wareId, null);
-        upProductPlatform(cmsBtProductGroup, channelId, cartId, ware);
+    /**
+     * 把tree改成平铺，为了之后方便检索
+     */
+    private List<CmsBtSellerCatModel> getAllSellerCat(List<CmsBtSellerCatModel> listSellerCatTree) {
+        List<CmsBtSellerCatModel> listSellerCat = new ArrayList<>();
+
+        listSellerCatTree.forEach(sellerCatModel-> {
+            listSellerCat.add(sellerCatModel);
+            List<CmsBtSellerCatModel> listChildSellerCat = sellerCatModel.getChildren();
+            if (ListUtils.notNull(listChildSellerCat)) {
+                listSellerCat.addAll(getAllSellerCat(listChildSellerCat));
+            }
+        });
+
+        return listSellerCat;
     }
 
-    private void upProductPlatform(CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, Ware ware) {
+    private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, List<CmsBtSellerCatModel> listSellerCat) {
+        String wareId = cmsBtProductGroup.getNumIId();
+        // 获取商品信息(360buy.ware.get)
+//        Ware ware = jdWareService.getWareInfo(shopBean, wareId, null);
+        Ware ware = jdWareService.getWareInfo(shopBean, wareId, "ware_id,skus,cid,ware_status,attributes,shop_categorys,title,ad_content,cubage,weight,is_pay_first,is_can_vat,item_num");
+        upProductPlatform(cmsBtProductGroup, channelId, cartId, ware, listSellerCat);
+    }
+
+    private void upProductPlatform(CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, Ware ware, List<CmsBtSellerCatModel> listSellerCat) {
         String wareId = cmsBtProductGroup.getNumIId();
         // deleted by morse.lu 2016/11/09 start
         // 貌似不需要都设置，只要attributes和一些共通项目
@@ -106,7 +130,11 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", code);
             CmsBtProductModel product = cmsBtProductDao.selectByCode(code, channelId);
-            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            List<String> listSkuCode = product.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList());
+            List<String> listSkuCode = product.getCommon().getSkus().stream().map(sku -> sku.getSkuCode().toLowerCase()).collect(Collectors.toList());
+            // modified by morse.lu 2016/11/18 end
 
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
@@ -137,7 +165,11 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
             } else {
                 // sku信息暂时没什么需要回写的
                 for (Sku sku : listSku) {
-                    if (listSkuCode.contains(sku.getOuterId())) {
+                    // modified by morse.lu 2016/11/18 start
+                    // 全小写比较skuCode
+//                    if (listSkuCode.contains(sku.getOuterId())) {
+                    if (listSkuCode.contains(sku.getOuterId().toLowerCase())) {
+                        // modified by morse.lu 2016/11/18 end
                         hasPublishSku = true;
                         break;
                     }
@@ -157,6 +189,27 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
                 } else {
                     updateMap.put("platforms.P" + cartId + ".pCatPath", "");
                 }
+            }
+
+            // 店铺内分类
+            if (!StringUtils.isEmpty(ware.getShopCategorys())) {
+                List<Map<String, Object>> sellerCats = new ArrayList<>();
+                String[] shopCategorys = ware.getShopCategorys().split(";"); // 用";"来分隔出多个店铺内分类
+                for (String shopCategory : shopCategorys) {
+                    String[] cats = shopCategory.split("-"); // 用"-"来分隔出类目层级结构
+                    String catId = cats[cats.length - 1]; // 用最后一级就可以了
+
+                    CmsBtSellerCatModel leaf = listSellerCat.stream().filter(w -> catId.equals(w.getCatId())).findFirst().get();
+                    Map<String, Object> model = new HashMap<>();
+                    model.put("cId", leaf.getCatId());
+                    model.put("cName", leaf.getCatPath());
+                    model.put("cIds", leaf.getFullCatId().split("-"));
+                    model.put("cNames", leaf.getCatPath().split(">"));
+
+                    sellerCats.add(model);
+                }
+
+                updateMap.put("platforms.P" + cartId + ".sellerCats", sellerCats);
             }
 
             if (hasPublishSku) {

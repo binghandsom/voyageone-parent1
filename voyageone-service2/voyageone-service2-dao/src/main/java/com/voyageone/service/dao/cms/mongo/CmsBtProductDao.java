@@ -88,10 +88,10 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
     }
 
     /**
-     * 根据skuCode返回一条产品数据
+     * 根据skuCode返回一条产品数据(忽略大小写)
      */
-    public CmsBtProductModel selectBySku(String skuCode, String channelId) {
-        String query = "{\"common.skus.skuCode\":\"" + skuCode + "\"}";
+    public CmsBtProductModel selectBySkuIgnoreCase(String skuCode, String channelId) {
+        String query = "{\"common.skus.skuCode\":{$regex:\"^" + skuCode + "$\",$options:'i'}}";
         return selectOneWithQuery(query, channelId);
     }
 

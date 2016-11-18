@@ -262,7 +262,11 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         cmsBtProductGroup.getProductCodes().forEach(productCode -> {
             CmsBtProductModel productModel = cmsBtProductDao.selectByCode(productCode, channelId);
             productModel.getCommon().getSkus().forEach(sku -> {
-                String skucode = sku.getSkuCode();
+                // modified by morse.lu 2016/11/18 start
+                // 全小写比较skuCode
+//                String skucode = sku.getSkuCode();
+                String skucode = sku.getSkuCode().toLowerCase();
+                // modified by morse.lu 2016/11/18 end
                 if (tmSkuList.contains(skucode)) {
                     tmSkuList.remove(skucode);
                 }
@@ -300,15 +304,27 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         if (fieldMap.containsKey("sku")) {
             // sku级
             List<Map<String, Object>> listSkuVal = (List) fieldMap.get("sku");
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
-
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
+            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+            // modified by morse.lu 2016/11/18 end
         } else if (fieldMap.containsKey("darwin_sku")) {
             // sku级
             List<Map<String, Object>> listSkuVal = (List) fieldMap.get("darwin_sku");
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
+            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+            // modified by morse.lu 2016/11/18 end
         } else {
-            tmSkuList.add(fieldMap.get("outer_id").toString());
+            // modified by morse.lu 2016/11/18 start
+            // 全小写比较skuCode
+//            tmSkuList.add(fieldMap.get("outer_id").toString());
+            tmSkuList.add(fieldMap.get("outer_id").toString().toLowerCase());
+            // modified by morse.lu 2016/11/18 end
         }
+
         return tmSkuList;
     }
 
@@ -321,7 +337,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         for (String skuCode : tmSkuList) {
             // 剩下的是天猫上有，但是group表里没有的sku
             // 那么把这些sku对应的code移到这个group下
-            CmsBtProductModel productModel = cmsBtProductDao.selectBySku(skuCode, channelId);
+            CmsBtProductModel productModel = cmsBtProductDao.selectBySkuIgnoreCase(skuCode, channelId);
             if (productModel == null) {
                 throw new BusinessException(String.format("天猫上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
             }
