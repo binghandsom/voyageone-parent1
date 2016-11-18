@@ -59,12 +59,39 @@ public class CmsBtShelvesTemplateService extends BaseService {
 
     }
 
-    public void update(CmsBtShelvesTemplateModel template, String user) {
+    /**
+     * 编辑货架模板
+     * @param template
+     * @param user
+     * @param clear
+     */
+    public void update(CmsBtShelvesTemplateModel template, String user, Integer clear) {
         template.setModifier(user);
         template.setModified(new Date());
         checkModel(template, SHELVES_EDIT);
         template.setTemplateType(null); // 模板类型不可更改
         cmsBtShelvesTemplateDao.update(template);
+        if (clear == 1) {
+            List<CmsBtShelvesModel> shelvesModels = cmsBtShelvesDaoExt.selectByTemplateId(template.getId());
+            if (CollectionUtils.isNotEmpty(shelvesModels)) {
+                List<Integer> shelvesIds = new ArrayList<Integer>();
+                for (CmsBtShelvesModel shelves:shelvesModels) {
+                    shelvesIds.add(shelves.getId());
+                    /*for (CmsBtShelvesModel shelves:shelvesModels) {
+                        shelvesIds.add(shelves.getId());
+                        param.put("shelvesId",shelves.getId());
+                        sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
+                    }*/
+                }
+                Map<String, Object> params = new HashMap<String, Object>();
+                params.clear();
+                params.put("shelvesIds", shelvesIds);
+                params.put("modified", template.getModified());
+                params.put("modifier", template.getModifier());
+                cmsBtShelvesProductDaoExt.clearImageByShelvesIds(params);
+
+            }
+        }
     }
 
     public CmsBtShelvesTemplateModel select(Integer id) {
@@ -149,30 +176,6 @@ public class CmsBtShelvesTemplateService extends BaseService {
             template.setHtmlClearfix2("");
             template.setHtmlBigImage("");
             template.setHtmlFoot("");
-        }
-        if (SHELVES_EDIT.equals(operType)) {
-            String targetHtmlImageTemplate = targetTemplate.getHtmlImageTemplate() == null ? "" : targetTemplate.getHtmlImageTemplate();
-            String thisHtmlImageTemplate = template.getHtmlImageTemplate() == null ? "" : template.getHtmlImageTemplate();
-            if (!targetHtmlImageTemplate.equals(thisHtmlImageTemplate)) {
-                List<CmsBtShelvesModel> shelvesModels = cmsBtShelvesDaoExt.selectByTemplateId(id);
-                List<Integer> shelvesIds = null;
-                if (CollectionUtils.isNotEmpty(shelvesModels)) {
-                    shelvesIds = new ArrayList<Integer>();
-//                    param.clear();
-//                    for (CmsBtShelvesModel shelves:shelvesModels) {
-//                        shelvesIds.add(shelves.getId());
-//                        param.put("shelvesId",shelves.getId());
-//                        sender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
-//                    }
-                    if (CollectionUtils.isNotEmpty(shelvesIds)) {
-                        param.clear();
-                        param.put("shelvesIds", shelvesIds);
-                        param.put("modified", template.getModified());
-                        param.put("modifier", template.getModifier());
-                        cmsBtShelvesProductDaoExt.clearImageByShelvesIds(param);
-                    }
-                }
-            }
         }
     }
 

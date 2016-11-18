@@ -2,10 +2,12 @@ package com.voyageone.web2.cms.views.shelves;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -13,12 +15,15 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james on 2016/11/15.
@@ -33,13 +38,18 @@ public class CmsShelvesDetailController extends CmsController {
     private final CmsShelvesDetailService cmsShelvesDetailService;
     private final CmsAdvanceSearchService advanceSearchService;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
+    private final MqSender mqSender;
 
     @Autowired
-    public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService, CmsBtShelvesService cmsBtShelvesService, CmsAdvanceSearchService advanceSearchService, CmsBtShelvesProductService cmsBtShelvesProductService) {
+    public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService,
+                                      CmsBtShelvesService cmsBtShelvesService,
+                                      CmsAdvanceSearchService advanceSearchService,
+                                      CmsBtShelvesProductService cmsBtShelvesProductService, MqSender mqSender) {
         this.cmsShelvesDetailService = cmsShelvesDetailService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
+        this.mqSender = mqSender;
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
@@ -78,14 +88,16 @@ public class CmsShelvesDetailController extends CmsController {
         return success(cmsShelvesDetailService.getShelvesInfo(shelvesIds, isLoadPromotionPrice));
     }
 
-    @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.EXPORT_APP_IMAGE)
-    public ResponseEntity<byte[]> doExportAppImage(@RequestBody Integer shelvesId) throws Exception {
+    @RequestMapping(value = CmsUrlConstants.SHELVES.DETAIL.EXPORT_APP_IMAGE, method = RequestMethod.GET)
+    public HttpEntity<byte[]> doExportAppImage(@RequestParam Integer shelvesId) throws Exception {
 
         byte[] data = cmsShelvesDetailService.exportAppImage(shelvesId);
 
-        String filename = String.format("橱窗app图-%d(%s).png", shelvesId, DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_PNG);
+        headers.setContentLength(data.length);
 
-        return genResponseEntityFromBytes(filename, data);
+        return new HttpEntity<>(data, headers);
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.CREATE_SHELVES)
@@ -102,6 +114,7 @@ public class CmsShelvesDetailController extends CmsController {
     public AjaxResponse updateShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
         cmsBtShelvesModel.setModifier(getUser().getUserName());
         cmsBtShelvesModel.setModified(new Date());
+        cmsBtShelvesModel.setChannelId(getUser().getSelChannelId());
 
         if (!cmsBtShelvesService.checkName(cmsBtShelvesModel)) {
             throw new BusinessException("该货架名称已存在");
@@ -134,6 +147,14 @@ public class CmsShelvesDetailController extends CmsController {
     public AjaxResponse deleteShelves(@RequestBody CmsBtShelvesModel cmsBtShelvesModel) {
         cmsBtShelvesModel.setModifier(getUser().getUserName());
         cmsBtShelvesService.delete(cmsBtShelvesModel);
+        return success(true);
+    }
+
+    @RequestMapping("releaseImage")
+    public AjaxResponse releaseImage(@RequestBody Integer shelvesId) {
+        Map<String,Object> param = new HashMap<>();
+        param.put(MqParameterKeys.key1,shelvesId);
+        mqSender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
         return success(true);
     }
 

@@ -539,7 +539,7 @@ define(function () {
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
                         "updateCat": "updateSellerCat",
-                        "sortableCat": "sortableCat",
+                        "sortableCat": "sortableCat"
                     }
                 },
                 "imageTemplateService": {
@@ -682,7 +682,8 @@ define(function () {
                 getShelvesInfo: "getShelvesInfo",
                 removeProduct: "removeProduct",
                 clearProduct: "clearProduct",
-                deleteShelves: "deleteShelves"
+                deleteShelves: "deleteShelves",
+                releaseImage: "releaseImage"
             }
         }
     };

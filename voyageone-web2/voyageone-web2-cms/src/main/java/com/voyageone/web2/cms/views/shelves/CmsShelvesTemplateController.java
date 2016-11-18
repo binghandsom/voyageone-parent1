@@ -3,6 +3,9 @@ package com.voyageone.web2.cms.views.shelves;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelClientType;
 import com.voyageone.service.fields.cms.CmsBtShelvesTemplateModelTemplateType;
@@ -66,8 +69,15 @@ public class CmsShelvesTemplateController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.TEMPLATE.EDIT)
-    public AjaxResponse editShelvesTemplate(@RequestBody CmsBtShelvesTemplateModel model){
-        cmsBtShelvesTemplateService.update(model, getUser().getUserName());
+    public AjaxResponse editShelvesTemplate(@RequestBody Map<String, Object> params){
+        CmsBtShelvesTemplateModel model = JsonUtil.jsonToBean(JacksonUtil.bean2Json(params), CmsBtShelvesTemplateModel.class);
+        String clearVal = (String) params.get("clear");
+        Integer clear = 0;
+        if (!StringUtils.isEmpty(clearVal) && StringUtils.isNumeric(clearVal)) {
+            clear = Integer.valueOf(clearVal);
+        }
+        clear = clear == 0 ? clear : 1;
+        cmsBtShelvesTemplateService.update(model, getUser().getUserName(), clear);
         return success("");
     }
 

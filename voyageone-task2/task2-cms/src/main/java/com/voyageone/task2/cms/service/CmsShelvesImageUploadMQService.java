@@ -1,10 +1,7 @@
 package com.voyageone.task2.cms.service;
 
-import com.jd.open.api.sdk.request.imgzone.ImgzonePictureUploadRequest;
-import com.jd.open.api.sdk.response.AbstractResponse;
 import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
 import com.taobao.api.ApiException;
-import com.taobao.api.response.PictureReplaceResponse;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -15,23 +12,20 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.tmall.service.TbPictureService;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelClientType;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
-import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
-import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import com.voyageone.task2.base.BaseMQCmsService;
-import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -49,22 +43,23 @@ import java.util.stream.Collectors;
 
 /**
  * Created by james on 2016/11/14.
+ *
+ * @version 2.10.0
+ * @since 2.10.0
  */
 @Service
 @RabbitListener(queues = MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob)
 public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
-
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
-
     private final TbPictureService tbPictureService;
-
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
-
     private final JdImgzoneService jdImgzoneService;
 
-
     @Autowired
-    public CmsShelvesImageUploadMQService(CmsBtShelvesProductService cmsBtShelvesProductService, TbPictureService tbPictureService, CmsBtShelvesTemplateService cmsBtShelvesTemplateService,JdImgzoneService jdImgzoneService) {
+    public CmsShelvesImageUploadMQService(CmsBtShelvesProductService cmsBtShelvesProductService,
+                                          TbPictureService tbPictureService,
+                                          CmsBtShelvesTemplateService cmsBtShelvesTemplateService,
+                                          JdImgzoneService jdImgzoneService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbPictureService = tbPictureService;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
@@ -73,10 +68,10 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 
     @Override
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
-        Integer shelvesId = (Integer) messageMap.get("shelvesId");
+        Integer shelvesId = MapUtils.getInteger(messageMap, MqParameterKeys.key1);
 
         if (shelvesId != null) {
-            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId,true);
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, true);
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtShelvesInfoBean.getShelvesModel().getChannelId(), CmsConstants.ChannelConfig.PLATFORM_IMAGE_DIRECTORY_ID, cmsBtShelvesInfoBean.getShelvesModel().getCartId().toString());
             if (cmsChannelConfigBean == null || StringUtil.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
                 throw new BusinessException("图片分类目录没有配置");
@@ -88,11 +83,11 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                 List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = cmsBtShelvesInfoBean.getShelvesProductModels();
                 cmsBtShelvesProductModels = cmsBtShelvesProductModels.stream().filter(cmsBtShelvesProductModel -> StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageUrl())).collect(Collectors.toList());
                 ExecutorService es = Executors.newFixedThreadPool(5);
-                if(cmsBtShelvesInfoBean.getShelvesModel().getClientType() == CmsBtShelvesModelClientType.APP){
+                if (cmsBtShelvesInfoBean.getShelvesModel().getClientType() == CmsBtShelvesModelClientType.APP) {
                     String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
                     FileUtils.mkdirPath(path);
                 }
-                cmsBtShelvesProductModels.forEach(item -> es.execute(()->uploadImage(shopBean, cmsBtShelvesInfoBean.getShelvesModel(), (CmsBtShelvesProductBean)item, cmsBtShelvesTemplateModel, picCatId)));
+                cmsBtShelvesProductModels.forEach(item -> es.execute(() -> uploadImage(shopBean, cmsBtShelvesInfoBean.getShelvesModel(), (CmsBtShelvesProductBean) item, cmsBtShelvesTemplateModel, picCatId)));
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             }
@@ -101,24 +96,24 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 
     private void uploadImage(ShopBean shopBean, CmsBtShelvesModel shelvesModel, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
 
-        if(shelvesModel.getClientType() == CmsBtShelvesModelClientType.PC){
+        if (shelvesModel.getClientType() == CmsBtShelvesModelClientType.PC) {
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.TM.getId())) {
-                uploadImageTm(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
-            }else if(shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())){
-                uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel,picCatId);
+                uploadImageTm(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel, picCatId);
+            } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatFormEnums.PlatForm.JD.getId())) {
+                uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel, picCatId);
             }
-        }else{
+        } else {
             String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesModel.getId());
             uploadLocal(path, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         }
 
     }
 
-    private void uploadLocal(String path, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel){
+    private void uploadLocal(String path, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel) {
         String saveFile = String.format("%s/%s.jpg", path, cmsBtShelvesProductModel.getProductCode());
-        String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
+        String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         byte[] imageBuf = downImage(imageUrl);
-        try(FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
+        try (FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
             fileOutputStream.write(imageBuf);
             cmsBtShelvesProductModel.setPlatformImageId(cmsBtShelvesProductModel.getProductCode());
             cmsBtShelvesProductModel.setPlatformImageUrl(saveFile);
@@ -137,7 +132,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         try {
             PictureUploadResponse pictureUploadResponse = null;
 
-            String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
+            String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
             // 图片是否传过
             if (StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 //没有传过 上传
@@ -169,9 +164,9 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 //        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
 //        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
         try {
-            ImgzonePictureUploadResponse pictureUploadResponse = null;
+            ImgzonePictureUploadResponse pictureUploadResponse;
 
-            String imageUrl = getImageUrl(cmsBtShelvesProductModel,cmsBtShelvesTemplateModel);
+            String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
             // 图片是否传过
             if (!StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 try {
@@ -181,7 +176,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                     $error(e);
                 }
             }
-             pictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, downImage(imageUrl), picCatId,cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
+            pictureUploadResponse = jdImgzoneService.uploadPicture(shopBean, downImage(imageUrl), picCatId, cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
 
             if (pictureUploadResponse != null && !StringUtil.isEmpty(pictureUploadResponse.getPictureId())) {
                 cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPictureId() + "");
@@ -227,7 +222,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         long threadNo = Thread.currentThread().getId();
         //如果promotionImagesList为空的时，不做处理
         byte[] buffer = new byte[1024 * 10];
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             int len;
             URL url = new URL(imageUrl);
             $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
