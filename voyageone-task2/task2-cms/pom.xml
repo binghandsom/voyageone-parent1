@@ -49,7 +49,8 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>task2-cms</include>
+                                    <include>com.voyageone:task2-base</include>
+                                    <include>com.voyageone:task2-cms</include>
                                 </includes>
                             </artifactSet>
                             <filters>
