@@ -164,6 +164,11 @@ public class CmsConstants {
 
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
+
+        // 商品默认包装重量
+        String DEFAULT_PACKAGE_WEIGHT = "DEFAULT_PACKAGE_WEIGHT";
+        // 如无默认包装重量，则统一设置包装重量0.5
+        double DEFAULT_PACKAGE_WEIGHT_VAL = 0.5;
     }
 
     public interface DataAmount {
