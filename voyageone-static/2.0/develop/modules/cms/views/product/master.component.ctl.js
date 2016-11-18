@@ -9,7 +9,7 @@ define([
 ], function (cms, carts) {
 
     var mConfig = {
-        bigImageUrl:'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
+        bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
     cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
@@ -48,6 +48,8 @@ define([
                 scope.copyCommonProperty = copyCommonProperty;
                 scope.goDetail = goDetail;
                 scope.simpleImgDown = simpleImgDown;
+                scope.removeImg = removeImg;
+                scope.sortImg = sortImg;
 
                 /**
                  * 获取京东页面初始化数据
@@ -135,11 +137,12 @@ define([
 
                         scope.vm.productComm.modified = context[context.length - 1].modified;
 
-                        var imgType = null;
+                        initialize();
+/*                        var imgType = null;
                         angular.forEach(context, function (item) {
                             imgType = item.imageType;
                             scope.vm.productComm.fields[imgType].push(item.imageName);
-                        });
+                        });*/
 
                     });
                 }
@@ -286,17 +289,61 @@ define([
 
                 }
 
-                //element
-                function simpleImgDown(imgName,$event){
+                function simpleImgDown(imgName, $event) {
                     var jq = angular.element,
                         _aTag;
 
                     imgName = mConfig.bigImageUrl.replace("✓", imgName);
-                    _aTag =  jq('<a download>').attr({'href':imgName});
+                    _aTag = jq('<a download>').attr({'href': imgName});
 
                     jq('body').append(_aTag);
                     _aTag[0].click();
                     _aTag.remove();
+
+                    $event.stopPropagation();
+                }
+
+                function removeImg(imagesType, imageName, $event) {
+                    var productComm = scope.vm.productComm;
+
+                    if (!imagesType)
+                        return;
+
+                    confirm("您确认要删除该图片吗？").then(function () {
+                        _.each(productComm.fields[imagesType], function (ele, index, list) {
+                            if (ele.image6 === imageName) {
+                                list.splice(list.indexOf(ele), 1);
+                            }
+                        });
+
+                        productDetailService.restoreImg({
+                            prodId: scope.productInfo.productId,
+                            imagesType: imagesType,
+                            images: productComm.fields[imagesType]
+                        }).then(function (res) {
+                            scope.vm.productComm.modified = res.data.modified;
+                            notify.success("删除成功！");
+                        });
+
+                    });
+
+                    $event.stopPropagation();
+                }
+
+                function sortImg(imagesType, $event) {
+                    var imgSource = scope.vm.productComm.fields[imagesType];
+
+                    if (!imagesType || imgSource.length < 2)
+                        return;
+
+                    productDetailService.restoreImg({
+                        prodId: scope.productInfo.productId,
+                        imagesType: imagesType,
+                        images: imgSource
+                    }).then(function (res) {
+                        scope.vm.productComm.modified = res.data.modified;
+                        notify.success("排序成功！");
+                    });
 
                     $event.stopPropagation();
                 }

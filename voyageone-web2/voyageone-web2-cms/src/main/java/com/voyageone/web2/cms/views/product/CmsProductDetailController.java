@@ -300,16 +300,20 @@ public class CmsProductDetailController extends CmsController {
         String prodId = String.valueOf(String.valueOf(params.get("prodId")));
         Assert.notNull(prodId).elseThrowDefaultWithTitle("promotionImages");
 
-        String imagesType = String.valueOf(String.valueOf(params.get("prodId")));
+        String imagesType = String.valueOf(String.valueOf(params.get("imagesType")));
         Assert.notNull(imagesType).elseThrowDefaultWithTitle("promotionImages");
 
         List<String> images = (List<String>) params.get("images");
         Assert.notNull(images).elseThrowDefaultWithTitle("promotionImages");
 
-        return success(productPropsEditService.restoreImg(getUser().getSelChannelId(),
+        Map<String, Object> result = new HashMap<>();
+        result.put("modified",productPropsEditService.restoreImg(getUser().getSelChannelId(),
                 Long.parseLong(prodId),
                 imagesType,
                 images));
+
+        return success(result);
+
 
     }
 
