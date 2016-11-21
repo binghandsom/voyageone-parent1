@@ -59,6 +59,8 @@ public class CmsBtShelvesModel extends BaseModel {
      */
     protected Date lastUpdate;
 
+    protected Integer refTagId;
+
     public String getShelvesName() {
         return shelvesName;
     }
@@ -129,5 +131,13 @@ public class CmsBtShelvesModel extends BaseModel {
 
     public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public Integer getRefTagId() {
+        return refTagId;
+    }
+
+    public void setRefTagId(Integer refTagId) {
+        this.refTagId = refTagId;
     }
 }

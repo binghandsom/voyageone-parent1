@@ -735,6 +735,66 @@ public class CmsBtShelvesExample {
             return (Criteria) this;
         }
 
+        public Criteria andRefTagIdIsNull() {
+            addCriterion("`ref_tag_id` is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdIsNotNull() {
+            addCriterion("`ref_tag_id` is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdEqualTo(Integer value) {
+            addCriterion("`ref_tag_id` =", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdNotEqualTo(Integer value) {
+            addCriterion("`ref_tag_id` <>", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdGreaterThan(Integer value) {
+            addCriterion("`ref_tag_id` >", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("`ref_tag_id` >=", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdLessThan(Integer value) {
+            addCriterion("`ref_tag_id` <", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdLessThanOrEqualTo(Integer value) {
+            addCriterion("`ref_tag_id` <=", value, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdIn(List<Integer> values) {
+            addCriterion("`ref_tag_id` in", values, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdNotIn(List<Integer> values) {
+            addCriterion("`ref_tag_id` not in", values, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdBetween(Integer value1, Integer value2) {
+            addCriterion("`ref_tag_id` between", value1, value2, "refTagId");
+            return (Criteria) this;
+        }
+
+        public Criteria andRefTagIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("`ref_tag_id` not between", value1, value2, "refTagId");
+            return (Criteria) this;
+        }
+
         public Criteria andCreaterIsNull() {
             addCriterion("`creater` is null");
             return (Criteria) this;
