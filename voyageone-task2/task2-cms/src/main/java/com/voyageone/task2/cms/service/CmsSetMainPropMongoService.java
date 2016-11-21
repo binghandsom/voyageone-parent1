@@ -2718,11 +2718,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         //取得当前code的创建的时间
                         LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
                         //取得当前group的创建的时间
-                        LocalDate groupDate = formatter.parseLocalDate(group.getCreated());
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
                         //feed和group的创建时间作比较
                         if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
                                 &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
-                            group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                            group=groupCode;
                         }else{
                             //根据当前model取得最新的group
                             group = null;
