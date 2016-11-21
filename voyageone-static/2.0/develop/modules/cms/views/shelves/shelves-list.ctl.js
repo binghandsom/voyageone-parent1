@@ -53,6 +53,7 @@ define([
 
                 clearInterval(self.$interval);
                 self.$interval = null;
+                self.lastShelvesInfoTime = '---';
 
                 if (self.shelves) {
                     self.shelves.forEach(function (s) {
@@ -369,6 +370,32 @@ define([
             });
         }
     };
+
+    cms.filter('shelvesProductClass', function () {
+        return function (p) {
+            switch (p.status) {
+                case 0:
+                    return 'label-success';
+                case 1:
+                    return 'label-danger';
+                default:
+                    return 'label-default';
+            }
+        };
+    });
+
+    cms.filter('shelvesProductName', function () {
+        return function (p) {
+            switch (p.status) {
+                case 0:
+                    return '已下架';
+                case 1:
+                    return '已上架';
+                default:
+                    return '---';
+            }
+        };
+    });
 
     cms.controller('ShelvesListController', ShelvesListController);
 });

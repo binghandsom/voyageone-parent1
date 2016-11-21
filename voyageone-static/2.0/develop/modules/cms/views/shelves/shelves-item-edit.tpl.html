@@ -1,5 +1,5 @@
 <div class="shelves-edit-item" ng-class="{'empty':!p.cartInventory}">
-    <span class="label {{p.status?'label-success':'label-danger'}}">{{p.status?'已上架':'已下架'}}</span>
+    <span class="label {{p|shelvesProductClass}}">{{p|shelvesProductName}}</span>
     <a href class="a-close-btn pull-right" ng-click="ctrl.removeOne(i, $index)"><i class="fa fa-close"></i></a>
     <div class="pull-left img">
         <img image="{{p.image}}">
