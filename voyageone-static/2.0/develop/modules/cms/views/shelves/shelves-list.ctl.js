@@ -387,9 +387,9 @@ define([
         return function (p) {
             switch (p.status) {
                 case 0:
-                    return 'label-success';
-                case 1:
                     return 'label-danger';
+                case 1:
+                    return 'label-success';
                 default:
                     return 'label-default';
             }
