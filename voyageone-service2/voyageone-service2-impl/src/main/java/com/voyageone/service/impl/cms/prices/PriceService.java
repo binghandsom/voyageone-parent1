@@ -15,11 +15,23 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.jd.service.JdSkuService;
+import com.voyageone.components.jumei.JumeiHtDealService;
+import com.voyageone.components.jumei.JumeiHtMallService;
+import com.voyageone.components.jumei.bean.HtDeal_UpdateDealPriceBatch_UpdateData;
+import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
+import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
+import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
+import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +71,15 @@ public class PriceService extends BaseService {
     private final ProductSkuService productSkuService;
     private final ImsBtProductDao imsBtProductDao;
     private final TbItemService tbItemService;
+
+    @Autowired
+    JumeiHtMallService jumeiHtMallService;
+
+    @Autowired
+    JdSkuService jdSkuService;
+
+    @Autowired
+    JumeiHtDealService serviceJumeiHtDeal;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
@@ -780,13 +801,15 @@ public class PriceService extends BaseService {
             return roundDouble(price, roundUp);
         }
     }
-
+    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) throws Exception {
+        updateSkuPrice(channleId, cartId, productModel,false);
+    }
     /**
-     * 更新商品SKU的价格 （非天猫平台暂不实现）
+     * 更新商品SKU的价格
      * 需要查询 voyageone_ims.ims_bt_product表，若对应的产品quantity_update_type为s：更新sku价格；为p：则更新商品价格(用最高一个sku的价格)
      * CmsBtProductModel中需要属性：common.fields.code, platforms.Pxx.pNumIId, platforms.Pxx.status, platforms.Pxx.skus.skuCode, platforms.Pxx.skus.priceSale,platforms.Pxx.skus.priceMsrp
      */
-    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) {
+    public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel,boolean isUpdateJmDealPrice) throws Exception {
         logger.info("PriceService　更新商品SKU的价格 ");
         ShopBean shopObj = Shops.getShop(channleId, Integer.toString(cartId));
         CartBean cartObj = Carts.getCart(cartId);
@@ -810,71 +833,187 @@ public class PriceService extends BaseService {
             return;
         }
 
-        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-            // 天猫平台直接调用API
-            List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
-            if (skuList == null || skuList.isEmpty()) {
-                $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
-                throw new BusinessException("产品数据不全,缺少sku数据！");
-            }
-
+        List<BaseMongoMap<String, Object>> skuList = platObj.getSkus();
+        if (skuList == null || skuList.isEmpty()) {
+            $error("PriceService 产品sku数据不存在 channelId=%s, code=%s, cartId=%d", channleId, prodCode, cartId);
+            throw new BusinessException("产品数据不全,缺少sku数据！");
+        }
+        String updType = null;
+        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id()) || PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
             // 先要判断更新类型
             ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(channleId, cartId, prodCode);
             if (imsBtProductModel == null) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表 channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表！");
             }
-            String updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
+            updType = org.apache.commons.lang3.StringUtils.trimToNull(imsBtProductModel.getQuantityUpdateType());
             if (updType == null || (!"s".equals(updType) && !"p".equals(updType))) {
                 $error("PriceService 产品数据不全 未配置ims_bt_product表quantity_update_type channelId=%s, cartId=%d, prod=%s", channleId, cartId, productModel.toString());
                 throw new BusinessException("产品数据不全,未配置ims_bt_product表quantity_update_type！");
             }
-
-            // 判断上新时销售价用的是建议售价还是最终售价
-            CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
-            String priceConfigValue = null;
-            if (priceConfig != null) {
-                // 取得价格对应的configValue名
-                priceConfigValue = org.apache.commons.lang3.StringUtils.trimToNull(priceConfig.getConfigValue1());
-            }
-
-            Double maxPrice = null;
-            List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
-            for (BaseMongoMap skuObj : skuList) {
-                UpdateSkuPrice obj3 = new UpdateSkuPrice();
-                obj3.setOuterId((String) skuObj.get("skuCode"));
-                Double priceSale = null;
-                if (priceConfigValue == null) {
-                    priceSale = skuObj.getDoubleAttribute("priceSale");
-                } else {
-                    priceSale = skuObj.getDoubleAttribute(priceConfigValue);
-                }
-                if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
-                    maxPrice = priceSale;
-                }
-                obj3.setPrice(priceSale.toString());
-                list2.add(obj3);
-            }
-            if ("s".equals(updType)) {
-                // 更新sku价格
-                maxPrice = null;
-            } else {
-                // 更新商品价格
-                list2 = null;
-            }
-
-            try {
-                TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopObj, platObj.getpNumIId(), maxPrice, list2);
-                if (response != null) {
-                    logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
-                }
-            } catch (ApiException e) {
-                $error(String.format("PriceService 调用天猫API失败 channelId=%s, cartId=%d msg=%s", channleId, cartId, e.getMessage()), e);
-                throw new BusinessException("调用天猫API更新商品SKU的价格失败！");
-            }
-        } else {
-            // TODO-- PriceService 非天猫平台暂不实现 更新商品SKU的价格
-            $info("PriceService 非天猫平台暂不实现");
         }
+
+        // 判断上新时销售价用的是建议售价还是最终售价
+        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+        String priceConfigValue = null;
+        if (priceConfig != null) {
+            // 取得价格对应的configValue名
+            priceConfigValue = org.apache.commons.lang3.StringUtils.trimToNull(priceConfig.getConfigValue1());
+        }
+        if (PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
+            // 天猫平台直接调用API
+            tmUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType, platObj.getpNumIId());
+        } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
+            // votodo -- PriceService  聚美平台 更新商品SKU的价格
+
+            if (isUpdateJmDealPrice) {
+                jm_UpdateDealPriceBatch(shopObj, skuList, priceConfigValue);
+            }
+            jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue);
+
+        } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
+            // votodo -- JdSkuService  京东平台 更新商品SKU的价格
+            jdUpdatePriceBatch(shopObj, skuList, priceConfigValue, updType);
+        }
+    }
+
+    private void   tmUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType,String pNumIId) throws Exception {
+        Double maxPrice = null;
+        List<UpdateSkuPrice> list2 = new ArrayList<>(skuList.size());
+        for (BaseMongoMap skuObj : skuList) {
+            UpdateSkuPrice obj3 = new UpdateSkuPrice();
+            obj3.setOuterId((String) skuObj.get("skuCode"));
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                maxPrice = priceSale;
+            }
+            obj3.setPrice(priceSale.toString());
+            list2.add(obj3);
+        }
+        if ("s".equals(updType)) {
+            // 更新sku价格
+            maxPrice = null;
+        } else {
+            // 更新商品价格
+            list2 = null;
+        }
+
+        TmallItemPriceUpdateResponse response = tbItemService.updateSkuPrice(shopBean, pNumIId, maxPrice, list2);
+        if (response != null) {
+            logger.info("PriceService　更新商品SKU的价格 " + response.getBody());
+        }
+    }
+
+    private void   jm_UpdateDealPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue) throws Exception {
+        List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>(skuList.size());
+        HtDeal_UpdateDealPriceBatch_UpdateData updateData = null;
+        for (BaseMongoMap skuObj : skuList) {
+            updateData = new HtDeal_UpdateDealPriceBatch_UpdateData();
+            String skuCode = (String) skuObj.get("skuCode");
+            if (StringUtils.isEmpty(skuCode)) {
+                continue;
+            }
+            updateData.setJumei_sku_no(skuCode);
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+            updateData.setDeal_price(priceSale);
+            updateData.setMarket_price(priceRetail);
+            list.add(updateData);
+        }
+        String errorMsg = "";
+        if (list.size() == 0) {
+            return;
+        }
+        HtDealUpdateDealPriceBatchRequest request = new HtDealUpdateDealPriceBatchRequest();
+        List<List<HtDeal_UpdateDealPriceBatch_UpdateData>> pageList = CommonUtil.splitList(list, 10);
+        for (List<HtDeal_UpdateDealPriceBatch_UpdateData> page : pageList) {
+            request.setUpdate_data(page);
+            HtDealUpdateDealPriceBatchResponse response = serviceJumeiHtDeal.updateDealPriceBatch(shopBean, request);
+            if (!response.is_Success()) {
+                errorMsg += response.getErrorMsg();
+            }
+        }
+        if (!StringUtil.isEmpty(errorMsg)) {
+            throw new BusinessException("jm_UpdateDealPriceBatch:" + errorMsg);
+        }
+    }
+
+    //聚美 更新商品价格
+    private void   jmhtMall_UpdateMallPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue) throws Exception {
+        List<HtMallSkuPriceUpdateInfo> list = new ArrayList<>(skuList.size());
+        HtMallSkuPriceUpdateInfo updateData = null;
+        for (BaseMongoMap skuObj : skuList) {
+            updateData = new HtMallSkuPriceUpdateInfo();
+           String skuCode= (String) skuObj.get("skuCode");
+            if(StringUtils.isEmpty(skuCode))
+            {
+                continue;
+            }
+            updateData.setJumei_sku_no(skuCode);
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+            updateData.setMall_price(priceSale);
+            updateData.setMarket_price(priceRetail);
+            list.add(updateData);
+        }
+        String errorMsg = "";
+        if(list.size()==0) return;
+        List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
+        for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
+            StringBuffer sb = new StringBuffer();
+            if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
+                errorMsg += sb.toString();
+            }
+        }
+        if (!StringUtil.isEmpty(errorMsg)) {
+            throw new BusinessException("updateMallSkuPrice:" + errorMsg);
+        }
+    }
+    //京东更新商品价格
+    private void   jdUpdatePriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue, String updType) throws Exception {
+        List<UpdateSkuPrice> list = new ArrayList<>(skuList.size());
+        UpdateSkuPrice updateData = null;
+        Double maxPrice = null;
+        for (BaseMongoMap skuObj : skuList) {
+            updateData = new UpdateSkuPrice();
+            updateData.setOuterId((String) skuObj.get("skuCode"));
+            Double priceSale = null;
+            if (priceConfigValue == null) {
+                priceSale = skuObj.getDoubleAttribute("priceSale");
+            } else {
+                priceSale = skuObj.getDoubleAttribute(priceConfigValue);
+            }
+            if (maxPrice == null || (maxPrice != null && priceSale > maxPrice)) {
+                maxPrice = priceSale;
+            }
+            updateData.setPrice(priceSale.toString());
+            list.add(updateData);
+        }
+        if (!"s".equals(updType)) {
+            final Double skuPrice = maxPrice;
+            // 更新商品价格
+            list.forEach(f -> f.setPrice(skuPrice.toString()));
+        }
+
+        list.forEach(f->{
+            if(!StringUtils.isEmpty(f.getOuterId())) {
+                jdSkuService.updateSkuPriceByOuterId(shopBean, f.getOuterId(), f.getPrice().toString());
+            }
+        });
     }
 }
