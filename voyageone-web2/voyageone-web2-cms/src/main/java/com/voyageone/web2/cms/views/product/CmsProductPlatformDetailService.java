@@ -13,6 +13,7 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPrice;
@@ -64,10 +65,18 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         ProductPriceSalesInfo productPriceSalesInfo = new ProductPriceSalesInfo();
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+
         productPriceSalesInfo.setBrand(cmsBtProduct.getCommon().getFields().getBrand());
         productPriceSalesInfo.setProductNameEn(cmsBtProduct.getCommon().getFields().getProductNameEn());
 
         productPriceSalesInfo.setQuantity(cmsBtProduct.getCommon().getFields().getQuantity());
+
+        List<CmsBtProductModel_Field_Image>  imgList = cmsBtProduct.getCommonNotNull().getFieldsNotNull().getImages1();
+
+        if (!imgList.isEmpty()) {
+            productPriceSalesInfo.setImage1(imgList.get(0).getName());
+        }
+
 
         List<ProductPrice> productPriceList=new ArrayList<>();
 
@@ -75,9 +84,10 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
             if(f.getCartId()!=0) {
                 ProductPrice productPrice = new ProductPrice();
-
                 productPrice.setStatus(f.getStatus());
-                productPrice.setpStatus(f.getpStatus().name());
+                if (f.getpStatus() != null) {
+                    productPrice.setpStatus(f.getpStatus().name());
+                }
                 productPrice.setpPublishError(f.getpPublishError());
                 productPrice.setStatus(f.getStatus());
                 productPrice.setpReallyStatus(f.getpReallyStatus());
@@ -93,9 +103,24 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                 productPrice.setPriceSaleSt(f.getpPriceSaleSt());
 
                 productPrice.setCartId(f.getCartId());
+                int count = f.getSkus().size();
+                int isSaleTrueCount = 0;
 
-                CartEnums.Cart cart=CartEnums.Cart.getValueByID(f.getCartId().toString());
-                if(cart!=null) {
+                for (BaseMongoMap<String, Object> sku : f.getSkus()) {
+                    if (ConvertUtil.toBoolean(sku.get("isSale"))) {
+                        isSaleTrueCount = isSaleTrueCount + 1;
+                    }
+                }
+
+
+                if (count > 0 && count == isSaleTrueCount) {
+                    productPrice.setChecked(2);//选中
+                } else if (count > isSaleTrueCount && isSaleTrueCount > 0) {
+                    productPrice.setChecked(1);//半选
+                }
+
+                CartEnums.Cart cart = CartEnums.Cart.getValueByID(f.getCartId().toString());
+                if (cart != null) {
                     productPrice.setCartName(cart.name());
                     productPriceList.add(productPrice);
                 }

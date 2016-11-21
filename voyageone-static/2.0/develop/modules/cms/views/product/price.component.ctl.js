@@ -31,6 +31,11 @@ define([
                         scope.vm.model = resp.data;
                         scope.sales = resp.data.sales;
                         scope.selectSalesOnChange();
+                        scope.vm.productPriceList.forEach(function (f) {
+                            if(f.checked ==2) {
+                                f.isSale = true;
+                            }
+                        });
                     });
                 }
                 scope.selectSalesOnChange = function () {
@@ -47,6 +52,10 @@ define([
                             f.saleQty = 0;
                         });
                     }
+                }
+                scope.isSaleOnChange=function (item) {
+                    console.log(item);
+                    
                 }
             }
         };

@@ -12,6 +12,16 @@ public class ProductPriceSalesInfo {
 
     Map<String, Map<String, Object>> sales;
     String brand;
+    int quantity;
+    String image1;
+
+    public String getImage1() {
+        return image1;
+    }
+
+    public void setImage1(String image1) {
+        this.image1 = image1;
+    }
 
     public int getQuantity() {
         return quantity;
@@ -21,7 +31,7 @@ public class ProductPriceSalesInfo {
         this.quantity = quantity;
     }
 
-    int quantity;
+
 
     public String getBrand() {
         return brand;

@@ -27,7 +27,7 @@
                         <div class="imageContainer">
                             <div class="imageWrapper">
                                 <img class="imageWrapper"
-                                     ng-src="http://image.sneakerhead.com/is/image/sneakerhead/010-51A0HC13E1-00LCNB0-1">
+                                     ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{vm.model.image1}}">
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,12 @@
                             <tbody>
                             <tr  ng-repeat="item in vm.productPriceList" >
                                 <td class="mfb-xt text-left">
-                                    <input type="checkbox">
+                                    <input style="margin: 0" type="checkbox"
+                                           ui-indeterminate="item.checked == 1"
+                                           ng-checked="item.checked == 2"
+                                           ng-click="ctrl.canSelectChild(category)"
+                                           ng-model="item.isSale"  ng-change="isSaleOnChange(item)" />
+                                    <!--<input type="checkbox" ng-model="item.isSale"     ng-checked="item.checked==2" />-->
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     <platform-status data="{

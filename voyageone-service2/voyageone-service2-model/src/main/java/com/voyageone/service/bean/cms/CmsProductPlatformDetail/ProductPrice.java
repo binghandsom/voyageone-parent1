@@ -11,6 +11,32 @@ public class ProductPrice {
     String pPublishError;
     String numberId;
 
+    //建议零售价
+    double priceMsrpSt;
+    double priceMsrpEd;
+
+    //指导价
+    double priceRetailSt;
+    double priceRetailEd;
+
+    //最终售价
+    double priceSaleSt;
+    double priceSaleEd;
+    //平台 id
+    int cartId;
+    String cartName;
+
+
+    int checked;//0:未选中 1半选中   2选中
+
+    public int getChecked() {
+        return checked;
+    }
+
+    public void setChecked(int checked) {
+        this.checked = checked;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -51,20 +77,7 @@ public class ProductPrice {
         this.numberId = numberId;
     }
 
-    //建议零售价
-    double priceMsrpSt;
-    double priceMsrpEd;
 
-    //指导价
-    double priceRetailSt;
-    double priceRetailEd;
-
-    //最终售价
-    double priceSaleSt;
-    double priceSaleEd;
-    //平台 id
-    int cartId;
-    String cartName;
 
     public String getCartName() {
         return cartName;
