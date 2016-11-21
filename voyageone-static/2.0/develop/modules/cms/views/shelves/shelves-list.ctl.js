@@ -246,8 +246,12 @@ define([
 
             context.clientName = self.clientType === self.clientTypes.PC ? "PC" : "APP";
 
-            this.popups.popNewShelves(context).then(function (insertedModel) {
-                self.shelves.push(insertedModel);
+            this.popups.popNewShelves(context).then(function (model) {
+                if (!s) {
+                    self.shelves.push(model);
+                } else {
+                    angular.merge(s, model);
+                }
             });
         },
         watchShelvesIsOpen: function (s) {
@@ -393,9 +397,9 @@ define([
     cms.filter('shelvesProductClass', function () {
         return function (p) {
             switch (p.status) {
-                case 0:
-                    return 'label-danger';
                 case 1:
+                    return 'label-danger';
+                case 0:
                     return 'label-success';
                 default:
                     return 'label-default';
@@ -406,9 +410,9 @@ define([
     cms.filter('shelvesProductName', function () {
         return function (p) {
             switch (p.status) {
-                case 0:
-                    return '已下架';
                 case 1:
+                    return '已下架';
+                case 0:
                     return '已上架';
                 default:
                     return '---';

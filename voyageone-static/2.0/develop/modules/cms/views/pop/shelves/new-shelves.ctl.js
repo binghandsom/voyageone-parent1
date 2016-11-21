@@ -79,14 +79,12 @@ define([
                 singleTemplateId: self.singleTemplateId
             };
 
-            if (self.usePromoPrice) {
-                shelvesModel.promotionId = self.promotionId;
-            }
+            shelvesModel.promotionId = self.usePromoPrice ? self.promotionId : 0;
 
             if (context.id) {
                 shelvesModel.id = context.id;
-                shelvesService.updateShelves(shelvesModel).then(function (resp) {
-                    self.$uibModalInstance.close(resp.data);
+                shelvesService.updateShelves(shelvesModel).then(function () {
+                    self.$uibModalInstance.close(shelvesModel);
                 });
             } else {
                 shelvesService.createShelves(shelvesModel).then(function (resp) {
