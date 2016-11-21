@@ -81,8 +81,9 @@
     text-align: right;
 }
 
-.shelves-item-label.code {
+.shelves-item-value.code {
     height: 36px;
+    max-height: 36px;
 }
 
 .shelves-item-value.price {
