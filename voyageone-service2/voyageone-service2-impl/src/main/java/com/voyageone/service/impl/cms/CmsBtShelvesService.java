@@ -35,7 +35,7 @@ import java.util.Map;
 public class CmsBtShelvesService extends BaseService {
     private final CmsBtShelvesDao cmsBtShelvesDao;
     private final CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao;
-    private CmsBtShelvesProductService cmsBtShelvesProductService;
+    private final CmsBtShelvesProductService cmsBtShelvesProductService;
 
     @Autowired
     public CmsBtShelvesService(CmsBtShelvesDao cmsBtShelvesDao, CmsBtShelvesTemplateDao cmsBtShelvesTemplateDao, CmsBtShelvesProductService cmsBtShelvesProductService) {
