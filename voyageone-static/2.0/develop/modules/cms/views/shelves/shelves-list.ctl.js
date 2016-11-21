@@ -158,6 +158,9 @@ define([
                         });
                     }
                 });
+
+                // 更新数据后触发一次过滤
+                self.filterProduct();
             });
         },
         clearFilter: function () {
@@ -348,6 +351,8 @@ define([
                         preview: true
                     }).then(function (resp) {
                         d.body.innerHTML = resp.data;
+                    }, function () {
+                        previewWindow.close();
                     });
                     break;
             }
@@ -367,6 +372,8 @@ define([
                         preview: true
                     }).then(function (resp) {
                         d.body.innerHTML = '<pre>' + resp.data + '</pre>';
+                    }, function () {
+                        newW.close();
                     });
                     break;
             }
