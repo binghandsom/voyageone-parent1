@@ -683,7 +683,8 @@ define(function () {
                 removeProduct: "removeProduct",
                 clearProduct: "clearProduct",
                 deleteShelves: "deleteShelves",
-                releaseImage: "releaseImage"
+                releaseImage: "releaseImage",
+                getShelvesHtml: "getShelvesHtml"
             }
         }
     };

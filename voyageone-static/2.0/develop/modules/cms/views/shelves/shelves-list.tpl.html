@@ -84,8 +84,8 @@
                     <button class="btn btn-default" ng-disabled="ctrl.canPreview(i)" ng-click="ctrl.releaseImage(i)">上传</button>
                 </div>
                 <div ng-if="!i.$e" class="pull-left">
-                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.preview(i)">预览</button>
-                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.release(i)">{{i.clientType===ctrl.clientTypes.APP?'下载图片':'复制代码'}}</button>
+                    <button class="btn btn-default" ng-disabled="i.clientType===ctrl.clientTypes.APP&&!ctrl.canPreview(i)" ng-click="ctrl.preview(i)" title="在上传处理完成后，才能预览">预览</button>
+                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.release(i)" title="在上传处理完成后，才能获取内容">{{i.clientType===ctrl.clientTypes.APP?'下载图片':'复制代码'}}</button>
                 </div>
                 <div ng-if="!i.$e" class="pull-left">
                     <button type="button" class="btn btn-default" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i>&nbsp;编辑货架</button>

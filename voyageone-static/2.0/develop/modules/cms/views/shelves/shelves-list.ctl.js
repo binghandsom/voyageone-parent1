@@ -230,6 +230,16 @@ define([
                     this.release(s);
                     break;
                 case this.clientTypes.PC:
+                    var previewWindow = window.open('about:blank');
+                    var d = previewWindow.document;
+                    d.write('<strong>内容正在下载，请稍等... </strong>');
+
+                    this.shelvesService.getShelvesHtml({
+                        shelvesId: s.id,
+                        preview: true
+                    }).then(function (resp) {
+                        d.body.innerHTML = resp.data;
+                    });
                     break;
             }
         },
@@ -239,6 +249,16 @@ define([
                     window.open(this.downloadAppUrl + "?shelvesId=" + s.id);
                     break;
                 case this.clientTypes.PC:
+                    var newW = window.open('about:blank');
+                    var d = newW.document;
+                    d.write('<strong>内容正在下载，请稍等... </strong>');
+
+                    this.shelvesService.getShelvesHtml({
+                        shelvesId: s.id,
+                        preview: true
+                    }).then(function (resp) {
+                        d.body.innerHTML = '<pre>' + resp.data + '</pre>';
+                    });
                     break;
             }
         },
