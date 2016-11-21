@@ -61,12 +61,6 @@
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>com.voyageone:task2-base</artifact>
-                                    <includes>
-                                        <include>com/voyageone/**</include>
-                                    </includes>
-                                </filter>
-                                <filter>
                                     <artifact>com.voyageone:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.SF</exclude>
