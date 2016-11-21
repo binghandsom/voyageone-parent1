@@ -246,8 +246,12 @@ define([
 
             context.clientName = self.clientType === self.clientTypes.PC ? "PC" : "APP";
 
-            this.popups.popNewShelves(context).then(function (insertedModel) {
-                self.shelves.push(insertedModel);
+            this.popups.popNewShelves(context).then(function (model) {
+                if (!s) {
+                    self.shelves.push(model);
+                } else {
+                    angular.merge(s, model);
+                }
             });
         },
         watchShelvesIsOpen: function (s) {
