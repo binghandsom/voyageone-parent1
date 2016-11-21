@@ -176,12 +176,12 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             serviceCmsBtJmPromotionExportTask3Service.export(errorfilePath, listProducctErrorMap, listSkuErrorMap, true);
             modelCmsBtJmPromotionImportTask.setFailuresFileName(failuresFileName);
             modelCmsBtJmPromotionImportTask.setErrorCode(2);
-            modelCmsBtJmPromotionImportTask.setFailuresRows(listProducctErrorMap.size()+listSkuErrorMap.size());
+            modelCmsBtJmPromotionImportTask.setFailuresRows(listSkuErrorMap.size());
         }
         if (listProductImport.size() == 0) {
             modelCmsBtJmPromotionImportTask.setErrorMsg("没有导入的商品");
         }
-        modelCmsBtJmPromotionImportTask.setSuccessRows(listProductImport.size());
+        modelCmsBtJmPromotionImportTask.setSuccessRows(listSkuImport.size());
         return  result;
     }
 
@@ -271,25 +271,31 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         for (ProductImportBean product : listProductImport) {
             $info("into" + product.getProductCode());
             saveInfo = new ProductSaveInfo();
+            List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
+
             saveInfo.productInfo = productService.getProductByCode(modelPromotion.getChannelId(), product.getProductCode());
             if (saveInfo.productInfo == null) {
                 product.setErrorMsg("不存在" + product.getProductCode());
                 listProducctErrorMap.add(BeanUtils.toMap(product));
+                listSkuErrorMap.addAll(BeanUtils.toMapList(listProductSkuImport));
+                listSkuImport.remove(listProductSkuImport);
                 continue;
             }
             if(isBlocked(saveInfo.productInfo,mapMasterBrand)) {
                 product.setErrorMsg("该商品品牌已加入黑名单,不能导入" + product.getProductCode());
                 listProducctErrorMap.add(BeanUtils.toMap(product));
+                listSkuErrorMap.addAll(BeanUtils.toMapList(listProductSkuImport));
+                listSkuImport.remove(listProductSkuImport);
                 continue;
             }
             saveInfo.p_Platform_Cart = saveInfo.productInfo.getPlatform(CartEnums.Cart.JM);
 
-            List<SkuImportBean> listProductSkuImport = getListSkuImportBeanByProductCode(listSkuImport, product.getProductCode());//获取商品的sku
             loadSaveInfo(saveInfo, model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product, modelPromotion, userName);
             if (saveInfo != null) {
-                if (saveInfo._listSkuImport.size() > 0) {
-                    listProducctErrorMap.addAll(BeanUtils.toMapList(saveInfo._listSkuImport));//初始化失败的sku
+                if (saveInfo._listSkuImportError.size() > 0) {
+                    listSkuErrorMap.addAll(BeanUtils.toMapList(saveInfo._listSkuImportError));//初始化失败的sku
+                    listSkuImport.remove(saveInfo._listSkuImportError);
                 }
                 listSaveInfo.add(saveInfo);
             }
@@ -317,7 +323,10 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
         String masterBrand = p_ProductInfo.getCommon().getFields().getBrand();
         if (!mapMasterBrand.containsKey(masterBrand)) {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(p_ProductInfo.getChannelId(), p_ProductInfo.getCommon().getFields().getCode());
-            String feedBrand = cmsBtFeedInfoModel.getBrand();
+            String feedBrand="";
+            if(cmsBtFeedInfoModel!=null) {
+                feedBrand= cmsBtFeedInfoModel.getBrand();
+             }
             if (cmsBtBrandBlockService.isBlocked(p_ProductInfo.getChannelId(), 27, feedBrand, masterBrand, platformBrandId)) {
                 mapMasterBrand.put(masterBrand, true);
             } else {
@@ -599,13 +608,13 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, skuImportBean.getSkuCode());
             if (mapSkuPlatform == null) {
                 skuImportBean.setErrorMsg("skuCode:" + skuImportBean.getSkuCode() + "jmPlatform未上新");
-                saveInfo._listSkuImport.add(skuImportBean);
+                saveInfo._listSkuImportError.add(skuImportBean);
                 continue;
             }
             CmsBtProductModel_Sku cmsBtProductModel_sku = saveInfo.productInfo.getCommon().getSku(skuImportBean.getSkuCode());
             if (cmsBtProductModel_sku == null) {
                 skuImportBean.setErrorMsg("skuCode:" + skuImportBean.getSkuCode() + " Common().getSku不存在");
-                saveInfo._listSkuImport.add(skuImportBean);
+                saveInfo._listSkuImportError.add(skuImportBean);
                 continue;
             }
             if (saveInfo.jmProductModel.getId() != null && saveInfo.jmProductModel.getId() > 0) {
