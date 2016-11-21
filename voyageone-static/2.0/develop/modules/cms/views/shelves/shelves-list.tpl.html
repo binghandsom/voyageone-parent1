@@ -96,7 +96,7 @@
         </uib-accordion-group>
     </uib-accordion>
 
-    <sticky style="position:absolute;top:300px;right:0">
+    <sticky style="position:absolute;top:300px;right:0;z-index:1">
         <ul class="nav nav-pills nav-stacked" style="min-width:0;width:auto">
             <li ng-repeat="i in ctrl.shelves">
                 <button type="button" class="btn btn-default" scroll-to="{{::'#s'+$index+',,-60'}}">{{i.shelvesName}}</button>

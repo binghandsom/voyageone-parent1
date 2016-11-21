@@ -33,9 +33,9 @@ define([
             APP: 2
         },
         opList: {
-            G:'>',
-            L:'<',
-            E:'='
+            G: '>',
+            L: '<',
+            E: '='
         },
         getShelves: function () {
             var self = this;
@@ -51,9 +51,7 @@ define([
 
             return shelvesService.search(params).then(function (resp) {
 
-                clearInterval(self.$interval);
-                self.$interval = null;
-                self.lastShelvesInfoTime = '---';
+                self.resetInterval();
 
                 if (self.shelves) {
                     self.shelves.forEach(function (s) {
@@ -66,25 +64,41 @@ define([
                 });
             });
         },
-        refreshInfo: function () {
+        resetInterval: function () {
+            clearInterval(this.$interval);
+            this.$interval = null;
+        },
+        refreshInfo: function (s) {
+            var self = this;
+
+            if (!self.delayTarget)
+                self.delayTarget = [];
+
+            self.delayTarget.push(s);
+
+            clearTimeout(self.timeoutRefresh);
+            self.timeoutRefresh = setTimeout(function () {
+                self.intervalRefreshInfo(self.delayTarget);
+                self.delayTarget = [];
+            }, 0);
+        },
+        intervalRefreshInfo: function (ss) {
             var self = this;
             var count = 30;
             var i = 30 * 1000;
 
+            count--;
+            self.getShelvesInfo(ss);
+
             if (self.$interval)
                 return;
 
-            // 第一次
-            count--;
-            self.getShelvesInfo();
-
             self.$interval = setInterval(function () {
                 if (count <= 0) {
-                    clearInterval(self.$interval);
-                    self.$interval = null;
+                    self.resetInterval();
 
                     self.confirm('自动刷新，已停止。是否继续自动刷新？').then(function () {
-                        self.refreshInfo();
+                        self.intervalRefreshInfo();
                     });
 
                     return;
@@ -93,12 +107,11 @@ define([
                 self.getShelvesInfo();
             }, i);
         },
-        getShelvesInfo: function () {
+        getShelvesInfo: function (ss) {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
-
-            var opened = shelves.filter(function (_s) {
+            var opened = ss || shelves.filter(function (_s) {
                 return _s.$isOpen;
             });
 
@@ -245,14 +258,14 @@ define([
             s.stopIsOpenWatch = $scope.$watch(function () {
                 return s.$isOpen;
             }, function ($isOpen) {
-                if ($isOpen) {
-                    self.refreshInfo();
-                } else {
-                    // 使用 setTimeout 来延迟执行
-                    setTimeout(function () {
+                // 使用 setTimeout 来延迟执行
+                setTimeout(function () {
+                    if ($isOpen) {
+                        self.refreshInfo(s);
+                    } else {
                         s.$e = false;
-                    }, 0);
-                }
+                    }
+                }, 0);
             });
         },
         sortProduct: function (s) {
