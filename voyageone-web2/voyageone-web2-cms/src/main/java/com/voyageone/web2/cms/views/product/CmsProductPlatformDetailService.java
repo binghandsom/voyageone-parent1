@@ -20,6 +20,7 @@ import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPrice;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
+import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
@@ -59,14 +60,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private PlatformCategoryService platformCategoryService;
     @Autowired
     private SxProductService sxProductService;
-
+    @Autowired
+    private  CmsProductDetailService cmsProductDetailService;
 
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
-
+    //PriceService   获取价格
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
         if (parameter.isSale()) {
+            // 如果该已经approve，则插入上新work表
             setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
+        }
+        else
+        {
+            //如果numiid存在则判断调用group下线，还是code下线(james)
+            setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
         }
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.isSale());
@@ -77,7 +85,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
     void  setCartSkuIsSale_True(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct,CmsBtProductModel_Platform_Cart platform,String userName)
     {
-        //更新所有的sku的isSale =true ， 如果该已经approve，则插入上新work表
+        // 如果该已经approve，则插入上新work表
         if("Approved".equals(platform.getStatus())) {
 
             List<String> cartIdList = new ArrayList<>();
@@ -85,11 +93,27 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             cartIdList.add(Integer.toString(parameter.getCartId()));
 
             //则插入上新work表
-            //PriceService   获取价格
             sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
         }
     }
+    void  setCartSkuIsSale_False(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct,CmsBtProductModel_Platform_Cart platform,String userName) {
+        //如果numiid存在则判断调用group下线，还是code下线
+        DelistingParameter delistingParameter = new DelistingParameter();
+        delistingParameter.setCartId(parameter.getCartId());
+        delistingParameter.setChannelId(cmsBtProduct.getChannelId());
+        delistingParameter.setProductCode(cmsBtProduct.getCommon().getFields().getCode());
+        delistingParameter.setComment("");
+        if (!StringUtils.isEmpty(platform.getpNumIId())) {
 
+            if (platform.getpIsMain() == 1) {
+
+                cmsProductDetailService.delistinGroup(delistingParameter, userName);
+            } else {
+                cmsProductDetailService.delisting(delistingParameter, userName);
+            }
+
+        }
+    }
 
     public ProductPriceSalesInfo getProductPriceSales(String channelId, Long prodId) {
 
