@@ -158,7 +158,6 @@ define([
                         });
                     }
                 });
-                self.lastShelvesInfoTime = new Date();
             });
         },
         clearFilter: function () {
