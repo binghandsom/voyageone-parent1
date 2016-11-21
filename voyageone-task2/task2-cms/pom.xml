@@ -49,13 +49,25 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.voyageone:task2-base</include>
-                                    <include>com.voyageone:task2-cms</include>
+                                    <include>com.voyageone:*</include>
                                 </includes>
+                                <excludes>
+                                    <exclude>com.voyageone:jd-open-api*</exclude>
+                                    <exclude>com.voyageone:jaxrpc</exclude>
+                                    <exclude>com.voyageone:top-schema</exclude>
+                                    <exclude>com.voyageone:axis</exclude>
+                                    <exclude>com.voyageone:voyageone-config</exclude>
+                                </excludes>
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>*:*</artifact>
+                                    <artifact>com.voyageone:task2-base</artifact>
+                                    <includes>
+                                        <include>com/voyageone/**</include>
+                                    </includes>
+                                </filter>
+                                <filter>
+                                    <artifact>com.voyageone:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
