@@ -9,6 +9,8 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.ConvertUtil;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
@@ -37,10 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author aooer 2016/1/19.
@@ -284,7 +283,7 @@ public class PromotionDetailService extends BaseService {
             codesModel.setModelId(groupModel.getGroupId().intValue());
         }
 
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
         if (!imgList.isEmpty()) {
             codesModel.setImageUrl1(imgList.get(0).getName());
         } else {
@@ -465,6 +464,15 @@ public class PromotionDetailService extends BaseService {
     @VOTransactional
     public void remove(String channelId, List<CmsBtPromotionGroupsBean> promotionModes, String modifier) {
         if (promotionModes.size() == 0) return;
+        CmsBtPromotionModel promotionModel = promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
+
+        Date  activityStart= DateTimeUtil.parse(promotionModel.getActivityStart(),"yyyy-MM-dd");
+
+        if(DateTimeUtilBeijing.toLocalTime(activityStart)<new Date().getTime())
+        {
+           throw  new  BusinessException("活动已经开始不能删除");
+        }
+
         List<String> codeList = new ArrayList<>();
         for (CmsBtPromotionGroupsBean item : promotionModes) {
             cmsPromotionModelDao.deleteCmsPromotionModel(item);
@@ -491,7 +499,6 @@ public class PromotionDetailService extends BaseService {
             cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getProductModel());
         }
         //批量删除tag
-        CmsBtPromotionModel promotionModel = promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
         promotionCodesTagService.deleteListByPromotionId_Codes(channelId, promotionModel.getPromotionId(), codeList, promotionModel.getRefTagId());
     }
 
@@ -626,6 +633,15 @@ public class PromotionDetailService extends BaseService {
     @VOTransactional
     public void delPromotionCode(List<CmsBtPromotionCodesBean> promotionModes, String channelId, String operator) {
         if(promotionModes.size()==0) return;
+
+        CmsBtPromotionModel promotionModel = promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
+
+        Date  activityStart= DateTimeUtil.parse(promotionModel.getActivityStart(),"yyyy-MM-dd");
+
+        if(DateTimeUtilBeijing.toLocalTime(activityStart)<new Date().getTime())
+        {
+            throw  new  BusinessException("活动已经开始不能删除");
+        }
         List<String> codeList=new ArrayList<>();
 
         for (CmsBtPromotionCodesBean item : promotionModes) {
@@ -663,7 +679,6 @@ public class PromotionDetailService extends BaseService {
         }
 
         //批量删除tag
-        CmsBtPromotionModel   promotionModel= promotionService.getByPromotionId(promotionModes.get(0).getPromotionId());
         promotionCodesTagService.deleteListByPromotionId_Codes(channelId,promotionModel.getPromotionId(),codeList,promotionModel.getRefTagId());
     }
 

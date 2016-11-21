@@ -53,6 +53,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.AbstractSkuFieldBuilder;
 import com.voyageone.service.impl.cms.sx.sku_field.SkuFieldBuilderService;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl7;
 import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderImpl8;
+import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
@@ -146,6 +147,8 @@ public class SxProductService extends BaseService {
     private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
     @Autowired
     private CmsBtBrandBlockService cmsBtBrandBlockService;
+    @Autowired
+    private PlatformMappingService platformMappingService;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -1421,6 +1424,7 @@ public class SxProductService extends BaseService {
         String strRex2 = "\\s*\\d+\\s*元*以上";
         String strRex3 = "其它";
         String strRex4 = "不限";
+		String strRex5 = "\\s*\\d+\\s*元*以下";
 
         // 如果不是京东京东国际的话, 返回false
         if (!shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
@@ -1462,6 +1466,14 @@ public class SxProductService extends BaseService {
                 }
             }
 
+			if (!blnError) {
+				Pattern pattern = Pattern.compile(strRex5, Pattern.CASE_INSENSITIVE);
+				Matcher matcher = pattern.matcher(optionDisplayName);
+				if (matcher.find()) {
+					blnError = true;
+				}
+			}
+
             if (!blnError) {
                 if (optionDisplayName.equals(strRex3) ||
                         optionDisplayName.equals(strRex4)) {
@@ -1496,6 +1508,14 @@ public class SxProductService extends BaseService {
         for (Option option : singleCheckField.getOptions()) {
             // 判断一下当前可选项属于哪类
             String optionDisplayName = option.getDisplayName();
+
+			{
+				// 把 "xxx以下"， 变成"0-xxx"
+				if (optionDisplayName.contains("以下")) {
+					optionDisplayName = "0-" + optionDisplayName.replace("以下", "");
+				}
+			}
+
             if (optionDisplayName.contains("-")) {
                 // 专门处理这类的内容: 100-199元
                 optionDisplayName = optionDisplayName.replace("元", "");
@@ -3576,10 +3596,16 @@ public class SxProductService extends BaseService {
 
 		// 是否智能上新
 		boolean blnIsSmartSx = isSmartSx(sxData.getChannelId(), sxData.getCartId());
+        Map<String, Object> platformMappingFieldValues = null;
 		if (blnIsSmartSx && blnForceSmartSx) {
 			// 当前店铺允许智能上新， 并且要求当前商品智能上新 的场合
             blnIsSmartSx = true;
-		} else {
+
+            // 根据 平台默认属性设置 里设置好的内容， 生成的值
+            platformMappingFieldValues = platformMappingService.getValueMap(
+                    sxData.getChannelId(), sxData.getMainProduct().getProdId(), sxData.getCartId(), sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
+
+        } else {
             blnIsSmartSx = false;
         }
 
@@ -3617,7 +3643,7 @@ public class SxProductService extends BaseService {
                     retMap.putAll(resolveField);
                 } else {
 					if (blnIsSmartSx) {
-						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData);
+						Map<String, Field> resolveField_smart  = getValueBySmartCore(field, sxData, platformMappingFieldValues);
 						if (resolveField_smart != null) {
 							if (retMap == null) {
 								retMap = new HashMap<>();
@@ -3632,8 +3658,29 @@ public class SxProductService extends BaseService {
         return retMap;
     }
 
-    private Map<String, Field> getValueBySmartCore(Field field, SxData sxData) {
+    private Map<String, Field> getValueBySmartCore(Field field, SxData sxData, Map<String, Object> platformMappingFieldValues) {
         Map<String, Field> retMap = new HashMap<>();
+
+        // 如果 平台默认属性设置 里， 有设置过的话， 那就直接用了
+        if (platformMappingFieldValues.containsKey(field.getId())) {
+            Object o = platformMappingFieldValues.get(field.getId());
+			if (o != null && !StringUtils.isEmpty(String.valueOf(o))) {
+				switch (field.getType()) {
+					case INPUT:
+						InputField inputField = (InputField) field;
+						inputField.setValue(o.toString());
+						retMap.put(field.getId(), inputField);
+						break;
+					case SINGLECHECK:
+						SingleCheckField singleCheckField = (SingleCheckField) field;
+						singleCheckField.setValue(o.toString());
+						retMap.put(field.getId(), singleCheckField);
+						break;
+				}
+			}
+
+            return retMap;
+        }
 
         // 目前只做必填项
         if (field.getRules() == null || field.getRuleByName("requiredRule") == null || !field.getRuleByName("requiredRule").getValue().equals("true")) {
