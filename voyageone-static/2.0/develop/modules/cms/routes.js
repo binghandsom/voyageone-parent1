@@ -152,6 +152,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
             "controller": "AttributeDetailController as ctrl"
         },
+        "channel_config_list" : {
+            "hash": "/channel/channel_config_list",
+            "templateUrl": "views/channel/config/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/config/index.ctl",
+            "controller": "channelConfigController as ctrl"
+        },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
             "templateUrl": "views/search/advanceSearch.tpl.html",

@@ -868,6 +868,20 @@ define(function () {
         "TXT_NO_CHECK_SKU": "请选择要移动的Sku",
         "TXT_CHECK_ALL_SKU": "不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行\"移动到其他Group\"操作",
         "TXT_CODE": "Code",
-        "TXT_GROUP_NUMIID": "商品页面编号"
+        "TXT_GROUP_NUMIID": "商品页面编号",
+
+        /** 店铺管理-各店铺配置 */
+        "TXT_CHANNEL_CONFIG":"店铺配置",
+        "TXT_CHANNEL_SELECT" : "选择店铺",
+        "TXT_CHANNEL_CONFIG_KEY" : "config_key",
+        "TXT_CHANNEL_CONFIG_CODE" : "config_code",
+        "TXT_CHANNEL_CONFIG_VALUE1" : "config_value1",
+        "TXT_CHANNEL_CONFIG_VALUE2" : "config_value2",
+        "TXT_CHANNEL_CONFIG_VALUE3" : "config_value3",
+        "TXT_CHANNEL_CONFIG_COMMENT" : "注释",
+        "TXT_CHANNEL_CONFIG_STATUS" : "状态",
+        "TXT_CHANNEL_CONFIG_TYPE" : "类型",
+        "TXT_CHANNEL_CONFIG_CREATE" : "新增店铺设置",
+        "TXT_CHANNEL_CONFIG_EDIT" : "编辑店铺设置"
     };
 });

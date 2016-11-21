@@ -580,7 +580,8 @@ define(function () {
                         "delete": "sizeChartDelete",
                         "editSave": "sizeChartEditSave",
                         "getNoMatchList": "getNoMatchList",
-                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId"
+                        "getListImageGroupBySizeChartId": "getListImageGroupBySizeChartId",
+                        getProductSizeChartList:"getProductSizeChartList"
                     }
                 },
                 "sizeChartDetail": {
@@ -590,6 +591,17 @@ define(function () {
                         "detailSave": "sizeChartDetailSave",
                         "detailSizeMapSave": "sizeChartDetailSizeMapSave"
                     }
+                }
+            },
+            "channelConfig" : {
+                "channelConfigService" : {
+                    "root" : "/cms/channel/config",
+                    "init" : "init",
+                    "loadByChannel" : "loadByChannel",
+                    "addChannelConfig":"addChannelConfig",
+                    "loadChannelConfigDetail":"loadChannelConfigDetail",
+                    "editChannelConfig":"editChannelConfig",
+                    "delChannelConfig" : "delChannelConfig"
                 }
             },
             "hsCodeInfo": {

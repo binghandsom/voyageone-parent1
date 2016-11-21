@@ -760,6 +760,7 @@ public interface CmsUrlConstants {
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
                 String GetNoMatchList="getNoMatchList";
                 String GetListImageGroupBySizeChartId="getListImageGroupBySizeChartId";
+                String GetProductSizeChartList="getProductSizeChartList";
             }
 
             interface SIZE_CHART_DETAIL {
@@ -793,6 +794,16 @@ public interface CmsUrlConstants {
             String SEARCH_BLACK_BRAND = "searchBlackBrand";
 
             String UPDATE_BLACK_BRAND = "updateBlackBrand";
+        }
+
+        interface CONFIG {
+            String ROOT = "/cms/channel/config";
+            String INIT = "init";
+            String LOAD_BY_CHANNEL = "loadByChannel";
+            String ADD_CHANNEL_CONFIG = "addChannelConfig";
+            String LOAD_CHANNEL_CONFIG_DETAIL = "loadChannelConfigDetail";
+            String EDIT_CHANNEL_CONFIG = "editChannelConfig";
+            String DEL_CHANNEL_CONFIG = "delChannelConfig";
         }
     }
 

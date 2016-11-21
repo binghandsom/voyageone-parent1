@@ -737,6 +737,7 @@ public class CmsBtJmPromotionService extends BaseService {
 
                 CmsBtTagJmModuleExtensionModel desJmModuleExtensionModel = tagService.getJmModule(desTag);
                 CmsBtTagJmModuleExtensionModel srcJmModuleExtensionModel = tagService.getJmModule(srcTagMode);
+                desJmModuleExtensionModel.setModuleTitle(srcJmModuleExtensionModel.getModuleTitle());
                 desJmModuleExtensionModel.setHideFlag(srcJmModuleExtensionModel.getHideFlag());
                 desJmModuleExtensionModel.setShelfType(srcJmModuleExtensionModel.getShelfType());
                 desJmModuleExtensionModel.setImageType(srcJmModuleExtensionModel.getImageType());

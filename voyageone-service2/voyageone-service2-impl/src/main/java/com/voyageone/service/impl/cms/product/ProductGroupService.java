@@ -384,7 +384,8 @@ public class ProductGroupService extends BaseService {
     public List<String> getUnPublishedProducts(CmsBtProductGroupModel model) {
         // 获取未上新过的产品信息,用于判断是否需要更新publishTime
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
+//        queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
+        queryObject.setQuery("{'common.fields.code':{$in:#}, $or: [{'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}, {'platforms.P" + model.getCartId() + ".pPublishTime':{$in:[null, '']}}]}");
         queryObject.setParameters(model.getProductCodes());
 
         // 如果该产品已经上新过,则对应值为true,否则为false

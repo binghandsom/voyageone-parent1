@@ -3,8 +3,12 @@ package com.voyageone.service.impl.cms.sx;
 import com.taobao.api.domain.Picture;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.InputField;
+import com.voyageone.common.masterdate.schema.field.MultiCheckField;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,5 +143,61 @@ public class SxProductServiceTest {
         .forEach(p ->  System.out.println(p.getKey() + " : " + p.getValue()));
 
     }
+
+    @Test
+    public void testGetSizeMap() {
+        String channelId = "023";
+        int sizeChartId = 10;
+
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, null, null, null, sizeChartId);
+        System.out.println("sizeMap size = " + sizeMap.size());
+    }
+
+    @Test
+    public void testIsXinPin() {
+        String channelId = "010";
+        int cartId = 23;
+        String code = "DMC015700";
+
+        CmsBtProductModel product = productService.getProductByCode(channelId, code);
+
+        boolean isXinPin = sxProductService.isXinPin(product, cartId);
+        System.out.println("isXinPin = " + (isXinPin ? "true" : "false"));
+    }
+
+    @Test
+    public void testSetFieldValue() {
+        List<Field> fieldList = new ArrayList<>();
+        InputField inputField1 = new InputField();
+        inputField1.setId("id1");
+        inputField1.setValue("value1");
+        fieldList.add(inputField1);
+        InputField inputField2 = new InputField();
+        inputField2.setId("id2");
+        inputField2.setValue("value2");
+        fieldList.add(inputField2);
+        MultiCheckField multiCheckField3 = new MultiCheckField();
+        multiCheckField3.setId("id3");
+        multiCheckField3.addValue("value3-1");
+        multiCheckField3.addValue("value3-2");
+        multiCheckField3.addValue("value3-3");
+        fieldList.add(multiCheckField3);
+
+        sxProductService.setFieldValue(fieldList, "id9", "aaa");
+
+        sxProductService.setFieldValue(fieldList, "id2", "");
+
+        List<String> fieldValues = new ArrayList<String>() {
+            {
+                add("value3-1-1");
+                add("value3-1-2");
+                add("value3-1-3");
+                add("value3-1-4");
+            }
+        };
+        sxProductService.setFieldValues(fieldList, "id3", fieldValues);
+        System.out.println("测试完成");
+    }
+
 
 }

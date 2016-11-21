@@ -143,7 +143,6 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl" style="table-layout: fixed;min-width: 1670px">
 				<thead>
 				<tr>
-					<th class="text-left mfb-xt3"></th>
 					<th class="text-center mfb-xxt" translate="TXT_SEQ"></th>
 					<th class="text-center mfb-xxt">频道页入口图</th>
 					<th class="text-left mfb-xxt" translate="TXT_PROMOTION_NAME"></th>
@@ -159,12 +158,6 @@
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList">
-					<td class="text-left mfb-xt3">
-						<label class="checkbox-inline c-checkbox">
-							<input type="checkbox" ng-model="vm.groupSelList.selFlag[promotion.id]" ng-controller="selectRowsCtrl"ng-click="selectOne(promotion.id, vm.groupSelList)">
-							<span class="fa fa-check"></span>
-						</label>
-					</td>
 					<td class="text-center mfb-xxt">{{promotion.id}}</td>
 					<td class="text-center mfb-xxt">
 						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)" ng-if="promotion.entryImg">
