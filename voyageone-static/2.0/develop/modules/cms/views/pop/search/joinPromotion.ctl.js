@@ -127,6 +127,7 @@ define([
 
             groupInfo.priceTypeId = priceTypeVal;
             groupInfo.priceValue = null;
+            groupInfo.optType = "=";
             groupInfo.roundType = "1";
             groupInfo._opeText = '';
 
