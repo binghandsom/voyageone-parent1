@@ -1,3 +1,11 @@
+#shelves-list {
+    font-family: Arial, "Microsoft Yahei", sans-serif;
+}
+
+.form-group .control-label {
+    font-weight: bold;
+}
+
 .shelves-item,
 .shelves-edit-item {
     float: left;

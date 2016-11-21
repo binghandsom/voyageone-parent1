@@ -22,12 +22,20 @@ define([
 
             self.getShelves();
         });
+
+        self.status = null;
+        self.op = self.opList.G;
     }
 
     ShelvesListController.prototype = {
         clientTypes: {
             PC: 1,
             APP: 2
+        },
+        opList: {
+            G:'>',
+            L:'<',
+            E:'='
         },
         getShelves: function () {
             var self = this;
@@ -42,6 +50,11 @@ define([
             }
 
             return shelvesService.search(params).then(function (resp) {
+
+                clearInterval(self.$interval);
+                self.$interval = null;
+                self.lastShelvesInfoTime = '---';
+
                 if (self.shelves) {
                     self.shelves.forEach(function (s) {
                         s.stopIsOpenWatch();
@@ -133,6 +146,70 @@ define([
                     }
                 });
                 self.lastShelvesInfoTime = new Date();
+            });
+        },
+        clearFilter: function () {
+            this.inventory = null;
+            this.status = null;
+            this.code = null;
+
+            this.shelves.forEach(function (s) {
+                if (!s.products || !s.products.length) {
+                    return;
+                }
+                s.products.forEach(function (p) {
+                    p.$hide = false;
+                });
+            });
+        },
+        filterProduct: function () {
+            var i = this.inventory;
+            i = i ? parseInt(i) : -1;
+            var o = this.op;
+            var t = this.status;
+            var c = this.code;
+
+            var ops = this.opList;
+
+            this.shelves.forEach(function (s) {
+
+                if (!s.products || !s.products.length) {
+                    return;
+                }
+
+                s.products.forEach(function (p) {
+
+                    p.$hide = false;
+
+                    if (i > -1) {
+                        var pass = true;
+
+                        switch (o) {
+                            case ops.G:
+                                pass = p.cartInventory > i;
+                                break;
+                            case ops.L:
+                                pass = p.cartInventory < i;
+                                break;
+                            case ops.E:
+                                pass = p.cartInventory == i;
+                                break;
+                        }
+
+                        if (!pass) {
+                            p.$hide = true;
+                            return;
+                        }
+                    }
+
+                    if (t !== null) {
+                        p.$hide = ((p.status || 0) !== t);
+                    }
+
+                    if (c) {
+                        p.$hide = p.productCode.indexOf(c) < 0;
+                    }
+                });
             });
         },
         addShelves: function (s) {
@@ -233,7 +310,7 @@ define([
                 });
             });
         },
-        releaseImage: function(s) {
+        releaseImage: function (s) {
             var self = this;
             self.shelvesService.releaseImage(s.id).then(function () {
                 self.notify.success('TXT_SUCCESS');
@@ -241,8 +318,8 @@ define([
         },
         canPreview: function (s) {
             return s.products && s.products.every(function (p) {
-                return !!p.platformImageUrl;
-            });
+                    return !!p.platformImageUrl;
+                });
         },
         preview: function (s) {
             switch (s.clientType) {
@@ -293,6 +370,32 @@ define([
             });
         }
     };
+
+    cms.filter('shelvesProductClass', function () {
+        return function (p) {
+            switch (p.status) {
+                case 0:
+                    return 'label-success';
+                case 1:
+                    return 'label-danger';
+                default:
+                    return 'label-default';
+            }
+        };
+    });
+
+    cms.filter('shelvesProductName', function () {
+        return function (p) {
+            switch (p.status) {
+                case 0:
+                    return '已下架';
+                case 1:
+                    return '已上架';
+                default:
+                    return '---';
+            }
+        };
+    });
 
     cms.controller('ShelvesListController', ShelvesListController);
 });
