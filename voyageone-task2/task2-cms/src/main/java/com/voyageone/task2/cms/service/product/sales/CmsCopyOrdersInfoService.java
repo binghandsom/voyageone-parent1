@@ -117,6 +117,13 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                                 $error("CmsCopyOrdersInfoService 产品数据不正确 channelId=%s, sku=%s", channelId, skuCode);
                                 continue;
                             }
+                            // 取得产品Code并决定值的正确性
+                            String productCode = StringUtils.trimToNull(prodModel.getCommon().getFields().getCode());
+                            if (productCode == null) {
+                                $error("CmsCopyOrdersInfoService 产品数据不正确 没有code channelId=%s, sku=%s", channelId, skuCode);
+                                continue;
+                            }
+                            
                             BasicDBObject queryObj = new BasicDBObject();
                             queryObj.put("cart_id", cartId);
                             queryObj.put("channel_id", channelId);
@@ -127,11 +134,6 @@ public class CmsCopyOrdersInfoService extends VOAbsLoggable {
                             updateValue.putAll(orderObj);
                             updateValue.put("modifier", modifier);
                             updateValue.put("modified", DateTimeUtil.getNow());
-                            String productCode = StringUtils.trimToNull(prodModel.getCommon().getFields().getCode());
-                            if (productCode == null) {
-                                $error("CmsCopyOrdersInfoService 产品数据不正确 没有code channelId=%s, sku=%s", channelId, skuCode);
-                                continue;
-                            }
                             updateValue.put("prodCode", productCode);
 
                             BasicDBObject updateObj = new BasicDBObject("$set", updateValue);
