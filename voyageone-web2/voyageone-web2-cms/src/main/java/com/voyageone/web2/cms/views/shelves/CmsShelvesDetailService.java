@@ -7,11 +7,13 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
@@ -48,6 +50,7 @@ class CmsShelvesDetailService extends BaseViewService {
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
     private final ProductService productService;
+    private final ProductTagService productTagService;
     private final MqSender sender;
     private final RedisTemplate<Object, Object> redisTemplate;
 
@@ -55,13 +58,14 @@ class CmsShelvesDetailService extends BaseViewService {
     public CmsShelvesDetailService(CmsBtShelvesProductService cmsBtShelvesProductService,
                                    CmsBtShelvesService cmsBtShelvesService,
                                    ProductService productService, RedisTemplate<Object, Object> redisTemplate,
-                                   MqSender sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService) {
+                                   MqSender sender, CmsBtShelvesTemplateService cmsBtShelvesTemplateService, ProductTagService productTagService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.productService = productService;
         this.redisTemplate = redisTemplate;
         this.sender = sender;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
+        this.productTagService = productTagService;
     }
 
     /**
@@ -101,6 +105,7 @@ class CmsShelvesDetailService extends BaseViewService {
             throw new BusinessException("货架不存在");
         }
 
+        List<Long> prodIdList = new ArrayList<>(productCodes.size());
         ShopBean shopBean = Shops.getShop(cmsBtShelvesModel.getChannelId(), cmsBtShelvesModel.getCartId());
         List<CmsBtShelvesProductModel> cmsBtShelvesProductModels = new ArrayList<>();
         productCodes.forEach(code -> {
@@ -137,9 +142,15 @@ class CmsShelvesDetailService extends BaseViewService {
             cmsBtShelvesProductModel.setCreater(modifier);
             cmsBtShelvesProductModel.setModifier(modifier);
             cmsBtShelvesProductModels.add(cmsBtShelvesProductModel);
+
+            prodIdList.add(productInfo.getProdId());
         });
         //更新数据库
         updateShelvesProduct(cmsBtShelvesProductModels);
+
+        if(!ListUtils.isNull(prodIdList)){
+            productTagService.addProdTag(cmsBtShelvesModel.getChannelId(), "-"+cmsBtShelvesModel.getRefTagId()+"-", prodIdList, modifier);
+        }
     }
 
     byte[] exportAppImage(Integer shelvesId) {
