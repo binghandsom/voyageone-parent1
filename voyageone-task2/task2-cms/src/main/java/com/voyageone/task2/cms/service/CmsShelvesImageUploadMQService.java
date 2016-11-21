@@ -18,6 +18,7 @@ import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelClientType;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
+import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CmsBtShelvesTemplateService;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
@@ -53,17 +54,19 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final TbPictureService tbPictureService;
     private final CmsBtShelvesTemplateService cmsBtShelvesTemplateService;
+    private final CmsBtShelvesService cmsBtShelvesService;
     private final JdImgzoneService jdImgzoneService;
 
     @Autowired
     public CmsShelvesImageUploadMQService(CmsBtShelvesProductService cmsBtShelvesProductService,
                                           TbPictureService tbPictureService,
                                           CmsBtShelvesTemplateService cmsBtShelvesTemplateService,
-                                          JdImgzoneService jdImgzoneService) {
+                                          JdImgzoneService jdImgzoneService, CmsBtShelvesService cmsBtShelvesService) {
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
         this.tbPictureService = tbPictureService;
         this.cmsBtShelvesTemplateService = cmsBtShelvesTemplateService;
         this.jdImgzoneService = jdImgzoneService;
+        this.cmsBtShelvesService = cmsBtShelvesService;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         Integer shelvesId = MapUtils.getInteger(messageMap, MqParameterKeys.key1);
 
         if (shelvesId != null) {
-            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, true);
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(cmsBtShelvesService.getId(shelvesId), true);
             CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(cmsBtShelvesInfoBean.getShelvesModel().getChannelId(), CmsConstants.ChannelConfig.PLATFORM_IMAGE_DIRECTORY_ID, cmsBtShelvesInfoBean.getShelvesModel().getCartId().toString());
             if (cmsChannelConfigBean == null || StringUtil.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
                 throw new BusinessException("图片分类目录没有配置");

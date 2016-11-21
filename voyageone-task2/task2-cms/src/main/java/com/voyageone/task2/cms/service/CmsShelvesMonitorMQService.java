@@ -76,6 +76,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
     protected void onStartup(Map<String, Object> messageMap) throws Exception {
         Integer shelvesId = (Integer) messageMap.get("shelvesId");
         if(shelvesId != null) {
+            $info("shelvesId = "+shelvesId +" 商品状态取得开始");
             CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
             List<CmsBtShelvesProductModel> cmsBtShelvesProducts = cmsBtShelvesProductService.getByShelvesId(shelvesId);
             if(!ListUtils.isNull(cmsBtShelvesProducts) && cmsBtShelvesModel != null) {
@@ -94,7 +95,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
                     }
                 });
                 ExecutorService es  = Executors.newFixedThreadPool(5);
-                numIidGroup.forEach((s, cmsBtShelvesProductModels) -> syuPlatformInfo(cmsBtShelvesModel.getChannelId(),cmsBtShelvesModel.getCartId(),s,cmsBtShelvesProductModels));
+                numIidGroup.forEach((s, cmsBtShelvesProductModels) -> es.execute(()->syuPlatformInfo(cmsBtShelvesModel.getChannelId(),cmsBtShelvesModel.getCartId(),s,cmsBtShelvesProductModels)));
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
@@ -103,6 +104,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
                 shelvesModel.setId(cmsBtShelvesModel.getId());
                 shelvesModel.setLastUpdate(new Date());
                 cmsBtShelvesService.update(shelvesModel);
+                $info("shelvesId = "+shelvesId +" 商品状态取得结束");
             }
             sendMq(messageMap);
         }
@@ -127,10 +129,12 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
+//        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
+//        shopBean.setShop_name("Jewelry海外旗舰店");
         try {
             TmallItemUpdateSchemaGetResponse itemUpdateSchemaGetResponse = tbProductService.doGetWareInfoItem(numiid, shopBean);
-
+            long threadNo = Thread.currentThread().getId();
+            $info("threadNo:" + threadNo + " numiid:" + numiid );
 
             if (null != itemUpdateSchemaGetResponse && itemUpdateSchemaGetResponse.isSuccess()) {
                 Map<String, Field> fieldMap = SchemaReader.readXmlForMap(itemUpdateSchemaGetResponse
@@ -156,6 +160,8 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
                     });
                 }
                 setInfo(channelId, "0".equalsIgnoreCase(itemStatus.getDefaultValue())?0:1, resultList, cmsBtShelvesProductModels);
+            }else{
+                $info("threadNo:" + threadNo + " numiid:" + numiid +" 取得异常");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,6 +194,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
     }
     private void setInfo(String channelId, int itemStatus, List<SkuBean> resultList, List<CmsBtShelvesProductModel> cmsBtShelvesProductModels) {
         cmsBtShelvesProductModels.forEach(cmsBtShelvesProductModel -> {
+            cmsBtShelvesProductModel.setCartInventory(0);
             cmsBtShelvesProductModel.setStatus(itemStatus);
 
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, cmsBtShelvesProductModel.getProductCode());

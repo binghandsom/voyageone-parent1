@@ -28,7 +28,7 @@ public class CmsShelvesMonitorServiceTest {
 //
 
         Map<String,Object> map = new HashedMap();
-        map.put("shelvesId",3);
+        map.put("shelvesId",6);
         cmsShelvesMonitorMQService.onStartup(map);
     }
 
