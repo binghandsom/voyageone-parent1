@@ -24,9 +24,9 @@ define([
                 };
                 initialize();
                 function initialize() {
-                    console.log(scope.productInfo);
+                    //console.log(scope.productInfo);
                     $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
-                        console.log(resp.data);
+                       // console.log(resp.data);
                         scope.vm.productPriceList = resp.data.productPriceList;
                         scope.vm.model = resp.data;
                         scope.sales = resp.data.sales;
@@ -55,7 +55,13 @@ define([
                 }
                 scope.isSaleOnChange=function (item) {
                     console.log(item);
-                    
+                    var parameter={};
+                    parameter.prodId=scope.productInfo.productId;
+                    parameter.cartId=item.cartId;
+                    parameter.isSale=item.isSale;
+                    $productDetailService.setCartSkuIsSale(parameter).then(function (resp) {
+                        console.log(resp.data);
+                    });
                 }
             }
         };

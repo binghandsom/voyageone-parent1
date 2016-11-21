@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,13 @@ public class CmsProductPlatformDetailController extends CmsController {
     
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
+    public  AjaxResponse setCartSkuIsSale(@RequestBody SetCartSkuIsSaleParameter parameter) {
+        UserSessionBean userSessionBean = getUser();
+        cmsProductPlatformDetailService.setCartSkuIsSale(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+        return success(null);
+    }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductPriceSales)
     public AjaxResponse getProductPriceSales(@RequestBody Long prodId) {
