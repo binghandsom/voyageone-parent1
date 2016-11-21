@@ -164,6 +164,9 @@ public class CmsConstants {
 
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
+
+        //feed的code按不同季度拆分
+        String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
     }
 
     public interface DataAmount {

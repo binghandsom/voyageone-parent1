@@ -67,11 +67,16 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -2704,7 +2709,28 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
                         && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
-                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+
+                    if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+
+                        //根据当前feed的code判断是否属于最新的group还是创建group
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+                        //取得当前code的创建的时间
+                        LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
+                        //取得当前group的创建的时间
+                        LocalDate groupDate = formatter.parseLocalDate(group.getCreated());
+                        //feed和group的创建时间作比较
+                        if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
+                                &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
+                            group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        }else{
+                            //根据当前model取得最新的group
+                            group = null;
+                        };
+                    }else {
+                        group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    }
+
                 }
 
                 // 看看同一个model里是否已经有数据在cms里存在的
@@ -2798,7 +2824,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
         }
-
         /**
          * 根据code, 到group表中去查找所有的group信息
          *
