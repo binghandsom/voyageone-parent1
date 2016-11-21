@@ -65,16 +65,29 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
-        if("Approved".equals(platform.getStatus())) {
-            //则插入上新work表
-            //PriceService   获取价格
+        if (parameter.isSale()) {
+            setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
         }
-
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.isSale());
         });
         productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
 
+    }
+
+    void  setCartSkuIsSale_True(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct,CmsBtProductModel_Platform_Cart platform,String userName)
+    {
+        //更新所有的sku的isSale =true ， 如果该已经approve，则插入上新work表
+        if("Approved".equals(platform.getStatus())) {
+
+            List<String> cartIdList = new ArrayList<>();
+
+            cartIdList.add(Integer.toString(parameter.getCartId()));
+
+            //则插入上新work表
+            //PriceService   获取价格
+            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
+        }
     }
 
 
