@@ -3,7 +3,9 @@ package com.voyageone.web2.cms.views.shelves;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
+import com.voyageone.service.fields.cms.CmsBtShelvesProductHistoryModelStatus;
 import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
+import com.voyageone.service.impl.cms.CmsBtShelvesProductHistoryService;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.TagService;
@@ -24,7 +26,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,7 @@ public class CmsShelvesDetailController extends CmsController {
     private final CmsAdvanceSearchService advanceSearchService;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
     private final ProductTagService productTagService;
+    private final CmsBtShelvesProductHistoryService cmsBtShelvesProductHistoryService;
     private final TagService tagService;
 
     private final MqSender mqSender;
@@ -51,7 +53,7 @@ public class CmsShelvesDetailController extends CmsController {
                                       CmsBtShelvesService cmsBtShelvesService,
                                       CmsAdvanceSearchService advanceSearchService,
                                       CmsBtShelvesProductService cmsBtShelvesProductService,
-                                      TagService tagService, MqSender mqSender, ProductTagService productTagService) {
+                                      TagService tagService, MqSender mqSender, ProductTagService productTagService, CmsBtShelvesProductHistoryService cmsBtShelvesProductHistoryService) {
         this.cmsShelvesDetailService = cmsShelvesDetailService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.advanceSearchService = advanceSearchService;
@@ -59,6 +61,7 @@ public class CmsShelvesDetailController extends CmsController {
         this.tagService = tagService;
         this.mqSender = mqSender;
         this.productTagService = productTagService;
+        this.cmsBtShelvesProductHistoryService = cmsBtShelvesProductHistoryService;
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
@@ -85,6 +88,7 @@ public class CmsShelvesDetailController extends CmsController {
             throw new BusinessException("批量修改商品属性 没有code条件 params=" + params.toString());
         }
         cmsShelvesDetailService.addProducts(shelvesId, productCodes, getUser().getUserName());
+        cmsBtShelvesProductHistoryService.batchInsert(shelvesId, productCodes, CmsBtShelvesProductHistoryModelStatus.ON_LINE, getUser().getUserName());
         return success(true);
     }
 
@@ -161,6 +165,7 @@ public class CmsShelvesDetailController extends CmsController {
         CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(cmsBtShelvesProductModel.getShelvesId());
         if (cmsBtShelvesModel != null && cmsBtShelvesModel.getRefTagId() != null && cmsBtShelvesModel.getRefTagId() > 0) {
             productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", Arrays.asList(cmsBtShelvesProductModel.getProductCode()), "tags");
+            cmsBtShelvesProductHistoryService.batchInsert(cmsBtShelvesModel.getId(), Arrays.asList(cmsBtShelvesProductModel.getProductCode()), CmsBtShelvesProductHistoryModelStatus.OFF_LINE, getUser().getUserName());
         }
         return success(true);
     }
@@ -173,6 +178,7 @@ public class CmsShelvesDetailController extends CmsController {
         CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(cmsBtShelvesProductModel.getShelvesId());
         if (cmsBtShelvesModel != null && cmsBtShelvesModel.getRefTagId() != null && cmsBtShelvesModel.getRefTagId() > 0) {
             productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", productCodes, "tags");
+            cmsBtShelvesProductHistoryService.batchInsert(cmsBtShelvesModel.getId(), productCodes, CmsBtShelvesProductHistoryModelStatus.OFF_LINE, getUser().getUserName());
         }
 
         cmsBtShelvesProductService.deleteByShelvesId(cmsBtShelvesProductModel.getShelvesId());

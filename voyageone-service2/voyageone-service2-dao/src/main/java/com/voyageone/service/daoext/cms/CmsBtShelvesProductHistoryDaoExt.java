@@ -1,6 +1,7 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.model.cms.CmsBtShelvesProductHistoryModel;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import java.util.List;
 @Repository
 public interface CmsBtShelvesProductHistoryDaoExt {
 
-    void batchInsert(List<CmsBtShelvesProductHistoryModel> models);
+    void batchInsert(@Param("shelvesId") Integer shelvesId, @Param("productCodes") List<String> productCodes, @Param("status") Integer status, @Param("modifier") String modifier);
 }
