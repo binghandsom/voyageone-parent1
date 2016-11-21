@@ -39,4 +39,8 @@ public class WmsBtItemDetailsDao extends com.voyageone.service.dao.ServiceBaseDa
         params.put("modifier", modifier);
         return update("wms_bt_item_details_updateCodeForMove", params);
     }
+
+    public List<ItemDetailsBean> selectByCode(String channelId,String code) {
+        return selectList("wms_bt_item_details_selectSkusOfCode", parameters("channelId", channelId, "code", code));
+    }
 }

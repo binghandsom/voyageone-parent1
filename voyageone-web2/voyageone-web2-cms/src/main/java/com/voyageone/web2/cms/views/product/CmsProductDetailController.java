@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -11,11 +12,14 @@ import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -259,6 +263,18 @@ public class CmsProductDetailController extends CmsController {
         productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
 
         return success(null);
+    }
+    
+    /**
+     * 取得SKU库存的信息（各仓库库存整体信息与详细信息）
+     * @param params { prodcutId }
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_SKU_STOCK_INFO)
+    public AjaxResponse getSkuStockInfo(@RequestBody String productId) {
+    	Preconditions.checkArgument(StringUtils.isNotBlank(productId));
+    	WmsCodeStoreInvBean skuStock = productService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId));
+    	return success(skuStock);
     }
 
     /**

@@ -20,6 +20,7 @@ define([
 		this.updateProductDetail = updateProductDetail;
 		this.changeCategory = changeCategory;
 		this.getProductPlatform =  getProductPlatform;
+		this.getSkuStockInfo = getSkuStockInfo;
 		this.changePlatformCategory =  changePlatformCategory;
 		this.updateProductPlatformChk = updateProductPlatformChk;
 		this.updateProductPlatform = updateProductPlatform;
@@ -245,6 +246,18 @@ define([
 					defer.reject(res);
 				});
 
+			return defer.promise;
+		}
+		
+		// 取得SKU的库存信息
+		function getSkuStockInfo(req) {
+			var defer = $q.defer();
+			$productDetailService.getSkuStockInfo(req)
+				.then(function (resp) {
+					defer.resolve(resp);
+				}, function(resp) {
+					defer.reject(resp)
+				});
 			return defer.promise;
 		}
 
