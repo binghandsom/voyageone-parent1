@@ -30,7 +30,6 @@ import java.util.List;
 public class CmsBtShelvesProductService extends BaseService {
     private final CmsBtShelvesProductDao cmsBtShelvesProductDao;
     private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
-    private final CmsBtShelvesService cmsBtShelvesService;
     private final PromotionCodeService promotionCodeService;
 
     public static final String SHELVES_IMAGE_PATH = "/Users/jonas/Desktop/1";
@@ -38,11 +37,9 @@ public class CmsBtShelvesProductService extends BaseService {
     @Autowired
     public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao,
                                       CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt,
-                                      CmsBtShelvesService cmsBtShelvesService,
                                       PromotionCodeService promotionCodeService) {
         this.cmsBtShelvesProductDao = cmsBtShelvesProductDao;
         this.cmsBtShelvesProductDaoExt = cmsBtShelvesProductDaoExt;
-        this.cmsBtShelvesService = cmsBtShelvesService;
         this.promotionCodeService = promotionCodeService;
     }
 
@@ -91,11 +88,10 @@ public class CmsBtShelvesProductService extends BaseService {
     /**
      * 根据货架Id获取货架里的产品信息
      */
-    public CmsBtShelvesInfoBean getShelvesInfo(Integer shelvesId, Boolean isLoadPromotionPrice) {
+    public CmsBtShelvesInfoBean getShelvesInfo(CmsBtShelvesModel cmsBtShelvesModel, Boolean isLoadPromotionPrice) {
 
 
         CmsBtShelvesInfoBean cmsBtShelvesInfoBean = new CmsBtShelvesInfoBean();
-        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
         cmsBtShelvesInfoBean.setShelvesModel(cmsBtShelvesModel);
 
         if (isLoadPromotionPrice) {
@@ -109,10 +105,10 @@ public class CmsBtShelvesProductService extends BaseService {
     public void delete(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
         cmsBtShelvesProductDao.delete(cmsBtShelvesProductModel.getId());
 
-        String fileName = String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesProductModel.getShelvesId(),cmsBtShelvesProductModel.getProductCode());
-        try{
+        String fileName = String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesProductModel.getShelvesId(), cmsBtShelvesProductModel.getProductCode());
+        try {
             FileUtils.delFile(fileName);
-        }catch (Exception e){
+        } catch (Exception ignored) {
         }
     }
 
@@ -121,9 +117,9 @@ public class CmsBtShelvesProductService extends BaseService {
         example.createCriteria().andShelvesIdEqualTo(shelvesId);
         cmsBtShelvesProductDao.deleteByExample(example);
         String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
-        try{
+        try {
             FileUtils.deleteAllFilesOfDir(new File(fileName));
-        }catch (Exception e){
+        } catch (Exception ignored) {
         }
     }
 

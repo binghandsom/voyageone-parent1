@@ -81,7 +81,9 @@ class CmsShelvesDetailService extends BaseViewService {
             }
             redisTemplate.expire("ShelvesMonitor_" + shelvesId, 1, TimeUnit.MINUTES);
 
-            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, isLoadPromotionPrice);
+            CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
+
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(cmsBtShelvesModel, isLoadPromotionPrice);
             if (cmsBtShelvesInfoBean != null) {
                 cmsBtShelvesInfoBanList.add(cmsBtShelvesInfoBean);
             }
@@ -141,9 +143,13 @@ class CmsShelvesDetailService extends BaseViewService {
     }
 
     byte[] exportAppImage(Integer shelvesId) {
-        CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, false);
-        if (cmsBtShelvesInfoBean.getShelvesModel() != null && cmsBtShelvesInfoBean.getShelvesProductModels() != null) {
-            CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel = cmsBtShelvesTemplateService.selectById(cmsBtShelvesInfoBean.getShelvesModel().getLayoutTemplateId());
+
+        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(shelvesId);
+
+        CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(cmsBtShelvesModel, false);
+
+        if (cmsBtShelvesModel != null && cmsBtShelvesInfoBean.getShelvesProductModels() != null) {
+            CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel = cmsBtShelvesTemplateService.selectById(cmsBtShelvesModel.getLayoutTemplateId());
             if (cmsBtShelvesTemplateModel.getNumPerLine() != null && cmsBtShelvesTemplateModel.getNumPerLine() > 0) {
                 List<String> imageNames = cmsBtShelvesInfoBean.getShelvesProductModels()
                         .stream()

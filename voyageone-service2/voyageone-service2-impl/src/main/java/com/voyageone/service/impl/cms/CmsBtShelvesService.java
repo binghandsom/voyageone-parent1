@@ -8,7 +8,6 @@ import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
 import com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao;
-import com.voyageone.service.daoext.cms.CmsBtShelvesProductDaoExt;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtShelvesExample;
@@ -102,24 +101,22 @@ public class CmsBtShelvesService extends BaseService {
 
     /**
      * 根据货架生成HTML代码
-     *
-     * @param shelvesId
-     * @param preview
-     * @return
-     * @author rex.wu
+     * <p>
+     * create by rex.wu
      */
     public String generateHtml(Integer shelvesId, boolean preview) {
-        CmsBtShelvesModel shelves = null;
+        CmsBtShelvesModel shelves;
         if (shelvesId != null && (shelves = cmsBtShelvesDao.select(shelvesId)) != null) {
             CmsBtShelvesTemplateModel layoutTemplate = cmsBtShelvesTemplateDao.select(shelves.getLayoutTemplateId());
             CmsBtShelvesTemplateModel singleTemplate = cmsBtShelvesTemplateDao.select(shelves.getSingleTemplateId());
-            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelvesId, true);
+
+            CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelves, true);
             List<CmsBtShelvesProductModel> products = cmsBtShelvesInfoBean == null ? null : cmsBtShelvesInfoBean.getShelvesProductModels();
 
             if (layoutTemplate == null || singleTemplate == null || CollectionUtils.isEmpty(products)) {
                 throw new BusinessException("货架没有关联布局模板或单品模板或商品！");
             }
-            StringBuffer htmlBuffer = new StringBuffer(); // html容器
+            StringBuilder htmlBuffer = new StringBuilder(); // html容器
             htmlBuffer.append(layoutTemplate.getHtmlHead()); // 布局模板：头部
             htmlBuffer.append(layoutTemplate.getHtmlClearfix1()); // 布局模板：清除浮动
 
@@ -127,7 +124,7 @@ public class CmsBtShelvesService extends BaseService {
             int numPerLine = layoutTemplate.getNumPerLine();
             CmsBtShelvesProductBean productBean = null;
             for (int i = 1; i <= len; i++) {
-                productBean = (CmsBtShelvesProductBean)products.get(i - 1);
+                productBean = (CmsBtShelvesProductBean) products.get(i - 1);
                 String singleHtml = "";
                 if (i % numPerLine == 0) { // 追加最后一个小图模块
                     singleHtml = singleTemplate.getHtmlLastImage();
@@ -135,27 +132,27 @@ public class CmsBtShelvesService extends BaseService {
                     singleHtml = singleTemplate.getHtmlSmallImage();
                 }
                 // TODO 暂时测试，天猫平台商品详情页链接
-                ShopBean shopBean = Shops.getShop(shelves.getChannelId(),shelves.getCartId());
-                if(shopBean.getPlatform().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())){
+                ShopBean shopBean = Shops.getShop(shelves.getChannelId(), shelves.getCartId());
+                if (shopBean.getPlatform().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
                     singleHtml.replace("@link", "https://detail.tmall.hk/hk/item.htm?id=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
-                }else if(shopBean.getPlatform().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
+                } else if (shopBean.getPlatform().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
                     singleHtml.replace("@link", "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
                 }
                 if (!preview) {
                     singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
-                }else {
+                } else {
                     // 单品模板的图片模板来生成图片html
                     String htmlImageTemplate = singleTemplate.getHtmlImageTemplate();
-                    if (htmlImageTemplate.indexOf("@price") != -1) {
+                    if (htmlImageTemplate.contains("@price")) {
                         htmlImageTemplate.replace("@price", String.valueOf(productBean.getSalePrice()));
                     }
-                    if (htmlImageTemplate.indexOf("@img") != -1) {
+                    if (htmlImageTemplate.contains("@img")) {
                         htmlImageTemplate.replace("@img", productBean.getImage());
                     }
-                    if (htmlImageTemplate.indexOf("@name") != -1) {
+                    if (htmlImageTemplate.contains("@name")) {
                         htmlImageTemplate.replace("@name", productBean.getProductName());
                     }
-                    if (htmlImageTemplate.indexOf("@sale_price") != -1) {
+                    if (htmlImageTemplate.contains("@sale_price")) {
                         htmlImageTemplate.replace("@sale_price", String.valueOf(productBean.getPromotionPrice()));
                     }
                     singleHtml.replace("@imglink", htmlImageTemplate);
@@ -179,9 +176,9 @@ public class CmsBtShelvesService extends BaseService {
         update(example);
 
         String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesModel.getId());
-        try{
+        try {
             FileUtils.deleteAllFilesOfDir(new File(fileName));
-        }catch (Exception e){
+        } catch (Exception ignored) {
         }
     }
 }
