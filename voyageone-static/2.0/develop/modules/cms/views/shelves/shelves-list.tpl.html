@@ -92,11 +92,18 @@
                     <button type="button" class="btn btn-danger" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i>&nbsp;删除货架</button>
                 </div>
             </div>
-            <div class="row" sv-root sv-part="i.products">
-                <div ng-repeat="p in i.products" sv-element class="clearfix pull-left"
-                     ng-include="'/modules/cms/views/shelves/shelves-item'+(i.$e?'-edit':'')+'.tpl.html'">
+
+            <div class="row" ng-if="!i.$e">
+                <div ng-repeat="p in i.products" ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
                 </div>
             </div>
+
+            <div class="row" sv-root sv-part="i.products" ng-if="i.$e">
+                <div ng-repeat="p in i.products" sv-element class="clearfix pull-left"
+                     ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
+                </div>
+            </div>
+
         </uib-accordion-group>
     </uib-accordion>
 
