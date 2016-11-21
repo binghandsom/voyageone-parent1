@@ -53,11 +53,9 @@
                                 </div>
                                 <div class="col-md-6" ng-if="ctrl.groupInfo.priceInputFlg">
                                     <input type="number" class="form-control"  name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
+                                    <div class="m-t-xs">
+                                        <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -86,7 +84,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <span class="col-sm-2 label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">{{ctrl.groupInfo._typeText}}</span>&emsp;{{ctrl.groupInfo._opeText}}&emsp;<span class="label label-primary">{{ctrl.groupInfo.priceValue}}</span>&emsp;
+                        <span class="col-sm-2 label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">{{ctrl.groupInfo._typeText}}</span>&emsp;
+                        {{ctrl.groupInfo._opeText}}&emsp;<span class="label label-primary">{{ctrl.groupInfo.priceValue}}</span>&emsp;
                     </div>
                     <div class="form-group">
                         <label class="col-sm-4">
