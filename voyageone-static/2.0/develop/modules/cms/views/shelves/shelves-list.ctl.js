@@ -53,36 +53,56 @@ define([
                 });
             });
         },
-        getShelvesInfo: function (s) {
+        refreshInfo: function () {
+            var self = this;
+            var count = 30;
+            var i = 30 * 1000;
+
+            if (self.$interval)
+                return;
+
+            // 第一次
+            count--;
+            self.getShelvesInfo();
+
+            self.$interval = setInterval(function () {
+                if (count <= 0) {
+                    clearInterval(self.$interval);
+                    self.$interval = null;
+
+                    self.confirm('自动刷新，已停止。是否继续自动刷新？').then(function () {
+                        self.refreshInfo();
+                    });
+
+                    return;
+                }
+                count--;
+                self.getShelvesInfo();
+            }, i);
+        },
+        getShelvesInfo: function () {
             var self = this;
             var shelves = self.shelves;
             var shelvesService = self.shelvesService;
 
-            var needInfoShelvesId;
-            var p = false;
+            var opened = shelves.filter(function (_s) {
+                return _s.$isOpen;
+            });
 
-            // 如果有指定货架，就只查询这一个
-            if (s) {
-                needInfoShelvesId = [s.id];
-            } else {
-                needInfoShelvesId = shelves.filter(function (_s) {
-                    return _s.$isOpen;
-                }).map(function (_s) {
-                    return _s.id;
-                });
-            }
+            var needInfoShelvesId = opened.map(function (_s) {
+                return _s.id;
+            });
 
-            // 如果该货架没有加载过价格，就加载，并标记不需要再次加载
-            if (!s.$pMap) {
-                p = true;
-            }
+            var needPrice = opened.some(function (_s) {
+                return !_s.$pMap;
+            });
 
             if (!needInfoShelvesId.length)
                 return;
 
             return shelvesService.getShelvesInfo({
                 shelvesIds: needInfoShelvesId,
-                isLoadPromotionPrice: p
+                isLoadPromotionPrice: needPrice
             }).then(function (resp) {
                 var infoBeanList = resp.data;
                 var map = {};
@@ -149,7 +169,7 @@ define([
                 return s.$isOpen;
             }, function ($isOpen) {
                 if ($isOpen) {
-                    self.getShelvesInfo(s);
+                    self.refreshInfo();
                 } else {
                     // 使用 setTimeout 来延迟执行
                     setTimeout(function () {
