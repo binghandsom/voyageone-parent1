@@ -397,9 +397,9 @@ define([
     cms.filter('shelvesProductClass', function () {
         return function (p) {
             switch (p.status) {
-                case 0:
-                    return 'label-danger';
                 case 1:
+                    return 'label-danger';
+                case 0:
                     return 'label-success';
                 default:
                     return 'label-default';
@@ -410,9 +410,9 @@ define([
     cms.filter('shelvesProductName', function () {
         return function (p) {
             switch (p.status) {
-                case 0:
-                    return '已下架';
                 case 1:
+                    return '已下架';
+                case 0:
                     return '已上架';
                 default:
                     return '---';
