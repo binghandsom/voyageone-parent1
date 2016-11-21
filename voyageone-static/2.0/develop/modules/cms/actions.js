@@ -92,6 +92,7 @@ define(function () {
                 "$productDetailService": {
                     "root": "/cms/product/detail/",
                     "setCartSkuIsSale":"setCartSkuIsSale",
+                    "getCalculateCartMsrp":"getCalculateCartMsrp",
                     "getProductPriceSales":"getProductPriceSales",
                     "getProductInfo": "getProductInfo",
                     "updateProductMasterInfo": "updateProductMasterInfo",

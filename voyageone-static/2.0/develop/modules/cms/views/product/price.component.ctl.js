@@ -63,6 +63,22 @@ define([
                         console.log(resp.data);
                     });
                 }
+                scope.calculateCartMsrpClick=function () {
+                    $productDetailService.getCalculateCartMsrp(scope.productInfo.productId).then(function (resp) {
+                        // console.log(resp.data);
+                        scope.vm.productPriceList.forEach(function (f) {
+                          var msrpInfo=_.find(resp.data,function (d) {
+                              return  d.cartId ==f.cartId
+                            });
+                            if(msrpInfo)
+                            {
+                                f.msrp = msrpInfo.msrp;
+                            }
+                        });
+
+                    });
+
+                }
             }
         };
     });

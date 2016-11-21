@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +52,11 @@ public class CmsProductPlatformDetailController extends CmsController {
         return success(null);
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetCalculateCartMsrp)
+    public  AjaxResponse getCalculateCartMsrp(@RequestBody Long prodId) throws IllegalPriceConfigException, PriceCalculateException {
+        return success(cmsProductPlatformDetailService.getCalculateCartMsrp(getUser().getSelChannelId(),prodId));
+
+    }
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductPriceSales)
     public AjaxResponse getProductPriceSales(@RequestBody Long prodId) {
         return success(cmsProductPlatformDetailService.getProductPriceSales(getUser().getSelChannelId(),prodId));

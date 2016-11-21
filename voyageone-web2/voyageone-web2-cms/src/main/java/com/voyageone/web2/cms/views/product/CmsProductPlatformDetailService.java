@@ -16,6 +16,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.CartMsrpInfo;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPrice;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
@@ -24,6 +25,8 @@ import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -62,9 +65,12 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private SxProductService sxProductService;
     @Autowired
     private  CmsProductDetailService cmsProductDetailService;
+    @Autowired
+    PriceService priceService;
+
 
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
-    //PriceService   获取价格
+
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
         if (parameter.isSale()) {
@@ -113,6 +119,25 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             }
 
         }
+    }
+
+    public  List<CartMsrpInfo>  getCalculateCartMsrp(String channelId, Long prodId) throws PriceCalculateException, IllegalPriceConfigException {
+        //PriceService   获取价格
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+        priceService.setPrice(cmsBtProduct, false);
+        List<CartMsrpInfo> list = new ArrayList<>();
+
+        cmsBtProduct.getPlatforms().values().forEach(f -> {
+            if (f.getCartId() > 0) {
+                double msrp = f.getSkus().stream().mapToDouble(m -> m.getDoubleAttribute("priceMsrp")).max().getAsDouble();
+                CartMsrpInfo info = new CartMsrpInfo();
+                info.setCartId(f.getCartId());
+                info.setMsrp(msrp);
+                list.add(info);
+            }
+
+        });
+        return list;
     }
 
     public ProductPriceSalesInfo getProductPriceSales(String channelId, Long prodId) {
