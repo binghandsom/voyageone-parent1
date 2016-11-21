@@ -116,6 +116,7 @@ public class CmsBtShelvesProductService extends BaseService {
         CmsBtShelvesProductExample example = new CmsBtShelvesProductExample();
         example.createCriteria().andShelvesIdEqualTo(shelvesId);
         cmsBtShelvesProductDao.deleteByExample(example);
+
         String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
         try {
             FileUtils.deleteAllFilesOfDir(new File(fileName));

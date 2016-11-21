@@ -3,13 +3,17 @@ package com.voyageone.web2.cms.views.shelves;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.fields.cms.CmsBtShelvesModelActive;
+import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
 import com.voyageone.service.impl.cms.CmsBtShelvesProductService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -20,10 +24,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by james on 2016/11/15.
@@ -38,18 +41,24 @@ public class CmsShelvesDetailController extends CmsController {
     private final CmsShelvesDetailService cmsShelvesDetailService;
     private final CmsAdvanceSearchService advanceSearchService;
     private final CmsBtShelvesProductService cmsBtShelvesProductService;
+    private final ProductTagService productTagService;
+    private final TagService tagService;
+
     private final MqSender mqSender;
 
     @Autowired
     public CmsShelvesDetailController(CmsShelvesDetailService cmsShelvesDetailService,
                                       CmsBtShelvesService cmsBtShelvesService,
                                       CmsAdvanceSearchService advanceSearchService,
-                                      CmsBtShelvesProductService cmsBtShelvesProductService, MqSender mqSender) {
+                                      CmsBtShelvesProductService cmsBtShelvesProductService,
+                                      TagService tagService, MqSender mqSender, ProductTagService productTagService) {
         this.cmsShelvesDetailService = cmsShelvesDetailService;
         this.cmsBtShelvesService = cmsBtShelvesService;
         this.advanceSearchService = advanceSearchService;
         this.cmsBtShelvesProductService = cmsBtShelvesProductService;
+        this.tagService = tagService;
         this.mqSender = mqSender;
+        this.productTagService = productTagService;
     }
 
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.SEARCH)
@@ -105,8 +114,22 @@ public class CmsShelvesDetailController extends CmsController {
         cmsBtShelvesModel.setChannelId(getUser().getSelChannelId());
         cmsBtShelvesModel.setCreater(getUser().getUserName());
         cmsBtShelvesModel.setModifier(getUser().getUserName());
-
         cmsBtShelvesService.insert(cmsBtShelvesModel);
+
+        // 新建tag表
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setChannelId(getUser().getSelChannelId());
+        cmsBtTagModel.setTagName(cmsBtShelvesModel.getShelvesName());
+        cmsBtTagModel.setTagPath("0");
+        cmsBtTagModel.setTagPathName("-" + cmsBtShelvesModel.getShelvesName() + "-");
+        cmsBtTagModel.setParentTagId(0);
+        cmsBtTagModel.setTagType(CmsBtTagModelTagType.shelves);
+        cmsBtTagModel.setCreater(getUser().getUserName());
+        cmsBtTagModel.setModifier(getUser().getUserName());
+        cmsBtTagModel.setActive(1);
+        tagService.insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, true);
+        cmsBtShelvesModel.setRefTagId(cmsBtTagModel.getId());
+        cmsBtShelvesService.update(cmsBtShelvesModel);
         return success(cmsBtShelvesModel);
     }
 
@@ -134,11 +157,24 @@ public class CmsShelvesDetailController extends CmsController {
     @RequestMapping("removeProduct")
     public AjaxResponse removeProduct(@RequestBody CmsBtShelvesProductModel cmsBtShelvesProductModel) {
         cmsBtShelvesProductService.delete(cmsBtShelvesProductModel);
+
+        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(cmsBtShelvesProductModel.getShelvesId());
+        if (cmsBtShelvesModel != null && cmsBtShelvesModel.getRefTagId() != null && cmsBtShelvesModel.getRefTagId() > 0) {
+            productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", Arrays.asList(cmsBtShelvesProductModel.getProductCode()), "tags");
+        }
         return success(true);
     }
 
     @RequestMapping("clearProduct")
     public AjaxResponse clearProduct(@RequestBody CmsBtShelvesProductModel cmsBtShelvesProductModel) {
+        // 删除产品数据了tagId
+        List<CmsBtShelvesProductModel> products = cmsBtShelvesProductService.getByShelvesId(cmsBtShelvesProductModel.getShelvesId());
+        List<String> productCodes = products.stream().map(CmsBtShelvesProductModel::getProductCode).collect(Collectors.toList());
+        CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(cmsBtShelvesProductModel.getShelvesId());
+        if (cmsBtShelvesModel != null && cmsBtShelvesModel.getRefTagId() != null && cmsBtShelvesModel.getRefTagId() > 0) {
+            productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", productCodes, "tags");
+        }
+
         cmsBtShelvesProductService.deleteByShelvesId(cmsBtShelvesProductModel.getShelvesId());
         return success(true);
     }
@@ -152,40 +188,47 @@ public class CmsShelvesDetailController extends CmsController {
 
     @RequestMapping("releaseImage")
     public AjaxResponse releaseImage(@RequestBody Integer shelvesId) {
-        Map<String,Object> param = new HashMap<>();
-        param.put(MqParameterKeys.key1,shelvesId);
+        Map<String, Object> param = new HashMap<>();
+        param.put(MqParameterKeys.key1, shelvesId);
         mqSender.sendMessage(MqRoutingKey.CMS_BATCH_ShelvesImageUploadJob, param);
         return success(true);
     }
 
     /**
      * 获取货架HTML代码
-     * @param params
-     *  shelvesId：货架ID
-     *  preview: 1 或者 0， 1：单品模板图片URL根据单品模板拼接的html代码获取，0单品图片URL直接拿货架商品的第三方平台图片地址
+     *
+     * @param params shelvesId：货架ID
+     *               preview: 1 或者 0， 1：单品模板图片URL根据单品模板拼接的html代码获取，0单品图片URL直接拿货架商品的第三方平台图片地址
      * @return
      */
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_HTML)
-    public AjaxResponse getShelvesHtml(@RequestBody getShelvesHtml params){
+    public AjaxResponse getShelvesHtml(@RequestBody getShelvesHtml params) {
         Boolean preview = params.preview == null ? false : params.preview;
         String html = cmsBtShelvesService.generateHtml(params.shelvesId, preview);
         return success(html);
     }
 
     private static class getShelvesHtml {
-        @JsonProperty("shelvesId") Integer shelvesId;
-        @JsonProperty("preview") Boolean preview;
+        @JsonProperty("shelvesId")
+        Integer shelvesId;
+        @JsonProperty("preview")
+        Boolean preview;
     }
 
     private static class AddProduct {
-        @JsonProperty("shelvesId") Integer shelvesId;
-        @JsonProperty("productCodes") List<String> productCodes;
-        @JsonProperty("isSelAll") Integer isSelAll;
+        @JsonProperty("shelvesId")
+        Integer shelvesId;
+        @JsonProperty("productCodes")
+        List<String> productCodes;
+        @JsonProperty("isSelAll")
+        Integer isSelAll;
     }
 
     private static class GetShelvesInfo {
-        @JsonProperty("shelvesIds") List<Integer> shelvesIds;
-        @JsonProperty("isLoadPromotionPrice") Boolean isLoadPromotionPrice;
+        @JsonProperty("shelvesIds")
+        List<Integer> shelvesIds;
+        @JsonProperty("isLoadPromotionPrice")
+        Boolean isLoadPromotionPrice;
     }
 
 
