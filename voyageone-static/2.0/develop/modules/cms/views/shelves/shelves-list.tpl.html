@@ -1,4 +1,4 @@
-<div class="wrapper-md" style="position:relative">
+<div id="shelves-list" class="wrapper-md" style="position:relative">
     <link rel="stylesheet" href="/modules/cms/views/shelves/shelves-list.css">
 
     <uib-accordion class="vo_accordion vo_attr">
@@ -25,44 +25,33 @@
     <div class="panel panel-search">
         <div class="panel-body">
             <div class="form-horizontal">
-                <div class="row">
-                    <div class="col-sm-5">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">平台库存：</label>
-                            <div class="col-sm-8">
-                                <div class="input-group">
-                                    <div class="input-group-addon" style="padding:0">
-                                        <select style="height:24px;border:0">
-                                            <option value="+">+</option>
-                                        </select>
-                                    </div>
-                                    <input type="text" class="form-control">
-                                </div>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">平台库存：</label>
+                    <div class="col-sm-2">
+                        <div class="input-group">
+                            <div class="input-group-addon" style="padding:0">
+                                <select style="height:24px;border:0" ng-model="ctrl.op" ng-options="v as v for (k,v) in ctrl.opList"></select>
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">上下架状态：</label>
-                            <div class="col-sm-8">
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="shelves-product-status">已上架</label>&nbsp; &nbsp;
-                                    <label><input type="checkbox" name="shelves-product-status">已下架</label>
-                                </div>
-                            </div>
+                            <input type="text" class="form-control" ng-model="ctrl.inventory">
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Model/Code/Sku：</label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control"></textarea>
-                            </div>
+                    <label class="col-sm-2 control-label">上下架状态：</label>
+                    <div class="col-sm-3">
+                        <div class="radio">
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="null" name="shelves-product-status">所有</label>&nbsp; &nbsp;
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="1" name="shelves-product-status">已上架</label>&nbsp; &nbsp;
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="0" name="shelves-product-status">已下架</label>
                         </div>
+                    </div>
+                    <label class="col-sm-1 control-label">Code：</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" ng-model="ctrl.code">
                     </div>
                 </div>
             </div>
             <div class="text-center">
-                <button type="button" class="btn btn-default">清除</button>
-                <button type="button" class="btn btn-vo" ng-disabled="!ctrl.shelves.length">搜索</button>
+                <button type="button" class="btn btn-default" ng-click="ctrl.clearFilter()">清除</button>
+                <button type="button" class="btn btn-vo" ng-click="ctrl.filterProduct()" ng-disabled="!ctrl.shelves.length">搜索</button>
             </div>
         </div>
     </div>
@@ -94,12 +83,12 @@
             </div>
 
             <div class="row" ng-if="!i.$e">
-                <div ng-repeat="p in i.products" ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
+                <div ng-repeat="p in i.products" ng-if="!p.$hide" ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
                 </div>
             </div>
 
             <div class="row" sv-root sv-part="i.products" ng-if="i.$e">
-                <div ng-repeat="p in i.products" sv-element class="clearfix pull-left"
+                <div ng-repeat="p in i.products" ng-if="!p.$hide" sv-element class="clearfix pull-left"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
                 </div>
             </div>
