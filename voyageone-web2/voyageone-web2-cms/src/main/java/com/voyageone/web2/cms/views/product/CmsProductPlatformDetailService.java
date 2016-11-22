@@ -16,10 +16,7 @@ import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsProductPlatformDetail.CartMsrpInfo;
-import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPrice;
-import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
-import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
@@ -68,7 +65,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     @Autowired
     PriceService priceService;
 
-
+    //设置isSale
     public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
@@ -120,6 +117,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
     }
+
+    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) {
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
+        CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
+        platform.getSkus().forEach(f -> {
+            if(parameter.getPriceMsrp()>0) {
+                f.setAttribute("priceMsrp", parameter.getPriceMsrp());
+            }
+            if(parameter.getPriceSale()>0) {
+                f.setAttribute("priceSale", parameter.getPriceSale());
+            }
+        });
+        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+    }
+
     //返回计算后的Msrp价格
     public  List<CartMsrpInfo>  getCalculateCartMsrp(String channelId, Long prodId) throws PriceCalculateException, IllegalPriceConfigException {
         //PriceService   获取价格

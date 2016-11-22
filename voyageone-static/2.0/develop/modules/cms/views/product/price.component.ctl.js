@@ -54,13 +54,13 @@ define([
                     }
                 }
                 scope.isSaleOnChange=function (item) {
-                    console.log(item);
+                   // console.log(item);
                     var parameter={};
                     parameter.prodId=scope.productInfo.productId;
                     parameter.cartId=item.cartId;
                     parameter.isSale=item.isSale;
                     $productDetailService.setCartSkuIsSale(parameter).then(function (resp) {
-                        console.log(resp.data);
+                      //  console.log(resp.data);
                     });
                 }
                 scope.calculateCartMsrpClick=function () {
@@ -72,12 +72,28 @@ define([
                             });
                             if(msrpInfo)
                             {
-                                f.msrp = msrpInfo.msrp;
+                                f.priceMsrp = msrpInfo.msrp;
                             }
                         });
 
                     });
 
+                }
+                scope.saveCartSkuPriceClick=function (item) {
+
+                    // console.log(item);
+                    var parameter = {};
+                    parameter.prodId = scope.productInfo.productId;
+                    parameter.cartId = item.cartId;
+                    if (item.priceMsrp) {
+                        parameter.priceMsrp = item.priceMsrp;//中国建议售价
+                    }
+                    if (item.priceSale) {
+                        parameter.priceSale = item.priceSale;//中国最终售价
+                    }
+                    $productDetailService.setCartSkuIsSale(parameter).then(function (resp) {
+                        console.log(resp.data);
+                    });
                 }
             }
         };

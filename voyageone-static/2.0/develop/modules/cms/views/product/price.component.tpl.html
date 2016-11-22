@@ -131,13 +131,13 @@
                                     {{item.priceSaleEd}}
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <input type="text" class="form-control text-right"  ng-model="item.msrp"  placeholder="中国建议售价"  />
+                                    <input type="text" class="form-control text-right"  ng-model="item.priceMsrp"  placeholder="中国建议售价"  />
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <input type="text" class="form-control text-right" placeholder="中国最终售价">
+                                    <input type="text" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价">
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <button class="btn btn-success btn-pop">价格保存</button>
+                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
                                 <td class="mfb-xxt  text-right">{{vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
@@ -45,7 +46,14 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
-    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
+    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
+        UserSessionBean userSessionBean = getUser();
+        cmsProductPlatformDetailService.saveCartSkuPrice(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+        return success(null);
+    }
+
+        @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
     public  AjaxResponse setCartSkuIsSale(@RequestBody SetCartSkuIsSaleParameter parameter) {
         UserSessionBean userSessionBean = getUser();
         cmsProductPlatformDetailService.setCartSkuIsSale(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());

@@ -93,6 +93,7 @@ define(function () {
                     "root": "/cms/product/detail/",
                     "setCartSkuIsSale":"setCartSkuIsSale",
                     "getCalculateCartMsrp":"getCalculateCartMsrp",
+                    "saveCartSkuPrice":"saveCartSkuPrice",
                     "getProductPriceSales":"getProductPriceSales",
                     "getProductInfo": "getProductInfo",
                     "updateProductMasterInfo": "updateProductMasterInfo",
