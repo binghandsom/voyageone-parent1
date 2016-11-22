@@ -434,40 +434,48 @@
     <div class="row" style="min-width: 241px;">
         <div class="row">
             <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> APP端启用开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+                <label class="control-label"> APP端启用开关</label>
             </div>
             <div class="col-sm-4">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1">
-                    <label class="onoffswitch-label" for="myonoffswitch1">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" ng-model="vm.lockStatus.onOffSwitch1" id="onOffSwitch1">
+                    <label class="onoffswitch-label" for="onOffSwitch1">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                     </label>
                 </div>
             </div>
             <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> 翻译完成开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+                <label class="control-label"> 翻译完成开关</label>
             </div>
             <div class="col-sm-4">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2">
-                    <label class="onoffswitch-label" for="myonoffswitch2">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" ng-model="vm.lockStatus.onOffSwitch2" id="onOffSwitch2">
+                    <label class="onoffswitch-label" for="onOffSwitch2">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                     </label>
                 </div>
             </div>
             <div class="col-sm-8" style="color: #000">
-                <label class="control-label"> Lock开关 <i class="fa fa-bell pull-right text-warnings"></i></label>
+                <label class="control-label"> Lock开关 <a href="javascript:void(0)"><i class="fa fa-bell pull-right text-warnings" ng-click="canWarn = !canWarn"></i></a></label>
             </div>
             <div class="col-sm-4">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch4">
-                    <label class="onoffswitch-label" for="myonoffswitch4">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
+                           ng-model="vm.lockStatus.onOffSwitch3"
+                           ng-click="lockProduct()"
+                           id="onOffSwitch3">
+                    <label class="onoffswitch-label" for="onOffSwitch3">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                     </label>
                 </div>
+            </div>
+            <div class="col-md-12" ng-if="canWarn">
+                <span class="text-warnings">
+                    &nbsp;一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。
+                </span>
             </div>
         </div>
     </div>

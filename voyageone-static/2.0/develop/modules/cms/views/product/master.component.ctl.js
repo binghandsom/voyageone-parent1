@@ -37,7 +37,8 @@ define([
                         "images8": [],
                         "images9": []
                     },
-                    hsCodeOrigin: null
+                    hsCodeOrigin: null,
+                    lockStatus:{}
                 };
 
                 initialize();
@@ -50,7 +51,7 @@ define([
                 scope.simpleImgDown = simpleImgDown;
                 scope.removeImg = removeImg;
                 scope.sortImg = sortImg;
-
+                scope.lockProduct = lockProduct;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -80,7 +81,7 @@ define([
                         scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
-                        scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+                        scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
                         //暂存税号个人
                         scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields, function (field) {
@@ -346,6 +347,26 @@ define([
                     });
 
                     $event.stopPropagation();
+                }
+
+
+                function lockProduct(){
+                    var _status = scope.vm.lockStatus.onOffSwitch3,
+                        lock = _status ? "1" : "0",
+                        message = _status ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+
+                    confirm(message).then(function () {
+
+                        productDetailService.updateLock({
+                            prodId: scope.productInfo.productId,
+                            lock: lock
+                        }).then(function () {
+                            notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+                        });
+
+                    }, function () {
+                        scope.vm.lockStatus.onOffSwitch3 = !_status;
+                    });
                 }
 
             }
