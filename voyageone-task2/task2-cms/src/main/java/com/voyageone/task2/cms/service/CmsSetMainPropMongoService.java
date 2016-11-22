@@ -1572,7 +1572,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // jeff 2016/05 change end
             if (lstImageOrg != null && lstImageOrg.size() > 0) {
                 for (String imgOrg : lstImageOrg) {
-                    Map<String, Object> multiComplexChildren = new HashMap<>();
+                       Map<String, Object> multiComplexChildren = new HashMap<>();
                     Map<String, Object> multiComplexChildren6 = new HashMap<>();
                     // jeff 2016/04 change start
                     // multiComplexChildren.put("image1", imgOrg);
@@ -1603,7 +1603,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         if(entry.getKey().equals("boxImages")){
                             for(String images:entry.getValue()){
                                 Map<String, Object> multiComplexChildren = new HashMap<>();
-                                multiComplexChildren.put("image2", images);
+                                String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), images);
+                                multiComplexChildren.put("image2", picName);
                                 multiComplex2.add(multiComplexChildren);
                             }
                         }
