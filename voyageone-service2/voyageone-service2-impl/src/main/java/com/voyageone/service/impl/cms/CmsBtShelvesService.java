@@ -146,7 +146,7 @@ public class CmsBtShelvesService extends BaseService {
                     // 单品模板的图片模板来生成图片html
                     String htmlImageTemplate = singleTemplate.getHtmlImageTemplate();
                     if (htmlImageTemplate.contains("@price")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice().intValue()));
                     }
                     if (htmlImageTemplate.contains("@img")) {
                         htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
@@ -160,7 +160,7 @@ public class CmsBtShelvesService extends BaseService {
                         }
                     }
                     if (htmlImageTemplate.contains("@sale_price")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@sale_price", String.valueOf(productBean.getPromotionPrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@sale_price", String.valueOf(productBean.getPromotionPrice().intValue()));
                     }
                     //singleHtml.replaceAll("@imglink", htmlImageTemplate); // Illegal group reference
                     int index = singleHtml.indexOf("@imglink");
