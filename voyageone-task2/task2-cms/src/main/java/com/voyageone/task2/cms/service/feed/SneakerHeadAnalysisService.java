@@ -230,10 +230,15 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             for (String attr : attList) {
                 String key = CamelUtil.underlineToCamel(attr.toLowerCase());
                 if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
-
                 List<String> values = new ArrayList<>();
-                values.add((String) temp.get(key));
-                attribute.put(key, values);
+
+                if(key.equals("boximages")){
+                    attribute.put(key, Arrays.asList(((String) temp.get(key)).split(",")));
+                }else {
+                    values.add((String) temp.get(key));
+                    attribute.put(key, values);
+                }
+
             }
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = modelBean.getCmsBtFeedInfoModel(getChannel());
