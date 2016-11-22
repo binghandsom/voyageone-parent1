@@ -5,38 +5,34 @@
 /* schema directive 样式定义 { */
 
 schema,
-default-attr{
+default-attr {
     display: block;
 }
 
 s-field,
-d-field{
+d-field {
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
 }
 
 schema > s-field,
-default-attr > d-field
-{
+default-attr > d-field {
     margin-bottom: 10px;
 }
 
 schema > s-field:last-child,
-default-attr > d-field:last-child
-{
+default-attr > d-field:last-child {
     margin-bottom: 0;
 }
 
 s-field vo-message,
-d-field vo-message
-{
+d-field vo-message {
     margin-top: 5px;
 }
 
-s-header ,
-d-header
-{
+s-header,
+d-header {
     width: 120px;
     flex-grow: 0;
     line-height: 26px;
@@ -54,8 +50,7 @@ d-header
 }
 
 s-complex,
-d-complex
-{
+d-complex {
     background-color: #f8f8f8;
     border: 1px solid #ededed;
     padding: 5px;
@@ -63,41 +58,35 @@ d-complex
 }
 
 s-complex s-field,
-d-complex d-field
-{
+d-complex d-field {
     margin-bottom: 5px;
 }
 
 s-complex s-field:last-child,
-d-complex d-field:last-child
-{
+d-complex d-field:last-child {
     margin-bottom: 0;
 }
 
 s-complex s-header.simple,
-d-complex d-header.simple
-{
+d-complex d-header.simple {
     color: #8a8a8a;
 }
 
 s-toolbar,
-d-toolbar
-{
+d-toolbar {
     display: block;
     background-color: #ededed;
     position: relative;
 }
 
-s-toolbar .btn-schema
-d-toolbar .btn-schema
-{
+s-toolbar .btn-schema,
+d-toolbar .btn-schema {
     position: absolute;
     top: 2px;
     right: 6px;
 }
 
-s-toolbox
-{
+s-toolbox {
     display: block;
     flex-grow: 0;
 }
@@ -107,15 +96,13 @@ d-toolbox .btn {
 }
 
 s-complex[multi],
-d-complex[multi]
-{
+d-complex[multi] {
     display: flex;
     align-items: flex-start;
 }
 
 s-complex[multi] s-field,
-d-complex[multi] d-field
-{
+d-complex[multi] d-field {
     display: block;
     flex-grow: 1;
     width: 100%;
@@ -124,26 +111,22 @@ d-complex[multi] d-field
 }
 
 s-complex[multi] .s-wrapper,
-d-complex[multi] .s-wrapper
-{
+d-complex[multi] .s-wrapper {
     width: 100%;
 }
 
 s-complex[multi] s-header.simple,
-d-complex[multi] d-header.simple
-{
+d-complex[multi] d-header.simple {
     display: none;
 }
 
 s-complex[multi]:first-of-type s-header.simple,
-d-complex[multi]:first-of-type d-header.simple
-{
+d-complex[multi]:first-of-type d-header.simple {
     display: block;
 }
 
 s-complex[multi] s-toolbox,
-d-complex[multi] d-toolbox
-{
+d-complex[multi] d-toolbox {
     align-self: flex-end;
 }
 
@@ -164,21 +147,18 @@ d-container {
 }
 
 s-container label,
-d-container label
-{
+d-container label {
     margin-right: 10px;
 }
 
-s-tip ,
-d-tip
-{
+s-tip,
+d-tip {
     display: block;
     color: #ee903d;
 }
 
 s-tip:before,
-d-tip:before
-{
+d-tip:before {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
@@ -189,9 +169,9 @@ d-tip:before
     padding-right: 3px;
 }
 
-.d-col-content{
+.d-col-content {
     display: inline-block;
-    width:80%;
+    width: 80%;
 }
 
 /* } schema directive 样式定义 */
@@ -403,21 +383,26 @@ vpagination button.btn-default {
     height: 25px;
     margin-bottom: 5px;
 }
+
 /* v-pagination end */
 
 /* dialogs.factory start */
 .vo-dialogs .modal-header .modal-title {
     font-size: 18px;
 }
+
 .vo-dialogs .modal-body {
     font-size: 18px;
     padding: 30px 23px;
 }
+
 .vo-dialogs .modal-footer .btn {
     font-size: 16px;
 }
+
 .modal-backdrop.in {
     opacity: 0.8;
     filter: alpha(opacity=80);
 }
+
 /* dialogs.factory end */

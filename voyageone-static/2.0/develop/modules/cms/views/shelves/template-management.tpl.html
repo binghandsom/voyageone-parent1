@@ -1,0 +1,109 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+        <uib-accordion-group is-open="open">
+            <uib-accordion-heading>
+                <i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_SHELVES_TEMPLATE_MANAGEMENT' | translate}}
+                <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+            </uib-accordion-heading>
+            <div class="container-fluid m-t-sm m-b-md">
+                <div class="col-sm-12">
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
+                                <div class="col-sm-7">
+                                    <label ng-repeat="(key,value) in vm.templateTypes">
+                                        <input type="checkbox" name="templateTypes"  ng-model="searchBean.templateTypes[key]" value="{{key}}"/>{{value}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_VIEW_TYPE"></label>
+                                <div class="col-sm-7">
+                                    <label ng-repeat="(key,value) in vm.clientTypes">
+                                        <input type="checkbox" name="clientTypes"  ng-model="searchBean.clientTypes[key]" value="{{key}}"/>{{value}}端
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_PLATFORM_TYPE"></label>
+                                <div class="col-sm-7">
+                                    <label ng-repeat="(key,value) in vm.carts">
+                                        <input type="checkbox" name="carts"  ng-model="searchBean.carts[key]" value="{{key}}"/>{{value}}端
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_SHELVES_TEMPLATE_NAME"></label>
+                                <div class="col-sm-7">
+                                    <input type="templateName" ng-model="searchBean.templateName" maxlength="255"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-12 text-center m-t-sm">
+                    <div class="form-inline">
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-vo" ng-click="searchShelvesTemplate()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                        <button class="btn btn-vo" ng-click="popNewShelvesTemplate()"><i class="fa fa-search"></i>&nbsp;{{'TXT_SHELVES_TEMPLATE_NEW' | translate}}</button>
+                    </div><!-- .form-inline -->
+                </div>
+            </div>
+        </uib-accordion-group>
+    </uib-accordion>
+
+    <!-- .accordion -->
+    <div class="box">
+        <div class="box-body-new">
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-x"></th>
+                    <th class="text-left" translate="平台"></th>
+                    <th class="text-left" translate="客户端类型"></th>
+                    <th class="text-left" translate="模板名称"></th>
+                    <th class="text-left" translate="模板类型"></th>
+                    <th class="text-left" translate="备注"></th>
+                    <th class="text-left" translate="操作"></th>
+                    <th class="text-left" tranate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody ng-if="templates.length">
+                <tr ng-repeat="template in templates">
+                    <td class="text-left" title="{{template.id}}">{{$index+1}}</td>
+                    <td class="text-left">{{vm.carts[template.cartId]}}</td>
+                    <td class="text-left">{{vm.clientTypes[template.clientType]}}</td>
+                    <td class="text-left">{{template.templateName}}</td>
+                    <td class="text-left">{{vm.templateTypes[template.templateType]}}</td>
+                    <td class="text-left">{{template.remark}}</td>
+                    <td class="text-left">
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="popEditShelvesTemplate(template)" >
+                            <i class="fa fa-pencil"></i>
+                        </button>&emsp;
+                        <button title="删除" class="btn btn-danger btn-xs" ng-click="deleteShelvesTemplate(template)">
+                            <i class="fa  fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+            <div  if-no-rows="templates.length"></div>
+        </div><!-- /.box-body -->
+    </div>
+</div><!-- end .wrapper-md -->

@@ -873,4 +873,27 @@ public interface CmsUrlConstants {
             }
         }
     }
+
+    interface SHELVES {
+        interface TEMPLATE {
+            String ROOT = "/cms/shelves/template";
+            String INIT = "init";
+            String ADD = "add";
+            String EDIT = "edit";
+            String DELETE = "delete";
+            String SEARCH = "search";
+            String DETAIL = "detail";
+        }
+        interface DETAIL {
+            String ROOT = "/cms/shelves/detail";
+            String SEARCH = "search";
+            String CREATE_SHELVES= "createShelves";
+            String UPDATE_SHELVES= "updateShelves";
+            String UPDATE_PRODUCT_SORT = "updateProductSort";
+            String ADD_PRODUCT = "addProduct";
+            String EXPORT_APP_IMAGE ="exportAppImage";
+            String GET_SHELVES_INFO = "getShelvesInfo";
+            String GET_SHELVES_HTML = "getShelvesHtml";
+        }
+    }
 }

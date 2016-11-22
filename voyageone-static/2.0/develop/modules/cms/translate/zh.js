@@ -869,6 +869,23 @@ define(function () {
         "TXT_CHECK_ALL_SKU": "不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行\"移动到其他Group\"操作",
         "TXT_CODE": "Code",
         "TXT_GROUP_NUMIID": "商品页面编号",
+        /**货架模板*/
+        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "刷图模板管理",
+        "TXT_SHELVES_TEMPLATE_TYPE" : "模板类型",
+        "TXT_SHELVES_TEMPLATE_NAME" : "模板名称",
+        "TXT_SHELVES_TEMPLATE_NEW" : "新建模板",
+        "TXT_NUM_PERLINE" : "每行个数",
+        "TXT_HTML" : "HTML代码",
+        "TXT_HTML_HEAD" : "头部",
+        "TXT_HTML_TITLE" : "标题模块",
+        "TXT_HTML_SEARCH" : "搜索模块",
+        "TXT_HTML_CLEARFIX" : "清除浮动",
+        "TXT_HTML_BIG_IMAGE" : "大图模块",
+        "TXT_HTML_SMALL_IMAGE" : "小图模块",
+        "TXT_HTML_FOOT" : "尾部",
+        "TXT_HTML_LAST_IMAGE" : "最后一个小图模块",
+        "TXT_HTML_IMAGE_TEMPLATE" : "图片模板",
+        "TXT_SHELVES_TEMPLATE_EDIT" : "编辑模板",
 
         /** 店铺管理-各店铺配置 */
         "TXT_CHANNEL_CONFIG":"店铺配置",
@@ -883,5 +900,9 @@ define(function () {
         "TXT_CHANNEL_CONFIG_TYPE" : "类型",
         "TXT_CHANNEL_CONFIG_CREATE" : "新增店铺设置",
         "TXT_CHANNEL_CONFIG_EDIT" : "编辑店铺设置"
+
+        /**菜单栏新增*/
+        "TXT_CURRENT_CHANNEL_SETTING" : "当前店铺设置",
+        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "货架模板一览"
     };
 });

@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.tools;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.service.bean.cms.CmsBtRefreshProductTaskModelStatus;
+import com.voyageone.service.fields.cms.CmsBtRefreshProductTaskModelStatus;
 import com.voyageone.service.dao.cms.CmsBtRefreshProductTaskDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;

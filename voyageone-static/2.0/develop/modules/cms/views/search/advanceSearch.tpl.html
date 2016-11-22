@@ -755,6 +755,16 @@
                                         <!--</li>-->
                                     <!--</ul>-->
                                 <!--</li>-->
+                                <li class="dropdown-submenu" ng-if="vm.masterData.shelvesMap[cartBean.value].length > 0 &&cartBean.cartType!=3">
+                                    <a href>加入橱窗</a>
+                                    <ul class="dropdown-menu dropdown-menu-ul">
+                                        <li ng-repeat="shelves in vm.masterData.shelvesMap[cartBean.value]">
+                                            <a href ng-click="$parent.addShelves(shelves.id)" >
+                                                {{shelves.shelvesName | limitTo: 10}}{{shelves.shelvesName.length > 10 ? '...' : ''}}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="popJoinPromotion(cartBean)">加入{{cartBean.name}}活动</a>
                                 </li>

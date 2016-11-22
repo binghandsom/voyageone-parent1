@@ -564,6 +564,24 @@ define([
                 "controller": 'ApproveConfirmController as ctrl'
             }
         },
+        "shelves" : {
+            "shelvesTemplateAdd" : {
+                "templateUrl": "views/pop/shelves/shelves-template-add.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-add.ctl",
+                "controller": 'ShelvesTemplateAddController as ctrl'
+            },
+            "shelvesTemplateEdit" : {
+                "templateUrl": "views/pop/shelves/shelves-template-edit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-edit.ctl",
+                "controller": 'ShelvesTemplateEditController as ctrl'
+            },
+            newShelves: {
+                templateUrl: "views/pop/shelves/new-shelves.tpl.html",
+                controllerUrl: "modules/cms/views/pop/shelves/new-shelves.ctl",
+                controller: 'NewShelvesPopupController as $ctrl',
+                size: 'md'
+            }
+        },
         confirmProductRefresh: {
             templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
             controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
@@ -1358,6 +1376,18 @@ define([
                 field: field,
                 mappingInfo: mappingInfo
             });
+        };
+
+        /**新建货架模板*/
+        $scope.shelvesTemplateAdd = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateAdd, context)
+        };
+        $scope.shelvesTemplateEdit = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateEdit, context)
+        };
+
+        $scope.popNewShelves = function popNewShelves(context) {
+            return openModal(popActions.shelves.newShelves, context)
         };
 
     }).factory('popups', function ($controller, $rootScope) {

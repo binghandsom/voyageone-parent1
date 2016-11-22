@@ -1,15 +1,9 @@
 package com.voyageone.components.jd.service;
 
 import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.request.imgzone.ImgzoneCategoryAddRequest;
-import com.jd.open.api.sdk.request.imgzone.ImgzoneCategoryQueryRequest;
-import com.jd.open.api.sdk.request.imgzone.ImgzonePictureReplaceRequest;
-import com.jd.open.api.sdk.request.imgzone.ImgzonePictureUploadRequest;
+import com.jd.open.api.sdk.request.imgzone.*;
 import com.jd.open.api.sdk.response.AbstractResponse;
-import com.jd.open.api.sdk.response.imgzone.ImgzoneCategoryAddResponse;
-import com.jd.open.api.sdk.response.imgzone.ImgzoneCategoryQueryResponse;
-import com.jd.open.api.sdk.response.imgzone.ImgzonePictureReplaceResponse;
-import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
+import com.jd.open.api.sdk.response.imgzone.*;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
@@ -36,7 +30,7 @@ public class JdImgzoneService extends JdBase {
      * @return ImgzonePictureUploadResponse 京东图片上传结果，包含图片信息
      * @throws JdException
      */
-    public AbstractResponse uploadPicture(ShopBean shop, byte[] imageData, String pictureCateId, String pictureName) throws JdException {
+    public ImgzonePictureUploadResponse  uploadPicture(ShopBean shop, byte[] imageData, String pictureCateId, String pictureName) throws JdException {
 
         if (imageData == null || imageData.length == 0) {
             throw new BusinessException("要上传到京东图片空间的图片imageData为空!");
@@ -80,6 +74,17 @@ public class JdImgzoneService extends JdBase {
 
         // 调用京东替换单张图片API(jingdong.imgzone.picture.replace)
         ImgzonePictureReplaceResponse response = reqApi(shop, request);
+
+        return response;
+    }
+
+    public ImgzonePictureDeleteResponse deletePictures(ShopBean shop, String pictureId) throws JdException {
+
+        ImgzonePictureDeleteRequest request=new ImgzonePictureDeleteRequest();
+
+        request.setPictureIds( pictureId );
+
+        ImgzonePictureDeleteResponse response = reqApi(shop, request);
 
         return response;
     }

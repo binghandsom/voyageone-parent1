@@ -99,6 +99,8 @@ public class CmsConstants {
         // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
         String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
 
+        //橱窗图片本地保存位置
+        String SHELVES_IMAGE_PATH = "SHELVES_IMAGE_PATH";
         /**
          * 调用价格计算时, 指定渠道使用什么方式计算价格
          * <p>
@@ -164,6 +166,9 @@ public class CmsConstants {
 
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
+
+        // 该店铺是否自动审批价格
+        String PLATFORM_IMAGE_DIRECTORY_ID = "PLATFORM_IMAGE_DIRECTORY_ID";
 
         // 商品默认包装重量
         String DEFAULT_PACKAGE_WEIGHT = "DEFAULT_PACKAGE_WEIGHT";

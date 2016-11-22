@@ -7,7 +7,7 @@ define([
     './advance.search.append.ctl'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q,shelvesService) {
 
         $scope.vm = {
             searchInfo: {
@@ -78,6 +78,7 @@ define([
         $scope.dismiss = dismiss;
         $scope.jdCategoryMapping = jdCategoryMapping;
         $scope.editPlatformAttribute = editPlatformAttribute;
+        $scope.addShelves = addShelves;
         /**
          * 初始化数据.
          */
@@ -391,6 +392,24 @@ define([
             }
         }
 
+        function addShelves(shelvesId) {
+            _chkProductSel(null, _addShelves, {'isSelAll': $scope.vm._selall ? 1 : 0, 'shelvesId': shelvesId});
+
+            function _addShelves(cartId, selList, context) {
+                var productIds = [];
+                if (selList) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                context.productCodes = productIds;
+                shelvesService.addProduct(context).then(function () {
+                    notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                    $scope.search();
+                });
+            }
+        }
+
         /**
          * popup出添加到聚美Promotion的功能
          * @param promotion
@@ -403,6 +422,7 @@ define([
 
             function _openJMActivity(cartId, selList, context) {
                 openAddJMActivityFnc(context.promotion, selList, context).then(function () {
+
                     $scope.search();
                 })
             }
@@ -1270,6 +1290,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q','shelvesService'];
     return searchIndex;
 });

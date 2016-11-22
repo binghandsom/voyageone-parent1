@@ -189,7 +189,8 @@ define(function () {
                     getEditModel: "getEditModel",
                     saveEditModel: "saveEditModel",
                     deleteByPromotionId: "deleteByPromotionId",
-                    setPromotionStatus: "setPromotionStatus"
+                    setPromotionStatus: "setPromotionStatus",
+                    getPromotionSimpleList: "getPromotionSimpleList"
                 },
                 "promotionDetailService": {
                     "root": "/cms/promotion/detail",
@@ -543,7 +544,7 @@ define(function () {
                         "addCat": "addSellerCat",
                         "delCat": "removeSellerCat",
                         "updateCat": "updateSellerCat",
-                        "sortableCat": "sortableCat",
+                        "sortableCat": "sortableCat"
                     }
                 },
                 "imageTemplateService": {
@@ -669,13 +670,38 @@ define(function () {
                 search: "getMasterBrandInfo"
             },
             //主品牌管理页面
-            "masterBrandApplicationService": {
-                root: "/cms/maintain/common/",
-                init: "initMasterBrandInfo",
-                search: "getMasterBrandInfo",
-                reviewed: "reviewedMasterBrandInfo",
-                edit: "editMasterBrandInfo",
-                mappingSearch: "mappingMasterBrandInfoToPlatform"
+            "masterBrandApplicationService":{
+                root:"/cms/maintain/common/",
+                init:"initMasterBrandInfo",
+                search:"getMasterBrandInfo",
+                reviewed:"reviewedMasterBrandInfo",
+                edit:"editMasterBrandInfo",
+                mappingSearch:"mappingMasterBrandInfoToPlatform"
+            },
+            // 货架模板管理
+            "shelvesTemplateService": {
+                root:"/cms/shelves/template",
+                init:"init",
+                add:"add",
+                edit:"edit",
+                delete:"delete",
+                search:"search",
+                detail:"detail"
+            },
+            // 货架管理
+            shelvesService: {
+                root: "/cms/shelves/detail",
+                search: "search",
+                createShelves: "createShelves",
+                updateShelves: "updateShelves",
+                updateProductSort: "updateProductSort",
+                addProduct: "addProduct",
+                getShelvesInfo: "getShelvesInfo",
+                removeProduct: "removeProduct",
+                clearProduct: "clearProduct",
+                deleteShelves: "deleteShelves",
+                releaseImage: "releaseImage",
+                getShelvesHtml: "getShelvesHtml"
             }
         }
     };
