@@ -376,8 +376,8 @@ define([
                         preview: false
                     }).then(function (resp) {
                         var t = document.createElement('textarea');
-                        t.value = resp.data;
-                        d.body.innerHTML = '<pre>' + t.innerHTML + '</pre>';
+                        t.innerHTML = resp.data;
+                        d.body.innerHTML = '<code>' + t.innerHTML + '</code>';
                     }, function () {
                         newW.close();
                     });
