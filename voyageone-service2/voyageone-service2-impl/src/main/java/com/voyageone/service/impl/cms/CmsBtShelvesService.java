@@ -133,29 +133,32 @@ public class CmsBtShelvesService extends BaseService {
                 }
                 // TODO 暂时测试，天猫平台商品详情页链接
                 ShopBean shopBean = Shops.getShop(shelves.getChannelId(), shelves.getCartId());
-                if (shopBean.getPlatform().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
-                    singleHtml.replace("@link", "https://detail.tmall.hk/hk/item.htm?id=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
-                } else if (shopBean.getPlatform().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
-                    singleHtml.replace("@link", "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
+                if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
+                    singleHtml = singleHtml.replace("@link", "https://detail.tmall.hk/hk/item.htm?id=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
+                } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
+                    singleHtml = singleHtml.replace("@link", "http://ware.shop.jd.com/onSaleWare/onSaleWare_viewProduct.action?wareId=" + productBean.getNumIid()); // 根据商品在平台ID拼接商品详情页
                 }
                 if (!preview) {
-                    singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
+                    singleHtml = singleHtml.replace("@imglink", productBean.getPlatformImageUrl()); // 单品模板生成图片在平台的地址
                 } else {
                     // 单品模板的图片模板来生成图片html
                     String htmlImageTemplate = singleTemplate.getHtmlImageTemplate();
                     if (htmlImageTemplate.contains("@price")) {
-                        htmlImageTemplate.replace("@price", String.valueOf(productBean.getSalePrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice()));
                     }
                     if (htmlImageTemplate.contains("@img")) {
-                        htmlImageTemplate.replace("@img", productBean.getImage());
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
                     }
                     if (htmlImageTemplate.contains("@name")) {
-                        htmlImageTemplate.replace("@name", productBean.getProductName());
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@name", productBean.getProductName());
                     }
                     if (htmlImageTemplate.contains("@sale_price")) {
-                        htmlImageTemplate.replace("@sale_price", String.valueOf(productBean.getPromotionPrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@sale_price", String.valueOf(productBean.getPromotionPrice()));
                     }
-                    singleHtml.replace("@imglink", htmlImageTemplate);
+                    //singleHtml.replaceAll("@imglink", htmlImageTemplate); // Illegal group reference
+                    int index = singleHtml.indexOf("@imglink");
+                    int length = singleHtml.length();
+                    singleHtml = singleHtml.substring(0, index) + htmlImageTemplate + singleHtml.substring(index + 8, length);
                 }
                 htmlBuffer.append(singleHtml);
             }
