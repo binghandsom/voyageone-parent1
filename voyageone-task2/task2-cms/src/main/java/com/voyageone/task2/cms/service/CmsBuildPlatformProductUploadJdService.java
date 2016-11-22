@@ -169,7 +169,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
                 doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
