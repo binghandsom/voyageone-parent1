@@ -375,7 +375,9 @@ define([
                         shelvesId: s.id,
                         preview: false
                     }).then(function (resp) {
-                        d.body.innerHTML = '<pre>' + resp.data + '</pre>';
+                        var t = document.createElement('textarea');
+                        t.value = resp.data;
+                        d.body.innerHTML = '<pre>' + t.innerHTML + '</pre>';
                     }, function () {
                         newW.close();
                     });

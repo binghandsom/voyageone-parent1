@@ -175,7 +175,9 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
 //        shopBean.setAppKey("BFA3102EFD4B981E9EEC2BE32DF1E44E");
 //        shopBean.setAppSecret("90742900899f49a5acfaf3ec1040a35c");
 //        shopBean.setSessionKey("8bac1a4d-3853-446b-832d-060ed9d8bb8c");
+        long threadNo = Thread.currentThread().getId();
         try {
+            $info("threadNo:" + threadNo + " numiid:" + numiid );
             WareListResponse wareListResponse = jdWareService.getJdProduct(shopBean, numiid, "ware_id,skus");
             int itemStatus = CmsBtShelvesProductModelStatus.OFF;
             List<SkuBean> resultList = new ArrayList<>();
@@ -188,6 +190,7 @@ public class CmsShelvesMonitorMQService extends BaseMQCmsService {
             }
             setInfo(channelId, itemStatus, resultList, cmsBtShelvesProductModels);
         } catch (Exception e) {
+            $info("threadNo:" + threadNo + " numiid:" + numiid +" 取得异常");
             e.printStackTrace();
             $error(e);
         }
