@@ -90,12 +90,13 @@ public class PlatformSchemaService extends BaseService {
      * 产品画面属性list取得
      */
     public Map<String, List<Field>> getFieldForProductImage(String catId, String channelId, int cartId, String language) {
-        if (CartEnums.Cart.JM.getValue() == cartId
-                || CartEnums.Cart.TT.getValue() == cartId
-                || CartEnums.Cart.USTT.getValue() == cartId
-                || CartEnums.Cart.CN.getValue() == cartId
-                || CartEnums.Cart.LIKING.getValue() == cartId
-                ) {
+//        if (CartEnums.Cart.JM.getValue() == cartId
+//                || CartEnums.Cart.TT.getValue() == cartId
+//                || CartEnums.Cart.USTT.getValue() == cartId
+//                || CartEnums.Cart.CN.getValue() == cartId
+//                || CartEnums.Cart.LIKING.getValue() == cartId
+//                ) {
+        if (CartEnums.Cart.isCommonCategorySchema(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
             // “聚美”或“天猫国际官网同购”或“Usjoi天猫国际官网同购”或"独立域名"的场合，因为只有一个catId，写死 catId = 1
             catId = "1";
         }
