@@ -74,10 +74,14 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             // 如果该已经approve，则插入上新work表
             setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
         }
-        else
-        {
-            //如果numiid存在则判断调用group下线，还是code下线(james)
-            setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
+        else {
+            if (!StringUtils.isEmpty(platform.getpNumIId())) {
+                //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
+
+                platform.setpReallyStatus("");
+                setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
+
+            }
         }
         platform.getSkus().forEach(f -> {
             f.setAttribute("isSale", parameter.getIsSale());
