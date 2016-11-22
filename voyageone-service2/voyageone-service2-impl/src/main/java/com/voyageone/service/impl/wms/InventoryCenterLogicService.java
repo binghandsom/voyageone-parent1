@@ -136,7 +136,7 @@ public class InventoryCenterLogicService extends BaseService {
     public List<String> transform(final Map<Long, String> idNameMap, Set<Long> storeIds) {
         List<String> result = storeIds.stream().map(st ->idNameMap.getOrDefault(st,""))
                                                                   .collect(toList());
-        result.add("total");
+        result.add(0, "total");
         return result;
     }
 
