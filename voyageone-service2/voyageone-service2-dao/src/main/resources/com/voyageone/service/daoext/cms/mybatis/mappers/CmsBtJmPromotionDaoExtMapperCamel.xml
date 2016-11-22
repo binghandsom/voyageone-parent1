@@ -132,10 +132,13 @@
                 )
             </if>
             <if test="compareType == 1 and prodSum != null">
-                and jmprom.prod_sum &lt;= #{prodSum}
+                and jmprom.prod_sum &lt; #{prodSum}
             </if>
             <if test="compareType == 2 and prodSum != null">
-                and jmprom.prod_sum &gt;= #{prodSum}
+                and jmprom.prod_sum &gt; #{prodSum}
+            </if>
+            <if test="compareType == 3 and prodSum != null">
+                and jmprom.prod_sum = #{prodSum}
             </if>
             <if test="prePeriodStart == null and prePeriodEnd != null">
                 and jmprom.pre_period_start &lt;= #{prePeriodEnd}
@@ -199,10 +202,13 @@
                 )
             </if>
             <if test="compareType == 1 and prodSum != null">
-                and jmprom.prod_sum &lt;= #{prodSum}
+                and jmprom.prod_sum &lt; #{prodSum}
             </if>
             <if test="compareType == 2 and prodSum != null">
-                and jmprom.prod_sum &gt;= #{prodSum}
+                and jmprom.prod_sum &gt; #{prodSum}
+            </if>
+            <if test="compareType == 3 and prodSum != null">
+                and jmprom.prod_sum = #{prodSum}
             </if>
             <if test="prePeriodStart == null and prePeriodEnd != null">
                 and jmprom.pre_period_start &lt;= #{prePeriodEnd}
