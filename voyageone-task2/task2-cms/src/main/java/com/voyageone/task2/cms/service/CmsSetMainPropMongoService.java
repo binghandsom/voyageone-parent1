@@ -2737,13 +2737,13 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         if (groupCode != null) {
                             LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
                             //feed和group的创建时间作比较
-                            if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
-                                    &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
+                            if (feedDate.getYearOfCentury() == groupDate.getYearOfCentury()
+                                    &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)) {
                                 group = groupCode;
-                            }else{
+                            } else {
                                 //根据当前model取得最新的group
                                 group = null;
-                            };
+                            }
                         }
                     }else {
                         group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
