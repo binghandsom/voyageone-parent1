@@ -92,7 +92,6 @@ define([
             parameter.optType=$scope.vm.optType;
             parameter.roundType=$scope.vm.roundType;
 
-            console.log(parameter);
             jmPromotionDetailService.batchUpdateSkuDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
                     alert(res.data.msg);

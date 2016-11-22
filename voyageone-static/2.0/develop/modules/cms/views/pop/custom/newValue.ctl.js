@@ -37,8 +37,6 @@ define([
                     //});
                     //$scope.valList = $filter(function (data) { console.log(data); return data.prop_translation != ''})(res.data.valList);
                     $scope.valList = res.data.valList;
-                }, function (res) {
-                    console.log("123123");
                 });
         };
 

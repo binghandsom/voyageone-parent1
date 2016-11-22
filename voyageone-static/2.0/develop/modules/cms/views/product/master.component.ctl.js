@@ -98,8 +98,6 @@ define([
                         parameterGetProductSizeChartList.productType=scope.productInfo.masterField.productType;
                         parameterGetProductSizeChartList.sizeType=scope.productInfo.masterField.sizeType;
 
-                        console.log(parameterGetProductSizeChartList);
-
                         sizeChartService.getProductSizeChartList(parameterGetProductSizeChartList).then(function (res) {
                             scope.vm.sizeChartList=res.data;
                             scope.selectSizeChartChange();
