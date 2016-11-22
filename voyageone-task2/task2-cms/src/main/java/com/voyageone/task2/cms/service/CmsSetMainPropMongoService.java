@@ -75,8 +75,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -2736,15 +2734,17 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                         LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
                         //取得当前group的创建的时间
                         CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
-                        LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
-                        //feed和group的创建时间作比较
-                        if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
-                                &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
-                            group=groupCode;
-                        }else{
-                            //根据当前model取得最新的group
-                            group = null;
-                        };
+                        if (groupCode != null) {
+                            LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
+                            //feed和group的创建时间作比较
+                            if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
+                                    &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
+                                group = groupCode;
+                            }else{
+                                //根据当前model取得最新的group
+                                group = null;
+                            };
+                        }
                     }else {
                         group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
                     }
