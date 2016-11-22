@@ -331,6 +331,7 @@ define([
         },
         releaseImage: function (s) {
             var self = this;
+            s._uped = true;
             self.shelvesService.releaseImage(s.id).then(function () {
                 self.notify.success('TXT_SUCCESS');
             });

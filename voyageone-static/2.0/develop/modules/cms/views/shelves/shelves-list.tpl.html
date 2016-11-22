@@ -69,7 +69,7 @@
                 <div class="pull-left">
                     <button class="btn btn-default" ng-click="ctrl.sortProduct(i)">{{i.$e?'保存并退出':'排序商品'}}</button>
                     <button class="btn btn-danger" ng-click="ctrl.removeAll(i)"><i class="fa fa-trash"></i>&nbsp;全量清空</button>
-                    <button class="btn btn-default" ng-disabled="ctrl.canPreview(i)" ng-click="ctrl.releaseImage(i)">上传</button>
+                    <button class="btn btn-default" ng-disabled="i._uped || ctrl.canPreview(i)" ng-click="ctrl.releaseImage(i)">上传</button>
                 </div>
                 <div ng-if="!i.$e" class="pull-left">
                     <button class="btn btn-default" ng-disabled="i.clientType===ctrl.clientTypes.APP&&!ctrl.canPreview(i)" ng-click="ctrl.preview(i)" title="在上传处理完成后，才能预览">预览</button>
