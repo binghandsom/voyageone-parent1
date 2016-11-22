@@ -32,7 +32,7 @@ public class CmsBtShelvesProductService extends BaseService {
     private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
     private final PromotionCodeService promotionCodeService;
 
-    public static final String SHELVES_IMAGE_PATH = "/Users/jonas/Desktop/1";
+    public static final String SHELVES_IMAGE_PATH = "/usr/web/contents/cms/shelves";
 
     @Autowired
     public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao,
