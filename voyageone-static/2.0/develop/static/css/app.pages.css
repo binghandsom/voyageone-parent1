@@ -473,10 +473,16 @@ s-field textarea.s-html {
     color: white;
 }
 
+.product-shema-detail .btn-image {
+    position: absolute;
+    display: block;
+    bottom: 5px;
+    right: 13px;
+}
+
 .product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
-
 .product-shema-detail span a {
     color: #e67e22;
     text-decoration: underline;

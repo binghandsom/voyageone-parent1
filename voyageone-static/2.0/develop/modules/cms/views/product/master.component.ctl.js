@@ -7,7 +7,12 @@ define([
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
 ], function (cms, carts) {
-    cms.directive("masterSchema", function (productDetailService,sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm) {
+
+    var mConfig = {
+        bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
+    };
+
+    cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
@@ -34,7 +39,8 @@ define([
                     },
                     hsCodeOrigin: null,
                     sizeChartList:[],
-                    selectSizeChart:null
+                    selectSizeChart:null,
+                    lockStatus:{}
                 };
 
                 scope.selectSizeChartChange=function () {
@@ -51,7 +57,10 @@ define([
                 scope.pageAnchor = pageAnchor;
                 scope.copyCommonProperty = copyCommonProperty;
                 scope.goDetail = goDetail;
-                
+                scope.simpleImgDown = simpleImgDown;
+                scope.removeImg = removeImg;
+                scope.sortImg = sortImg;
+                scope.lockProduct = lockProduct;
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -81,7 +90,7 @@ define([
                         scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
-                        scope.productInfo.lockStatus = scope.vm.mastData.lock == "1" ? true : false;
+                        scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
                         //暂存税号个人
                         scope.vm.hsCodeOrigin = angular.copy(_.find(scope.vm.productComm.schemaFields, function (field) {
@@ -147,21 +156,12 @@ define([
 
                         scope.vm.productComm.modified = context[context.length - 1].modified;
 
-                        var imgType = null;
+                        initialize();
+/*                        var imgType = null;
                         angular.forEach(context, function (item) {
                             imgType = item.imageType;
-                            scope.vm.tempImage[item.imageType].push($rootScope.imageUrl.replace('%s', item.imageName));
-                        });
-
-                        _.map(scope.vm.productComm.schemaFields, function (item) {
-                            if (item.id == imgType) {
-                                item.complexValues.splice(0, item.complexValues.length);
-                                angular.forEach(context[context.length - 1].imageSchema[0].complexValues, function (image) {
-                                    item.complexValues.push(image);
-                                });
-
-                            }
-                        });
+                            scope.vm.productComm.fields[imgType].push(item.imageName);
+                        });*/
 
                     });
                 }
@@ -304,8 +304,87 @@ define([
                     if (args.length == 0)
                         return;
 
-                    window.open("http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200".replace("✓", args[args.length - 1]));
+                    window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
 
+                }
+
+                function simpleImgDown(imgName, $event) {
+                    var jq = angular.element,
+                        _aTag;
+
+                    imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                    _aTag = jq('<a download>').attr({'href': imgName});
+
+                    jq('body').append(_aTag);
+                    _aTag[0].click();
+                    _aTag.remove();
+
+                    $event.stopPropagation();
+                }
+
+                function removeImg(imagesType, imageName, $event) {
+                    var productComm = scope.vm.productComm;
+
+                    if (!imagesType)
+                        return;
+
+                    confirm("您确认要删除该图片吗？").then(function () {
+                        _.each(productComm.fields[imagesType], function (ele, index, list) {
+                            if (ele.image6 === imageName) {
+                                list.splice(list.indexOf(ele), 1);
+                            }
+                        });
+
+                        productDetailService.restoreImg({
+                            prodId: scope.productInfo.productId,
+                            imagesType: imagesType,
+                            images: productComm.fields[imagesType]
+                        }).then(function (res) {
+                            scope.vm.productComm.modified = res.data.modified;
+                            notify.success("删除成功！");
+                        });
+
+                    });
+
+                    $event.stopPropagation();
+                }
+
+                function sortImg(imagesType, $event) {
+                    var imgSource = scope.vm.productComm.fields[imagesType];
+
+                    if (!imagesType || imgSource.length < 2)
+                        return;
+
+                    productDetailService.restoreImg({
+                        prodId: scope.productInfo.productId,
+                        imagesType: imagesType,
+                        images: imgSource
+                    }).then(function (res) {
+                        scope.vm.productComm.modified = res.data.modified;
+                        notify.success("排序成功！");
+                    });
+
+                    $event.stopPropagation();
+                }
+
+
+                function lockProduct(){
+                    var _status = scope.vm.lockStatus.onOffSwitch3,
+                        lock = _status ? "1" : "0",
+                        message = _status ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+
+                    confirm(message).then(function () {
+
+                        productDetailService.updateLock({
+                            prodId: scope.productInfo.productId,
+                            lock: lock
+                        }).then(function () {
+                            notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+                        });
+
+                    }, function () {
+                        scope.vm.lockStatus.onOffSwitch3 = !_status;
+                    });
                 }
 
                 /**全schema中通过name递归查找field*/

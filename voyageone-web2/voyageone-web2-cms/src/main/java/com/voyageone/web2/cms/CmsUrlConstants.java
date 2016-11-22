@@ -638,6 +638,8 @@ public interface CmsUrlConstants {
 
             String MOVE_SKU = "moveSku";
 
+            String RESTORE_IMG = "restoreImg";
+
 			String GET_SKU_STOCK_INFO = "getSkuStockInfo";
         }
 

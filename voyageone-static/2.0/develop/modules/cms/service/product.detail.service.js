@@ -52,6 +52,8 @@ define([
 		this.moveSkuSearch = moveSkuSearch;
 		this.moveSkuPreview = moveSkuPreview;
 		this.moveSku = moveSku;
+		this.restoreImg = restoreImg;
+
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -718,6 +720,18 @@ define([
 		function moveSku(req){
 			var defer = $q.defer();
 			$productDetailService.moveSku(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		function restoreImg(req){
+			var defer = $q.defer();
+			$productDetailService.restoreImg(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){

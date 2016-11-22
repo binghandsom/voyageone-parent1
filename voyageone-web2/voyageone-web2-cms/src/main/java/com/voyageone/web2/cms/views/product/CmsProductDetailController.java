@@ -303,5 +303,34 @@ public class CmsProductDetailController extends CmsController {
         return success(null);
     }
 
+    /**
+     * 修改产品共通属性中的图片属性
+     * @param params
+     *        imagesType 图片类型
+     *        images 图片集合
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.RESTORE_IMG)
+    public AjaxResponse restoreImg(@RequestBody Map params) {
+
+        String prodId = String.valueOf(String.valueOf(params.get("prodId")));
+        Assert.notNull(prodId).elseThrowDefaultWithTitle("promotionImages");
+
+        String imagesType = String.valueOf(String.valueOf(params.get("imagesType")));
+        Assert.notNull(imagesType).elseThrowDefaultWithTitle("promotionImages");
+
+        List<String> images = (List<String>) params.get("images");
+        Assert.notNull(images).elseThrowDefaultWithTitle("promotionImages");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("modified",productPropsEditService.restoreImg(getUser().getSelChannelId(),
+                Long.parseLong(prodId),
+                imagesType,
+                images));
+
+        return success(result);
+
+
+    }
 
 }

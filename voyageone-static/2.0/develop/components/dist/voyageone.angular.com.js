@@ -155,7 +155,16 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     tempHtml += "<br>";
                 }
             });
-        } else {
+        }
+        else if(values.isUseComplexTemplate == true){
+            $scope.dynamicPopover = {
+                type: values.type,
+                value1: values.value,
+                value2: values.value2,
+                value3: values.value3,
+                templateUrl: 'dynamicPopoverTemplate.html'
+            };
+        }else {
             tempHtml += values;
         }
         return tempHtml;
@@ -1227,7 +1236,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                 return;
 
-            var contentContainer = angular.element('<s-tip>');
+            var contentContainer = angular.element('<s-tip ng-if="showTip">');
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
@@ -1753,9 +1762,23 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
                 if (showName)
                     container.append(angular.element('<s-header>'));
+                //sofia
+                each(rules, function (content, key) {
 
+                    if (key.indexOf('$') === 0)
+                        return;
+
+                    if (key.indexOf('Rule') > 0 && key !== 'tipRule')
+                        return;
+
+                    var contentContainer = angular.element('<s-tip-new ng-click="showTip=!showTip">');
+                    container.append(contentContainer);
+                });
+                innerElement = angular.element('<div class="s-wrapper" style="margin-left:15px">');
+                //sofia
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="s-wrapper">');
+                // innerElement = angular.element('<div class="s-wrapper">');
+
                 container.append(innerElement);
                 container = innerElement;
 
@@ -3199,6 +3222,9 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
 
 /*****************************/
 
+/**
+ * @description 格林威治时间转换为当地时区时间
+ */
 angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
 
     return function (input,format) {
@@ -3210,15 +3236,13 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
             return '';
         }
 
-
         input = typeof input === 'string' ? new Date(input) : input;
 
         miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
 
-
         return $filter('date')(new Date(miliTimes), format);
-    };
 
+    };
 
 });
 

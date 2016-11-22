@@ -150,13 +150,22 @@ s-container label,
 d-container label {
     margin-right: 10px;
 }
-
-s-tip,
-d-tip {
+s-tip-new{
+    color: #ee903d;
+    cursor: pointer;
+    font-size: 14px;
+}
+s-tip-new:before{
+    content: '\f0a2';
+    margin-right: -15px;
+}
+s-tip ,
+d-tip
+{
     display: block;
     color: #ee903d;
 }
-
+s-tip-new:before,
 s-tip:before,
 d-tip:before {
     display: inline-block;
@@ -165,7 +174,7 @@ d-tip:before {
     font-weight: bold;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
-    content: '\f0a2';
+    /*content: '\f0a2';*/
     padding-right: 3px;
 }
 
