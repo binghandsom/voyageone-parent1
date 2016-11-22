@@ -25,19 +25,22 @@ define([
                 initialize();
                 function initialize() {
                     //console.log(scope.productInfo);
-                    $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
-                       // console.log(resp.data);
-                        scope.vm.productPriceList = resp.data.productPriceList;
-                        scope.vm.model = resp.data;
-                        scope.sales = resp.data.sales;
-                        scope.selectSalesOnChange();
-                        scope.vm.productPriceList.forEach(function (f) {
-                            if(f.checked ==2) {
-                                f.isSale = true;
-                            }
-                        });
-                    });
+                    initData();
                 }
+               function initData() {
+                   $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
+                       // console.log(resp.data);
+                       scope.vm.productPriceList = resp.data.productPriceList;
+                       scope.vm.model = resp.data;
+                       scope.sales = resp.data.sales;
+                       scope.selectSalesOnChange();
+                       scope.vm.productPriceList.forEach(function (f) {
+                           if(f.checked ==2) {
+                               f.isSale = true;
+                           }
+                       });
+                   });
+               }
                 scope.selectSalesOnChange = function () {
                    // console.log(scope.vm.selectSales);
                     var cartSales = scope.sales[scope.vm.selectSales];
@@ -67,33 +70,35 @@ define([
                     $productDetailService.getCalculateCartMsrp(scope.productInfo.productId).then(function (resp) {
                         // console.log(resp.data);
                         scope.vm.productPriceList.forEach(function (f) {
-                          var msrpInfo=_.find(resp.data,function (d) {
-                              return  d.cartId ==f.cartId
+                            var msrpInfo = _.find(resp.data, function (d) {
+                                return d.cartId == f.cartId
                             });
-                            if(msrpInfo)
-                            {
+                            if (msrpInfo) {
                                 f.priceMsrp = msrpInfo.msrp;
                             }
                         });
 
                     });
-
                 }
                 scope.saveCartSkuPriceClick=function (item) {
 
-                    // console.log(item);
                     var parameter = {};
                     parameter.prodId = scope.productInfo.productId;
                     parameter.cartId = item.cartId;
+
                     if (item.priceMsrp) {
                         parameter.priceMsrp = item.priceMsrp;//中国建议售价
                     }
+
                     if (item.priceSale) {
                         parameter.priceSale = item.priceSale;//中国最终售价
                     }
-                    $productDetailService.setCartSkuIsSale(parameter).then(function (resp) {
-                        console.log(resp.data);
+
+                    $productDetailService.saveCartSkuPrice(parameter).then(function (resp) {
+                        //console.log(resp.data);
+                        initData();
                     });
+
                 }
             }
         };

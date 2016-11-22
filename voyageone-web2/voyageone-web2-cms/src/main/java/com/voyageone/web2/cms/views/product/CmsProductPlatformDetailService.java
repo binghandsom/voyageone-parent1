@@ -121,6 +121,15 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
+        if(parameter.getPriceMsrp()>0) {
+            platform.setpPriceMsrpSt(parameter.getPriceMsrp());
+            platform.setpPriceMsrpEd(parameter.getPriceMsrp());
+        }
+        if(parameter.getPriceSale()>0) {
+            platform.setpPriceSaleSt(parameter.getPriceSale());
+            platform.setpPriceSaleEd(parameter.getPriceSale());
+        }
+
         platform.getSkus().forEach(f -> {
             if(parameter.getPriceMsrp()>0) {
                 f.setAttribute("priceMsrp", parameter.getPriceMsrp());

@@ -137,7 +137,7 @@
                                     <input type="text" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价">
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
+                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
                                 <td class="mfb-xxt  text-right">{{vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
