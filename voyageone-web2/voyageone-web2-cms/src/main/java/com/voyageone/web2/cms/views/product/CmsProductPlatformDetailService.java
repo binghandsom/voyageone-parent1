@@ -117,7 +117,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
     }
-
+    // 保存价格
     public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
@@ -130,6 +130,21 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.setpPriceSaleEd(parameter.getPriceSale());
         }
 
+        if("Approved".equals(platform.getStatus())) {
+            if(StringUtils.isEmpty(platform.getpNumIId()))
+            {
+                //已经approve但是无NumIID，则插入上新work表,
+                List<String> cartIdList = new ArrayList<>();
+                cartIdList.add(Integer.toString(parameter.getCartId()));
+                //则插入上新work表
+                sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
+            }
+            else
+            {
+                //有NumIID，则价格变更API
+
+            }
+        }
         platform.getSkus().forEach(f -> {
             if(parameter.getPriceMsrp()>0) {
                 f.setAttribute("priceMsrp", parameter.getPriceMsrp());
