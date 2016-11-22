@@ -1500,9 +1500,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         return common;
     }
-    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) throws Exception {
 
-    }
     public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform,boolean isUpdateJmDealPrice) throws Exception {
 
         //更新mongo数据
@@ -1525,8 +1523,10 @@ public class CmsProductDetailService extends BaseViewService {
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
 
+
         //刷新价格
         CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
         priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
+
     }
 }
