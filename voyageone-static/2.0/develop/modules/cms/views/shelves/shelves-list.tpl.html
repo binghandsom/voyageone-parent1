@@ -57,7 +57,7 @@
     </div>
 
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
-        <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen"
+        <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen" ng-init="$si=$index"
                              ng-repeat="i in ctrl.shelves">
             <uib-accordion-heading>
                 <h5 style="margin:6px 0">
@@ -86,8 +86,8 @@
                 </div>
             </div>
 
-            <div class="row" sv-root sv-part="i.products" ng-if="i.$e">
-                <div ng-repeat="p in i.products" ng-if="!p.$hide" sv-element class="clearfix pull-left"
+            <div id="sv{{$si}}" class="row" sv-root sv-part="i.products" ng-if="i.$e">
+                <div ng-repeat="p in i.products" ng-if="!p.$hide" sv-element="{containment:'#sv{{$si}}'}" class="clearfix pull-left"
                      ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
                 </div>
             </div>
