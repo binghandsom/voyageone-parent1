@@ -333,7 +333,7 @@ define([
             var self = this;
             s._uped = true;
             self.shelvesService.releaseImage(s.id).then(function () {
-                self.notify.success('TXT_SUCCESS');
+                self.notify.success('上传请求发送成功。请等待。。。');
             });
         },
         canPreview: function (s) {
