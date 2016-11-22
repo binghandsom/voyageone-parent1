@@ -99,6 +99,8 @@ public class CmsConstants {
         // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
         String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
 
+        //橱窗图片本地保存位置
+        String SHELVES_IMAGE_PATH = "SHELVES_IMAGE_PATH";
         /**
          * 调用价格计算时, 指定渠道使用什么方式计算价格
          * <p>

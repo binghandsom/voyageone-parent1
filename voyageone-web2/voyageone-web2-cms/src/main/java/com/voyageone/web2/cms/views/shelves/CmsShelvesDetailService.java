@@ -165,7 +165,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 List<String> imageNames = cmsBtShelvesInfoBean.getShelvesProductModels()
                         .stream()
                         .filter(item -> !StringUtil.isEmpty(item.getPlatformImageUrl()))
-                        .map(item -> String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId, item.getProductCode()))
+                        .map(item -> String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.getShelvesImagePath(), shelvesId, item.getProductCode()))
                         .collect(Collectors.toList());
                 if (imageNames.size() == 0) {
                     throw new BusinessException("货架中没有商品");

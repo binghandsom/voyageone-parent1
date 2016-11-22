@@ -185,7 +185,7 @@ public class CmsBtShelvesService extends BaseService {
         example.setModified(new Date());
         update(example);
 
-        String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesModel.getId());
+        String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.getShelvesImagePath(), cmsBtShelvesModel.getId());
         try {
             FileUtils.deleteAllFilesOfDir(new File(fileName));
         } catch (Exception ignored) {

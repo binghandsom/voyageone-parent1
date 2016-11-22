@@ -88,7 +88,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                 cmsBtShelvesProductModels = cmsBtShelvesProductModels.stream().filter(cmsBtShelvesProductModel -> StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageUrl())).collect(Collectors.toList());
                 ExecutorService es = Executors.newFixedThreadPool(5);
                 if (cmsBtShelvesInfoBean.getShelvesModel().getClientType() == CmsBtShelvesModelClientType.APP) {
-                    String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
+                    String path = String.format("%s/shelves%d", CmsBtShelvesProductService.getShelvesImagePath(), shelvesId);
                     FileUtils.mkdirPath(path);
                 }
                 cmsBtShelvesProductModels.forEach(item -> es.execute(() -> uploadImage(shopBean, cmsBtShelvesInfoBean.getShelvesModel(), (CmsBtShelvesProductBean) item, cmsBtShelvesTemplateModel, picCatId)));
@@ -107,7 +107,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
                 uploadImageJd(shopBean, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel, picCatId);
             }
         } else {
-            String path = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesModel.getId());
+            String path = String.format("%s/shelves%d", CmsBtShelvesProductService.getShelvesImagePath(), shelvesModel.getId());
             uploadLocal(path, cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         }
 

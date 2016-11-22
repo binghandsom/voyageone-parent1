@@ -1,5 +1,9 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.ListUtils;
@@ -31,8 +35,6 @@ public class CmsBtShelvesProductService extends BaseService {
     private final CmsBtShelvesProductDao cmsBtShelvesProductDao;
     private final CmsBtShelvesProductDaoExt cmsBtShelvesProductDaoExt;
     private final PromotionCodeService promotionCodeService;
-
-    public static final String SHELVES_IMAGE_PATH = "/usr/web/contents/cms/shelves";
 
     @Autowired
     public CmsBtShelvesProductService(CmsBtShelvesProductDao cmsBtShelvesProductDao,
@@ -105,7 +107,7 @@ public class CmsBtShelvesProductService extends BaseService {
     public void delete(CmsBtShelvesProductModel cmsBtShelvesProductModel) {
         cmsBtShelvesProductDao.delete(cmsBtShelvesProductModel.getId());
 
-        String fileName = String.format("%s/shelves%d/%s.jpg", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, cmsBtShelvesProductModel.getShelvesId(), cmsBtShelvesProductModel.getProductCode());
+        String fileName = String.format("%s/shelves%d/%s.jpg", getShelvesImagePath(), cmsBtShelvesProductModel.getShelvesId(), cmsBtShelvesProductModel.getProductCode());
         try {
             FileUtils.delFile(fileName);
         } catch (Exception ignored) {
@@ -117,7 +119,7 @@ public class CmsBtShelvesProductService extends BaseService {
         example.createCriteria().andShelvesIdEqualTo(shelvesId);
         cmsBtShelvesProductDao.deleteByExample(example);
 
-        String fileName = String.format("%s/shelves%d", CmsBtShelvesProductService.SHELVES_IMAGE_PATH, shelvesId);
+        String fileName = String.format("%s/shelves%d", getShelvesImagePath(), shelvesId);
         try {
             FileUtils.deleteAllFilesOfDir(new File(fileName));
         } catch (Exception ignored) {
@@ -147,6 +149,11 @@ public class CmsBtShelvesProductService extends BaseService {
             return cmsBtShelvesProductBeens;
         }
         return new ArrayList<>();
+    }
+
+    public static String getShelvesImagePath(){
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(ChannelConfigEnums.Channel.NONE.getId(), CmsConstants.ChannelConfig.SHELVES_IMAGE_PATH);
+        return config.getConfigValue1();
     }
 
     private Double getPromotionPrice(String code, List<CmsBtPromotionCodesBean> cmsBtPromotionCodes) {
