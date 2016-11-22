@@ -12,6 +12,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
@@ -132,6 +133,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
 //        shopBean.setSessionKey("620272892e6145ee7c3ed73c555b4309f748ZZ9427ff3412641101981");
+//        shopBean.setShop_name("Jewelry海外旗舰店");
         try {
             PictureUploadResponse pictureUploadResponse = null;
 
@@ -200,8 +202,8 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
             if (tmeplate.contains("@price")) {
                 tmeplate = tmeplate.replace("@price", cmsBtShelvesProductModel.getSalePrice().intValue() + "");
             }
-            if (tmeplate.contains("@img-1")) {
-                tmeplate = tmeplate.replace("@img-1", cmsBtShelvesProductModel.getImage());
+            if (tmeplate.contains("@img")) {
+                tmeplate = tmeplate.replace("@img", cmsBtShelvesProductModel.getImage());
             }
             if (tmeplate.contains("@name")) {
                 try {
@@ -230,8 +232,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
             URL url = new URL(imageUrl);
             $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
             //Url
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            try (InputStream inputStream = conn.getInputStream()) {
+            try (InputStream inputStream = HttpUtils.getInputStream(imageUrl)) {
                 while ((len = inputStream.read(buffer)) > 0) {
                     byteArrayOutputStream.write(buffer, 0, len);
                 }
