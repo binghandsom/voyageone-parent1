@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -144,16 +146,21 @@ public class CmsBtShelvesService extends BaseService {
                     // 单品模板的图片模板来生成图片html
                     String htmlImageTemplate = singleTemplate.getHtmlImageTemplate();
                     if (htmlImageTemplate.contains("@price")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@price", String.valueOf(productBean.getSalePrice().intValue()));
                     }
                     if (htmlImageTemplate.contains("@img")) {
                         htmlImageTemplate = htmlImageTemplate.replaceAll("@img", productBean.getImage());
                     }
                     if (htmlImageTemplate.contains("@name")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@name", productBean.getProductName());
+                        try {
+                            htmlImageTemplate = htmlImageTemplate.replaceAll("@name", URLEncoder.encode(productBean.getProductName(), "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                            throw new BusinessException("编码商品名称出错了！");
+                        }
                     }
                     if (htmlImageTemplate.contains("@sale_price")) {
-                        htmlImageTemplate = htmlImageTemplate.replaceAll("@sale_price", String.valueOf(productBean.getPromotionPrice()));
+                        htmlImageTemplate = htmlImageTemplate.replaceAll("@sale_price", String.valueOf(productBean.getPromotionPrice().intValue()));
                     }
                     //singleHtml.replaceAll("@imglink", htmlImageTemplate); // Illegal group reference
                     int index = singleHtml.indexOf("@imglink");
