@@ -53,6 +53,7 @@ define([
                 scope.moveToGroup = moveToGroup;
                 scope.doResetTmProduct = doResetTmProduct;
                 scope.publishProduct = publishProduct;
+                scope.isPublishSucceed = false;
 
                 /**
                  * 获取京东页面初始化数据
@@ -483,6 +484,7 @@ define([
                             productIds: [scope.vm.mastData.productCode],
                             isSelectAll: 0
                         }).then(function () {
+                            scope.isPublishSucceed = true;
                             alert('已完成商品的智能上新！');
                         });
                     });
