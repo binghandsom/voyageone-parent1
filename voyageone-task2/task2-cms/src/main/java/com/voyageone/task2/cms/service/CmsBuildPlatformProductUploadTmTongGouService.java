@@ -24,6 +24,8 @@ import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
+import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
+import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
@@ -31,6 +33,7 @@ import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaTmDao;
 import com.voyageone.service.impl.cms.DictService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
@@ -53,6 +56,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,6 +94,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     private CmsMtPlatformCategorySchemaTmDao platformCategorySchemaDao;
     @Autowired
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
+    @Autowired
+    private PromotionDetailService promotionDetailService;
 
 	@Override
     public SubSystem getSubSystem() {
@@ -346,12 +352,48 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             if (!updateWare) {
                 // 新增商品的时候
                 result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
-            } else {
+			} else {
                 // 更新商品的时候
                 result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             }
 
-            if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
+            // sku模式 or product模式（默认s模式， 如果没有颜色的话， 就是p模式）
+            sxData.setHasSku(true);
+			if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
+				// 用simple的那个sku， 覆盖到原来的那个sku上
+				int idxOrg = -1;
+				String strSimpleSkuValue = null;
+				for (int i = 0; i < itemFieldList.size(); i++) {
+					Field field = itemFieldList.get(i);
+					if (field.getId().equals("skus_simple")) {
+						InputField inputField = (InputField) field;
+						if (!StringUtils.isEmpty(inputField.getValue())) {
+							strSimpleSkuValue = inputField.getValue();
+						}
+					} else if (field.getId().equals("skus")) {
+						idxOrg = i;
+					}
+				}
+				if (!StringUtils.isEmpty(strSimpleSkuValue) && idxOrg != -1) {
+					// 找到如果设置过值的话， 再给一次机会尝试一下
+					// 如果没设置过值的话， 就说明前面已经判断过， 这个商品有多个sku， 没办法使用这种方式
+					((InputField)itemFieldList.get(idxOrg)).setValue(strSimpleSkuValue);
+
+					productInfoXml = SchemaWriter.writeParamXmlString(itemFieldList);
+
+                    // 换为p(roduct)模式
+                    sxData.setHasSku(false);
+					if (!updateWare) {
+						// 新增商品的时候
+						result = tbSimpleItemService.addSimpleItem(shopProp, productInfoXml);
+					} else {
+						// 更新商品的时候
+						result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
+					}
+				}
+			}
+
+			if (!StringUtils.isEmpty(result) && result.startsWith("ERROR:")) {
                 // 天猫官网同购新增/更新商品失败时
                 String errMsg = "天猫官网同购新增商品时出现错误! ";
                 if (updateWare) {
@@ -375,6 +417,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             } else {
                 platformStatus = CmsConstants.PlatformStatus.InStock;   // 在库
             }
+
+            // 更新特价宝
+            sxData.getPlatform().setNumIId(numIId);
+            updateTeJiaBaoPromotion(sxData);
 
             // 回写PXX.pCatId, PXX.pCatPath等信息
             Map<String, String> pCatInfoMap = getSimpleItemCatInfo(shopProp, numIId);
@@ -554,12 +600,41 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //      匹配成功的品牌，会出现在商品详情页面;
         //      如果无法匹配，且商家希望显示品牌的，建议商家通过商家后台申请新品牌。
         String valBrand = "";
-        if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
-                && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
-            // common中的品牌 (格式：<value>nike</value>)
-            valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+        // 优先使用cms_mt_brands_mapping表中的匹配过的天猫平台上已有的品牌id(格式:<value>"{\"brand_id\":\"93764828\"}"</value>)
+        if (!StringUtils.isEmpty(sxData.getBrandCode())) {
+            valBrand = "{\"brand_id\":\"" + sxData.getBrandCode() + "\"}";
+        } else {
+            // 如果没找到匹配过的天猫平台品牌id，就用feed中带过来的brand，让平台自己去匹配
+            if (mainProduct.getCommon() != null && mainProduct.getCommon().getFields() != null
+                    && !StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("brand"))) {
+                // common中的品牌 (格式：<value>nike</value>)
+                valBrand = mainProduct.getCommon().getFields().getStringAttribute("brand");
+            }
         }
         productInfoMap.put("brand", valBrand);
+
+        // 为什么要这段内容呢， 因为发生了一件很奇怪的事情， 曾经上新成功的商品， 更新的时候提示说【id:xxx还没有成为品牌】
+        // 所以使用之前上过的品牌
+        // TODO:目前好像只有024这家店有这个问题， 明天再查一下
+        if (sxData.getChannelId().equals("024")) {
+            // 如果已经上新过了的话， 使用曾经上新过的品牌
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                String numIId = sxData.getPlatform().getNumIId();
+                // 取得更新对象商品id
+                TbItemSchema tbItemSchema = null;
+                try {
+                    tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, NumberUtils.toLong(numIId));
+                    if (tbItemSchema != null && !ListUtils.isNull(tbItemSchema.getFields())) {
+                        InputField inputFieldBrand = (InputField)tbItemSchema.getFieldMap().get("brand");
+                        if (!StringUtils.isEmpty(inputFieldBrand.getDefaultValue())) {
+                            productInfoMap.put("brand", inputFieldBrand.getDefaultValue());
+                        }
+                    }
+                } catch (Exception e) {
+                }
+
+            }
+        }
 
         // 主图(必填)
         // 最少1张，最多5张。多张图片之间，使用英文的逗号进行分割。需要使用alicdn的图片地址。建议尺寸为800*800像素。
@@ -591,10 +666,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         //         start_from为货源地;
         // 格式:<value>{"weight":"1.5","volume":"0.0001","template_id":"243170100","province":"美国","city":"美国"}</value>
         Map<String, Object> paramLogistics = new HashMap<>();
-        // 物流重量 // TODO 这里要改进
-        paramLogistics.put("weight", getValueFromPage("logistics_weight", "1", mainProductPlatformCart));
-        // 物流体积 // TODO 这里是要改成从condition表获取
-        paramLogistics.put("volume", getValueFromPage("logistics_volume", "1", mainProductPlatformCart));
+        // 物流重量
+        paramLogistics.put("weight", getValueFromPageOrCondition("logistics_weight", "", mainProductPlatformCart, sxData, shopProp));
+        // 物流体积
+        paramLogistics.put("volume", getValueFromPageOrCondition("logistics_volume", "", mainProductPlatformCart, sxData, shopProp));
         // 物流模板ID
         paramLogistics.put("template_id", getValueFromPageOrCondition("logistics_template_id", "", mainProductPlatformCart, sxData, shopProp));
         // 省(国家)
@@ -611,13 +686,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 设置成true跨境申报后，商品的每个SKU必须带有HSCODE才可以上架，
         // 如果设置成false邮关申报后，商品不需要设置HSCODE
         String crossBorderRreportFlg = getValueFromPageOrCondition("extends_cross_border_report", "", mainProductPlatformCart, sxData, shopProp);
-        // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
-        // 根据配置取得商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
-        String color = getValueFromPageOrCondition("color_code_codediff", mainProduct.getCommon().getFields().getCode(), mainProductPlatformCart, sxData, shopProp);
-        List<BaseMongoMap<String, Object>> targetSkuList = getSkus(sxData.getCartId(), productList, skuList,
-                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg, color);
-        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList));
+        // 取得天猫同购上新用skus列表
+        List<BaseMongoMap<String, Object>> targetSkuList_0 = getSkus(0, sxData.getCartId(), productList, skuList,
+                priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
 
+        productInfoMap.put("skus", JacksonUtil.bean2Json(targetSkuList_0));
+		if (skuList.size() == 1) {
+			// 只有一个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 可以用上
+			List<BaseMongoMap<String, Object>> targetSkuList_1 = getSkus(1, sxData.getCartId(), productList, skuList,
+					priceConfigValue, skuLogicQtyMap, expressionParser, shopProp, crossBorderRreportFlg);
+			productInfoMap.put("skus_simple", JacksonUtil.bean2Json(targetSkuList_1));
+		} else {
+			// 多个sku的场合， 万一天猫自动匹配的类目只允许一个sku的时候， 就上新不了了
+			productInfoMap.put("skus_simple", null);
+		}
 
         // 扩展(部分必填)
         // 该字段主要控制商品的部分备注信息等，其中部分字段是必须填写的，非必填的字段部分可以完全不用填写。
@@ -631,17 +713,22 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 主要币种代码：人民币/CNY 港币/HKD 新台币/TWD 美元/USD 英镑/GBP 日元/JPY 韩元/KRW 欧元/EUR 加拿大元/CAD
         //             澳元/AUD 新西兰元/NZD
         paramExtends.put("currency_type", getValueFromPageOrCondition("extends_currency_type", "", mainProductPlatformCart, sxData, shopProp));
-        // 是否需要自动翻译(必填)  (如果标题是中文，那么就是false，否则就是true)
+        // 是否需要自动翻译(必填)  (如果有配置优先使用配置项目，没有配置的时候如果标题是中文，那么就是false，否则就是true)
         String extends_translate = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
-                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
-            extends_translate = "false";
-        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
-            extends_translate = "false";
-        } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
-            extends_translate = "false";
-        } else {
-            extends_translate = "true";
+        // 优先使用画面选择的是否自动翻译，再解析cms_mt_channel_condition_config表中的数据字典取得"项目名_XX"(XX为cartId)对应的值
+        extends_translate = getValueFromPageOrCondition("extends_translate", "", mainProductPlatformCart, sxData, shopProp);
+        if (!"true".equalsIgnoreCase(extends_translate) && !"false".equalsIgnoreCase(extends_translate)) {
+            // cms_mt_channel_condition_config表中配置的"extends_translate"的值不是"true"或"false"时
+            if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                    && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
+                extends_translate = "false";
+            } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
+                extends_translate = "false";
+            } else if (StringUtils.isEmpty(StringUtils.toString(productInfoMap.get("title")))) {
+                extends_translate = "false";
+            } else {
+                extends_translate = "true";
+            }
         }
         paramExtends.put("translate", extends_translate);
         // 商品原始语言(必填)
@@ -652,7 +739,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 官网商品地址(必填)  商品在海外网址的地址，如果无法确保一一对应，可以先填写网站url
         paramExtends.put("website_url", getValueFromPageOrCondition("extends_website_url", "", mainProductPlatformCart, sxData, shopProp));
         // 参考价格(非必填)    商品的参考价格，如果大于现在的价格，则填写
-        paramExtends.put("foreign_origin_price", getValueFromPageOrCondition("extends_foreign_origin_price", "", mainProductPlatformCart, sxData, shopProp));
+//        paramExtends.put("foreign_origin_price", getValueFromPageOrCondition("extends_foreign_origin_price", "", mainProductPlatformCart, sxData, shopProp));
         // 是否使用原标题(false自动插入商品关键词）(非必填)  填写true表示使用原始标题，false表示需要插入关键词，不填写默认为不需要插入关键词
         paramExtends.put("original_title", getValueFromPageOrCondition("extends_original_title", "", mainProductPlatformCart, sxData, shopProp));
         // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
@@ -894,8 +981,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     }
 
     /**
-     * 从cms_mt_channel_config表中取得价格对应的配置项目值
+     * 取得天猫同购上新用skus列表
      *
+     * @param type 0: 适合颜色尺码都有的类目， 1：适合单sku的类目
      * @param cartId String 平台id
      * @param productList List<BaseMongoMap<String, Object>> 上新产品列表
      * @param skuList List<BaseMongoMap<String, Object>> 上新合并后sku列表
@@ -904,14 +992,42 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param expressionParser 解析子
      * @param shopProp ShopBean 店铺信息
      * @param crossBorderRreportFlg String 入关方式(true表示跨境申报，false表示邮关申报)
-     * @param color 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
      * @return List<BaseMongoMap<String, Object>> 天猫同购上新用skus列表
      */
-    private List<BaseMongoMap<String, Object>> getSkus(Integer cartId, List<CmsBtProductModel> productList,
+    private List<BaseMongoMap<String, Object>> getSkus(int type, Integer cartId, List<CmsBtProductModel> productList,
                                                        List<BaseMongoMap<String, Object>> skuList,
                                                        String priceConfigValue, Map<String, Integer> skuLogicQtyMap,
                                                        ExpressionParser expressionParser,
-                                                       ShopBean shopProp, String crossBorderRreportFlg, String color) {
+                                                       ShopBean shopProp, String crossBorderRreportFlg) {
+
+		// 官网同购， 上新时候的价格， 统一用所有sku里的最高价
+		Double priceMax = 0d;
+		for (CmsBtProductModel product : productList) {
+			if (product.getCommon() == null
+					|| product.getCommon().getFields() == null
+					|| product.getPlatform(cartId) == null
+					|| ListUtils.isNull(product.getPlatform(cartId).getSkus())) {
+				continue;
+			}
+			for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
+				String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+
+				// 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
+				BaseMongoMap<String, Object> mergedSku = skuList.stream()
+						.filter(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()).equals(skuCode))
+						.findFirst()
+						.get();
+				// 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
+				if (priceMax.compareTo(Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue))) < 0) {
+					priceMax = Double.parseDouble(mergedSku.getStringAttribute(priceConfigValue));
+				}
+
+			}
+
+		}
+
+
+		// 具体设置属性的逻辑
         List<BaseMongoMap<String, Object>> targetSkuList = new ArrayList<>();
         // 循环productList设置颜色和尺码等信息到sku列表
         for (CmsBtProductModel product : productList) {
@@ -936,6 +1052,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
             }
 
+            // 采用Ⅲ有SKU,且有不同图案，颜色的设置方式
+            // 根据cms_mt_channel_condition_config表中配置的取得对象项目，取得当前product对应的商品特质英文（code 或 颜色/口味/香型等）的设置项目 (根据配置决定是用code还是codeDiff，默认为code)
+            SxData sxData = expressionParser.getSxData();
+            // 由于字典解析方式只能取得mainProduct里面字段的值，但color需要取得每个product里面字段的值，所以另加一个新的方法取得color值
+            String color = getColorCondition(sxData.getChannelId(), sxData.getCartId(), product, "color_code_codediff", shopProp);
+            // 如果根据配置(code或者codeDiff)取出来的值大于30位，则采用color字段的值
+            if (!StringUtils.isEmpty(color) && color.length() > 30) {
+                color = product.getCommon().getFields().getColor();
+            }
+
             // 在根据skuCode循环
             for (BaseMongoMap<String, Object> sku : product.getPlatform(cartId).getSkus()) {
                 String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
@@ -943,8 +1069,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 销售属性map(颜色，尺寸)
                 BaseMongoMap<String, Object> saleProp = new BaseMongoMap<>();
                 // 商品特质英文（颜色/口味/香型等）(根据配置决定是用code还是codeDiff，默认为code)
-//                saleProp.put("color", product.getCommon().getFields().getCodeDiff());
-//                saleProp.put("color", product.getCommon().getFields().getCode());
                 saleProp.put("color", color);
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
                 BaseMongoMap<String, Object> mergedSku = skuList.stream()
@@ -954,10 +1078,13 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 // 尺寸
                 saleProp.put("size", mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name()));
                 // 追加销售属性
-                skuMap.put("sale_prop", saleProp);
+				if (type == 0) { // 只有在type是0的场合（有多个颜色尺码的场合）才需要sale_prop这个属性
+					skuMap.put("sale_prop", saleProp);
+				}
 
                 // 价格(根据cms_mt_channel_config表中的配置有可能是从priceRetail或者priceMsrp中取得价格)
-                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
+//                skuMap.put("price", mergedSku.getStringAttribute(priceConfigValue));
+				skuMap.put("price", String.valueOf(priceMax));
                 // outer_id
                 skuMap.put("outer_id", skuCode);
                 // 库存
@@ -985,6 +1112,55 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         }
 
         return targetSkuList;
+    }
+
+    /**
+     * 从cms_mt_channel_condition_config表中取得商品特质英文(CodeDiff或Code)的值
+     * 由于通过字典解析取值，只能取得mainProduct里面的字段的值，而商品特质英文需要取得每个product中的字段的值，所以不能用原来的字典解析
+     *
+     * @param channelId String 渠道id
+     * @param cartId String 平台id
+     * @param prePropId String 条件表达式前缀(运费模板:transportid_ 关联版式:commonhtml_id_)
+     * @return String 指定类型(如：运费模板id或关联版式id等)对应的值
+     */
+    protected String getColorCondition(String channelId, Integer cartId, CmsBtProductModel product, String prePropId, ShopBean shop) {
+        if (product == null) return "";
+
+        // 返回值用(默认为code)
+        String resultStr = product.getCommon().getFields().getCode();
+
+        // 条件表达式前缀(商品特质英文(CodeDiff或Code):color_code_codediff)
+        // 条件表达式表platform_prop_id字段的检索条件为条件表达式前缀加cartId
+        String platformPropId = prePropId + "_" + StringUtils.toString(cartId);
+        // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
+        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(channelId, platformPropId);
+
+        // 使用运费模板或关联版式条件表达式
+        if (ListUtils.notNull(conditionPropValueModels)) {
+            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+                String conditionExpressionStr = conditionPropValueModel.getCondition_expression().trim();
+
+                String propValue = null;
+                // 带名字字典解析
+                if (conditionExpressionStr.contains("color")) {
+                    propValue = product.getCommon().getFields().getColor();
+                } else if (conditionExpressionStr.contains("codeDiff")) {
+                    propValue = product.getCommon().getFields().getCodeDiff();
+                } else if (conditionExpressionStr.contains("code")) {
+                    propValue = product.getCommon().getFields().getCode();
+                }
+
+                // 找到字典对应的值则跳出循环
+                if (!StringUtils.isEmpty(propValue)) {
+                    resultStr = propValue;
+                    break;
+                }
+            }
+        }
+
+        // 如果cms_mt_channel_condition_config表里有配置项，就返回配置的字段值；
+        // 如果没有配置加这个配置项目，直接反应该产品的code
+        return resultStr;
     }
 
     /**
@@ -1054,4 +1230,70 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         return pCatPath;
     }
 
+    /**
+     * 特价宝的调用
+     *
+     * @param sxData            SxData 上新数据
+     */
+    private void updateTeJiaBaoPromotion(SxData sxData) {
+        // 特价宝的调用
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+        CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+        CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
+                , CmsConstants.ChannelConfig.PRICE
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
+
+        // 检查一下
+        String tejiabaoOpenFlag = null;
+        String tejiabaoPricePropName = null;
+
+        if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
+            if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
+                tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
+            }
+        }
+        if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
+            tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
+        }
+
+        if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+            for (CmsBtProductModel sxProductModel : sxData.getProductList()) {
+                // 获取价格
+                if (sxProductModel.getCommon().getSkus() == null || sxProductModel.getCommon().getSkus().size() == 0) {
+                    // 没有sku的code, 跳过
+                    continue;
+                }
+
+                List<CmsBtPromotionSkuBean> skus = new ArrayList<>();
+                for (BaseMongoMap<String, Object> sku : sxProductModel.getPlatform(sxData.getCartId()).getSkus()) {
+                    CmsBtPromotionSkuBean skuBean = new CmsBtPromotionSkuBean();
+                    skuBean.setProductSku(sku.getAttribute("skuCode"));
+                    Double dblPriceSku = Double.parseDouble(sku.getAttribute(tejiabaoPricePropName).toString());
+                    skuBean.setPromotionPrice(new BigDecimal(dblPriceSku));
+                    skus.add(skuBean);
+                }
+
+                Double dblPrice = Double.parseDouble(sxProductModel.getPlatform(sxData.getCartId()).getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
+
+                // 设置特价宝
+                CmsBtPromotionCodesBean cmsBtPromotionCodesBean = new CmsBtPromotionCodesBean();
+                cmsBtPromotionCodesBean.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                cmsBtPromotionCodesBean.setChannelId(sxData.getChannelId());
+                cmsBtPromotionCodesBean.setCartId(sxData.getCartId());
+                // product表结构变化
+                cmsBtPromotionCodesBean.setProductCode(sxProductModel.getCommon().getFields().getCode());
+                cmsBtPromotionCodesBean.setProductId(sxProductModel.getProdId());
+                cmsBtPromotionCodesBean.setPromotionPrice(dblPrice); // 真实售价
+                cmsBtPromotionCodesBean.setNumIid(sxData.getPlatform().getNumIId());
+                cmsBtPromotionCodesBean.setModifier(getTaskName());
+                cmsBtPromotionCodesBean.setSkus(skus);
+                // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodesBean);
+
+            }
+        }
+
+    }
 }

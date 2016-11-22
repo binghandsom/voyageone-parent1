@@ -18,12 +18,10 @@ import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
-import com.voyageone.service.bean.cms.cn.CnCategoryBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -32,7 +30,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -185,6 +186,9 @@ MongoSequenceService commSequenceMongoService;
             throw new BusinessException("重复的店铺内分类名!");
         }
         ShopBean shopBean = Shops.getShop(channelId, cartId);
+        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
+            shopBean = Shops.getShop(channelId, 23);
+        }
         if (shopBean == null) {
             throw new BusinessException("未配置店铺的销售平台!");
         }
@@ -219,7 +223,9 @@ MongoSequenceService commSequenceMongoService;
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-
+        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
+            shopBean = Shops.getShop(channelId, 23);
+        }
         String shopCartId = shopBean.getCart_id();
         if (isJDPlatform(shopBean)) {
             jdShopService.updateShopCategory(shopBean, cId, cName);
@@ -228,7 +234,7 @@ MongoSequenceService commSequenceMongoService;
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-            cnSellerCatService.updateSellerCat(channelId,cId, shopBean);
+            cnSellerCatService.updateSellerCat(currentNode, shopBean);
         }
 
         List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
@@ -247,7 +253,9 @@ MongoSequenceService commSequenceMongoService;
     public void deleteSellerCat(String channelId, int cartId, String parentCId, String cId, String modifier) {
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-
+        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
+            shopBean = Shops.getShop(channelId, 23);
+        }
         String shopCartId = shopBean.getCart_id();
 
         if (isJDPlatform(shopBean)) {
@@ -262,7 +270,9 @@ MongoSequenceService commSequenceMongoService;
             }
 //        }else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         }else if (shopCartId.equals(CartEnums.Cart.LIKING.getId())) {
-            cnSellerCatService.deleteSellerCat(channelId,cId,shopBean);
+            List<CmsBtSellerCatModel>  sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
+            CmsBtSellerCatModel currentNode = sellercats.stream().filter(w ->w.getCatId().equals(cId)).findFirst().get();
+            cnSellerCatService.deleteSellerCat(currentNode,shopBean);
         }
 
 

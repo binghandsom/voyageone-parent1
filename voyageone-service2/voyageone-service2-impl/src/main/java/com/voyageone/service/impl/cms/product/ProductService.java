@@ -32,18 +32,18 @@ import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
 import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.apache.commons.lang.math.NumberUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,6 +110,9 @@ public class ProductService extends BaseService {
     @Autowired
     private ProductLogService productLogService;
 
+    @Autowired
+    private CmsMtEtkHsCodeService cmsMtEtkHsCodeService;
+
 
     /**
      * 获取商品 根据ID获
@@ -123,10 +126,11 @@ public class ProductService extends BaseService {
      * 获取商品 根据ID获
      */
     public List<CmsBtProductModel> getProductByNumIid(String channelId, String numIid, Integer cartId) {
-        String temp = "platforms.P"+cartId+".pNumIId";
-        String query = String.format("{\"%s\":\"%s\"}",temp,numIid);
+        String temp = "platforms.P" + cartId + ".pNumIId";
+        String query = String.format("{\"%s\":\"%s\"}", temp, numIid);
         return cmsBtProductDao.select(query, channelId);
     }
+
     /**
      * 获取商品 根据Code
      */
@@ -148,6 +152,27 @@ public class ProductService extends BaseService {
      */
     public List<CmsBtProductModel> getProductByOriginalCode(String channelId, String code) {
         String query = "{\"common.fields.originalCode\":\"" + code + "\"}";
+        return cmsBtProductDao.select(query, channelId);
+    }
+
+    /**
+     * 获取拆分后的商品 根据OriginalCode，去掉code和original一致的拆分前商品
+     */
+    public List<CmsBtProductModel> getProductByOriginalCodeWithoutItself(String channelId, String code) {
+        List<CmsBtProductModel> result = null;
+        List<CmsBtProductModel> originalCodeProductList = this.getProductByOriginalCode(channelId, code);
+        if (ListUtils.notNull(originalCodeProductList)) {
+            result = originalCodeProductList.stream().filter(p -> !p.getCommonNotNull().getFieldsNotNull().getCode().equals(p.getCommonNotNull().getFieldsNotNull().getOriginalCode())).collect(Collectors.toList());
+        }
+
+        return result;
+    }
+
+    /**
+     * 获取商品 根据SkuCode(一个SkuCode应该只在一个product中)
+     */
+    public List<CmsBtProductModel> getProductBySkuCode(String channelId, String skuCode) {
+        String query = "{\"common.skus.skuCode\":\"" + skuCode + "\"}";
         return cmsBtProductDao.select(query, channelId);
     }
 
@@ -626,6 +651,25 @@ public class ProductService extends BaseService {
                 resultInfo.setUnitPu(hsCodePu[2]);
 //                }
             }
+            if (!StringUtil.isEmpty(hsCodePrivate)) {
+                CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(hsCodePrivate);
+                if (cmsMtEtkHsCodeModel != null) {
+                    resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+                    resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+                    resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+                }
+            }
+//            for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : product.getPlatforms().entrySet()) {
+//                if(entry.getValue().getCartId() > 10 && entry.getValue().getCartId() < 900 && entry.getValue().getStatus().equalsIgnoreCase("Approved") && !StringUtil.isEmpty(entry.getValue().getpCatPath())){
+//                    CmsMtEtkHsCodeModel cmsMtEtkHsCodeModel = cmsMtEtkHsCodeService.getEdcHsCodeByHsCode(entry.getValue().getCartId(),  entry.getValue().getpCatPath());
+//                    if(cmsMtEtkHsCodeModel != null){
+//                        resultInfo.setEtkHsCode(cmsMtEtkHsCodeModel.getEtkHsCode());
+//                        resultInfo.setEtkDescription(cmsMtEtkHsCodeModel.getEtkDescription());
+//                        resultInfo.setEtkUnit(cmsMtEtkHsCodeModel.getEtkUnit());
+//                        break;
+//                    }
+//                }
+//            }
         }
         return resultInfo;
     }
@@ -696,11 +740,11 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(skuIncludes)) {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> sku.getStringAttribute("skuCode").indexOf(skuIncludes) > -1).collect(Collectors.toList());
-                } else if(skuList != null && !skuList.isEmpty()){
+                } else if (skuList != null && !skuList.isEmpty()) {
                     System.out.print(product.getCommon().getFields().getCode());
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus().stream()
                             .filter(sku -> skuList.contains(sku.getStringAttribute("skuCode"))).collect(Collectors.toList());
-                }else{
+                } else {
                     skus = product.getPlatform(Integer.parseInt(cartId)).getSkus();
                 }
             }
@@ -1223,5 +1267,141 @@ public class ProductService extends BaseService {
 //                }
 //            });
 //        }
+    }
+
+    public void updateProductPlatformIsMain(Integer isMain, String mainProductCode, String channelId, String productCode, Integer cartId, String modifier) {
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", productCode);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        updateMap.put("platforms.P" + cartId + ".pIsMain", isMain);
+        updateMap.put("platforms.P" + cartId + ".mainProductCode", mainProductCode);
+        updateMap.put("platforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
+    public void updateProductForMove(String channelId, CmsBtProductModel productMode, String modifier) {
+        //更新mongo数据
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", productMode.getCommon().getFields().getCode());
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+//        updateMap.put("common.fields.priceMsrpSt", productMode.getCommon().getFields().getPriceMsrpSt());
+//        updateMap.put("common.fields.priceMsrpEd", productMode.getCommon().getFields().getPriceMsrpEd());
+//        updateMap.put("common.fields.priceRetailSt", productMode.getCommon().getFields().getPriceRetailSt());
+//        updateMap.put("common.fields.priceRetailEd", productMode.getCommon().getFields().getPriceRetailEd());
+//        updateMap.put("common.modifier", productMode.getCommon().getModifier());
+//        updateMap.put("common.modified", productMode.getCommon().getModified());
+//        updateMap.put("common.skus", productMode.getCommon().getSkus());
+        updateMap.put("common", productMode.getCommon());
+        updateMap.put("platforms", productMode.getPlatforms());
+        updateMap.put("sales", productMode.getSales());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
+    /**
+     * 计算group的价格区间
+     */
+    public void calculatePriceRange(CmsBtProductModel productModel) {
+        // Common.fields下的价格区间
+        Double commonPriceRetailSt = null;
+        Double commonPriceRetailEd = null;
+        Double commonPriceMsrpSt = null;
+        Double commonPriceMsrpEd = null;
+        for (CmsBtProductModel_Sku skuModel : productModel.getCommon().getSkus()) {
+            Double skuPriceRetail = skuModel.getPriceRetail();
+            if (commonPriceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < commonPriceRetailSt)) {
+                commonPriceRetailSt = skuPriceRetail;
+            }
+            if (commonPriceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > commonPriceRetailEd)) {
+                commonPriceRetailEd = skuPriceRetail;
+            }
+
+            Double skuPriceMsrp = skuModel.getPriceMsrp();
+            if (commonPriceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < commonPriceMsrpSt)) {
+                commonPriceMsrpSt = skuPriceMsrp;
+            }
+            if (commonPriceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > commonPriceMsrpEd)) {
+                commonPriceMsrpEd = skuPriceMsrp;
+            }
+        }
+        productModel.getCommon().getFields().setPriceRetailSt(commonPriceRetailSt);
+        productModel.getCommon().getFields().setPriceRetailEd(commonPriceRetailEd);
+        productModel.getCommon().getFields().setPriceMsrpSt(commonPriceMsrpSt);
+        productModel.getCommon().getFields().setPriceMsrpEd(commonPriceMsrpEd);
+
+        // Platforms下的价格区间
+        for (Map.Entry<String, CmsBtProductModel_Platform_Cart> platform : productModel.getPlatforms().entrySet()) {
+            // 跳过P0（主数据）
+            if (platform.getValue().getCartId().equals(0)) {
+                continue;
+            }
+            Double priceSaleSt = null;
+            Double priceSaleEd = null;
+            Double priceRetailSt = null;
+            Double priceRetailEd = null;
+            Double priceMsrpSt = null;
+            Double priceMsrpEd = null;
+            for (Map<String, Object> sku : platform.getValue().getSkus()) {
+                Object objSkuPriceSale = sku.get("priceSale");
+                Double skuPriceSale = null;
+                if (objSkuPriceSale != null) {
+                    skuPriceSale = new Double(String.valueOf(objSkuPriceSale));
+                }
+                if (priceSaleSt == null || (skuPriceSale != null && skuPriceSale < priceSaleSt)) {
+                    priceSaleSt = skuPriceSale;
+                }
+                if (priceSaleEd == null || (skuPriceSale != null && skuPriceSale > priceSaleEd)) {
+                    priceSaleEd = skuPriceSale;
+                }
+
+                Object objSkuPriceRetail = sku.get("priceRetail");
+                Double skuPriceRetail = null;
+                if (objSkuPriceRetail != null) {
+                    skuPriceRetail = new Double(String.valueOf(objSkuPriceRetail));
+                }
+                if (priceRetailSt == null || (skuPriceRetail != null && skuPriceRetail < priceRetailSt)) {
+                    priceRetailSt = skuPriceRetail;
+                }
+                if (priceRetailEd == null || (skuPriceRetail != null && skuPriceRetail > priceRetailEd)) {
+                    priceRetailEd = skuPriceRetail;
+                }
+
+                Object objSkuPriceMsrp = sku.get("priceMsrp");
+                Double skuPriceMsrp = null;
+                if (objSkuPriceMsrp != null) {
+                    skuPriceMsrp = new Double(String.valueOf(objSkuPriceMsrp));
+                }
+                if (priceMsrpSt == null || (skuPriceMsrp != null && skuPriceMsrp < priceMsrpSt)) {
+                    priceMsrpSt = skuPriceMsrp;
+                }
+                if (priceMsrpEd == null || (skuPriceMsrp != null && skuPriceMsrp > priceMsrpEd)) {
+                    priceMsrpEd = skuPriceMsrp;
+                }
+            }
+            platform.getValue().setpPriceSaleSt(priceSaleSt);
+            platform.getValue().setpPriceSaleEd(priceSaleEd);
+            platform.getValue().setpPriceRetailSt(priceRetailSt);
+            platform.getValue().setpPriceRetailEd(priceRetailEd);
+            platform.getValue().setpPriceMsrpSt(priceMsrpSt);
+            platform.getValue().setpPriceMsrpEd(priceMsrpEd);
+        }
+    }
+
+    public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
+        cmsBtProductDao.removeTagByCodes(channelId, codes, tagId);
     }
 }

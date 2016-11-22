@@ -14,4 +14,16 @@
         <constructor-arg ref="cmsProductSolrClient" />
     </bean>
 
+    <solr:solr-server id="cmsProductSolrDistClient" url="http://10.0.0.44:8983/solr/cms_product_d" maxConnections="10" timeout="5000" />
+
+    <bean id="cmsProductSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <constructor-arg ref="cmsProductSolrDistClient" />
+    </bean>
+
+    <solr:solr-server id="cmsBrandCatsSolrDistClient" url="http://10.0.0.44:8983/solr/cms_brand_cats_d" maxConnections="10" timeout="5000" />
+
+    <bean id="cmsBrandCatsSolrDistTemplate" class="org.springframework.data.solr.core.SolrTemplate">
+        <constructor-arg ref="cmsBrandCatsSolrDistClient" />
+    </bean>
+
 </beans>

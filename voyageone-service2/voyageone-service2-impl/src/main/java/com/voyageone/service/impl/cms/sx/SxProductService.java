@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx;
 
+import com.google.common.base.Joiner;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
@@ -19,6 +20,7 @@ import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.*;
+import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
@@ -568,7 +570,7 @@ public class SxProductService extends BaseService {
         return retUrls;
     }
 
-    private Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
+    public Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         int TIMEOUT_TIME = 10*1000;
@@ -1118,6 +1120,43 @@ public class SxProductService extends BaseService {
             }
         }
 
+        // add by desmond 2016/20/26 start
+        // 判断每个Product中是否有重复的sizeSx(有2个以上的sku用同一个sizeSx),如果有的话，上传到天猫/京东等平台会会报"销售属性重复"的错误，
+        // 在这里直接报出异常，让运营到CMS画面去改尺码
+        // sizeSx(设置优先顺序为CMS中的 容量/尺码 > platform size > size)
+        StringBuilder duplicatedSizeSxErrMsg = new StringBuilder();
+        for (CmsBtProductModel productModel : productModelList) {
+            List<String> duplicatedSizeSxList = new ArrayList<>();
+            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                String currentSizeSx = sku.getSizeSx();
+                // 如果已经知道是有重复的sku就跳过
+                if (duplicatedSizeSxList.contains(currentSizeSx)) {
+                    continue;
+                }
+
+                // 如果当前sku.sizeSx在整个产品的skus中有重复的，则加入到重复duplicatedSizeSxList中
+                if (productModel.getCommon().getSkus().stream().filter(s -> currentSizeSx.equals(s.getSizeSx())).count() > 1) {
+                    duplicatedSizeSxList.add(currentSizeSx);
+                }
+            }
+
+            // 如果有重复sizeSx的时候，报出异常，后面的上新不做了
+            if (ListUtils.notNull(duplicatedSizeSxList)) {
+                // Joiner如果对象列表中有null值的话，就会报Preconditions.checkNotNull的nullpointexception
+                duplicatedSizeSxErrMsg.append( String.format("产品(%s)的多个sku的上新用尺码sizeSx(CMS系统中的" +
+                        "\"容量/尺码\">\"platform size\">\"size\")都是重复值(\"%s\"), 同一个产品中" +
+                        "如果多个sku使用同一个上新用尺码时，上新时会报\"销售属性重复\"的错误,请修改成不同的尺码值; ",
+                        productModel.getCommon().getFields().getCode(), Joiner.on(",").join(duplicatedSizeSxList)));
+            }
+        }
+        // 如果有重复的上新用尺码值，则报错,后面的上新不做了
+        if (!StringUtils.isEmpty(duplicatedSizeSxErrMsg.toString())) {
+            $error(duplicatedSizeSxErrMsg.toString());
+            sxData.setErrorMessage(duplicatedSizeSxErrMsg.toString());
+            return sxData;
+        }
+        // add by desmond 2016/20/26 end
+
         // 排序 (根据SizeSx来进行排序)
         for (CmsBtProductModel productModel : productModelList) {
             sortSkuInfo(productModel.getCommon().getSkus());
@@ -1131,6 +1170,95 @@ public class SxProductService extends BaseService {
 
         sxData.setProductList(productModelList);
         sxData.setSkuList(skuList);
+
+        return sxData;
+    }
+
+    /**
+     * 根据code获取SxData
+     * 仅仅为了做成一个SxData类型返回，用于各种别的需要SxData的逻辑
+     * 所以，尽量 不做任何上新check，不做任何多余处理，
+     * 入参的平台id也只用于检索group表且允许group信息没有，而各个平台值可能不同，因此
+     *      SxData里的skuList是空，没必要再去塞一遍
+     *      sizeSx也不设值了，所以sku根据size排序也不做了
+     *
+     * @param needGetGroupCodes 是否获取group下所有code信息，如果false不获取的话，那么主商品code认为是入参的code，SxData里的值也只有入参的code的信息
+     */
+    public SxData getSxDataByCodeWithoutCheck(String channelId, int cartId, String code, boolean needGetGroupCodes) {
+        SxData sxData = new SxData();
+        sxData.setChannelId(channelId);
+        sxData.setCartId(cartId);
+
+        // 获取group信息
+        CmsBtProductGroupModel grpModel = cmsBtProductGroupDao.selectOneWithQuery("{\"productCodes\": \"" + code + "\"," + "\"cartId\":" + cartId + "}", channelId);
+        if (grpModel == null) {
+            String errMsg = "取得上新数据(SxData)失败!没找到对应的group数据!";
+            $warn(errMsg);
+            sxData.setGroupId(-1L); // 可能报错需要用到，就塞个-1，不要让它为空
+            if (needGetGroupCodes) {
+                sxData.setErrorMessage(errMsg);
+                return sxData;
+            }
+        } else {
+            sxData.setGroupId(grpModel.getGroupId());
+            sxData.setPlatform(grpModel);
+        }
+
+        // 主商品code
+        String mainProductCode = code;
+        if (needGetGroupCodes) {
+            mainProductCode = grpModel.getMainProductCode();
+        }
+
+        // 该group下的所有code
+        List<String> productCodeList;
+        if (needGetGroupCodes) {
+            productCodeList = grpModel.getProductCodes();
+        } else {
+            productCodeList = new ArrayList<>();
+            productCodeList.add(code);
+        }
+        String[] codeArr = new String[productCodeList.size()];
+        codeArr = productCodeList.toArray(codeArr);
+
+        // 通过上面取得的code，得到对应的产品信息，以及sku信息
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codeArr, "$in") + "}", channelId);
+        if (ListUtils.isNull(productModelList)) {
+            String errMsg = "取得上新数据(SxData)失败!没找到对应的code数据!";
+            $warn(errMsg);
+            sxData.setErrorMessage(errMsg);
+            return sxData;
+        }
+        sxData.setProductList(productModelList);
+
+        for (CmsBtProductModel productModel : productModelList) {
+            if (mainProductCode.equals(productModel.getCommon().getFields().getCode())) {
+                // 主商品
+                sxData.setMainProduct(productModel);
+
+                Map<String, Object> searchParam = new HashMap<>();
+                searchParam.put("channelId", channelId);
+                searchParam.put("cartId", cartId);
+                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
+                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
+                if (cmsMtBrandsMappingModel != null) {
+                    sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
+                }
+
+                String orgChannelId = productModel.getOrgChannelId(); // feed信息要从org里获取
+                String prodOrgCode = productModel.getCommon().getFields().getOriginalCode(); // 有可能会有原始code
+                if (prodOrgCode == null) prodOrgCode = productModel.getCommon().getFields().getCode();
+                CmsBtFeedInfoModel feedInfo = cmsBtFeedInfoDao.selectProductByCode(orgChannelId, prodOrgCode);
+                if (feedInfo == null) {
+                    // 该商品对应的feed信息不存在，很多地方需要用到feed信息，所以错误信息先塞进sxData里面
+                    String errMsg = "取得上新数据(SxData)失败! 该商品对应的feed信息不存在(OriginalCode/Code=" + prodOrgCode + ")";
+                    $error(errMsg);
+                    sxData.setErrorMessage(errMsg);
+                } else {
+                    sxData.setCmsBtFeedInfoModel(feedInfo);
+                }
+            }
+        }
 
         return sxData;
     }
@@ -2816,9 +2944,10 @@ public class SxProductService extends BaseService {
         }
         try {
             String scProductId = taobaoScItemService.doCreateScItem(shopBean, skuCode, title, qty);
-            if (StringUtils.isEmpty(scProductId)) {
-                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
-            }
+			// 临时忽略检查
+//            if (StringUtils.isEmpty(scProductId)) {
+//                throw new BusinessException(String.format("自动设置天猫商品全链路库存管理时,发生不明异常!skuCode:%s", skuCode));
+//            }
             return scProductId;
         } catch (BusinessException be) {
             throw be;
@@ -3475,11 +3604,13 @@ public class SxProductService extends BaseService {
                 // 先看看有没有默认值
                 String val = singleCheckField.getDefaultValue();
 
-                // 看看所有候选项里是否有"其他""其它"
+                // 看看所有候选项里是否有比较模糊的选项
                 if (StringUtils.isEmpty(val)) {
                     for (Option option : singleCheckField.getOptions()) {
                         if (option.getDisplayName().equals("其他") ||
-                                option.getDisplayName().equals("其它")
+                                option.getDisplayName().equals("其它") ||
+                                option.getDisplayName().equals("混合") ||
+                                option.getDisplayName().equals("通用")
                                 ) {
                             val = option.getValue();
                             break;
@@ -3940,6 +4071,29 @@ public class SxProductService extends BaseService {
             });
         }
         $debug("insertSxWorkLoad 新增SxWorkload结果 " + iCnt);
+    }
+
+    public FeedCustomPropService getCustomPropService() {
+        return customPropService;
+    }
+
+    /**
+     * 百度翻译
+     *
+     * @param transBaiduOrg 要翻译的内容
+     * @return
+     */
+    public List<String> transBaidu(List<String> transBaiduOrg) {
+        List<String> transBaiduCn = null;
+        if (transBaiduOrg.size() > 0) {
+            try {
+                transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return transBaiduCn;
     }
 
 

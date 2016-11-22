@@ -1,27 +1,37 @@
 package com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Created by dell on 2016/10/8.
  */
 public class SaveSkuPromotionPricesParameter {
-    public int id;
-    BigDecimal promotionPrice;
-
-    public int getId() {
-        return id;
+    public String getProductCode() {
+        return productCode;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setProductCode(String productCode) {
+        this.productCode = productCode;
     }
 
-    public BigDecimal getPromotionPrice() {
-        return promotionPrice;
+    public int getPromotionId() {
+        return promotionId;
     }
 
-    public void setPromotionPrice(BigDecimal promotionPrice) {
-        this.promotionPrice = promotionPrice;
+    public void setPromotionId(int promotionId) {
+        this.promotionId = promotionId;
+    }
+
+    String productCode;
+    int promotionId;
+
+    List<SkuPromotionPriceInfo> listSkuPromotionPriceInfo;
+
+    public List<SkuPromotionPriceInfo> getListSkuPromotionPriceInfo() {
+        return listSkuPromotionPriceInfo;
+    }
+
+    public void setListSkuPromotionPriceInfo(List<SkuPromotionPriceInfo> listSkuPromotionPriceInfo) {
+        this.listSkuPromotionPriceInfo = listSkuPromotionPriceInfo;
     }
 }

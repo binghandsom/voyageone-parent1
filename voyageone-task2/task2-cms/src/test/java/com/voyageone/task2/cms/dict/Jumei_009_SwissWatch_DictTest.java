@@ -172,6 +172,24 @@ public class Jumei_009_SwissWatch_DictTest {
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
+        {
+            // 商品自定义图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord(""));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_自定义图片));
+
+            RuleExpression useOriUrl = new RuleExpression();
+            useOriUrl.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
         return ruleRoot;
 
     }
@@ -254,23 +272,23 @@ public class Jumei_009_SwissWatch_DictTest {
             }
         }
 
-        {
-            // PC端自定义图
-            RuleExpression htmlTemplate = new RuleExpression();
-            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-            RuleExpression imageTemplate = new RuleExpression();
-            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
-
-            RuleExpression imageType = new RuleExpression();
-            imageType.addRuleWord(new TextWord(C_自定义图片));
-
-            RuleExpression useOriUrl = new RuleExpression();
-            useOriUrl.addRuleWord(new TextWord("1"));
-
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
-            ruleRoot.addRuleWord(new CustomWord(word));
-        }
+//        {
+//            // PC端自定义图
+//            RuleExpression htmlTemplate = new RuleExpression();
+//            htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+//
+//            RuleExpression imageTemplate = new RuleExpression();
+//            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x790_500x?$bbbbbbbb790x500bbbbbbbb$&$product=%s"));
+//
+//            RuleExpression imageType = new RuleExpression();
+//            imageType.addRuleWord(new TextWord(C_自定义图片));
+//
+//            RuleExpression useOriUrl = new RuleExpression();
+//            useOriUrl.addRuleWord(new TextWord("1"));
+//
+//            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+//            ruleRoot.addRuleWord(new CustomWord(word));
+//        }
 
         {
             // 购物流程图

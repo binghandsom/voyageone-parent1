@@ -1,8 +1,6 @@
 package com.voyageone.common.redis;
 
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
 
 /**
  * @author aooer 2016/4/5.
@@ -26,6 +24,34 @@ public class VoCacheTemplate<K,V> extends RedisTemplate<K,V>{
     @Override
     public <HK, HV> HashOperations<K, HK, HV> opsForHash() {
         return local?new LocalHashOperations<>():super.opsForHash();
+    }
+
+    public <HK, HV> HashOperations<K, HK, HV> opsForHash(boolean local) {
+        if (!local) {
+            if (!initialized) {
+                super.afterPropertiesSet();
+                initialized = true;
+            }
+            return super.opsForHash();
+        }
+        return new LocalHashOperations<>();
+    }
+
+    public ListOperations<K, V> opsForList() {
+        if (!initialized) {
+            super.afterPropertiesSet();
+            initialized = true;
+        }
+        return super.opsForList();
+    }
+
+    @Override
+    public ZSetOperations<K, V> opsForZSet() {
+        if (!initialized) {
+            super.afterPropertiesSet();
+            initialized = true;
+        }
+        return super.opsForZSet();
     }
 
     @Override

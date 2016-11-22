@@ -1,0 +1,61 @@
+<div class="product-shema-detail">
+    <div class="form-horizontal" name="productFieldForm" novalidate>
+        <div class="container-fluid" id="sku">
+            <div class="panel panel-default">
+                <div class="panel-heading ng-scope">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-pop btn-info" ng-click="moveSku()" ng-if="skuList.length > 1">
+                                <i class="fa fa-refresh"></i>&nbsp;{{'TXT_MOVE_TO_NEW_CODE'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover-new table-hover table_main">
+                            <thead>
+                            <tr>
+                                <th class="text-left mfb-xt" translate="BTN_SELECT"></th>
+                                <th class="text-center mfb-xx" translate="TXT_IMAGE"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SKU_CODE"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SKU_INVENTORY"></th>
+                                <th class="text-left mfb-xx" translate="TXT_SIZE"></th>
+                                <th class="text-center mfb-xx" translate="TXT_BARCODE"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="skuInfo in skuList">
+                                <td class="control-label text-left v-middle form-inline">
+                                    <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                        <input ng-model="skuInfo.isChecked" type="checkbox">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+                                </td>
+                                <td class="text-center v-middle">
+                                    <a ng-click=""><img class="thumb-md" src="{{skuInfo.imageUrl}}"></a>
+                                </td>
+                                <td class="text-left v-middle">
+                                    {{skuInfo.skuCode}}
+                                </td>
+                                <td class="text-left v-middle">
+                                    {{skuInfo.qty}}
+                                </td>
+                                <td class="text-left v-middle">
+                                    {{skuInfo.size}}
+                                </td>
+                                <td class="text-center v-middle">
+                                    {{skuInfo.barcode}}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

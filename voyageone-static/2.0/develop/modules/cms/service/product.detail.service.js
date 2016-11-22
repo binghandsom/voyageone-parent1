@@ -25,6 +25,7 @@ define([
 		this.updateProductPlatform = updateProductPlatform;
 		this.updateProductFeed = updateProductFeed;
 		this.getCommonProductInfo = getCommonProductInfo;
+		this.getCommonProductSkuInfo = getCommonProductSkuInfo;
 		this.updateCommonProductInfo = updateCommonProductInfo;
 		this.updateLock = updateLock;
 		this.updateProductAtts = updateProductAtts;
@@ -39,6 +40,17 @@ define([
 		this.getPlatformCategories = getPlatformCategories;
 		this.priceConfirm = priceConfirm;
 		this.updateSkuPrice = updateSkuPrice;
+		this.resetTmProduct = resetTmProduct;
+		this.moveCodeInitCheck = moveCodeInitCheck;
+		this.moveCodeInit = moveCodeInit;
+		this.moveCodeSearch = moveCodeSearch;
+		this.moveCodePreview = moveCodePreview;
+		this.moveCode = moveCode;
+		this.moveSkuInitCheck = moveSkuInitCheck;
+		this.moveSkuInit = moveSkuInit;
+		this.moveSkuSearch = moveSkuSearch;
+		this.moveSkuPreview = moveSkuPreview;
+		this.moveSku = moveSku;
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -299,6 +311,23 @@ define([
 		}
 
 		/**
+		 * 获取产品Sku属性
+		 * @param { prodId:"",cartId:""} 产品id，平台id
+		 * @returns
+		 */
+		function getCommonProductSkuInfo(req){
+			var defer = $q.defer();
+			$productDetailService.getCommonProductSkuInfo(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
 		 * master保存操作
 		 * @param { prodId:"",productComm:""} 产品id，productComm(产品共通属性)
 		 * @returns
@@ -517,6 +546,172 @@ define([
 				});
 			return defer.promise;
 		}
-	}
 
+        /**
+         *  重置天猫产品id
+         * @param req
+         * @returns {Promise}
+         */
+		function resetTmProduct(req){
+			var defer = $q.defer();
+
+			$productDetailService.resetTmProduct(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Code-初始化Check
+		 */
+		function moveCodeInitCheck(req){
+			var defer = $q.defer();
+			$productDetailService.moveCodeInitCheck(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Code-初始化
+		 */
+		function moveCodeInit(req){
+			var defer = $q.defer();
+			$productDetailService.moveCodeInit(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Code-检索
+		 */
+		function moveCodeSearch(req){
+			var defer = $q.defer();
+			$productDetailService.moveCodeSearch(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Code-预览
+		 */
+		function moveCodePreview(req){
+			var defer = $q.defer();
+			$productDetailService.moveCodePreview(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Code
+		 */
+		function moveCode(req){
+			var defer = $q.defer();
+			$productDetailService.moveCode(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Sku-初始化Check
+		 */
+		function moveSkuInitCheck(req){
+			var defer = $q.defer();
+			$productDetailService.moveSkuInitCheck(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Sku-初始化
+		 */
+		function moveSkuInit(req){
+			var defer = $q.defer();
+			$productDetailService.moveSkuInit(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Sku-检索
+		 */
+		function moveSkuSearch(req){
+			var defer = $q.defer();
+			$productDetailService.moveSkuSearch(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Sku-预览
+		 */
+		function moveSkuPreview(req){
+			var defer = $q.defer();
+			$productDetailService.moveSkuPreview(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 移动Sku
+		 */
+		function moveSku(req){
+			var defer = $q.defer();
+			$productDetailService.moveSku(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+	}
 });

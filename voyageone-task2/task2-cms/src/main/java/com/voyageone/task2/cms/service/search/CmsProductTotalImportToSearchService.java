@@ -68,7 +68,7 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
         while (it.hasNext()) {
             CmsBtProductModel cmsBtProductModel = it.next();
 
-            SolrUpdateBean update = cmsProductSearchService.createUpdate(cmsBtProductModel, currentTime);
+            SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, currentTime);
             if (update == null) {
                 continue;
             }
@@ -93,6 +93,7 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
         List<String> removeIdList = new ArrayList<>();
         //删除数据
         SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
+        //noinspection Duplicates
         while (productSearchCursor.hasNext()) {
             CommIdSearchModel model = productSearchCursor.next();
             if (model != null && model.getId() != null) {
@@ -111,6 +112,8 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             cmsProductSearchService.deleteByIds(removeIdList);
             cmsProductSearchService.commit();
         }
+
+        cmsProductSearchService.optimize();
     }
 
     @Override

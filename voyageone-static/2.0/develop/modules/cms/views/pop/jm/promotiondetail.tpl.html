@@ -6,7 +6,12 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="promotionForm">
-
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" translate="平台名称"></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" value="聚美国际" readonly>
+                </div>
+            </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-8">
@@ -14,7 +19,6 @@
                     <input type="hidden"  ng-model="model.id" >
                 </div>
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
                     <vo-message target="promotionForm.promotionName"></vo-message>
@@ -22,113 +26,96 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
+                <label class="col-sm-3 control-label vo_reqfield">活动场景</label>
                 <div class="col-sm-8">
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="0" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 日常专场
-                    </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="1" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 导购团
-                    </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="2" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 大促
-                    </label>
-
-                    <label class="checkbox-inline c-radio">
-                        <input type="radio" name="promotionType"  value="3" ng-model="editModel.model.promotionType" required ng-disabled="vm.isBeginPre">
-                        <span class="fa fa-check"></span> 长期场馆
+                    <label class="checkbox-inline c-checkbox" style="margin-right:40px" ng-repeat="sceneValObj in vm.metaData.promotionSceneList">
+                        <input type="checkbox" name="promotionScene" style="margin: 0" ng-value="sceneValObj.value" ng-disabled="vm.isEnd"
+                               ng-model="editModel.model.promotionScene[sceneValObj.value]"
+                               ng-required="checkboxVal(editModel.model.promotionScene)" >
+                        <span class="fa fa-check"></span> {{sceneValObj.name}}
                     </label>
                 </div>
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionType"></vo-message>
+                    <vo-message target="promotionForm.promotionScene"></vo-message>
                 </div>
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">专场主品牌</label>
+                <label class="col-sm-3 control-label vo_reqfield">活动类型</label>
                 <div class="col-sm-8" >
-                    <select chosen ng-model="editModel.model.cmsBtJmMasterBrandId" required name="cmsBtJmMasterBrandId"
-                            ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList" width="'100%'">
+                    <select class="form-control m-r-xs" ng-model="editModel.model.promotionType" required name="promotionType" width="'100%'" ng-disabled="vm.isEnd||editModel.model.isFstSave==1"
+                            ng-options="typeObj.value as typeObj.name for typeObj in vm.metaData.promotionTypeList">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
             </div>
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.cmsBtJmMasterBrandId"></vo-message>
+                    <vo-message target="promotionForm.promotionType"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group" style="margin-bottom:15px">
+                <label class="col-sm-3 control-label vo_reqfield">专场主品牌</label>
+                <div class="col-sm-4" >
+                    <select chosen ng-model="editModel.model.masterBrandName" required name="masterBrandName" ng-disabled="editModel.model.isFstSave==1"
+                            ng-options="brand.value as brand.value for brand in vm.metaData.jmMasterBrandList" width="'100%'" ng-change="onJmBrandChange()">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                    </select>
+                </div>
+                <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="editModel.model.cmsBtJmMasterBrandId">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{editModel.model.cmsBtJmMasterBrandId}}</label>
+                <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="!editModel.model.cmsBtJmMasterBrandId">聚美品牌未匹配</label>
+            </div>
+            <div class="row form-group">
+                <div class="col-sm-7 col-sm-offset-3">
+                    <vo-message target="promotionForm.masterBrandName"></vo-message>
                 </div>
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">活动时间</label>
+                <label class="col-sm-3 control-label vo_reqfield">准备期截止时间</label>
                 <div class="col-sm-9">
                     <div class="row form-inline">
                         <div class="col-sm-5 input-group">
-                            <input  type="datetime-local" class="form-control"
-                                    ng-readonly="vm.isBegin||editModel.model.status!=0"
-                                    datepicker-popup
-                                    ng-model="editModel.model.activityStart" name="activityStart" required
-                                    max-date="editModel.model.activityEnd"
-                                    min-date = "vm.currentTime"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
-                                    is-open="datePicker1" ng-required="true" close-text="Close"
-                                    ng-disabled="vm.isBeginPre"
-                                    date-disabled="disabled(date, mode)"/>
-                            <span class="input-group-btn" >
-                                <button type="button" ng-disabled="vm.isBegin||editModel.model.status!=0"  class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-                            </span>
-                        </div>
-                        &nbsp;~&nbsp;
-                        <div class="col-sm-5 input-group">
-                            <input  type="datetime-local" class="form-control"
-                                    ng-readonly="vm.isBegin||editModel.model.status!=0"
-                                    datepicker-popup
-                                    ng-model="editModel.model.activityEnd" name="activityEnd" required
-                                    min-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
-                                    is-open="datePicker2" ng-required="true" close-text="Close"
-                                    ng-disabled="vm.isBeginPre"
-                                    date-disabled="disabled(date, mode)"/>
+                            <input type="datetime-local" class="form-control" uib-datepicker-popup ng-readonly="vm.isDeadline"
+                                   ng-model="editModel.model.signupDeadline" name="signupDeadline" required
+                                   min-date="vm.currentTime"
+                                   max-date="editModel.model.prePeriodStart"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="datePicker4" close-text="Close"
+                                   ng-disabled="vm.isDeadline"/>
                             <span class="input-group-btn">
-                                <button type="button" ng-disabled="vm.isBegin ||editModel.model.status!=0" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.activityStart && promotionForm.activityEnd" class="vo-message-success"></vo-message>
+                    <vo-message target="promotionForm.signupDeadline" class="vo-message-success"></vo-message>
                 </div>
             </div>
 
             <!--  预热时间不能大于活动时间   -->
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">预热开始时间</label>
+                <label class="col-sm-3 control-label vo_reqfield">预热时间</label>
                 <div class="col-sm-9">
                     <div class="row form-inline">
                         <div class="col-sm-5 input-group">
-                            <input  type="datetime-local" class="form-control"
-                                    datepicker-popup ng-readonly="vm.isBegin"
+                            <input type="datetime-local" class="form-control"
+                                    datepicker-popup ng-readonly="vm.isBeginPre"
                                     ng-model="editModel.model.prePeriodStart" name="prePeriodStart" required
+                                    min-date="vm.currentTime"
                                     max-date="editModel.model.activityStart"
-                                    date-model-format="yyyy-MM-dd HH:mm:ss"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
                                     is-open="datePicker3" ng-required="true" close-text="Close"
                                     ng-disabled="vm.isBeginPre"
                                     date-disabled="disabled(date, mode)"/>
                             <span class="input-group-btn" >
-                                <button type="button" class="btn btn-default"  ng-disabled="vm.isBegin" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" class="btn btn-default" ng-disabled="vm.isBeginPre" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
@@ -141,62 +128,44 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label">准备期截止时间</label>
+                <label class="col-sm-3 control-label vo_reqfield">活动时间</label>
                 <div class="col-sm-9">
                     <div class="row form-inline">
                         <div class="col-sm-5 input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup
-                                   ng-model="editModel.model.signupDeadline"
-                                   max-date="editModel.model.prePeriodStart"
-                                   date-model-format="yyyy-MM-dd"
-                                   is-open="datePicker4" close-text="Close" />
+                            <input type="datetime-local" class="form-control"
+                                    ng-readonly="vm.isBegin||editModel.model.status!=0"
+                                    datepicker-popup
+                                    ng-model="editModel.model.activityStart" name="activityStart" required
+                                    max-date="editModel.model.activityEnd"
+                                    min-date = "vm.currentTime"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                    is-open="datePicker1" ng-required="true" close-text="Close"
+                                    ng-disabled="vm.isBegin"
+                                    date-disabled="disabled(date, mode)"/>
+                            <span class="input-group-btn" >
+                                <button type="button" ng-disabled="vm.isBegin||editModel.model.status!=0" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </div>~
+                        <div class="col-sm-5 input-group" style="margin-left:20px">
+                            <input  type="datetime-local" class="form-control"
+                                    ng-readonly="vm.isEnd||editModel.model.status!=0"
+                                    datepicker-popup
+                                    ng-model="editModel.model.activityEnd" name="activityEnd" required
+                                    min-date="editModel.model.activityStart"
+                                    date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                    is-open="vm.datePicker2" ng-required="true" close-text="Close"
+                                    ng-disabled="vm.isEnd"
+                                    date-disabled="disabled(date, mode)"/>
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+                                <button type="button" ng-disabled="vm.isEnd ||editModel.model.status!=0" class="btn btn-default" ng-click="onDateChange()"><i class="glyphicon glyphicon-calendar"></i></button>
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield">专场优惠</label>
-                <div class="col-sm-8">
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionDown" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;直降
-                        </label>
-                    </div>
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-2">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionFullMinus" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;满减
-                        </label>
-                    </div>
-                    <div class="row m-l-md">
-                        <div class="col-md-6">
-                            <div class="col-md-1 m-t-xs"><strong class="text-base">满</strong></div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" ng-model="editModel.model.promotionFullAmount" ng-disabled="!editModel.model.isPromotionFullMinus || vm.isBeginPre" scale="15,2">
-                            </div>
-                            <div class="col-md-1 m-t-xs"><strong class="text-base">减</strong></div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" ng-model="editModel.model.promotionMinusAmount" ng-disabled="!editModel.model.isPromotionFullMinus || vm.isBeginPre" scale="15,2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row wrapper-xs">
-                        <label class="checkbox-inline c-checkbox col-md-4">
-                            <input type="checkbox" name="promotionYh" ng-model="editModel.model.isPromotionGiveCoupons" ng-disabled="vm.isBeginPre" ng-required = "!(editModel.model.isPromotionDown||editModel.model.isPromotionFullMinus||editModel.model.isPromotionGiveCoupons)">
-                            <span class="fa fa-check"></span>&nbsp;优惠券（聚美承担）
-                        </label>
-                    </div>
-                </div>
-            </div>
-
             <div class="row form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <vo-message target="promotionForm.promotionYh"></vo-message>
+                    <vo-message target="promotionForm.activityStart && promotionForm.activityEnd" class="vo-message-success"></vo-message>
                 </div>
             </div>
 
@@ -226,21 +195,15 @@
             </div>
 
             <div class="row form-group">
-                <label class="col-sm-3 control-label">专场涉及品类</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control"  ng-model="editModel.model.category">
-                </div>
-            </div>
-            <div class="row form-group">
                 <label class="col-sm-3 control-label">专场涉及品牌</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control no-resize" rows="4" ng-model="editModel.model.brand" disabled></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.brand" disabled></textarea>
                 </div>
             </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label">活动备注</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control no-resize" rows="2" ng-model="editModel.model.comment"></textarea>
+                    <textarea class="form-control no-resize" rows="3" ng-model="editModel.model.comment"></textarea>
                 </div>
             </div>
         </form>
@@ -255,18 +218,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="tag in getTagList()">
+                <tr ng-repeat="tag in editModel.tagList" ng-if="tag.model.active != 0">
                     <td class="mfb-xxxsm">
-                        <input class="form-control" ng-model="tag.tagName" name="tagName{{$index}}" ng-required="true" maxlength="20" required>
-                        <vo-message target="tagListForm['tagName' + $index]"></vo-message>
+                        <input class="form-control" ng-model="tag.model.tagName" name="tagName{{$index}}" required maxlength="20" ng-readonly="tag.featured">
+                        <vo-message target="tagListForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
                     </td>
-                    <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.id != ''" ng-click="delTag(tag)"><i class="fa fa-trash-o"></i></button></td>
+                    <td class="mfb-xxs text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="$index>0" ng-click="delTag(tag, $index)"><i class="fa fa-trash-o"></i></button></td>
                 </tr>
                 </tbody>
             </table>
         </form>
         <div class="form-group">
-            <button ng-disabled="isEdit" class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
+            <button ng-disabled="vm.isEnd" class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
         </div>
     </div>
     <div class="modal-footer">

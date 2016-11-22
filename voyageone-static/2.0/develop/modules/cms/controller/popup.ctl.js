@@ -60,7 +60,7 @@ define([
                 "backdrop": 'static',
                 "size": 'lg'
             },
-            "categoryMul":{
+            "categoryMul": {
                 "templateUrl": "views/pop/bulkUpdate/categoryMul.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/categoryMul.ctl",
                 "controller": 'popCategoryMulCtl as ctrl',
@@ -195,13 +195,13 @@ define([
             }
         },
         "platformMapping": {
-            "propertyMapping":{
+            "propertyMapping": {
                 "templateUrl": "views/pop/platformMapping/propertyMapping.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/propertyMapping.ctl",
                 "controller": 'propertyMappingController as ctrl',
                 "size": 'lg'
             },
-            "propertySetting":{
+            "propertySetting": {
                 "templateUrl": "views/pop/platformMapping/propertySetting.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/platformMapping/propertySetting.ctl",
                 "controller": 'propertySettingController as ctrl',
@@ -302,14 +302,33 @@ define([
                 "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                 "controller": 'popAddStockIncrementCtl'
             },
-            "setSkuPrice":{
+            "setSkuPrice": {
                 "templateUrl": "views/pop/promotion/setSkuPrice.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/setSkuPrice.ctl",
                 "controller": 'setSkuPriceCtl as ctrl',
-                "size":"lg"
+                "size": "lg"
             }
         },
         "jumei": {
+            "promotion": {
+                "imageSuit": {
+                    "templateUrl": "views/pop/jm/promotion/image.suit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.suit.ctl",
+                    "controller": 'imageSuitCtl as ctrl',
+                    "size": 'lg'
+                },
+                "imageUpload": {
+                    "templateUrl": "views/pop/jm/promotion/image.upload.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.upload.ctl",
+                    "controller": 'imageUploadCtl as ctrl'
+                },
+                "imageBatchUpload": {
+                    "templateUrl": "views/pop/jm/promotion/image.batch.upload.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotion/image.batch.upload.ctl",
+                    "controller": 'imageBatchUploadCtl as ctrl',
+                    "size": "lg"
+                }
+            },
             "jmPromotionDefaultSetting": {
                 "batch": {
                     "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
@@ -352,7 +371,14 @@ define([
                 "priceModify": {
                     "templateUrl": "views/pop/jm/pricemodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/pricemodify.ctl",
+                    "controller": 'popPriceModifyCtl',
+                    "size": '600',
                     "controller": 'popPriceModifyCtl'
+                },
+                "tagModify": {
+                    "templateUrl": "views/pop/jm/tagmodify.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/tagmodify.ctl",
+                    "controller": 'popTagModifyCtl'
                 }
             },
             "jmImageManage": {
@@ -496,10 +522,21 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/hsCodeChange.ctl",
                 "controller": 'HsCodeChangeController as ctrl'
             },
-            "approveConfirm":{
+            "approveConfirm": {
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
+            },
+            "skuMoveConfirm": {
+                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
+                "controller": 'SkuMoveConfirmController as ctrl'
+            },
+            "moveResult": {
+                "templateUrl": "views/pop/product/move_result.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
+                "controller": 'MoveResultController as ctrl',
+                "size": 'sm'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -627,7 +664,7 @@ define([
          * @param context
          * @returns {*}
          */
-        $scope.popCategoryMul = function popCategoryMul(context){
+        $scope.popCategoryMul = function popCategoryMul(context) {
             return openModal(popActions.bulkUpdate.categoryMul, context);
         };
 
@@ -941,7 +978,7 @@ define([
         /**
          * sku价格刷新
          */
-        $scope.openSetSkuPrice = function openSetSkuPrice(context){
+        $scope.openSetSkuPrice = function openSetSkuPrice(context) {
             return openModal(popActions.promotion.setSkuPrice, context);
         };
 
@@ -1056,7 +1093,7 @@ define([
         /**
          * 图片和尺码表确认框
          */
-        $scope.openTemplateConfirm = function openTemplateConfirm(context){
+        $scope.openTemplateConfirm = function openTemplateConfirm(context) {
             return openModal(popActions.store.listing.delConfirm, context);
         };
 
@@ -1117,6 +1154,11 @@ define([
             return openModal(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
 
+
+        //聚美一览中，price
+        $scope.openJMTagModify = function (context) {
+            return openModal(popActions.jumei.jmPromotionDetail.tagModify, context);
+        };
         //聚美图片管理中，追加按钮
         $scope.openJmImageSetting = function openJmImageSetting(context) {
             return openModal(popActions.jumei.jmImageManage.imageSetting, context);
@@ -1197,44 +1239,53 @@ define([
         };
 
         /**税号改变 hsCodeChange*/
-        $scope.openHsCodeChange = function openHsCodeChange(context){
-            return openModal(popActions.product.hsCodeChange,context);
+        $scope.openHsCodeChange = function openHsCodeChange(context) {
+            return openModal(popActions.product.hsCodeChange, context);
         };
 
         /**属性匹配*/
-        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping,searchInfo){
-            return openModal(popActions.platformMapping.propertyMapping,_.extend(fieldMapping,searchInfo));
+        $scope.openPropertyMapping = function openPropertyMapping(fieldMapping, searchInfo) {
+            return openModal(popActions.platformMapping.propertyMapping, _.extend(fieldMapping, searchInfo));
         };
 
         /**属性编辑*/
-        $scope.openPropertySetting = function openPropertySetting(context){
-            return openModal(popActions.platformMapping.propertySetting,context);
+        $scope.openPropertySetting = function openPropertySetting(context) {
+            return openModal(popActions.platformMapping.propertySetting, context);
         };
 
         /**上新价格确认*/
-        $scope.openApproveConfirm = function openApproveConfirm(context){
-            return openModal(popActions.product.approveConfirm,context);
+        $scope.openApproveConfirm = function openApproveConfirm(context) {
+            return openModal(popActions.product.approveConfirm, context);
         };
 
         /**
-         * 品牌审核弹出框
+         * 聚美选择套图
          */
-        $scope.openMasterBrandCheck = function openMasterBrandCheck(context){
-            return openModal(popActions.maintain.masterBrandCheck,context);
+        $scope.openImageSuit = function openImageSuit(context) {
+            return openModal(popActions.jumei.promotion.imageSuit, context)
         };
 
         /**
-         * master 品牌匹配
+         * 聚美活动图片上传
          */
-        $scope.openMasterBrandMapDetail = function openMasterBrandMapDetail(context){
-            return openModal(popActions.maintain.masterBrandMapDetail,context)
+        $scope.openImageJmUpload = function openImageJmUpload(context) {
+            return openModal(popActions.jumei.promotion.imageUpload, context)
         };
 
         /**
-         * 主品牌编辑
+         * 聚美活动图片批量上传
          */
-        $scope.openMasterBrandEdit = function openMasterBrandEdit(context){
-            return openModal(popActions.maintain.masterBrandEdit,context);
+        $scope.openImageBatchJmUpload = function openImageBatchJmUpload(context) {
+            return openModal(popActions.jumei.promotion.imageBatchUpload, context)
+        };
+
+        /**移动SKU确认*/
+        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
+            return openModal(popActions.product.skuMoveConfirm, context);
+        };
+        /**移动SKU的结果确认*/
+        $scope.openMoveResult = function openMoveResult(context) {
+            return openModal(popActions.product.moveResult, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

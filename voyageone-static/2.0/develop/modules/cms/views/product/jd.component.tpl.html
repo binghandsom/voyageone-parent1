@@ -73,6 +73,16 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
                                             </a>
                                         </li>
+                                        <li ng-if="cartInfo.value == 23 || cartInfo.value == 20">
+                                            <a href="javascript:void(0)" ng-click="doResetTmProduct()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;重置天猫产品Id
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" ng-click="moveToGroup()" target="_blank">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

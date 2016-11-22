@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 
 /**
  * 模块 jm  针对资源的rest服务
- *
- * @description
- * @author: holysky
- * @date: 2016/4/20 15:46
+ * <p>
+ * create by holysky on 2016/4/20 15:46
  * COPYRIGHT © 2001 - 2016 VOYAGE ONE GROUP INC. ALL RIGHTS RESERVED.
+ *
+ * @author holysky
  */
 @RestController
 @RequestMapping(
@@ -35,20 +35,20 @@ import java.util.stream.Collectors;
         method = RequestMethod.POST
 )
 public class CmsJMController extends CmsController {
-    private static final Logger log = LoggerFactory.getLogger(CmsJMController.class);
+    private final TagService tagService;
+    private final CmsJmPromotionService jmPromotionService;
 
     @Autowired
-    private TagService tagService;
-    @Autowired
-    private CmsJmPromotionService jmPromotionService;
+    public CmsJMController(TagService tagService, CmsJmPromotionService jmPromotionService) {
+        this.tagService = tagService;
+        this.jmPromotionService = jmPromotionService;
+    }
 
     public static final class AddPromotionParam {
-
-
         CmsBtJmPromotionModel promotion = new CmsBtJmPromotionModel();
         List<Map<String, String>> products;
-        Double discount=1.0; //正折扣不是 xxx% off
-        Integer priceType=1; //默认用官方销售价计算
+        Double discount = 1.0; //正折扣不是 xxx% off
+        Integer priceType = 1; //默认用官方销售价计算
         String tagName;
         String tagId;
         private Integer isSelAll = null;
@@ -122,14 +122,12 @@ public class CmsJMController extends CmsController {
 
     /**
      * 高级检索画面，批量添加到JM活动
-     * @param param
-     * @return
      */
     @RequestMapping("promotion/product/add")
     public AjaxResponse doProductAdd(@RequestBody AddPromotionParam param) {
         UserSessionBean user = getUser();
         Map<String, Object> response = jmPromotionService.addProductionToPromotion(param.getProductIds(), param.promotion, user.getSelChannelId(),
-                param.discount, param.priceType, param.tagName, param.tagId, user.getUserName(), param.getIsSelAll(), getCmsSession());
+                param.discount, param.priceType, param.tagName, param.tagId, param.getIsSelAll(), getCmsSession());
         return success(response);
     }
 
@@ -139,12 +137,11 @@ public class CmsJMController extends CmsController {
     }
 
     @RequestMapping("promotion/product/getPromotionTags")
-    public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params){
+    public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params) {
 
         //fix error by holysky
         int tag_id = Integer.parseInt(String.valueOf(params.get("refTagId")));
 
         return success(tagService.getListByParentTagId(tag_id));
     }
-
 }

@@ -178,6 +178,9 @@
             <if test="errMsg != null" >
                 err_msg = #{errMsg,jdbcType=VARCHAR},
             </if>
+            <if test="numIid != null" >
+                num_iid = #{numIid,jdbcType=VARCHAR},
+            </if>
                 modified = now(),
             <if test="modifier != null" >
                 modifier = #{modifier,jdbcType=VARCHAR},

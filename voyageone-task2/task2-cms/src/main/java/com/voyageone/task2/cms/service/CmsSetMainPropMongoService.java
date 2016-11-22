@@ -65,6 +65,7 @@ import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * feed->master导入服务
@@ -539,6 +541,18 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+
+                        List<CmsBtFeedInfoModel_Sku> skus = feed.getSkus().stream()
+                                .filter(sku -> sku.getPriceNet() != null && sku.getPriceNet().compareTo(0D) > 0 && !StringUtil.isEmpty(sku.getBarcode()))
+                                .collect(Collectors.toList());
+                        if(ListUtils.isNull(skus)){
+                            // feed里面的品牌已被加入黑名单,导入失败
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                                    "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (CommonConfigNotFoundException ce) {
@@ -1099,9 +1113,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 } else {
                     // 生成productGroup数据
                     doSetGroup(feed);
+                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    $info("doCreateCmsBtProductModel:" +  (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1126,24 +1142,27 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+                    $info("doSaveItemDetails:" +  (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-
+                    $info("doSetPrice:" +  (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
+                    $info("setSellerCats:" +  (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
-
+                    $info("weightCalculate:" +  (System.currentTimeMillis() - startTime));
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+                    $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 
                 }
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-
+                $info("insertCmsBtFeedImportSize:" +  (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -1156,6 +1175,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
                 insertWorkload(cmsProduct);
+                $info("insertWorkload:" +  (System.currentTimeMillis() - startTime));
 //                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
 //                    // 遍历主数据product里的sku,看看有没有
 //                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
@@ -2214,6 +2234,11 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             } else if (product.getCommon().getFields() == null) {
                 product.getCommon().setFields(new CmsBtProductModel_Field());
             }
+
+            if(product.getChannelId().equalsIgnoreCase("024")){
+                product.getCommon().getFields().setLongDesEn(feed.getLongDescription());
+            }
+
             // delete desmond 2016/07/01 start 跟上面重复了
 //            if (product.getFields() == null) {
 //                product.setFields(new CmsBtProductModel_Field());
@@ -3989,13 +4014,24 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
      */
     private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
         if (feed == null) return;
+//
+//        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
+//        feed.setUpdMessage(errMsg);
+//        if (!StringUtils.isEmpty(isFeedReImport))
+//            feed.setIsFeedReImport(isFeedReImport);
+//        feed.setModifier(getTaskName());
+//        feedInfoService.updateFeedInfo(feed);
+        Map <String, Object>paraMap = new HashedMap();
+        paraMap.put("code",feed.getCode());
 
-        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
-        feed.setUpdMessage(errMsg);
+        Map <String, Object>rsMap = new HashedMap();
+        rsMap.put("updFlg",updFlg);
+        rsMap.put("updMessage",errMsg);
+        rsMap.put("modifier",getTaskName());
+        rsMap.put("modified",DateTimeUtil.getNowTimeStamp());
         if (!StringUtils.isEmpty(isFeedReImport))
-            feed.setIsFeedReImport(isFeedReImport);
-        feed.setModifier(getTaskName());
-        feedInfoService.updateFeedInfo(feed);
+            rsMap.put("isFeedReImport",isFeedReImport);
+        feedInfoService.updateFeedInfo(feed.getChannelId(), paraMap, rsMap);
     }
 
     /**
