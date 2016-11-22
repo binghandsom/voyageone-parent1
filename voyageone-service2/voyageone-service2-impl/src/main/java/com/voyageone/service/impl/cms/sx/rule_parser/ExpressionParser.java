@@ -46,9 +46,14 @@ public class ExpressionParser extends VOAbsLoggable {
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
-        this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
-        this.masterHtmlWordParser = new MasterHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
-        this.masterClrHtmlWordParser = new MasterClrHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
+        // modified by morse.lu 2016/11/22 start
+//        this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId());
+//        this.masterHtmlWordParser = new MasterHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
+//        this.masterClrHtmlWordParser = new MasterClrHtmlWordParser(sxData.getMainProduct(), sxData.getCartId());
+        this.masterWordParser = new MasterWordParser(sxData.getMainProduct(), sxData.getCartId(), this);
+        this.masterHtmlWordParser = new MasterHtmlWordParser(sxData.getMainProduct(), sxData.getCartId(), this);
+        this.masterClrHtmlWordParser = new MasterClrHtmlWordParser(sxData.getMainProduct(), sxData.getCartId(), this);
+        // modified by morse.lu 2016/11/22 end
         this.feedCnWordParser = new FeedCnWordParser(sxData.getMainProduct());
         this.feedOrgWordParser = new FeedOrgWordParser(sxData.getMainProduct(), sxData.getCmsBtFeedInfoModel());
         this.skuWordParser = new SkuWordParser();
@@ -103,13 +108,22 @@ public class ExpressionParser extends VOAbsLoggable {
                 }
                 break;
             case MASTER:
-                plainValue = masterWordParser.parse(ruleWord);
+                // modified by morse.lu 2016/11/22 start
+//                plainValue = masterWordParser.parse(ruleWord);
+                plainValue = masterWordParser.parse(ruleWord, shopBean, user, extParameter);
+                // modified by morse.lu 2016/11/22 end
                 break;
             case MASTER_HTML:
-                plainValue = masterHtmlWordParser.parse(ruleWord);
+                // modified by morse.lu 2016/11/22 start
+//                plainValue = masterHtmlWordParser.parse(ruleWord);
+                plainValue = masterHtmlWordParser.parse(ruleWord, shopBean, user, extParameter);
+                // modified by morse.lu 2016/11/22 end
                 break;
             case MASTER_CLR_HTML:
-                plainValue = masterClrHtmlWordParser.parse(ruleWord);
+                // modified by morse.lu 2016/11/22 start
+//                plainValue = masterClrHtmlWordParser.parse(ruleWord);
+                plainValue = masterClrHtmlWordParser.parse(ruleWord, shopBean, user, extParameter);
+                // modified by morse.lu 2016/11/22 end
                 break;
             case FEED_ORG:
                 plainValue = feedOrgWordParser.parse(ruleWord);

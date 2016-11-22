@@ -8,6 +8,7 @@ import java.util.Map;
 public class MasterWord extends RuleWord{
     private String value;
     private Map<String, String> extra;
+    private RuleExpression defaultExpression;
 
     public MasterWord() {
         setWordType(WordType.MASTER);
@@ -32,5 +33,13 @@ public class MasterWord extends RuleWord{
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public RuleExpression getDefaultExpression() {
+        return defaultExpression;
+    }
+
+    public void setDefaultExpression(RuleExpression defaultExpression) {
+        this.defaultExpression = defaultExpression;
     }
 }
