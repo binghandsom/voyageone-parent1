@@ -3,6 +3,12 @@ package com.voyageone.web2.cms.views.product;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +46,29 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private CmsAdvanceSearchService cmsAdvanceSearchService;
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
+    public  AjaxResponse  saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) throws Exception {
+        UserSessionBean userSessionBean = getUser();
+        cmsProductPlatformDetailService.saveCartSkuPrice(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+        return success(null);
+    }
+
+        @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SetCartSkuIsSale)
+    public  AjaxResponse setCartSkuIsSale(@RequestBody SetCartSkuIsSaleParameter parameter) {
+        UserSessionBean userSessionBean = getUser();
+        cmsProductPlatformDetailService.setCartSkuIsSale(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+        return success(null);
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetCalculateCartMsrp)
+    public  AjaxResponse getCalculateCartMsrp(@RequestBody Long prodId) throws IllegalPriceConfigException, PriceCalculateException {
+        return success(cmsProductPlatformDetailService.getCalculateCartMsrp(getUser().getSelChannelId(),prodId));
+
+    }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductPriceSales)
+    public AjaxResponse getProductPriceSales(@RequestBody Long prodId) {
+        return success(cmsProductPlatformDetailService.getProductPriceSales(getUser().getSelChannelId(),prodId));
+    }
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_PLATFORM)
     public AjaxResponse doGetProductPlatform(@RequestBody Map params) {
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));

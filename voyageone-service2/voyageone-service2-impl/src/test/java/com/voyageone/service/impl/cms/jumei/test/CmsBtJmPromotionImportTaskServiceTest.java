@@ -15,6 +15,6 @@ public class CmsBtJmPromotionImportTaskServiceTest {
 
     @Test
     public  void  test() throws Exception {
-        service.importFile(53,"/usr/web/contents/cms/jumei_sx/import");
+        service.importFile(54,"/usr/web/contents/cms/jumei_sx/import");
     }
 }

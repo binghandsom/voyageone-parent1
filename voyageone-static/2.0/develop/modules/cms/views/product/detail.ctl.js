@@ -16,6 +16,8 @@ define([
     './jgj.component.ctl',
     './gw.component.ctl',
     './dl.component.ctl',
+    './price.component.ctl',
+    './dl.component.ctl',
     './inventory.component.ctl'
 ], function (cms) {
 

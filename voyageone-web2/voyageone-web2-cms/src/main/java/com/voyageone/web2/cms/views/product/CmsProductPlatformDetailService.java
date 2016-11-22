@@ -13,25 +13,27 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsProductPlatformDetail.*;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
+import com.voyageone.service.bean.cms.product.DelistingParameter;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
+import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
+import com.voyageone.service.impl.cms.prices.PriceCalculateException;
+import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
-import com.voyageone.service.model.cms.CmsMtBrandsMappingModel;
-import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,15 +60,228 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     private PlatformCategoryService platformCategoryService;
     @Autowired
     private SxProductService sxProductService;
+    @Autowired
+    private  CmsProductDetailService cmsProductDetailService;
+    @Autowired
+    PriceService priceService;
+
+    //设置isSale
+    public  void  setCartSkuIsSale(SetCartSkuIsSaleParameter parameter,String channelId,String userName) {
+
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
+        CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
+        if (parameter.getIsSale()) {
+            // 如果该已经approve，则插入上新work表
+            setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
+        }
+        else {
+            if (!StringUtils.isEmpty(platform.getpNumIId())) {
+                //如果numiid存在则判断调用group下线，还是code下线 中同时清空pReallyStatus的值
+
+                platform.setpReallyStatus("");
+                setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
+
+            }
+        }
+        platform.getSkus().forEach(f -> {
+            f.setAttribute("isSale", parameter.getIsSale());
+        });
+        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+
+    }
+
+    void  setCartSkuIsSale_True(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct,CmsBtProductModel_Platform_Cart platform,String userName)
+    {
+        // 如果该已经approve，则插入上新work表
+        if("Approved".equals(platform.getStatus())) {
+
+            List<String> cartIdList = new ArrayList<>();
+
+            cartIdList.add(Integer.toString(parameter.getCartId()));
+
+            //则插入上新work表
+            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
+        }
+    }
+    void  setCartSkuIsSale_False(SetCartSkuIsSaleParameter parameter, CmsBtProductModel cmsBtProduct,CmsBtProductModel_Platform_Cart platform,String userName) {
+        //如果numiid存在则判断调用group下线，还是code下线
+        DelistingParameter delistingParameter = new DelistingParameter();
+        delistingParameter.setCartId(parameter.getCartId());
+        delistingParameter.setChannelId(cmsBtProduct.getChannelId());
+        delistingParameter.setProductCode(cmsBtProduct.getCommon().getFields().getCode());
+        delistingParameter.setComment("");
+        if (!StringUtils.isEmpty(platform.getpNumIId())) {
+
+            if (platform.getpIsMain() == 1) {
+
+                cmsProductDetailService.delistinGroup(delistingParameter, userName);
+            } else {
+                cmsProductDetailService.delisting(delistingParameter, userName);
+            }
+
+        }
+    }
+    // 保存价格
+    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) throws Exception {
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
+        CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
+        if(parameter.getPriceMsrp()>0) {
+            platform.setpPriceMsrpSt(parameter.getPriceMsrp());
+            platform.setpPriceMsrpEd(parameter.getPriceMsrp());
+        }
+        if(parameter.getPriceSale()>0) {
+            platform.setpPriceSaleSt(parameter.getPriceSale());
+            platform.setpPriceSaleEd(parameter.getPriceSale());
+        }
+
+        if("Approved".equals(platform.getStatus())) {
+            if(StringUtils.isEmpty(platform.getpNumIId()))
+            {
+                //已经approve但是无NumIID，则插入上新work表,
+                List<String> cartIdList = new ArrayList<>();
+                cartIdList.add(Integer.toString(parameter.getCartId()));
+                //则插入上新work表
+                sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
+            }
+            else
+            {
+                //有NumIID，则价格变更API
+                priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
+
+            }
+        }
+        platform.getSkus().forEach(f -> {
+            if(parameter.getPriceMsrp()>0) {
+                f.setAttribute("priceMsrp", parameter.getPriceMsrp());
+            }
+            if(parameter.getPriceSale()>0) {
+                f.setAttribute("priceSale", parameter.getPriceSale());
+            }
+        });
+        productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
+    }
+
+    //返回计算后的Msrp价格
+    public  List<CartMsrpInfo>  getCalculateCartMsrp(String channelId, Long prodId) throws PriceCalculateException, IllegalPriceConfigException {
+        //PriceService   获取价格
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+        priceService.setPrice(cmsBtProduct, false);
+        List<CartMsrpInfo> list = new ArrayList<>();
+
+        cmsBtProduct.getPlatforms().values().forEach(f -> {
+            if (f.getCartId() > 0) {
+                double msrp = f.getSkus().stream().mapToDouble(m -> m.getDoubleAttribute("priceMsrp")).max().getAsDouble();
+                CartMsrpInfo info = new CartMsrpInfo();
+                info.setCartId(f.getCartId());
+                info.setMsrp(msrp);
+                list.add(info);
+            }
+
+        });
+        return list;
+    }
+
+    public ProductPriceSalesInfo getProductPriceSales(String channelId, Long prodId) {
+
+        ProductPriceSalesInfo productPriceSalesInfo = new ProductPriceSalesInfo();
+
+        CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
+
+        productPriceSalesInfo.setBrand(cmsBtProduct.getCommon().getFields().getBrand());
+        productPriceSalesInfo.setProductNameEn(cmsBtProduct.getCommon().getFields().getProductNameEn());
+
+        productPriceSalesInfo.setQuantity(cmsBtProduct.getCommon().getFields().getQuantity());
+
+        List<CmsBtProductModel_Field_Image> imgList = cmsBtProduct.getCommonNotNull().getFieldsNotNull().getImages1();
+
+        if (!imgList.isEmpty()) {
+            productPriceSalesInfo.setImage1(imgList.get(0).getName());
+        }
+
+
+        List<ProductPrice> productPriceList = new ArrayList<>();
+
+        cmsBtProduct.getPlatforms().values().forEach(f -> {
+
+            ProductPrice productPrice = getProductPrice(f);
+            if (productPrice != null) productPriceList.add(productPrice);
+
+        });
+
+
+        Map<String, Map<String, Object>> map = new HashedMap();
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_7, cmsBtProduct.getSales().getCodeSum7());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_30, cmsBtProduct.getSales().getCodeSum30());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_ALL, cmsBtProduct.getSales().getCodeSumAll());
+
+        map.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, cmsBtProduct.getSales().getCodeSumYear());
+
+        productPriceSalesInfo.setSales(map);
+
+        productPriceSalesInfo.setProductPriceList(productPriceList);
+
+        return productPriceSalesInfo;
+    }
+
+    private ProductPrice getProductPrice( CmsBtProductModel_Platform_Cart f) {
+        if (f.getCartId() != 0) {
+            ProductPrice productPrice = new ProductPrice();
+            productPrice.setStatus(f.getStatus());
+            if (f.getpStatus() != null) {
+                productPrice.setpStatus(f.getpStatus().name());
+            }
+            productPrice.setpPublishError(f.getpPublishError());
+            productPrice.setStatus(f.getStatus());
+            productPrice.setpReallyStatus(f.getpReallyStatus());
+            productPrice.setNumberId(f.getpNumIId());
+
+            productPrice.setPriceMsrpEd(f.getpPriceMsrpEd());
+            productPrice.setPriceMsrpSt(f.getpPriceMsrpSt());
+
+            productPrice.setPriceRetailEd(f.getpPriceRetailEd());
+            productPrice.setPriceRetailSt(f.getpPriceRetailSt());
+
+            productPrice.setPriceSaleEd(f.getpPriceSaleEd());
+            productPrice.setPriceSaleSt(f.getpPriceSaleSt());
+
+            productPrice.setCartId(f.getCartId());
+            int count = f.getSkus().size();
+            int isSaleTrueCount = 0;
+
+            for (BaseMongoMap<String, Object> sku : f.getSkus()) {
+                if (ConvertUtil.toBoolean(sku.get("isSale"))) {
+                    isSaleTrueCount = isSaleTrueCount + 1;
+                }
+            }
+
+
+            if (count > 0 && count == isSaleTrueCount) {
+                productPrice.setChecked(2);//选中
+            } else if (count > isSaleTrueCount && isSaleTrueCount > 0) {
+                productPrice.setChecked(1);//半选
+            }
+
+            CartEnums.Cart cart = CartEnums.Cart.getValueByID(f.getCartId().toString());
+            if (cart != null) {
+                productPrice.setCartName(cart.name());
+
+                return productPrice;
+            }
+        }
+        return null;
+    }
 
     /**
-     * 获取产品平台信息
-     *
-     * @param channelId channelId
-     * @param prodId    prodId
-     * @param cartId    cartId
-     * @return 产品平台信息
-     */
+         * 获取产品平台信息
+         *
+         * @param channelId channelId
+         * @param prodId    prodId
+         * @param cartId    cartId
+         * @return 产品平台信息
+         */
     public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId, String language) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getPlatform(cartId);

@@ -293,11 +293,16 @@ public class CmsBtJmPromotionImportTask3Service extends BaseService {
             loadSaveInfo(saveInfo, model, listProductSkuImport, product, listProducctErrorMap, listSkuErrorMap, userName);
             loadCmsBtPromotionCodes(saveInfo, listProductSkuImport, product, modelPromotion, userName);
             if (saveInfo != null) {
+
                 if (saveInfo._listSkuImportError.size() > 0) {
                     listSkuErrorMap.addAll(BeanUtils.toMapList(saveInfo._listSkuImportError));//初始化失败的sku
                     listSkuImport.remove(saveInfo._listSkuImportError);
                 }
-                listSaveInfo.add(saveInfo);
+
+                if (saveInfo.jmSkuList.size() > 0) {
+                    listSaveInfo.add(saveInfo);
+                }
+
             }
         }
         $info("初始化结束");
