@@ -47,12 +47,29 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.voyageone:*</include>
+                                </includes>
+                                <excludes>
+                                    <exclude>com.voyageone:jd-open-api*</exclude>
+                                    <exclude>com.voyageone:jaxrpc</exclude>
+                                    <exclude>com.voyageone:top-schema</exclude>
+                                    <exclude>com.voyageone:axis</exclude>
+                                    <exclude>com.voyageone:voyageone-config</exclude>
+                                </excludes>
+                            </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>*:*</artifact>
-                                    <includes>
-                                        <include>com/voyageone/**</include>
-                                    </includes>
+                                    <artifact>com.voyageone:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/spring.*</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
+                                        <exclude>log4j.properties</exclude>
+                                    </excludes>
                                 </filter>
                             </filters>
                             <!--<transformers>-->
