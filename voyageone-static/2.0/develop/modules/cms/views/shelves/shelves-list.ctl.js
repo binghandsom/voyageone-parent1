@@ -373,7 +373,7 @@ define([
 
                     this.shelvesService.getShelvesHtml({
                         shelvesId: s.id,
-                        preview: true
+                        preview: false
                     }).then(function (resp) {
                         d.body.innerHTML = '<pre>' + resp.data + '</pre>';
                     }, function () {
