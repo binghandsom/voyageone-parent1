@@ -1741,6 +1741,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         } catch (Exception ex) {
                             // 如果报"图片张数必须多余N张"的异常，则继续上传下一张图片，否则抛出异常
                             if (ex.getMessage().contains("图片张数必须多于")) {
+                                delImageCnt++;
                                 continue;
                             } else {
                                 throw new BusinessException(ex.getMessage());
