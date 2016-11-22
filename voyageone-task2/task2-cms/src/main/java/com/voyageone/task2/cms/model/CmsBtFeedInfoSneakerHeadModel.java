@@ -20,6 +20,16 @@ public class CmsBtFeedInfoSneakerHeadModel extends CmsBtFeedInfoModel {
     private String orderlimitcount;
     private String approveddescriptions;
     private String urlkey;
+    private String boximages;
+
+    public String getBoximages() {
+        return boximages;
+    }
+
+    public void setBoximages(String boximages) {
+        this.boximages = boximages;
+    }
+
 
     public String getRelationshiptype() {
         return relationshiptype;

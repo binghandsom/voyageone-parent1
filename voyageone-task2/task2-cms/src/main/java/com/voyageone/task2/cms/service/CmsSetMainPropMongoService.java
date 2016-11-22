@@ -1553,6 +1553,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            {
 //                if (newFlg) {
             List<Map<String, Object>> multiComplex = new LinkedList<>();
+            List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
             // jeff 2016/05 change start
@@ -1583,7 +1584,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     multiComplex6.add(multiComplexChildren6);
                 }
             }
-
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
             // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
@@ -1595,6 +1595,22 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置PC端自拍商品图images6
                     productCommonField.put("images6", multiComplex6);
                 }
+            }
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+            if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+                if (feed.getAttribute() != null && feed.getAttribute().size() > 0) {
+                    for (Map.Entry<String, List<String>> entry : feed.getAttribute().entrySet()) {
+                        if(entry.getKey().equals("boxImages")){
+                            for(String images:entry.getValue()){
+                                Map<String, Object> multiComplexChildren = new HashMap<>();
+                                multiComplexChildren.put("image2", images);
+                                multiComplex2.add(multiComplexChildren);
+                            }
+                        }
+
+                    }
+                }
+                productCommonField.put("images2", multiComplex2);
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
