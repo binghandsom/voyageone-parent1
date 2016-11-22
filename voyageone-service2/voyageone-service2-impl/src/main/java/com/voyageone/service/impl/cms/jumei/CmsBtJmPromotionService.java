@@ -366,6 +366,10 @@ public class CmsBtJmPromotionService extends BaseService {
                     if (parameter.getSaveType() == 1) {
                         setJmPromotionStepStatus(parameter.getModel().getId(), JmPromotionStepNameEnum.PromotionDetail, JmPromotionStepStatusEnum.Success, userName);
                     }
+                }else{
+                    parameter.setExtModel(new CmsBtJmPromotionSpecialExtensionModel());
+                    parameter.getExtModel().setJmpromotionId(parameter.getModel().getId());
+                    parameter.getExtModel().setPromotionId(promotionId);
                 }
             } else {
                 // 活动名已存在

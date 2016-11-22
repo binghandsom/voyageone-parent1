@@ -39,7 +39,12 @@ define([
             this.allCheckNodes;     //原始全选状态
             this.halfCheckNodes;    //原始半选状态
             this.checkNodes = {};
-            this.groupInfo = {};
+            this.groupInfo = {
+                priceType: 'priceSale',
+                optType: '=',
+                roundType: "1",
+                skuUpdType: "1"
+            };
         }
 
         JoinPromotionCtl.prototype.getCodeList = function () {
@@ -59,6 +64,8 @@ define([
         };
 
         JoinPromotionCtl.prototype.init = function () {
+            this.chkPriceType('3', 'TXT_SALE_PRICE');
+            this.chkOptionType();
             this.search();
         };
 
@@ -120,6 +127,7 @@ define([
 
             groupInfo.priceTypeId = priceTypeVal;
             groupInfo.priceValue = null;
+            groupInfo.optType = "=";
             groupInfo.roundType = "1";
             groupInfo._opeText = '';
 
@@ -132,7 +140,7 @@ define([
                 //groupInfo.skuUpdType = "0";
             } else {
                 groupInfo._optStatus = false;
-                groupInfo.optType = '';
+                // groupInfo.optType = '';
                 groupInfo._typeText = $translate.instant(typeTxt);
                 groupInfo.priceInputFlg = false;
                 groupInfo.skuUpdType = "1";
@@ -172,16 +180,15 @@ define([
                 userArr = objToArr(checkNodes),
                 allCheckArr = objToArr(self.allCheckNodes);
 
-/*            /!**判断用户是否选择了新的活动标签*!/
-            var isClick = _.every(userArr, function (item) {
-                return allCheckArr.indexOf(item) < 0;
-            });
+            /*            /!**判断用户是否选择了新的活动标签*!/
+             var isClick = _.every(userArr, function (item) {
+             return allCheckArr.indexOf(item) < 0;
+             });
 
-            if (!isClick) {
-                alert("未做任何改变！");
-                return;
-            }*/
-
+             if (!isClick) {
+             alert("未做任何改变！");
+             return;
+             }*/
             /**至少要选择一个活动*/
             var eachP = _.some(self.listTreeNode, function (item) {
                 return item.checked != 0 && item.checked != 1;

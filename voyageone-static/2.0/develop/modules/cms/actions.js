@@ -132,7 +132,8 @@ define(function () {
                     moveSkuInit:"moveSkuInit",
                     moveSkuSearch:"moveSkuSearch",
                     moveSkuPreview:"moveSkuPreview",
-                    moveSku:"moveSku"
+                    moveSku:"moveSku",
+                    getSkuStockInfo: 'getSkuStockInfo'
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

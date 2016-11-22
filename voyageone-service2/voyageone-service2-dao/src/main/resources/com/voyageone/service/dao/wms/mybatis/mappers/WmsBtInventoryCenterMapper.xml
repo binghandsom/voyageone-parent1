@@ -10,4 +10,23 @@
         )
     </update>
 
+    <select id="wms_bt_inventory_center_selectSkuInventoryBy" resultType="com.voyageone.service.bean.wms.InventoryCenterBean">
+        select * from wms_bt_inventory_center
+        where order_channel_id=#{channelId}
+        and store_id in <foreach collection="storeIds" item="item" index="index"  open="(" separator="," close=")"> #{item} </foreach>
+        and sku in <foreach collection="skus" item="item" index="index"  open="(" separator="," close=")"> #{item} </foreach>
+    </select>
+
+    <select id="wms_bt_inventory_center_countOrderInStoresBySku" resultType="map">
+--       TODO 修改我
+      select
+        (select count(r.id) from tt_reservation r where r.status='11' and r.sku=#{sku}) as openCount,
+        (select count(new_order_id) from wms_bt_new_order where order_channel_id=#{channelId} and sku=#{sku} and  active=1) as onHold,
+        (select count(distinct o.order_number) from oms_bt_orders o left join tt_reservation r on  o.order_number=r.order_number
+          where
+            order_status in('Pending','In Processing' ,'Approved')
+          and o.order_channel_id=#{channelId}
+          and r.id is null) as newOrder
+      from dual;
+    </select>
 </mapper>
