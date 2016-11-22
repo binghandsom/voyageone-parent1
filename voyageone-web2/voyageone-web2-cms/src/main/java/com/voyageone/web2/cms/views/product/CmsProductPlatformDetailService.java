@@ -118,7 +118,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
     }
     // 保存价格
-    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) {
+    public  void  saveCartSkuPrice(SaveCartSkuPriceParameter parameter,String channelId,String userName) throws Exception {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
         if(parameter.getPriceMsrp()>0) {
@@ -142,6 +142,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             else
             {
                 //有NumIID，则价格变更API
+                priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
 
             }
         }
