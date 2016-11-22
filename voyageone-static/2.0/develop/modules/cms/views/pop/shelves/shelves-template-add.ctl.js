@@ -18,7 +18,7 @@ define([
                 // 默认新建【布局模板】，每行个数为【1】
                 $scope.modelBean = {
                     "templateType":"0",
-                    "numPerLine":1
+                    "numPerLine":2
                 };
                 $scope.layout = true; // ng-show 默认显示【布局模板】输入框
                 $scope.single = false; // ng-show 默认不显示【单品模板】输入框
