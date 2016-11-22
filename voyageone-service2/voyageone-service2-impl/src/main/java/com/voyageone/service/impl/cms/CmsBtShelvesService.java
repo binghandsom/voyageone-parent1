@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
 import com.voyageone.service.bean.cms.CmsBtShelvesProductBean;
 import com.voyageone.service.dao.cms.CmsBtShelvesDao;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +116,17 @@ public class CmsBtShelvesService extends BaseService {
 
             CmsBtShelvesInfoBean cmsBtShelvesInfoBean = cmsBtShelvesProductService.getShelvesInfo(shelves, true);
             List<CmsBtShelvesProductModel> products = cmsBtShelvesInfoBean == null ? null : cmsBtShelvesInfoBean.getShelvesProductModels();
+            if (CollectionUtils.isNotEmpty(products)) {
+                List<CmsBtShelvesProductModel> filterModels = new ArrayList<CmsBtShelvesProductModel>();
+                for (CmsBtShelvesProductModel product:products) {
+                    if (org.apache.commons.lang.StringUtils.isBlank(product.getNumIid())) {
+                        filterModels.add(product);
+                    }
+                }
+                if (filterModels.size() > 0) {
+                    products.removeAll(filterModels);
+                }
+            }
 
             if (layoutTemplate == null || singleTemplate == null || CollectionUtils.isEmpty(products)) {
                 throw new BusinessException("货架没有关联布局模板或单品模板或商品！");
