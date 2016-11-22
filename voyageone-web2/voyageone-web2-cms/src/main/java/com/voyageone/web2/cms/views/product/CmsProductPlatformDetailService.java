@@ -73,7 +73,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, parameter.getProdId());
         CmsBtProductModel_Platform_Cart platform = cmsBtProduct.getPlatform(parameter.getCartId());
-        if (parameter.isSale()) {
+        if (parameter.getIsSale()) {
             // 如果该已经approve，则插入上新work表
             setCartSkuIsSale_True(parameter, cmsBtProduct, platform, userName);
         }
@@ -83,7 +83,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             setCartSkuIsSale_False(parameter, cmsBtProduct, platform, userName);
         }
         platform.getSkus().forEach(f -> {
-            f.setAttribute("isSale", parameter.isSale());
+            f.setAttribute("isSale", parameter.getIsSale());
         });
         productService.updateProductPlatform(channelId, parameter.getProdId(), platform, userName);
 
@@ -120,7 +120,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         }
     }
-
+    //返回计算后的Msrp价格
     public  List<CartMsrpInfo>  getCalculateCartMsrp(String channelId, Long prodId) throws PriceCalculateException, IllegalPriceConfigException {
         //PriceService   获取价格
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);

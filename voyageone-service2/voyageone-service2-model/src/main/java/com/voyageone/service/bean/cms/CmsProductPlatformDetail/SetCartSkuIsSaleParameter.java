@@ -20,11 +20,11 @@ public class SetCartSkuIsSaleParameter {
         this.cartId = cartId;
     }
 
-    public boolean isSale() {
+    public boolean getIsSale() {
         return isSale;
     }
 
-    public void setSale(boolean sale) {
+    public void setIsSale(boolean sale) {
         isSale = sale;
     }
 
