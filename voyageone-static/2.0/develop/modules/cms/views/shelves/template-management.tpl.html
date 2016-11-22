@@ -85,7 +85,7 @@
                 </thead>
                 <tbody ng-if="templates.length">
                 <tr ng-repeat="template in templates">
-                    <td class="text-left">{{$index+1}}</td>
+                    <td class="text-left" title="{{template.id}}">{{$index+1}}</td>
                     <td class="text-left">{{vm.carts[template.cartId]}}</td>
                     <td class="text-left">{{vm.clientTypes[template.clientType]}}</td>
                     <td class="text-left">{{template.templateName}}</td>
