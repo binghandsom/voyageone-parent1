@@ -67,11 +67,16 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -1548,6 +1553,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            {
 //                if (newFlg) {
             List<Map<String, Object>> multiComplex = new LinkedList<>();
+            List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
             // jeff 2016/05 change start
@@ -1578,7 +1584,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     multiComplex6.add(multiComplexChildren6);
                 }
             }
-
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
             // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
@@ -1590,6 +1595,22 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置PC端自拍商品图images6
                     productCommonField.put("images6", multiComplex6);
                 }
+            }
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+            if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+                if (feed.getAttribute() != null && feed.getAttribute().size() > 0) {
+                    for (Map.Entry<String, List<String>> entry : feed.getAttribute().entrySet()) {
+                        if(entry.getKey().equals("boxImages")){
+                            for(String images:entry.getValue()){
+                                Map<String, Object> multiComplexChildren = new HashMap<>();
+                                multiComplexChildren.put("image2", images);
+                                multiComplex2.add(multiComplexChildren);
+                            }
+                        }
+
+                    }
+                }
+                productCommonField.put("images2", multiComplex2);
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -2704,7 +2725,29 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
                         && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
-                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+
+                    if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+
+                        //根据当前feed的code判断是否属于最新的group还是创建group
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+                        //取得当前code的创建的时间
+                        LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
+                        //取得当前group的创建的时间
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
+                        //feed和group的创建时间作比较
+                        if(feedDate.getYearOfCentury()==groupDate.getYearOfCentury()
+                                &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)){
+                            group=groupCode;
+                        }else{
+                            //根据当前model取得最新的group
+                            group = null;
+                        };
+                    }else {
+                        group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    }
+
                 }
 
                 // 看看同一个model里是否已经有数据在cms里存在的
@@ -2798,7 +2841,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
         }
-
         /**
          * 根据code, 到group表中去查找所有的group信息
          *

@@ -169,6 +169,9 @@ public class CmsConstants {
         String DEFAULT_PACKAGE_WEIGHT = "DEFAULT_PACKAGE_WEIGHT";
         // 如无默认包装重量，则统一设置包装重量0.5
         double DEFAULT_PACKAGE_WEIGHT_VAL = 0.5;
+
+        //feed的code按不同季度拆分
+        String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
     }
 
     public interface DataAmount {
