@@ -24,6 +24,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
 /**
@@ -33,7 +34,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
  * mongo: cms_mt_prod_sales_his
  *
  * @author jason.jiang on 2016/05/24
- * @version 2.0.0
+ * @author Wangtd on 2016/11/23
+ * @since 2.0.0
+ * @version 2.0.9
  */
 @Service
 public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
@@ -109,14 +112,17 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             // 合并sku销售数据
             for (Map<String, Object> sumInfo : skuSumAllList) {
                 skuSum7List.stream().filter(sum7Info -> sumInfo.get("skuCode").equals(sum7Info.get("skuCode")) 
-                		&& sumInfo.get("cartId").equals(sum7Info.get("cartId")))
-                        .forEach(sum7Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7)));
+                		&& sumInfo.get("cartId").equals(sum7Info.get("cartId"))).forEach(sum7Info ->
+                        	sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_7, sum7Info.get(CmsBtProductModel_Sales.CODE_SUM_7))
+                        );
                 skuSum30List.stream().filter(sum30Info -> sumInfo.get("skuCode").equals(sum30Info.get("skuCode"))
-                		&& sumInfo.get("cartId").equals(sum30Info.get("cartId")))
-                        .forEach(sum30Info -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30)));
+                		&& sumInfo.get("cartId").equals(sum30Info.get("cartId"))).forEach(sum30Info ->
+                        	sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_30, sum30Info.get(CmsBtProductModel_Sales.CODE_SUM_30))
+                        );
                 skuSumYearList.stream().filter(sumYearInfo -> sumInfo.get("skuCode").equals(sumYearInfo.get("skuCode"))
-                		&& sumInfo.get("cartId").equals(sumYearInfo.get("cartId")))
-                        .forEach(sumYearInfo -> sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, sumYearInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR)));
+                		&& sumInfo.get("cartId").equals(sumYearInfo.get("cartId"))).forEach(sumYearInfo ->
+                        	sumInfo.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, sumYearInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR))
+                        );
             }
 
             List<Map<String, Object>> skuCartSumList = new ArrayList<>();
@@ -128,9 +134,43 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_YEAR, 0);
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             }
+            // 合并不在此次统计sku销量这列的sku
+			if (saleObj != null) {
+	            List<CmsBtProductModel_Sales_Sku> skus = saleObj.getSkus();
+	            if (CollectionUtils.isNotEmpty(skus)) {
+	            	for (CmsBtProductModel_Sales_Sku sku : skus) {
+	            		if (0 != sku.getCartId() && !skuCodeMap.containsKey(sku.getSkuCode())) {
+	            			skuCodeMap.put(sku.getSkuCode(), "");
+	            			skuSumAllList.add(sku);
+	            		}
+	            	}
+	            }
+            }
+
+            //------------------------------------ sku合计 -----------------------------------
+            for (String skuCode : skuCodeMap.keySet()) {
+                int skuSum7 = 0, skuSum30 = 0, skuSumYear = 0, skuSumAll = 0;
+                for (Map sumInfo : skuSumAllList) {
+                    if (skuCode.equals(sumInfo.get("skuCode"))) {
+                        skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7));
+                        skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30));
+                        skuSumYear += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR));
+                        skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL));
+                    }
+                }
+                Map<String, Object> skuMap = new HashMap<>();
+                skuMap.put("skuCode", skuCode);
+                skuMap.put("cartId", 0);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_7, skuSum7);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_30, skuSum30);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, skuSumYear);
+                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, skuSumAll);
+                skuCartSumList.add(skuMap);
+            }
+            skuSumAllList.addAll(skuCartSumList);
+            salesMap.put("skus", skuSumAllList);
             
             //----------------------------------- code销售数据 -------------------------------------------
-            // 再统计产品code级别的数据，由于是多维度的统计，由上面的sku数据合并较复杂，不如直接统计
             // 7天销售code数据
             params = new Object[]{begDate1, endDate, cartList, channelId, prodCode};
             salesMap.put(CmsBtProductModel_Sales.CODE_SUM_7, summaryCodeSales(queryCodeStr, params));
@@ -157,41 +197,15 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
                 salesMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, codeSumAllMap);
             }
 
-            //------------------------------------ sku合计 -----------------------------------
-            for (String skuCode : skuCodeMap.keySet()) {
-                int skuSum7 = 0, skuSum30 = 0, skuSumYear = 0, skuSumAll = 0;
-                for (Map sumInfo : skuSumAllList) {
-                    if (skuCode.equals(sumInfo.get("skuCode"))) {
-                        skuSum7 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_7));
-                        skuSum30 += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_30));
-                        skuSumYear += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_YEAR));
-                        skuSumAll += StringUtils.toIntValue((Integer) sumInfo.get(CmsBtProductModel_Sales.CODE_SUM_ALL));
-                    }
-                }
-                Map<String, Object> skuMap = new HashMap<>();
-                skuMap.put("skuCode", skuCode);
-                skuMap.put("cartId", 0);
-                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_7, skuSum7);
-                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_30, skuSum30);
-                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_YEAR, skuSumYear);
-                skuMap.put(CmsBtProductModel_Sales.CODE_SUM_ALL, skuSumAll);
-                skuCartSumList.add(skuMap);
-            }
-            skuSumAllList.addAll(skuCartSumList);
-            salesMap.put("skus", skuSumAllList);
-
-            //---------------------------------- 没有的数据补零 -----------------------------------
+            //---------------------------------- 重新处理统计数据-----------------------------------
             // 7天销量
-            padZeroAbsentSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_7, saleObj);
-
+            checkAndRecalculateSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_7, saleObj);
             // 30天销量
-            padZeroAbsentSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_30, saleObj);
-
+            checkAndRecalculateSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_30, saleObj);
             // 年销量
-            padZeroAbsentSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_YEAR, saleObj);
-
+            checkAndRecalculateSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_YEAR, saleObj);
             // 总销量
-            padZeroAbsentSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_ALL, saleObj);
+            checkAndRecalculateSales(salesMap, cartList, CmsBtProductModel_Sales.CODE_SUM_ALL, saleObj);
 
             Map<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", prodCode);
@@ -279,29 +293,30 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
      * @param cartList Cart列表
      * @param codeSumLevel 统计的量级（7天，30天，年，全部）
      */
-    private void padZeroAbsentSales(Map<String, Object> salesMap, List<Integer> cartList, String codeSumLevel,
+    private void checkAndRecalculateSales(Map<String, Object> salesMap, List<Integer> cartList, String codeSumLevel,
     		CmsBtProductModel_Sales saleObj) {
         Map<String, Object> sumMap = (Map<String, Object>) salesMap.get(codeSumLevel);
-
-        int sumAll = 0;
-        if (sumMap == null) {
+        if (MapUtils.isEmpty(sumMap)) {
             sumMap = new HashMap<>();
             for (Integer cartItem : cartList) {
                 sumMap.put(CmsBtProductModel_Sales.CARTID + cartItem, 0);
             }
             salesMap.put(codeSumLevel, sumMap);
+            // 设置Cart0的销量
+            sumMap.put(CmsBtProductModel_Sales.CARTID_0, 0);
         } else {
             for (Integer cartItem : cartList) {
                 sumMap.putIfAbsent(CmsBtProductModel_Sales.CARTID + cartItem, 0);
             }
-
+            sumMap.putIfAbsent(CmsBtProductModel_Sales.CARTID_0, 0);
+            
             if (saleObj != null) {
-                // 加入不在此次统计这列的Cart销量
+                // 加入不在此次统计之列的Cart销量
             	boolean isNotContained = false;
             	Map<String, Object> codeSumMap = (Map<String, Object>) saleObj.get(codeSumLevel);
             	if (MapUtils.isNotEmpty(codeSumMap)) {
             		for (String codeSum : codeSumMap.keySet()) {
-            			if (!sumMap.containsKey(codeSum)) {
+            			if (!CmsBtProductModel_Sales.CARTID_0.equals(codeSum) && !sumMap.containsKey(codeSum)) {
             				isNotContained = true;
                 			sumMap.put(codeSum, codeSumMap.get(codeSum));	
             			}
@@ -309,17 +324,16 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             	}
                 // 若有未包含的Cart，则重新计算Cart0的销量
             	if (isNotContained) {
+            		int sumAll = 0;
             		for (String sumKey : sumMap.keySet()) {
             			if (!CmsBtProductModel_Sales.CARTID_0.equals(sumKey)) {
             				sumAll += StringUtils.toIntValue((Integer) sumMap.get(sumKey));
             			}
             		}
+            		sumMap.putIfAbsent(CmsBtProductModel_Sales.CARTID_0, sumAll);
             	}
             }
         }
-        
-        // 设置Cart0的销量
-        sumMap.put(CmsBtProductModel_Sales.CARTID_0, sumAll);
     }
 
 }
