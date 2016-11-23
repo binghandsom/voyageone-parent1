@@ -210,6 +210,7 @@ class CmsShelvesDetailService extends BaseViewService {
         int spacingX = 5;
         int spacingY = 5;
         try {
+            $info(urls.get(0));
             InputStream imagein = new FileInputStream(urls.get(0));
             BufferedImage image = ImageIO.read(imagein);
             imagein.close();
