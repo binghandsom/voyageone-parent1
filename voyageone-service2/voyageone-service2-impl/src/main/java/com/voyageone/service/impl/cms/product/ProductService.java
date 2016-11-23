@@ -1024,9 +1024,9 @@ public class ProductService extends BaseService {
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("appSwitch", appSwitch);
-        updateMap.put("modifier", modifier);
-        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        updateMap.put("common.fields.appSwitch", appSwitch);
+        updateMap.put("common.fields.modifier", modifier);
+        updateMap.put("common.fields.modified", DateTimeUtil.getNowTimeStamp());
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -1042,13 +1042,13 @@ public class ProductService extends BaseService {
         queryMap.put("prodId", prodId);
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("translateStatus", translateStatus);
+        updateMap.put("common.fields.translateStatus", translateStatus);
         if (translateStatus == 1) {
-            updateMap.put("translateTime", modifier);
-            updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+            updateMap.put("common.fields.translateTime", modifier);
+            updateMap.put("common.fields.translator", DateTimeUtil.getNowTimeStamp());
         } else {
-            updateMap.put("translateTime", "");
-            updateMap.put("modified", "");
+            updateMap.put("common.fields.translateTime", "");
+            updateMap.put("common.fields.translator", "");
         }
 
         BulkUpdateModel model = new BulkUpdateModel();
