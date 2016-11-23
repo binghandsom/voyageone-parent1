@@ -1595,7 +1595,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 }
             }
             CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
-            if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+            if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null
+                    &&feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
                 if (feed.getAttribute() != null && feed.getAttribute().size() > 0) {
                     for (Map.Entry<String, List<String>> entry : feed.getAttribute().entrySet()) {
                         if(entry.getKey().equals("boxImages")){
@@ -2726,7 +2727,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 取得product.model对应的group信息
                     CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
 
-                    if(feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+                    if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null&&
+                            feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
 
                         //根据当前feed的code判断是否属于最新的group还是创建group
                         DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
@@ -3015,7 +3017,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
-                if(cmsChannelConfigBean.getChannelId().equals(channelId)){
+                if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null&&
+                        channelId.equals(cmsChannelConfigBean.getChannelId())){
                     String[] imgName = originalUrl.split("/");
                     newModel.setImgName(imgName[imgName.length]);
                     newModel.setUpdFlg(1);
