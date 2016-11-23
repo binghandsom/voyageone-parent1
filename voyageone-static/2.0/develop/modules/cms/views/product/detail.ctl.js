@@ -40,7 +40,8 @@ define([
                 masterCategory: null,
                 lockStatus: null,
                 feedInfo: null,
-                autoApprovePrice: null
+                autoApprovePrice: null,
+                productComm : null
             };
         }
 
