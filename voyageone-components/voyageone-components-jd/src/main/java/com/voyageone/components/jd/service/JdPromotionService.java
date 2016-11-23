@@ -1,5 +1,6 @@
 package com.voyageone.components.jd.service;
 
+import com.jd.open.api.sdk.request.promotion.SellerPromotionCommitRequest;
 import com.jd.open.api.sdk.request.promotion.SellerPromotionGetRequest;
 import com.jd.open.api.sdk.request.promotion.SellerPromotionSkuAddRequest;
 import com.jd.open.api.sdk.request.promotion.SellerPromotionSkuListRequest;
@@ -281,6 +282,43 @@ public class JdPromotionService extends JdBase {
             }
         } catch (Exception ex) {
             String errMsg = String.format(shop.getShop_name() + "调用京东API取得促销sku列表查询(最多返回10个)失败! [channelId:%s] [cartId:%s] [promotionId:%s]" +
+                    "[errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(), promoId, ex.getMessage());
+            logger.error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+    }
+
+    /**
+     * 促销创建完毕，提交保存促销命令(jingdong.seller.promotion.commit)
+     * commit之后就不能再追加jdSkuId了
+     *
+     * @param shop        ShopBean  店铺信息
+     * @param promoId     Long      促销编号
+     */
+    public void doCommitPromotion(ShopBean shop, Long promoId) {
+
+        SellerPromotionCommitRequest request = new SellerPromotionCommitRequest();
+        // 促销编号(必须)
+        if (promoId != null)     request.setPromoId(promoId);
+
+        try {
+            // 调用京东促销创建完毕，提交保存促销命令API(jingdong.seller.promotion.commit)
+            SellerPromotionCommitResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return;
+                } else {
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("京东促销创建完毕提交保存促销命令API返回应答为空(response = null)");
+            }
+        } catch (Exception ex) {
+            String errMsg = String.format(shop.getShop_name() + "调用京东促销创建完毕提交保存促销命令失败! [channelId:%s] [cartId:%s] [promotionId:%s]" +
                     "[errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(), promoId, ex.getMessage());
             logger.error(errMsg);
             throw new BusinessException(errMsg);
