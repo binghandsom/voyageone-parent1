@@ -26,22 +26,9 @@ define([
                     mastData: null,
                     productComm: null,
                     categoryMark: null,
-                    tempImage: {
-                        "images1": [],
-                        "images2": [],
-                        "images3": [],
-                        "images4": [],
-                        "images5": [],
-                        "images6": [],
-                        "images7": [],
-                        "images8": [],
-                        "images9": []
-                    },
                     hsCodeOrigin: null,
                     lockStatus:{}
                 };
-
-                initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
@@ -53,6 +40,7 @@ define([
                 scope.sortImg = sortImg;
                 scope.lockProduct = lockProduct;
 
+                initialize();
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -347,7 +335,10 @@ define([
                     $event.stopPropagation();
                 }
 
-
+                /**
+                 * 导航栏上的状态锁定操作
+                 * @param onOffSwitch：锁定的对象
+                 */
                 function lockProduct(onOffSwitch){
                     var _status = scope.vm.lockStatus[onOffSwitch],
                         lock = _status ? "1" : "0";
