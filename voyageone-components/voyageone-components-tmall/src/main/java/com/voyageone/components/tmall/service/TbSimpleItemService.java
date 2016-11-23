@@ -11,7 +11,9 @@ import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
+import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +30,36 @@ import java.util.List;
  */
 @Component
 public class TbSimpleItemService extends TbBase {
+
+    /**
+     * 普通的Appkey转官网同购上新用的Appkey
+     * @param shopBean 普通的Appkey
+     * @return 官网同购的Appkey
+     */
+    private ShopBean getTonggouShopBean(ShopBean shopBean) {
+        ShopBean newShopBean = new ShopBean();
+
+        String tm_tt_sx = "tm_tt_sx";
+        ThirdPartyConfigBean shopConfig = ThirdPartyConfigs.getThirdPartyConfig(shopBean.getOrder_channel_id(), tm_tt_sx);
+
+        newShopBean.setCart_id(shopBean.getCart_id());
+        newShopBean.setCart_type(shopBean.getCart_type());
+        newShopBean.setPlatform_id(shopBean.getPlatform_id());
+        newShopBean.setOrder_channel_id(shopBean.getOrder_channel_id());
+        if (shopConfig != null) {
+            newShopBean.setAppKey(shopConfig.getProp_val1());
+            newShopBean.setAppSecret(shopConfig.getProp_val2());
+            newShopBean.setSessionKey(shopConfig.getProp_val3());
+            newShopBean.setApp_url(shopConfig.getProp_val4());
+        }
+        newShopBean.setShop_name(shopBean.getShop_name());
+        newShopBean.setPlatform(shopBean.getPlatform());
+        newShopBean.setComment(shopBean.getComment());
+        newShopBean.setCart_name(shopBean.getCart_name());
+
+        return newShopBean;
+    }
+
     /**
      * 天猫官网同购新增Item
      * 淘宝接口名：tmall.item.simpleschema.add
@@ -42,7 +74,7 @@ public class TbSimpleItemService extends TbBase {
         TmallItemSimpleschemaAddRequest request = new TmallItemSimpleschemaAddRequest();
         request.setSchemaXmlFields(schemaXml);
 
-        TmallItemSimpleschemaAddResponse response = reqTaobaoApi(shopBean, request);
+        TmallItemSimpleschemaAddResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
 
         // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getSubCode())) {
@@ -70,7 +102,7 @@ public class TbSimpleItemService extends TbBase {
         request.setItemId(numIId);
         request.setSchemaXmlFields(schemaXml);
 
-        TmallItemSimpleschemaUpdateResponse response = reqTaobaoApi(shopBean, request);
+        TmallItemSimpleschemaUpdateResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
 
         // 调用淘宝API未成功或者subCode不为空的时候(errorCode是英文错误，subCode是中文错误)
         if (!response.isSuccess() || !StringUtils.isEmpty(response.getErrorCode())) {
@@ -94,7 +126,7 @@ public class TbSimpleItemService extends TbBase {
 
         String xmlData = SchemaWriter.writeParamXmlString(tbItemSchema.getFields());
 
-        return updateSimpleItem(shopBean, tbItemSchema.getNum_iid(), xmlData);
+        return updateSimpleItem(getTonggouShopBean(shopBean), tbItemSchema.getNum_iid(), xmlData);
     }
 
     /**
@@ -111,7 +143,7 @@ public class TbSimpleItemService extends TbBase {
         TmallItemUpdateSimpleschemaGetRequest request = new TmallItemUpdateSimpleschemaGetRequest();
         request.setItemId(numIId);
 
-        TmallItemUpdateSimpleschemaGetResponse response = reqTaobaoApi(shopBean, request);
+        TmallItemUpdateSimpleschemaGetResponse response = reqTaobaoApi(getTonggouShopBean(shopBean), request);
 
         String result = response.getResult();
 
