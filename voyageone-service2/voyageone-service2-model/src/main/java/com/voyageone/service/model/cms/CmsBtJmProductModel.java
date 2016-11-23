@@ -32,6 +32,11 @@ public class CmsBtJmProductModel extends BaseModel {
     protected String productCode;
 
     /**
+     * 聚美MallId
+     */
+    protected String jumeiMallId;
+
+    /**
      * 英文产地
      */
     protected String origin;
@@ -221,6 +226,14 @@ public class CmsBtJmProductModel extends BaseModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode == null ? null : productCode.trim();
+    }
+
+    public String getJumeiMallId() {
+        return jumeiMallId;
+    }
+
+    public void setJumeiMallId(String jumeiMallId) {
+        this.jumeiMallId = jumeiMallId == null ? null : jumeiMallId.trim();
     }
 
     public String getOrigin() {

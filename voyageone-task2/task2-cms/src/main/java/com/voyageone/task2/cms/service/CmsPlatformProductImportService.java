@@ -11,7 +11,7 @@ import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.TmpOldCmsDataBean;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
@@ -36,7 +36,7 @@ import java.util.*;
  * @version 2.0.0
  */
 @Service
-public class CmsPlatformProductImportService extends BaseTaskService {
+public class CmsPlatformProductImportService extends BaseCronTaskService {
 
     @Autowired
     private TbProductService tbProductService;

@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -12,25 +13,25 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtTagDao;
-import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionGroupsDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtPromotionSkusDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtTaskTejiabaoDaoExt;
+import com.voyageone.service.daoext.cms.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,11 +63,19 @@ public class PromotionDetailService extends BaseService {
     @Autowired
     private ProductTagService productTagService;
 
+    @Autowired
+    PromotionSkuService promotionSkuService;
+
+    @Autowired
+    CmsBtPromotionCodesDaoExtCamel cmsBtPromotionCodesDaoExtCamel;
+    public void addPromotionDetail(PromotionDetailAddBean bean){
+        addPromotionDetail(bean,true);
+    }
     /**
      * 添加商品到promotion
      */
     @VOTransactional
-    public void addPromotionDetail(PromotionDetailAddBean bean) {
+    public void addPromotionDetail(PromotionDetailAddBean bean, boolean isUpdatePromotionPrice) {
         String channelId = bean.getChannelId();
         Integer cartId = bean.getCartId();
         Integer promotionId = bean.getPromotionId();
@@ -74,7 +83,10 @@ public class PromotionDetailService extends BaseService {
         //String tagPath = bean.getTagPath();
         String productCode = bean.getProductCode();
         Long productId = bean.getProductId();
-        Double promotionPrice = bean.getPromotionPrice();
+        Double promotionPrice = 0.0;
+        if (bean.getPromotionPrice() != null && bean.getPromotionPrice().size() > 0) {
+            promotionPrice = (Double) bean.getPromotionPrice().values().toArray()[0];
+        }
         String modifier = bean.getModifier();
 
         // 获取Product信息
@@ -85,8 +97,7 @@ public class PromotionDetailService extends BaseService {
             productInfo = productService.getProductByCode(channelId, productCode);
             query.setQuery("{\"productCodes\":\"" + productCode + "\",\"cartId\":" + cartId + "}");
             groupModel = productGroupService.getProductGroupByQuery(channelId, query);
-        }
-        else {
+        } else {
             productInfo = productService.getProductById(channelId, productId);
             query.setQuery("{\"productCodes\":\"" + productInfo.getCommon().getFields().getCode() + "\",\"cartId\":" + cartId + "}");
             groupModel = productGroupService.getProductGroupByQuery(channelId, query);
@@ -94,10 +105,10 @@ public class PromotionDetailService extends BaseService {
 
         if (productInfo == null) {
             $warn("addPromotionDetail product不存在 " + bean.toString());
-            throw new BusinessException("productCode:"+productCode+"不存在");
+            throw new BusinessException("productCode:" + productCode + "不存在");
         }
 
-        String numIId = groupModel == null?null:groupModel.getNumIId();
+        String numIId = groupModel == null ? null : groupModel.getNumIId();
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean = new CmsBtPromotionGroupsBean(productInfo, groupModel, promotionId, modifier);
         cmsBtPromotionGroupsBean.setNumIid(numIId);
@@ -109,10 +120,18 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionCodesBean.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodesBean.setTagId(tagId == null ? 0 : tagId);
 
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
-        if (!imgList.isEmpty()) {
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
+        if (!imgList.isEmpty() && imgList.get(0).size() != 0) {
             cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
+        }else{
+            imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+            if (!imgList.isEmpty()) {
+                cmsBtPromotionCodesBean.setImage_url_1(imgList.get(0).getName());
+            }
         }
+
+
+
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodesBean) == 0) {
             cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodesBean);
         }
@@ -122,16 +141,55 @@ public class PromotionDetailService extends BaseService {
             $warn("addPromotionDetail product sku不存在 参数:" + bean.toString() + " 商品:" + productInfo.toString());
             throw new BusinessException("商品Sku数据不存在");
         }
+        List<BaseMongoMap<String, Object>> listSkuMongo = productInfo.getPlatform(bean.getCartId()).getSkus();
         skusList.forEach(sku -> {
-            CmsBtPromotionSkuBean cmsBtPromotionSkuModel = new CmsBtPromotionSkuBean(productInfo, groupModel, promotionId, modifier, sku.getSkuCode(), 0);
-            cmsBtPromotionSkuModel.setNumIid(numIId);
-            cmsBtPromotionSkuModel.setSize(sku.getSize());
-            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModel) == 0) {
-                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
+            BaseMongoMap<String, Object> mapSkuPlatform = getJMPlatformSkuMongo(listSkuMongo, sku.getSkuCode());
+            CmsBtPromotionSkuBean cmsBtPromotionSkuModelBean = new CmsBtPromotionSkuBean(productInfo, groupModel, promotionId, modifier, sku.getSkuCode(), 0);
+            cmsBtPromotionSkuModelBean.setNumIid(numIId);
+            cmsBtPromotionSkuModelBean.setSize(sku.getSize());
+            if (mapSkuPlatform != null) {
+                Double priceMsrp = mapSkuPlatform.getDoubleAttribute("priceMsrp");
+                Double priceRetail = mapSkuPlatform.getDoubleAttribute("priceRetail");
+                Double priceSale = mapSkuPlatform.getDoubleAttribute("priceSale");
+                cmsBtPromotionSkuModelBean.setMsrpRmb(new BigDecimal(priceMsrp));
+                cmsBtPromotionSkuModelBean.setRetailPrice(new BigDecimal(priceRetail));
+                cmsBtPromotionSkuModelBean.setSalePrice(new BigDecimal(priceSale));
+            }
+            if (sku != null) {
+                cmsBtPromotionSkuModelBean.setMsrpUsd(new BigDecimal(sku.getClientMsrpPrice()));
+            }
+            if (bean.getPromotionPrice() != null && bean.getPromotionPrice().containsKey(cmsBtPromotionSkuModelBean.getProductSku())) {
+                cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(bean.getPromotionPrice().get(cmsBtPromotionSkuModelBean.getProductSku())));
+            } else {
+                if (!isUpdatePromotionPrice)//不更新活动价格
+                {
+                    CmsBtPromotionSkusModel cmsBtPromotionSkusModel = promotionSkuService.get(promotionId, productInfo.getCommon().getFields().getCode(), sku.getSkuCode());
+                    if (cmsBtPromotionSkusModel != null) {
+                        cmsBtPromotionSkuModelBean.setPromotionPrice(cmsBtPromotionSkusModel.getPromotionPrice());
+                    }
+                }
+            }
+            if (cmsBtPromotionSkuModelBean.getPromotionPrice() == null) {
+                cmsBtPromotionSkuModelBean.setPromotionPrice(new BigDecimal(0));
+            }
+
+            if (cmsPromotionSkuDao.updatePromotionSku(cmsBtPromotionSkuModelBean) == 0) {
+                cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModelBean);
             }
         });
     }
-
+    private BaseMongoMap<String, Object>  getJMPlatformSkuMongo(List<BaseMongoMap<String, Object>> list,String skuCode)
+    {
+        if(list==null) return  null;
+        for(BaseMongoMap<String, Object> map:list)
+        {
+            if(skuCode.equalsIgnoreCase(map.getStringAttribute("skuCode")))
+            {
+                return  map;
+            }
+        }
+        return null;
+    }
     @VOTransactional
     public void insertPromotionGroup(CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean) {
 
@@ -157,6 +215,7 @@ public class PromotionDetailService extends BaseService {
                 cmsBtPromotionSkuModel.setModified(cmsBtPromotionGroupsBean.getModified());
                 cmsPromotionSkuDao.insertPromotionSku(cmsBtPromotionSkuModel);
             });
+            cmsBtPromotionCodesDaoExtCamel.updatePromotionPrice(code.getPromotionId(),code.getProductCode());
         }
     }
 
@@ -314,7 +373,11 @@ public class PromotionDetailService extends BaseService {
         request.setProductId(cmsBtPromotionCodesBean.getProductId());
         request.setProductCode(cmsBtPromotionCodesBean.getProductCode());
         request.setPromotionId(cmsBtPromotionCodesBean.getPromotionId());
-        request.setPromotionPrice(cmsBtPromotionCodesBean.getPromotionPrice());
+        Map<String,Double> promostionPrice = new HashedMap();
+        if(cmsBtPromotionCodesBean.getSkus() != null){
+            cmsBtPromotionCodesBean.getSkus().forEach(cmsBtPromotionSkuBean -> promostionPrice.put(cmsBtPromotionSkuBean.getProductSku(),cmsBtPromotionSkuBean.getPromotionPrice().doubleValue()));
+        }
+        request.setPromotionPrice(promostionPrice);
         request.setTagId(cmsBtPromotionCodesBean.getTagId());
         request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
 
@@ -345,6 +408,23 @@ public class PromotionDetailService extends BaseService {
             cmsBtPromotionTask.setNumIid(cmsBtPromotionCodesBean.getNumIid());
             cmsBtPromotionTask.setCreater(operator);
             cmsBtPromotionTask.setModifier(operator);
+
+            PromotionDetailAddBean request=new PromotionDetailAddBean();
+            request.setModifier(cmsBtPromotionCodesBean.getModifier());
+            request.setChannelId(cmsBtPromotionCodesBean.getChannelId());
+            request.setCartId(cmsBtPromotionCodesBean.getCartId());
+            request.setProductId(cmsBtPromotionCodesBean.getProductId());
+            request.setProductCode(cmsBtPromotionCodesBean.getProductCode());
+            request.setPromotionId(cmsBtPromotionCodesBean.getPromotionId());
+            Map<String,Double> promostionPrice = new HashedMap();
+            if(cmsBtPromotionCodesBean.getSkus() != null){
+                cmsBtPromotionCodesBean.getSkus().forEach(cmsBtPromotionSkuBean -> promostionPrice.put(cmsBtPromotionSkuBean.getProductSku(),cmsBtPromotionSkuBean.getPromotionPrice().doubleValue()));
+            }
+            request.setPromotionPrice(promostionPrice);
+            request.setTagId(cmsBtPromotionCodesBean.getTagId());
+            request.setTagPath(cmsBtPromotionCodesBean.getTagPath());
+
+            addPromotionDetail(request);
 
             if (isUpdateAllPromotionTask(cmsBtPromotionCodesBean)) {
                 cmsBtPromotionTask.setSynFlg(1);

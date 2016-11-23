@@ -42,6 +42,7 @@ public class ExpressionParser extends VOAbsLoggable {
         this.sxProductService = sxProductService;
         this.sxData = sxData;
         this.dictWordParser = new DictWordParser(sxProductService, sxData.getChannelId(), sxData.getCartId());
+//        this.dictWordParser = new DictWordParser(sxProductService, sxData.getMainProduct().getOrgChannelId(), sxData.getCartId());
         this.textWordParser = new TextWordParser();
         this.customWordParser = new CustomWordParser(this, sxProductService, sxData);
 
@@ -61,77 +62,7 @@ public class ExpressionParser extends VOAbsLoggable {
 
         if (ruleExpression != null) {
             for (RuleWord ruleWord : ruleExpression.getRuleWordList()) {
-                String plainValue = "";
-                switch (ruleWord.getWordType()) {
-                    case TEXT:
-                        plainValue = textWordParser.parse(ruleWord);
-                        if (((TextWord)ruleWord).isUrl()) {
-                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-//                                plainValue = sxProductService.encodeImageUrl(plainValue);
-                                Set<String> url = new HashSet<>();
-                                url.add(plainValue);
-                                // 上传图片到天猫图片空间
-                                Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-                                // added by morse.lu 2016/06/29 start
-                                // 返回上传后的url
-                                if (!StringUtils.isEmpty(map.get(plainValue))) {
-                                    plainValue = map.get(plainValue);
-                                }
-                                // added by morse.lu 2016/06/29 end
-                            }
-                        }
-                        break;
-                    case MASTER:
-                        plainValue = masterWordParser.parse(ruleWord);
-                        break;
-                    case MASTER_HTML:
-                        plainValue = masterHtmlWordParser.parse(ruleWord);
-                        break;
-                    case MASTER_CLR_HTML:
-                        plainValue = masterClrHtmlWordParser.parse(ruleWord);
-                        break;
-                    case FEED_ORG:
-                        plainValue = feedOrgWordParser.parse(ruleWord);
-                        break;
-                    case FEED_CN:
-                        plainValue = feedCnWordParser.parse(ruleWord);
-                        break;
-                    case DICT:
-                        DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
-                        if (dictWordDefine == null)
-                        {
-                            $error("字典不存在:" + ruleWord);
-                            return null;
-                        }
-
-                        plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
-
-                        // deleted by morse.lu 2016/06/29 start
-                        // 图片上传在各自字典里做了
-//                        if (!StringUtils.isEmpty(plainValue) && dictWordDefine.getIsUrl()) {
-//                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-////                                plainValue = sxProductService.encodeImageUrl(plainValue);
-//                                Set<String> url = new HashSet<>();
-//                                url.add(plainValue);
-//                                // 上传图片到天猫图片空间
-//                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
-//                            }
-//                        }
-                        // deleted by morse.lu 2016/06/29 end
-
-                        break;
-                    case CUSTOM:
-                        plainValue = customWordParser.parse(ruleWord, shopBean, user, extParameter);
-                        break;
-                    case SKU:
-                        plainValue = skuWordParser.parse(ruleWord);
-                        break;
-                    // added by morse.lu 2016/06/27 start
-                    case COMMON:
-                        // 从product表的common下去取
-                        plainValue = commonWordParser.parse(ruleWord);
-                    // added by morse.lu 2016/06/27 end
-                }
+                String plainValue = parseWord(ruleWord, shopBean, user, extParameter);
 
                 // modified by morse.lu 2016/09/18 start
                 // TODO：即使null也继续做下去,可能会有较大影响范围,有问题产生了,以后一点点修正别的地方的逻辑吧
@@ -148,6 +79,82 @@ public class ExpressionParser extends VOAbsLoggable {
         else
             return null;
         return resultStr.toString();
+    }
+
+    public String parseWord(RuleWord ruleWord, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        String plainValue = "";
+        switch (ruleWord.getWordType()) {
+            case TEXT:
+                plainValue = textWordParser.parse(ruleWord);
+                if (((TextWord)ruleWord).isUrl()) {
+                    if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+//                                plainValue = sxProductService.encodeImageUrl(plainValue);
+                        Set<String> url = new HashSet<>();
+                        url.add(plainValue);
+                        // 上传图片到天猫图片空间
+                        Map<String, String> map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+                        // added by morse.lu 2016/06/29 start
+                        // 返回上传后的url
+                        if (!StringUtils.isEmpty(map.get(plainValue))) {
+                            plainValue = map.get(plainValue);
+                        }
+                        // added by morse.lu 2016/06/29 end
+                    }
+                }
+                break;
+            case MASTER:
+                plainValue = masterWordParser.parse(ruleWord);
+                break;
+            case MASTER_HTML:
+                plainValue = masterHtmlWordParser.parse(ruleWord);
+                break;
+            case MASTER_CLR_HTML:
+                plainValue = masterClrHtmlWordParser.parse(ruleWord);
+                break;
+            case FEED_ORG:
+                plainValue = feedOrgWordParser.parse(ruleWord);
+                break;
+            case FEED_CN:
+                plainValue = feedCnWordParser.parse(ruleWord);
+                break;
+            case DICT:
+                DictWord dictWordDefine = dictWordParser.parseToDefineDict(ruleWord);
+                if (dictWordDefine == null)
+                {
+                    $error("字典不存在:" + ruleWord);
+                    return null;
+                }
+
+                plainValue = parse(dictWordDefine.getExpression(), shopBean, user, extParameter);
+
+                // deleted by morse.lu 2016/06/29 start
+                // 图片上传在各自字典里做了
+//                        if (!StringUtils.isEmpty(plainValue) && dictWordDefine.getIsUrl()) {
+//                            if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
+////                                plainValue = sxProductService.encodeImageUrl(plainValue);
+//                                Set<String> url = new HashSet<>();
+//                                url.add(plainValue);
+//                                // 上传图片到天猫图片空间
+//                                sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, url, user);
+//                            }
+//                        }
+                // deleted by morse.lu 2016/06/29 end
+
+                break;
+            case CUSTOM:
+                plainValue = customWordParser.parse(ruleWord, shopBean, user, extParameter);
+                break;
+            case SKU:
+                plainValue = skuWordParser.parse(ruleWord);
+                break;
+            // added by morse.lu 2016/06/27 start
+            case COMMON:
+                // 从product表的common下去取
+                plainValue = commonWordParser.parse(ruleWord);
+                // added by morse.lu 2016/06/27 end
+        }
+
+        return plainValue;
     }
 
     public Map<String, Object> popMasterPropContext() {

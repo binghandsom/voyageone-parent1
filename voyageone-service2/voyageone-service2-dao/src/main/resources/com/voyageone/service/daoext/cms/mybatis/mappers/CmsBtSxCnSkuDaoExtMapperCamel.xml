@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtSxCnSkuDaoExt">
+    <delete id="deleteByListCodes">
+        delete from cms_bt_sx_cn_sku
+        <where>
+            `channel_id` = #{channelId,jdbcType=VARCHAR}
+            and code in
+            <foreach item="item" index="index" collection="listCodes"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+</mapper>

@@ -4,7 +4,7 @@
        <select id="cms_selectInventoryCode" parameterType="String" resultType="com.voyageone.task2.cms.bean.InventoryForCmsBean">
               select aa.order_channel_id channelId,
               aa.code,
-              sum(aa.qty_orgin) qty,
+              sum(aa.qty_china) qty,
               #{modified} modifier,
               #{modified} creater
               from wms_bt_inventory_center_logic aa

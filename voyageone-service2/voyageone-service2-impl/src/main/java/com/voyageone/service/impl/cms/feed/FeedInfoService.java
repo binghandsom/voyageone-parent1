@@ -8,6 +8,7 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class FeedInfoService extends BaseService {
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
+    @Autowired
+    private CmsMasterBrandMappingService cmsMasterBrandMappingService;
+
     /**
      * getList
      */
@@ -39,7 +43,7 @@ public class FeedInfoService extends BaseService {
      * getCnt
      */
     public long getCnt(String channelId, Map<String, Object> searchValue) {
-        String queryStr = getSearchQuery(searchValue);
+        String queryStr = getSearchQuery(channelId, searchValue);
         return cmsBtFeedInfoDao.countByQuery(queryStr, channelId);
     }
 
@@ -251,7 +255,7 @@ public class FeedInfoService extends BaseService {
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
      */
-    public String getSearchQuery(Map<String, Object> searchValue) {
+    public String getSearchQuery(String channelId, Map<String, Object> searchValue) {
         StringBuilder result = new StringBuilder();
 
         // 获取查询的价格类型
@@ -365,6 +369,22 @@ public class FeedInfoService extends BaseService {
             orSearch.add(MongoUtils.splicingValue("longDescription", fuzzySearch, "$regex"));
             result.append("{").append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
             result.append("},");
+        }
+
+        if(searchValue.get("masterBrand") != null){
+            List<String> masterBrands = (List<String>) searchValue.get("masterBrand");
+            if (!masterBrands.isEmpty()) {
+                List<String> feedBrands = cmsMasterBrandMappingService.getFeedBrandByMasterBrand(channelId, masterBrands);
+                List<String> brands;
+                if (searchValue.get("brand") != null) {
+                    brands = (List<String>) searchValue.get("brand");
+                } else {
+                    brands = new ArrayList<String>();
+                }
+                brands.addAll(feedBrands);
+                brands = brands.stream().distinct().collect(Collectors.toList());
+                searchValue.put("brand", brands);
+            }
         }
 
         // 获取brand

@@ -149,13 +149,13 @@ public class JongoQuery extends BaseCondition {
     }
 
     public String getQuery() {
-        if (query != null) {
-            return query;
+        if (query == null || query.length() == 0) {
+            if (queryStrList != null && queryStrList.size() > 0) {
+                return "{$and:[" + StringUtils.join(queryStrList, ',') + "]}";
+            }
         }
-        if (queryStrList != null && queryStrList.size() > 0) {
-            return "{$and:[" + StringUtils.join(queryStrList, ',') + "]}";
-        }
-        return "";
+
+        return query;
     }
 
     public Map getQueryMap() {

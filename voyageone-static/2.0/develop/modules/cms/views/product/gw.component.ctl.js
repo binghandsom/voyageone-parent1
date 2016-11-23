@@ -41,6 +41,7 @@ define([
                 scope.allSkuSale = allSkuSale;
                 scope.focusError = focusError;
                 scope.copyMainProduct = copyMainProduct;
+                scope.moveToGroup = moveToGroup;
 
                 /**
                  * 获取京东页面初始化数据
@@ -123,11 +124,6 @@ define([
                  * @param popupNewCategory popup实例
                  */
                 function categoryMapping(popupNewCategory) {
-
-                    if (scope.vm.status == 'Approved') {
-                        alert("商品可能已经上线，请先进行该平台的【全Group下线】操作。");
-                        return;
-                    }
 
                     productDetailService.getPlatformCategories({cartId: scope.cartInfo.value})
                         .then(function (res) {
@@ -226,6 +222,32 @@ define([
                 }
 
                 /**
+                 * 移动Code到其他Group
+                 * */
+                function moveToGroup() {
+                    // if (scope.vm.mastData == null)  return;
+                    var template = $translate.instant('TXT_CONFIRM_MOVE_SKU', {'cartName': scope.cartInfo.name});
+                    var moveCodeInfo = {
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        prodId: scope.productInfo.productId
+                    };
+                    window.sessionStorage.setItem('moveCodeInfo', JSON.stringify(moveCodeInfo));
+                    confirm(template).then(function () {
+                        var newTab = window.open('about:blank');
+                        productDetailService.moveCodeInitCheck({
+                            cartId: scope.cartInfo.value,
+                            cartName: scope.cartInfo.name,
+                            prodId: scope.productInfo.productId
+                        }).then(function (resp) {
+                            newTab.location.href = "#/product/code_move";
+                        }, function (err) {
+                            newTab.close();
+                        });
+                    });
+                }
+
+                /**
                  * @description 更新操作
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
@@ -278,19 +300,21 @@ define([
                                     platform: scope.vm.platform
                                 });
 
-                                productDetailService.checkCategory({
-                                    cartId: scope.vm.platform.cartId,
-                                    pCatPath: scope.vm.platform.pCatPath
-                                }).then(function (resp) {
-                                    if (resp.data === false) {
-                                        confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
-                                            scope.vm.platform.status = scope.vm.status = "Pending";
+                                if (scope.vm.platform.pCatPath) {
+                                    productDetailService.checkCategory({
+                                        cartId: scope.vm.platform.cartId,
+                                        pCatPath: scope.vm.platform.pCatPath
+                                    }).then(function (resp) {
+                                        if (resp.data === false) {
+                                            confirm("当前类目没有申请 是否还需要保存？如果选择[确定]，那么状态会返回[待编辑]。请联系IT人员处理平台类目").then(function () {
+                                                scope.vm.platform.status = scope.vm.status = "Pending";
+                                                callSave();
+                                            });
+                                        } else {
                                             callSave();
-                                        });
-                                    } else {
-                                        callSave();
-                                    }
-                                });
+                                        }
+                                    });
+                                }
 
                             } else {
                                 callSave();

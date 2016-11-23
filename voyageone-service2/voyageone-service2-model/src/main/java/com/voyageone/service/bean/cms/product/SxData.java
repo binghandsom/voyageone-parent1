@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.service.model.cms.CmsTmpSxCnCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -76,7 +77,20 @@ public class SxData {
 		}
 	}
 
-	public String getChannelId() {
+    // added by morse.lu 2016/10/19 start
+    // 独立域名上新，临时用的，以后不看cms_tmp_sx_cn_code这张表且删了这张表之后，把这里的删掉
+    private CmsTmpSxCnCodeModel tmpSxCnCode;
+
+    public CmsTmpSxCnCodeModel getTmpSxCnCode() {
+        return tmpSxCnCode;
+    }
+
+    public void setTmpSxCnCode(CmsTmpSxCnCodeModel tmpSxCnCode) {
+        this.tmpSxCnCode = tmpSxCnCode;
+    }
+    // added by morse.lu 2016/10/19 end
+
+    public String getChannelId() {
 		return channelId;
 	}
 

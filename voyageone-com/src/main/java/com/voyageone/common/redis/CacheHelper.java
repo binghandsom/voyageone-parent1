@@ -3,8 +3,7 @@ package com.voyageone.common.redis;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.spring.SpringContext;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -23,11 +22,35 @@ public class CacheHelper {
     private final static String RELAOD = "reload";
 
     @SuppressWarnings("unchecked")
-    public static RedisTemplate<String, Map<String, Object>> getCacheTemplate() {
+    public static RedisTemplate getCacheTemplate() {
         return SpringContext.getBean(RedisTemplate.class);
     }
 
     public static HashOperations getHashOperation() {
+        return getCacheTemplate().opsForHash();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static ListOperations<String, Object> getListOperation() {
+        return getCacheTemplate().opsForList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static ZSetOperations<String, Object> getZSetOperation() {
+        return getCacheTemplate().opsForZSet();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static ValueOperations<String, Object> getValueOperation() {
+        return getCacheTemplate().opsForValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static HashOperations getHashOperation(boolean isLocal) {
+        RedisTemplate template = getCacheTemplate();
+        if (template instanceof VoCacheTemplate) {
+            return ((VoCacheTemplate)template).opsForHash(isLocal);
+        }
         return getCacheTemplate().opsForHash();
     }
 
@@ -83,8 +106,16 @@ public class CacheHelper {
         callCache(key, refreshMap);
     }
 
+    /* SSB表示缓存数据类型为<String,String,bean>  */
+    public static void reFreshSSB(String key, Map refreshMap, boolean isLocal) {
+        if (StringUtil.isEmpty(key)|| MapUtils.isEmpty(refreshMap)) return;
+        //noinspection unchecked
+        getHashOperation(isLocal).putAll(key, refreshMap);
+    }
+
     /* 删除RedisKey */
     public static void delete(String key) {
+        //noinspection unchecked
         getCacheTemplate().delete(key);
     }
 

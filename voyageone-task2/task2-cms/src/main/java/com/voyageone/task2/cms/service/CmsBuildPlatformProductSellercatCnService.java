@@ -2,6 +2,8 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
@@ -9,7 +11,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
+public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskService {
 
     @Autowired
     private CnSchemaService cnSchemaService;
@@ -64,8 +66,16 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-                // 主处理
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+//                {
+//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+//                    // 主处理
+//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
+                    // 主处理
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()), shopBean);
+                }
             }
         }
 
@@ -78,12 +88,14 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
      *
      * @param channelId String 渠道ID
      */
-    public void doUpload(String channelId, int cartId) {
-        List<List<Field>> result = new ArrayList<>();
-
+    public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         // 取得要更新的类目
         List<String> listCatIds = cnCategoryService.selectListWaitingUpload(channelId);
+        if (ListUtils.isNull(listCatIds)) {
+            return;
+        }
 
+        List<List<Field>> result = new ArrayList<>();
         for (String catId : listCatIds) {
             List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             if (ListUtils.isNull(codes)) {
@@ -93,7 +105,8 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
 
             List<Field> fields = new ArrayList<>();
             fields.add(createInputField("Id", catId)); // Id
-            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+//            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+            fields.add(createInputField("ProductCodes", codes.stream().map(code-> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
 
             result.add(fields);
         }
@@ -101,9 +114,16 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseTaskService {
         String xml = cnSchemaService.writeCategoryProductXmlString(result);
         $debug("类目-产品xml:" + xml);
 
-        // TODO:doPost
-
+        // doPost
         boolean isSuccess = false;
+        try {
+            String resultPost = cnSchemaService.postXml(xml, shopBean);
+            if (resultPost != null && resultPost.indexOf("Success") >= 0) {
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            $error("推送类目-产品xml时发生异常!");
+        }
 
         if (isSuccess) {
             // 状态更新成 1:已处理

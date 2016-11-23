@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.JmPicBean;
 import com.voyageone.task2.cms.dao.JmPicDao;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @version 2.0.0
  */
 @Service
-public class CmsUploadJmPicService extends BaseTaskService {
+public class CmsUploadJmPicService extends BaseCronTaskService {
 
     private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&*_''/‘’^\\()]");
 

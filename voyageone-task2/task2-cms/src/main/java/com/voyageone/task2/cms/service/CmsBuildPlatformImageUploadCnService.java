@@ -7,7 +7,7 @@ import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.sx.CnImageService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtSxCnImagesModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2.6.0
  */
 @Service
-public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
+public class CmsBuildPlatformImageUploadCnService extends BaseCronTaskService {
 
     @Autowired
     private BusinessLogService businessLogService;
@@ -36,6 +36,7 @@ public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
 
     private static final int PUBLISH_IMAGE_COUNT_ONCE_HANDLE = 10000;
 
+    // url,文件夹名 都未定
     private static final String[][] CN_URLS = new String[][]{
             {"201", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product="},
             {"202", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160906_x1200_1200x?$1200x1200_exportpng$&$product=="},
@@ -72,7 +73,8 @@ public class CmsBuildPlatformImageUploadCnService extends BaseTaskService {
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
                 // 独立域名商品信息新增或更新
-                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+//                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+                doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()));
             }
         }
 

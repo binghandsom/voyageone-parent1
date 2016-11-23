@@ -165,7 +165,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         // 获取product列表
         List<String> prodCodeList = null;
         if (searchValue.getFileType() == 2) {
-            if (codeList == null) {
+            if (codeList == null || codeList.isEmpty()) {
                 prodCodeList = advSearchQueryService.getGroupCodeList(searchValue, channelId);
             } else {
                 $debug("仅导出选中的记录,再查询group");
@@ -186,7 +186,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 prodCodeList = grpList.stream().map(tmItem -> tmItem.getMainProductCode()).distinct().collect(Collectors.toList());
             }
         } else {
-            if (codeList == null) {
+            if (codeList == null || codeList.isEmpty()) {
                 prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId);
             } else {
                 $debug("仅导出选中的记录");

@@ -275,12 +275,13 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 
         // added by morse.lu 2016/08/08 start
         String[] status = new String[]{"", ""}; // status[0] 状态 status[1] error的场合error信息
-        String[] errorKeys = {"不完整", "不规范", "不正确", "错误", "需", "未"}; // 以后视情况追加修正
+        String[] errorKeys = {"不完整", "不规范", "不正确", "错误", "需", "未", "不一致", "缺少", "审核中", "待审核"}; // 以后视情况追加修正
         List<String> listBarcode = new ArrayList<>();
         // added by morse.lu 2016/08/08 end
         // 调用天猫API获取产品信息获取schema(tmall.product.schema.get )
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         List<Field> fields = SchemaReader.readXmlForList(schema);
+        boolean hasAllowUpdate = false;
 
         for (Field field : fields)
         {
@@ -314,8 +315,11 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                     if (sxDarwinSkuProps != null) {
                         // 是这次要上的barcode
                         sxDarwinSkuProps.setCspuId(((InputField) mapFields.get("id")).getDefaultValue()); // 规格编号
-                        if (!sxDarwinSkuProps.isAllowUpdate()) {
-                            // 不允许更新，那么有错，就需要把错报出来
+                        // deleted by morse.lu 2016/10/27 start
+                        // 即使允许更新也要判断先原先是否有错(sxDarwinSkuProps.setErr(true)要执行)，为了之后代码来判断
+//                        if (!sxDarwinSkuProps.isAllowUpdate()) {
+//                            // 不允许更新，那么有错，就需要把错报出来
+                        // deleted by morse.lu 2016/10/27 end
                             if (cspuField.getRules() != null) {
                                 boolean isFirstErr = true;
                                 for (Rule rule : cspuField.getRules()) {
@@ -323,7 +327,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                                         String info = StringUtils.null2Space2(rule.getValue());
                                         boolean isErrorMsg = false;
                                         for (String errorKey : errorKeys) {
-                                            if (info.indexOf(errorKey) > 0) {
+                                            if (info.indexOf(errorKey) >= 0) {
                                                 isErrorMsg = true;
                                                 break;
                                             }
@@ -340,12 +344,25 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                                     }
                                 }
                             }
+                            // added by morse.lu 2016/10/27 start
+                        if (sxDarwinSkuProps.isAllowUpdate()) {
+                            // 允许更新
+                            hasAllowUpdate = true;
+                            // added by morse.lu 2016/10/27 start
                         }
                     }
                 }
             }
             // added by morse.lu 2016/08/08 end
         }
+
+        // added by morse.lu 2016/10/27 start
+        if (hasAllowUpdate) {
+            // 允许更新话，说明IT审核过错误已经修正了，在允许更新表里添加了，那么直接把状态改成true
+            status[0] = "true";
+            status[1] = "";
+        }
+        // added by morse.lu 2016/10/27 start
 
         return status;
     }
@@ -673,6 +690,10 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 //                    throw new BusinessException("这是新增的达尔文产品,所有规格都要填!");
 //                } else {
                     platformProductId = addTmallProduct(expressionParser, cmsMtPlatformCategorySchemaModel, null, shopBean, modifier);
+                    if (StringUtils.isEmpty(platformProductId)) {
+                        // schema没取到
+                        throw new BusinessException("上新达尔文产品失败,可能是产品schema没有取到!");
+                    }
 //                }
              } else {
                 // 对于找到的pid进行更新
@@ -719,9 +740,12 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
      */
     private boolean judgeCspuNeedUpdate(SxData sxData) {
         boolean needUpdate = false;
-        if (sxData.isUpdateProductFlg()) {
-            needUpdate = true;
-        } else {
+        // deleted by morse.lu 2016/10/13 start
+        // 达尔文产品不去判断"产品是否允许更新表"，只判断"规格是否允许更新表"
+//        if (sxData.isUpdateProductFlg()) {
+//            needUpdate = true;
+//        } else {
+        // deleted by morse.lu 2016/10/13 end
             Map<String, SxDarwinSkuProps> mapDarwinSkuProps = sxData.getMapDarwinSkuProps();
             for (SxDarwinSkuProps skuProps : mapDarwinSkuProps.values()) {
                 if (skuProps.isAllowUpdate() || StringUtils.isEmpty(skuProps.getCspuId())) {
@@ -730,7 +754,7 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                     break;
                 }
             }
-        }
+//        }
 
         return needUpdate;
     }

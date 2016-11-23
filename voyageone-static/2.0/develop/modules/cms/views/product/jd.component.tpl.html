@@ -73,6 +73,16 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
                                             </a>
                                         </li>
+                                        <li ng-if="cartInfo.value == 23 || cartInfo.value == 20">
+                                            <a href="javascript:void(0)" ng-click="doResetTmProduct()">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;重置天猫产品Id
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:void(0)" ng-click="moveToGroup()" target="_blank">
+                                                <i class="fa fa-arrow-circle-right"></i>&nbsp;移动到其他Group
+                                            </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
@@ -306,7 +316,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                         <div class="panel-body">
                             <div class="table-responsive">
@@ -315,8 +324,7 @@
                                         <thead>
                                         <tr>
                                             <th class="text-center">
-                                                <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value != 27">
-                                                <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved'">All
+                                                <input class="sku_check" type="checkbox" ng-click="selectAll()" ng-model="vm.skuFlag" ng-true-value="true" ng-false-value="false" ng-checked="allSkuSale()">All
                                             </th>
                                             <th class="text-center">skuCode</th>
                                             <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
@@ -336,8 +344,7 @@
                                         </tr>
                                         <tr ng-repeat="entity in vm.platform.skus" ng-if="vm.platform.skus.length > 0" ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
                                             <td class="text-center v-middle">
-                                                <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value != 27">
-                                                <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false" ng-if="cartInfo.value == 27" ng-disabled="vm.status == 'Approved' && entity.isSale == true">
+                                                <input class="sku_check" type="checkbox" ng-model="entity.isSale" ng-true-value="true" ng-false-value="false">
                                             </td>
                                             <td class="text-center v-middle">{{entity.skuCode}}</td>
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].qty}}</td>

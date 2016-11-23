@@ -198,10 +198,9 @@ public class CmsAddToPromotionService extends BaseViewService {
             request.setCartId(cartId);
             request.setProductId(item);
             request.setPromotionId(promotionId);
-            request.setPromotionPrice(0.00);
             request.setTagId(tagInfo.getId());
             request.setTagPath(tagInfo.getTagPath());
-            promotionDetailService.addPromotionDetail(request);
+            promotionDetailService.addPromotionDetail(request, false);
         });
     }
 

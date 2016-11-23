@@ -56,8 +56,103 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private String property4;
 
-    private String time;
+    /**
+     * 库存数量
+     */
+    private Integer quantity;
 
+    private String time;
+   private double maxMsrpRmb;
+   private double minMsrpRmb;
+   private double maxRetailPrice;
+   private double minRetailPrice;
+
+    public double getMaxMsrpRmb() {
+        return maxMsrpRmb;
+    }
+
+    public void setMaxMsrpRmb(double maxMsrpRmb) {
+        this.maxMsrpRmb = maxMsrpRmb;
+    }
+
+    public double getMinMsrpRmb() {
+        return minMsrpRmb;
+    }
+
+    public void setMinMsrpRmb(double minMsrpRmb) {
+        this.minMsrpRmb = minMsrpRmb;
+    }
+
+    public double getMaxRetailPrice() {
+        return maxRetailPrice;
+    }
+
+    public void setMaxRetailPrice(double maxRetailPrice) {
+        this.maxRetailPrice = maxRetailPrice;
+    }
+
+    public double getMinRetailPrice() {
+        return minRetailPrice;
+    }
+
+    public void setMinRetailPrice(double minRetailPrice) {
+        this.minRetailPrice = minRetailPrice;
+    }
+
+    public double getMaxSalePrice() {
+        return maxSalePrice;
+    }
+
+    public void setMaxSalePrice(double maxSalePrice) {
+        this.maxSalePrice = maxSalePrice;
+    }
+
+    public double getMinSalePrice() {
+        return minSalePrice;
+    }
+
+    public void setMinSalePrice(double minSalePrice) {
+        this.minSalePrice = minSalePrice;
+    }
+
+    public double getMaxPromotionPrice() {
+        return maxPromotionPrice;
+    }
+
+    public void setMaxPromotionPrice(double maxPromotionPrice) {
+        this.maxPromotionPrice = maxPromotionPrice;
+    }
+
+    public double getMinPromotionPrice() {
+        return minPromotionPrice;
+    }
+
+    public void setMinPromotionPrice(double minPromotionPrice) {
+        this.minPromotionPrice = minPromotionPrice;
+    }
+
+    public double getMaxMsrpUsd() {
+        return maxMsrpUsd;
+    }
+
+    public void setMaxMsrpUsd(double maxMsrpUsd) {
+        this.maxMsrpUsd = maxMsrpUsd;
+    }
+
+    public double getMinMsrpUsd() {
+        return minMsrpUsd;
+    }
+
+    public void setMinMsrpUsd(double minMsrpUsd) {
+        this.minMsrpUsd = minMsrpUsd;
+    }
+
+    private double maxSalePrice;
+   private double minSalePrice;
+   private double maxPromotionPrice;
+   private double minPromotionPrice;
+   private double maxMsrpUsd;
+   private double minMsrpUsd;
     private List<CmsBtPromotionSkuBean> skus;
 
     public CmsBtPromotionCodesBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, Integer cartId) {
@@ -266,5 +361,13 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     public void setSkus(List<CmsBtPromotionSkuBean> skus) {
         this.skus = skus;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
     }
 }

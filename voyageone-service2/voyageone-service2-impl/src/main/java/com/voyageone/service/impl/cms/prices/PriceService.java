@@ -20,7 +20,6 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,30 +52,25 @@ import static java.util.stream.Collectors.toMap;
  */
 @Service
 public class PriceService extends BaseService {
-
     private final CmsMtFeeCommissionService feeCommissionService;
-
     private final CmsMtFeeExchangeService feeExchangeService;
-
     private final CmsMtFeeTaxService feeTaxService;
-
     private final CmsMtFeeShippingService feeShippingService;
-
     private final ProductSkuService productSkuService;
-    @Autowired
-    private ImsBtProductDao imsBtProductDao;
-    @Autowired
-    private TbItemService tbItemService;
+    private final ImsBtProductDao imsBtProductDao;
+    private final TbItemService tbItemService;
 
     @Autowired
     public PriceService(CmsMtFeeShippingService feeShippingService, CmsMtFeeTaxService feeTaxService,
                         CmsMtFeeCommissionService feeCommissionService, CmsMtFeeExchangeService feeExchangeService,
-                        ProductSkuService productSkuService) {
+                        ProductSkuService productSkuService, ImsBtProductDao imsBtProductDao, TbItemService tbItemService) {
         this.feeShippingService = feeShippingService;
         this.feeTaxService = feeTaxService;
         this.feeCommissionService = feeCommissionService;
         this.feeExchangeService = feeExchangeService;
         this.productSkuService = productSkuService;
+        this.imsBtProductDao = imsBtProductDao;
+        this.tbItemService = tbItemService;
     }
 
     /**
@@ -266,7 +260,7 @@ public class PriceService extends BaseService {
 
         String channelId = product.getChannelId();
 
-        Integer platformId = CartType.getPlatformIdById(cartId);
+        Integer platformId = Integer.valueOf(Carts.getCart(cartId).getPlatform_id());
 
         // 计算是否自动同步最终售价
         boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
@@ -322,10 +316,10 @@ public class PriceService extends BaseService {
             hsCode = strings[0];
         }
 
-        /**
+        /*
          * 1.如果无税号，价格计算 按默认值11.9（配置）中计算 中国建议售价,中国指导售价和中国最终售价
-           2.如果税号从无 -》有，根据税号的税率重新计算 中国建议售价,中国指导售价和中国最终售价
-           3.如果税号从有 -》有，现有逻辑不变，根据价格同步配置，重新计算 中国指导售价和中国最终售价（看配置）
+         * 2.如果税号从无 -》有，根据税号的税率重新计算 中国建议售价,中国指导售价和中国最终售价
+         * 3.如果税号从有 -》有，现有逻辑不变，根据价格同步配置，重新计算 中国指导售价和中国最终售价（看配置）
          */
         Double taxRate;
 
@@ -384,6 +378,13 @@ public class PriceService extends BaseService {
                 if (StringUtils.isEmpty(weightString) || !StringUtils.isNumeric(weightString) || (weight = Double.valueOf(weightString)) <= 0)
                     throw new PriceCalculateException("没有为渠道 %s (%s) 的(SKU) %s 找到可用的商品重量", channelId, cartId, skuCodeValue);
             }
+            CmsChannelConfigBean defaultPackageWeightConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.DEFAULT_PACKAGE_WEIGHT);
+            Double defaultPackageWeight = 0D;
+            if (defaultPackageWeightConfig == null || StringUtils.isEmpty(defaultPackageWeightConfig.getConfigValue1())
+                    || !StringUtils.isNumeric(defaultPackageWeightConfig.getConfigValue1()) || (defaultPackageWeight = Double.valueOf(defaultPackageWeightConfig.getConfigValue1())) < 0) {
+                defaultPackageWeight = CmsConstants.ChannelConfig.DEFAULT_PACKAGE_WEIGHT_VAL;
+            }
+            weight = Double.sum(weight, defaultPackageWeight);
 
             // 公式参数: 获取运费
             Double shippingFee = feeShippingService.getShippingFee(shippingType, weight);

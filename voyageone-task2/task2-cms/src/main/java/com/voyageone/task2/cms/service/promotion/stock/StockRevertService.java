@@ -8,7 +8,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.daoext.cms.CmsBtStockSeparateItemDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTasksStockDaoExt;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.*;
  * @version 0.0.1, 16/3/29
  */
 @Service
-public class StockRevertService extends BaseTaskService {
+public class StockRevertService extends BaseCronTaskService {
 
     @Autowired
     private StockInfoService stockInfoService;

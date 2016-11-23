@@ -17,23 +17,27 @@ ul[uib-datepicker-popup-wrap] table {
 ul[uib-datepicker-popup-wrap] button {
     border: 0;
 }
-.category_highlight{
+
+.category_highlight {
     background: hotpink;
     color: #fff;
 }
-.category_highlight>p>span{
+
+.category_highlight > p > span {
     color: #fff;
 }
+
 .thumb-xxs {
     max-width: 17px;
     max-height: 34px;
     display: inline-block;
 }
+
 .thumb-sm-search {
-     max-width: 80px;
-     max-height:80px;
-     display: inline-block;
- }
+    max-width: 80px;
+    max-height: 80px;
+    display: inline-block;
+}
 
 .notifyjs-bootstrap-base {
     font-size: 24px;

@@ -9,7 +9,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -27,11 +27,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service
-public class GetPlatformCategoryTreesService extends BaseTaskService {
+public class GetPlatformCategoryTreesService extends BaseCronTaskService {
 
     private final static String JOB_NAME = "getPlatformCategoryTreesTask";
 

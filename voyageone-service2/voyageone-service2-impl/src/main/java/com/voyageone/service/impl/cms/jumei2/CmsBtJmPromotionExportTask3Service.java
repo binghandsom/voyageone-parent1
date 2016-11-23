@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.jumei2;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.util.excel.ExcelColumn;
 import com.voyageone.common.util.excel.ExcelException;
@@ -49,7 +50,7 @@ public class CmsBtJmPromotionExportTask3Service {
         String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
         //"/usr/JMExport/"
         String filePath = exportPath + "/" + fileName;
-        model.setBeginTime(new Date());
+        model.setBeginTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         //int TemplateType = model.getTemplateType();
         try {
             dao.update(model);
@@ -67,7 +68,7 @@ public class CmsBtJmPromotionExportTask3Service {
             ex.printStackTrace();
         }
         model.setIsExport(true);
-        model.setEndTime(new Date());
+        model.setEndTime(DateTimeUtilBeijing.getCurrentBeiJingDate());
         dao.update(model);
     }
 
@@ -114,6 +115,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("尺码类别", "sizeType", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesEn", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesCn", "cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
@@ -155,6 +157,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("团购价格", "dealPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("市场价格", "marketPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
         info.addExcelColumn("聚美SKU", "jmSkuNo", "cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());

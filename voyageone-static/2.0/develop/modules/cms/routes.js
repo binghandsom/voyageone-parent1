@@ -223,8 +223,8 @@ define(function () {
         },
         "tools_common_master_brand_mapping": {
             "hash": "/tools/common/masterBrandMapping",
-            "templateUrl": "views/tools/common/masterBrandMapping.tpl.html",
-            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping.ctl",
+            "templateUrl": "views/tools/common/masterBrandMapping/index.tpl.html",
+            "controllerUrl": "modules/cms/views/tools/common/masterBrandMapping/index.ctl",
             "controller": "MasterBrandMappingController as ctrl"
         },
         "tools_product_translation_setting": {
@@ -344,6 +344,18 @@ define(function () {
             "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl",
             "controller": "jmImageManageController as ctrl"
         },
+        // 聚美专场修改
+        "jmpromotion_list": {
+            "hash": "/jmpromotion/list",
+            "templateUrl": "views/jmpromotion/splist.tpl.html",
+            "controllerUrl": "modules/cms/views/jmpromotion/splist.ctl"
+        },
+        "jmpromotion_detail": {
+            "hash": "/jmpromotion/detail/:promId/:jmpromId",
+            "templateUrl": "views/jmpromotion/spdetail.tpl.html",
+            "controllerUrl": "modules/cms/views/jmpromotion/spdetail.ctl",
+            "controller": "SpDetailPageController as ctrl"
+        },
         "image_create": {
             "hash": "/imagecreate/index",
             "templateUrl": "views/imagecreate/index.tpl.html",
@@ -360,6 +372,24 @@ define(function () {
             "templateUrl": "views/channel/black_brand/list.tpl.html",
             "controllerUrl": "modules/cms/views/channel/black_brand/list.controller",
             "controller": "BlackBrandListController as ctrl"
+        },
+        "sku-move": {
+            "hash": "/product/sku_move",
+            "templateUrl": "views/product/skumove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/skumove.ctl",
+            "controller": "SkuMoveController as ctrl"
+        },
+        "code-move": {
+            "hash": "/product/code_move",
+            "templateUrl": "views/product/codemove.tpl.html",
+            "controllerUrl": "modules/cms/views/product/codemove.ctl",
+            "controller": "CodeMoveController as ctrl"
+        },
+        "maintain_common_master_brand_application": {
+            "hash": "/maintain/common/masterBrandApplication/",
+            "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
+            "controllerUrl": "modules/cms/views/maintain/common/masterBrandApplication/index.ctl",
+            "controller": "masterBrandApplicationController as ctrl"
         }
     };
 });

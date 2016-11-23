@@ -62,10 +62,10 @@ public class CmsFeedSearchController extends CmsController {
      * @apiSampleRequest off
      */
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.INIT)
-    public AjaxResponse init() throws Exception {
+    public AjaxResponse init(@RequestBody String channelId) throws Exception {
         CmsSessionBean cmsSession = getCmsSession();
         UserSessionBean userInfo = getUser();
-        return success(searchService.getMasterData(userInfo, cmsSession, getLang()));
+        return success(searchService.getMasterData(userInfo, channelId, cmsSession, getLang()));
     }
 
     /**
@@ -154,16 +154,21 @@ public class CmsFeedSearchController extends CmsController {
         int cnt = 0;
         Boolean isAll = (Boolean) params.get("isAll");
         Integer status = (Integer) params.get("status");
-        if(!isAll) {
+        Map<String, Object> searchValue = (Map<String, Object>) params.get("searchInfo");
+        String channelId = getUser().getSelChannelId();
+        if(searchValue != null){
+            channelId = searchValue.get("orgChaId")==null?getUser().getSelChannelId():searchValue.get("orgChaId").toString();
+        }
+        if(isAll == null || !isAll) {
             List selList = (List) params.get("selList");
             if (selList == null || selList.isEmpty()) {
                 throw new BusinessException("请至少选择一个Feed.");
             }
-            searchService.updateFeedStatus(selList,status, getUser());
+            searchService.updateFeedStatus(selList,status, getUser(),channelId);
         }else{
-            Map<String, Object> searchValue = (Map<String, Object>) params.get("searchInfo");
 
-            searchService.updateFeedStatus(searchValue, status, getUser());
+
+            searchService.updateFeedStatus(searchValue, status, getUser(),channelId);
         }
         // 返回结果信息
         return success(null);
@@ -180,25 +185,15 @@ public class CmsFeedSearchController extends CmsController {
         return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
     }
 
-    @RequestMapping(CmsUrlConstants.SEARCH.FEED.REEXPORT)
-    public  AjaxResponse reExport(@RequestBody CmsBtExportTaskModel params) {
-        params.setChannelId(getUser().getSelChannelId());
-        params.setModifier(getUser().getUserName());
-        params.setCreater(getUser().getUserName());
-        params.setCreated(new Date());
-        params.setTaskType(CmsBtExportTaskService.FEED);
-        params.setStatus(0);
-        return success(searchService.export(getUser().getSelChannelId(), params, getUser().getUserName()));
-    }
-
     @RequestMapping(CmsUrlConstants.SEARCH.FEED.EXPORTSEARCH)
     public AjaxResponse exportSearch(@RequestBody Map<String,Object> params){
         Map<String, Object> resultBean = new HashMap<String, Object>();
         UserSessionBean userInfo = getUser();
         Integer pageNum = (Integer) params.get("pageNum");
         Integer pageSize = (Integer) params.get("pageSize");
-        resultBean.put("exportList", cmsBtExportTaskService.getExportTaskByUser(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
-        resultBean.put("exportListTotal", cmsBtExportTaskService.getExportTaskByUserCnt(userInfo.getSelChannelId(), CmsBtExportTaskService.FEED, userInfo.getUserName()));
+        String channelId = params.get("orgChaId") == null ? userInfo.getSelChannelId() : params.get("orgChaId").toString();
+        resultBean.put("exportList", cmsBtExportTaskService.getExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userInfo.getUserName(), (pageNum - 1) * pageSize, pageSize));
+        resultBean.put("exportListTotal", cmsBtExportTaskService.getExportTaskByUserCnt(channelId, CmsBtExportTaskService.FEED, userInfo.getUserName()));
 
         // 返回feed信息
         return success(resultBean);

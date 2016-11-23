@@ -1,0 +1,90 @@
+<div class="wrapper-md" ng-init="ctrl.loadPromotion()" id="jm-promotion2-detail">
+    <uib-accordion class="vo_accordion vo_attr">
+        <uib-accordion-group heading="聚美专场" is-open="true">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">聚美专场名称：</label>
+                            <div class="col-sm-7">
+                                <p class="form-control-static">{{ctrl.promotion.name}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-5">预热时间：</label>
+                            <div class="col-sm-7">
+                                <p class="form-control-static">{{ctrl.promotion.prePeriodStart}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">活动时间：</label>
+                            <div class="col-sm-3">
+                                <p class="form-control-static">{{ctrl.promotion.activityStart}}</p>
+                            </div>
+                            <label class="col-sm-1 text-center m-t-xs"><strong>~</strong></label>
+                            <div class="col-sm-3">
+                                <p class="form-control-static">{{ctrl.promotion.activityEnd}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-accordion-group>
+    </uib-accordion>
+    <div class="row m-b-sm">
+        <div class="col-sm-8">
+            <div class="product-shema-detail">
+                <ul class="nav nav-pills">
+                    <li ng-if="ctrl.promotion.uploadStatus==0"><span class="label on-sale" style="background:darkgray">专场上传 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.uploadStatus==1"><span class="label on-sale">专场上传 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.uploadStatus==2"><span class="label on-sale tagFlag">专场上传 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==0"><span class="label on-sale" style="background:darkgray">活动信息 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==1"><span class="label on-sale">活动信息 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.detailStatus==2"><span class="label on-sale tagFlag">活动信息 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==0"><span class="label on-sale" style="background:darkgray">活动货架 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==1"><span class="label on-sale">活动货架 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.shelfStatus==2"><span class="label on-sale tagFlag">活动货架 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==0"><span class="label on-sale" style="background:darkgray">活动图片 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==1"><span class="label on-sale">活动图片 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==2"><span class="label on-sale tagFlag">活动图片 <i class="fa fa-times ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.imageStatus==3"><span class="label on-sale" style="background:#FFFF99;color:black">活动图片 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==0"><span class="label on-sale" style="background:darkgray">活动飘窗 <i class="fa ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==1"><span class="label on-sale">活动飘窗 <i class="fa fa-check ng-scope"></i></span></li>
+                    <li ng-if="ctrl.promotion.bayWindowStatus==2"><span class="label on-sale tagFlag">活动飘窗 <i class="fa fa-times ng-scope"></i></span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-4 text-right">
+            <div class="btn-group" uib-dropdown>
+                <button type="button" class="btn btn-default btn-pop" uib-dropdown-toggle style="width: 90px;">
+                    导出 <span class="caret"></span>
+                </button>
+                <ul class="uib-dropdown-menu" style="min-width: 114px">
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click="ctrl.addExport()">按上传模板</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(1)>按专场模板</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadJmPromotionInfo(2)>按商城模板</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadSpecialImageZip()>下载专场图片包</a></li>
+                    <li role="menuitem"><a href="javascript:void(0)" ng-click=ctrl.downloadWaresImageZip()>下载商品主图包</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <uib-tabset class="tab-container vo_nav-tabs">
+        <uib-tab heading="Products"><sp-product-list></sp-product-list></uib-tab>
+        <uib-tab heading="Promotion Detail"><sp-edit></sp-edit></uib-tab>
+        <uib-tab heading="JM Shelf (Module)"><sp-shelf></sp-shelf></uib-tab>
+        <uib-tab heading="Promotion Images"><sp-images></sp-images></uib-tab>
+        <uib-tab heading="Bay Windows"><bay-window></bay-window></uib-tab>
+        <uib-tab heading="Import List"><sp-import-list></sp-import-list></uib-tab>
+        <uib-tab heading="Export List"><sp-export-list></sp-export-list></uib-tab>
+    </uib-tabset>
+</div>
+

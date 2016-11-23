@@ -85,7 +85,7 @@ public class PlatformMappingService extends BaseService {
 
         if (StringUtils.isEmpty(categoryPath)) {
             CmsBtProductModel_Platform_Cart cart = product.getPlatform(cartId);
-            categoryPath = cart.getpCatPath();
+            categoryPath = cart != null ? cart.getpCatPath() : "";
         }
 
         CmsBtPlatformMappingModel fieldMapsModel = platformMappingDao.selectOne(cartId, CATEGORY_TYPE_SPECIFIC, categoryPath, channelId);

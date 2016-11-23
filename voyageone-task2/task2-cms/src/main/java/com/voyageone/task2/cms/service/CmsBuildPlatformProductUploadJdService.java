@@ -40,7 +40,7 @@ import com.voyageone.service.model.cms.CmsMtPlatformDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +70,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
+public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService {
 
     // 京东平台的操作类型(在售)
     private final static String OptioinType_onsale = "onsale";
@@ -209,12 +210,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             return;
         }
 
+        // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
+        Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
+        // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
+        doChannelConfigInit(channelId, cartId, channelConfigValueMap);
+
         // 创建线程池
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         // 根据上新任务列表中的groupid循环上新处理
         for(CmsBtSxWorkloadModel cmsBtSxWorkloadModel:sxWorkloadModels) {
             // 启动多线程
-            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp));
+            executor.execute(() -> uploadProduct(cmsBtSxWorkloadModel, shopProp, channelConfigValueMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -233,7 +239,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsBtSxWorkloadModel CmsBtSxWorkloadModel WorkLoad信息
      * @param shopProp ShopBean 店铺信息
      */
-    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp) {
+    public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp, Map<String, String> channelConfigValueMap) {
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -280,6 +286,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 //            sxProductService.sortSkuInfo(sxData.getSkuList());
 //            // added by morse.lu 2016/06/28 end
             // delete by desmond 2016/07/08 end
+
+            // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
+            // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
+            {
+                // 京东默认补满image1的5张图片
+                if (ListUtils.notNull(sxData.getMainProduct().getCommon().getFields().getImages1())) {
+                    int cnt = sxData.getMainProduct().getCommon().getFields().getImages1().size();
+                    for (int i = cnt; i < 5; i++) {
+                        sxData.getMainProduct().getCommon().getFields().getImages1().add(sxData.getMainProduct().getCommon().getFields().getImages1().get(0));
+                    }
+                }
+                // 补满每个产品image1的5张图片
+                for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+                    if (ListUtils.notNull(cmsBtProduct.getCommon().getFields().getImages1())) {
+                        int cnt = cmsBtProduct.getCommon().getFields().getImages1().size();
+                        for (int i = cnt; i < 5; i++) {
+                            cmsBtProduct.getCommon().getFields().getImages1().add(cmsBtProduct.getCommon().getFields().getImages1().get(0));
+                        }
+                    }
+                }
+            }
 
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();
@@ -484,7 +511,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 updateProductBean.setWareId(String.valueOf(jdWareId));
                 // 构造更新用商品bean，主要设置SKU相关属性
                 updateProductBean = setJdProductSkuInfo(updateProductBean, sxData, shopProp, productColorMap,
-                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
 
                 // 新增之后调用京东商品更新API
                 // 调用京东商品更新API设置SKU信息的好处是可以一次更新SKU信息，不用再一个一个SKU去设置
@@ -552,7 +579,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                 jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, shopProp, productColorMap,
-                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus);
+                        skuLogicQtyMap, cmsColorList, cmsSizeList, salePropStatus, channelConfigValueMap);
 
                 // 京东商品更新API返回的更新时间
                 // 调用京东商品更新API
@@ -572,6 +599,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                     }
                 }
             }
+
+            // 新增/更新商品没有报异常的时候，给商品打标（设置"7天无理由退货"等特殊features属性）,出错报异常让运营感知到异常
+            doMergeWareFeatures(shopProp, jdProductBean, jdWareId);
 
             // 新增或者更新商品结束时，根据状态回写product表（成功1 失败2）
             if (retStatus) {
@@ -723,13 +753,20 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         }
         // 商品标题(必须)
         jdProductBean.setTitle(jdCommonInfoMap.get("productTitle"));
+        // 7天无理由退货 1为支持，0为不支持 (非必须)
+        jdProductBean.setIs7ToReturn(jdCommonInfoMap.get("productIs7ToReturn"));
         // UPC编码(非必须)
 //        jdProductBean.setUpcCode(mainProduct.getXXX());                 // 不使用
         // 操作类型 现只支持：offsale 或onsale,默认为下架状态 (非必须)
         // 如果这里设成OnSale，新增商品时会直接上架，在售商品不能删除
         jdProductBean.setOptionType(OptioinType_offsale);
         // 外部商品编号，对应商家后台货号(非必须)
-        String productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+        String productModel = null;
+        if (mainProduct.getPlatform(sxData.getCartId()) != null) {
+            if (mainProduct.getPlatform(sxData.getCartId()).getFields() != null) {
+                productModel = mainProduct.getPlatform(sxData.getCartId()).getFields().getStringAttribute("productModel");
+            }
+        }
         if (StringUtils.isEmpty(productModel)) {
             // 默认使用model来设置
             jdProductBean.setItemNum(mainProduct.getCommon().getFields().getModel());
@@ -877,8 +914,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
         jdProductBean.setInputStrs(jdProductAttrMap.get(Input_Strs));
         // 是否输入验证码 true:是;false:否  (非必须)
         jdProductBean.setHasCheckCode("false");
-        // 广告词内容最大支持45个字符(非必须)
-//        jdProductBean.setAdContent(mainProduct.getXXX());                  // 不使用
+        // 商品标语(广告词)内容最大支持45个字符(非必须)
+        jdProductBean.setAdContent(jdCommonInfoMap.get("productAdContent"));
         // 定时上架时间 时间格式：yyyy-MM-dd HH:mm:ss;规则是大于当前时间，10天内。(非必须)
 //        jdProductBean.setListTime(mainProduct.getXXX());                   // 不使用
         // 品牌id
@@ -1104,6 +1141,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
      * @param cmsColorList List<CmsMtPlatformSkusModel> 该类目对应的颜色SKU列表
      * @param cmsSizeList List<CmsMtPlatformSkusModel> 该类目对应的尺寸SKU列表
      * @param salePropStatus String 当前平台主类目对应的销售属性状况
+     * @param channelConfigValueMap cms_mt_channel_config配置表中配置的值集合
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -1112,7 +1150,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                                               Map<String, Integer> skuLogicQtyMap,
                                               List<CmsMtPlatformSkusModel> cmsColorList,
                                               List<CmsMtPlatformSkusModel> cmsSizeList,
-                                              String salePropStatus) throws BusinessException {
+                                              String salePropStatus,
+                                              Map<String, String> channelConfigValueMap) throws BusinessException {
         List<CmsBtProductModel> productList = sxData.getProductList();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
 
@@ -1243,10 +1282,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
             // 设置该商品的自定义属性值别名(颜色1:颜色1的别名^颜色2:颜色2的别名)
             // 如果超过25个字(不管中文还是英文),  那就用color, 如果color也超长了, 京东上新会出错写入到business_log表里的, 运营直接修改common的颜色将其缩短即可.
             // 20160630 tom 防止code超长 START
-//            sbPropertyAlias.append(objProduct.getCommon().getFields().getCode());
-            String color = objProduct.getCommon().getFields().getCode();
-            if (color.length() > 25) {
+            // 如果该店铺在cms_mt_channel_config表中配置了使用哪个字段作为颜色别名就用配置的字段(如:color),否则默认为用code作为颜色别名
+            String color;
+            // 颜色别名配置key(ALIAS_29.color_alias)
+            String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + sxData.getCartId() + CmsConstants.ChannelConfig.COLOR_ALIAS;
+            if ("color".equalsIgnoreCase(channelConfigValueMap.get(colorAliasKey))) {
                 color = objProduct.getCommon().getFields().getColor();
+            } else {
+                color = objProduct.getCommon().getFields().getCode();
+                if (color.length() > 25) {
+                    color = objProduct.getCommon().getFields().getColor();
+                }
             }
             // 20160630 tom 防止code超长 END
             // 如果平台类目颜色和尺寸都存在的时候，颜色存在尺寸不存在的时候在后面SKU循环里面做
@@ -1280,10 +1326,27 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                         // 颜色1^尺码1|颜色1^尺码2|颜色2^尺码1|颜色2^尺码2(这里的尺码1是指从平台上取下来的，存在cms_mt_platform_skus表中的平台尺码值1)
                         if (productColorMap.containsKey(productCode)) {
                             sbSkuProperties.append(productColorMap.get(productCode));
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (skuSizeMap.containsKey(sizeSx)) {
                             sbSkuProperties.append(Separtor_Xor);        // "^"
                             sbSkuProperties.append(skuSizeMap.get(sizeSx));
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                    "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                    "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                         if (productColorMap.containsKey(productCode)
                                 || skuSizeMap.containsKey(sizeSx)) {
@@ -1306,6 +1369,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                             sbPropertyAlias.append(Separtor_Colon);         // ":"
                             sbPropertyAlias.append(color);
                             sbPropertyAlias.append(Separtor_Xor);           // "^"
+                        } else {
+                            // 该group下产品件数比京东平台上该类目的颜色属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020014:1562502478|~" (第二组没有颜色所以报错)
+                            String errMsg = String.format("产品(%s)没找到对应的平台类目(%s:%s)的颜色属性值,原因是本group下面的" +
+                                            "产品件数(%s件)比京东平台上该类目的颜色属性件数(%s件)多，强制上新会报\"参数错误.销售属性维度不一致\"的异常.",
+                                    productCode, platformCart.getpCatId(), platformCart.getpCatPath(), productList.size(), productColorMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     } else if ("3".equals(salePropStatus)) {
                         // 如果平台类目没有颜色只有尺寸信息时，skuSizeMap中的key为productCode_sizeSx
@@ -1314,6 +1385,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                         if (skuSizeMap.containsKey(sizeKey)) {
                             sbSkuProperties.append(skuSizeMap.get(sizeKey));
                             sbSkuProperties.append(Separtor_Vertical);   // "|"
+                        } else {
+                            // 该产品上新用尺码件数(<=sku件数)比京东平台上该类目的尺码属性件数多，强制上新会报"参数错误.销售属性维度不一致"的异常
+                            // "1000020013:1562511370^1000020014:1562502477|1000020013:1562511370|~" (第二组没有尺寸所以报错)
+                            String errMsg = String.format("产品(%s)的sku(%s)的上新用尺码(%s)没找到对应的平台类目(%s:%s)的尺码属性值，" +
+                                            "原因是该产品上新用尺码件数(约等于sku件数%s件)比京东平台上该类目的尺码属性件数(%s件)多，强制上新" +
+                                            "会报\"参数错误.销售属性维度不一致\"的异常.", productCode, pSkuCode, sizeSx, platformCart.getpCatId(),
+                                    platformCart.getpCatPath(), platformSkuList.size(), skuSizeMap.size());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
                         }
                     }
 
@@ -1661,6 +1741,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                         } catch (Exception ex) {
                             // 如果报"图片张数必须多余N张"的异常，则继续上传下一张图片，否则抛出异常
                             if (ex.getMessage().contains("图片张数必须多于")) {
+                                delImageCnt++;
                                 continue;
                             } else {
                                 throw new BusinessException(ex.getMessage());
@@ -1670,7 +1751,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
                 }
 
                 // 删除剩余的图片
-                for (int i = delImageCnt; delImageCnt < intOldImageCnt; i++) {
+                for (int i = delImageCnt; i < intOldImageCnt; i++) {
                     // 调用删除图片API（指定删除第一张）
                     // 如果报"图片张数必须多余N张"的异常，则写到log表里，让运营在CMS里面添加图片
                     try {
@@ -2135,5 +2216,75 @@ public class CmsBuildPlatformProductUploadJdService extends BaseTaskService {
 
         cmsBtProductDao.updateFirst(updateProductQuery, channelId);
 
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值集合
+     *
+     * @param channelId String 渠道id
+     * @param cartId int 平台id
+     * @param channelConfigValueMap 返回cms_mt_channel_config配置表中配置的值集合用
+     */
+    public void doChannelConfigInit(String channelId, int cartId, Map<String, String> channelConfigValueMap) {
+
+        // 从配置表(cms_mt_channel_config)表中取得颜色别名(ALIAS_29.color_alias)
+        String colorAliasKey = CmsConstants.ChannelConfig.ALIAS + "_" + cartId + CmsConstants.ChannelConfig.COLOR_ALIAS;
+        String colorAliasValue1 = getChannelConfigValue(channelId, CmsConstants.ChannelConfig.ALIAS,
+                cartId + CmsConstants.ChannelConfig.COLOR_ALIAS);
+        channelConfigValueMap.put(colorAliasKey, colorAliasValue1);
+    }
+
+    /**
+     * 取得cms_mt_channel_config配置表中配置的值
+     *
+     * @param channelId String 渠道id
+     * @param configKey CmsConstants.ChannelConfig ConfigKey
+     * @param configCode String ConfigCode
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public String getChannelConfigValue(String channelId, String configKey, String configCode) {
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(configKey)) return "";
+
+        // 配置表(cms_mt_channel_config)表中ConfigCode的默认值为0
+        String strConfigCode = "0";
+        if (!StringUtils.isEmpty(configCode)) {
+            strConfigCode = configCode;
+        }
+
+        String strConfigValue = "";
+        // 通过配置表(cms_mt_channel_config)取得Configykey和ConfigCode对应的配置值(config_value1)
+        CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, configKey, strConfigCode);
+        if (channelConfig != null) {
+            strConfigValue = channelConfig.getConfigValue1();
+        }
+
+        return strConfigValue;
+    }
+
+    /**
+     * 给京东商品打标，设置一些特殊的属性(如：7天无理由退货等feature特殊属性)
+     *
+     * @param shop String 渠道id
+     * @param jdProductBean JdProductBean 京东产品对象(目前只需要取得is7ToReturn,以后可能还会取得其他属性值)
+     * @param jdWareId Long 京东商品id
+     * @return String cms_mt_channel_config配置表中配置的值
+     */
+    public boolean doMergeWareFeatures(ShopBean shop, JdProductBean jdProductBean, Long jdWareId) {
+        boolean result = false;
+        if (shop == null || jdProductBean == null || jdWareId == null || jdWareId == 0) return result;
+
+        // 特殊标key(最大20个，用逗号分隔)
+        StringBuilder sbFeatureKey = new StringBuilder();
+        // 特殊标值(最大20个，用逗号分隔)
+        StringBuilder sbFeatureValue  = new StringBuilder();
+
+        // 设置7天无理由退货(1为支持，0为不支持)
+        if ("0".equals(jdProductBean.getIs7ToReturn()) || "1".equals(jdProductBean.getIs7ToReturn())) {
+            sbFeatureKey.append("is7ToReturn");
+            sbFeatureValue.append(jdProductBean.getIs7ToReturn());
+            result = jdWareService.mergeWareFeatures(shop, jdWareId, sbFeatureKey.toString(), sbFeatureValue.toString());
+        }
+
+        return result;
     }
 }

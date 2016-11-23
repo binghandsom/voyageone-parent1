@@ -9,7 +9,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.BcbgStyleBean;
 import com.voyageone.task2.cms.bean.SuperFeedBcbgBean;
@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toList;
  * Created by Jonas on 10/10/15.
  */
 @Service
-public class BcbgAnalysisService extends BaseTaskService {
+public class BcbgAnalysisService extends BaseCronTaskService {
 
     private final BcbgSuperFeedDao bcbgSuperFeedDao;
 

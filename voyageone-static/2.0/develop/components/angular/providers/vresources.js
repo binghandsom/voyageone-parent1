@@ -107,9 +107,9 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
             _url = getActionUrl(_root, _url);
 
-            _ServiceClass.prototype[actionName] = _cacheFlag === 0 ? function (args) {
-                return this._a.post(_url, args).then(_resolve, _reject);
-            } : function (args) {
+            _ServiceClass.prototype[actionName] = _cacheFlag === 0 ? function (args, option) {
+                return this._a.post(_url, args, option).then(_resolve, _reject);
+            } : function (args, option) {
                 var deferred, result;
                 var session = this._sc,
                     local = this._lc,
@@ -126,7 +126,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 if (result !== null && result !== undefined)
                     deferred.resolve(result);
                 else
-                    this._a.post(_url, args).then(function (res) {
+                    this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
                         
                         switch (_cacheFlag) {

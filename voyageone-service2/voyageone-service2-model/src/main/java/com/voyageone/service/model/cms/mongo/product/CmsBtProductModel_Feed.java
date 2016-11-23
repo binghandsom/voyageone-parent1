@@ -18,6 +18,8 @@ public class CmsBtProductModel_Feed  {
 
     private String catPath = "";
 
+    private String brand = "";
+
     private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
 
     private BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
@@ -72,5 +74,13 @@ public class CmsBtProductModel_Feed  {
     }
     public void setCustomIdsCn(List<String> customIdsCn) {
         this.customIdsCn = customIdsCn;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 }
