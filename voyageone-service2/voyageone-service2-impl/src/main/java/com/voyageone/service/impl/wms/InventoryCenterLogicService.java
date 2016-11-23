@@ -72,12 +72,12 @@ public class InventoryCenterLogicService extends BaseService {
         for (final StoreBean store : channelStores) {
             long store_id = store.getStore_id();
             idNameMap.put(store_id, store.getStore_name());
-    	    // 可销售仓库
+            // 可销售仓库
             if ("1".equals(store.getIs_sale())) {
             	if ("1".equals(store.getInventory_manager()) && CNHK.contains(store.getStore_area())) {
                 	// 国内仓库
             		if ("0".equals(store.getStore_type())) {// 自营仓库
-				inOwnStores.add(store_id);
+                        inOwnStores.add(store_id);
             		} else {// 非自营仓库
             			inNOwnStores.add(store_id);
             		}
@@ -91,13 +91,12 @@ public class InventoryCenterLogicService extends BaseService {
                 }
             }
         }
-        
+
         //重新过滤
         storeIds= Lists.newArrayList(Iterators.concat(inOwnStores.iterator(), inNOwnStores.iterator(), gbOwnStores.iterator(), gbNOwnStores
                 .iterator()));
 
         WmsCodeStoreInvBean result = new WmsCodeStoreInvBean();
-
 
         //设置库存
         for (final ItemDetailsBean skuItem : items) {
