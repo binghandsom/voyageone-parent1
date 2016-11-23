@@ -64,7 +64,7 @@ public class CmsBtJdPromotionService extends BaseService {
         if (shop == null || promoId == null || ListUtils.isNull(jdPromoSkuList)) return;
 
         // 追加SKU到促销活动前先查询促销，如果促销存在且促销状态是未提交状态（status=-1）才可以添加；如果促销状态<>-1报出异常说不能添加了
-        StringBuffer sbFault = new StringBuffer("");
+        StringBuilder sbFault = new StringBuilder("");
         if (!canAddSkuToPromotion(shop, promoId, sbFault)) {
             String errMsg = String.format("不能添加jdSkuId到促销;%s", sbFault.toString());
             $error(errMsg);
@@ -86,7 +86,7 @@ public class CmsBtJdPromotionService extends BaseService {
         List<JdPromotionSkuBean> updateSkuIdList = new ArrayList<>();
         // 用于保存根据skuCode未能取到jdSkuId的sku对象列表
         List<JdPromotionSkuBean> getSkuIdErrList = new ArrayList<>();
-        StringBuffer failCause = new StringBuffer();
+        StringBuilder failCause = new StringBuilder();
         // 看看有没有SKU没有jdSkuId的，有的话就从京东平台上取得一下(后面会回写到product表中)
         for (JdPromotionSkuBean jdPromSku : jdPromoSkuList) {
             // 如果skuCode和jdSkuId都为空时，跳过
@@ -147,7 +147,7 @@ public class CmsBtJdPromotionService extends BaseService {
                     sbPromoPrices.append(jdPromSku.getJdPromoPrice() + ",");
                 }
 
-                // 移除StringBuffer最后的","
+                // 移除StringBuilder最后的","
                 if (sbSkuIds.length() > 0) {
                     sbSkuIds.deleteCharAt(sbSkuIds.length() - 1);
                 }
@@ -249,7 +249,7 @@ public class CmsBtJdPromotionService extends BaseService {
      * @param sbFault     返回用错误信息
      * @return boolean    该促销id是否可以添加jdSkuId
      */
-    public boolean canAddSkuToPromotion(ShopBean shop, Long promoId, StringBuffer sbFault) {
+    public boolean canAddSkuToPromotion(ShopBean shop, Long promoId, StringBuilder sbFault) {
         // 取得京东促销详细信息
         PromotionVO promoInfo = jdPromotionService.getPromotionInfo(shop, promoId);
         String promoStatus = null;

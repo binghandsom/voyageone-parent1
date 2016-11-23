@@ -74,7 +74,7 @@ public class JdSkuServiceTest {
         shopBean.setShop_name("京东国际匠心界全球购专营店");
 
         String wareId = "1955593691";
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
         List<Sku> skus = jdSkuService.getSkusByWareId(shopBean, wareId, failCause);
         System.out.println("result skuId = " + (skus == null ? "no skus" : Joiner.on(",").join(skus.stream().map(Sku::getSkuId).toArray())));
         System.out.println("failCause = " + failCause.toString());
@@ -107,7 +107,7 @@ public class JdSkuServiceTest {
             add("1955172111");
         }};
 
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
         List<Sku> skus = jdSkuService.getSkusByWareIds(shopBean, wareIds, failCause);
         System.out.println("result skuId = " + (skus == null ? "no skus" : Joiner.on(",").join(skus.stream().map(Sku::getSkuId).toArray())));
         System.out.println("failCause = " + failCause.toString());
@@ -125,7 +125,7 @@ public class JdSkuServiceTest {
         shopBean.setShop_name("京东国际匠心界全球购专营店");
 
         String outerId = "022-0410S0RAW0862";
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
         Sku sku = jdSkuService.getSkuByOuterId(shopBean, outerId, failCause);
         System.out.println("result skuId = " + (sku == null ? "no sku" : sku.getSkuId()));
         System.out.println("failCause = " + failCause.toString());

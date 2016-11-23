@@ -120,7 +120,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
         String wareIds = "1955562601,1956338285,1956343460,1956346635,1956850725,1956856320,1956847324,1956848623,1956853915,1956849824,1956849928,1956846729,1956854153,1956860243,1956864623,1956848426,1956847257,1956848741,1956854473,1956852935,1956846867,1956853961,1956854523,1956846576,1956851530,1956847945,1956847327,1956847033,1956847132,1956849825,1956852824,1956852618,1956846027,1956852924,1956848664,1956855450";
         String[] wareIdArray = wareIds.split(",");
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
         List<Sku> skus;
         System.out.println("");
         System.out.println("=============================================================");
@@ -188,7 +188,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         StringBuilder sbUpdateSql = new StringBuilder();
         List<List<String>> pageList = CommonUtil.splitList(wareIdList, 100);
         List<Sku> skus;
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
 
         String folder = "D:\\自动生成文件\\02_回写jdSkuId\\";
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
