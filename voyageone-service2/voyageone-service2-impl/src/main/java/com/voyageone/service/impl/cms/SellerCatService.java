@@ -223,9 +223,6 @@ MongoSequenceService commSequenceMongoService;
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
-            shopBean = Shops.getShop(channelId, 23);
-        }
         String shopCartId = shopBean.getCart_id();
         if (isJDPlatform(shopBean)) {
             jdShopService.updateShopCategory(shopBean, cId, cName);
