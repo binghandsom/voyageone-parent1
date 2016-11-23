@@ -147,7 +147,7 @@ define([
                 }
 
                 /**
-                 * 更新操作    prodId:'5924',hsCode:'08010000,吊坠,个'
+                 * 更新操作
                  */
                 function saveProduct(openHsCodeChange) {
                     if (!validSchema()) {
