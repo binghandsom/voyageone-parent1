@@ -33,7 +33,7 @@ d-field vo-message {
 
 s-header,
 d-header {
-    width: 120px;
+    width: 150px;
     flex-grow: 0;
     line-height: 26px;
     font-weight: bold;
