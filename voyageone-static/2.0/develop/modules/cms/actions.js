@@ -110,6 +110,8 @@ define(function () {
                     "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
+                    "doAppSwitch": "doAppSwitch",
+                    "doTranslateStatus": "doTranslateStatus",
                     "updateProductAtts": "updateProductAtts",
                     "checkCategory": "checkCategory",
                     "getChangeMastProductInfo": "getChangeMastProductInfo",
@@ -122,19 +124,21 @@ define(function () {
                     "resetTmProduct": "resetTmProduct",
                     priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
-                    updateSkuPrice:"updateSkuPrice",
-                    moveCodeInitCheck:"moveCodeInitCheck",
-                    moveCodeInit:"moveCodeInit",
-                    moveCodeSearch:"moveCodeSearch",
-                    moveCodePreview:"moveCodePreview",
-                    moveCode:"moveCode",
-                    moveSkuInitCheck:"moveSkuInitCheck",
-                    moveSkuInit:"moveSkuInit",
-                    moveSkuSearch:"moveSkuSearch",
-                    moveSkuPreview:"moveSkuPreview",
-                    moveSku:"moveSku",
+                    updateSkuPrice: "updateSkuPrice",
+                    moveCodeInitCheck: "moveCodeInitCheck",
+                    moveCodeInit: "moveCodeInit",
+                    moveCodeSearch: "moveCodeSearch",
+                    moveCodePreview: "moveCodePreview",
+                    moveCode: "moveCode",
+                    moveSkuInitCheck: "moveSkuInitCheck",
+                    moveSkuInit: "moveSkuInit",
+                    moveSkuSearch: "moveSkuSearch",
+                    moveSkuPreview: "moveSkuPreview",
+                    moveSku: "moveSku",
                     getSkuStockInfo: 'getSkuStockInfo',
-                    restoreImg:"restoreImg"
+                    restoreImg: "restoreImg",
+                    doAppSwitch: "doAppSwitch",
+                    doTranslateStatus: "doTranslateStatus"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -671,13 +675,13 @@ define(function () {
                 search: "getMasterBrandInfo"
             },
             //主品牌管理页面
-            "masterBrandApplicationService":{
-                root:"/cms/maintain/common/",
-                init:"initMasterBrandInfo",
-                search:"getMasterBrandInfo",
-                reviewed:"reviewedMasterBrandInfo",
-                edit:"editMasterBrandInfo",
-                mappingSearch:"mappingMasterBrandInfoToPlatform"
+            "masterBrandApplicationService": {
+                root: "/cms/maintain/common/",
+                init: "initMasterBrandInfo",
+                search: "getMasterBrandInfo",
+                reviewed: "reviewedMasterBrandInfo",
+                edit: "editMasterBrandInfo",
+                mappingSearch: "mappingMasterBrandInfoToPlatform"
             },
             // 货架模板管理
             "shelvesTemplateService": {

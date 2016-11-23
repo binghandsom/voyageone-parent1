@@ -26,17 +26,6 @@ define([
                     mastData: null,
                     productComm: null,
                     categoryMark: null,
-                    tempImage: {
-                        "images1": [],
-                        "images2": [],
-                        "images3": [],
-                        "images4": [],
-                        "images5": [],
-                        "images6": [],
-                        "images7": [],
-                        "images8": [],
-                        "images9": []
-                    },
                     hsCodeOrigin: null,
                     sizeChartList:[],
                     selectSizeChart:null,
@@ -50,7 +39,6 @@ define([
                     })
 
                 }
-                initialize();
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;
@@ -61,6 +49,8 @@ define([
                 scope.removeImg = removeImg;
                 scope.sortImg = sortImg;
                 scope.lockProduct = lockProduct;
+
+                initialize();
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -90,6 +80,8 @@ define([
                         scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.vm.lockStatus.onOffSwitch1 = scope.vm.mastData.appSwitch == "1" ? true : false;
+                        scope.vm.lockStatus.onOffSwitch2 = scope.vm.mastData.translateStatus == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
                         //暂存税号个人
@@ -157,11 +149,6 @@ define([
                         scope.vm.productComm.modified = context[context.length - 1].modified;
 
                         initialize();
-/*                        var imgType = null;
-                        angular.forEach(context, function (item) {
-                            imgType = item.imageType;
-                            scope.vm.productComm.fields[imgType].push(item.imageName);
-                        });*/
 
                     });
                 }
@@ -179,7 +166,7 @@ define([
                 }
 
                 /**
-                 * 更新操作    prodId:'5924',hsCode:'08010000,吊坠,个'
+                 * 更新操作
                  */
                 function saveProduct(openHsCodeChange) {
                     if (!validSchema()) {
@@ -367,25 +354,49 @@ define([
                     $event.stopPropagation();
                 }
 
+                /**
+                 * 导航栏上的状态锁定操作
+                 * @param onOffSwitch：锁定的对象
+                 */
+                function lockProduct(onOffSwitch){
+                    var _status = scope.vm.lockStatus[onOffSwitch],
+                        lock = _status ? "1" : "0";
 
-                function lockProduct(){
-                    var _status = scope.vm.lockStatus.onOffSwitch3,
-                        lock = _status ? "1" : "0",
-                        message = _status ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+                    confirm("您确定执行该操作吗？").then(function () {
 
-                    confirm(message).then(function () {
-
-                        productDetailService.updateLock({
-                            prodId: scope.productInfo.productId,
-                            lock: lock
-                        }).then(function () {
-                            notify.success(_status ? "商品已锁定" : "商品已接触锁定");
-                        });
+                        switch (onOffSwitch){
+                            case "onOffSwitch1":
+                                productDetailService.doAppSwitch({
+                                    prodId: scope.productInfo.productId,
+                                    appSwitch: lock
+                                }).then(function () {
+                                    notify.success(_status ? "APP端已启用" : "APP端已关闭");
+                                });
+                                break;
+                            case "onOffSwitch2":
+                                productDetailService.doTranslateStatus({
+                                    prodId: scope.productInfo.productId,
+                                    translateStatus: lock
+                                }).then(function () {
+                                    notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                });
+                                break;
+                            case "onOffSwitch3":
+                                productDetailService.updateLock({
+                                    prodId: scope.productInfo.productId,
+                                    lock: lock
+                                }).then(function () {
+                                    notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+                                });
+                                break;
+                        }
 
                     }, function () {
-                        scope.vm.lockStatus.onOffSwitch3 = !_status;
+                        scope.vm.lockStatus[onOffSwitch] = !_status;
                     });
                 }
+
+
 
                 /**全schema中通过name递归查找field*/
                 function searchField(fieldName, schema) {
