@@ -6,6 +6,7 @@ package com.voyageone.service.impl.cms.promotion;
 
 import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.ware.Sku;
+import com.jd.open.api.sdk.response.promotion.PromoSkuVO;
 import com.jd.open.api.sdk.response.promotion.PromotionVO;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
@@ -70,6 +71,15 @@ public class CmsBtJdPromotionService extends BaseService {
             throw new BusinessException(errMsg);
         }
 
+        // 追加SKU到促销活动前先查询一下促销中已追加的jdSkuId,因为接口不支持更新jdSkuId,如果有试图更新已存在的skuId,会报错
+        List<PromoSkuVO> existsPromoSkuVOs = jdPromotionService.getPromotionSkuListAllById(shop, promoId);
+        List<String> existsJdSkuIds = new ArrayList<>();
+        existsPromoSkuVOs.forEach(p -> {
+            if (p.getSkuId() != null) {
+                existsJdSkuIds.add(StringUtils.toString(p.getSkuId()));
+            }
+        });
+
         // 用于保存真正需要加入到promotion中去的sku对象列表
         List<JdPromotionSkuBean> successSkuList = new ArrayList<>();
         // 用于保存参数传进来的sku没有jdSkuId,在这里从平台上重新取得jdSkuId之后，需要回写到product表中的sku对象列表
@@ -81,6 +91,10 @@ public class CmsBtJdPromotionService extends BaseService {
         for (JdPromotionSkuBean jdPromSku : jdPromoSkuList) {
             // 如果skuCode和jdSkuId都为空时，跳过
             if (StringUtils.isEmpty(jdPromSku.getSkuCode()) && StringUtils.isEmpty(jdPromSku.getJdSkuId()))
+                continue;
+
+            // 过滤掉平台上当前促销活动中已经存在的jdSkuId
+            if (existsJdSkuIds.contains(jdPromSku.getJdSkuId()))
                 continue;
 
             // 如果jdSkuId为空的话，需要用skuCode到京东平台上重新取得一下
