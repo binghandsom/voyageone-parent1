@@ -676,7 +676,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         String shipFlag = getConditionPropValue(sxData, "logistics_template_ship_flag", shopProp);
         if ("true".equalsIgnoreCase(shipFlag)) {
             // 是否包邮设置为包邮("2":包邮)
-            // 参加活动天猫给付费广告位的话，还需要商品收藏数达到一定量才可以
+            // 参加活动天猫给付费广告位的话，还需要商品收藏数达到一定量才可以.
             paramLogistics.put("ship", "2");
         }
         // 省(国家)
