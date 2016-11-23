@@ -128,7 +128,7 @@ public class JdSkuService extends JdBase {
      * @param wareId String  京东商品id列表，sku所属商品id，必选。ware_ids个数不能超过10个
      * @return skus  指定商品列表的所有sku信息列表
      */
-    public List<Sku> getSkusByWareId(ShopBean shop, String wareId, StringBuffer failCause) throws BusinessException {
+    public List<Sku> getSkusByWareId(ShopBean shop, String wareId, StringBuilder failCause) throws BusinessException {
         List<String> wareIds = new ArrayList<>();
         wareIds.add(wareId);
 
@@ -143,7 +143,7 @@ public class JdSkuService extends JdBase {
      * @param wareIds List<String>  京东商品id列表，sku所属商品id，必选。ware_ids个数不能超过10个
      * @return skus  指定商品列表的所有sku信息列表
      */
-    public List<Sku> getSkusByWareIds(ShopBean shop, List<String> wareIds, StringBuffer failCause) throws BusinessException {
+    public List<Sku> getSkusByWareIds(ShopBean shop, List<String> wareIds, StringBuilder failCause) throws BusinessException {
         List<Sku> skus = new ArrayList<>();
         if (ListUtils.isNull(wareIds)) return null;
 
@@ -196,7 +196,7 @@ public class JdSkuService extends JdBase {
      * @param outerId String  sku的外部商家ID(skuCode)
      * @return sku  外部商家ID对应的sku信息
      */
-    public Sku getSkuByOuterId(ShopBean shop, String outerId, StringBuffer failCause) {
+    public Sku getSkuByOuterId(ShopBean shop, String outerId, StringBuilder failCause) {
         if (StringUtils.isEmpty(outerId)) {
             failCause.append("根据外部商家ID(skuCode)获取商品SKU信息时，参数传入的outerid为空！");
             return null;

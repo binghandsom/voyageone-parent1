@@ -2317,7 +2317,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         String channelId = shop.getOrder_channel_id();
         String cartId = shop.getCart_id();
-        StringBuffer failCause = new StringBuffer("");
+        StringBuilder failCause = new StringBuilder("");
         List<Sku> skus;
 
         try {

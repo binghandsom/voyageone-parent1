@@ -53,11 +53,11 @@ public class CmsBtJdPromotionServiceTest {
 //        Long promoId = 1045913792L;
 //        Long promoId = 1046183527L;
 //        Long promoId = 1046206009L;
-        Long promoId = 1046205699L;
+        Long promoId = 1046178147L;
 
         String testWareId = "1956814662";  // 匠心界店内追加的一个专门用来测试的商品
         List<Sku> skus;
-        StringBuffer failCause = new StringBuffer();
+        StringBuilder failCause = new StringBuilder();
         try {
             // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
             skus = jdSkuService.getSkusByWareId(shopBean, testWareId, failCause);

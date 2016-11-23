@@ -6,6 +6,8 @@ package com.voyageone.service.impl.cms.promotion;
 
 import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.ware.Sku;
+import com.jd.open.api.sdk.response.promotion.PromoSkuVO;
+import com.jd.open.api.sdk.response.promotion.PromotionVO;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
@@ -61,17 +63,38 @@ public class CmsBtJdPromotionService extends BaseService {
 
         if (shop == null || promoId == null || ListUtils.isNull(jdPromoSkuList)) return;
 
+        // 追加SKU到促销活动前先查询促销，如果促销存在且促销状态是未提交状态（status=-1）才可以添加；如果促销状态<>-1报出异常说不能添加了
+        StringBuilder sbFault = new StringBuilder("");
+        if (!canAddSkuToPromotion(shop, promoId, sbFault)) {
+            String errMsg = String.format("不能添加jdSkuId到促销;%s", sbFault.toString());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
+        // 追加SKU到促销活动前先查询一下促销中已追加的jdSkuId,因为接口不支持更新jdSkuId,如果有试图更新已存在的skuId,会报错
+        List<PromoSkuVO> existsPromoSkuVOs = jdPromotionService.getPromotionSkuListAllById(shop, promoId);
+        List<String> existsJdSkuIds = new ArrayList<>();
+        existsPromoSkuVOs.forEach(p -> {
+            if (p.getSkuId() != null) {
+                existsJdSkuIds.add(StringUtils.toString(p.getSkuId()));
+            }
+        });
+
         // 用于保存真正需要加入到promotion中去的sku对象列表
         List<JdPromotionSkuBean> successSkuList = new ArrayList<>();
         // 用于保存参数传进来的sku没有jdSkuId,在这里从平台上重新取得jdSkuId之后，需要回写到product表中的sku对象列表
         List<JdPromotionSkuBean> updateSkuIdList = new ArrayList<>();
         // 用于保存根据skuCode未能取到jdSkuId的sku对象列表
         List<JdPromotionSkuBean> getSkuIdErrList = new ArrayList<>();
-        StringBuffer failCause = new StringBuffer();
+        StringBuilder failCause = new StringBuilder();
         // 看看有没有SKU没有jdSkuId的，有的话就从京东平台上取得一下(后面会回写到product表中)
         for (JdPromotionSkuBean jdPromSku : jdPromoSkuList) {
             // 如果skuCode和jdSkuId都为空时，跳过
             if (StringUtils.isEmpty(jdPromSku.getSkuCode()) && StringUtils.isEmpty(jdPromSku.getJdSkuId()))
+                continue;
+
+            // 过滤掉平台上当前促销活动中已经存在的jdSkuId
+            if (existsJdSkuIds.contains(jdPromSku.getJdSkuId()))
                 continue;
 
             // 如果jdSkuId为空的话，需要用skuCode到京东平台上重新取得一下
@@ -124,7 +147,7 @@ public class CmsBtJdPromotionService extends BaseService {
                     sbPromoPrices.append(jdPromSku.getJdPromoPrice() + ",");
                 }
 
-                // 移除StringBuffer最后的","
+                // 移除StringBuilder最后的","
                 if (sbSkuIds.length() > 0) {
                     sbSkuIds.deleteCharAt(sbSkuIds.length() - 1);
                 }
@@ -169,6 +192,9 @@ public class CmsBtJdPromotionService extends BaseService {
             }
         }
 
+        // sku全部追加成功之后，就调用commit提交保存促销活动，并要再促销活动创建3小时内commit，commit之后就不能再添加sku了
+        jdPromotionService.doPromotionCommit(shop, promoId);
+
     }
 
     /**
@@ -202,6 +228,54 @@ public class CmsBtJdPromotionService extends BaseService {
         if (rs != null) {
             $debug("京东添加SKUID到promotion时发现jdSkuId为空，从平台上取得jdSkuId之后回写jdSkuId处理 channelId=%s, cartId=%s, jdSkuId更新结果=%s", channelId, cartId, rs.toString());
         }
+    }
+
+    /**
+     * 判断当前促销id是否可以添加jdSkuId
+     *
+     * @param shop        店铺信息
+     * @param promoId     促销id
+     * @return boolean    该促销id是否可以添加jdSkuId
+     */
+    public boolean canAddSkuToPromotion(ShopBean shop, Long promoId) {
+        return canAddSkuToPromotion(shop, promoId, null);
+    }
+
+    /**
+     * 判断当前促销id是否可以添加jdSkuId
+     *
+     * @param shop        店铺信息
+     * @param promoId     促销id
+     * @param sbFault     返回用错误信息
+     * @return boolean    该促销id是否可以添加jdSkuId
+     */
+    public boolean canAddSkuToPromotion(ShopBean shop, Long promoId, StringBuilder sbFault) {
+        // 取得京东促销详细信息
+        PromotionVO promoInfo = jdPromotionService.getPromotionInfo(shop, promoId);
+        String promoStatus = null;
+        if (promoInfo != null) {
+            switch (promoInfo.getStatus()) {
+                case -1: promoStatus = "-1:新建促销且在3小时内，可以添加jdSkuId";break;
+                case 1: promoStatus = "1:驳回";break;
+                case 2: promoStatus = "2:未审核";break;
+                case 3: promoStatus = "3:人工审核";break;
+                case 4: promoStatus = "4:审核通过";break;
+                case 5: promoStatus = "5:已生效";break;
+                case 6: promoStatus = "6:已暂停";break;
+                case 7: promoStatus = "7:强制暂停";break;
+                default: promoStatus = "未知的status(" + promoInfo.getStatus() + ")";
+            }
+
+            if (promoInfo.getStatus() == -1) {
+                return true;
+            }
+        }
+
+        if (sbFault != null) {
+            sbFault.append(String.format("该促销(%s)未被创建或者创建时间已经超过3个小时不能添加jdSkuId了! [status:%s]", promoId, promoStatus));
+        }
+
+        return false;
     }
 
 }
