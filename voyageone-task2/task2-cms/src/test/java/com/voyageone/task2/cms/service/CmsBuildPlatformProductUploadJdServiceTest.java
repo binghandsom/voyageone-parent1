@@ -10,6 +10,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
@@ -143,6 +144,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
 
     @Test
     public void testCreateUpdateSkuIdsSql() throws Exception {
+        // 批量取得product表中所有已上过京东，但没有回写过jdSkuId的numIId，然后取得所有的jdSkuId生成mongo更新sql文
 
         String channelId = "928";
         int cartId = 28;
@@ -161,17 +163,22 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         // 取得mongoDB中对象product表里面所有已上过京东平台的pNumIId(去掉重复项)
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'platforms.P"+StringUtils.toString(cartId)+".pNumIId':{$nin:[null,'']}}");
-        queryObj.setProjectionExt("platforms.P"+ StringUtils.toString(cartId) +".pNumIId");
+        queryObj.setProjectionExt("platforms.P"+ StringUtils.toString(cartId) +".pNumIId","platforms.P"+ StringUtils.toString(cartId) +".skus");
         List<CmsBtProductModel> productList = cmsBtProductDao.select(queryObj, channelId);
         if (ListUtils.isNull(productList)) {
             System.out.println("在product表中没有查到pNumIId!");
         }
 
         // 保存商品id(pNumIId)的列表
+        // 这里取得的pNumIid也不一定就是没有回写过jdSkuId的，因为有可能同一个group下面product1的jdSkuId回写了，product2的jdSkuId在平台上没有这个sku不用回写
         List<String> wareIdList = new ArrayList<>();
         productList.forEach(p -> {
-            if (!wareIdList.contains(p.getPlatformNotNull(cartId).getpNumIId())) {
-                wareIdList.add(p.getPlatformNotNull(cartId).getpNumIId());
+            // 如果该产品platforms.PXX.skus里面有isSale=true并且jdSkuId为空的时候(并且没有一个jdSkuId都没有,如果不想这样就把这个条件注掉)
+            if ((p.getPlatformNotNull(cartId).getSkus().stream().filter(s -> Boolean.parseBoolean(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())) && StringUtils.isEmpty(s.getStringAttribute("jdSkuId"))).count() > 0)
+               && (p.getPlatformNotNull(cartId).getSkus().stream().filter(s -> Boolean.parseBoolean(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name())) && !StringUtils.isEmpty(s.getStringAttribute("jdSkuId"))).count() == 0)) {
+                if (!wareIdList.contains(p.getPlatformNotNull(cartId).getpNumIId())) {
+                    wareIdList.add(p.getPlatformNotNull(cartId).getpNumIId());
+                }
             }
         });
 
