@@ -61,7 +61,7 @@ define([
                         prodId: scope.productInfo.productId
                     }).then(function (resp) {
                         scope.vm.mastData = resp.data.mastData;
-                        scope.vm.productComm = resp.data.productComm;
+                        scope.vm.productComm = scope.productInfo.productComm = resp.data.productComm;
 
                         var _fields = scope.vm.productComm.fields;
 

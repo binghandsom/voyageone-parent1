@@ -12,8 +12,7 @@ define([
             restrict: "E",
             templateUrl : "views/product/price.component.tpl.html",
             scope: {
-                productInfo: "=productInfo",
-                //sales:{}
+                productInfo: "=productInfo"
             },
             link: function (scope) {
                 scope.sales = {};
@@ -24,12 +23,11 @@ define([
                 };
                 initialize();
                 function initialize() {
-                    //console.log(scope.productInfo);
                     initData();
                 }
                function initData() {
+                   console.log(scope.productInfo);
                    $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
-                       // console.log(resp.data);
                        scope.vm.productPriceList = resp.data.productPriceList;
                        scope.vm.model = resp.data;
                        scope.sales = resp.data.sales;
@@ -42,10 +40,8 @@ define([
                    });
                }
                 scope.selectSalesOnChange = function () {
-                   // console.log(scope.vm.selectSales);
                     var cartSales = scope.sales[scope.vm.selectSales];
                     if (cartSales) {
-                      //  console.log(cartSales);
                         scope.vm.productPriceList.forEach(function (f) {
                             f.saleQty = cartSales["cartId" + f.cartId];
                         });

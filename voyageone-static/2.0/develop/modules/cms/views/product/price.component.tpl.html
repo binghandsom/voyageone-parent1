@@ -11,7 +11,7 @@
                             <ul uib-dropdown-menu>
                                 <li>
                                     <a href="javascript:void(0)"
-                                       ng-click="openHistoryPrice(vm.mastData.productCode,vm.platform.skus,null,cartInfo.value)">
+                                       ng-click="openHistoryPrice(productInfo.productComm.fields.code,productInfo.productComm.skus)">
                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
                                     </a>
                                 </li>
@@ -37,13 +37,13 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Product Name</label>
                             <div class="col-sm-6">
-                                <input class="form-control" value="{{vm.model.productNameEn}}"  />
+                                <input class="form-control" readonly value="{{vm.model.productNameEn}}"  />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label">Brand</label>
                             <div class="col-sm-6">
-                                <input class="form-control"   value="{{vm.model.brand}}" />
+                                <input class="form-control" readonly  value="{{vm.model.brand}}" />
                             </div>
                         </div>
                     </form>
