@@ -51,11 +51,11 @@ public class SimpleSchemaAdd {
 //		fieldList.add(createInputField("extends_website_url", "官网商品地址", false, "如果不知道， 可以填官网首页"));
 //		fieldList.add(createInputField("extends_foreign_origin_price", "参考价格", false, null));
 		{
-			// 是否自动插入商品关键词 选项列表
+			// 是否使用原始标题 选项列表
 			List<Option> optionList = getTrueFalseOptionList();
 			String defaultValue = "";
 			String tipInfo1 = "true, false, 默认false， 比如自动插入： X国 官网 直邮 进口";
-			fieldList.add(createSingleCheckField("extends_original_title", "是否自动插入商品关键词", optionList, defaultValue, false, tipInfo1));
+			fieldList.add(createSingleCheckField("extends_original_title", "是否使用原始标题", optionList, defaultValue, false, tipInfo1));
 		}
 //		fieldList.add(createInputField("extends_shop_cats", "店铺内分类id", false, null));
 //		{

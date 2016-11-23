@@ -552,5 +552,30 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         cmsBuildPlatformProductUploadJMService.doUpdateMallStatus(pPlatformMallId, productGroupModel.getPlatformActive(), shop);
     }
 
+    @Test
+    public void testUpdateSkuIsEnableDeal() {
+
+        String channelId = "028";
+        int cartId = 27;
+        String originHashId = "ht1479292676p3174515";
+        String jumeiSkuNo = "701418385";
+
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id(channelId);
+        shop.setCart_id(String.valueOf(cartId));
+        shop.setApp_url("http://openapi.ext.jumei.com/");
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shop.setPlatform_id("3");
+
+        try {
+            // 把聚美平台上deal中的sku下架
+            cmsBuildPlatformProductUploadJMService.updateSkuIsEnableDeal(shop, originHashId, jumeiSkuNo, "0");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

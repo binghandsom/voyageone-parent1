@@ -678,7 +678,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         paramLogistics.put("city", getValueFromPageOrCondition("logistics_city", "", mainProductPlatformCart, sxData, shopProp));
         // 货源地
         paramLogistics.put("start_from", getValueFromPageOrCondition("logistics_start_from", "", mainProductPlatformCart, sxData, shopProp));
-
+        if ("017".equals(sxData.getChannelId())) paramLogistics.put("ship", "2");
         productInfoMap.put("logistics", JacksonUtil.bean2Json(paramLogistics));
 
         // skus(必填)

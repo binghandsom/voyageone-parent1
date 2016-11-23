@@ -420,7 +420,7 @@ public class JdWareService extends JdBase {
                     // 京东返回正常的场合
                     if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                         // 返回上传图片成功,跳出循环，返回true
-                        logger.error("调用京东API根据商品Id，销售属性值Id增加图片成功 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                        logger.info("调用京东API根据商品Id，销售属性值Id增加图片成功 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
                                 + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId
                                 + ",pic_url:" + picUrl);
 //                        break;

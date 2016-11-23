@@ -275,12 +275,25 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             }
             // added by morse.lu 2016/07/08 end
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
-            // added by morse.lu 2016/07/26 start
-            if (availableSizeIndex >= sizeOptions.size()) {
-                throw new BusinessException(String.format("最多只能%d个不同尺码!请拆分group!", sizeOptions.size()));
+            // added by morse.lu 2016/11/21 start
+            String sizeValue;
+            if (skuExtendField == null) {
+                // 没有尺码扩展，就不能取size别名了，那么相当于直接用schema里的size的option显示在画面上，这种情况需要cms的size名字与option里的一致
+                Option option = sizeOptions.stream().filter(o -> o.getDisplayName().equals(sizeSx)).findFirst().orElse(null);
+                if (option != null) {
+                    sizeValue = option.getValue();
+                } else {
+                    throw new BusinessException(String.format("尺码必须是下列可用尺码之一!可用尺码为:[%s]", sizeOptions.stream().map(Option::getDisplayName).collect(Collectors.joining(","))));
+                }
+            } else {
+                // added by morse.lu 2016/11/21 end
+                // added by morse.lu 2016/07/26 start
+                if (availableSizeIndex >= sizeOptions.size()) {
+                    throw new BusinessException(String.format("最多只能%d个不同尺码!请拆分group!", sizeOptions.size()));
+                }
+                // added by morse.lu 2016/07/26 end
+                sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             }
-            // added by morse.lu 2016/07/26 end
-            String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
             // added by morse.lu 2016/07/08 start

@@ -1896,7 +1896,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         if (ListUtils.isNull(remoteSpus)) return;
 
         // 通过聚美hashId取得聚美平台上的deal信息(包含sku在该deal上的上下架信息)
-        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
+//        List<LinkedHashMap<String,Object>> remoteSkuList = getRemoteDealSkuList(shop, originHashId);
 
         for (JmGetProductInfo_Spus spu : remoteSpus) {
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode
@@ -1923,12 +1923,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 				}
             } else if (isNotSaleBusinessmanCode(spu, jmSkus)) {
                 // P27.sku.isSale = false的时候
-                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
-                // 如果用lambda表达式的get方法用来得到Optional实例中的值,如果没有get到的话，会报NoSuchElementException的异常,错误消息"No value present",用get()之前一定要加上count()>0
-                if (ListUtils.notNull(remoteSkuList)
-                        && !StringUtils.isEmpty(spu.getSku_no())
-                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
-                        && "1".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
+//                // 只有当平台上该sku是显示(isEnable="1")的时候，才把状态改为隐藏(isEnable=0)
+//                // 如果用lambda表达式的get方法用来得到Optional实例中的值,如果没有get到的话，会报NoSuchElementException的异常,错误消息"No value present",用get()之前一定要加上count()>0
+//                if (ListUtils.notNull(remoteSkuList)
+//                        && !StringUtils.isEmpty(spu.getSku_no())
+//                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
+//                        && "1".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
                     // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中存在对应的SkuCode,但isSale=false(不在该平台卖了)
                     // 只下架该sku，不修改商家商品编码(skuCode)和聚美SKU商家商品编码(skuCode)
                     // 把Deal的库存修改成0(只有上架显示时才能更新库存)
@@ -1940,16 +1940,16 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                     // 只有当修改前平台上该sku的状态为"1"(显示)的时候，才将否则就将聚美SKU状态（最新Deal）改为隐藏(is_enable="0"),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=0)"
                     updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "0");
                     $info("[skuCode:%s]的isEnable属性值1->0变更 ", spu.getBusinessman_code());
-                }
+//                }
             } else {
                 // P27.sku.isSale = true的时候
                 // 只有当平台上该sku是隐藏(isEnable="0")的时候，才把状态改为显示(isEnable=1),也就是deal中的"是否在此次团购中售卖(setSale_on_this_deal=1)"
                 // 如果用lambda表达式的get方法用来得到Optional实例中的值,如果没有get到的话，会报NoSuchElementException的异常,错误消息"No value present",用get()之前一定要加上count()>0
-                if (ListUtils.notNull(remoteSkuList)
-                        && !StringUtils.isEmpty(spu.getSku_no())
-                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
-                        && "0".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
-                    // 只有当修改前平台上该sku的状态为"0"(隐藏)的时候，才将聚美SKU状态（最新Deal）改为显示(is_enable="1")
+//                if (ListUtils.notNull(remoteSkuList)
+//                        && !StringUtils.isEmpty(spu.getSku_no())
+//                        && remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).count() > 0
+//                        && "0".equals(remoteSkuList.stream().filter(p -> spu.getSku_no().equals(p.get("sku_no"))).findFirst().get().get("is_enable").toString())) {
+//                    // 只有当修改前平台上该sku的状态为"0"(隐藏)的时候，才将聚美SKU状态（最新Deal）改为显示(is_enable="1")
                     // 如果在deal中取得的remoteSkuList没找到skuNo,也就是说deal中没有spu.sku_no的时候，会报"100012:Sku不存在"错误
                     updateSkuIsEnableDeal(shop, originHashId, spu.getSku_no(), "1");
                     $info("[skuCode:%s]的isEnable属性值0->1变更 ", spu.getBusinessman_code());
@@ -1959,7 +1959,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                         String stockSyncResponse = updateStockNum(shop, spu.getBusinessman_code(), String.valueOf(skuLogicQtyMap.get(spu.getBusinessman_code())));
                         $info("[skuCode:%s]的isSale属性值false->true变更时同步库存:%s", spu.getBusinessman_code(), stockSyncResponse);
                     }
-                }
+//                }
             }
         }
     }
