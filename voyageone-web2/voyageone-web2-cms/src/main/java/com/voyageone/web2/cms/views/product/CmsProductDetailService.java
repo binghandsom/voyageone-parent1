@@ -595,6 +595,8 @@ public class CmsProductDetailService extends BaseViewService {
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
         mastData.put("lock", cmsBtProduct.getLock());
+        mastData.put("appSwitch",productComm.getFields().getAppSwitch());
+        mastData.put("translateStatus",productComm.getFields().getTranslateStatus());
         mastData.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
