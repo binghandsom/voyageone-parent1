@@ -1560,7 +1560,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param commonSkus
      * @return
      */
-    private List<BaseMongoMap<String, Object>> mergeSkuAttr(List<BaseMongoMap<String, Object>> jmSkus, List<CmsBtProductModel_Sku> commonSkus) {
+    protected List<BaseMongoMap<String, Object>> mergeSkuAttr(List<BaseMongoMap<String, Object>> jmSkus, List<CmsBtProductModel_Sku> commonSkus) {
 
         for (BaseMongoMap<String, Object> jmSku : jmSkus) {
             String code = jmSku.getStringAttribute("skuCode");
