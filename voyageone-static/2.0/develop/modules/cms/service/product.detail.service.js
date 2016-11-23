@@ -52,7 +52,8 @@ define([
 		this.moveSkuPreview = moveSkuPreview;
 		this.moveSku = moveSku;
 		this.restoreImg = restoreImg;
-
+		this.doAppSwitch = doAppSwitch;
+		this.doTranslateStatus = doTranslateStatus;
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -716,9 +717,48 @@ define([
 			return defer.promise;
 		}
 
+		/**
+		 * 更新schema图片信息
+		 * @param req imagetype ：图片类型   images
+		 * @returns {*}
+         */
 		function restoreImg(req){
 			var defer = $q.defer();
 			$productDetailService.restoreImg(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * app端启用开关
+		 * @param {prodId: string, appSwitch: "0"/"1"}
+         * @returns {*}
+         */
+		function doAppSwitch(req){
+			var defer = $q.defer();
+			$productDetailService.doAppSwitch(req)
+				.then (function (res) {
+					defer.resolve(res);
+				},function(res){
+					defer.reject(res);
+				});
+
+			return defer.promise;
+		}
+
+		/**
+		 * 翻译完成开关
+		 * @param {prodId: string, translateStatus: "0"/"1"}
+         * @returns {*}
+         */
+		function doTranslateStatus(req){
+			var defer = $q.defer();
+			$productDetailService.doTranslateStatus(req)
 				.then (function (res) {
 					defer.resolve(res);
 				},function(res){

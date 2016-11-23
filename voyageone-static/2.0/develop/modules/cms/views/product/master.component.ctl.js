@@ -52,6 +52,7 @@ define([
                 scope.removeImg = removeImg;
                 scope.sortImg = sortImg;
                 scope.lockProduct = lockProduct;
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -82,6 +83,8 @@ define([
                         scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
+                        scope.vm.lockStatus.onOffSwitch1 = scope.vm.mastData.appSwitch == "1" ? true : false;
+                        scope.vm.lockStatus.onOffSwitch2 = scope.vm.mastData.translateStatus == "1" ? true : false;
                         scope.vm.lockStatus.onOffSwitch3 = scope.vm.mastData.lock == "1" ? true : false;
 
                         //暂存税号个人
@@ -140,11 +143,6 @@ define([
                         scope.vm.productComm.modified = context[context.length - 1].modified;
 
                         initialize();
-/*                        var imgType = null;
-                        angular.forEach(context, function (item) {
-                            imgType = item.imageType;
-                            scope.vm.productComm.fields[imgType].push(item.imageName);
-                        });*/
 
                     });
                 }
@@ -351,24 +349,45 @@ define([
                 }
 
 
-                function lockProduct(){
-                    var _status = scope.vm.lockStatus.onOffSwitch3,
-                        lock = _status ? "1" : "0",
-                        message = _status ? "您确定要锁定商品吗？" : "您确定要解锁商品吗？";
+                function lockProduct(onOffSwitch){
+                    var _status = scope.vm.lockStatus[onOffSwitch],
+                        lock = _status ? "1" : "0";
 
-                    confirm(message).then(function () {
+                    confirm("您确定执行该操作吗？").then(function () {
 
-                        productDetailService.updateLock({
-                            prodId: scope.productInfo.productId,
-                            lock: lock
-                        }).then(function () {
-                            notify.success(_status ? "商品已锁定" : "商品已接触锁定");
-                        });
+                        switch (onOffSwitch){
+                            case "onOffSwitch1":
+                                productDetailService.doAppSwitch({
+                                    prodId: scope.productInfo.productId,
+                                    appSwitch: lock
+                                }).then(function () {
+                                    notify.success(_status ? "APP端已启用" : "APP端已关闭");
+                                });
+                                break;
+                            case "onOffSwitch2":
+                                productDetailService.doTranslateStatus({
+                                    prodId: scope.productInfo.productId,
+                                    translateStatus: lock
+                                }).then(function () {
+                                    notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                });
+                                break;
+                            case "onOffSwitch3":
+                                productDetailService.updateLock({
+                                    prodId: scope.productInfo.productId,
+                                    lock: lock
+                                }).then(function () {
+                                    notify.success(_status ? "商品已锁定" : "商品已接触锁定");
+                                });
+                                break;
+                        }
 
                     }, function () {
-                        scope.vm.lockStatus.onOffSwitch3 = !_status;
+                        scope.vm.lockStatus[onOffSwitch] = !_status;
                     });
                 }
+
+
 
             }
         };
