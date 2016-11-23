@@ -5187,6 +5187,9 @@ a.text-black:hover {
 .show {
     visibility: visible;
 }
+.cur-m{
+   cursor: move;
+}
 .line {
     width: 100%;
     height: 2px;
