@@ -12,7 +12,7 @@ define([
         bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
-    cms.directive("masterSchema", function (productDetailService, $rootScope, systemCategoryService, alert, notify, confirm) {
+    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
