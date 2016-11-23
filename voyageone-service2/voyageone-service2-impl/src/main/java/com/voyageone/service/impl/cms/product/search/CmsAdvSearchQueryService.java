@@ -294,21 +294,26 @@ public class CmsAdvSearchQueryService extends BaseService {
         if (searchValue.getfCatPathList() != null && searchValue.getfCatPathList().size() > 0) {
             StringBuilder fCatPathStr = new StringBuilder("{$or:[");
             int idx = 0;
+            List<String> parameters = new ArrayList<>();
             for (String fCatPath : searchValue.getfCatPathList()) {
+            	//fCatPath = StringUtils.replace(fCatPath, "'", "\\'");
                 if (idx == 0) {
-                    fCatPathStr.append("{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                    fCatPathStr.append("{\"feed.catPath\":{\"$regex\":#}}");
                     idx ++;
                 } else {
-                    fCatPathStr.append(",{'feed.catPath':{'$regex':'^" + fCatPath + "'}}");
+                    fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
                 }
+                parameters.add("^" + fCatPath);
             }
             fCatPathStr.append("]}");
             queryObject.addQuery(fCatPathStr.toString());
+            queryObject.addParameters(parameters.toArray());
         }
 
         // 获取 master category
         if (StringUtils.isNotEmpty(searchValue.getmCatPath())) {
-            queryObject.addQuery("{'common.catPath':{'$regex':'^" + searchValue.getmCatPath() + "'}}");
+            queryObject.addQuery("{'common.catPath':{'$regex':#}}");
+            queryObject.addParameters("^" + searchValue.getmCatPath());
         }
 
         if (StringUtils.isNotEmpty(searchValue.getCreateTimeStart())) {
