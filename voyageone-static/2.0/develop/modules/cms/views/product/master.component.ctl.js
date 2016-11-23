@@ -61,7 +61,6 @@ define([
                         cartId: "0",
                         prodId: scope.productInfo.productId
                     }).then(function (resp) {
-                        console.log(resp);
                         scope.vm.mastData = resp.data.mastData;
                         scope.vm.productComm = resp.data.productComm;
 
