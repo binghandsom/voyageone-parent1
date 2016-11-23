@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MapUtil;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
@@ -138,7 +139,7 @@ public class BeatJobService extends BaseCronTaskService {
 
                     // 每次任务前, 重置信息
                     bean.clearMessage();
-                    Context context = null;
+                    Context context;
 
                     try {
                         // 创建上下文数据
@@ -197,8 +198,13 @@ public class BeatJobService extends BaseCronTaskService {
 
                         $debug("价格披露2 出现异常", exception);
 
+                        Map jsonMap = MapUtil.toMap(
+                                "jiagepiluId", bean.getId(),
+                                "e", exception
+                        );
+
                         // 对未知异常发送错误报告
-                        logIssue(exception, bean);
+                        logIssue(exception, jsonMap);
 
                         bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), exception.getMessage()));
                         fail(bean);
