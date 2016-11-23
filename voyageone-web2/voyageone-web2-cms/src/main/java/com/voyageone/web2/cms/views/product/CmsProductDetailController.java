@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
@@ -168,6 +169,28 @@ public class CmsProductDetailController extends CmsController {
 
         String lock = (String) requestMap.get("lock");
         productService.updateProductLock(getUser().getSelChannelId(), prodId, lock, getUser().getUserName());
+
+        return success(null);
+    }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DoAppSwitch)
+    public AjaxResponse doAppSwitch(@RequestBody Map requestMap) {
+        //{prodId: "5992", appSwitch: "0"}
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+
+        productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
+
+        return success(null);
+    }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DoTranslateStatus)
+    public AjaxResponse doTranslateStatus(@RequestBody Map requestMap) {
+        //{prodId: "5992", translateStatus: "0"}
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        int translateStatus = ConvertUtil.toInt(requestMap.get("translateStatus"));
+
+        productService.updateProductTranslateStatus(getUser().getSelChannelId(), prodId, translateStatus, getUser().getUserName());
 
         return success(null);
     }

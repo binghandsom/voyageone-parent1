@@ -1019,7 +1019,45 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         insertProductHistory(channelId, prodId);
     }
+    public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("appSwitch", appSwitch);
+        updateMap.put("modifier", modifier);
+        updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        insertProductHistory(channelId, prodId);
+    }
+//    	"translateStatus" : "1",
+//                "translator" : "",      0就都清空
+//	"translateTime" : "",   0就都清空
+    public void updateProductTranslateStatus(String channelId, Long prodId, int translateStatus, String modifier) {
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("translateStatus", translateStatus);
+        if (translateStatus == 1) {
+            updateMap.put("translateTime", modifier);
+            updateMap.put("modified", DateTimeUtil.getNowTimeStamp());
+        } else {
+            updateMap.put("translateTime", "");
+            updateMap.put("modified", "");
+        }
 
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        insertProductHistory(channelId, prodId);
+    }
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", cmsProduct.getProdId());

@@ -106,6 +106,8 @@ define(function () {
                     "getCommonProductSkuInfo": "getCommonProductSkuInfo",
                     "updateCommonProductInfo": "updateCommonProductInfo",
                     "updateLock": "updateLock",
+                    "doAppSwitch":"doAppSwitch",
+                    "doTranslateStatus":"doTranslateStatus",
                     "updateProductAtts": "updateProductAtts",
                     "checkCategory": "checkCategory",
                     "getChangeMastProductInfo": "getChangeMastProductInfo",

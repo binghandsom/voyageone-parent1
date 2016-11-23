@@ -561,6 +561,8 @@ public interface CmsUrlConstants {
         interface DETAIL {
             String ROOT = "/cms/product/detail";
 
+            String DoAppSwitch="doAppSwitch";
+            String DoTranslateStatus="doTranslateStatus";
             String GET_PRODUCT_INFO = "getProductInfo";
 
             String UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";
