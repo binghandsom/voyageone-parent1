@@ -15,7 +15,7 @@ import com.voyageone.components.ftp.bean.FtpFileBean;
 import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
  * @version 2.0.0
  */
 @Service
-public class CmsImagePostScene7Service extends BaseTaskService {
+public class CmsImagePostScene7Service extends BaseCronTaskService {
 
     @Autowired
     private CmsBtImagesDaoExt cmsBtImagesDaoExt;

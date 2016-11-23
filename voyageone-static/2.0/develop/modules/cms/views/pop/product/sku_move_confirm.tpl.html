@@ -1,0 +1,27 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">
+            <i class="fa fa-check-square-o  "></i>&nbsp;&nbsp;{{'TXT_CONFIRM' | translate}}
+        </h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 col-sm-offset-2">
+                    <div class="form-group">
+                        <strong class="text-u-red"> <div ng-if="ctrl.moveType == 'Sku'">本次操作不可恢复，</div>确认是否进行移动{{ctrl.moveType}}操作？</strong>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control"name="moveInput" ng-model="ctrl.move" placeholder="请输入MOVE">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()">{{'BTN_CANCEL'|translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.confirm()" ng-disabled="ctrl.move.toLowerCase() != 'move'"> 移动</button>
+    </div>
+</div>

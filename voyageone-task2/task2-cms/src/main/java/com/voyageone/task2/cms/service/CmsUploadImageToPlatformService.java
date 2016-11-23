@@ -21,7 +21,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel_Image;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.CmsMtImageCategoryDao;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
@@ -44,7 +44,7 @@ import java.util.List;
  * @version 2.0.0
  */
 @Service
-public class CmsUploadImageToPlatformService extends BaseTaskService {
+public class CmsUploadImageToPlatformService extends BaseCronTaskService {
 
 
     /* 斜杠分隔符 */
@@ -86,6 +86,7 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
         queryObject.setQuery("{\"image.status\":"
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","
                 + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + ","
+                + CartEnums.Cart.TT.getId() + "," + CartEnums.Cart.USTT.getId() + ","
                 + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "]}}");
 
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
@@ -110,7 +111,8 @@ public class CmsUploadImageToPlatformService extends BaseTaskService {
      * @param image ImageModel
      */
     private void uploadImageToPlatform(String channelId, String cartId, int imageType, CmsBtImageGroupModel_Image image) {
-        if (cartId.equals(CartEnums.Cart.TM.getId()) || cartId.equals(CartEnums.Cart.TB.getId()) ||cartId.equals(CartEnums.Cart.TG.getId())) {
+        if (cartId.equals(CartEnums.Cart.TM.getId()) || cartId.equals(CartEnums.Cart.TB.getId()) ||cartId.equals(CartEnums.Cart.TG.getId())
+                || cartId.equals(CartEnums.Cart.TT.getId()) || cartId.equals(CartEnums.Cart.USTT.getId())) {
             uploadImageToTB(channelId, cartId, imageType, image);
         } else if (cartId.equals(CartEnums.Cart.JM.getId())) {
             uploadImageToJM(channelId, imageType, image);

@@ -1,8 +1,11 @@
 package com.voyageone.task2.cms.service;
 
+import com.google.common.collect.Lists;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
 import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
@@ -12,6 +15,8 @@ import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -27,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Ethan Shi on 2016/6/13.
@@ -60,6 +66,12 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Autowired
     JumeiProductService jumeiProductService;
+
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    ProductGroupService productGroupService;
 
     @Test
     public void TestPrice() throws Exception {
@@ -131,8 +143,8 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         CmsBtSxWorkloadModel work = new CmsBtSxWorkloadModel();
         work.setCartId(27);
-        work.setChannelId("010");
-        work.setGroupId(30222L);
+        work.setChannelId("028");
+        work.setGroupId(1091269L);
         work.setPublishStatus(0);
 
         cmsBuildPlatformProductUploadJMService.updateProduct(work);
@@ -144,9 +156,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(185);
-        workload.setChannelId("017");
+        workload.setChannelId("028");
         workload.setCartId(27);
-        workload.setGroupId(Long.parseLong("389898"));
+        workload.setGroupId(Long.parseLong("1126837"));
         workload.setPublishStatus(0);
 
         cmsBuildPlatformProductUploadJMService.updateProduct(workload);
@@ -414,9 +426,12 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
                 remoteSpus = new ArrayList<>();
             }
 
+            //取库存
+            Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(), jmCart.getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+
             // 测试
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在平台上隐藏该商品编码并把库存改为0
-            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(cartId).getSkus());
+            cmsBuildPlatformProductUploadJMService.doHideNotExistSkuDeal(shop, originHashId, remoteSpus, product.getPlatform(cartId).getSkus(), skuLogicQtyMap);
             // 如果平台上取得的商家商品编码在mongoDB的产品P27.Skus()中不存在对应的SkuCode，则在聚美商城上隐藏该商品编码并把库存改为0
 //        if (!StringUtils.isEmpty(product.getPlatform(CART_ID).getpPlatformMallId()))
             cmsBuildPlatformProductUploadJMService.doHideNotExistSkuMall(shop, remoteSpus, product.getPlatform(cartId).getSkus());
@@ -432,9 +447,9 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     @Test
     public void testUpdateDealPriceBatch() {
 
-        String channelId = "012";
+        String channelId = "015";
         int cartId = 27;
-        String productCode = "BCH60F46-6R3";
+        String productCode = "1148114032";
 
         ShopBean shop = Shops.getShop(channelId, cartId);
 
@@ -453,5 +468,114 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         }
     }
 
+    @Test
+    public void testHidByCode() {
+        String channelId = "027";
+        int cartId = 27;
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+
+        String[] codes = {"027-1101-03","027-1101-05","027-1101-06","027-1101-07","027-1101-08","027-1101-09","027-1101-12","027-1101-13","027-1101-14","027-1101-15"};
+        List<String> listSku = Lists.newArrayList("027-1101XL03","027-1101XXL03","027-1101XXXL03","027-1101XL05","027-1101XXL05","027-1101XXXL05","027-1101XL06","027-1101XXL06","027-1101XXXL06","027-1101XL07","027-1101XXL07","027-1101XXXL07","027-1101XL08","027-1101XXL08","027-1101XXXL08","027-1101XL09","027-1101XXL09","027-1101XXXL09","027-1101XL12","027-1101XXL12","027-1101XXXL12","027-1101XL13","027-1101XXL13","027-1101XXXL13","027-1101XL14","027-1101XXL14","027-1101XXXL14","027-1101XL15","027-1101XXL15","027-1101XXXL15");
+
+        List<CmsBtProductModel> productModelList = cmsBtProductDao.select("{" + MongoUtils.splicingValue("common.fields.code", codes, "$in") + "}", channelId);
+
+        for (CmsBtProductModel productModel : productModelList) {
+            String originHashId = productModel.getPlatform(cartId).getpNumIId();
+            for (BaseMongoMap<String, Object> sku : productModel.getPlatform(cartId).getSkus()) {
+                String skuCode = sku.getStringAttribute("skuCode");
+                if (!listSku.contains(skuCode)) {
+                    continue;
+                }
+
+                String jmSkuNo = sku.getStringAttribute("jmSkuNo");
+                try {
+                    cmsBuildPlatformProductUploadJMService.updateSkuIsEnableDeal(shopBean, originHashId, jmSkuNo, "0");
+                    logger.info(String.format("jmSkuNo[%s] Deal 下架成功!", jmSkuNo));
+                } catch (Exception e) {
+                    logger.error(String.format("jmSkuNo[%s] Deal 下架失败!" + e.getMessage(), jmSkuNo));
+                }
+
+
+                StringBuffer failCause = new StringBuffer("");
+                try {
+                    cmsBuildPlatformProductUploadJMService.updateSkuIsEnableMall(shopBean, jmSkuNo, "disabled", failCause);
+                    if (failCause.length() > 0) {
+                        logger.error(String.format("jmSkuNo[%s] Mall 下架失败!" + failCause.toString(), jmSkuNo));
+                    } else {
+                        logger.info(String.format("jmSkuNo[%s] Mall 下架成功!", jmSkuNo));
+                    }
+                } catch (Exception e) {
+                    logger.error(String.format("jmSkuNo[%s] Mall 下架失败!" + e.getMessage(), jmSkuNo));
+                }
+
+            }
+        }
+
+    }
+
+    @Test
+    public void testSaveProductPlatform() {
+        String channelId = "028";
+        int cartId = 27;
+        String productCode = "028-ps4716508";
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
+        if (cmsBtProductModel == null) {
+            System.out.print(String.format("没找到对应的产品信息 [ProductCode:%s]", productCode));
+        }
+
+        List<BaseMongoMap<String, Object>> jmSkus = cmsBtProductModel.getPlatform(cartId).getSkus();
+        int i = 1;
+        for (BaseMongoMap<String, Object> sku : jmSkus) {
+            sku.setStringAttribute("sizeNick", "39."+i);
+            i++;
+        }
+
+        cmsBuildPlatformProductUploadJMService.saveProductPlatform(channelId, cmsBtProductModel);
+    }
+
+    @Test
+    public void testDoUpdateMallStatus() {
+        String channelId = "023";
+        int cartId = 27;
+        String productCode = "VN-0KC44K1";
+        String pPlatformMallId = "23602";
+
+        CmsBtProductGroupModel productGroupModel = productGroupService.selectProductGroupByCode(channelId, productCode, cartId);
+        if (productGroupModel == null) {
+            System.out.print(String.format("没找到对应的产品Group信息 [ProductCode:%s]", productCode));
+        }
+
+        ShopBean shop = Shops.getShop(channelId, cartId);
+
+        // 调用聚美商城商品上下架
+        cmsBuildPlatformProductUploadJMService.doUpdateMallStatus(pPlatformMallId, productGroupModel.getPlatformActive(), shop);
+    }
+
+    @Test
+    public void testUpdateSkuIsEnableDeal() {
+
+        String channelId = "028";
+        int cartId = 27;
+        String originHashId = "ht1479292676p3174515";
+        String jumeiSkuNo = "701418385";
+
+        ShopBean shop = new ShopBean();
+        shop.setOrder_channel_id(channelId);
+        shop.setCart_id(String.valueOf(cartId));
+        shop.setApp_url("http://openapi.ext.jumei.com/");
+        shop.setAppKey("");
+        shop.setAppSecret("");
+        shop.setSessionKey("");
+        // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
+        shop.setPlatform_id("3");
+
+        try {
+            // 把聚美平台上deal中的sku下架
+            cmsBuildPlatformProductUploadJMService.updateSkuIsEnableDeal(shop, originHashId, jumeiSkuNo, "0");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -1,0 +1,516 @@
+<section ng-init="ctrlEdit.init()" style="position: relative">
+    <form role="form" class="form-horizontal" name="ctrlEdit.promotionForm" novalidate>
+        <div id="jm-sp-edit-base" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">活动基本信息</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">平台名称</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" readonly="readonly" value="聚美国际">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">活动名称</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" required name="promotionName"
+                               ng-model="ctrlEdit.editModel.model.name" maxlength="25">
+                        <input type="hidden" ng-model="ctrlEdit.model.id">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionName"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">活动场景</label>
+                    <div class="col-sm-5">
+                        <label class="checkbox-inline c-checkbox" style="margin-right:40px" ng-repeat="sceneValObj in ctrlEdit.vm.metaData.promotionSceneList">
+                            <input type="checkbox" name="promotionScene" style="margin: 0" ng-value="sceneValObj.value"
+                                   ng-model="ctrlEdit.editModel.model.promotionScene[sceneValObj.value]"
+                                   ng-required="ctrlEdit.checkboxVal(ctrlEdit.editModel.model.promotionScene)"
+                                   ng-disabled="ctrlEdit.vm.isEnd">
+                            <span class="fa fa-check"></span> {{sceneValObj.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionScene"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">活动类型</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.model.promotionType" ng-options="typeObj.value as typeObj.name for typeObj in ctrlEdit.vm.metaData.promotionTypeList"
+                                name="promotionType" width="'100%'" ng-disabled="ctrlEdit.vm.isEnd||ctrlEdit.editModel.model.isFstSave==1" ng-change="ctrlEdit.createActId()" required>
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionType"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">专场主品牌</label>
+                    <div class="col-sm-3">
+                        <select chosen ng-model="ctrlEdit.editModel.model.masterBrandName" required ng-disabled="ctrlEdit.editModel.model.isFstSave==1"
+                                ng-options="brand.value as brand.value for brand in ctrlEdit.vm.metaData.jmMasterBrandList"
+                                name="masterBrandName" width="'100%'" ng-change="ctrlEdit.onJmBrandChange()">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌ID&nbsp;&nbsp;&nbsp;&nbsp;{{ctrlEdit.editModel.model.cmsBtJmMasterBrandId}}</label>
+                    <label class="col-sm-3 control-label text-left" style="margin-left:40px" ng-if="!ctrlEdit.editModel.model.cmsBtJmMasterBrandId">聚美品牌未匹配</label>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.masterBrandName"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">准备期截止时间</label>
+                    <div class="col-sm-7">
+                        <div class="col-sm-3 input-group">
+                            <input type="datetime-local" class="form-control" uib-datepicker-popup ng-readonly="vm.isDeadline"
+                                   ng-model="ctrlEdit.editModel.model.signupDeadline" name="signupDeadline" required
+                                   min-date="ctrlEdit.vm.currentTime"
+                                   max-date="ctrlEdit.editModel.model.prePeriodStart"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="datePicker4" close-text="Close"
+                                   ng-disabled="ctrlEdit.vm.isDeadline" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-disabled="ctrlEdit.vm.isDeadline" ng-click="datePicker4 = !datePicker4"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.signupDeadline" class="vo-message-success"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">预热时间</label>
+                    <div class="col-sm-7">
+                        <div class="col-sm-3 input-group">
+                            <input type="datetime-local" class="form-control"
+                                   uib-datepicker-popup ng-readonly="vm.isBeginPre"
+                                   ng-model="ctrlEdit.editModel.model.prePeriodStart" name="prePeriodStart" required
+                                   min-date="ctrlEdit.vm.currentTime"
+                                   max-date="ctrlEdit.editModel.model.activityStart"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="datePicker3" ng-required="true" close-text="Close"
+                                   ng-disabled="ctrlEdit.vm.isBeginPre"
+                                   date-disabled="disabled(date, mode)"/>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-disabled="ctrlEdit.vm.isBeginPre"
+                                    ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.prePeriodStart" class="vo-message-success"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">活动时间</label>
+                    <div class="col-sm-7 form-inline">
+                        <div class="col-sm-4 input-group">
+                            <input type="datetime-local" class="form-control"
+                                   ng-readonly="ctrlEdit.vm.isBegin||ctrlEdit.editModel.model.status!=0"
+                                   uib-datepicker-popup
+                                   ng-model="ctrlEdit.editModel.model.activityStart" name="activityStart" required
+                                   max-date="ctrlEdit.editModel.model.activityEnd"
+                                   min-date="ctrlEdit.vm.currentTime"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="datePicker1" ng-required="true" close-text="Close"
+                                   ng-disabled="ctrlEdit.vm.isBegin"
+                                   date-disabled="disabled(date, mode)"/>
+                        <span class="input-group-btn">
+                            <button type="button" ng-disabled="ctrlEdit.vm.isBegin || ctrlEdit.editModel.model.status!=0"
+                                    class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </div>
+                        ~
+                        <div class="col-sm-4 input-group" style="margin-left:20px">
+                            <input type="datetime-local" class="form-control"
+                                   ng-readonly="ctrlEdit.vm.isEnd||ctrlEdit.editModel.model.status!=0"
+                                   uib-datepicker-popup
+                                   ng-model="ctrlEdit.editModel.model.activityEnd" name="activityEnd" required
+                                   min-date="ctrlEdit.editModel.model.activityStart"
+                                   date-model-format="yyyy-MM-dd HH:mm:ss" step="1"
+                                   is-open="ctrlEdit.vm.datePicker2" ng-required="true" close-text="Close"
+                                   ng-disabled="ctrlEdit.vm.isEnd"
+                                   date-disabled="disabled(date, mode)"/>
+                        <span class="input-group-btn">
+                            <button type="button" ng-disabled="ctrlEdit.vm.isEnd || ctrlEdit.editModel.model.status!=0"
+                                    class="btn btn-default" ng-click="ctrlEdit.onDateChange()"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.activityStart && ctrlEdit.promotionForm.activityEnd"
+                                    class="vo-message-success"></vo-message>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-2 control-label vo_reqfield" translate="TXT_PROMOTION_PC_ID"></label>
+                    <div class="col-sm-2">
+                        <input required="" name="promotionPcId" type="number" class="form-control" maxlength="20"
+                               ng-model="ctrlEdit.editModel.model.activityPcId" scale="20,0">
+                    </div>
+
+                    <label class="col-sm-1 control-label vo_reqfield" translate="TXT_PROMOTION_APP_ID"></label>
+                    <div class="col-sm-2">
+                        <input required="" name="promotionAppId" type="number" class="form-control" maxlength="20"
+                               ng-model="ctrlEdit.editModel.model.activityAppId" scale="20,0">
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-3">
+                        <vo-message target="ctrlEdit.promotionForm.promotionPcId" class="vo-message-success"></vo-message>
+                    </div>
+                    <div class="col-sm-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionAppId" class="vo-message-success"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">专场涉及品牌</label>
+                    <div class="col-sm-5">
+                        <textarea class="form-control no-resize" rows="3" ng-model="ctrlEdit.editModel.model.brand" disabled></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">活动备注</label>
+                    <div class="col-sm-5">
+                        <textarea class="form-control no-resize" rows="3" ng-model="ctrlEdit.editModel.model.comment"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <table class="table table-hover-new table-hover">
+                            <thead>
+                            <tr>
+                                <th>TAG</th>
+                                <th class="text-center" style="width: 55px;">{{'BTN_DELETE' | translate}}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="tag in ctrlEdit.editModel.tagList" ng-if="tag.model.active!=0">
+                                <td>
+                                    <input class="form-control" ng-model="tag.model.tagName" name="tagName{{$index}}" maxlength="20" required ng-readonly="tag.featured">
+                                    <vo-message target="ctrlEdit.promotionForm['tagName' + $index]" ng-if="!tag.featured"></vo-message>
+                                </td>
+                                <td class="text-center">
+                                    <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-if="!tag.featured" ng-click="ctrlEdit.delTag(tag, $index)"><i class="fa fa-trash-o"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <button class="btn btn-sm btn-success btn-addon pull-right" style="margin-right:5px"
+                                    ng-disabled="ctrlEdit.vm.isEnd" ng-click="ctrlEdit.addTag()"><i class="fa fa-plus"></i>追加
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="jm-sp-edit-special" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">活动专场信息</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Promotion Product Type</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionProductType" ng-change="ctrlEdit.createActId('promotionProductType')"
+                               ng-readonly="ctrlEdit.editModel.model.isFstSave==1&&ctrlEdit.editModel.model.promotionType=='3'">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">展示平台</label>
+                    <div class="col-sm-5">
+                        <label class="checkbox-inline c-checkbox" style="margin-right:40px" ng-repeat="displayValObj in ctrlEdit.vm.metaData.displayPlatformList">
+                            <input type="checkbox" name="displayPlatform" style="margin: 0" ng-value="displayValObj.value"
+                                   ng-model="ctrlEdit.editModel.extModel.displayPlatform[displayValObj.value]"
+                                   ng-required="ctrlEdit.checkboxVal(ctrlEdit.editModel.extModel.displayPlatform)">
+                            <span class="fa fa-check"></span> {{displayValObj.name}}
+                        </label>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.displayPlatform"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">主频道</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.mainChannel" name="mainChannel" required ng-change="ctrlEdit.onMainChannelChange()"
+                                ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.mainChannelList" ng-disabled="ctrlEdit.editModel.model.isFstSave==1">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.mainChannel"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">专场类型</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionType" name="sessionType" required
+                                ng-options="item.value as item.name for item in ctrlEdit.vm.metaData.sessionTypelList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.sessionType"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">关联品类</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.sessionCategory" name="sessionCategory" required
+                                ng-options="value.value as value.name group by value.pName for value in ctrlEdit.vm.metaData.sessionCategoryList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.sessionCategory"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">预展示频道</label>
+                    <div class="col-sm-5">
+                        <div class="row">
+                            <label class="col-sm-3" ng-repeat="preDispValObj in ctrlEdit.vm.metaData.preDisplayChannelList">
+                                <input type="checkbox" ng-value="preDispValObj.value" ng-model="ctrlEdit.editModel.extModel.preDisplayChannel[preDispValObj.value]"> {{preDispValObj.name}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">首页主标题/专场标题</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.mainTitle" maxlength="9" name="mainTitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.mainTitle"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">首页副标题</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.subtitle" maxlength="11" name="subtitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.subtitle"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">入口图专场导向文案</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.enterGuide" maxlength="8" name="enterGuide">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">营销标题</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingTitle" maxlength="16" name="marketingTitle" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.marketingTitle"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">营销文案</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.marketingCopywriter" maxlength="28" name="marketingCopywriter" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.marketingCopywriter"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label s-required">促销文案</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" ng-model="ctrlEdit.editModel.extModel.promotionalCopy" maxlength="15" name="promotionalCopy" required>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-sm-7 col-sm-offset-2">
+                        <vo-message target="ctrlEdit.promotionForm.promotionalCopy"></vo-message>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">页面标识</label>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">PC</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrlEdit.editModel.extModel.pcPageId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">APP</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="readonly" class="form-control" ng-model="ctrlEdit.editModel.extModel.appPageId">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <label>
+                            <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.syncMobile"> 同步移动专场
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <label>
+                            <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.showHiddenDeal"> 货架显示隐藏deal
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <label>
+                            <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.showSoldOutDeal"> 显示0库存deal
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-5 col-sm-offset-2">
+                        <label>
+                            <input type="checkbox" ng-model="ctrlEdit.editModel.extModel.showMobile"> 移动端显示
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">分享</label>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">分享标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="readonly" class="form-control" value="{{ctrlEdit.editModel.extModel.marketingTitle}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">分享内容</label>
+                            <div class="col-sm-10">
+                                <input type="text" readonly="readonly" class="form-control" value="{{ctrlEdit.editModel.extModel.marketingCopywriter}}{{ctrlEdit.editModel.extModel.promotionalCopy}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">直邮信息</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" ng-model="ctrlEdit.editModel.extModel.directmailType" ng-options="mailTp.value as mailTp.name for mailTp in ctrlEdit.vm.metaData.directmailTypelList">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="jm-sp-edit-gift" class="panel panel-vo">
+            <div class="panel-heading">
+                <h4 class="panel-title">活动促销信息</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Promotion Gift</label>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isPromotionFullMinus"> 满减</label>
+                            <div class="col-sm-1 text-right">
+                                满
+                            </div>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrlEdit.editModel.extModel.promotionFullAmount"> 元
+                            </div>
+                            <div class="col-sm-4 form-inline">
+                                减 <input type="text" ng-model="ctrlEdit.editModel.extModel.promotionMinusAmount"> 元
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.isPromotionEachfullMinus"> 满减</label>
+                            <div class="col-sm-1 text-right">
+                                每满
+                            </div>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrlEdit.editModel.extModel.promotionEachfullAmount"> 元
+                            </div>
+                            <div class="col-sm-4 form-inline">
+                                减 <input type="text" ng-model="ctrlEdit.editModel.extModel.promotionEachminusAmount"> 元
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.jmCoupons"> 优惠券（聚美承担）</label>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrlEdit.editModel.extModel.jmCouponsMoney"> 元
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3"><input type="checkbox" ng-model="ctrlEdit.editModel.extModel.voCoupons"> 优惠券（VO承担）</label>
+                            <div class="col-sm-4 form-inline">
+                                <input type="text" ng-model="ctrlEdit.editModel.extModel.voCouponsMoney"> 元
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <sticky top-fix="208" style="position: absolute; top: 35px; right: 10px;">
+        <ul class="nav nav-pills nav-stacked">
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-base,,-60">活动基本信息</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-special,,-60">活动专场信息</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" scroll-to="#jm-sp-edit-gift,,-60">活动促销信息</button>
+            </li>
+            <hr>
+            <li>
+                <button type="button" class="btn btn-success" style="width:90px" ng-click="ctrlEdit.save(0)">暂存</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-primary" style="width:90px" ng-click="ctrlEdit.save(1)" ng-disabled="ctrlEdit.promotionForm.$invalid">提交</button>
+            </li>
+        </ul>
+    </sticky>
+</section>

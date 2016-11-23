@@ -26,6 +26,17 @@
                     <s-field ng-if="vm.propertyInfo.property.id" field="vm.propertyInfo.property" show-name="false"></s-field>
                 </div>
             </div>
+            <div class="form-group" style="padding-top:8px" ng-show="(vm.propertyInfo.property.id=='translateStatus')&&(vm.propertyInfo.property.value.value=='2')">
+                <label class="col-sm-3 control-label">优先翻译日期</label>
+                <div class="col-sm-5 input-group" style="padding-left:4px">
+                    <input type="text" class="form-control" uib-datepicker-popup min-date = "vm.currentTime"
+                           ng-model="vm.propertyInfo.property.value.priorTranslateDate" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                           date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close"/>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
+                </div>
+            </div>
             <div class="form-group" style="padding-top:8px" ng-show="(vm.propertyInfo.property.id=='hsCodePrivate')&&(vm.autoSynPrice!='1')">
                 <div class="col-sm-3 control-label">确认项</div>
                 <div class="col-sm-2">

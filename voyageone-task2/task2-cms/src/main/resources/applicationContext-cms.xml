@@ -15,6 +15,11 @@
         <task:scheduled ref="CmsBulkUploadImageToS7Job" method="run" cron="0 0/2 * * * ?"/>
 
         <!-- cms2 batch add    -->
+        <!-- 从Cms系统导入产品数据到收索服务器 （每天早上4：30点一次） -->
+        <task:scheduled ref="CmsProductTotalImportToSearchJob" method="run" cron="0 30 20 * * ?"/>
+        <!-- 从Cms系统导入产品数据到收索服务器为分销系统使用 （每天早上4：40点一次） -->
+        <task:scheduled ref="CmsProductTotalImportToDistSearchJob" method="run" cron="0 40 20 * * ?"/>
+
         <!-- 将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <task:scheduled ref="CmsSetMainPropMongoJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
@@ -76,7 +81,7 @@
         <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 25 0/1 * * ?"/>
 
         <!-- OverStock feed 导入 cms2 -->
-        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0 9 * * ?"/>
+        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0 17 0/3 * ?"/>
 
         <!-- OverStock price 导入 cms2 -->
         <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>
@@ -133,7 +138,7 @@
         <task:scheduled ref="CmsUploadImageToPlatformJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 从oms系统导入产品前90天订单信息到订单历史记录表，并统计出指定销量数据 -->
-        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 10 * * ?"/>
+        <task:scheduled ref="CmsImportOrdersHisInfoJob" method="run" cron="0 0 18 * * ?"/>
 
         <!-- 将主类目/对应的平台类目信息导入到cms_mt_category_tree_all表 -->
         <task:scheduled ref="CmsImportCategoryTreeJob" method="run" cron="0 0/1 * * * ?"/>
@@ -156,7 +161,15 @@
         <!-- 从天猫/京东获取商品的上下架状态（每天早上2点一次） -->
         <task:scheduled ref="CmsGetPlatformStatusJob" method="run" cron="0 0 0/2 * * ?"/>
 
-        <!-- 取所有平台tree和schema（每天早上5点一次） -->
+        <!-- 聚美活动开始 把商城的价格设置为活动价 -->
+        <task:scheduled ref="CmsJmMallPromotionPriceSyncJob" method="run" cron="0 0/5 * * * ?"/>
+        <!-- 聚美活动结束 把商城的价格回复 -->
+        <task:scheduled ref="CmsJmMallPriceReductionJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 聚美活动结束 把商城的价格回复 -->
+        <task:scheduled ref="CmsSynJmPromotionDealPriceJob" method="run" cron="0 0 17 * * ?"/>
+
+        <!-- 每天同步聚美活动里面的价格 -->
         <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
 
         <!--&lt;!&ndash; 独立域名上新xml准备（每分钟一次） &ndash;&gt;-->

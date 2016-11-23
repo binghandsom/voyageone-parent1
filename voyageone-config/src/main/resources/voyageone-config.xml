@@ -6,7 +6,6 @@
         http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
     <!-- localhost dev env -->
-    <!-- localhost dev env -->
     <import resource="classpath*:common-config.xml"/>
     <import resource="classpath*:data-cache-config.xml"/>
     <import resource="classpath*:datasource-cms2-config.xml"/>
@@ -18,6 +17,7 @@
     <import resource="classpath*:sdk-client-config.xml"/>
     <import resource="classpath*:mq-config.xml"/>
     <import resource="classpath*:redis-config.xml"/>
+    <import resource="classpath*:solr-config.xml"/>
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/common-config.xml" />-->
@@ -28,6 +28,7 @@
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/redis-config.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/solr-config.xml"/>-->
 
 
 </beans>

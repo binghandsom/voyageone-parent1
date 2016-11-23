@@ -149,7 +149,6 @@ public class CnSchemaService extends CnBase {
     }
 
     public String postXml(String xml, ShopBean shopBean) throws Exception {
-        // TODO:  apiAction 未定
-        return post("/catalog_request_json.php", xml, shopBean);
+        return post("/catalog_request.php", xml, shopBean);
     }
 }

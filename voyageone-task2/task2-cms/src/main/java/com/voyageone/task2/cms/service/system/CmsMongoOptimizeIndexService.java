@@ -11,8 +11,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.dao.cms.mongo.CmsZiIndexDao;
 import com.voyageone.service.model.cms.mongo.meta.CmsZiIndexModel;
 import com.voyageone.service.model.cms.mongo.meta.CmsZiIndexModel_Index;
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.CodeConstants;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 
 
 @Service
-public class CmsMongoOptimizeIndexService extends BaseTaskService {
+public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
 
     @Autowired
     private CmsZiIndexDao indexOptDao;

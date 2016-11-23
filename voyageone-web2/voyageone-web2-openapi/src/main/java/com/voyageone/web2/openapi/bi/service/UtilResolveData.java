@@ -18,23 +18,23 @@ class UtilResolveData {
     @SuppressWarnings("unchecked")
     static List<List<String>> getInfoTM(String channelId, String cartId, Map<String, Object> jsonData) {
         List<List<String>> result = new ArrayList<>();
-        if (jsonData.get("content") != null) {
-            Map<String, Object> contentData = (Map<String, Object>) jsonData.get("content");
-            if (contentData.get("data") != null) {
-                Map<String, Object> rootData = (Map<String, Object>) contentData.get("data");
-                if (rootData.get("data") != null) {
-                    List data = (List) rootData.get("data");
-                    for (Object row : data) {
-                        List<String> convertRow = transformInfoTM((List<String>) row);
-                        if (!convertRow.isEmpty()) {
-                            convertRow.add(0, channelId);
-                            convertRow.add(0, String.valueOf(cartId));
-                            result.add(convertRow);
-                        }
+//        if (jsonData.get("content") != null) {
+//            Map<String, Object> contentData = (Map<String, Object>) jsonData.get("content");
+        if (jsonData.get("data") != null) {
+            Map<String, Object> rootData = (Map<String, Object>) jsonData.get("data");
+            if (rootData.get("data") != null) {
+                List data = (List) rootData.get("data");
+                for (Object row : data) {
+                    List<String> convertRow = transformInfoTM((List<String>) row);
+                    if (!convertRow.isEmpty()) {
+                        convertRow.add(0, channelId);
+                        convertRow.add(0, String.valueOf(cartId));
+                        result.add(convertRow);
                     }
                 }
             }
         }
+//        }
         return result;
     }
 
@@ -76,15 +76,15 @@ class UtilResolveData {
     @SuppressWarnings("unchecked")
     static List<String> getKeysTM(Map<String, Object> jsonData) {
         List<String> result = new ArrayList<>();
-        if (jsonData.get("content") != null) {
-            Map<String, Object> contentData = (Map<String, Object>) jsonData.get("content");
-            if (contentData.get("data") != null) {
-                Map<String, Object> rootData = (Map<String, Object>) contentData.get("data");
-                if (rootData.get("title") != null) {
-                    result = (List<String>) rootData.get("title");
-                }
+//        if (jsonData.get("content") != null) {
+//            Map<String, Object> contentData = (Map<String, Object>) jsonData.get("content");
+        if (jsonData.get("data") != null) {
+            Map<String, Object> rootData = (Map<String, Object>) jsonData.get("data");
+            if (rootData.get("title") != null) {
+                result = (List<String>) rootData.get("title");
             }
         }
+//        }
         return result;
     }
 

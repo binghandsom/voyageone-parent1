@@ -101,7 +101,9 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
                 viewType = "1"; // 默认 PC端
             }
             // added by morse.lu 2016/09/19 end
-            parseResult = sxProductService.getImageTemplate(sxData.getChannelId(),
+            parseResult = sxProductService.getImageTemplate(
+                                                            sxData.getChannelId(),
+//                                                            sxData.getMainProduct().getOrgChannelId(),
                                                             sxData.getCartId(),
                                                             4, // 4：参数模版
 //                                                            1, // PC端

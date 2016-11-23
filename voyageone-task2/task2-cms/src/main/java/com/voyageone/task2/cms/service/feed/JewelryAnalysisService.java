@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedJEBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
@@ -28,7 +28,7 @@ import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.JEWE
  * Created by Jonas on 10/10/15.
  */
 @Service
-public class JewelryAnalysisService extends BaseTaskService {
+public class JewelryAnalysisService extends BaseCronTaskService {
 
     @Autowired
     private SuperFeed2Dao superfeeddao;

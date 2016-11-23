@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.csvreader.CsvWriter;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -39,7 +39,7 @@ import java.util.*;
  * Created by jerry on 2016/01/23.
  */
 @Service
-public class ImportExcelFileService extends BaseTaskService {
+public class ImportExcelFileService extends BaseCronTaskService {
 
     @Autowired
     private DataSourceTransactionManager transactionManager;

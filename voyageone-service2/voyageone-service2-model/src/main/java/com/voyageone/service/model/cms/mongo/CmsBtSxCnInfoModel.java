@@ -16,6 +16,7 @@ public class CmsBtSxCnInfoModel extends ChannelPartitionModel {
     private List<String> catIds;
     private String code;
     private Long prodId; // cms产品id
+    private String urlKey;
     private String productXml;
     private String skuXml;
     private String platformActive; // 回写OnSale/InStock用
@@ -68,6 +69,14 @@ public class CmsBtSxCnInfoModel extends ChannelPartitionModel {
 
     public void setProdId(Long prodId) {
         this.prodId = prodId;
+    }
+
+    public String getUrlKey() {
+        return urlKey;
+    }
+
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
     }
 
     public String getProductXml() {

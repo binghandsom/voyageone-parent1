@@ -4,13 +4,13 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MapUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.vms.VmsBtInventoryFileDao;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.vms.VmsBtInventoryFileModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -34,7 +34,7 @@ import static com.voyageone.task2.vms.VmsConstants.VMS_PROPERTY;
  * Created by vantis on 16-9-8.
  */
 @Service
-public class VmsPrcInvFileScanService extends BaseTaskService {
+public class VmsPrcInvFileScanService extends BaseCronTaskService {
 
     private VmsBtInventoryFileDao vmsBtInventoryFileDao;
     private MqSender mqSender;
@@ -117,7 +117,7 @@ public class VmsPrcInvFileScanService extends BaseTaskService {
 
         vmsBtInventoryFileModel.setStatus(PrcInvFileStatus.WAITING_IMPORT);
         Map<String, Object> param;
-        param = MapUtil.toMap(vmsBtInventoryFileModel);
+        param = BeanUtils.toMap(vmsBtInventoryFileModel);
         param = MySqlPageHelper.build(param)
                 .addSort("created", Order.Direction.ASC)
                 .limit(1)

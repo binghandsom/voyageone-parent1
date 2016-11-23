@@ -3,13 +3,18 @@ package com.voyageone.base.dao.mongodb;
 import com.voyageone.base.dao.mongodb.support.MongoCollection;
 import com.voyageone.common.util.StringUtils;
 
+import static java.util.stream.Collectors.joining;
+
 /**
  * MongoCollectionName
+ *
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
-public class MongoCollectionName {
+class MongoCollectionName {
+    private static final char SEPARATOR = '_';
+
     public static String getCollectionName(Class<?> entityClass) {
         String className = entityClass.getSimpleName();
         String result = null;
@@ -17,20 +22,12 @@ public class MongoCollectionName {
         if (mongoCollection != null && !StringUtils.isEmpty(mongoCollection.value())) {
             result = mongoCollection.value();
         }
-		
+
         if (result == null) {
             result = toUnderlineName(className);
             if (result.endsWith("_model")) {
-                result = result.substring(0, result.length()-6);
+                result = result.substring(0, result.length() - 6);
             }
-        }
-        return result;
-    }
-
-    private static String getPartitionValue(String partStr, String split) {
-        String result = "";
-        if (partStr != null) {
-            result = "_" + split + partStr;
         }
         return result;
     }
@@ -47,8 +44,15 @@ public class MongoCollectionName {
         return null;
     }
 
-    private static final char SEPARATOR = '_';
-    public static String toUnderlineName(String s) {
+    private static String getPartitionValue(String partStr, String split) {
+        String result = "";
+        if (partStr != null) {
+            result = "_" + split + partStr;
+        }
+        return result;
+    }
+
+    private static String toUnderlineName(String s) {
         if (s == null) {
             return null;
         }

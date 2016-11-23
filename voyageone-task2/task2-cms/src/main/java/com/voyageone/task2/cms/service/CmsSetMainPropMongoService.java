@@ -43,6 +43,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
+import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
@@ -54,7 +55,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -64,6 +65,7 @@ import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +78,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * feed->master导入服务
@@ -85,7 +88,7 @@ import java.util.regex.Pattern;
  * @since 2.0.0
  */
 @Service
-public class CmsSetMainPropMongoService extends BaseTaskService {
+public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
     @Autowired
     private CmsBtFeedMapping2Dao cmsBtFeedMapping2Dao; // DAO: 新的feed->主数据的mapping关系
@@ -131,6 +134,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     private CmsBtFeedImportSizeService cmsBtFeedImportSizeService;
     @Autowired
     CmsBtBrandBlockService cmsBtBrandBlockService;
+    @Autowired
+    CmsMasterBrandMappingService cmsMasterBrandMappingService;
     // 每个channel的feed->master导入默认最大件数
     private final static int FEED_IMPORT_MAX_500 = 500;
 
@@ -291,11 +296,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
         // --------------------------------------------------------------------------------------------
 
+        Map<String,String> mastBrand = null;
+
         // public setMainProp(String orderChannelId, boolean skip_mapping_check) {
 //        public setMainProp(String orderChannelId, boolean skip_mapping_check, String priceBreakTime) {
         public setMainProp(String orderChannelId, boolean skip_mapping_check) {
             this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
+            this.mastBrand = new HashMap<>();
 //            this.priceBreakTime = priceBreakTime;
         }
 
@@ -444,7 +452,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
         private void showChannelErrorResult(String channelId, Map<String, String> resultMap) {
             // 如果是共通配置没有或者价格计算时抛出整个Channel的配置没有的错误时，后面的feed导入就不用做了，免得报出几百条同样的错误
-            String resultInfo = channelId + " " + channel.getFull_name() + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " 产品导入结果 [渠道级别共通配置属性错误,该渠道下" +
                     "所有的feed都不做导入了，请修改好后重新导入]";
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
             resultMap.put(channelId, resultInfo);
@@ -533,6 +541,18 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                             $error(errMsg);
                             throw new BusinessException(errMsg);
                         }
+
+                        List<CmsBtFeedInfoModel_Sku> skus = feed.getSkus().stream()
+                                .filter(sku -> sku.getPriceNet() != null && sku.getPriceNet().compareTo(0D) > 0 && !StringUtil.isEmpty(sku.getBarcode()))
+                                .collect(Collectors.toList());
+                        if(ListUtils.isNull(skus)){
+                            // feed里面的品牌已被加入黑名单,导入失败
+                            String errMsg = String.format(strProcName + ":feed里面的sku的价格成本价为0" +
+                                    "[ChannelId:%s] [FeedCode:%s]", feed.getChannelId(), feed.getCode());
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                        feed.setSkus(skus);
                         // feed->master导入主处理
                         doSaveProductMainProp(feed, channelId, categoryTreeAllList);
                     } catch (CommonConfigNotFoundException ce) {
@@ -603,7 +623,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             //            $info(channel.getFull_name() + "产品导入结果 [总件数:" + feedList.size()
 //                    + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]");
 
-            String resultInfo = channelId + " " + channel.getFull_name() + " " + strProcName + ":结果 [总件数:" + feedList.size()
+            String resultInfo = channelId + " " + String.format("%1$-15s", channel.getFull_name()) + " " + strProcName + ":结果 [总件数:" + feedList.size()
                     + " 新增成功:" + insertCnt + " 更新成功:" + updateCnt + " 失败:" + errCnt + "]";
 //            $info(resultInfo);
             // 将该channel的feed->master导入信息加入map，供channel导入线程全部完成一起显示
@@ -1091,9 +1111,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // delete desmon 2016/07/01 end
 
                 } else {
+                    // 生成productGroup数据
+                    doSetGroup(feed);
+                    $info("doSetGroup:" + (System.currentTimeMillis() - startTime));
                     // 不存在的场合, 新建一个product
 //                    cmsProduct = doCreateCmsBtProductModel(feed, mapping, newMapping, mapBrandMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1 ? true : false, originalFeed.getCode());
+                    $info("doCreateCmsBtProductModel:" +  (System.currentTimeMillis() - startTime));
                     if (cmsProduct == null) {
                         // 有出错, 跳过
                         String errMsg = "feed->master导入:新增:编辑商品的时候出错(cmsProduct = null):" + originalFeed.getChannelId() + ":" + originalFeed.getCode();
@@ -1118,24 +1142,27 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                        cmsBtFeedInfoDao.update(originalFeed);
 //                        return;
                     }
+                    $info("doSaveItemDetails:" +  (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
-
+                    $info("doSetPrice:" +  (System.currentTimeMillis() - startTime));
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
+                    $info("setSellerCats:" +  (System.currentTimeMillis() - startTime));
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
-
+                    $info("weightCalculate:" +  (System.currentTimeMillis() - startTime));
                     productService.createProduct(channelId, cmsProduct, getTaskName());
+                    $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 
                 }
 
                 // 插入尺码表
                 insertCmsBtFeedImportSize(channelId, cmsProduct);
-
+                $info("insertCmsBtFeedImportSize:" +  (System.currentTimeMillis() - startTime));
                 // jeff 2016/04 change start
                 // 生成更新前的价格履历Bean
                 // ProductPriceBean productPriceBeanBefore = getProductPriceBeanBefore(cmsProduct, blnProductExist);
@@ -1144,12 +1171,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // doSetPrice(channelId, feed, cmsProduct);
 //                CmsBtProductModel cmsProductBean = doSetPrice(channelId, feed, cmsProduct);
 
-                // 生成productGroup数据
-                doSetGroup(feed);
 
                 // Update desmond 2016/09/06 start
                 // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
                 insertWorkload(cmsProduct);
+                $info("insertWorkload:" +  (System.currentTimeMillis() - startTime));
 //                if ("1".equals(sxFlg) && !"1".equals(cmsProduct.getLock())) {
 //                    // 遍历主数据product里的sku,看看有没有
 //                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : cmsProduct.getPlatforms().entrySet()) {
@@ -1361,22 +1387,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         mapBrandMapping.put(feedBrandLowerCase, feedBrandLowerCase);
                     }
                     // add by desmond 2016/07/18 end
-
-                    // update desmond 2016/07/04 start
-//                    String strAddUpdate = newFlg ? "新增" : "更新";
-//                    String errMsg = "feed->master导入:" + strAddUpdate +"出错:" + feed.getChannelId() + ":" + feed.getCode() + ":feed->main的品牌mapping没做 (feed brand:" + feed.getBrand() + ")";
-//                    $error(errMsg);
-//                    throw new BusinessException(errMsg);
-
-//                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-                    // 记下log, 跳过当前记录
-                    //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-//                    $warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-//                    return null;
-                    // update desmond 2016/07/04 end
                 }
+                // 根据feed品牌取得mast对应的品牌
+//                String masterBrand = this.mastBrand.get(feed.getBrand());
+//                if(StringUtil.isEmpty(masterBrand)){
+//                    masterBrand = cmsMasterBrandMappingService.getMasterBrandByFeedBrand(this.channel.getOrder_channel_id(),feed.getBrand());
+//                }
+//                productCommonField.setBrand(masterBrand);
+//                this.mastBrand.put(feed.getBrand(),masterBrand);
             }
 
 
@@ -1960,7 +1978,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // 商品状态
-                platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                // cartID是928的场合 状态直接是approved james.li
+                if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                }else{
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                }
                 // 平台属性状态(新增时)
                 platform.setpAttributeStatus("0");    // add desmond 2016/07/05
 
@@ -2097,6 +2120,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.getFeed().setCustomIdsCn(mainFeedOrgAttsKeyCnList); // 自定义字段列表(中文)
             product.getFeed().setCatId(feed.getCatId());
             product.getFeed().setCatPath(feed.getCategory());
+            product.getFeed().setBrand(feed.getBrand());
 
             // --------- 商品Group信息设定 ------------------------------------------------------
             // 创建新的group
@@ -2210,6 +2234,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             } else if (product.getCommon().getFields() == null) {
                 product.getCommon().setFields(new CmsBtProductModel_Field());
             }
+
+            if(product.getChannelId().equalsIgnoreCase("024")){
+                product.getCommon().getFields().setLongDesEn(feed.getLongDescription());
+            }
+
             // delete desmond 2016/07/01 start 跟上面重复了
 //            if (product.getFields() == null) {
 //                product.setFields(new CmsBtProductModel_Field());
@@ -2449,7 +2478,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // 商品状态
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    // cartID是928的场合 状态直接是approved james.li
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }else{
+                        platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    }
                     // 平台属性状态(更新时，新增PXX平台属性时)
                     platform.setpAttributeStatus("0");   // add desmond 2016/07/05
                     platforms.put("P" + typeChannelBean.getValue(), platform);
@@ -2475,6 +2509,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         }
                     }
                     // add desmond 2016/07/07 end
+
+                    // cartID是928的场合 状态直接是approved james.li
+                    CmsBtProductModel_Platform_Cart platform = platforms.get("P" + typeChannelBean.getValue());
+                    //
+                    if(platform.getCartId() == CartEnums.Cart.USJGJ.getValue()){
+                        platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    }
                 }
             }
 
@@ -2631,6 +2672,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // TODO 因为这2个字段是新加的，原来存在的数据的这2个字段需要导入，等全部导过一遍之后，这2句话再移到条件内
             product.getFeed().setCatId(feed.getCatId());
             product.getFeed().setCatPath(feed.getCategory());
+            product.getFeed().setBrand(feed.getBrand());
 
 
             return product;
@@ -3972,13 +4014,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
      */
     private void updateFeedInfo(CmsBtFeedInfoModel feed, Integer updFlg, String errMsg, String isFeedReImport) {
         if (feed == null) return;
+//
+//        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
+//        feed.setUpdMessage(errMsg);
+//        if (!StringUtils.isEmpty(isFeedReImport))
+//            feed.setIsFeedReImport(isFeedReImport);
+//        feed.setModifier(getTaskName());
+//        feedInfoService.updateFeedInfo(feed);
+        Map <String, Object>paraMap = new HashedMap();
+        paraMap.put("code",feed.getCode());
 
-        feed.setUpdFlg(updFlg);  // 1:feed->master导入失败   2:feed->master导入失败
-        feed.setUpdMessage(errMsg);
+        Map <String, Object>rsMap = new HashedMap();
+        rsMap.put("updFlg",updFlg);
+        rsMap.put("updMessage",errMsg);
+        rsMap.put("modifier",getTaskName());
+        rsMap.put("modified",DateTimeUtil.getNowTimeStamp());
         if (!StringUtils.isEmpty(isFeedReImport))
-            feed.setIsFeedReImport(isFeedReImport);
-        feed.setModifier(getTaskName());
-        feedInfoService.updateFeedInfo(feed);
+            rsMap.put("isFeedReImport",isFeedReImport);
+        feedInfoService.updateFeedInfo(feed.getChannelId(), paraMap, rsMap);
     }
 
     /**

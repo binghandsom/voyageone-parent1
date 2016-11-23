@@ -89,7 +89,7 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
     }
 
     public ImageStatus getImageStatusEnum() {
-        return ImageStatus.valueOf(imageStatus);
+        return imageStatus == null ? ImageStatus.None : ImageStatus.valueOf(imageStatus);
     }
 
     public void setImageStatus(ImageStatus imageStatus) {

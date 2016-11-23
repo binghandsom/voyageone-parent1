@@ -28,51 +28,58 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * BaseMQAnnoService
- *
- * @author aooer 2016/4/18.
- * @version 2.0.0
- * @since 2.0.0
+ * 基础 Message Queue任务 服务类
+ * <p>
+ * Created by jonas on 15/6/6.
  */
 public abstract class BaseMQAnnoService extends BaseTaskService {
 
-    //taskControlList job配置
+    /**
+     * taskControlList job配置
+     */
     protected List<TaskControlBean> taskControlList = null;
 
     /**
-     * @param taskControlList job 配置
-     * @throws Exception
-     * @deprecated ignore MqJobService不需要实现此方法
+     * 默认公开的启动入口
      */
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        throw new Exception("not support!");
-    }
+    public void startup() {}
 
     /**
-     * MqJobService需要实现此方法
-     *
-     * @param messageMap Mq消息Map
-     * @throws Exception
+     * RabbitHandler
      */
-    public abstract void onStartup(Map<String, Object> messageMap) throws Exception;
-
     @RabbitHandler
     protected void onMessage(byte[] message, @Headers Map<String, Object> headers) throws Exception {
         MDC.put("taskName", getTaskName());
         MDC.put("subSystem", getSubSystem().name().toLowerCase());
+
         SimpleAmqpHeaderMapper headerMapper = new SimpleAmqpHeaderMapper();
         MessageHeaders messageHeaders = new MessageHeaders(headers);
         MessageProperties messageProperties = new MessageProperties();
         headerMapper.fromHeaders(messageHeaders, messageProperties);
 
+        //监听通知消息，执行任务
         onMessage(new Message(message, messageProperties));
+
         MDC.remove("taskName");
         MDC.remove("subSystem");
     }
 
-    // 先获取配置
-    protected void initControls() {
+    /**
+     * 监听通知消息，执行任务
+     *
+     * @param message 接受到的消息体
+     */
+    private void onMessage(Message message) {
+        //先获取配置
+        initControls();
+        startup(message);
+    }
+
+    /**
+     * 获取配置
+     */
+    private void initControls() {
         if (taskControlList == null) {
             taskControlList = getControls();
             if (taskControlList == null) {
@@ -85,54 +92,10 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
         }
     }
 
-    @VOMQRunnable
-    public boolean isRunnable() {
-        //先获取配置
-        initControls();
-        try {
-            if (!taskControlList.isEmpty()) {
-                return TaskControlUtils.isRunnable(taskControlList, true);
-            }
-        } catch (Exception ignored) {
-        }
-        return false;
-    }
-
-    @VOMQStart
-    public boolean startMQ() {
-        try {
-            MQControlHelper.start(getClass().getName());
-            // set concurrentConsumers
-            String threadCount = null;
-            if (taskControlList != null) {
-                threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-            }
-            int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
-            MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
-            return true;
-        } catch (Exception ignored) {
-            return false;
-        }
-    }
-
-    @VOMQStop
-    public boolean stopMQ() {
-        MQControlHelper.stop(getClass().getName());
-        return true;
-    }
-
     /**
-     * 监听通知消息，执行任务
-     *
-     * @param message 接受到的消息体
+     * 默认公开的启动入口
      */
-    protected void onMessage(Message message) {
-        //先获取配置
-        initControls();
-        process(message);
-    }
-
-    private TaskControlEnums.Status process(Message message) {
+    public void startup(Message message) {
         String messageStr = "";
         try {
             messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
@@ -151,9 +114,18 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
             $error("出现异常，任务退出", ex);
             throw new MQException(ex, message);
         }
-        return TaskControlEnums.Status.SUCCESS;
     }
 
+    /**
+     * MqJobService需要实现此方法
+     *
+     * @param messageMap Mq消息Map
+     */
+    protected abstract void onStartup(Map<String, Object> messageMap) throws Exception;
+
+    /**
+     * 是否超过重试次数的判断
+     */
     private boolean isOutRetryTimes(Message message) {
         MessageProperties messageProperties = message.getMessageProperties();
         Map<String, Object> headers = messageProperties.getHeaders();
@@ -163,14 +135,49 @@ public abstract class BaseMQAnnoService extends BaseTaskService {
                 (int) headers.get(VOExceptionStrategy.CONSUMER_RETRY_KEY) >= VOExceptionStrategy.MAX_RETRY_TIMES;
     }
 
-
-    public TaskControlBean getTaskControlBean(List<TaskControlBean> taskControlList, String cfg_name) {
-        for (TaskControlBean taskControlBean : taskControlList) {
-            if (taskControlBean.getCfg_name().equals(cfg_name)) {
-                return taskControlBean;
+    /**
+     * 判断TASK是否可以执行
+     */
+    @VOMQRunnable
+    public boolean isRunnable() {
+        //先获取配置
+        initControls();
+        try {
+            if (!taskControlList.isEmpty()) {
+                return TaskControlUtils.isRunnable(taskControlList, true);
             }
+        } catch (Exception ignored) {
         }
-        return null;
+        return false;
+    }
+
+    /**
+     * 执行启动TASK
+     */
+    @VOMQStart
+    public boolean startMQ() {
+        try {
+            MQControlHelper.start(getClass().getName());
+            // set concurrentConsumers
+            String threadCount = null;
+            if (taskControlList != null) {
+                threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
+            }
+            int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
+            MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
+     * 执行停止TASK
+     */
+    @VOMQStop
+    public boolean stopMQ() {
+        MQControlHelper.stop(getClass().getName());
+        return true;
     }
 
 }

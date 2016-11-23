@@ -1,0 +1,238 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-move"></i>&nbsp;{{'TXT_CODE_MOVE' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-2"><!-- 操作类型 -->
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_TYPE_OF_OPERATION"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" value="{{'TXT_MOVE_CODE_TO_OTHER_GROUP'|translate}}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"><!-- 移动Code -->
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_MOVED_CODE"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="ctrl.productCode" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3"><!-- 操作店铺 -->
+                            <div class="form-horizontal">
+                                <div class="form-group form-inline">
+                                    <label class="col-sm-4 control-label" translate="TXT_MODIFIED_CART"></label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="ctrl.cartName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4"><!-- 移动源Group -->
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_REMOVED_SOURCE_GROUP"></label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" ng-model="ctrl.sourceGroupName" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box"><!-- Group 检索 -->
+        <div class="box-body container-fluid  product-shema-detail">
+            <div class="col-sm-12"><!-- 请选择移动目的Group -->
+                <div class="form-group m-t-sm">
+                    <div class="col-sm-2 m-b-xs">
+                        <div class="form-group">
+                            <hr>
+                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_SELECT_TARGET_GROUP'|translate}}</span>
+                        </div>
+                        <div class="form-group" ng-if="!ctrl.show">
+                            <button class="btn btn-success col-sm-12" ng-click="ctrl.preview()"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="form-group"></div>
+                        <div class="m-t-lg">
+                            <label class="radio-inline c-radio">
+                                <input type="radio" name="destGroupType" value="new" ng-model="ctrl.destGroupType" ng-disabled="ctrl.sourceGroupProductsNum == 1" ng-change="ctrl.destGroupChange()"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_NEW_GROUP'|translate}}
+                            </label>
+                            <label class="radio-inline c-radio" style="margin-left: 2px;">
+                                <input type="radio" name="destGroupType" value="select" ng-model="ctrl.destGroupType" ng-change="ctrl.destGroupChange()"><span class="fa fa-check"></span> {{'TXT_MOVE_TO_SELECTED_GROUP'|translate}}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12" ng-if="ctrl.show"><!-- Group 检索 -->
+                <div class="form-group m-t-sm">
+                    <div class="col-sm-2">
+                        <div class="form-group">
+                            <hr>
+                            <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_GROUP_SEARCH'|translate}}</span>
+                        </div>
+                        <div class="form-group m-t-md">
+                            <button class="btn btn-success col-sm-12" ng-click="ctrl.preview()"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;{{'TXT_BUILD_PREVIEW'|translate}}</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label">{{'TXT_CODE' | translate}}</label>
+                            <div class="col-sm-4">
+                                <input class="form-control" ng-model="ctrl.searchCode">
+                            </div>
+                            <button class="btn btn-vo" ng-click="ctrl.search()" title="Search"><i class="fa fa-search"></i></button>
+                        </div>
+                        <div class="form-group">
+                            <table class="table table-hover-new table-hover table_main m-t-sm">
+                                <thead>
+                                <tr>
+                                    <th class="text-left mfb-xt" translate="BTN_SELECT"></th>
+                                    <th class="text-center mfb-xx" translate="TXT_PRIMARY_PRODUCT"></th>
+                                    <th class="text-left mfb-xxxs" translate="TXT_GROUP_NAME_WITH_COLON"></th>
+                                    <th class="text-left mfb-xx" translate="TXT_NUMBER_IID_WITH_COLON"></th>
+                                    <th class="text-left mfb-xx" translate="TXT_MODEL"></th>
+                                    <th class="text-left mfb-xx" translate="TXT_SALE_STATUS"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="group in ctrl.groupList">
+                                    <td class="control-label v-middle">
+                                        <label class="radio-inline c-radio v-middle">
+                                            <input type="radio" name="selGroup" value="{{group.groupInfo.groupId}}" ng-model="ctrl.destGroupId" ng-click="ctrl.selGroup(group)" style="margin-left: 0;">
+                                            <span class="fa fa-check v-middle"></span>
+                                        </label>
+                                    </td>
+                                    <td class="text-center v-middle">
+                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(group.mainProductInfo)"><img class="thumb-md" image="{{group.mainProductInfo.common.fields.images1[0].image1}}"></a>
+                                    </td>
+                                    <td class="text-left v-middle" ng-if="group.mainProductInfo.common.fields.originalTitleCn != ''">
+                                        <a ng-href="#/product/detail/{{group.mainProductInfo.prodId}}" target="_blank">
+                                        {{group.mainProductInfo.common.fields.originalTitleCn}}</a>
+                                    </td>
+                                    <td class="text-left v-middle" ng-if="group.mainProductInfo.common.fields.originalTitleCn == ''">
+                                        <a ng-href="#/product/detail/{{group.mainProductInfo.prodId}}" target="_blank">
+                                        {{group.mainProductInfo.common.fields.productNameEn}}</a>
+                                    </td>
+                                    <td class="text-left v-middle">
+                                        <a ng-href="{{ctrl.productUrl}}{{group.groupInfo.numIId}}{{ctrl.cartId=='27'?'.html':''}}" target="_blank">
+                                        {{group.groupInfo.numIId}}</a>
+                                    </td>
+                                    <td class="text-left v-middle">
+                                        <a ng-href="#/group/detail/{{group.groupInfo.groupId}}" target="_blank">
+                                        {{group.mainProductInfo.common.fields.model}}</a>
+                                    </td>
+                                    <td class="text-left v-middle">
+                                        {{group.groupInfo.platformStatus}}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box" ng-if="ctrl.showView"><!-- 移动后预览 -->
+        <div class="box-body container-fluid  product-shema-detail">
+            <div class="col-sm-12"><!-- 移动后预览 -->
+                <div class="form-group m-t-sm">
+                    <div class="col-sm-2">
+                        <hr>
+                        <span class="product-title"><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;{{'TXT_PREVIEW_AFTER_MOVE'|translate}}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <table class="table table-hover-new table-hover table_main table_compare">
+                        <thead>
+                        <tr>
+                            <th class="text-center table_compare_before" colspan="4" translate="TXT_MOVED_BEFORE"></th>
+                            <th class="text-center table_compare_after" colspan="4" translate="TXT_MOVED_AFTER"></th>
+                        </tr>
+                        <tr>
+                            <th class="text-center table_compare_before" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                            <th class="text-center table_compare_before" colspan="2" translate="TXT_TARGET_INFO"></th>
+                            <th class="text-center table_compare_after" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                            <th class="text-center table_compare_after" colspan="2" translate="TXT_TARGET_INFO"></th>
+                        </tr>
+                        <tr>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_GROUP_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_GROUP_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_GROUP_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_GROUP_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="text-left v-middle">{{ctrl.sourceGroupInfoBefore}}</td>
+                            <td class="text-left v-middle">
+                                <div ng-repeat="codeInfo in ctrl.sourceCodeInfoBefore">
+                                    <span ng-if="codeInfo.current == true">{{codeInfo.code}}</span>
+                                    <div ng-if="codeInfo.current != true">{{codeInfo.code}}</div>
+                                </div>
+                            </td>
+                            <td class="text-left v-middle">
+                                <div ng-if="ctrl.destGroupInfoBefore != ''">{{ctrl.destGroupInfoBefore}}</div>
+                                <div ng-if="ctrl.destGroupInfoBefore == ''">(无)</div>
+                            </td>
+                            <td class="text-left v-middle">
+                                <div ng-if="ctrl.destCodeInfoBefore.length == 0">(无)</div>
+                                <div ng-repeat="codeInfo in ctrl.destCodeInfoBefore">{{codeInfo.code}}</div>
+                            </td>
+                            <td class="text-left v-middle">
+                                <s ng-if="ctrl.sourceGroupInfoAfterDeleted == true">{{ctrl.sourceGroupInfoAfter}}</s>
+                                <div ng-if="ctrl.sourceGroupInfoAfterDeleted != true">{{ctrl.sourceGroupInfoAfter}}</div>
+                            </td>
+                            <td class="text-left v-middle">
+                                <div ng-repeat="codeInfo in ctrl.sourceCodeInfoAfter">
+                                    <span ng-if="codeInfo.current == true">
+                                        <s ng-if="codeInfo.deleted == true">{{codeInfo.code}}</s>
+                                        <div ng-if="codeInfo.deleted != true">{{codeInfo.code}}</div>
+                                    </span>
+                                    <div ng-if="codeInfo.current != true">
+                                        <s ng-if="codeInfo.deleted == true">{{codeInfo.code}}</s>
+                                        <div ng-if="codeInfo.deleted != true">{{codeInfo.code}}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            </td>
+                            <td class="text-left v-middle">
+                                <div ng-if="ctrl.destGroupInfoAfter != ''">{{ctrl.destGroupInfoAfter}}</div>
+                                <div ng-if="ctrl.destGroupInfoAfter == ''">(新Group)</div>
+                            </td>
+                            <td class="text-left v-middle">
+                                <div ng-repeat="codeInfo in ctrl.destCodeInfoAfter">
+                                    <span ng-if="codeInfo.current == true">{{codeInfo.code}}</span>
+                                    <div ng-if="codeInfo.current != true">{{codeInfo.code}}</div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="form-group text-center">
+                    <button class="btn btn-vo" ng-disabled="!ctrl.moveButton" ng-click="ctrl.move('Code')" >&nbsp;{{'TXT_MOVE_CONFIRM'|translate}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

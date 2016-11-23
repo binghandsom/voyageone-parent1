@@ -1,12 +1,13 @@
 var morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
-var proxyMiddleware = proxy('http://localhost:8080');
+var proxyUrl = "http://localhost:8080",
+    proxyMiddleware = proxy(proxyUrl);
 
 module.exports = {
     server: {
         baseDir: "develop",
-        index: "adminLogin.html"
+        index: "login.html"
     },
 /*    files: [
         'develop/static/!**!/!*.css',

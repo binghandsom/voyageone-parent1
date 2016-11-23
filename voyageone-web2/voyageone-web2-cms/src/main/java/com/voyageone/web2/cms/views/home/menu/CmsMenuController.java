@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
@@ -88,6 +89,27 @@ public class CmsMenuController extends CmsController {
         // 判断是否是minimall用户
         boolean isMiniMall = Channels.isUsJoi(channelId);
         resultBean.put("isminimall", isMiniMall ? 1 : 0);
+
+        // 判断是否只在聚美销售
+        List<TypeChannelBean> channelList = TypeChannels.getTypeListSkuCarts(getUser().getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang());
+        if (channelList != null && channelList.size() > 0) {
+            if (channelList.size() == 1 && "27".equals(channelList.get(0).getValue())) {
+                // 只在聚美销售
+                resultBean.put("only4jumei", 1);
+            } else {
+                boolean isJumei = false;
+                for (TypeChannelBean channelBean : channelList) {
+                    if ("27".equals(channelBean.getValue())) {
+                        isJumei = true;
+                        break;
+                    }
+                }
+                resultBean.put("only4jumei", isJumei ? 2 : 0);
+            }
+        } else {
+            resultBean.put("only4jumei", "");
+        }
+
         // 返回用户信息
         return success(resultBean);
     }
@@ -97,7 +119,6 @@ public class CmsMenuController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_TYPE)
     public AjaxResponse getPlatformType() {
-
         // 返回用户信息
         return success(menuService.getPlatformTypeList(getUser().getSelChannelId(), getLang()));
     }
@@ -130,6 +151,7 @@ public class CmsMenuController extends CmsController {
     {
         return success(serviceCmsBtDataAmount.getHomeSumData(getUser().getSelChannelId(), getLang()));
     }
+
     @RequestMapping(value = CmsUrlConstants.HOME.MENU.SumHome,method = RequestMethod.GET)
     public AjaxResponse SumHome(@RequestParam String channelId) {
         if (StringUtils.isEmpty(channelId)) {
@@ -150,7 +172,6 @@ public class CmsMenuController extends CmsController {
     public AjaxResponse getMainCategories() {
         return success(channelCategoryService.getCategoriesByChannelId(getUser().getSelChannelId()));
     }
-
 
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CARTS)
     public AjaxResponse getCarts() {

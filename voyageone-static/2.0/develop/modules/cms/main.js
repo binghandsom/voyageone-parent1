@@ -18,7 +18,7 @@ require.config({
         'angular': 'libs/angular.js/1.5.6/angular',
         'angular-translate': 'libs/angular-translate/2.8.1/angular-translate',
         'angular-block-ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
-        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3.min',
+        'angular-ui-bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
         'angular-ngStorage': 'libs/angular-ngStorage/ngStorage',
         'angular-file-upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
         'angular-ui-utils': 'libs/angular-ui-utils/0.1.1/angular-ui-utils.min',
@@ -32,7 +32,8 @@ require.config({
         'chosen': 'libs/chosen/1.4.2/chosen.jquery',
         'angular-chosen': 'libs/angular-chosen/1.5.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
-        'angular-drag':'libs/angular-drag/angular-drag'
+        'angular-drag': 'libs/angular-drag/angular-drag',
+        'angular-sortable-view': 'libs/angular-sortable-view/0.0.15/angular-sortable-view'
     },
     waitSeconds: 0,
     shim: {
@@ -55,8 +56,9 @@ require.config({
         'chosen': ['jquery'],
         'angular-chosen': ['angular', 'chosen'],
         'angular-ui-utils': ['angular'],
-        'angular-drag':['angular'],
+        'angular-drag': ['angular'],
         'md5': ['angular'],
+        'angular-sortable-view': ['angular'],
         'cms': [
             'underscore',
             'voyageone-angular-com',
@@ -75,7 +77,8 @@ require.config({
             'angular-chosen',
             'angular-ui-utils',
             'md5',
-            'angular-drag'
+            'angular-drag',
+            'angular-sortable-view'
         ]
     },
     deps: ['cms']

@@ -275,12 +275,25 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
             }
             // added by morse.lu 2016/07/08 end
             List<Option> sizeOptions = ((SingleCheckField)sku_sizeField).getOptions();
-            // added by morse.lu 2016/07/26 start
-            if (availableSizeIndex >= sizeOptions.size()) {
-                throw new BusinessException(String.format("最多只能%d个不同尺码!请拆分group!", sizeOptions.size()));
+            // added by morse.lu 2016/11/21 start
+            String sizeValue;
+            if (skuExtendField == null) {
+                // 没有尺码扩展，就不能取size别名了，那么相当于直接用schema里的size的option显示在画面上，这种情况需要cms的size名字与option里的一致
+                Option option = sizeOptions.stream().filter(o -> o.getDisplayName().equals(sizeSx)).findFirst().orElse(null);
+                if (option != null) {
+                    sizeValue = option.getValue();
+                } else {
+                    throw new BusinessException(String.format("尺码必须是下列可用尺码之一!可用尺码为:[%s]", sizeOptions.stream().map(Option::getDisplayName).collect(Collectors.joining(","))));
+                }
+            } else {
+                // added by morse.lu 2016/11/21 end
+                // added by morse.lu 2016/07/26 start
+                if (availableSizeIndex >= sizeOptions.size()) {
+                    throw new BusinessException(String.format("最多只能%d个不同尺码!请拆分group!", sizeOptions.size()));
+                }
+                // added by morse.lu 2016/07/26 end
+                sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             }
-            // added by morse.lu 2016/07/26 end
-            String sizeValue = sizeOptions.get(availableSizeIndex++).getValue();
             skuFieldValue.setSingleCheckFieldValue(sku_sizeField.getId(), new Value(sizeValue));
             buildSkuResult.getSizeCmsSkuPropMap().put(sizeValue, cmsSkuProp);
             // added by morse.lu 2016/07/08 start
@@ -324,23 +337,26 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //            skuSubMappingMap.put(propId, mappingBean);
 //        }
         // deleted by morse.lu 2016/07/04 end
+        // deleted by morse.lu 2016/10/18 start
+        // 这段又不需要了- -！ 因为允许改类目了
         // added by morse.lu 2016/08/17 start
-        List<ComplexValue> multiComplexDefaultValues = ((MultiComplexField) skuField).getDefaultComplexValues();
-        // Map<sku_outerId商家编码即skuCode, ComplexValue>
-        Map<String, ComplexValue> mapSkuComplexValue = new HashMap<>();
-        if (ListUtils.notNull(multiComplexDefaultValues) && sku_outerIdField != null) {
-            for (ComplexValue complexValue : multiComplexDefaultValues) {
-                String sku_outerId = "";
-                for (String fieldId : complexValue.getFieldKeySet()) {
-                    if (fieldId.equals(sku_outerIdField.getId())) {
-                        sku_outerId = ((InputField) complexValue.getValueField(fieldId)).getValue();
-                        break;
-                    }
-                }
-                mapSkuComplexValue.put(sku_outerId, complexValue);
-            }
-        }
+//        List<ComplexValue> multiComplexDefaultValues = ((MultiComplexField) skuField).getDefaultComplexValues();
+//        // Map<sku_outerId商家编码即skuCode, ComplexValue>
+//        Map<String, ComplexValue> mapSkuComplexValue = new HashMap<>();
+//        if (ListUtils.notNull(multiComplexDefaultValues) && sku_outerIdField != null) {
+//            for (ComplexValue complexValue : multiComplexDefaultValues) {
+//                String sku_outerId = "";
+//                for (String fieldId : complexValue.getFieldKeySet()) {
+//                    if (fieldId.equals(sku_outerIdField.getId())) {
+//                        sku_outerId = ((InputField) complexValue.getValueField(fieldId)).getValue();
+//                        break;
+//                    }
+//                }
+//                mapSkuComplexValue.put(sku_outerId, complexValue);
+//            }
+//        }
         // added by morse.lu 2016/08/17 end
+        // deleted by morse.lu 2016/10/18 end
 
         List<ComplexValue> complexValues = new ArrayList<>();
         for (CmsBtProductModel sxProduct : sxProducts) {
@@ -446,13 +462,23 @@ public class TmallGjSkuFieldBuilderImpl3 extends AbstractSkuFieldBuilder {
 //                    }
                     // deleted by morse.lu 2016/10/08 end
                     if (sku_productIdField != null && fieldId.equals(sku_productIdField.getId())) {
-                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
-                        if (complexValue != null) {
-                            Field oldField = complexValue.getValueField(fieldId);
-                            if (oldField != null) {
-                                skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
-                            }
-                        }
+                        // modified by morse.lu 2016/10/18 start
+//                        ComplexValue complexValue = mapSkuComplexValue.get(cmsSkuProp.getSkuCode());
+//                        if (complexValue != null) {
+//                            Field oldField = complexValue.getValueField(fieldId);
+//                            if (oldField != null) {
+//                                skuFieldValue.setInputFieldValue(sku_productIdField.getId(), ((InputField) oldField).getValue());
+//                            }
+//                        }
+                        String skuCode = cmsSkuProp.getSkuCode();
+                        String scProductId = expressionParser.getSxProductService().updateTmScProductId(
+                                shopBean,
+                                skuCode,
+                                expressionParser.getSxProductService().getProductValueByMasterMapping("title", shopBean, expressionParser, user),
+                                skuInventoryMap.get(skuCode) != null ? Integer.toString(skuInventoryMap.get(skuCode)) : "0"
+                        );
+                        skuFieldValue.setInputFieldValue(sku_productIdField.getId(), scProductId);
+                        // modified by morse.lu 2016/10/18 end
                         continue;
                     }
                     // added by morse.lu 2016/08/17 end

@@ -9,7 +9,7 @@ public class BatchUpdatePriceParameterBean {
     int priceType;
     double discount;
     double price;
-    List<Long> listPromotionProductId;
+    List<Integer> listPromotionProductId;
     int jmPromotionId;
 
     public int getJmPromotionId() {
@@ -52,11 +52,11 @@ public class BatchUpdatePriceParameterBean {
         this.price = price;
     }
 
-    public List<Long> getListPromotionProductId() {
+    public List<Integer> getListPromotionProductId() {
         return listPromotionProductId;
     }
 
-    public void setListPromotionProductId(List<Long> listPromotionProductId) {
+    public void setListPromotionProductId(List<Integer> listPromotionProductId) {
         this.listPromotionProductId = listPromotionProductId;
     }
 }

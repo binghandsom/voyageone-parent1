@@ -79,7 +79,7 @@ define([
                         keyWord: "",
                         sort: "desc"
                     };
-                    self.assignInfo.priority = self.vm.sortFieldOptions[0].value;
+                    self.assignInfo.priority = 'priority'; // 默认分发规则是按优先级
                 })
             },
 

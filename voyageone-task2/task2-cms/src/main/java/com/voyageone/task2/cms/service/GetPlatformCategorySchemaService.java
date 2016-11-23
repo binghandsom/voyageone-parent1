@@ -15,7 +15,7 @@ import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -31,8 +31,9 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GetPlatformCategorySchemaService extends BaseTaskService {
+public class GetPlatformCategorySchemaService extends BaseCronTaskService {
 
+    //【注意】这个取得淘宝类目schema信息的job不单独执行了，现在都是从GetAllPlatformsInfoService调用的，job名"CmsGetAllPlatformsInfoJob"
     private final static String JOB_NAME = "getPlatformCategorySchemaTask";
 
     // Active有效

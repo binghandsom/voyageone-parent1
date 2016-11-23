@@ -37,12 +37,10 @@ public class CmsSetMainPropMongoServiceTest {
 
     @Test
     public void testOnStartup() throws Exception {
-        BigDecimal b = new BigDecimal(1 * 453.59237);
-        int a = b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue();
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("019");
+        taskControlBean.setCfg_val1("015");
         taskControlList.add(taskControlBean);
 
 

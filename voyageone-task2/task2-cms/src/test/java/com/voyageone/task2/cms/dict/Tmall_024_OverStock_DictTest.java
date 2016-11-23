@@ -36,7 +36,7 @@ public class Tmall_024_OverStock_DictTest {
 	@Test
 	public void startupTest() {
 
-		doCreateJson("详情页描述", false, doDict_详情页描述());
+		doCreateJson("天猫同购描述", false, doDict_详情页描述());
 
 	}
 
@@ -91,8 +91,8 @@ public class Tmall_024_OverStock_DictTest {
 
 	/**
 	 * 详情页描述(PC端)
-	 * 1. 产品信息(参数图: http://s7d5.scene7.com/is/image/sneakerhead/cpxx?$790_400$&$img=%s&$t1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s)
-	 * 1. 产品信息(参数图: http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s)
+	 * 0. 固定图片（产品信息）
+	 * 1. 英文短描述 回车
 	 * 2. 共通图片 - 尺码图
 	 * 3. 商品图前缀 + 商品图(模板:http://s7d5.scene7.com/is/image/sneakerhead/img-1?$790_600$&$img=%s)
 	 * 4. 共通图片 - 购物流程(购物流程+购物须知+7天退货服务须知)
@@ -103,66 +103,30 @@ public class Tmall_024_OverStock_DictTest {
 		RuleExpression ruleRoot = new RuleExpression();
 
 		// 生成内容
+
+//		// OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
+//		do参数图(ruleRoot);
+
 		{
-			// 商品参数图
-			{
-				// 前缀
-				String html = "<div><img src=\"";
-				ruleRoot.addRuleWord(new TextWord(html));
-			}
+			// 产品信息 这几个字
+			TextWord word = new TextWord(String.format(C_TEMPLATE_IMG, "https://img.alicdn.com/imgextra/i4/2939402618/TB2tT9Bb.OO.eBjSZFLXXcxmXXa-2939402618.jpg"));
+			ruleRoot.addRuleWord(word);
+		}
 
-			{
-				// imageTemplate
-				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
-				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
-
-				// 参数imageParams
-				List<RuleExpression> imageParams = new ArrayList<>();
-
-				{
-					// 第一个参数是product_id(GetMainProductImages)
-					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
-					RuleExpression imageIndex = new RuleExpression();
-					imageIndex.addRuleWord(new TextWord("0"));
-					userParam.setImageIndex(imageIndex);
-					RuleExpression img_imageType = new RuleExpression();
-					img_imageType.addRuleWord(new TextWord(C_商品图片));
-					userParam.setImageType(img_imageType);
-
-					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
-					wordValueGetMainProductImages.setUserParam(userParam);
-
-					RuleExpression imgWord = new RuleExpression();
-					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
-					imageParams.add(imgWord);
-				}
-
-				{
-					// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
-					for (int index = 0; index < 8; index++) {
-						{
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, index));
-							imageParams.add(ruleExpression);
-						}
-						{
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(false, index));
-							imageParams.add(ruleExpression);
-						}
-					}
-				}
-
-				CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
-				ruleRoot.addRuleWord(new CustomWord(word));
-			}
-
-			{
-				// 后缀
-				String html = "\"></div>";
-				ruleRoot.addRuleWord(new TextWord(html));
-			}
+//		{
+//			// 英文短描述
+//			MasterHtmlWord word = new MasterHtmlWord("shortDesEn");
+//			ruleRoot.addRuleWord(word);
+//		}
+		{
+			// feed_info的modelLongdescription
+			FeedOrgWord word = new FeedOrgWord("modelLongdescription");
+			ruleRoot.addRuleWord(word);
+		}
+		{
+			// 回车一个
+			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
+			ruleRoot.addRuleWord(word);
 		}
 
 		{
@@ -247,5 +211,72 @@ public class Tmall_024_OverStock_DictTest {
 		return ruleRoot;
 	}
 
+	/**
+	 * OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
+	 * @param ruleRoot
+	 */
+	private void do参数图(RuleExpression ruleRoot) {
+		{
+			// 商品参数图
+			{
+				// 前缀
+				String html = "<div><img src=\"";
+				ruleRoot.addRuleWord(new TextWord(html));
+			}
+
+			{
+				// imageTemplate
+				RuleExpression imageTemplate = new RuleExpression();
+				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
+				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+				// 参数imageParams
+				List<RuleExpression> imageParams = new ArrayList<>();
+
+				{
+					// 第一个参数是product_id(GetMainProductImages)
+					CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+					RuleExpression imageIndex = new RuleExpression();
+					imageIndex.addRuleWord(new TextWord("0"));
+					userParam.setImageIndex(imageIndex);
+					RuleExpression img_imageType = new RuleExpression();
+					img_imageType.addRuleWord(new TextWord(C_商品图片));
+					userParam.setImageType(img_imageType);
+
+					CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+					wordValueGetMainProductImages.setUserParam(userParam);
+
+					RuleExpression imgWord = new RuleExpression();
+					imgWord.addRuleWord(new CustomWord(wordValueGetMainProductImages));
+					imageParams.add(imgWord);
+				}
+
+				{
+					// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
+					for (int index = 0; index < 8; index++) {
+						{
+							RuleExpression ruleExpression = new RuleExpression();
+							ruleExpression.addRuleWord(new FeedCnWord(true, index));
+							imageParams.add(ruleExpression);
+						}
+						{
+							RuleExpression ruleExpression = new RuleExpression();
+							ruleExpression.addRuleWord(new FeedCnWord(false, index));
+							imageParams.add(ruleExpression);
+						}
+					}
+				}
+
+				CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+				ruleRoot.addRuleWord(new CustomWord(word));
+			}
+
+			{
+				// 后缀
+				String html = "\"></div>";
+				ruleRoot.addRuleWord(new TextWord(html));
+			}
+		}
+	}
 
 }

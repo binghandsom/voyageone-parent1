@@ -1,0 +1,25 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">
+            <i class="fa fa-check-square-o"></i>&nbsp;&nbsp;{{'TXT_CONFIRM' | translate}}
+        </h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 col-sm-offset-2">
+                    <div class="form-group">
+                        <strong class="text-u-red"> {{ctrl.resultType}}移动操作成功！</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-vo" ng-click="ctrl.ok()">
+            {{ctrl.resultBtn}}
+        </button>
+    </div>
+</div>

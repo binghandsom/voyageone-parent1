@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive'
 ], function () {
-    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter) {
+    function searchIndex($scope, $routeParams, $feedSearchService, $translate, $q, selectRowsFactory, confirm, alert, attributeService, cActions, $sessionStorage, $filter, cookieService) {
         $scope.status={};
         $scope.vm = {
             searchInfo: {},
@@ -15,7 +15,8 @@ define([
             feedSelList: {selList: []},
             exportPageOption: {curr: 1, size: 10, total: 0, fetch: exportSearch},
             exportList: [],
-            currTab: {group: true, export: false}
+            currTab: {group: true, export: false},
+            selChannelName:""
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.beforSearchInfo = {};
@@ -41,11 +42,12 @@ define([
 
             $scope.vm.searchInfo.isAll = false;
 
+
             // 如果是来自category的检索
             if ($routeParams.type == "1") {
                 $scope.vm.searchInfo.category = decodeURIComponent($routeParams.value);
             }
-            $feedSearchService.init()
+            $feedSearchService.init(" ")
                 .then(function (res) {
                     $scope.vm.masterData = res.data;
                 })
@@ -92,6 +94,28 @@ define([
             this.openCodeDetail({'attsList': feedObj.attsList});
         };
 
+        $scope.init = function (selChannel){
+            if($scope.vm.masterData.isminimall == 1){
+                var temp = _.find($scope.vm.masterData.channelList,function (item) {
+                    return item.order_channel_id == selChannel;
+                });
+                if(temp){
+                    $scope.vm.selChannelName = temp.full_name;
+                }
+            }
+            $scope.vm.masterData.channelList
+            if(selChannel){
+                $feedSearchService.init(selChannel)
+                    .then(function (res) {
+                        $scope.vm.masterData = res.data;
+                    })
+            }
+        };
+
+        $scope.getChannelName = function (selChannel){
+
+        }
+
         /**
          * 检索
          */
@@ -111,7 +135,7 @@ define([
             $scope.vm.feedPageOption.curr = !page ? $scope.vm.feedPageOption.curr : page;
             $scope.vm.searchInfo.pageNum = $scope.vm.feedPageOption.curr;
             $scope.vm.searchInfo.pageSize = $scope.vm.feedPageOption.size;
-
+            $scope.vm.searchInfo.orgChaId =  $scope.vm.orgChaId;
             $feedSearchService.search($scope.vm.searchInfo).then(function (res) {
 
                 $scope.vm.currTab.group = true;
@@ -187,8 +211,6 @@ define([
                     'selList': selList,
                     'isAll': $scope.vm.searchInfo.isAll,
                     'status': mark,
-
-
                     "searchInfo": $scope.beforSearchInfo
                 }).then(function () {
                     if (tempFeedSelect != null) {
@@ -207,8 +229,10 @@ define([
         function doExport() {
             var data;
             if ($scope.vm.feedSelList.selList && $scope.vm.feedSelList.selList.length > 0) {
-                data = {"parameter": JSON.stringify($scope.vm.feedSelList.selList)}
+                var searchInfo = {"codeList":$scope.vm.feedSelList.selList,"orgChaId":$scope.vm.orgChaId};
+                data = {"parameter": JSON.stringify(searchInfo)}
             } else {
+                $scope.vm.searchInfo.orgChaId = $scope.vm.orgChaId;
                 data = {"parameter": JSON.stringify($scope.vm.searchInfo)}
             }
             $feedSearchService.doExport(data).then(function (data) {
@@ -271,6 +295,6 @@ define([
 
     };
 
-    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter'];
+    searchIndex.$inject = ['$scope', '$routeParams', '$feedSearchService', '$translate', '$q', 'selectRowsFactory', 'confirm', 'alert', 'attributeService', 'cActions', '$sessionStorage', '$filter','cookieService'];
     return searchIndex;
 });

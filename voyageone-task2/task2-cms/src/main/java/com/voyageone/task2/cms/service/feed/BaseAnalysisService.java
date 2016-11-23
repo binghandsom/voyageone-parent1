@@ -6,11 +6,10 @@ import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -29,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  * @author james.li on 2016/4/28.
  * @version 2.0.0
  */
-public abstract class BaseAnalysisService  extends BaseTaskService {
+public abstract class BaseAnalysisService  extends BaseCronTaskService {
 
     protected ChannelConfigEnums.Channel channel;
 
@@ -243,6 +242,7 @@ public abstract class BaseAnalysisService  extends BaseTaskService {
                 }
             }catch (Exception e){
                 e.printStackTrace();
+                $error(e);
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             }
         }

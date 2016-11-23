@@ -1,10 +1,13 @@
 package com.voyageone.task2.cms.service.product.batch;
 
 import com.mongodb.WriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
@@ -12,7 +15,10 @@ import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 高级检索业务的批量更新
@@ -34,6 +41,10 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
     private ProductService productService;
     @Autowired
     private PriceService priceService;
+    @Autowired
+    private ProductGroupService productGroupService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     public void onStartup(Map<String, Object> messageMap) {
         $debug("高级检索 批量更新 开始执行... param=" + messageMap.toString());
@@ -64,6 +75,16 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
                 synPriceFlg = false;
             }
             updateHsCode(prop_id, hsCode, codeList, channleId, userName, synPriceFlg);
+        } else if ("translateStatus".equals(prop_id)) {
+            // 翻译状态更新
+            String stsCode = null;
+            String priorDate = null;
+            Map<String, Object> valObj = (Map<String, Object>) prop.get("value");
+            if (valObj != null) {
+                stsCode = StringUtils.trimToEmpty((String) valObj.get("value"));
+                priorDate = StringUtils.trimToEmpty((String) valObj.get("priorTranslateDate"));
+            }
+            updateTranslateStatus(stsCode, codeList, channleId, userName, priorDate);
         }
     }
 
@@ -148,4 +169,44 @@ public class CmsBacthUpdateTask extends VOAbsLoggable {
             }
         }
     }
+
+    /**
+     * 翻译状态更新
+     */
+    private void updateTranslateStatus(String propValue, List<String> codeList, String channelId, String userName, String priorDate) {
+        // 先找出所选商品的主商品code
+        JongoQuery qryObj = new JongoQuery();
+        qryObj.setQuery("{'productCodes':{$in:#},'cartId':0}");
+        qryObj.setParameters(codeList);
+        qryObj.setProjection("{'mainProductCode':1,'_id':0}");
+        List<CmsBtProductGroupModel> grpList = productGroupService.getList(channelId, qryObj);
+        if (grpList == null || grpList.isEmpty()) {
+            $error("高级检索 批量更新 翻译状态更新 没有找到主商品");
+            return;
+        }
+        List<String> mnCodeList = grpList.stream().map(grpObj -> grpObj.getMainProductCode()).filter(mnCode -> mnCode != null && mnCode.length() > 0).collect(Collectors.toList());
+
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setQuery("{'platforms.P0.mainProductCode':{$in:#}}");
+        updObj.setQueryParameters(mnCodeList);
+        if ("0".equals(propValue)) {
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'0','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':''}}");
+        } else if ("1".equals(propValue)) {
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'1','common.fields.translator':#,'common.fields.translateTime':#,'common.fields.priorTranslateDate':''}}");
+            updObj.setUpdateParameters(userName, DateTimeUtil.getNow());
+        } else if ("2".equals(propValue)) {
+            updObj.setUpdate("{$set:{'common.fields.translateStatus':'2','common.fields.translator':'','common.fields.translateTime':'','common.fields.priorTranslateDate':#}}");
+            updObj.setUpdateParameters(priorDate);
+        } else {
+            $warn("高级检索 批量更新 翻译状态更新 未知设置");
+            return;
+        }
+        WriteResult rs = productService.updateMulti(updObj, channelId);
+        $debug("高级检索 批量更新 翻译状态批量更新结果 " + rs.toString());
+
+        // 记录商品修改历史
+        propValue = Types.getTypeName(TypeConfigEnums.MastType.translationStatus.getId(), "cn", propValue);
+        productStatusHistoryService.insertList(channelId, codeList, -1, EnumProductOperationType.BatchUpdate, "高级检索 批量更新：翻译状态--" + propValue, userName);
+    }
+
 }
