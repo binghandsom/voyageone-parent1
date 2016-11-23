@@ -70,6 +70,8 @@ public class CmsShelvesTemplateController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SHELVES.TEMPLATE.EDIT)
     public AjaxResponse editShelvesTemplate(@RequestBody Map<String, Object> params){
+        params.remove("created");
+        params.remove("modified");
         CmsBtShelvesTemplateModel model = JsonUtil.jsonToBean(JacksonUtil.bean2Json(params), CmsBtShelvesTemplateModel.class);
         String clearVal = (String) params.get("clear");
         Integer clear = 0;
