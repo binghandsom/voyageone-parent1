@@ -132,7 +132,8 @@ class CmsShelvesDetailService extends BaseViewService {
             List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
             if (!imgList.isEmpty() && imgList.get(0).size() > 0) {
                 cmsBtShelvesProductModel.setImage(imgList.get(0).getName());
-            } else {
+            }
+            if(StringUtil.isEmpty(cmsBtShelvesProductModel.getImage())){
                 imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
                 if (!imgList.isEmpty()) {
                     cmsBtShelvesProductModel.setImage(imgList.get(0).getName());

@@ -117,6 +117,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         String saveFile = String.format("%s/%s.jpg", path, cmsBtShelvesProductModel.getProductCode());
         String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         byte[] imageBuf = downImage(imageUrl);
+        $info("imageBuf:=" + imageBuf.length);
         try (FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
             fileOutputStream.write(imageBuf);
             cmsBtShelvesProductModel.setPlatformImageId(cmsBtShelvesProductModel.getProductCode());
@@ -223,7 +224,7 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         return tmeplate;
     }
 
-    private byte[] downImage(String imageUrl) {
+    public byte[] downImage(String imageUrl) {
         long threadNo = Thread.currentThread().getId();
         //如果promotionImagesList为空的时，不做处理
         byte[] buffer = new byte[1024 * 10];
@@ -234,10 +235,12 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
             //Url
             try (InputStream inputStream = HttpUtils.getInputStream(imageUrl)) {
                 while ((len = inputStream.read(buffer)) > 0) {
+                    $info("len: "+len);
                     byteArrayOutputStream.write(buffer, 0, len);
                 }
                 inputStream.close();
             } catch (Exception e) {
+                $error(e);
                 e.printStackTrace();
             }
 

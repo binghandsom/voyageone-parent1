@@ -8,7 +8,7 @@ package com.voyageone.service.impl.com.mq.config;
  * @since 2.9.0
  */
 public interface MqParameterKeys {
-    String key1 = "MqParameterKey1";
+    String key1 = "shelvesId";
     String key2 = "MqParameterKey2";
     String key3 = "MqParameterKey3";
     String key4 = "MqParameterKey4";
