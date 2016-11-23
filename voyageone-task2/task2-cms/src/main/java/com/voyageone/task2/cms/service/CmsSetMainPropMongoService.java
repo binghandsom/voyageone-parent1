@@ -1598,8 +1598,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null
                     &&feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
 
-                if (feed.getAttribute() != null && feed.getAttribute().get("boxImages") != null) {
-                    for(String images : feed.getAttribute().get("boxImages")){
+                if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
+                    for(String images : feed.getAttribute().get("boximages")){
                         Map<String, Object> multiComplexChildren = new HashMap<>();
                         String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), images);
                         multiComplexChildren.put("image2", picName);
