@@ -116,7 +116,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
                 // 独立域名商品信息新增或更新
-//                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
+                doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()));
                 doUpload(channelId, Integer.parseInt(CartEnums.Cart.LIKING.getId()));
             }
         }
