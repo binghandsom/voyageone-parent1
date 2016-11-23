@@ -295,7 +295,7 @@ public class JdPromotionService extends JdBase {
      * @param shop        ShopBean  店铺信息
      * @param promoId     Long      促销编号
      */
-    public void doCommitPromotion(ShopBean shop, Long promoId) {
+    public void doPromotionCommit(ShopBean shop, Long promoId) {
 
         SellerPromotionCommitRequest request = new SellerPromotionCommitRequest();
         // 促销编号(必须)

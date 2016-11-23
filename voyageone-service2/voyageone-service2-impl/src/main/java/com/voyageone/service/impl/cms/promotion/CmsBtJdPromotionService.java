@@ -179,7 +179,7 @@ public class CmsBtJdPromotionService extends BaseService {
         }
 
         //  sku全部追加成功之后，就调用commit提交保存促销活动，并要再促销活动创建3小时内commit，commit之后就不能再添加sku了
-        jdPromotionService.doCommitPromotion(shop, promoId);
+        jdPromotionService.doPromotionCommit(shop, promoId);
 
     }
 
