@@ -117,7 +117,9 @@ public class CmsShelvesImageUploadMQService extends BaseMQCmsService {
         String saveFile = String.format("%s/%s.jpg", path, cmsBtShelvesProductModel.getProductCode());
         String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
         byte[] imageBuf = downImage(imageUrl);
-        $info("imageBuf:=" + imageBuf.length);
+        if(imageBuf == null && imageBuf.length == 0) {
+            throw new BusinessException("图片下载失败url=" + imageUrl);
+        }
         try (FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
             fileOutputStream.write(imageBuf);
             cmsBtShelvesProductModel.setPlatformImageId(cmsBtShelvesProductModel.getProductCode());
