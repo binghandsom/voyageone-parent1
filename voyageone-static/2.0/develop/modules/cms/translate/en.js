@@ -901,7 +901,7 @@ define(function () {
         "TXT_CHANNEL_CONFIG_STATUS" : "状态",
         "TXT_CHANNEL_CONFIG_TYPE" : "类型",
         "TXT_CHANNEL_CONFIG_CREATE" : "新增店铺设置",
-        "TXT_CHANNEL_CONFIG_EDIT" : "编辑店铺设置"
+        "TXT_CHANNEL_CONFIG_EDIT" : "编辑店铺设置",
 
         /**菜单栏新增*/
         "TXT_CURRENT_CHANNEL_SETTING" : "当前店铺设置",
