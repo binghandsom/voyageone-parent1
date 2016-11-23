@@ -47,10 +47,10 @@ public class TbSimpleItemService extends TbBase {
         newShopBean.setPlatform_id(shopBean.getPlatform_id());
         newShopBean.setOrder_channel_id(shopBean.getOrder_channel_id());
         if (shopConfig != null) {
-            newShopBean.setAppKey(shopConfig.getProp_val1());
-            newShopBean.setAppSecret(shopConfig.getProp_val2());
-            newShopBean.setSessionKey(shopConfig.getProp_val3());
-            newShopBean.setApp_url(shopConfig.getProp_val4());
+            newShopBean.setApp_url(shopConfig.getProp_val1());
+            newShopBean.setAppKey(shopConfig.getProp_val2());
+            newShopBean.setAppSecret(shopConfig.getProp_val3());
+            newShopBean.setSessionKey(shopConfig.getProp_val4());
         }
         newShopBean.setShop_name(shopBean.getShop_name());
         newShopBean.setPlatform(shopBean.getPlatform());
