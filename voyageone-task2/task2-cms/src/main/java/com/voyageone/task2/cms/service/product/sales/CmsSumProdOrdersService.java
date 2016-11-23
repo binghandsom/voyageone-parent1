@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -126,29 +128,33 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             }
 
             List<Map<String, Object>> skuCartSumList = new ArrayList<>();
-            Map<String, String> skuCodeMap = new HashMap<>();
+            Set<String> skuCodeSet = new HashSet<>();
+            Set<Integer> skuCartSet = new HashSet<>();
             for (Map<String, Object> sumInfo : skuSumAllList) {
-                skuCodeMap.put((String) sumInfo.get("skuCode"), "");
+                skuCodeSet.add((String) sumInfo.get("skuCode"));
+                skuCartSet.add((Integer) sumInfo.get("cartId"));
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_7, 0);
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_30, 0);
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_YEAR, 0);
                 sumInfo.putIfAbsent(CmsBtProductModel_Sales.CODE_SUM_ALL, 0);
             }
-            // 合并不在此次统计sku销量这列的sku
+            // 合并不在此次统计sku销量之列的sku
 			if (saleObj != null) {
 	            List<CmsBtProductModel_Sales_Sku> skus = saleObj.getSkus();
 	            if (CollectionUtils.isNotEmpty(skus)) {
 	            	for (CmsBtProductModel_Sales_Sku sku : skus) {
-	            		if (0 != sku.getCartId() && !skuCodeMap.containsKey(sku.getSkuCode())) {
-	            			skuCodeMap.put(sku.getSkuCode(), "");
-	            			skuSumAllList.add(sku);
+	            		if (0 != sku.getCartId()) {
+	            			skuCodeSet.add(sku.getSkuCode());
+	            			if (!skuCodeSet.contains(sku.getSkuCode()) || !skuCartSet.contains(sku.getCartId())) {
+	            				skuSumAllList.add(sku);
+		            		}
 	            		}
 	            	}
 	            }
             }
 
             //------------------------------------ sku合计 -----------------------------------
-            for (String skuCode : skuCodeMap.keySet()) {
+            for (String skuCode : skuCodeSet) {
                 int skuSum7 = 0, skuSum30 = 0, skuSumYear = 0, skuSumAll = 0;
                 for (Map sumInfo : skuSumAllList) {
                     if (skuCode.equals(sumInfo.get("skuCode"))) {
@@ -242,7 +248,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
         List<Map<String, Object>> amtDays = cmsMtProdSalesHisDao.aggregateToMap(new JongoAggregate(strQuery, params),
         		new JongoAggregate(queryStr3));
         if (CollectionUtils.isNotEmpty(amtDays)) {
-        	List<Map<String, Object>> skuSumList = new ArrayList<Map<String, Object>>();
+        	List<Map<String, Object>> skuSumList = new ArrayList<>();
         	
             for (Map<String, Object> hisInfo : amtDays) {
                 int qty = ((Number) hisInfo.get("count")).intValue();
@@ -330,7 +336,7 @@ public class CmsSumProdOrdersService extends VOAbsIssueLoggable {
             				sumAll += StringUtils.toIntValue((Integer) sumMap.get(sumKey));
             			}
             		}
-            		sumMap.putIfAbsent(CmsBtProductModel_Sales.CARTID_0, sumAll);
+            		sumMap.put(CmsBtProductModel_Sales.CARTID_0, sumAll);
             	}
             }
         }
