@@ -237,6 +237,8 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 isFirst = false;
                 newGroupModel = cmsProductCodeChangeGroupService.moveToNewGroup(channelId, cartId, moveCode, sourceGroupModel, getTaskName());
                 // 回写下numIId,状态
+                newGroupModel.setCreater(sourceGroupModel.getCreater());
+                newGroupModel.setCreated(sourceGroupModel.getCreated());
                 newGroupModel.setPlatformStatus(status);
                 newGroupModel.setNumIId(numIId);
                 productGroupService.update(newGroupModel);
