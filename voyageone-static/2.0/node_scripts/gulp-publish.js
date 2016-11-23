@@ -92,6 +92,11 @@ gulp.task(tasks.publish.modules, function () {
         .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.modules));
 
+    // 压缩css文件
+    gulp.src(publish.modules.css)
+        .pipe(minifyCss())
+        .pipe(gulp.dest(publish.release.modules));
+
     // copy json文件
     gulp.src(publish.modules.json)
         .pipe(gulp.dest(publish.release.modules));

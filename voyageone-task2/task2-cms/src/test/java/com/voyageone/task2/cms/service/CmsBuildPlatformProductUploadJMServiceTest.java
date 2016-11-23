@@ -5,9 +5,11 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jumei.JumeiHtMallService;
+import com.voyageone.components.jumei.bean.HtMallSkuAddInfo;
 import com.voyageone.components.jumei.bean.JmGetProductInfoRes;
 import com.voyageone.components.jumei.bean.JmGetProductInfo_Spus;
 import com.voyageone.components.jumei.service.JumeiProductService;
@@ -19,9 +21,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -47,7 +47,6 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
     CmsBuildPlatformProductUploadJMService cmsBuildPlatformProductUploadJMService;
     @Autowired
     private JumeiHtMallService jumeiHtMallService;
-
 
     @Autowired
     CmsBtSxWorkloadDaoExt cmsBtSxWorkloadDaoExt;
@@ -575,6 +574,98 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
             cmsBuildPlatformProductUploadJMService.updateSkuIsEnableDeal(shop, originHashId, jumeiSkuNo, "0");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testAddSkuNoToJumeiMall() {
+        // 手动追加skuNo到聚美mall中(如果聚美商城里面没有platformMallId的话，应该直接先删除product和group表
+        // 中的platformMallId，再approve应该就可以了，不用这个追加sku到商城)
+        // -- 删除聚美mallId(product和group表都要改)
+        // db.cms_bt_product_c009.find({'common.fields.code':'009-10054-BKRTSA'})
+        // db.cms_bt_product_group_c009.find({'productCodes':'009-10054-BKRTSA',cartId:27})
+        //
+        // db.cms_bt_product_c009.update({'common.fields.code':'009-10054-BKRTSA'},{$set:{'platforms.P27.pPlatformMallId':''}})
+        // db.cms_bt_product_group_c009.update({'productCodes':'009-10054-BKRTSA',cartId:27},{$set:{'platformMallId':''}})
+
+        String channelId = "009";
+        int CART_ID = 27;
+        String productCode = "009-10054-BKRTSA";
+        StringBuffer sbFault = new StringBuffer();
+
+        ShopBean shopBean = Shops.getShop(channelId, CART_ID);
+        if (shopBean == null) {
+            System.out.println("没有取到店铺信息");
+            return;
+        }
+//        ShopBean shopBean = new ShopBean();
+//        shopBean.setApp_url("https://api.jd.com/routerjson");
+//        shopBean.setAppKey("");
+//        shopBean.setAppSecret("");
+//        shopBean.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+//        shopBean.setOrder_channel_id(channelId);
+//        shopBean.setCart_id(StringUtils.toString(CART_ID));
+//        shopBean.setShop_name("京东国际匠心界全球购专营店");
+
+        CmsBtProductModel product = productService.getProductByCode(channelId, productCode);
+        if (product == null) {
+            System.out.print(String.format("没找到对应的产品信息 [ProductCode:%s]", productCode));
+            return;
+        }
+
+        List<String> addSkuList = new ArrayList() {{
+            add("009-SL-10054-BKRTSA");
+        }};
+
+        //取库存
+        Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(),
+                product.getPlatformNotNull(CART_ID).getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
+
+        // 追加sku
+        if (ListUtils.notNull(addSkuList)) {
+            List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
+            List<CmsBtProductModel_Sku> commonSkus = product.getCommon().getSkus();
+            skuList = cmsBuildPlatformProductUploadJMService.mergeSkuAttr(skuList, commonSkus);
+            for (BaseMongoMap<String, Object> sku : skuList) {
+                String skuCode = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
+                if (addSkuList.contains(skuCode)) {
+                    HtMallSkuAddInfo mallSkuAddInfo = new HtMallSkuAddInfo();
+                    mallSkuAddInfo.setJumeiSpuNo(sku.getStringAttribute("jmSpuNo"));
+                    HtMallSkuAddInfo.SkuInfo skuInfo = mallSkuAddInfo.getSkuInfo();
+//                        skuInfo.setCustoms_product_number(" "); // 发货仓库为保税区仓库时，此处必填, 现在暂时不用设置
+//                        skuInfo.setCustoms_product_number(skuCode);
+                    skuInfo.setBusinessman_num(skuCode);
+                    Integer stock = skuLogicQtyMap.get(skuCode);
+                    if (stock == null) {
+                        stock = 0;
+                    }
+
+                    skuInfo.setStocks(stock);
+                    skuInfo.setMall_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+                    skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
+
+                    sbFault.setLength(0);
+                    try {
+                        String jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sbFault);
+                        if (StringUtils.isEmpty(jumeiSkuNo) || sbFault.length() > 0) {
+                            // 价格更新失败throw出去
+                            throw new BusinessException("聚美商城追加sku失败!" + sbFault.toString());
+                        }
+                    } catch (Exception e) {
+                    }
+
+                    // 回写(自己手动回写到mysql表吧)
+//                    String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
+//                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
+//                    cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
+//                    cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
+////                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
+//                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode());
+//
+//                    sku.setStringAttribute("jmSkuNo", jumeiSkuNo);
+//                    saveProductPlatform(product.getChannelId(), product);
+                }
+            }
         }
     }
 

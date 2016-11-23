@@ -1597,18 +1597,15 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
             if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null
                     &&feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
-                if (feed.getAttribute() != null && feed.getAttribute().size() > 0) {
-                    for (Map.Entry<String, List<String>> entry : feed.getAttribute().entrySet()) {
-                        if(entry.getKey().equals("boxImages")){
-                            for(String images:entry.getValue()){
-                                Map<String, Object> multiComplexChildren = new HashMap<>();
-                                String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), images);
-                                multiComplexChildren.put("image2", picName);
-                                multiComplex2.add(multiComplexChildren);
-                            }
-                        }
 
+                if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
+                    for(String images : feed.getAttribute().get("boximages")){
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), images);
+                        multiComplexChildren.put("image2", picName);
+                        multiComplex2.add(multiComplexChildren);
                     }
+
                 }
                 productCommonField.put("images2", multiComplex2);
             }
@@ -3020,7 +3017,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null&&
                         channelId.equals(cmsChannelConfigBean.getChannelId())){
                     String[] imgName = originalUrl.split("/");
-                    newModel.setImgName(imgName[imgName.length]);
+                    newModel.setImgName(imgName[imgName.length - 1]);
                     newModel.setUpdFlg(1);
                 }else{
                     newModel.setUpdFlg(0);
