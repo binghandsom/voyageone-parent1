@@ -97,10 +97,15 @@ define([
             }
 
             function _openBulkUpdate() {
-                $fieldEditService.bulkSetPlatformFields($scope.vm.propertyInfo).then(function (res) {
-                    notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    $modalInstance.close();
+
+                confirm("将要批量更新商品属性，是否确认？").then(function(){
+                    $fieldEditService.bulkSetPlatformFields($scope.vm.propertyInfo).then(function (res) {
+                        notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        $modalInstance.close();
+                    });
                 });
+
+
             }
         }
     });
