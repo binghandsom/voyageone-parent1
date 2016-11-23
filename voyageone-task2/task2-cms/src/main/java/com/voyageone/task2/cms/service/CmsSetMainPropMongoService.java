@@ -2982,6 +2982,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            param.setOriginalUrl(originalUrl);
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
 
             // 不存在则插入
             if (findImage == null) {
@@ -3009,12 +3010,20 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 newModel.setChannelId(channelId);
                 newModel.setOriginalUrl(originalUrl);
                 newModel.setCode(code);
-                newModel.setUpdFlg(0);
+
                 newModel.setCreater(getTaskName());
                 newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
-                newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
+                if(cmsChannelConfigBean.getChannelId().equals(channelId)){
+                    String[] imgName = originalUrl.split("/");
+                    newModel.setImgName(imgName[imgName.length]);
+                    newModel.setUpdFlg(1);
+                }else{
+                    newModel.setUpdFlg(0);
+                    newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
+                }
+
                 imagesService.insert(newModel);
 
                 return newModel.getImgName();
