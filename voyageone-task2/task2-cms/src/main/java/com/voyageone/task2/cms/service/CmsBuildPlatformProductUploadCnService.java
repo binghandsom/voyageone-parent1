@@ -333,7 +333,9 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                     model.setOrgChannelId(mapProductOrgChannel.get(code));
                     model.setCategoryIds(mapProductCats.get(code).stream().collect(Collectors.joining(",")));
                 } else if ("Sku".equals(field.getId())) {
-                    model.setSku(getFieldValue(field));
+                    String sku = getFieldValue(field);
+                    sku = sku.substring(1); // 推送的是 固定"S" + sku
+                    model.setSku(sku);
                 } else if ("Size".equals(field.getId())) {
                     model.setSize(getFieldValue(field));
                 } else if ("ShowSize".equals(field.getId())) {
