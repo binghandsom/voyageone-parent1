@@ -101,8 +101,8 @@ define([
                             item.priceSaleSt=parameter.priceSale;
                             item.priceSaleEd=parameter.priceSale;
                         }
-                        //item.priceMsrp=undefined;
-                        //item.priceSale=undefined;
+                        item.priceMsrp=undefined;
+                        item.priceSale=undefined;
                         notify.success("保存成功")
 
                     });
