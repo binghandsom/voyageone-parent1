@@ -78,7 +78,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
-                        <table class="table table-hover-new table-hover table_main" style="min-width:1200px">
+                        <table class="table table-hover-new table-hover" style="min-width:1200px">
                             <thead>
                             <tr>
                                 <th class="mfb-xt text-left">Live</th>
@@ -99,20 +99,19 @@
                                     <input style="margin: 0" type="checkbox"
                                            ui-indeterminate="item.checked == 1"
                                            ng-checked="item.checked == 2"
-                                           ng-click="ctrl.canSelectChild(category)"
                                            ng-model="item.isSale"  ng-change="isSaleOnChange(item)" />
-                                    <!--<input type="checkbox" ng-model="item.isSale"     ng-checked="item.checked==2" />-->
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <platform-status data="{
-                                        cartId: item.cartId,
-                                        cartName: item.cartName,
-                                        status: item.status,
-                                        pStatus: item.pStatus,
-                                        pReallyStatus: item.pReallyStatus,
-                                        pPublishError: item.pPublishError,
-                                        numberId: item.numberId
-                                    }"></platform-status>
+                                    <a href="#/product/detail/{{productInfo.productId}}/{{item.cartId}}|skuModule" target="_blank">
+                                        <platform-status data="{
+                                            cartId: item.cartId,
+                                            cartName: item.cartName,
+                                            status: item.status,
+                                            pStatus: item.pStatus,
+                                            pReallyStatus: item.pReallyStatus,
+                                            pPublishError: item.pPublishError
+                                        }"></platform-status>
+                                    </a>
                                 </td>
 
                                 <td class="mfb-xxt text-right">
