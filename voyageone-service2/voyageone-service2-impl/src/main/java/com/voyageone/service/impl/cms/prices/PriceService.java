@@ -17,6 +17,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
@@ -987,9 +988,12 @@ public class PriceService extends BaseService {
         List<List<HtMallSkuPriceUpdateInfo>> pageList = CommonUtil.splitList(list, 10);
         for (List<HtMallSkuPriceUpdateInfo> page : pageList) {
             StringBuffer sb = new StringBuffer();
+			$info("sunpeitao--->>>>>>>" + JacksonUtil.bean2Json(page));
             if (!jumeiHtMallService.updateMallSkuPrice(shopBean, page, sb)) {
                 errorMsg += sb.toString();
+				$info("sunpeitao--->>>>>>>" + sb.toString());
             }
+			$info("sunpeitao--->>>>>>>END:" + sb.toString());
         }
         if (!StringUtil.isEmpty(errorMsg)) {
             throw new BusinessException("updateMallSkuPrice:" + errorMsg);
