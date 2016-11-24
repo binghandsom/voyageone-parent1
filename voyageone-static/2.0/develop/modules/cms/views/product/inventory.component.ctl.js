@@ -77,7 +77,7 @@ define([
                     			});
                     			
                     			// 保存库存为0的总库存，删除其他库存为0的仓库
-	                        	if (key != 'order' && item != 'total' && countTotal == 0) {
+                    			if (key != 'order' && item != 'total' && countTotal == 0) {
                     				stockHeader[key].splice(stockHeader[key].indexOf(item), 1);
                     			} else {
                     				totalStock[key][item] = countTotal;

@@ -3944,6 +3944,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         }
         //1磅(lb)=453.59237克(g)
         if(weight != null){
+            cmsProduct.getCommon().getFields().setWeightLb(weight);
             BigDecimal b = new BigDecimal(weight * 453.59237);
             cmsProduct.getCommon().getFields().setWeightG(b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             b = new BigDecimal(weight * 453.59237 / 1000.0);

@@ -25,6 +25,10 @@ define([
 
         self.status = null;
         self.op = self.opList.G;
+
+        $scope.$on("$destroy", function () {
+            self.resetInterval();
+        });
     }
 
     ShelvesListController.prototype = {
@@ -84,8 +88,8 @@ define([
         },
         intervalRefreshInfo: function (ss) {
             var self = this;
-            var count = 30;
-            var i = 30 * 1000;
+            var count = 3;
+            var i = 1 * 1000;
 
             count--;
             self.getShelvesInfo(ss);

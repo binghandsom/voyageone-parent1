@@ -855,7 +855,7 @@
                                 <tbody>
                                     <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
                                 </tbody>
-                                <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd;">
+                                <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                         <td class="text-center" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
@@ -1027,7 +1027,7 @@
                                         <td colspan="9" if-no-rows="vm.groupList.length"></td>
                                     </tr>
                                 </tbody>
-                                <tbody ng-repeat="groupInfo in vm.groupList"  style="border-bottom:1px solid #ddd;">
+                                <tbody ng-repeat="groupInfo in vm.groupList"  style="border-bottom:1px solid #ddd; height: 80px;">
                                     <tr ng-class="{'table_bg_green_mint': groupInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
                                         <td class="text-center" style="height: 80px" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
