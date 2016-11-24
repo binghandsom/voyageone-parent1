@@ -320,7 +320,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         if (cartId == CartEnums.Cart.CN.getValue()) {
             // sneakerhead从feed里去取
             ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-            strUrlKey = sxProductService.getProductValueByFeed("urlKey", shopBean, expressionParser, getTaskNameForUpdate());
+            strUrlKey = sxProductService.getProductValueByFeed("urlkey", shopBean, expressionParser, getTaskNameForUpdate());
         } else {
             strUrlKey = sxData.getMainProduct().getOrgChannelId()
 //                        + "-" + sxData.getTmpSxCnCode().getBrand()
@@ -703,7 +703,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
         String strUrlKey;
         if (cartId == CartEnums.Cart.CN.getValue()) {
             // sneakerhead从feed里去取
-            strUrlKey = sxProductService.getProductValueByFeed("urlKey", shopBean, expressionParser, getTaskNameForUpdate());
+            strUrlKey = sxProductService.getProductValueByFeed("urlkey", shopBean, expressionParser, getTaskNameForUpdate());
         } else {
             strUrlKey = sxData.getMainProduct().getOrgChannelId()
 //                        + "-" + sxData.getTmpSxCnCode().getBrand()
@@ -852,7 +852,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
                 ((InputField) field).setValue(colorEn);
             }
-            String colorMap = sxProductService.getProductValueByFeed("colorMap",shopBean, expressionParser, getTaskNameForUpdate());
+            String colorMap = sxProductService.getProductValueByFeed("colormap",shopBean, expressionParser, getTaskNameForUpdate());
             {
                 if (!StringUtils.isEmpty(colorMap)) {
                     // ColorMap 翻译一下
@@ -966,8 +966,12 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
 
 //            ((InputField) field).setValue(((InputField) fieldsMap.get("Name")).getValue());
             if (cartId == CartEnums.Cart.CN.getValue()) {
-                // sneakerhead从feed来
-                ((InputField) field).setValue(sxProductService.getProductValueByFeed("abstractDescription", shopBean, expressionParser, getTaskNameForUpdate()));
+                // modified by morse.lu 2016/11/24 start
+//                // sneakerhead从feed来
+//                ((InputField) field).setValue(sxProductService.getProductValueByFeed("abstractdescription", shopBean, expressionParser, getTaskNameForUpdate()));
+                 // sneakerhead common.fields.usageEn
+                ((InputField) field).setValue(product.getCommon().getFields().getUsageEn());
+                // modified by morse.lu 2016/11/24 end
             } else {
                 ((InputField) field).setValue(product.getPlatform(sxData.getCartId()).getFields().getStringAttribute("Name"));
             }
@@ -991,7 +995,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 listSp.add(field_id);
                 Field field = fieldsMap.get(field_id);
 
-                ((InputField) field).setValue(sxProductService.getProductValueByFeed("blogUrl", shopBean, expressionParser, getTaskNameForUpdate()));
+                ((InputField) field).setValue(sxProductService.getProductValueByFeed("blogurl", shopBean, expressionParser, getTaskNameForUpdate()));
             }
         }
         {
@@ -1045,7 +1049,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 listSp.add(field_id);
                 Field field = fieldsMap.get(field_id);
 
-                ((SingleCheckField) field).setValue(sxProductService.getProductValueByFeed("isRewardEligible", shopBean, expressionParser, getTaskNameForUpdate()));
+                ((SingleCheckField) field).setValue(sxProductService.getProductValueByFeed("isrewardeligible", shopBean, expressionParser, getTaskNameForUpdate()));
             }
         }
         {
@@ -1056,7 +1060,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 listSp.add(field_id);
                 Field field = fieldsMap.get(field_id);
 
-                ((SingleCheckField) field).setValue(sxProductService.getProductValueByFeed("isDiscountEligible", shopBean, expressionParser, getTaskNameForUpdate()));
+                ((SingleCheckField) field).setValue(sxProductService.getProductValueByFeed("isdiscounteligible", shopBean, expressionParser, getTaskNameForUpdate()));
             }
         }
         {
@@ -1067,7 +1071,7 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
                 listSp.add(field_id);
                 Field field = fieldsMap.get(field_id);
 
-                ((InputField) field).setValue(sxProductService.getProductValueByFeed("orderLimitCount", shopBean, expressionParser, getTaskNameForUpdate()));
+                ((InputField) field).setValue(sxProductService.getProductValueByFeed("orderlimitcount", shopBean, expressionParser, getTaskNameForUpdate()));
             }
         }
 //        {
