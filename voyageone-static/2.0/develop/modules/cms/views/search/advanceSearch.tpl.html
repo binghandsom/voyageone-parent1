@@ -77,10 +77,8 @@
                                                 <label class="col-sm-3 control-label" translate="TXT_TRANSSTS_ATTRIBUTE"></label>
                                                 <div class="col-sm-8">
                                                     <div class="col-sm-10">
-                                                        <select class="form-control" ng-model="vm.searchInfo.transStsFlg">
+                                                        <select class="form-control" ng-model="vm.searchInfo.transStsFlg" ng-options="translate.value as translate.name for translate in vm.masterData.transStatusList">
                                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                                            <option value="0">未翻译</option>
-                                                            <option value="1">已翻译</option>
                                                         </select>
                                                     </div>
                                                 </div>

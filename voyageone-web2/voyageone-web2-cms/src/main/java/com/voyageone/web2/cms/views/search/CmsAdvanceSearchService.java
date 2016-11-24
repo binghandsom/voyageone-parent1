@@ -1,26 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import com.voyageone.service.impl.cms.CmsBtShelvesService;
-import com.voyageone.service.model.cms.CmsBtShelvesModel;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
@@ -28,10 +7,10 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeBean;
@@ -40,6 +19,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -57,6 +37,18 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
+import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * @author Edward
@@ -168,6 +160,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
         //标签type
         masterData.put("tagTypeList", Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), language));
+
+        // 翻译状态
+        masterData.put("transStatusList", Types.getTypeList(TypeConfigEnums.MastType.translationStatus.getId(), language));
 
         // 设置按销量排序的选择列表
         masterData.put("salesTypeList", salesTypeList);
