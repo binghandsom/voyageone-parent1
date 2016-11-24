@@ -52,7 +52,7 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
     private CmsBtPriceLogService cmsBtPriceLogService;
 
     public void onStartup(Map<String, Object> messageMap) {
-        $debug("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
+        $info("高级检索 重新计算指导价 开始执行... param=" + messageMap.toString());
         String channleId = StringUtils.trimToNull((String) messageMap.get("_channleId"));
         String userName = StringUtils.trimToNull((String) messageMap.get("_userName"));
         List<String> codeList = (List<String>) messageMap.get("productIds");
@@ -85,6 +85,7 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
             }
 
             for (String prodCode : codeList) {
+                $info("channleId="+ channleId +" cartId=" + cartId +" prodCode=" + prodCode);
                 queryObj.setQuery("{'common.fields.code':#,'platforms.P#':{$exists:true}}");
                 queryObj.setParameters(prodCode, cartId);
                 queryObj.setProjectionExt("prodId", "channelId", "orgChannelId", "platforms.P" + cartId + ".pNumIId", "platforms.P" + cartId + ".status", "platforms.P" + cartId + ".skus", "common.fields", "common.skus");
