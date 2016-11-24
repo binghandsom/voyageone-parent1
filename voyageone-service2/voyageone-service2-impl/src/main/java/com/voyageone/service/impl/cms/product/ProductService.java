@@ -1513,7 +1513,7 @@ public class ProductService extends BaseService {
 
     //更新mongo product  tag
     public void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel, int refTagId, List<TagTreeNode> tagList, String modifier) {
-        if(productModel.getTags() == null || productModel.getTags().size() == 0) return;
+        if(tagList == null || tagList.size() == 0) return;
         //更新商品Tags  sunpt
         if (productModel != null) {
             List<String> tags = productModel.getTags();
