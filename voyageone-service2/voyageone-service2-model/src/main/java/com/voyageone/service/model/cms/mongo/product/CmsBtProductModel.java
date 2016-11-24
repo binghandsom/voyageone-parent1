@@ -224,6 +224,7 @@ public class CmsBtProductModel extends ChannelPartitionModel {
 
     //tags
     public List<String> getTags() {
+        if (tags == null) tags = new ArrayList<>();
         return tags;
     }
 
