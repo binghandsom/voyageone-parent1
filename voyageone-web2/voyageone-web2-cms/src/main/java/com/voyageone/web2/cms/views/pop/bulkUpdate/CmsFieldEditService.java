@@ -1055,8 +1055,8 @@ public class CmsFieldEditService extends BaseViewService {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
-        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())) {
-            // 不是天猫平台时插入上新程序
+        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())&&!PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
+            // 不是天猫平台时插入上新程序 votodo
             $debug("批量修改商品价格 开始记入SxWorkLoad表");
             sta = System.currentTimeMillis();
             sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
