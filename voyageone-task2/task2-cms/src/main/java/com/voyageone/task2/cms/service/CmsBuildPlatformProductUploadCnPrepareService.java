@@ -774,7 +774,12 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColor());
+//            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColor());
+            String color = product.getCommon().getFields().getColor();
+            if (StringUtils.isEmpty(color)) {
+                color = product.getCommon().getFields().getCodeDiff();
+            }
+            ((InputField) field).setValue(color);
         }
         {
             // ShColorSn colorSh
@@ -782,7 +787,8 @@ public class CmsBuildPlatformProductUploadCnPrepareService extends BaseCronTaskS
             listSp.add(field_id);
             Field field = fieldsMap.get(field_id);
 
-            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColorSh());
+//            ((InputField) field).setValue(sxData.getTmpSxCnCode().getColorSh());
+            ((InputField) field).setValue(product.getCommon().getFields().getCodeDiff());
         }
         {
             // ColorMap 和ColorSn一样
