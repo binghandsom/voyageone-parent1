@@ -379,6 +379,9 @@ define([
                                     translateStatus: lock
                                 }).then(function () {
                                     notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                    scope.productInfo.translateStatus = +lock;
+                                    //通知子页面
+                                    scope.productInfo.checkFlag = new Date().getTime();
                                 });
                                 break;
                             case "onOffSwitch3":
