@@ -77,6 +77,7 @@ public class CmsRefreshRetailPriceTask extends VOAbsLoggable {
         JongoUpdate updObj = new JongoUpdate();
 
         for (Integer cartId : cartList) {
+            if(cartId == 928) continue;
             ShopBean shopObj = Shops.getShop(channleId, cartId.toString());
             CartBean cartObj = Carts.getCart(cartId);
             if (shopObj == null) {
