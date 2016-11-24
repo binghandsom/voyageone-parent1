@@ -32,12 +32,6 @@ public class CmsBtJdPromotionServiceTest {
 
     @Test
     public void testAddSkuIdToPromotionBatch() {
-        Integer totoalCnt = 101;
-        Integer size = 10;
-        int retry = (totoalCnt%size == 0) ? (totoalCnt/size) : (totoalCnt/size+1);
-        System.out.println("");
-        System.out.println("retry = " + retry);
-
         ShopBean shopBean = new ShopBean();
         shopBean.setApp_url("https://api.jd.com/routerjson");
         shopBean.setAppKey("");
@@ -49,10 +43,6 @@ public class CmsBtJdPromotionServiceTest {
         shopBean.setPlatform_id("2");
 
         // test用促销01
-//        Long promoId = 1045629728L;
-//        Long promoId = 1045913792L;
-//        Long promoId = 1046183527L;
-//        Long promoId = 1046206009L;
         Long promoId = 1046178147L;
 
         String testWareId = "1956814662";  // 匠心界店内追加的一个专门用来测试的商品
