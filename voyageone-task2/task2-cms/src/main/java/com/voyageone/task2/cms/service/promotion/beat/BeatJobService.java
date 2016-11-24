@@ -198,13 +198,8 @@ public class BeatJobService extends BaseCronTaskService {
 
                         $debug("价格披露2 出现异常", exception);
 
-                        Map jsonMap = MapUtil.toMap(
-                                "jiagepiluId", bean.getId(),
-                                "e", exception
-                        );
-
                         // 对未知异常发送错误报告
-                        logIssue(exception, jsonMap);
+                        logIssue(exception, bean.getId());
 
                         bean.setMessage(format("出现 %s 异常: %s", getGoodName(exception), exception.getMessage()));
                         fail(bean);

@@ -40,11 +40,11 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 
     private Double msrp;
 
-   // private Integer tagId;
+    private Integer tagId;
 
-   // private String tagPath;
+    private String tagPath;
 
-  //  private String tagPathName;
+    private String tagPathName;
 
     private Double msrpUS;
 
@@ -284,17 +284,17 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 //        return tagId;
 //    }
 //
-//    public void setTagId(Integer tagId) {
-//        this.tagId = tagId;
-//    }
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
+    }
 //
 //    public String getTagPath() {
 //        return tagPath;
 //    }
 //
-//    public void setTagPath(String tagPath) {
-//        this.tagPath = tagPath;
-//    }
+    public void setTagPath(String tagPath) {
+        this.tagPath = tagPath;
+    }
 
     public Double getRetailPrice() {
         return retailPrice;
@@ -308,9 +308,9 @@ public class CmsBtPromotionCodesBean extends CmsBtPromotionGroupsBean {
 //        return tagPathName;
 //    }
 //
-//    public void setTagPathName(String tagPathName) {
-//        this.tagPathName = tagPathName;
-//    }
+    public void setTagPathName(String tagPathName) {
+        this.tagPathName = tagPathName;
+    }
 
     public Double getMsrpUS() {
         return msrpUS;
