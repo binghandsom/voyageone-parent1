@@ -78,9 +78,11 @@ public class CmsBtPriceLogService extends BaseService {
         }
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
-        for (CmsBtPriceLogModel newLog : paramList)
-            // 向Mq发送消息同步sku,code,group价格范围
-            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
+        if(paramList.size()>0)
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(paramList.get(0))));
+//        for (CmsBtPriceLogModel newLog : paramList)
+//            // 向Mq发送消息同步sku,code,group价格范围
+//            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));
 
         // 先做完所有价格范围同步的请求后，再开始处理是否记录未确认价格的操作
         for (CmsBtPriceLogModel newLog : paramList) {
