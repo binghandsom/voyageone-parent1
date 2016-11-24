@@ -73,9 +73,6 @@ public class CmsConstants {
         // 各个平台渠道导入master数据的PlatformActive初始值
         String PLATFORM_ACTIVE = "PLATFORM_ACTIVE";
 
-        // 价格自动同步间隔天数
-        String AUTO_SYN_DAY = "AUTO_SYN_DAY";
-
         // 强制击穿阈值(例如: 10 表示的是10%)
         String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
 

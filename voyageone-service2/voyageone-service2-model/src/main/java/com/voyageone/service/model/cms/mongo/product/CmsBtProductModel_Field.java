@@ -515,6 +515,12 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("commissionRate", commissionRate);
     }
 
+    //磅
+    public Double getWeightLb() { return getDoubleAttribute("weightLB"); }
+    public void setWeightLb(Double weightLB) {
+        setAttribute("weightLB", weightLB == null ? 0.0 : weightLB);
+    }
+
     //克
     public Integer getWeightG() {
         return getIntAttribute("weightG");
