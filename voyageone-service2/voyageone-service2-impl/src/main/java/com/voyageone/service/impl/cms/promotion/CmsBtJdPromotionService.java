@@ -278,7 +278,7 @@ public class CmsBtJdPromotionService extends BaseService {
         }
 
         if (sbFault != null) {
-            sbFault.append(String.format("该促销(%s)未被创建或者创建时间已经超过3个小时不能添加jdSkuId了! [status:%s]", promoId, promoStatus));
+            sbFault.append(String.format("该促销(%s)的未被创建或者status不等于-1(新建促销且在3小时内可以添加jdSkuId)! [该促销status:%s]", promoId, promoStatus));
         }
 
         return false;
