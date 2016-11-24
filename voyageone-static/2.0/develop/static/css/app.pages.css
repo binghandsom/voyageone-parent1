@@ -429,6 +429,11 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
+.product-shema-detail .border-col-gray{
+    color: #fff;
+    border: 1px solid #ccc;
+}
+
 .product-shema-detail a .thumb-group {
     max-height: 100px;
 }
