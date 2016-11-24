@@ -8,6 +8,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
@@ -283,10 +284,11 @@ public class PromotionDetailService extends BaseService {
             codesModel.setModelId(groupModel.getGroupId().intValue());
         }
 
-        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
+        List<CmsBtProductModel_Field_Image> imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages6();
         if (!imgList.isEmpty()) {
             codesModel.setImageUrl1(imgList.get(0).getName());
-        } else {
+        }
+        if(StringUtil.isEmpty(codesModel.getImageUrl1())){
             imgList = productInfo.getCommonNotNull().getFieldsNotNull().getImages1();
             if (!imgList.isEmpty()) {
                 codesModel.setImageUrl1(imgList.get(0).getName());

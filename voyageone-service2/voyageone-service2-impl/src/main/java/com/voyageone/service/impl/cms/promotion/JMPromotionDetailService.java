@@ -310,7 +310,7 @@ public class JMPromotionDetailService extends BaseService {
             skuModel.setMsrpUsd(new BigDecimal(msrpUsd));
 
             skuModel.setDealPrice(new BigDecimal(0));
-            skuModel.setMarketPrice(new BigDecimal(priceRetail));
+            skuModel.setMarketPrice(new BigDecimal(priceMsrp));
             skuModel.setDiscount(BigDecimalUtil.divide(skuModel.getDealPrice(), skuModel.getMarketPrice(), 2));//折扣
             skuModel.setModified(new Date());
             skuModel.setModifier(modifier);
