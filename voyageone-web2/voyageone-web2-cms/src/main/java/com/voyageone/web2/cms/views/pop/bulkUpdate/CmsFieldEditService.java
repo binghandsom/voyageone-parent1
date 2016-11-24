@@ -1,20 +1,5 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -25,19 +10,13 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
@@ -48,11 +27,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.SizeChartService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
-import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
@@ -70,6 +45,7 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -1055,13 +1031,15 @@ public class CmsFieldEditService extends BaseViewService {
         int cnt = cmsBtPriceLogService.addLogListAndCallSyncPriceJob(priceLogList);
         $debug("批量修改商品价格 记入价格变更履历结束 结果=" + cnt + " 耗时" + (System.currentTimeMillis() - sta));
 
-//        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())&&!PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
-//            // 不是天猫平台时插入上新程序 votodo
-//            $debug("批量修改商品价格 开始记入SxWorkLoad表");
-//            sta = System.currentTimeMillis();
-//            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
-//            $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
-//        }
+        if (!PlatFormEnums.PlatForm.TM.getId().equals(cartObj.getPlatform_id())
+                && !PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())
+                && !PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
+            // 不是天猫平台时插入上新程序 votodo
+            $debug("批量修改商品价格 开始记入SxWorkLoad表");
+            sta = System.currentTimeMillis();
+            sxProductService.insertSxWorkLoad(userInfo.getSelChannelId(), productCodes, cartId, userInfo.getUserName());
+            $debug("批量修改商品价格 记入SxWorkLoad表结束 耗时" + (System.currentTimeMillis() - sta));
+        }
 
         // 如果有未处理的商品，则放入缓存
         commCacheService.deleteCache("CmsFieldEditService.setProductSalePrice", userInfo.getUserId() + "2");
