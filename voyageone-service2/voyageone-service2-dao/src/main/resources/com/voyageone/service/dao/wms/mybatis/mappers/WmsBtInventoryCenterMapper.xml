@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
     <update id="wms_bt_inventory_center_updateCodeForMove" parameterType="HashMap">
         update wms_bt_inventory_center set code=#{itemCodeNew},modified = now(),modifier =#{modifier} where code=#{itemCodeOld} and order_channel_id=#{channelId}
-        <if test="skuList != null">
+        <if test="skuList != null and skuList.size() > 0">
         and (sku in
         <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
             #{skuItem}
@@ -15,12 +15,12 @@
     <select id="wms_bt_inventory_center_selectSkuInventoryBy" resultType="com.voyageone.service.bean.wms.InventoryCenterBean">
         select * from wms_bt_inventory_center
         where order_channel_id=#{channelId}
-        <if test="storeIds != null">
-        and store_id in
+        <if test="storeIds != null and storeIds.size() > 0">
+          and store_id in
         <foreach collection="storeIds" item="item" index="index"  open="(" separator="," close=")">#{item} </foreach>
         </if>
-        <if test="skus != null">
-        and sku in
+        <if test="skus != null and skus.size() > 0">
+          and sku in
         <foreach collection="skus" item="item" index="index"  open="(" separator="," close=")">#{item} </foreach>
         </if>
     </select>
