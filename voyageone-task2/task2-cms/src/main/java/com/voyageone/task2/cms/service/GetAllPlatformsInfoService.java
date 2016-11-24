@@ -114,7 +114,7 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
     /**
      * 天猫类目取得
      */
-    private void doTmPlatformCategory(String channelId, int cartId, ShopBean shopBean) {
+    protected void doTmPlatformCategory(String channelId, int cartId, ShopBean shopBean) {
         try {
             // 天猫tree取得
             tmTreeService.doSetPlatformCategoryTm(shopBean);

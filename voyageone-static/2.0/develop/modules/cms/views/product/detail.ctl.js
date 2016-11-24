@@ -15,7 +15,10 @@ define([
     './master.component.ctl',
     './jgj.component.ctl',
     './gw.component.ctl',
-    './dl.component.ctl'
+    './dl.component.ctl',
+    './price.component.ctl',
+    './dl.component.ctl',
+    './inventory.component.ctl'
 ], function (cms) {
 
     return cms.controller('productDetailController', (function () {
@@ -37,13 +40,17 @@ define([
                 masterCategory: null,
                 lockStatus: null,
                 feedInfo: null,
-                autoApprovePrice: null
+                autoApprovePrice: null,
+                productComm : null,
+                skuBlock:null     //为了定位到平台详情页的sku区域
             };
         }
 
         /**获取初始化数据*/
         ProductDetailController.prototype.initialize = function () {
-            var self = this;
+            var self = this,
+                _cartObj = self.routeParams.cartId;
+
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
                     return element.value > 20;
@@ -54,7 +61,16 @@ define([
                 self.product.autoApprovePrice = resp.autoApprovePrice[0];
             });
 
-            this.defaultCartId = this.routeParams.cartId != null ? this.routeParams.cartId : 0;
+            if(_cartObj){
+                var strArr = _cartObj.split("|");
+
+                if(strArr.length > 1){
+                    self.defaultCartId = strArr[0];
+                    self.product.skuBlock = true;
+                }else
+                    self.defaultCartId = _cartObj;
+            }
+
         };
 
         /**锁定操作*/

@@ -16,9 +16,9 @@ define(['underscore'], function (_) {
 
     return {
 
-        OnSale: new PlatformStatus('OnSale', '在售'),
-        InStock: new PlatformStatus('InStock', '在库'),
-        WaitingPublish: new PlatformStatus('WaitingPublish', '等待上新'),
+        OnSale: new PlatformStatus('OnSale', '售'),
+        InStock: new PlatformStatus('InStock', '库'),
+        WaitingPublish: new PlatformStatus('WaitingPublish', '待'),
 
         /**
          * 显示商品上下架状态
@@ -34,9 +34,9 @@ define(['underscore'], function (_) {
             var stsItem = this[val];
             var stsTxt = (stsItem instanceof PlatformStatus) ? stsItem.name : '';
             if (val2 == 'OnSale' && val2 != val) {
-                return stsTxt + '-已上架';
+                return stsTxt + '-已';
             } else if (val2 == 'InStock' && val2 != val) {
-                return stsTxt + '-未上架';
+                return stsTxt + '-未';
             } else {
                 return stsTxt;
             }

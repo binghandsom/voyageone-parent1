@@ -1,9 +1,11 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
@@ -11,11 +13,14 @@ import com.voyageone.service.bean.cms.product.GetChangeMastProductInfoParameter;
 import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -171,6 +176,28 @@ public class CmsProductDetailController extends CmsController {
 
         return success(null);
     }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DoAppSwitch)
+    public AjaxResponse doAppSwitch(@RequestBody Map requestMap) {
+        //{prodId: "5992", appSwitch: "0"}
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        int appSwitch = ConvertUtil.toInt(requestMap.get("appSwitch"));
+
+        productService.updateProductAppSwitch(getUser().getSelChannelId(), prodId, appSwitch, getUser().getUserName());
+
+        return success(null);
+    }
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.DoTranslateStatus)
+    public AjaxResponse doTranslateStatus(@RequestBody Map requestMap) {
+        //{prodId: "5992", translateStatus: "0"}
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        int translateStatus = ConvertUtil.toInt(requestMap.get("translateStatus"));
+
+        productService.updateProductTranslateStatus(getUser().getSelChannelId(), prodId, translateStatus, getUser().getUserName());
+
+        return success(null);
+    }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_FEED_ATTS)
     public AjaxResponse updateProductAtts(@RequestBody Map requestMap) {
@@ -239,7 +266,7 @@ public class CmsProductDetailController extends CmsController {
      * @params cartId：平台Id  prodId：产品编号   platform:平台信息
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_SKUPRICE)
-    public AjaxResponse updateSkuPrice(@RequestBody Map params) {
+    public AjaxResponse updateSkuPrice(@RequestBody Map params) throws Exception {
 
         String channelId = getUser().getSelChannelId();
         Assert.notNull(channelId).elseThrowDefaultWithTitle("channelId");
@@ -256,9 +283,21 @@ public class CmsProductDetailController extends CmsController {
 
         cmsProductPlatformDetailService.priceChk(channelId, prodId, platform);
 
-        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform));
+        productPropsEditService.updateSkuPrice(channelId, cartId, prodId, getUser().getUserName(), new CmsBtProductModel_Platform_Cart(platform),true);
 
         return success(null);
+    }
+    
+    /**
+     * 取得SKU库存的信息（各仓库库存整体信息与详细信息）
+     * @param params { prodcutId }
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_SKU_STOCK_INFO)
+    public AjaxResponse getSkuStockInfo(@RequestBody String productId) {
+    	Preconditions.checkArgument(StringUtils.isNotBlank(productId));
+    	WmsCodeStoreInvBean skuStock = productService.getStockInfoBySku(getUser().getSelChannelId(), Long.valueOf(productId));
+    	return success(skuStock);
     }
 
     /**
@@ -287,5 +326,34 @@ public class CmsProductDetailController extends CmsController {
         return success(null);
     }
 
+    /**
+     * 修改产品共通属性中的图片属性
+     * @param params
+     *        imagesType 图片类型
+     *        images 图片集合
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.RESTORE_IMG)
+    public AjaxResponse restoreImg(@RequestBody Map params) {
+
+        String prodId = String.valueOf(String.valueOf(params.get("prodId")));
+        Assert.notNull(prodId).elseThrowDefaultWithTitle("promotionImages");
+
+        String imagesType = String.valueOf(String.valueOf(params.get("imagesType")));
+        Assert.notNull(imagesType).elseThrowDefaultWithTitle("promotionImages");
+
+        List<String> images = (List<String>) params.get("images");
+        Assert.notNull(images).elseThrowDefaultWithTitle("promotionImages");
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("modified",productPropsEditService.restoreImg(getUser().getSelChannelId(),
+                Long.parseLong(prodId),
+                imagesType,
+                images));
+
+        return success(result);
+
+
+    }
 
 }

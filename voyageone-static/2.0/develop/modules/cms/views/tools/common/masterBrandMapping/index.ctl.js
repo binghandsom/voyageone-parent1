@@ -57,7 +57,7 @@ define([
                 popups = self.popups;
 
             if (item.masterFlag == null || item.masterFlag == 1) {
-                console.log("待确认");
+                //console.log("待确认");
             } else if (item.masterFlag == 2) {
                 popups.openMasterBrandMapDetail({}).then(function () {
 

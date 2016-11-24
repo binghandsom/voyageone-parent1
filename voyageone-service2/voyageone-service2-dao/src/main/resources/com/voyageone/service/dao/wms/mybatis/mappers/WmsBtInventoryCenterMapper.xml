@@ -3,11 +3,35 @@
 <mapper namespace="com.voyageone.service.dao.sql">
     <update id="wms_bt_inventory_center_updateCodeForMove" parameterType="HashMap">
         update wms_bt_inventory_center set code=#{itemCodeNew},modified = now(),modifier =#{modifier} where code=#{itemCodeOld} and order_channel_id=#{channelId}
+        <if test="skuList != null and skuList.size() > 0">
         and (sku in
         <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
             #{skuItem}
         </foreach>
         )
+        </if>
     </update>
 
+    <select id="wms_bt_inventory_center_selectSkuInventoryBy" resultType="com.voyageone.service.bean.wms.InventoryCenterBean">
+        select * from wms_bt_inventory_center
+        where order_channel_id=#{channelId}
+        <if test="storeIds != null and storeIds.size() > 0">
+          and store_id in
+        <foreach collection="storeIds" item="item" index="index"  open="(" separator="," close=")">#{item} </foreach>
+        </if>
+        <if test="skus != null and skus.size() > 0">
+          and sku in
+        <foreach collection="skus" item="item" index="index"  open="(" separator="," close=")">#{item} </foreach>
+        </if>
+    </select>
+
+    <select id="wms_bt_inventory_center_countOrderInStoresBySku" resultType="map">
+      select
+        (select count(r.id) from tt_reservation r where r.status='11' and r.sku=#{sku}) as openCount,
+        (select count(new_order_id) from wms_bt_new_order where order_channel_id=#{channelId} and sku=#{sku} and  active=1) as onHold,
+        (select count(distinct o.order_number) from oms_bt_orders o join oms_bt_order_details od on o.order_number=od.order_number
+        where o.order_status in('Pending','In Processing' ,'Approved')
+              and o.order_channel_id=#{channelId} and od.sku=#{sku} and od.res_id=0) as newOrder
+      from dual;
+    </select>
 </mapper>

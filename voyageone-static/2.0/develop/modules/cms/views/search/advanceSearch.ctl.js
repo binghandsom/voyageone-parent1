@@ -1,18 +1,13 @@
-/**
- * Created by sofia on 6/8/2016.
- */
-/**
- * Created by linanbin on 15/12/7.
- */
 define([
     'underscore',
     'modules/cms/controller/popup.ctl',
     'modules/cms/directives/keyValue.directive',
     'modules/cms/service/search.advance2.service',
-    'modules/cms/service/product.detail.service'
+    'modules/cms/service/product.detail.service',
+    './advance.search.append.ctl'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q,shelvesService) {
 
         $scope.vm = {
             searchInfo: {
@@ -28,7 +23,11 @@ define([
                 promotionTagType: 1,
                 freeTagType: 1,
                 supplierType: 1,
-                brandSelType: 1
+                brandSelType: 1,
+                productSelType: '1',
+                sizeSelType: '1',
+                salesType: 'All',
+                custGroupType: '1'
             },
             _selall: false,
             groupPageOption: {curr: 1, total: 0, fetch: getGroupList},
@@ -37,9 +36,7 @@ define([
             groupList: [],
             productList: [],
             currTab: "product",
-            status: {
-                open: true
-            },
+            status: {open: true},
             groupSelList: {selList: []},
             productSelList: {selList: []},
             custAttrList: [],
@@ -51,11 +48,9 @@ define([
             _cart_tab_act: false
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
-
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = function () {
-            //$scope.vm.status.open = false;//收缩搜索栏
             search();
             $scope.vm._selall = false;
         };
@@ -77,9 +72,13 @@ define([
         $scope.getCat = getCat;
         $scope.openAdvanceImagedetail = openAdvanceImagedetail;
         $scope.openApproval = openApproval;
+        $scope.openIntelligentPublish = openIntelligentPublish;
         $scope.platformCategoryMapping = platformCategoryMapping;
         $scope.openTagManagement = openTagManagement;
         $scope.dismiss = dismiss;
+        $scope.jdCategoryMapping = jdCategoryMapping;
+        $scope.editPlatformAttribute = editPlatformAttribute;
+        $scope.addShelves = addShelves;
         /**
          * 初始化数据.
          */
@@ -149,7 +148,7 @@ define([
         /**
          * 清空画面上显示的数据
          */
-        function clear() {
+        function clear(child) {
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
@@ -187,6 +186,13 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
             $scope.vm._freeTags = null;
+
+            if(child.columnArrow){
+                _.forEach(child.columnArrow, function (value, key) {
+                    child.columnArrow[key] = null;
+                });
+            }
+
         }
 
         /**
@@ -265,11 +271,16 @@ define([
                     prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                 }
                 $scope.vm.currTab = "product";
-                $scope.vm.currTab2 = true;
+
+                if($scope.vm.currTab == 'product')
+                    $scope.vm.currTab2 = true;
+                else
+                    $scope.$feedActive = false;
+
                 $scope.vm.fstShowGrpFlg = true;
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 900) + 'px';
-                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1300) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.sumCustomProps.length) * 120 + $scope.vm.selSalesType.length * 100 + $scope.vm.selBiDataList.length * 100 + 1360) + 'px';
             })
         }
 
@@ -326,6 +337,11 @@ define([
                 $scope.vm.fstShowGrpFlg = false;
                 getGroupList();
             }
+
+            if($scope.vm.currTab == 'product')
+                $scope.vm.currTab2 = true;
+            else
+                $scope.$feedActive = false;
         };
 
         /**
@@ -376,6 +392,24 @@ define([
             }
         }
 
+        function addShelves(shelvesId) {
+            _chkProductSel(null, _addShelves, {'isSelAll': $scope.vm._selall ? 1 : 0, 'shelvesId': shelvesId});
+
+            function _addShelves(cartId, selList, context) {
+                var productIds = [];
+                if (selList) {
+                    _.forEach(selList, function (object) {
+                        productIds.push(object.code);
+                    });
+                }
+                context.productCodes = productIds;
+                shelvesService.addProduct(context).then(function () {
+                    notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
+                    $scope.search();
+                });
+            }
+        }
+
         /**
          * popup出添加到聚美Promotion的功能
          * @param promotion
@@ -388,6 +422,7 @@ define([
 
             function _openJMActivity(cartId, selList, context) {
                 openAddJMActivityFnc(context.promotion, selList, context).then(function () {
+
                     $scope.search();
                 })
             }
@@ -481,10 +516,8 @@ define([
 
         // 删除自定义查询选项
         function delCustAttribute(idx) {
-            if ($scope.vm.custAttrList.length > 1) {
+            if ($scope.vm.custAttrList.length > 0) {
                 $scope.vm.custAttrList.splice(idx, 1);
-            } else {
-                alert("最少保留一项")
             }
         }
 
@@ -586,7 +619,7 @@ define([
             $scope.vm._shopCatValues = null;
             $scope.vm._promotionTags = null;
 
-            $scope.vm.searchInfo.salesType = null;
+            $scope.vm.searchInfo.salesType = 'All';
             $scope.vm.searchInfo.salesSortType = null;
             $scope.vm.searchInfo.salesStart = null;
             $scope.vm.searchInfo.salesEnd = null;
@@ -756,6 +789,31 @@ define([
                     });
             }
         };
+
+        // 智能上新
+        function openIntelligentPublish(cartId) {
+        	_chkProductSel(parseInt(cartId), __openIntelligentPublish);
+
+        	function __openIntelligentPublish(cartId, _selProdList) {
+        		confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
+        		.then(function() {
+        			var productIds = [];
+        			if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+        			$fieldEditService.intelligentPublish({
+        				cartId: cartId,
+        				productIds: productIds,
+        				isSelectAll: $scope.vm._selall ? 1 : 0
+        			}).then(function() {
+            			alert('已完成商品的智能上新！');
+                        $scope.search();
+        			});
+        		});
+        	}
+        }
 
         // 商品审批
         function openApproval(openUpdateApprovalFnc, cartId) {
@@ -958,7 +1016,7 @@ define([
                     });
                     res.productIds = productIds;
                     res.isSelAll = $scope.vm._selall ? 1 : 0;
-                    $addChannelCategoryService.save(res).then(function (context) {
+                    $addChannelCategoryService.save(res).then(function () {
                         notify.success($translate.instant('TXT_SUBMIT_SUCCESS'));
                         $scope.search();
                     });
@@ -975,13 +1033,13 @@ define([
                 if (isPromoTag) {
                     // 查询活动标签
                     $scope.vm._promotionTags = res.selectdTagList;
-                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.promotionTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 } else {
                     // 查询自由标签
                     $scope.vm._freeTags = res.selectdTagList;
-                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    $scope.vm.searchInfo.freeTags = _.chain(res.selectdTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 }
@@ -1100,8 +1158,70 @@ define([
                     });
                 });
             }
+        };
+
+        /**
+         @description 类目popup
+         * @param productInfo
+         * @param popupNewCategory popup实例
+         */
+        function jdCategoryMapping(cartId) {
+            _chkProductSel(null, _openAddPromotion, {"cartId":cartId,"selList":[]});
+
+            function _openAddPromotion(cartId, selList, context) {
+
+                if(selList && selList.length > 0){
+                    selList.forEach(function (item) {
+                        context.selList.push(item.code);
+                    })
+                }
+                productDetailService.getPlatformCategories({"cartId": context.cartId})
+                    .then(function (res) {
+                        return $q(function (resolve, reject) {
+                            if (!res.data || !res.data.length) {
+                                notify.danger("数据还未准备完毕");
+                                reject("数据还未准备完毕");
+                            } else {
+                                resolve(popups.popupNewCategory({
+                                    //' from: scope.vm.platform == null ? "" : scope.vm.platform.pCatPath,
+                                    categories: res.data,
+                                    divType: ">",
+                                    plateSchema: true
+                                }));
+                            }
+                        });
+                    }).then(function (data) {
+
+                    confirm("将要批量更新商品类目，是否确认？").then(function(){
+                        $fieldEditService.bulkSetCategory({'isSelAll': $scope.vm._selall ? 1 : 0, "productIds":context.selList, "cartId":+context.cartId,"pCatPath":data.selected.catPath,"pCatId":data.selected.catId}).then(function (){
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            search();
+                        });
+                    });
+
+                });
+
+            }
         }
 
+        function editPlatformAttribute(cartId) {
+            _chkProductSel(null, _openAddPromotion, {"cartId":cartId,"selList":[]});
+
+            function _openAddPromotion(cartId, selList, context) {
+
+                if(selList && selList.length > 0){
+                    selList.forEach(function (item) {
+                        context.selList.push(item.code);
+                    })
+                }
+                popups.popupPlatformPopOptions({
+                    productIds: context.selList,
+                    isSelAll: $scope.vm._selall,
+                    cartId: context.cartId
+                });
+
+            }
+        }
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
             var cartIdVal = 0;
@@ -1147,10 +1267,28 @@ define([
                     });
                 });
             }
-        }
+        };
+
+        /**
+         * 高级检索加入活动
+         */
+        $scope.popJoinPromotion = function (cartBean) {
+
+            _chkProductSel(cartBean.value, function (cartId, selList, context) {
+                popups.openJoinPromotion(_.extend({
+                    cartBean: cartBean,
+                    selList: selList
+                }, context)).then(function (context) {
+
+                });
+            }, {'isSelAll': $scope.vm._selall ? 1 : 0});
+
+
+        };
+
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q','shelvesService'];
     return searchIndex;
 });

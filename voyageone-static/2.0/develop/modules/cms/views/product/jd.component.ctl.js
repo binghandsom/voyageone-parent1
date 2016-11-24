@@ -6,7 +6,12 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups) {
+
+    var cntConfig = {
+        checkArr: ['translate', 'tax', 'category', 'attribute']
+    };
+
+    cms.directive("jdSchema", function (productDetailService, $translate, notify, confirm, $q, $compile, alert, popups, $fieldEditService) {
         return {
             restrict: "E",
             templateUrl: "views/product/jd.component.tpl.html",
@@ -47,6 +52,8 @@ define([
                 scope.refreshPrice = refreshPrice;
                 scope.moveToGroup = moveToGroup;
                 scope.doResetTmProduct = doResetTmProduct;
+                scope.publishProduct = publishProduct;
+                scope.isPublishSucceed = false;
 
                 /**
                  * 获取京东页面初始化数据
@@ -77,6 +84,7 @@ define([
 
                         scope.vm.mastData = mastData = resp.data.mastData;
                         scope.vm.platform = platform = resp.data.platform;
+                        scope.vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
                         if (platform) {
                             scope.vm.status = platform.status == null ? scope.vm.status : platform.status;
@@ -92,6 +100,12 @@ define([
 
                         if (platform.schemaFields && platform.schemaFields.product)
                             initBrand(platform.schemaFields.product, platform.pBrandId);
+
+                        if(scope.productInfo.skuBlock){
+                            setTimeout(function(){
+                                pageAnchor('sku',0);
+                            },1500)
+                        }
 
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
@@ -271,9 +285,9 @@ define([
                             cartId: scope.cartInfo.value,
                             cartName: scope.cartInfo.name,
                             prodId: scope.productInfo.productId
-                        }).then(function (resp) {
+                        }).then(function () {
                             newTab.location.href = "#/product/code_move";
-                        }, function (err) {
+                        }, function () {
                             newTab.close();
                         });
                     });
@@ -292,16 +306,17 @@ define([
                         }
                     }
 
-                    var statusCount = 0;
-                    for (var attr in scope.vm.checkFlag) {
-                        statusCount += scope.vm.checkFlag[attr] == true ? 1 : 0;
-                    }
+                    var statusFlag = _.filter(scope.vm.checkFlag, function (value, key) {
+                        return cntConfig.checkArr.indexOf(key) >= 0;
+                    }).every(function (value) {
+                        return value == true ? 1 : 0;
+                    });
 
                     scope.vm.preStatus = angular.copy(scope.vm.status);
 
                     switch (scope.vm.status) {
                         case "Pending":
-                            scope.vm.status = statusCount == 4 ? "Ready" : scope.vm.status;
+                            scope.vm.status = statusFlag ? "Ready" : scope.vm.status;
                             break;
                         case "Ready":
                             scope.vm.status = "Approved";
@@ -377,7 +392,7 @@ define([
                             }
                         });
                     } else {
-                        callSave();
+                        return callSave();
                     }
 
                 }
@@ -386,12 +401,15 @@ define([
                 function callSave(mark) {
 
                     /**判断价格*/
-                    productDetailService.updateProductPlatformChk({
+                    var promise = productDetailService.updateProductPlatformChk({
                         prodId: scope.productInfo.productId,
                         platform: scope.vm.platform
-                    }).then(function (resp) {
+                    });
+
+                    promise.then(function (resp) {
                         scope.vm.platform.modified = resp.data.modified;
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        if(mark !== 'intel')
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }, function (resp) {
                         if (resp.code != "4000091" && resp.code != "4000092") {
                             scope.vm.status = scope.vm.preStatus;
@@ -411,6 +429,8 @@ define([
                                 scope.vm.status = scope.vm.preStatus;
                         });
                     });
+
+                    return promise;
                 }
 
                 function validSchema() {
@@ -451,7 +471,7 @@ define([
                  * 重置天猫产品id
                  * @returns {*}
                  */
-                function doResetTmProduct(){
+                function doResetTmProduct() {
                     return productDetailService.resetTmProduct({
                         cartId: scope.cartInfo.value,
                         productCode: scope.productInfo.masterField.code
@@ -459,6 +479,22 @@ define([
                         alert("处理完成， 请重新approve一下商品");
                         // notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     });
+                }
+
+                // 商品智能上新
+                function publishProduct() {
+
+                    callSave('intel').then(function () {
+                        $fieldEditService.intelligentPublish({
+                            cartId: scope.vm.platform.cartId,
+                            productIds: [scope.vm.mastData.productCode],
+                            isSelectAll: 0
+                        }).then(function () {
+                            scope.isPublishSucceed = true;
+                            alert('已完成商品的智能上新！');
+                        });
+                    });
+
                 }
 
                 /**

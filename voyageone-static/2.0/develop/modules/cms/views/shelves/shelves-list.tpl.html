@@ -1,0 +1,117 @@
+<div id="shelves-list" class="wrapper-md" style="position:relative">
+    <link rel="stylesheet" href="/modules/cms/views/shelves/shelves-list.css">
+
+    <uib-accordion class="vo_accordion vo_attr">
+        <uib-accordion-group heading="货架管理" is-open="true">
+            <form action class="form-horizontal" novalidate>
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">平台类型：</label>
+                    <div class="col-sm-4">
+                        <select chosen width="'100%'" ng-model="ctrl.cart"
+                                ng-options="c.value as c.name for c in ctrl.cartList"
+                                ng-change="ctrl.getShelves()"></select>
+                    </div>
+                    <label class="col-sm-1 control-label">客户端类型：</label>
+                    <div class="col-sm-4">
+                        <select chosen width="'100%'" ng-model="ctrl.clientType"
+                                ng-options="v as k for (k,v) in ctrl.clientTypes"
+                                ng-change="ctrl.getShelves()"></select>
+                    </div>
+                </div>
+            </form>
+        </uib-accordion-group>
+    </uib-accordion>
+
+    <div class="panel panel-search">
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-1 control-label">平台库存：</label>
+                    <div class="col-sm-2">
+                        <div class="input-group">
+                            <div class="input-group-addon" style="padding:0">
+                                <select style="height:24px;border:0" ng-model="ctrl.op" ng-options="v as v for (k,v) in ctrl.opList"></select>
+                            </div>
+                            <input type="text" class="form-control" ng-model="ctrl.inventory">
+                        </div>
+                    </div>
+                    <label class="col-sm-2 control-label">上下架状态：</label>
+                    <div class="col-sm-3">
+                        <div class="radio">
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="null" name="shelves-product-status">所有</label>&nbsp; &nbsp;
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="1" name="shelves-product-status">已上架</label>&nbsp; &nbsp;
+                            <label><input type="radio" ng-model="ctrl.status" ng-value="0" name="shelves-product-status">已下架</label>
+                        </div>
+                    </div>
+                    <label class="col-sm-1 control-label">Code：</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" ng-model="ctrl.code">
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="button" class="btn btn-default" ng-click="ctrl.clearFilter()">清除</button>
+                <button type="button" class="btn btn-vo" ng-click="ctrl.filterProduct()" ng-disabled="!ctrl.shelves.length">搜索</button>
+            </div>
+        </div>
+    </div>
+
+    <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
+        <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen" ng-init="$si=$index"
+                             ng-repeat="i in ctrl.shelves">
+            <uib-accordion-heading>
+                <h5 style="margin:6px 0">
+                    <i class="fa {{i.$isOpen?'fa-minus':'fa-plus'}}"></i>&nbsp;<span>{{i.shelvesName}}</span>
+                    <span style="margin-right: 20px;">最后一次上下架状态&平台库存刷新时间：<span ng-if="!i.lastUpdate">--</span><span ng-if="i.lastUpdate">{{i.lastUpdate | date: 'yyyy-MM-dd HH:mm:ss'}}</span></span>
+                </h5>
+            </uib-accordion-heading>
+            <div class="clearfix button-bar">
+                <div class="pull-left">
+                    <button class="btn btn-default" ng-click="ctrl.sortProduct(i)">{{i.$e?'保存并退出':'排序商品'}}</button>
+                    <button class="btn btn-danger" ng-click="ctrl.removeAll(i)"><i class="fa fa-trash"></i>&nbsp;全量清空</button>
+                    <button class="btn btn-default" ng-disabled="i._uped || ctrl.canPreview(i)" ng-click="ctrl.releaseImage(i)">上传</button>
+                </div>
+                <div ng-if="!i.$e" class="pull-left">
+                    <button class="btn btn-default" ng-disabled="i.clientType===ctrl.clientTypes.APP&&!ctrl.canPreview(i)" ng-click="ctrl.preview(i)" title="在上传处理完成后，才能预览">预览</button>
+                    <button class="btn btn-default" ng-disabled="!ctrl.canPreview(i)" ng-click="ctrl.release(i)" title="在上传处理完成后，才能获取内容">{{i.clientType===ctrl.clientTypes.APP?'下载图片':'复制代码'}}</button>
+                </div>
+                <div ng-if="!i.$e" class="pull-left">
+                    <button type="button" class="btn btn-default" ng-click="ctrl.addShelves(i)"><i class="fa fa-edit"></i>&nbsp;编辑货架</button>
+                    <button type="button" class="btn btn-danger" ng-click="ctrl.deleteShelves(i, $index)"><i class="fa fa-trash"></i>&nbsp;删除货架</button>
+                </div>
+            </div>
+
+            <div class="row" ng-if="!i.$e">
+                <div ng-repeat="p in i.products" ng-if="!p.$hide" ng-include="'/modules/cms/views/shelves/shelves-item.tpl.html'">
+                </div>
+            </div>
+
+            <div id="sv{{$si}}" class="row" sv-root sv-part="i.products" ng-if="i.$e">
+                <div ng-repeat="p in i.products" ng-if="!p.$hide" sv-element="{containment:'#sv{{$si}}'}" class="clearfix pull-left"
+                     ng-include="'/modules/cms/views/shelves/shelves-item-edit.tpl.html'">
+                </div>
+            </div>
+
+        </uib-accordion-group>
+    </uib-accordion>
+
+    <sticky style="position:absolute;top:300px;right:0;z-index:1">
+        <ul class="nav nav-pills nav-stacked" style="min-width:0;width:auto">
+            <li ng-repeat="i in ctrl.shelves">
+                <button type="button" class="btn btn-default" scroll-to="{{::'#s'+$index+',,-60'}}">{{i.shelvesName}}</button>
+            </li>
+            <li>
+                <hr>
+            </li>
+            <li>
+                <button type="button" class="btn btn-info" ng-click="ctrl.addShelves()">新建货架</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" ng-click="ctrl.collapseAll()">全部收起</button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" ng-click="ctrl.expandAll()">全部展开</button>
+            </li>
+        </ul>
+    </sticky>
+</div>

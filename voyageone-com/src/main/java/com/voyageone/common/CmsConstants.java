@@ -73,9 +73,6 @@ public class CmsConstants {
         // 各个平台渠道导入master数据的PlatformActive初始值
         String PLATFORM_ACTIVE = "PLATFORM_ACTIVE";
 
-        // 价格自动同步间隔天数
-        String AUTO_SYN_DAY = "AUTO_SYN_DAY";
-
         // 强制击穿阈值(例如: 10 表示的是10%)
         String MANDATORY_BREAK_THRESHOLD = "MANDATORY_BREAK_THRESHOLD";
 
@@ -99,6 +96,8 @@ public class CmsConstants {
         // Feed导入Master时，在Product更新的情况下，是否更新Feed节点下面的数据
         String FEED_UPDATE_FLG = "FEED_UPDATE_FLG";
 
+        //橱窗图片本地保存位置
+        String SHELVES_IMAGE_PATH = "SHELVES_IMAGE_PATH";
         /**
          * 调用价格计算时, 指定渠道使用什么方式计算价格
          * <p>
@@ -165,10 +164,16 @@ public class CmsConstants {
         // feed增加状态属性
         String AUTO_SET_FEED_IMPORT_FLG = "AUTO_SET_FEED_IMPORT_FLG";
 
+        // 该店铺是否自动审批价格
+        String PLATFORM_IMAGE_DIRECTORY_ID = "PLATFORM_IMAGE_DIRECTORY_ID";
+
         // 商品默认包装重量
         String DEFAULT_PACKAGE_WEIGHT = "DEFAULT_PACKAGE_WEIGHT";
         // 如无默认包装重量，则统一设置包装重量0.5
         double DEFAULT_PACKAGE_WEIGHT_VAL = 0.5;
+
+        //feed的code按不同季度拆分
+        String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
     }
 
     public interface DataAmount {

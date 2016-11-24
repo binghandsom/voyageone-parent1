@@ -29,6 +29,8 @@ public class MqRoutingKey {
      * image create task
      */
     public static final String CMS_BATCH_CmsMtImageCreateTaskJob = "voyageone_cms_batchjob_CmsMtImageCreateTaskJob_queue";
+
+    public static final String CMS_BATCH_PlatformFieldsTaskJob = "voyageone_cms_batchjob_PlatformFieldsTaskJob_queue";
     /**
      * jd mq task
      */
@@ -62,6 +64,16 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_PlatformTitleTranslateJob = "voyageone_cms_batchjob_CmsPlatformTitleTranslateJob_queue";
 
     /**
+     * 货架监控
+     */
+    public static final String CMS_BATCH_ShelvesMonitorJob = "voyageone_cms_batchjob_ShelvesMonitor_queue";
+
+    /**
+     * 货架监控
+     */
+    public static final String CMS_BATCH_ShelvesImageUploadJob = "voyageone_cms_batchjob_ShelvesImageUpload_queue";
+
+    /**
      * 同步产品sku的价格至code的group价格范围
      */
     public static final String CMS_TASK_ProdcutPriceUpdateJob = "voyageone_cms_task_ProdcutPriceUpdateJob_queue";
@@ -81,6 +93,8 @@ public class MqRoutingKey {
      * 高级检索-批处理
      */
     public static final String CMS_TASK_AdvSearch_AsynProcessJob = "voyageone_cms_task_AdvSearch_AsynProcessJob_queue";
+
+    public static final String CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob = "voyageone_cms_task_AdvSearch_RefreshRetailPriceService_queue";
     /**
      * 高级检索-取得产品的bi信息
      */
@@ -92,4 +106,11 @@ public class MqRoutingKey {
      * @since 2.6.0
      */
     public static final String CMS_TASK_BRANDBLOCKJOB = "voyageone_cms_task_CmsBrandBlockJobService_queue";
+    /**
+     * 默认属性功能，用于强制对某商品或某类目进行属性的重新计算赋值和上新
+     * create by jonas on 2016-11-02 19:26:28
+     *
+     * @since 2.9.0
+     */
+    public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
 }

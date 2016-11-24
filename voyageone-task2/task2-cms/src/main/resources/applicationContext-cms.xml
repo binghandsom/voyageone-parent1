@@ -81,7 +81,7 @@
         <task:scheduled ref="CmsShoeZooAnalysisJob" method="run" cron="0 25 0/1 * * ?"/>
 
         <!-- OverStock feed 导入 cms2 -->
-        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0 9 * * ?"/>
+        <task:scheduled ref="CmsOverStockAnalysisJob" method="run" cron="0 0 17 0/3 * ?"/>
 
         <!-- OverStock price 导入 cms2 -->
         <task:scheduled ref="OverStockPriceAnalysisJob" method="run" cron="13 0/2 * * * ?"/>
@@ -172,14 +172,14 @@
         <!-- 每天同步聚美活动里面的价格 -->
         <task:scheduled ref="CmsGetAllPlatformsInfoJob" method="run" cron="0 0 5 * * ?"/>
 
-        <!--&lt;!&ndash; 独立域名上新xml准备（每分钟一次） &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
+        <!-- 独立域名上新xml准备（每分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 独立域名上新（每3分钟一次） &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>-->
+        <!-- 独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
-        <!--&lt;!&ndash; 独立域名类目-产品关系（每5分钟一次） &ndash;&gt;-->
-        <!--<task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>-->
+        <!-- 独立域名类目-产品关系（每5分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductSellercatCnJob" method="run" cron="0 0/5 0-23 * * ?"/>
 
          <!--&lt;!&ndash;独立域名图片上传（每2小时一次） &ndash;&gt;-->
         <!--<task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>-->

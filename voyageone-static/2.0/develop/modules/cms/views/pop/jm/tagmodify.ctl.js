@@ -36,7 +36,7 @@ define([
                 var tag = _.find($scope.vm.tagList, function (tag) {
                     return tag.tagName == tagName;
                 });
-                productTagList.push({tagId: tag.id, tagName: tag.tagName});
+                productTagList.push({tagId: tag.id, tagName: tag.tagName,checked:2});//checked=2 新增
             }
             parameter.tagList = productTagList;
             jmPromotionDetailService.updatePromotionListProductTag(parameter).then(function (res) {

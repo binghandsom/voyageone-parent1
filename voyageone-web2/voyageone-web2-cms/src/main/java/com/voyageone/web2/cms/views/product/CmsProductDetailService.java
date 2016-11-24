@@ -572,6 +572,7 @@ public class CmsProductDetailService extends BaseViewService {
                 image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
+                image.put("qty",product.getCommon().getFields().getQuantity());
                 images.add(image);
             }
         });
@@ -594,6 +595,8 @@ public class CmsProductDetailService extends BaseViewService {
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
         mastData.put("lock", cmsBtProduct.getLock());
+        mastData.put("appSwitch",productComm.getFields().getAppSwitch());
+        mastData.put("translateStatus",productComm.getFields().getTranslateStatus());
         mastData.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
@@ -728,7 +731,7 @@ public class CmsProductDetailService extends BaseViewService {
                         });
                         cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                     }
-                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
                 }
             });
 
@@ -1500,7 +1503,7 @@ public class CmsProductDetailService extends BaseViewService {
         return common;
     }
 
-    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) {
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform,boolean isUpdateJmDealPrice) throws Exception {
 
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1522,8 +1525,35 @@ public class CmsProductDetailService extends BaseViewService {
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
 
+
         //刷新价格
         CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
-        priceService.updateSkuPrice(channelId, cartId, productInfo);
+        priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
+
+    }
+
+    /**
+     * 修改产品共通属性中的图片
+     * @param imageType   图片类型
+     * @param images      图片集合
+     * @return 系统当前时间
+     */
+    public Date restoreImg(String channelId, Long prodId, String imageType,List<String> images){
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put(String.format("common.fields.images%s", imageType.substring(imageType.length()-1,imageType.length())), images);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        return DateTimeUtil.getDate();
     }
 }

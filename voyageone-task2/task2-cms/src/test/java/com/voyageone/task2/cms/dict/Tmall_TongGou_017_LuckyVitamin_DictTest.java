@@ -266,6 +266,24 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             }
 
             {
+                // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" />"));
+
+                RuleExpression imageTemplate = new RuleExpression();
+                imageTemplate.addRuleWord(new TextWord(""));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord(C_自定义图片));
+
+                RuleExpression useOriUrl = new RuleExpression();
+                useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+
+            {
                 // 中间插入自定义部分_产品实拍分隔文字
                 String html = "<img width=\"790px\" src=\"https://img.alicdn.com/imgextra/i1/3031513024/TB2lLA_cEWO.eBjSZPcXXbopVXa_!!3031513024.jpg\"/>";
                 TextWord word = new TextWord(html);
@@ -418,6 +436,19 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				do处理天猫同购无线端20张图片(1, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
+			{
+                // 无线自定义图片
+                do处理天猫同购无线端20张图片(2, ruleRoot, new DictWord("无线自定义图片-1"));
+                do处理天猫同购无线端20张图片(3, ruleRoot, new DictWord("无线自定义图片-2"));
+                do处理天猫同购无线端20张图片(4, ruleRoot, new DictWord("无线自定义图片-3"));
+                do处理天猫同购无线端20张图片(5, ruleRoot, new DictWord("无线自定义图片-4"));
+                do处理天猫同购无线端20张图片(6, ruleRoot, new DictWord("无线自定义图片-5"));
+                do处理天猫同购无线端20张图片(7, ruleRoot, new DictWord("无线自定义图片-6"));
+                do处理天猫同购无线端20张图片(8, ruleRoot, new DictWord("无线自定义图片-7"));
+                do处理天猫同购无线端20张图片(9, ruleRoot, new DictWord("无线自定义图片-8"));
+                do处理天猫同购无线端20张图片(10, ruleRoot, new DictWord("无线自定义图片-9"));
+            }
+
             {
                 // 第3张, 顶部固定图_产品实拍分隔文字
 //                String strImgJiage = "http://img.alicdn.com/imgextra/i3/2640015666/TB2pRsVar5K.eBjy0FnXXaZzVXa_!!2640015666.jpg";
@@ -439,16 +470,16 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				imageIndex.addRuleWord(new TextWord("2"));
 
 				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
-				do处理天猫同购无线端20张图片(2, ruleRoot, new CustomWord(getCommonImagesWord));
+				do处理天猫同购无线端20张图片(11, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
                 // 第4~8张, 无线商品图片(四张)
-                do处理天猫同购无线端20张图片(3, ruleRoot, new DictWord("无线商品图片-1"));
-                do处理天猫同购无线端20张图片(4, ruleRoot, new DictWord("无线商品图片-2"));
-                do处理天猫同购无线端20张图片(5, ruleRoot, new DictWord("无线商品图片-3"));
-                do处理天猫同购无线端20张图片(6, ruleRoot, new DictWord("无线商品图片-4"));
-                do处理天猫同购无线端20张图片(7, ruleRoot, new DictWord("无线商品图片-5"));
+                do处理天猫同购无线端20张图片(12, ruleRoot, new DictWord("无线商品图片-1"));
+                do处理天猫同购无线端20张图片(13, ruleRoot, new DictWord("无线商品图片-2"));
+                do处理天猫同购无线端20张图片(14, ruleRoot, new DictWord("无线商品图片-3"));
+                do处理天猫同购无线端20张图片(15, ruleRoot, new DictWord("无线商品图片-4"));
+                do处理天猫同购无线端20张图片(16, ruleRoot, new DictWord("无线商品图片-5"));
             }
 
             {
@@ -472,7 +503,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				imageIndex.addRuleWord(new TextWord("0"));
 
 				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
-				do处理天猫同购无线端20张图片(8, ruleRoot, new CustomWord(getCommonImagesWord));
+				do处理天猫同购无线端20张图片(17, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
@@ -496,7 +527,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				imageIndex.addRuleWord(new TextWord("1"));
 
 				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
-				do处理天猫同购无线端20张图片(9, ruleRoot, new CustomWord(getCommonImagesWord));
+				do处理天猫同购无线端20张图片(18, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             {
@@ -520,7 +551,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				imageIndex.addRuleWord(new TextWord("2"));
 
 				CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
-				do处理天猫同购无线端20张图片(10, ruleRoot, new CustomWord(getCommonImagesWord));
+				do处理天猫同购无线端20张图片(19, ruleRoot, new CustomWord(getCommonImagesWord));
             }
 
             // end

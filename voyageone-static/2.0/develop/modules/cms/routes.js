@@ -150,7 +150,13 @@ define(function () {
             "hash": "/channel/default_attribute_detail/:upEntity?",
             "templateUrl": "views/channel/defaultAttribute/detail.tpl.html",
             "controllerUrl": "modules/cms/views/channel/defaultAttribute/detail.ctl",
-            "controller": "attributeDetailController as ctrl"
+            "controller": "AttributeDetailController as ctrl"
+        },
+        "channel_config_list" : {
+            "hash": "/channel/channel_config_list",
+            "templateUrl": "views/channel/config/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/config/index.ctl",
+            "controller": "channelConfigController as ctrl"
         },
         "search_advance_new": {
             "hash": "/search/advanceSearch",
@@ -279,6 +285,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/product/detail.ctl",
             "controller": "productDetailController as ctrl"
         },
+/*        "product_detail_cart_skuModule": {
+            "hash": "/product/detail/productId/:cartId:/skuModule",
+            "templateUrl": "views/product/detail.tpl.html",
+            "controllerUrl": "modules/cms/views/product/detail.ctl",
+            "controller": "productDetailController as ctrl"
+        },*/
         "channel_common": {
             "hash": "/channel/common",
             "templateUrl": "views/channel/common/attribute.tpl.html",
@@ -390,6 +402,18 @@ define(function () {
             "templateUrl": "views/maintain/common/masterBrandApplication/index.tpl.html",
             "controllerUrl": "modules/cms/views/maintain/common/masterBrandApplication/index.ctl",
             "controller": "masterBrandApplicationController as ctrl"
+        },
+        "shelves-template": {
+            "hash": "/shelves/template/management",
+            "templateUrl": "views/shelves/template-management.tpl.html",
+            "controllerUrl": "modules/cms/views/shelves/template-management.ctl",
+            "controller": "shelvesTemplateController as ctrl"
+        },
+        "shelves-list": {
+            "hash": "/shelves/management",
+            "templateUrl": "views/shelves/shelves-list.tpl.html",
+            "controllerUrl": "modules/cms/views/shelves/shelves-list.ctl",
+            "controller": "ShelvesListController as ctrl"
         }
     };
 });

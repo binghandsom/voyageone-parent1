@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtShelvesTemplateDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesTemplateModel" />
+    <sql id="Example_Where_Clause" >
+        <where >
+            <foreach collection="oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Update_By_Example_Where_Clause" >
+        <where >
+            <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+                <if test="criteria.valid" >
+                    <trim prefix="(" suffix=")" prefixOverrides="and" >
+                        <foreach collection="criteria.criteria" item="criterion" >
+                            <choose >
+                                <when test="criterion.noValue" >
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue" >
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue" >
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue" >
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+
+    <sql id="Base_Column_List" >
+        `id`, `template_name`, `template_type`, `client_type`, `cart_id`, `channel_id`, `remark`, 
+        `num_per_line`, `html_head`, `html_module_title`, `html_module_search`, `html_big_image`, 
+        `html_small_image`, `html_foot`, `html_clearfix1`, `html_clearfix2`, `html_last_image`, 
+        `html_image_template`, `creater`, `created`, `modifier`, `modified`, `active`
+    </sql>
+
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.cms.CmsBtShelvesTemplateExample" >
+        select
+        <if test="distinct" >
+            distinct
+        </if>
+        'true' as QUERYID,
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+        <if test="orderByClause != null" >
+            order by ${orderByClause}
+        </if>
+    </select>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="countByExample" parameterType="com.voyageone.service.model.cms.CmsBtShelvesTemplateExample" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_shelves_template
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </select>
+
+    <update id="updateByExampleSelective" parameterType="map" >
+        update cms_bt_shelves_template
+        <set >
+            <if test="record.id != null" >
+                `id` = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.templateName != null" >
+                `template_name` = #{record.templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="record.templateType != null" >
+                `template_type` = #{record.templateType,jdbcType=INTEGER},
+            </if>
+            <if test="record.clientType != null" >
+                `client_type` = #{record.clientType,jdbcType=INTEGER},
+            </if>
+            <if test="record.cartId != null" >
+                `cart_id` = #{record.cartId,jdbcType=INTEGER},
+            </if>
+            <if test="record.channelId != null" >
+                `channel_id` = #{record.channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null" >
+                `remark` = #{record.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="record.numPerLine != null" >
+                `num_per_line` = #{record.numPerLine,jdbcType=INTEGER},
+            </if>
+            <if test="record.htmlHead != null" >
+                `html_head` = #{record.htmlHead,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlModuleTitle != null" >
+                `html_module_title` = #{record.htmlModuleTitle,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlModuleSearch != null" >
+                `html_module_search` = #{record.htmlModuleSearch,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlBigImage != null" >
+                `html_big_image` = #{record.htmlBigImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlSmallImage != null" >
+                `html_small_image` = #{record.htmlSmallImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlFoot != null" >
+                `html_foot` = #{record.htmlFoot,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlClearfix1 != null" >
+                `html_clearfix1` = #{record.htmlClearfix1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlClearfix2 != null" >
+                `html_clearfix2` = #{record.htmlClearfix2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlLastImage != null" >
+                `html_last_image` = #{record.htmlLastImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.htmlImageTemplate != null" >
+                `html_image_template` = #{record.htmlImageTemplate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="record.creater != null" >
+                `creater` = #{record.creater,jdbcType=VARCHAR},
+            </if>
+            <if test="record.created != null" >
+                `created` = #{record.created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifier != null" >
+                `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="record.modified != null" >
+                `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.active != null" >
+                `active` = #{record.active,jdbcType=INTEGER},
+            </if>
+        </set>
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="updateByExample" parameterType="map" >
+        update cms_bt_shelves_template
+        set `id` = #{record.id,jdbcType=INTEGER},
+            `template_name` = #{record.templateName,jdbcType=VARCHAR},
+            `template_type` = #{record.templateType,jdbcType=INTEGER},
+            `client_type` = #{record.clientType,jdbcType=INTEGER},
+            `cart_id` = #{record.cartId,jdbcType=INTEGER},
+            `channel_id` = #{record.channelId,jdbcType=VARCHAR},
+            `remark` = #{record.remark,jdbcType=VARCHAR},
+            `num_per_line` = #{record.numPerLine,jdbcType=INTEGER},
+            `html_head` = #{record.htmlHead,jdbcType=LONGVARCHAR},
+            `html_module_title` = #{record.htmlModuleTitle,jdbcType=LONGVARCHAR},
+            `html_module_search` = #{record.htmlModuleSearch,jdbcType=LONGVARCHAR},
+            `html_big_image` = #{record.htmlBigImage,jdbcType=LONGVARCHAR},
+            `html_small_image` = #{record.htmlSmallImage,jdbcType=LONGVARCHAR},
+            `html_foot` = #{record.htmlFoot,jdbcType=LONGVARCHAR},
+            `html_clearfix1` = #{record.htmlClearfix1,jdbcType=LONGVARCHAR},
+            `html_clearfix2` = #{record.htmlClearfix2,jdbcType=LONGVARCHAR},
+            `html_last_image` = #{record.htmlLastImage,jdbcType=LONGVARCHAR},
+            `html_image_template` = #{record.htmlImageTemplate,jdbcType=LONGVARCHAR},
+            `creater` = #{record.creater,jdbcType=VARCHAR},
+            `created` = #{record.created,jdbcType=TIMESTAMP},
+            `modifier` = #{record.modifier,jdbcType=VARCHAR},
+            `modified` = #{record.modified,jdbcType=TIMESTAMP},
+            `active` = #{record.active,jdbcType=INTEGER}
+        <if test="_parameter != null" >
+            <include refid="Update_By_Example_Where_Clause" />
+        </if>
+    </update>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtShelvesTemplateModel" >
+        update cms_bt_shelves_template
+        <set >
+            <if test="templateName != null" >
+                `template_name` = #{templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateType != null" >
+                `template_type` = #{templateType,jdbcType=INTEGER},
+            </if>
+            <if test="clientType != null" >
+                `client_type` = #{clientType,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                `remark` = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="numPerLine != null" >
+                `num_per_line` = #{numPerLine,jdbcType=INTEGER},
+            </if>
+            <if test="htmlHead != null" >
+                `html_head` = #{htmlHead,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlModuleTitle != null" >
+                `html_module_title` = #{htmlModuleTitle,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlModuleSearch != null" >
+                `html_module_search` = #{htmlModuleSearch,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlBigImage != null" >
+                `html_big_image` = #{htmlBigImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlSmallImage != null" >
+                `html_small_image` = #{htmlSmallImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlFoot != null" >
+                `html_foot` = #{htmlFoot,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlClearfix1 != null" >
+                `html_clearfix1` = #{htmlClearfix1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlClearfix2 != null" >
+                `html_clearfix2` = #{htmlClearfix2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlLastImage != null" >
+                `html_last_image` = #{htmlLastImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlImageTemplate != null" >
+                `html_image_template` = #{htmlImageTemplate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=INTEGER},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_bt_shelves_template
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <delete id="deleteByExample" parameterType="com.voyageone.service.model.cms.CmsBtShelvesTemplateExample" >
+        delete from cms_bt_shelves_template
+        <if test="_parameter != null" >
+            <include refid="Example_Where_Clause" />
+        </if>
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        <where >
+            <if test="templateName != null" >
+                and `template_name` = #{templateName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="clientType != null" >
+                and `client_type` = #{clientType,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="numPerLine != null" >
+                and `num_per_line` = #{numPerLine,jdbcType=INTEGER}
+            </if>
+            <if test="htmlHead != null" >
+                and `html_head` = #{htmlHead,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleTitle != null" >
+                and `html_module_title` = #{htmlModuleTitle,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleSearch != null" >
+                and `html_module_search` = #{htmlModuleSearch,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlBigImage != null" >
+                and `html_big_image` = #{htmlBigImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlSmallImage != null" >
+                and `html_small_image` = #{htmlSmallImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlFoot != null" >
+                and `html_foot` = #{htmlFoot,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix1 != null" >
+                and `html_clearfix1` = #{htmlClearfix1,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix2 != null" >
+                and `html_clearfix2` = #{htmlClearfix2,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlLastImage != null" >
+                and `html_last_image` = #{htmlLastImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlImageTemplate != null" >
+                and `html_image_template` = #{htmlImageTemplate,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        <where >
+            <if test="templateName != null" >
+                and `template_name` = #{templateName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="clientType != null" >
+                and `client_type` = #{clientType,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="numPerLine != null" >
+                and `num_per_line` = #{numPerLine,jdbcType=INTEGER}
+            </if>
+            <if test="htmlHead != null" >
+                and `html_head` = #{htmlHead,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleTitle != null" >
+                and `html_module_title` = #{htmlModuleTitle,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleSearch != null" >
+                and `html_module_search` = #{htmlModuleSearch,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlBigImage != null" >
+                and `html_big_image` = #{htmlBigImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlSmallImage != null" >
+                and `html_small_image` = #{htmlSmallImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlFoot != null" >
+                and `html_foot` = #{htmlFoot,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix1 != null" >
+                and `html_clearfix1` = #{htmlClearfix1,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix2 != null" >
+                and `html_clearfix2` = #{htmlClearfix2,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlLastImage != null" >
+                and `html_last_image` = #{htmlLastImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlImageTemplate != null" >
+                and `html_image_template` = #{htmlImageTemplate,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_bt_shelves_template
+        <where >
+            <if test="templateName != null" >
+                and `template_name` = #{templateName,jdbcType=VARCHAR}
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="clientType != null" >
+                and `client_type` = #{clientType,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="remark != null" >
+                and `remark` = #{remark,jdbcType=VARCHAR}
+            </if>
+            <if test="numPerLine != null" >
+                and `num_per_line` = #{numPerLine,jdbcType=INTEGER}
+            </if>
+            <if test="htmlHead != null" >
+                and `html_head` = #{htmlHead,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleTitle != null" >
+                and `html_module_title` = #{htmlModuleTitle,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlModuleSearch != null" >
+                and `html_module_search` = #{htmlModuleSearch,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlBigImage != null" >
+                and `html_big_image` = #{htmlBigImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlSmallImage != null" >
+                and `html_small_image` = #{htmlSmallImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlFoot != null" >
+                and `html_foot` = #{htmlFoot,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix1 != null" >
+                and `html_clearfix1` = #{htmlClearfix1,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlClearfix2 != null" >
+                and `html_clearfix2` = #{htmlClearfix2,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlLastImage != null" >
+                and `html_last_image` = #{htmlLastImage,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="htmlImageTemplate != null" >
+                and `html_image_template` = #{htmlImageTemplate,jdbcType=LONGVARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtShelvesTemplateModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_shelves_template
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="templateName != null" >
+                `template_name`,
+            </if>
+            <if test="templateType != null" >
+                `template_type`,
+            </if>
+            <if test="clientType != null" >
+                `client_type`,
+            </if>
+            <if test="cartId != null" >
+                `cart_id`,
+            </if>
+            <if test="channelId != null" >
+                `channel_id`,
+            </if>
+            <if test="remark != null" >
+                `remark`,
+            </if>
+            <if test="numPerLine != null" >
+                `num_per_line`,
+            </if>
+            <if test="htmlHead != null" >
+                `html_head`,
+            </if>
+            <if test="htmlModuleTitle != null" >
+                `html_module_title`,
+            </if>
+            <if test="htmlModuleSearch != null" >
+                `html_module_search`,
+            </if>
+            <if test="htmlBigImage != null" >
+                `html_big_image`,
+            </if>
+            <if test="htmlSmallImage != null" >
+                `html_small_image`,
+            </if>
+            <if test="htmlFoot != null" >
+                `html_foot`,
+            </if>
+            <if test="htmlClearfix1 != null" >
+                `html_clearfix1`,
+            </if>
+            <if test="htmlClearfix2 != null" >
+                `html_clearfix2`,
+            </if>
+            <if test="htmlLastImage != null" >
+                `html_last_image`,
+            </if>
+            <if test="htmlImageTemplate != null" >
+                `html_image_template`,
+            </if>
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `created`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+            `modified`,
+            <if test="active != null" >
+                `active`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="templateName != null" >
+                #{templateName,jdbcType=VARCHAR},
+            </if>
+            <if test="templateType != null" >
+                #{templateType,jdbcType=INTEGER},
+            </if>
+            <if test="clientType != null" >
+                #{clientType,jdbcType=INTEGER},
+            </if>
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
+            </if>
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="numPerLine != null" >
+                #{numPerLine,jdbcType=INTEGER},
+            </if>
+            <if test="htmlHead != null" >
+                #{htmlHead,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlModuleTitle != null" >
+                #{htmlModuleTitle,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlModuleSearch != null" >
+                #{htmlModuleSearch,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlBigImage != null" >
+                #{htmlBigImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlSmallImage != null" >
+                #{htmlSmallImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlFoot != null" >
+                #{htmlFoot,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlClearfix1 != null" >
+                #{htmlClearfix1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlClearfix2 != null" >
+                #{htmlClearfix2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlLastImage != null" >
+                #{htmlLastImage,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="htmlImageTemplate != null" >
+                #{htmlImageTemplate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

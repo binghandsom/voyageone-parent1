@@ -1,0 +1,185 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"> 加入活动 </h5>
+    </div>
+    <div class="modal-body">
+        <form name="ctrl.promotionFrom" class="form-horizontal" novalidate>
+            <div class="form-group">
+                <div class="col-sm-7">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">平台:</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" ng-model="ctrl.cartBean.name" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{'TXT_BASE_PRICE' |translate}}</label>
+                        <div class="col-sm-9">
+                            <label class="col-sm-3 m-t-xs">
+                                <input type="radio" name="BasePrice" value="priceMsrp" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('1','TXT_MSRP_PRICE')"  required>&nbsp;{{'TXT_MSRP_PRICE'|translate}}
+                            </label>
+                            <label class="col-sm-3 m-t-xs">
+                                <input type="radio" name="BasePrice" value="priceRetail" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('2','TXT_RETAIL_PRICE_WITH_COLON')"  required>&nbsp;{{'TXT_RETAIL_PRICE_WITH_COLON'|translate}}
+                            </label>
+                            <label class="col-sm-3 m-t-xs">
+                                <input type="radio" name="BasePrice" value="priceSale" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('3','TXT_SALE_PRICE')"  required>&nbsp;{{'TXT_SALE_PRICE'|translate}}
+                            </label>
+                            <label class="col-sm-3 m-t-xs">
+                                <input type="radio" name="BasePrice" value="none" ng-model="ctrl.groupInfo.priceType" ng-click="ctrl.chkPriceType('4','')" required>&nbsp;{{'TXT_NONE'|translate}}
+                            </label>
+                        </div>
+                        <div class="col-sm-offset-2">
+                            <vo-message target="ctrl.promotionFrom.BasePrice" class="m-l-xs"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{'TXT_EXPRESSION' | translate}}</label>
+                        <div class="col-sm-9">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <select class="form-control" name="optType" ng-model="ctrl.groupInfo.optType" ng-disabled="ctrl.groupInfo._optStatus" ng-change="ctrl.chkOptionType()" required>
+                                        <option value="" selected="selected">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        <option value="*">*</option>
+                                        <option value="+">+</option>
+                                        <option value="-">-</option>
+                                        <option value="=">=</option>
+                                    </select>
+                                    <div class="m-t-xs">
+                                        <vo-message target="ctrl.promotionFrom.optType"></vo-message>
+                                    </div>
+                                </div>
+                                <div class="col-md-6" ng-if="ctrl.groupInfo.priceInputFlg">
+                                    <input type="number" class="form-control"  name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
+                                    <div class="m-t-xs">
+                                        <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label class="col-sm-6">
+                                        <input type="radio" name="roundType" value="1" ng-model="ctrl.groupInfo.roundType" required>&nbsp;小数点向上取整
+                                    </label>
+                                    <label class="col-sm-6">
+                                        <input type="radio" name="roundType" value="2" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向下取整
+                                    </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <label class="col-sm-6">
+                                        <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
+                                    </label>
+                                    <label class="col-sm-6">
+                                        <input type="radio" name="roundType" value="4" ng-model="ctrl.groupInfo.roundType" required>&nbsp;无特殊处理
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <vo-message target="ctrl.promotionFrom.roundType"></vo-message>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="col-sm-2 label label-info">活动价</span>&emsp;=&emsp;<span class="label label-primary">{{ctrl.groupInfo._typeText}}</span>&emsp;
+                        {{ctrl.groupInfo._opeText}}&emsp;<span class="label label-primary">{{ctrl.groupInfo.priceValue}}</span>&emsp;
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4">
+                            <input type="radio" name="skuUpdType" value="1" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最高价
+                        </label>
+                        <label class="col-sm-4">
+                            <input type="radio" name="skuUpdType" value="2" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU统一最低价
+                        </label>
+                        <label class="col-sm-4">
+                            <input type="radio" name="skuUpdType" value="3" ng-model="ctrl.groupInfo.skuUpdType" required>&nbsp;商品内，SKU价格不统一
+                        </label>
+                        <div class="form-group">
+                            <vo-message target="ctrl.promotionFrom.skuUpdType" class="m-l-sm"></vo-message>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">活动时间:</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-md-5 input-group">
+                                    <input class="form-control" ng-model="ctrl.groupInfo.startTime" uib-datepicker-popup
+                                           name="startTime"
+                                           date-model-format="yyyy-MM-dd"
+                                           min-date="ctrl.nowTime"
+                                           is-open="datePicker1" close-text="Close">
+                                    <span class="input-group-btn">
+                                      <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                ~
+                                <div class="col-md-5 input-group">
+                                    <input class="form-control" ng-model="ctrl.groupInfo.endTime" uib-datepicker-popup
+                                           name="endTime"
+                                           date-model-format="yyyy-MM-dd"
+                                           min-date="ctrl.groupInfo.startTime"
+                                           is-open="datePicker2" close-text="Close">
+                                    <span class="input-group-btn">
+                                       <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <button class="btn btn-success" ng-click="ctrl.search()"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">活动标签</label>
+                            <div class="col-sm-9">
+                                <div class="column_overflow" style="border:1px solid silver;overflow-x:hidden">
+                                    <div class="col-sm-12" ng-repeat="category in ctrl.listTreeNode track by category.id">
+                                        <div class="m-t-xs">
+                                            <label>
+                                                <input style="margin: 0" type="checkbox"
+                                                       ui-indeterminate="category.checked == 1"
+                                                       ng-checked="category.checked == 2"
+                                                       ng-click="ctrl.canSelectChild(category)"
+                                                       ng-model="ctrl.checkNodes[category.id]">
+                                                &nbsp;{{category.name}}
+                                            </label>
+                                        </div>
+                                        <div ng-if="category.children.length > 0" ng-include="'categoryContainer'"
+                                             ng-init="categoryContainer = category.children;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!------------------- 显示活动标签 ------------------->
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"
+                ng-disabled="ctrl.promotionFrom.$invalid || !ctrl.listTreeNode.length">
+            <i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}
+        </button>
+    </div>
+</div>
+
+<script id="categoryContainer" type="text/ng-template">
+    <div class="col-sm-12 m-l-md" ng-repeat="category in categoryContainer">
+        <div class="m-t-xs">
+            <label>
+                <input style="margin: 0" type="checkbox"
+                       ui-indeterminate="category.checked == 1"
+                       ng-checked="category.checked == 2"
+                       ng-click="ctrl.canSelectChild(category)"
+                       ng-model="ctrl.checkNodes[category.id]">
+                &nbsp;{{category.name}}
+            </label>
+        </div>
+    </div>
+</script>

@@ -33,6 +33,20 @@
             <if test="createdEnd != null">
                 and #{createdEnd,jdbcType=VARCHAR} >= a.created
             </if>
+            <if test="promotionStart != null and  promotionEnd != null">
+                and (
+                activity_start BETWEEN #{promotionStart,jdbcType=VARCHAR}
+                AND #{promotionEnd,jdbcType=VARCHAR}
+                )
+                OR (
+                activity_end BETWEEN #{promotionStart,jdbcType=VARCHAR}
+                AND #{promotionEnd,jdbcType=VARCHAR}
+                )
+                OR (
+                #{promotionStart,jdbcType=VARCHAR} > activity_start
+                AND activity_end > #{promotionEnd,jdbcType=VARCHAR}
+                )
+            </if>
         </where>
         order by ${orderByColumn}  limit #{offset},#{pageRowCount}) as a on a.Id=cms_bt_promotion.Id
     </select>
@@ -67,5 +81,25 @@
                 and #{createdEnd,jdbcType=VARCHAR} >= a.created
             </if>
         </where>
+    </select>
+    <select id="selectAddPromotionList" resultType="MapModel">
+        SELECT a.`id`,a.`promotion_name`,a.`ref_tag_id`,COUNT(c.id) AS productCount FROM voyageone_cms2.cms_bt_promotion a
+        left JOIN  `cms_bt_promotion_codes` AS c ON  a.`id`=c.`promotion_id`  AND c.`product_code` IN  <foreach item="item" index="i" collection="codeList"  open="("  separator=","  close=")">
+        #{item}
+    </foreach>
+        where a.active = 1
+              and a.activity_end >= now()
+              and a.promotion_status = 1
+              and a.channel_id=#{channelId}
+              and a.cart_id=#{cartId}
+        <if test="activityStart != null">
+            and a.activity_end >= #{activityStart,jdbcType=VARCHAR}
+        </if>
+        <if test="activityEnd != null">
+            and #{activityEnd,jdbcType=VARCHAR} >= a.activity_end
+        </if>
+
+        GROUP BY a.id
+        ORDER BY a.id DESC
     </select>
 </mapper>

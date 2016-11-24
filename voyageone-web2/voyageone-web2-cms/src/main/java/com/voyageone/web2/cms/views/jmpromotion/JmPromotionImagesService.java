@@ -60,7 +60,7 @@ public class JmPromotionImagesService extends BaseViewService {
         Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(model));
         if (imageMap != null) {
             imageMap.forEach((s, o) -> {
-                if (s != null && o instanceof String && o.toString().contains(model.getJmPromotionId() + "")) {
+                if (s != null && o instanceof String && o.toString().contains("-" + s + "-")) {
                     if (model.getUseTemplate() != null && model.getUseTemplate())
                         promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(o.toString(), s, cmsBtJmPromotionSaveBean));
                     else

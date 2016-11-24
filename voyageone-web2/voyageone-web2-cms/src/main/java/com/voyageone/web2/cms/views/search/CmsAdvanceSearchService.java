@@ -19,6 +19,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
+import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -26,6 +27,7 @@ import com.voyageone.service.impl.cms.product.ProductTagService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
+import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
@@ -35,6 +37,7 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +80,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
 
+    @Autowired
+    private CmsBtShelvesService cmsBtShelvesService;
+
+    @Autowired
+    private SxProductService sxProductService;
+
     /**
      * 获取检索页面初始化的master data数据
      */
@@ -104,14 +113,23 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
         // 获取brand list
         masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
-
+        
+        // 取得产品类型
+        masterData.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), language));
+        // 取得尺寸类型
+        masterData.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), language));
+        
+        // 取得销量类型
+        List<Map<String, String>> salesTypeList = advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null);
+        List<Map<String, String>> allSortList = new ArrayList<>(salesTypeList);
         // 获取sort list
         List<Map<String, Object>> sortList = commonPropService.getCustColumns(3);
         List<Map<String, String>> biDataList = advSearchOtherService.getBiDataList(userInfo.getSelChannelId(), language, null);
-        for (Map<String, String> biData : biDataList) {
+        allSortList.addAll(biDataList);
+        for (Map<String, String> sortData : allSortList) {
             Map<String, Object> keySumMap = new HashMap<>();
-            keySumMap.put("propId", biData.get("value"));
-            keySumMap.put("propName", biData.get("name"));
+            keySumMap.put("propId", sortData.get("value"));
+            keySumMap.put("propName", sortData.get("name"));
             sortList.add(keySumMap);
         }
         masterData.put("sortList", sortList);
@@ -120,6 +138,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
         // 按cart获取promotion list，只加载有效的活动(活动期内/未关闭/有标签)
         Map<String, List> promotionMap = new HashMap<>();
+        Map<String, List> shelvesMap = new HashMap<>();
         param = new HashMap<>();
         for (TypeChannelBean cartBean : cartList) {
             if (CartEnums.Cart.JM.getId().equals(cartBean.getValue())) {
@@ -129,8 +148,12 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 param.put("cartId", Integer.parseInt(cartBean.getValue()));
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
             }
+
+            shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
         }
         masterData.put("promotionMap", promotionMap);
+
+        masterData.put("shelvesMap", shelvesMap);
 
         // 获取自定义查询用的属性
         masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
@@ -138,8 +161,11 @@ public class CmsAdvanceSearchService extends BaseViewService {
         //标签type
         masterData.put("tagTypeList", Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), language));
 
+        // 翻译状态
+        masterData.put("transStatusList", Types.getTypeList(TypeConfigEnums.MastType.translationStatus.getId(), language));
+
         // 设置按销量排序的选择列表
-        masterData.put("salesTypeList", advSearchOtherService.getSalesTypeList(userInfo.getSelChannelId(), language, null));
+        masterData.put("salesTypeList", salesTypeList);
 
         // 设置BI数据显示的选择列表
         masterData.put("biDataList", biDataList);
@@ -187,8 +213,41 @@ public class CmsAdvanceSearchService extends BaseViewService {
             isPriceFormula = "1";
         }
         masterData.put("isPriceFormula", isPriceFormula);
+        
+        // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
+        masterData.put("channelConfig", getChannelConfig(userInfo.getSelChannelId(), cartList, language));
 
         return masterData;
+    }
+    
+    /**
+     * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
+     */
+    public Map<String, Object> getChannelConfig(String channelId, Integer cartId, String langId) {
+    	TypeChannelBean channelConfig = new TypeChannelBean();
+    	channelConfig.setValue(String.valueOf(cartId));
+    	return getChannelConfig(channelId, Arrays.asList(channelConfig), langId);
+    }
+    
+    /**
+     * 取得平台店铺的配置（目前控制智能上新的显示与隐藏）
+     */
+    public Map<String, Object> getChannelConfig(String channelId, List<TypeChannelBean> cartList, String langId) {
+        // 取得渠道的通用配置，动态按钮或配置可以直接在此外添加。
+        Map<String, Object> configMap = new HashMap<String, Object>();
+        if (CollectionUtils.isEmpty(cartList)) {
+        	configMap.put("publishEnabledChannels", "");
+        } else {
+        	List<String> publishEnabledChannels = new ArrayList<String>();
+        	cartList.forEach(cart -> {
+        		if (sxProductService.isSmartSx(channelId, Integer.valueOf(cart.getValue()))) {
+        			publishEnabledChannels.add(cart.getValue());
+        		}
+        	});
+        	configMap.put("publishEnabledChannels", publishEnabledChannels);
+        }
+        
+        return configMap;
     }
 
     /**

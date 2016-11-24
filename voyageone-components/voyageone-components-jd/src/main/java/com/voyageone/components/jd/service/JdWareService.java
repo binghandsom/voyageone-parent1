@@ -420,7 +420,7 @@ public class JdWareService extends JdBase {
                     // 京东返回正常的场合
                     if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
                         // 返回上传图片成功,跳出循环，返回true
-                        logger.error("调用京东API根据商品Id，销售属性值Id增加图片成功 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
+                        logger.info("调用京东API根据商品Id，销售属性值Id增加图片成功 " + "channel_id:" + shop.getOrder_channel_id() + ",cart_id:"
                                 + shop.getCart_id() + ",ware_id:" + request.getWareId() + ",attrValueId:" + attrValueId
                                 + ",pic_url:" + picUrl);
 //                        break;
@@ -901,7 +901,7 @@ public class JdWareService extends JdBase {
     public String getJdProductCatId(ShopBean shop, String wareId) {
         String catId = null;
         String field = "cid";
-        WareListRequest request = new WareListRequest();
+        WareListRequest request = new WareListRequest ();
         request.setWareIds(wareId);
         request.setFields(field);
 
@@ -921,6 +921,25 @@ public class JdWareService extends JdBase {
         }
 
         return catId;
+    }
+    public WareListResponse getJdProduct(ShopBean shop, String wareId, String field) {
+        String catId = null;
+        WareListRequest request = new WareListRequest ();
+        request.setWareIds(wareId);
+        request.setFields(field);
+
+        try {
+            WareListResponse response = reqApi(shop, request);
+            if ("0".equals(response.getCode())) {
+                return response;
+            } else {
+                logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! " + response.getZhDesc());
+            }
+
+        } catch (Exception e) {
+            logger.error("调用京东API取得商品信息失败[wareId:" + wareId + "]! ");
+        }
+        return null;
     }
 
     /**

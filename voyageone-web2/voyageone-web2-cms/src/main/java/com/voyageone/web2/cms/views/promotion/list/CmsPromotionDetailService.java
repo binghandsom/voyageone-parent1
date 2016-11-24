@@ -10,6 +10,7 @@ import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodesTagDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -17,6 +18,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionModelService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodesTagModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
@@ -27,6 +29,7 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsPromotionExportBean;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2015/12/15.
@@ -50,28 +55,21 @@ import java.util.Map;
 public class CmsPromotionDetailService extends BaseViewService {
 
     @Autowired
+    CmsBtPromotionCodesTagDao cmsBtPromotionCodesTagDao;
+    @Autowired
     private TaskService taskService;
-
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
     @Autowired
     private CmsAddToPromotionService cmsPromotionSelectService;
-
     @Autowired
     private PromotionDetailService promotionDetailService;
-
     @Autowired
     private PromotionModelService promotionModelService;
-
     @Autowired
     private PromotionCodeService promotionCodeService;
-
     @Autowired
     private PromotionSkuService promotionSkuService;
-
-    @Autowired
-    private ProductService productService;
 
 
 //    private static final int codeCellNum = 1;
@@ -133,6 +131,8 @@ public class CmsPromotionDetailService extends BaseViewService {
 //        });
 //        return response;
 //    }
+    @Autowired
+    private ProductService productService;
 
     public Map<String, List<String>> insertPromotionProduct2(List<CmsBtPromotionGroupsBean> productModels, int promotionId, String operator) {
 
@@ -150,18 +150,20 @@ public class CmsPromotionDetailService extends BaseViewService {
         List<CmsBtTagModel> tags = cmsPromotionSelectService.selectListByParentTagId(promotion.getRefTagId());
 
         for (CmsBtPromotionGroupsBean productModel : productModels) {
-            productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
-                CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
-                if (tag != null) {
-                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
-                }
-            });
+            // votodo: 2016/11/10  tag
+//            productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
+//                CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
+//                if (tag != null) {
+//                    cmsBtPromotionCodeModel1.setTagId(tag.getId());
+//                }
+//            });
 
             boolean errflg = false;
             try {
                 productModel.setPromotionId(promotionId);
                 productModel.setModifier(operator);
-                promotionDetailService.insertPromotionGroup(productModel);
+                productModel.setChannelId(promotion.getChannelId());
+                promotionDetailService.insertPromotionGroup(productModel,tags);
             } catch (Exception e) {
                 $error(e);
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("fail").add(cmsBtPromotionCodeModel.getProductCode()));
@@ -234,9 +236,23 @@ public class CmsPromotionDetailService extends BaseViewService {
                     map.setPlatformStatus(cmsBtProductModel.getGroupBean().getPlatformStatus());
                     map.setInventory(cmsBtProductModel.getCommon().getFields().getQuantity());
                 }
+                setTagNames(map);
             });
         }
         return promList;
+    }
+
+    private void setTagNames(CmsBtPromotionCodesBean bean) {
+        // CmsBtJmPromotionTagProductModel parameter = new CmsBtJmPromotionTagProductModel();
+        // parameter.setCmsBtJmPromotionProductId(Integer.valueOf(map.get("id").toString()));
+        Map<String, Object> map = new HashedMap();
+        map.put("cmsBtPromotionCodesId", bean.getId());
+        List<CmsBtPromotionCodesTagModel> cmsBtJmPromotionTagProductModelList = cmsBtPromotionCodesTagDao.selectList(map);
+        List<String> tagNameList = cmsBtJmPromotionTagProductModelList
+                .stream()
+                .map(CmsBtPromotionCodesTagModel::getTagName)
+                .collect(Collectors.toList());
+        bean.setTagNameList(tagNameList);
     }
 
     /**

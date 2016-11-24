@@ -11,9 +11,14 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeedCustomPropDao;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
@@ -37,36 +42,36 @@ import static java.util.stream.Collectors.toList;
  * Created by jonas on 8/15/16.
  *
  * @author jonas
- * @version 2.4.0
+ * @version 2.9.0
  * @since 2.4.0
  */
 @Service
 class PlatformMappingViewService extends BaseViewService {
-
     private final PlatformMappingService platformMappingService;
-
     private final PlatformSchemaService platformSchemaService;
-
     private final CmsMtPlatformCommonSchemaService platformCommonSchemaService;
-
     private final CommonSchemaService commonSchemaService;
-
     private final CmsMtFeedCustomPropDao feedCustomPropDao;
+    private final PlatformCategoryService platformCategoryService;
+    private final MqSender mqSender;
 
     @Autowired
     public PlatformMappingViewService(PlatformMappingService platformMappingService,
                                       PlatformSchemaService platformSchemaService,
                                       CmsMtPlatformCommonSchemaService platformCommonSchemaService,
                                       CommonSchemaService commonSchemaService,
-                                      CmsMtFeedCustomPropDao feedCustomPropDao) {
+                                      CmsMtFeedCustomPropDao feedCustomPropDao,
+                                      PlatformCategoryService platformCategoryService, MqSender mqSender) {
         this.platformMappingService = platformMappingService;
         this.platformSchemaService = platformSchemaService;
         this.platformCommonSchemaService = platformCommonSchemaService;
         this.commonSchemaService = commonSchemaService;
         this.feedCustomPropDao = feedCustomPropDao;
+        this.platformCategoryService = platformCategoryService;
+        this.mqSender = mqSender;
     }
 
-    public Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
+    Map<String, Object> page(Integer cartId, Integer categoryType, String categoryPath, int page, int size, UserSessionBean userSessionBean) {
 
         ChannelConfigEnums.Channel channel = userSessionBean.getSelChannel();
 
@@ -91,7 +96,7 @@ class PlatformMappingViewService extends BaseViewService {
         return result;
     }
 
-    public PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId, String lang) {
+    PlatformMappingGetBean get(CmsBtPlatformMappingModel platformMappingModel, String channelId, String lang) {
 
         CmsBtPlatformMappingModel _platformMappingModel = platformMappingService.get(platformMappingModel, channelId);
 
@@ -120,7 +125,9 @@ class PlatformMappingViewService extends BaseViewService {
 
         List<Field> item = null, product = null;
 
-        if (type == 1) {
+        // 如果类型不是"通用类目"，或者不是"叶子类目"
+        // 那么统统使用通用 Schema
+        if (type == 1 || !platformCategoryService.isLeafCategory(categoryPath, channelId, cartId)) {
             CmsMtPlatformCommonSchemaModel commonSchemaModel = platformCommonSchemaService.get(cartId);
 
             if (commonSchemaModel == null)
@@ -158,7 +165,7 @@ class PlatformMappingViewService extends BaseViewService {
         return platformMappingGetBean;
     }
 
-    public String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
+    String save(PlatformMappingSaveBean platformMappingSaveBean, UserSessionBean user) {
 
         String username = user.getUserName();
 
@@ -233,7 +240,7 @@ class PlatformMappingViewService extends BaseViewService {
         return platformMappingModel.getModified();
     }
 
-    public List<Map<String, Object>> getCommonSchema() {
+    List<Map<String, Object>> getCommonSchema() {
 
         CmsMtCommonSchemaModel comSchemaModel = commonSchemaService.getComSchemaModel();
 
@@ -259,7 +266,7 @@ class PlatformMappingViewService extends BaseViewService {
         }).collect(toList());
     }
 
-    public List<Map<String, Object>> getFeedCustomProps(String channelId) {
+    List<Map<String, Object>> getFeedCustomProps(String channelId) {
 
         CmsMtFeedCustomPropModel feedCustomPropModel = new CmsMtFeedCustomPropModel();
 
@@ -277,6 +284,20 @@ class PlatformMappingViewService extends BaseViewService {
             jsObject.put("cnLabel", f.getFeedPropTranslation());
             return jsObject;
         }).collect(toList());
+    }
+
+    boolean refreshProducts(CmsBtRefreshProductTaskModel cmsBtRefreshProductTaskModel, String userName) {
+
+        boolean need = platformMappingService.createRefreshProductsTask(cmsBtRefreshProductTaskModel, userName);
+
+        if (!need)
+            return false;
+
+        Map<String, Object> map = new HashMap<>();
+        map.put(MqParameterKeys.key1, cmsBtRefreshProductTaskModel.getId());
+        mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
+
+        return true;
     }
 
     private void fillMapping(Map<String, CmsBtPlatformMappingModel.FieldMapping> mappingMap, List<Field> fieldList) {

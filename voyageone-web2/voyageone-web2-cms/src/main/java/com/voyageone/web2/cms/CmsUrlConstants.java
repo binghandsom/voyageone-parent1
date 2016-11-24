@@ -40,6 +40,7 @@ public interface CmsUrlConstants {
                 String INIT = "init";
                 String GET_LIST_BY_WHERE = "getListByWhere";
                 String SaveModel = "saveModel";
+                String ENCORE = "encore";
                 String DELETE = "delete";
                 String GET = "get";
                 String GetEditModel = "getEditModel";
@@ -203,6 +204,7 @@ public interface CmsUrlConstants {
                 String TMALL_JUHUASUAN_EXPORT = "tmallJuhuasuanExport";
 
                 String TMALL_PROMOTION_EXPORT = "tmallPromotionExport";
+                String UpdatePromotionProductTag="updatePromotionProductTag";
             }
         }
 
@@ -340,6 +342,9 @@ public interface CmsUrlConstants {
             String EXPORT_PRODUCTS = "exportProducts";
             String EXPORT_SERACH = "exportSearch";
             String EXPORT_DOWNLOAD = "exportDownload";
+
+			String GET_SKU_INVENTORY = "getSkuInventory";
+
         }
 
         interface FEED {
@@ -479,6 +484,10 @@ public interface CmsUrlConstants {
             String GET_POP_OPTIONS = "getPopOptions";
             String SET_PRODUCT_FIELDS = "setProductFields";
             String DLD_PRODUCT_PROCESALE = "dldUnProcCode4PriceSale";
+            String INTELLIGENT_PUBLISH = "intelligentPublish";
+            String BULK_SET_CATEGORY = "bulkSetCategory";
+            String BULK_SET_PLATFORM_FIELDS = "bulkSetPlatformFields";
+            String GET_PLATFROM_POP_OPTIONS = "getPlatfromPopOptions";
         }
 
         interface ADD_TO_PROMOTION {
@@ -488,6 +497,12 @@ public interface CmsUrlConstants {
             String GET_PROM_TAGS = "getPromotionTags";
             String CHECK_PROM_TAGS = "checkPromotionTags";
             String ADD_TO_PROMOTION = "addToPromotion";
+        }
+        interface  AddProductToPromotion
+        {
+            String ROOT = "/cms/pop/add_product_to_promotion/";
+            String Save = "save";
+            String Init="init";
         }
 
         interface PRICE_LOG {
@@ -511,6 +526,8 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
+
+			String GET_UNDUE_PROMOTION = "getUnduePromotion";
         }
 
         interface IMAGE_SETTING {
@@ -543,6 +560,18 @@ public interface CmsUrlConstants {
 
         interface DETAIL {
             String ROOT = "/cms/product/detail";
+
+            String SaveCartSkuPrice="saveCartSkuPrice";
+
+            String SetCartSkuIsSale="setCartSkuIsSale";
+
+            String GetCalculateCartMsrp="getCalculateCartMsrp";
+
+            String GetProductPriceSales="getProductPriceSales";
+
+            String DoAppSwitch="doAppSwitch";
+
+            String DoTranslateStatus="doTranslateStatus";
 
             String GET_PRODUCT_INFO = "getProductInfo";
 
@@ -617,6 +646,10 @@ public interface CmsUrlConstants {
             String MOVE_SKU_PREVIEW = "moveSkuPreview";
 
             String MOVE_SKU = "moveSku";
+
+            String RESTORE_IMG = "restoreImg";
+
+			String GET_SKU_STOCK_INFO = "getSkuStockInfo";
         }
 
         interface HISTORY {
@@ -743,6 +776,7 @@ public interface CmsUrlConstants {
                 String SAVE_EDIT_SIZE_CHART = "sizeChartEditSave";
                 String GetNoMatchList="getNoMatchList";
                 String GetListImageGroupBySizeChartId="getListImageGroupBySizeChartId";
+                String GetProductSizeChartList="getProductSizeChartList";
             }
 
             interface SIZE_CHART_DETAIL {
@@ -766,6 +800,8 @@ public interface CmsUrlConstants {
             String UPDATE_SELLER_CAT = "updateSellerCat";
 
             String GET_SELLER_CAT_CONFIG = "getSellerCatConfig";
+
+            String SORTABLE_CART =  "sortableCat";
         }
 
         interface BLACK_BRAND {
@@ -774,6 +810,16 @@ public interface CmsUrlConstants {
             String SEARCH_BLACK_BRAND = "searchBlackBrand";
 
             String UPDATE_BLACK_BRAND = "updateBlackBrand";
+        }
+
+        interface CONFIG {
+            String ROOT = "/cms/channel/config";
+            String INIT = "init";
+            String LOAD_BY_CHANNEL = "loadByChannel";
+            String ADD_CHANNEL_CONFIG = "addChannelConfig";
+            String LOAD_CHANNEL_CONFIG_DETAIL = "loadChannelConfigDetail";
+            String EDIT_CHANNEL_CONFIG = "editChannelConfig";
+            String DEL_CHANNEL_CONFIG = "delChannelConfig";
         }
     }
 
@@ -836,6 +882,29 @@ public interface CmsUrlConstants {
                 String MASTER_BRAND_APPLICATION_EDIT="editMasterBrandInfo";
                 String MASTER_BRAND_APPLICATION_PLATFORM_SEARCH="mappingMasterBrandInfoToPlatform";
             }
+        }
+    }
+
+    interface SHELVES {
+        interface TEMPLATE {
+            String ROOT = "/cms/shelves/template";
+            String INIT = "init";
+            String ADD = "add";
+            String EDIT = "edit";
+            String DELETE = "delete";
+            String SEARCH = "search";
+            String DETAIL = "detail";
+        }
+        interface DETAIL {
+            String ROOT = "/cms/shelves/detail";
+            String SEARCH = "search";
+            String CREATE_SHELVES= "createShelves";
+            String UPDATE_SHELVES= "updateShelves";
+            String UPDATE_PRODUCT_SORT = "updateProductSort";
+            String ADD_PRODUCT = "addProduct";
+            String EXPORT_APP_IMAGE ="exportAppImage";
+            String GET_SHELVES_INFO = "getShelvesInfo";
+            String GET_SHELVES_HTML = "getShelvesHtml";
         }
     }
 }

@@ -39,6 +39,7 @@ public class CmsAddToPromotionController extends CmsController {
         return success(true);
     }
 
+
     /**
      * 检查所选择的产品是否已存在同级别的promotion tag
      * @param params

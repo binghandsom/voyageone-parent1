@@ -180,8 +180,10 @@ public class NewTargetAnalysisService extends BaseAnalysisService {
                 targetBean.setEnergyGuideHasEnergyStar(reader.get(i++));
                 targetBean.setReturnMethod(reader.get(i++));
                 targetBean.setCountryOfOriginCode(reader.get(i++));
-                targetBean.setPerordercharges(reader.get(i++));
-                targetBean.setPerunitcharges(reader.get(i++));
+                i++;
+                i++;
+                targetBean.setPerordercharges("");
+                targetBean.setPerunitcharges("");
                 targetBean.setWeight(reader.get(i++));
                 targetBean.setItembulky(reader.get(i++));
                 targetBean.setFixedprice(reader.get(i++));
