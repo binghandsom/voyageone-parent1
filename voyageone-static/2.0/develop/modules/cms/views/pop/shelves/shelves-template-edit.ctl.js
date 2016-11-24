@@ -83,10 +83,10 @@ define([
                         imageTemplate = imageTemplate.replace("@price", "1299");
                     }
                     if (imageTemplate.indexOf("@img") != -1) {
-                        imageTemplate = imageTemplate.replace("@img", "sneakerhead/290-250");
+                        imageTemplate = imageTemplate.replace("@img", "adidas-samba-lifestyle-shoesg17102-1");
                     }
                     if (imageTemplate.indexOf("@name") != -1) {
-                        imageTemplate = imageTemplate.replace("@name", encodeURIComponent("天天搞机-魅蓝5全球首发"));
+                        imageTemplate = imageTemplate.replace("@name", encodeURIComponent("MEN'S ORIGINALS SAMBA SHOES"));
                     }
                     if (imageTemplate.indexOf("@sale_price") != -1) {
                         imageTemplate = imageTemplate.replace("@sale_price", "799");
