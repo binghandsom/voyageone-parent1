@@ -4,7 +4,7 @@
     </div>
 
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
+        <form role="form" class="form-horizontal" name="$ctrl.form" novalidate>
             <div class="form-group">
                 <label class="col-sm-4 control-label">平台类型：</label>
                 <div class="col-sm-7">
@@ -20,21 +20,24 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">货架名称：</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" ng-model="$ctrl.shelvesName">
+                    <input name="n" type="text" class="form-control" ng-model="$ctrl.shelvesName" required>
+                    <vo-message target="$ctrl.form.n"></vo-message>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label">布局模板：</label>
                 <div class="col-sm-7">
-                    <select chosen width="'100%'" ng-model="$ctrl.layoutTemplateId"
+                    <select chosen width="'100%'" ng-model="$ctrl.layoutTemplateId" required name="lt"
                             ng-options="t.id as t.templateName for t in $ctrl.layoutTemplates"></select>
+                    <vo-message target="$ctrl.form.lt"></vo-message>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-4 control-label">单品模板：</label>
                 <div class="col-sm-7">
-                    <select chosen width="'100%'" ng-model="$ctrl.singleTemplateId"
+                    <select chosen width="'100%'" ng-model="$ctrl.singleTemplateId" required name="st"
                             ng-options="t.id as t.templateName for t in $ctrl.singleTemplates"></select>
+                    <vo-message target="$ctrl.form.st"></vo-message>
                 </div>
             </div>
             <div class="form-group">
@@ -50,7 +53,9 @@
                 <label class="col-sm-4 control-label">参加活动：</label>
                 <div class="col-sm-7">
                     <select chosen width="'100%'" ng-model="$ctrl.promotionId" ng-init="$ctrl.getPromotions()"
+                            ng-required="$ctrl.usePromoPrice" name="p"
                             ng-options="p.id as (p.promotionName || p.name) for p in $ctrl.promotionList"></select>
+                    <vo-message target="$ctrl.form.p"></vo-message>
                 </div>
             </div>
         </form>

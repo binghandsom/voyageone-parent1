@@ -71,6 +71,10 @@ define([
             var context = self.context;
             var shelvesService = self.shelvesService;
 
+            if (self.form.$invalid) {
+                return;
+            }
+
             var shelvesModel = {
                 shelvesName: self.shelvesName,
                 cartId: context.cartId,
