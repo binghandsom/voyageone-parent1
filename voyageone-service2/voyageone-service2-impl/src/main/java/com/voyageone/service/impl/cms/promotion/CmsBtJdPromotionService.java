@@ -126,47 +126,52 @@ public class CmsBtJdPromotionService extends BaseService {
             }
         }
 
+        // 如果没有需要追加的(所以的skuId都已经追加到促销中了)
+        if (ListUtils.isNull(successSkuList)) {
+            String errMsg = String.format("没有需要追加的jdSkuId或者所有需要追加的jdSkuId都已经追加到该促销(促销Id:%s)中了(已经追加到促销中sku不能做更新操作),请确认后再试.", promoId);
+            $error(errMsg);
+            throw new BusinessException(errMsg);
+        }
+
         // 调用京东API添加sku到京东促销
         StringBuilder addFailCause = new StringBuilder();
         // 保存调用京东批量添加sku到京东促销API之后，返回的促销SKU编号(jdSkuId)列表(返回的SKU列表是都参加促销的SKU，无效的SKU会被剔除 )
         List<Long> addSuccessSkuIds = null;
-        if (ListUtils.notNull(successSkuList)) {
-            StringBuilder sbSkuIds = new StringBuilder();
-            StringBuilder sbJdPrices = new StringBuilder();
-            StringBuilder sbPromoPrices = new StringBuilder();
+        StringBuilder sbSkuIds = new StringBuilder();
+        StringBuilder sbJdPrices = new StringBuilder();
+        StringBuilder sbPromoPrices = new StringBuilder();
 
-            // 单次最多添加100个SKU，超过100个SKU的时候，分批处理
-            List<List<JdPromotionSkuBean>> pageList = CommonUtil.splitList(successSkuList, 100);
-            for(List<JdPromotionSkuBean> page : pageList) {
-                sbSkuIds.setLength(0);
-                sbJdPrices.setLength(0);
-                sbPromoPrices.setLength(0);
-                for (JdPromotionSkuBean jdPromSku : page) {
-                    sbSkuIds.append(jdPromSku.getJdSkuId() + ",");
-                    sbJdPrices.append(jdPromSku.getJdPrice() + ",");
-                    sbPromoPrices.append(jdPromSku.getJdPromoPrice() + ",");
-                }
-
-                // 移除StringBuilder最后的","
-                if (sbSkuIds.length() > 0) {
-                    sbSkuIds.deleteCharAt(sbSkuIds.length() - 1);
-                }
-                if (sbJdPrices.length() > 0) {
-                    sbJdPrices.deleteCharAt(sbJdPrices.length() - 1);
-                }
-                if (sbPromoPrices.length() > 0) {
-                    sbPromoPrices.deleteCharAt(sbPromoPrices.length() - 1);
-                }
-
-                try {
-                    // 调用京东添加sku到京东促销API(如果出错，记录错误信息，继续追加下一批sku)
-                    addSuccessSkuIds = jdPromotionService.addSkuIdToPromotion(shop, promoId, sbSkuIds.toString(),
-                            sbJdPrices.toString(), sbPromoPrices.toString());
-                } catch (Exception e) {
-                    addFailCause.append(e.getMessage());
-                }
-
+        // 单次最多添加100个SKU，超过100个SKU的时候，分批处理
+        List<List<JdPromotionSkuBean>> pageList = CommonUtil.splitList(successSkuList, 100);
+        for(List<JdPromotionSkuBean> page : pageList) {
+            sbSkuIds.setLength(0);
+            sbJdPrices.setLength(0);
+            sbPromoPrices.setLength(0);
+            for (JdPromotionSkuBean jdPromSku : page) {
+                sbSkuIds.append(jdPromSku.getJdSkuId() + ",");
+                sbJdPrices.append(jdPromSku.getJdPrice() + ",");
+                sbPromoPrices.append(jdPromSku.getJdPromoPrice() + ",");
             }
+
+            // 移除StringBuilder最后的","
+            if (sbSkuIds.length() > 0) {
+                sbSkuIds.deleteCharAt(sbSkuIds.length() - 1);
+            }
+            if (sbJdPrices.length() > 0) {
+                sbJdPrices.deleteCharAt(sbJdPrices.length() - 1);
+            }
+            if (sbPromoPrices.length() > 0) {
+                sbPromoPrices.deleteCharAt(sbPromoPrices.length() - 1);
+            }
+
+            try {
+                // 调用京东添加sku到京东促销API(如果出错，记录错误信息，继续追加下一批sku)
+                addSuccessSkuIds = jdPromotionService.addSkuIdToPromotion(shop, promoId, sbSkuIds.toString(),
+                        sbJdPrices.toString(), sbPromoPrices.toString());
+            } catch (Exception e) {
+                addFailCause.append(e.getMessage());
+            }
+
         }
 
         // 调用京东API添加sku到京东促销出现错误时，报出错误消息
@@ -176,20 +181,21 @@ public class CmsBtJdPromotionService extends BaseService {
         }
 
         // 如果有未追加成功的skuIds时，报出异常
+        List<String> notAddSkuIds = new ArrayList<>();
+        List<String> addSkuIds = new ArrayList<>();  // 已经追加到该促销中的skuId列表
         if (ListUtils.notNull(addSuccessSkuIds)) {
-            List<String> addSkuIds = addSuccessSkuIds.stream().map(p -> StringUtils.toString(p)).collect(Collectors.toList());
-            List<String> notAddSkuIds = new ArrayList<>();
-            successSkuList.forEach(p -> {
-                if (!addSkuIds.contains(p.getJdSkuId())) notAddSkuIds.add(p.getJdSkuId());
-            });
-
-            // 如果有未追加成功的skuIds时，报出异常
-            if (ListUtils.notNull(notAddSkuIds)) {
-                String errMsg = String.format(shop.getShop_name() + "调用京东API添加sku到京东促销部分成功，部分未被追加进去! [channelId:%s] [cartId:%s] [promotionId:%s] [追加成功jdSkuId:%s] " +
-                        "[未被追加jdSkuId:%s]", shop.getOrder_channel_id(), shop.getCart_id(), promoId, Joiner.on(",").join(addSkuIds), Joiner.on(",").join(notAddSkuIds));
-                $error(errMsg);
-                throw new BusinessException(errMsg);
-            }
+            addSkuIds.addAll(addSuccessSkuIds.stream().map(p -> StringUtils.toString(p)).collect(Collectors.toList()));
+        }
+        // 看看那些本次需要追加的skuId中哪些没有被成功的追加到促销中
+        successSkuList.forEach(p -> {
+            if (!addSkuIds.contains(p.getJdSkuId())) notAddSkuIds.add(p.getJdSkuId());
+        });
+        // 如果有未被成功追加到促销中的sku，则报出异常，不需要commit促销(如果commit之后就不能再追加sku了)
+        if (ListUtils.notNull(notAddSkuIds)) {
+            String errMsg = String.format(shop.getShop_name() + "调用京东API添加sku到京东促销部分成功，部分未被追加进去! [channelId:%s] [cartId:%s] [promotionId:%s] [追加成功jdSkuId:%s] " +
+                    "[未被追加jdSkuId:%s]", shop.getOrder_channel_id(), shop.getCart_id(), promoId, Joiner.on(",").join(addSkuIds), Joiner.on(",").join(notAddSkuIds));
+            $error(errMsg);
+            throw new BusinessException(errMsg);
         }
 
         // sku全部追加成功之后，就调用commit提交保存促销活动，并要再促销活动创建3小时内commit，commit之后就不能再添加sku了
