@@ -116,7 +116,7 @@ public class InventoryCenterLogicService extends BaseService {
 
             int  skuAllCount= inventoryCenters.stream().mapToInt(inv -> inv.getQty()).sum();
             stock.setBase(new WmsCodeStoreInvBean.StocksBean.BaseBean(skuItem.getSku(),skuItem.getSize(),"",skuAllCount));
-            Map<String, Long> orderCounter = wmsBtInventoryCenterDao.countOrderInStoresBySku(channelId, skuItem.getSku(), storeIds);
+            Map<String, Long> orderCounter = wmsBtInventoryCenterDao.countOrderInStoresBySku(channelId, skuItem.getSku());
             stock.setOrder(new WmsCodeStoreInvBean.StocksBean.OrderBean(orderCounter.getOrDefault("openCount",0L),
                                                                         orderCounter.getOrDefault("onHold",0L),
                                                                         orderCounter.getOrDefault("newOrder",0L)));
