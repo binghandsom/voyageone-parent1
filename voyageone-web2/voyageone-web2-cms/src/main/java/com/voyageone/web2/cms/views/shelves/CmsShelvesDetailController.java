@@ -132,6 +132,7 @@ public class CmsShelvesDetailController extends CmsController {
         cmsBtTagModel.setModifier(getUser().getUserName());
         cmsBtTagModel.setActive(1);
         tagService.insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, true);
+
         cmsBtShelvesModel.setRefTagId(cmsBtTagModel.getId());
         cmsBtShelvesService.update(cmsBtShelvesModel);
         return success(cmsBtShelvesModel);
@@ -164,8 +165,8 @@ public class CmsShelvesDetailController extends CmsController {
 
         CmsBtShelvesModel cmsBtShelvesModel = cmsBtShelvesService.getId(cmsBtShelvesProductModel.getShelvesId());
         if (cmsBtShelvesModel != null && cmsBtShelvesModel.getRefTagId() != null && cmsBtShelvesModel.getRefTagId() > 0) {
-            productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", Arrays.asList(cmsBtShelvesProductModel.getProductCode()), "tags");
-            cmsBtShelvesProductHistoryService.batchInsert(cmsBtShelvesModel.getId(), Arrays.asList(cmsBtShelvesProductModel.getProductCode()), CmsBtShelvesProductHistoryModelStatus.OFF_LINE, getUser().getUserName());
+            productTagService.deleteByCodes(getUser().getSelChannelId(), "-" + cmsBtShelvesModel.getRefTagId() + "-", Collections.singletonList(cmsBtShelvesProductModel.getProductCode()), "tags");
+            cmsBtShelvesProductHistoryService.batchInsert(cmsBtShelvesModel.getId(), Collections.singletonList(cmsBtShelvesProductModel.getProductCode()), CmsBtShelvesProductHistoryModelStatus.OFF_LINE, getUser().getUserName());
         }
         return success(true);
     }
@@ -205,7 +206,6 @@ public class CmsShelvesDetailController extends CmsController {
      *
      * @param params shelvesId：货架ID
      *               preview: 1 或者 0， 1：单品模板图片URL根据单品模板拼接的html代码获取，0单品图片URL直接拿货架商品的第三方平台图片地址
-     * @return
      */
     @RequestMapping(CmsUrlConstants.SHELVES.DETAIL.GET_SHELVES_HTML)
     public AjaxResponse getShelvesHtml(@RequestBody getShelvesHtml params) {
