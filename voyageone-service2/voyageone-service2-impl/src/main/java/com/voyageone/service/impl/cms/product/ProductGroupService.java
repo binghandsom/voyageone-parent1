@@ -193,7 +193,7 @@ public class ProductGroupService extends BaseService {
             query.setProjectionExt("common.fields.code");
         } else {
             CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
-            if(channelId.equals(cmsChannelConfigBean.getChannelId())){
+            if(cmsChannelConfigBean != null && channelId.equals(cmsChannelConfigBean.getChannelId())){
                 query.setQuery(String.format("{\"common.fields.model\":\"%s\"}", modelCode));
                 query.setProjectionExt("common.fields.code","created");
                 query.setSort("{\"created\":-1}");
