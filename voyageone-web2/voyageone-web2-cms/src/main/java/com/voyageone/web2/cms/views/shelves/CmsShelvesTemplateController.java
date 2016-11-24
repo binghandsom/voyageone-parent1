@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.shelves;
 
+import com.alibaba.druid.support.json.JSONUtils;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -70,15 +71,14 @@ public class CmsShelvesTemplateController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SHELVES.TEMPLATE.EDIT)
     public AjaxResponse editShelvesTemplate(@RequestBody Map<String, Object> params){
-        params.remove("created");
-        params.remove("modified");
-        CmsBtShelvesTemplateModel model = JsonUtil.jsonToBean(JacksonUtil.bean2Json(params), CmsBtShelvesTemplateModel.class);
         String clearVal = (String) params.get("clear");
         Integer clear = 0;
         if (!StringUtils.isEmpty(clearVal) && StringUtils.isNumeric(clearVal)) {
             clear = Integer.valueOf(clearVal);
         }
         clear = clear == 0 ? clear : 1;
+        params.remove("clear");
+        CmsBtShelvesTemplateModel model = JacksonUtil.json2BeanWithDateCovert(JacksonUtil.bean2Json(params), CmsBtShelvesTemplateModel.class);
         cmsBtShelvesTemplateService.update(model, getUser().getUserName(), clear);
         return success("");
     }
