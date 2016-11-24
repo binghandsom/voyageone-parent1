@@ -77,7 +77,6 @@ define([
                     });
                 }
                 scope.saveCartSkuPriceClick=function (item) {
-
                     var parameter = {};
                     parameter.prodId = scope.productInfo.productId;
                     parameter.cartId = item.cartId;
@@ -92,9 +91,21 @@ define([
 
                     $productDetailService.saveCartSkuPrice(parameter).then(function (resp) {
                         //console.log(resp.data);
-                        initData();
-                    });
+                        // initData();
+                        if (parameter.priceMsrp > 0) {
+                            item.priceMsrpSt=parameter.priceMsrp;
+                            item.priceMsrpEd=parameter.priceMsrp;
+                        }
 
+                        if (parameter.priceSale > 0) {
+                            item.priceSaleSt=parameter.priceSale;
+                            item.priceSaleEd=parameter.priceSale;
+                        }
+                        //item.priceMsrp=undefined;
+                        //item.priceSale=undefined;
+                        notify.success("保存成功")
+
+                    });
                 }
             }
         };
