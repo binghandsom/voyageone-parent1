@@ -6,11 +6,11 @@
 define([
     'cms',
     'modules/cms/directives/platFormStatus.directive'
-],function(cms) {
+], function (cms) {
     cms.directive("priceSchema", function ($productDetailService, $rootScope, alert, notify, confirm) {
         return {
             restrict: "E",
-            templateUrl : "views/product/price.component.tpl.html",
+            templateUrl: "views/product/price.component.tpl.html",
             scope: {
                 productInfo: "=productInfo"
             },
@@ -18,29 +18,31 @@ define([
                 scope.sales = {};
                 scope.vm = {
                     selectSales: "codeSumAll",
-                    productPriceList: []
-                    ,model:{}
+                    productPriceList: [],
+                    model: {}
                 };
-                initialize();
-                function initialize() {
+
+                (function () {
                     initData();
+                })();
+
+                function initData() {
+                    $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
+                        scope.vm.productPriceList = resp.data.productPriceList;
+                        scope.vm.model = resp.data;
+                        scope.sales = resp.data.sales;
+                        scope.selectSalesOnChange();
+                        scope.vm.productPriceList.forEach(function (f) {
+                            if (f.checked == 2) {
+                                f.isSale = true;
+                            }
+                        });
+                    });
                 }
-               function initData() {
-                   console.log(scope.productInfo);
-                   $productDetailService.getProductPriceSales(scope.productInfo.productId).then(function (resp) {
-                       scope.vm.productPriceList = resp.data.productPriceList;
-                       scope.vm.model = resp.data;
-                       scope.sales = resp.data.sales;
-                       scope.selectSalesOnChange();
-                       scope.vm.productPriceList.forEach(function (f) {
-                           if(f.checked ==2) {
-                               f.isSale = true;
-                           }
-                       });
-                   });
-               }
+
                 scope.selectSalesOnChange = function () {
                     var cartSales = scope.sales[scope.vm.selectSales];
+
                     if (cartSales) {
                         scope.vm.productPriceList.forEach(function (f) {
                             f.saleQty = cartSales["cartId" + f.cartId];
@@ -51,20 +53,28 @@ define([
                             f.saleQty = 0;
                         });
                     }
-                }
-                scope.isSaleOnChange=function (item) {
-                   // console.log(item);
-                    var parameter={};
-                    parameter.prodId=scope.productInfo.productId;
-                    parameter.cartId=item.cartId;
-                    parameter.isSale=item.isSale;
-                    $productDetailService.setCartSkuIsSale(parameter).then(function (resp) {
-                      //  console.log(resp.data);
+                };
+
+                scope.isSaleOnChange = function (item) {
+                    var _state = item.isSale;
+
+                    $productDetailService.setCartSkuIsSale({
+                        prodId: scope.productInfo.productId,
+                        cartId: item.cartId,
+                        isSale: item.isSale
+                    }).then(function () {
+                        notify.success("更新成功 ！");
+                        //更新平台页面
+                        scope.productInfo.masterCategory = new Date().getTime();
+                    }, function () {
+                        item.isSale = !_state;
                     });
-                }
-                scope.calculateCartMsrpClick=function () {
+
+
+                };
+
+                scope.calculateCartMsrpClick = function () {
                     $productDetailService.getCalculateCartMsrp(scope.productInfo.productId).then(function (resp) {
-                        // console.log(resp.data);
                         scope.vm.productPriceList.forEach(function (f) {
                             var msrpInfo = _.find(resp.data, function (d) {
                                 return d.cartId == f.cartId
@@ -75,8 +85,9 @@ define([
                         });
 
                     });
-                }
-                scope.saveCartSkuPriceClick=function (item) {
+                };
+
+                scope.saveCartSkuPriceClick = function (item) {
 
                     var parameter = {};
                     parameter.prodId = scope.productInfo.productId;
@@ -90,8 +101,7 @@ define([
                         parameter.priceSale = item.priceSale;//中国最终售价
                     }
 
-                    $productDetailService.saveCartSkuPrice(parameter).then(function (resp) {
-                        //console.log(resp.data);
+                    $productDetailService.saveCartSkuPrice(parameter).then(function () {
                         initData();
                     });
 

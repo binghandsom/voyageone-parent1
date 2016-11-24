@@ -28,7 +28,7 @@ define([
     ]).constant('cActions', actions)
         .constant('cRoutes', routes)
         .constant('cLanguageType', {
-            en: {
+                en: {
                 name: "en",
                 value: enTranslate
             },
