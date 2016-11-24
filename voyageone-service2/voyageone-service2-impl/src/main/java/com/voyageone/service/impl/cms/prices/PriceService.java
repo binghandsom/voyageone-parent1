@@ -17,6 +17,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
@@ -873,9 +874,7 @@ public class PriceService extends BaseService {
         } else if (PlatFormEnums.PlatForm.JM.getId().equals(cartObj.getPlatform_id())) {
             // votodo -- PriceService  聚美平台 更新商品SKU的价格
 
-            if (isUpdateJmDealPrice) {
-                jm_UpdateDealPriceBatch(shopObj, skuList, priceConfigValue);
-            }
+            jm_UpdateDealPriceBatch(shopObj, platObj, priceConfigValue,isUpdateJmDealPrice);
             jmhtMall_UpdateMallPriceBatch(shopObj, skuList, priceConfigValue);
 
         } else if (PlatFormEnums.PlatForm.JD.getId().equals(cartObj.getPlatform_id())) {
@@ -916,25 +915,31 @@ public class PriceService extends BaseService {
         }
     }
 
-    private void   jm_UpdateDealPriceBatch(ShopBean shopBean,List<BaseMongoMap<String, Object>> skuList,String priceConfigValue) throws Exception {
-        List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>(skuList.size());
+    private void   jm_UpdateDealPriceBatch(ShopBean shopBean, CmsBtProductModel_Platform_Cart platObj,String priceConfigValue,boolean isUpdateJmDealPrice) throws Exception {
+
         HtDeal_UpdateDealPriceBatch_UpdateData updateData = null;
+        String pNumIId=platObj.getpNumIId();
+        List<BaseMongoMap<String, Object>> skuList=platObj.getSkus();
+        List<HtDeal_UpdateDealPriceBatch_UpdateData> list = new ArrayList<>(skuList.size());
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtDeal_UpdateDealPriceBatch_UpdateData();
-            String skuCode = (String) skuObj.get("skuCode");
-            if (StringUtils.isEmpty(skuCode)) {
+            String jmSkuNo = (String) skuObj.get("jmSkuNo");
+            if (StringUtils.isEmpty(jmSkuNo)) {
                 continue;
             }
-            updateData.setJumei_sku_no(skuCode);
+            updateData.setJumei_sku_no(jmSkuNo);
             Double priceSale = null;
             if (priceConfigValue == null) {
                 priceSale = skuObj.getDoubleAttribute("priceSale");
             } else {
                 priceSale = skuObj.getDoubleAttribute(priceConfigValue);
             }
-            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
-            updateData.setDeal_price(priceSale);
-            updateData.setMarket_price(priceRetail);
+            Double priceMsrp = skuObj.getDoubleAttribute("priceMsrp");
+            if(isUpdateJmDealPrice) {
+                updateData.setDeal_price(priceSale);
+            }
+            updateData.setMarket_price(priceMsrp);
+            updateData.setJumei_hash_id(pNumIId);
             list.add(updateData);
         }
         String errorMsg = "";
@@ -961,7 +966,7 @@ public class PriceService extends BaseService {
         HtMallSkuPriceUpdateInfo updateData = null;
         for (BaseMongoMap skuObj : skuList) {
             updateData = new HtMallSkuPriceUpdateInfo();
-           String skuCode= (String) skuObj.get("skuCode");
+            String skuCode= (String) skuObj.get("jmSkuNo");
             if(StringUtils.isEmpty(skuCode))
             {
                 continue;
@@ -973,9 +978,9 @@ public class PriceService extends BaseService {
             } else {
                 priceSale = skuObj.getDoubleAttribute(priceConfigValue);
             }
-            Double priceRetail = skuObj.getDoubleAttribute("priceRetail");
+            Double priceMsrp = skuObj.getDoubleAttribute("priceMsrp");
             updateData.setMall_price(priceSale);
-            updateData.setMarket_price(priceRetail);
+            updateData.setMarket_price(priceMsrp);
             list.add(updateData);
         }
         String errorMsg = "";

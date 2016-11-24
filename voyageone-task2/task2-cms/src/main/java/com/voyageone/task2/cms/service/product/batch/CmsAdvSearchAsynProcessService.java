@@ -24,8 +24,6 @@ public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
     private CmsAddChannelCategoryTask saveChannelCategoryService;
     @Autowired
     private CmsConfirmRetailPriceTask confirmRetailPriceService;
-    @Autowired
-    private CmsRefreshRetailPriceTask refreshRetailPriceService;
 
     @Override
     public String getTaskName() {
@@ -42,7 +40,7 @@ public class CmsAdvSearchAsynProcessService extends BaseMQCmsService {
         } else if ("retailprice".equals(serviceName)) {
             confirmRetailPriceService.onStartup(messageMap);
         } else if ("refreshRetailPrice".equals(serviceName)) {
-            refreshRetailPriceService.onStartup(messageMap);
+//            refreshRetailPriceService.onStartup(messageMap);
         } else {
             $error("高级检索异步批量处理 未知操作 " + messageMap.toString());
         }

@@ -1189,7 +1189,12 @@ public class CmsFieldEditService extends BaseViewService {
         params.put("_taskName", params.get("_option"));
         params.put("_channleId",  userInfo.getSelChannelId());
         params.put("_userName",  userInfo.getUserName());
-        sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+        if("refreshRetailPrice".equalsIgnoreCase((String)params.get("_option"))){
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+        }else{
+            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+        }
+
 
         rsMap.put("ecd", 0);
         return rsMap;
