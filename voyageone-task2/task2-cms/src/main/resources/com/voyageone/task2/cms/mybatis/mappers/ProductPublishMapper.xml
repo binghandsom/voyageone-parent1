@@ -60,7 +60,7 @@
 	</update>
 
 	<!-- 统计前90天订单中的产品数量 -->
-	<select id="cms_selectProductOrderCount" resultType="Map"><![CDATA[
+	<select id="cms_selectProductOrderCount" resultType="Map">
 		select
 			sku, date, CAST(sum(qty) AS signed) qty
 		from
@@ -68,14 +68,21 @@
 			select b.sku, DATE_FORMAT(DATE_ADD(a.order_date_time, INTERVAL 8 HOUR), '%Y-%m-%d') AS date, b.quantity_ordered-b.quantity_returned qty
 			from oms_bt_order_details b, oms_bt_orders a
 			where a.order_number = b.order_number and b.adjustment=0
-			and a.cart_id = #{cartId}
-			and a.parent_order_channel_id = #{channelId}
+			<!-- 产品销量父子店数据同步修正 -->
+			<![CDATA[
+			and (
+				a.cart_id = #{cartId} or (
+					a.parent_order_channel_id = #{cartId} and a.parent_order_channel_id <> a.order_channel_id
+				)
+			)
+			and a.order_channel_id = #{channelId}
 			and b.`status` not in ('Canceled', 'Returned')
 			and (a.order_date_time <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
 			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
+			]]>
 			) sales
 		group by sku, date limit #{oIdx},#{oLimit}
-	]]></select>
+	</select>
 
 	<!-- 统计所有订单中的产品数量 -->
 	<select id="cms_selectProductOrderCountAllDays" resultType="Map"><![CDATA[
