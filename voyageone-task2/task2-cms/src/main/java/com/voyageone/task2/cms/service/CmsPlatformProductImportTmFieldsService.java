@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.taobao.api.domain.Item;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -12,9 +13,8 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.tmall.service.TbItemSchema;
-import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -25,7 +25,6 @@ import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -58,8 +57,8 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     @Autowired
     private TbSellerCatService tbSellerCatService;
 
-    @Autowired
-    private TbItemService tbItemService;
+//    @Autowired
+//    private TbItemService tbItemService;
 
     @Autowired
     private PlatformCategoryService platformCategoryService;
@@ -134,47 +133,65 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         return result;
     }
 
-    private List<Map<String, Object>> doSetSeller(ShopBean shopBean, Long nummIId, List<CmsBtSellerCatModel> sellerCat) throws Exception {
-        TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, nummIId);
-
-        List<com.taobao.top.schema.field.Field> fields = schema.getFields();
-
-        List<String> cIds = new ArrayList<>();
-
-        for (com.taobao.top.schema.field.Field field : fields) {
-            if ("seller_cids".equals(field.getId())) {
-                List<String> values = ((com.taobao.top.schema.field.MultiCheckField) field).getDefaultValues();
-
-                for (String value : values) {
-                    cIds.add(value);
-                }
-            }
-        }
-
-
+    // modified by morse.lu 2016/11/25 start
+//    private List<Map<String, Object>> doSetSeller(ShopBean shopBean, Long nummIId, List<CmsBtSellerCatModel> sellerCat) throws Exception {
+//        TbItemSchema schema = tbItemService.getUpdateSchema(shopBean, nummIId);
+//
+//        List<com.taobao.top.schema.field.Field> fields = schema.getFields();
+//
+//        List<String> cIds = new ArrayList<>();
+//
+//        for (com.taobao.top.schema.field.Field field : fields) {
+//            if ("seller_cids".equals(field.getId())) {
+//                List<String> values = ((com.taobao.top.schema.field.MultiCheckField) field).getDefaultValues();
+//
+//                for (String value : values) {
+//                    cIds.add(value);
+//                }
+//            }
+//        }
+    private List<Map<String, Object>> doSetSeller(List<String> cIds, List<CmsBtSellerCatModel> sellerCat) throws Exception {
+    // modified by morse.lu 2016/11/25 end
         List<Map<String, Object>> sellerCats = new ArrayList<>();
 
-        for (String pCId : cIds) {
-            CmsBtSellerCatModel leaf = sellerCat.stream().filter(w -> pCId.equals(w.getCatId())).findFirst().get();
-            Map<String, Object> model = new HashMap<>();
-            model.put("cId", leaf.getCatId());
-            model.put("cName", leaf.getCatPath());
-            model.put("cIds", leaf.getFullCatId().split("-"));
-            model.put("cNames", leaf.getCatPath().split(">"));
+        if (ListUtils.notNull(cIds)) {
+            for (String pCId : cIds) {
+                CmsBtSellerCatModel leaf = sellerCat.stream().filter(w -> pCId.equals(w.getCatId())).findFirst().get();
+                Map<String, Object> model = new HashMap<>();
+                model.put("cId", leaf.getCatId());
+                model.put("cName", leaf.getCatPath());
+                model.put("cIds", leaf.getFullCatId().split("-"));
+                model.put("cNames", leaf.getCatPath().split(">"));
 
-            sellerCats.add(model);
+                sellerCats.add(model);
+            }
         }
         return sellerCats;
     }
 
     private void doSetProduct(ShopBean shopBean, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, List<CmsBtSellerCatModel> sellerCat) throws Exception {
         Map<String, Object> fieldMap = new HashMap<>();
+        // added by morse.lu 2016/11/25 start
+        // 获取产品id和商品类目id并回填
+        Item item = tbProductService.doGetItemInfo(cmsBtProductGroup.getNumIId(), "cid,product_id", shopBean).getItem();
+        Long itemProductId = item.getProductId();
+        String platformPid = null;
+        if (itemProductId != null && itemProductId.intValue() != 0) {
+            platformPid = Long.toString(itemProductId);
+        }
+        cmsBtProductGroup.setPlatformPid(platformPid);
+        fieldMap.put("cid", Long.toString(item.getCid()));
+        // added by morse.lu 2016/11/25 end
         if (PlatFormEnums.PlatForm.TM.getId().equals(shopBean.getPlatform_id())) {
             // 只有天猫系才会更新fields字段
-            fieldMap.putAll(getPlatformProduct(cmsBtProductGroup.getPlatformPid(), shopBean));
+//            fieldMap.putAll(getPlatformProduct(cmsBtProductGroup.getPlatformPid(), shopBean));
+            fieldMap.putAll(getPlatformProduct(platformPid, shopBean));
             fieldMap.putAll(getPlatformWareInfoItem(cmsBtProductGroup.getNumIId(), shopBean));
         }
-        List<Map<String, Object>> sellerCats = doSetSeller(shopBean, Long.parseLong(cmsBtProductGroup.getNumIId()), sellerCat);
+        // modified by morse.lu 2016/11/25 start
+//        List<Map<String, Object>> sellerCats = doSetSeller(shopBean, Long.parseLong(cmsBtProductGroup.getNumIId()), sellerCat);
+        List<Map<String, Object>> sellerCats = doSetSeller((List<String>) fieldMap.get("seller_cids"), sellerCat);
+        // modified by morse.lu 2016/11/25 end
         upProductPlatform(fieldMap, cmsBtProductGroup, channelId, cartId, sellerCats);
     }
 
@@ -221,7 +238,10 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                 }
             });
             // added by morse.lu 2016/07/18 start
-            String catId = (String) fieldMap.get("cat_id"); // 类目ID
+            // modified by morse.lu 2016/11/25 start
+//            String catId = (String) fieldMap.get("cat_id"); // 类目ID
+            String catId = (String) fieldMap.get("cid"); // 类目ID
+            // modified by morse.lu 2016/11/25 end
             if (!StringUtils.isEmpty(catId)) {
                 // 取到了再回写
                 updateMap.put("platforms.P" + cartId + ".pCatId", catId);
@@ -341,6 +361,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     public Map<String, Object> getPlatformWareInfoItem(String numIid, ShopBean shopBean) throws Exception {
         fieldHashMap fieldMap = new fieldHashMap();
         String schema = tbProductService.doGetWareInfoItem(numIid, shopBean).getUpdateItemResult();
+        $info("取得天猫商品信息schema:" + schema);
         if (schema != null) {
             List<Field> fields = SchemaReader.readXmlForList(schema);
             fields.forEach(field -> {

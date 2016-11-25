@@ -4092,7 +4092,7 @@ public class SxProductService extends BaseService {
 
     /**
      * 取得新品上市的店铺内分类类目id
-     * 类目名格式：新品上市(2016)>2月
+     * 类目名格式：新品上市（2016）>2月
      * cms_mt_channel_config表配置是否需要设定新品上市的店铺内分类(val1=1表示需要)，以及几个月内属于新品上市商品(val2=3表示近3个月,以publishTime作为基准来比较)
      *
      * @param publishTime 上新时间 null的话表示第一次上新，那么把当前时间作为基准
@@ -4123,13 +4123,13 @@ public class SxProductService extends BaseService {
         int year = getDateYear(date);
         int month = getDateMonth(date);
 
-        CmsBtSellerCatModel sellerCatModel = cmsBtSellerCatDao.selectByRootCatPath(channelId, cartId, String.format("新品上市(%d)", year));
+        CmsBtSellerCatModel sellerCatModel = cmsBtSellerCatDao.selectByRootCatPath(channelId, cartId, String.format("新品上市（%d）", year));
         if (sellerCatModel == null) {
-            throw new BusinessException(String.format("新品%d年的店铺内分类未创建!创建格式(括号小写):新品上市(%d)>%d月", year, year, month));
+            throw new BusinessException(String.format("新品%d年的店铺内分类未创建!创建格式(括号大写):新品上市（%d）>%d月", year, year, month));
         }
         CmsBtSellerCatModel childSellerCatModel = sellerCatModel.getChildren().stream().filter(childCat-> String.format("%d月", month).equals(childCat.getCatName())).findFirst().orElse(null);
         if (childSellerCatModel == null) {
-            throw new BusinessException(String.format("新品%d年%d月的店铺内分类未创建!创建格式(括号小写):新品上市(%d)>%d月", year, month, year, month));
+            throw new BusinessException(String.format("新品%d年%d月的店铺内分类未创建!创建格式(括号大写):新品上市（%d）>%d月", year, month, year, month));
         }
 
         return childSellerCatModel.getFullCatId();
