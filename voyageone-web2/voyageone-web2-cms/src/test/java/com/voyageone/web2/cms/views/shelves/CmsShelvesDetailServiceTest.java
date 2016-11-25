@@ -61,10 +61,10 @@ public class CmsShelvesDetailServiceTest {
 
         try {
             List<String> images = new ArrayList<>();
-            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
-            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
-            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
-            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\05098AA.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\05098AA.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\05098AA.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\05098AA.jpg");
             byte[]  a = cmsShelvesDetailService.createAppImage(images,2);
             try(FileOutputStream fileOutputStream = new FileOutputStream((new File("H:\\shelves\\merge.png")))) {
                 fileOutputStream.write(a);

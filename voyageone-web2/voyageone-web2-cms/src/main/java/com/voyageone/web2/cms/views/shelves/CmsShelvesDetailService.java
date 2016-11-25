@@ -208,8 +208,8 @@ class CmsShelvesDetailService extends BaseViewService {
 
 
     public byte[] createAppImage(List<String> urls, int numPerLine) {
-        int spacingX = 0;
-        int spacingY = 0;
+        int spacingX = 100;
+        int spacingY = 100;
         try {
             $info(urls.get(0));
             InputStream imagein = new FileInputStream(urls.get(0));
@@ -218,6 +218,7 @@ class CmsShelvesDetailService extends BaseViewService {
 
             Integer width = image.getWidth();
             Integer height = image.getHeight();
+            $info(width + "  "+ height);
             List<List<String>> urlSplit = CommonUtil.splitList(urls, numPerLine);
             BufferedImage combined = new BufferedImage(width * numPerLine + (numPerLine - 1) * spacingX, height * urlSplit.size() + (urlSplit.size() - 1) * spacingY, BufferedImage.TYPE_INT_ARGB);
             Graphics g = combined.getGraphics();
@@ -230,6 +231,7 @@ class CmsShelvesDetailService extends BaseViewService {
                 }
                 for (int j = 0; j < urlSplit.get(i).size(); j++) {
                     InputStream temp = new FileInputStream(urlSplit.get(i).get(j));
+                    $info(urlSplit.get(i).get(j));
                     BufferedImage imageTemp = ImageIO.read(temp);
 
                     int x;
