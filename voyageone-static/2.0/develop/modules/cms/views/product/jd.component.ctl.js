@@ -101,6 +101,12 @@ define([
                         if (platform.schemaFields && platform.schemaFields.product)
                             initBrand(platform.schemaFields.product, platform.pBrandId);
 
+                        if(scope.productInfo.skuBlock){
+                            setTimeout(function(){
+                                pageAnchor('sku',0);
+                            },1500)
+                        }
+
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
                     });

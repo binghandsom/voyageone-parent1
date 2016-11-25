@@ -37,9 +37,9 @@ define([
             APP: 2
         },
         opList: {
-            G: '>',
-            L: '<',
-            E: '='
+            G: '大于',
+            L: '小于',
+            E: '等于'
         },
         getShelves: function () {
             var self = this;

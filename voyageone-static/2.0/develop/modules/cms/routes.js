@@ -285,6 +285,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/product/detail.ctl",
             "controller": "productDetailController as ctrl"
         },
+/*        "product_detail_cart_skuModule": {
+            "hash": "/product/detail/productId/:cartId:/skuModule",
+            "templateUrl": "views/product/detail.tpl.html",
+            "controllerUrl": "modules/cms/views/product/detail.ctl",
+            "controller": "productDetailController as ctrl"
+        },*/
         "channel_common": {
             "hash": "/channel/common",
             "templateUrl": "views/channel/common/attribute.tpl.html",

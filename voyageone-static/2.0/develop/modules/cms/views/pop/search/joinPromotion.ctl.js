@@ -106,6 +106,13 @@ define([
             else
                 entity.checked = 0;
 
+            if (entity.children && entity.children.length > 0 && !checkNodes[entity.id]) {
+                //父节点勾掉后子节点也都清掉
+                angular.forEach(entity.children, function (ele) {
+                    ele.checked = 0;
+                });
+            }
+
             if (entity.children && entity.children.length > 0 && checkNodes[entity.id]) {
 
                 var exit = _.some(entity.children, function (item) {
@@ -176,19 +183,8 @@ define([
                 alert = self.alert,
                 notify = self.notify,
                 $uibModalInstance = self.$uibModalInstance,
-                context = self.context,
-                userArr = objToArr(checkNodes),
-                allCheckArr = objToArr(self.allCheckNodes);
+                context = self.context;
 
-            /*            /!**判断用户是否选择了新的活动标签*!/
-             var isClick = _.every(userArr, function (item) {
-             return allCheckArr.indexOf(item) < 0;
-             });
-
-             if (!isClick) {
-             alert("未做任何改变！");
-             return;
-             }*/
             /**至少要选择一个活动*/
             var eachP = _.some(self.listTreeNode, function (item) {
                 return item.checked != 0 && item.checked != 1;

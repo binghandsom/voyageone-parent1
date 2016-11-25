@@ -72,27 +72,37 @@ public class InventoryCenterLogicService extends BaseService {
         for (final StoreBean store : channelStores) {
             long store_id = store.getStore_id();
             idNameMap.put(store_id, store.getStore_name());
-            // 可销售仓库
-            if ("1".equals(store.getIs_sale())) {
-            	if ("1".equals(store.getInventory_manager()) && CNHK.contains(store.getStore_area())) {
-                	// 国内仓库
-            		if ("0".equals(store.getStore_type())) {// 自营仓库
-                        inOwnStores.add(store_id);
-            		} else {// 非自营仓库
-            			inNOwnStores.add(store_id);
-            		}
-                } else if ("0".equals(store.getInventory_manager()) && !CNHK.contains(store.getStore_area())) {
-                	// 国外仓库
-            		if ("0".equals(store.getStore_type())) {// 自营仓库
-            			gbOwnStores.add(store_id);
-            		} else {// 非自营仓库
-            			gbNOwnStores.add(store_id);
-            		}
-                }
+            //国内自营
+            if(CNHK.contains(store.getStore_area()) &&   //CN,HK仓库
+                    "1".equals(store.getInventory_manager())//我们管理库存
+                    && "0".equals(store.getStore_type())  //自营
+                    &&"1".equals(store.getIs_sale())) {  //可销售
+                inOwnStores.add(store_id);
             }
-        }
+            //国内第三方
+            if(CNHK.contains(store.getStore_area()) &&   //CN,HK仓库
+                    ("0".equals(store.getInventory_manager())//不是我们管理库存
+                    || !"0".equals(store.getStore_type()))  //非自营(第三方)
+                    &&"1".equals(store.getIs_sale())) {  //可销售
+                inNOwnStores.add(store_id);
+            }
+            //国外自营
+            if(!CNHK.contains(store.getStore_area()) &&   //国外
+                    "1".equals(store.getInventory_manager())//我们管理库存
+                    && "0".equals(store.getStore_type())  //自营
+                    &&"1".equals(store.getIs_sale())) {  //可销售
+                gbOwnStores.add(store_id);
+            }
+            //国外第三方
+            if (!CNHK.contains(store.getStore_area()) &&   //国外
+                    "0".equals(store.getInventory_manager())//不是我们管理库存
+                    && !"0".equals(store.getStore_type())  //非自营(第三方)
+                    && "1".equals(store.getIs_sale())) {   //可销售
+                gbNOwnStores.add(store_id);
+            }
+        } //end for
 
-        //重新过滤
+        //重新赋值为过滤过的值
         storeIds= Lists.newArrayList(Iterators.concat(inOwnStores.iterator(), inNOwnStores.iterator(), gbOwnStores.iterator(), gbNOwnStores
                 .iterator()));
 
@@ -106,7 +116,7 @@ public class InventoryCenterLogicService extends BaseService {
 
             int  skuAllCount= inventoryCenters.stream().mapToInt(inv -> inv.getQty()).sum();
             stock.setBase(new WmsCodeStoreInvBean.StocksBean.BaseBean(skuItem.getSku(),skuItem.getSize(),"",skuAllCount));
-            Map<String, Long> orderCounter = wmsBtInventoryCenterDao.countOrderInStoresBySku(channelId, skuItem.getSku(), storeIds);
+            Map<String, Long> orderCounter = wmsBtInventoryCenterDao.countOrderInStoresBySku(channelId, skuItem.getSku());
             stock.setOrder(new WmsCodeStoreInvBean.StocksBean.OrderBean(orderCounter.getOrDefault("openCount",0L),
                                                                         orderCounter.getOrDefault("onHold",0L),
                                                                         orderCounter.getOrDefault("newOrder",0L)));

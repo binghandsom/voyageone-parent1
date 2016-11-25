@@ -147,7 +147,7 @@
                                             </label>
                                         </div>
                                         <div ng-if="category.children.length > 0" ng-include="'categoryContainer'"
-                                             ng-init="categoryContainer = category.children;parentNode = category">
+                                             ng-init="categoryContainer = category.children;">
                                         </div>
                                     </div>
                                 </div>
@@ -157,13 +157,6 @@
                 </div>
             </div>
 
-            <!--        <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-offset-3">
-                                <vo-message target="ctrl.promotionFrom.endTime"></vo-message>
-                            </div>
-                        </div>
-                    </div>-->
             <!------------------- 显示活动标签 ------------------->
         </form>
     </div>
@@ -184,8 +177,7 @@
                        ui-indeterminate="category.checked == 1"
                        ng-checked="category.checked == 2"
                        ng-click="ctrl.canSelectChild(category)"
-                       ng-model="ctrl.checkNodes[category.id]"
-                       ng-disabled="parentNode.checked == 0 || parentNode.checked == 1">
+                       ng-model="ctrl.checkNodes[category.id]">
                 &nbsp;{{category.name}}
             </label>
         </div>
