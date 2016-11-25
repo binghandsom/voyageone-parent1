@@ -61,7 +61,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
         Map<String, Object> searchValue = JacksonUtil.jsonToMap(cmsBtExportTaskModel.getParameter());
         String channelId = searchValue.get("orgChaId") == null ? cmsBtExportTaskModel.getChannelId() : searchValue.get("orgChaId").toString();
 
-        if(searchValue.get("codeList") != null){
+        if(searchValue.get("codeList") != null && searchValue.get("codeList") instanceof List){
             List<Map<String,Object>> codes = (List<Map<String, Object>>) searchValue.get("codeList");
             cnt = Long.valueOf(codes.size());
             List<String> codeList = codes.stream().map(stringObjectMap -> stringObjectMap.get("code").toString()).collect(Collectors.toList());
