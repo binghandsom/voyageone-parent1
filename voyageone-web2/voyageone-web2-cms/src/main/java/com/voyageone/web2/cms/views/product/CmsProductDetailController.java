@@ -290,7 +290,7 @@ public class CmsProductDetailController extends CmsController {
     
     /**
      * 取得SKU库存的信息（各仓库库存整体信息与详细信息）
-     * @param params { prodcutId }
+     * @param { prodcutId }
      * @return
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_SKU_STOCK_INFO)
@@ -349,7 +349,9 @@ public class CmsProductDetailController extends CmsController {
         result.put("modified",productPropsEditService.restoreImg(getUser().getSelChannelId(),
                 Long.parseLong(prodId),
                 imagesType,
-                images));
+                images,
+                getUser().getUserName()
+                ));
 
         return success(result);
 

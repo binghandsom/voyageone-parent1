@@ -317,7 +317,7 @@ define([
 
                     confirm("您确认要删除该图片吗？").then(function () {
                         _.each(productComm.fields[imagesType], function (ele, index, list) {
-                            if (ele.image6 === imageName) {
+                            if (ele[imagesType.replace('images','image')] === imageName) {
                                 list.splice(list.indexOf(ele), 1);
                             }
                         });
@@ -326,8 +326,7 @@ define([
                             prodId: scope.productInfo.productId,
                             imagesType: imagesType,
                             images: productComm.fields[imagesType]
-                        }).then(function (res) {
-                            scope.vm.productComm.modified = res.data.modified;
+                        }).then(function () {
                             notify.success("删除成功！");
                         });
 
@@ -346,8 +345,7 @@ define([
                         prodId: scope.productInfo.productId,
                         imagesType: imagesType,
                         images: imgSource
-                    }).then(function (res) {
-                        scope.vm.productComm.modified = res.data.modified;
+                    }).then(function () {
                         notify.success("排序成功！");
                     });
 
