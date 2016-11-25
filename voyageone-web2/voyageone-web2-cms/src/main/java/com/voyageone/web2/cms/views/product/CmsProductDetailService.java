@@ -1538,14 +1538,16 @@ public class CmsProductDetailService extends BaseViewService {
      * @param images      图片集合
      * @return 系统当前时间
      */
-    public Date restoreImg(String channelId, Long prodId, String imageType,List<String> images){
+    public String restoreImg(String channelId, Long prodId, String imageType,List<String> images,String modifier){
 
+        String modified = DateTimeUtil.getNowTimeStamp();
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
 
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put(String.format("common.fields.images%s", imageType.substring(imageType.length()-1,imageType.length())), images);
+        updateMap.put("common.modifier", modifier);
 
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
@@ -1554,6 +1556,6 @@ public class CmsProductDetailService extends BaseViewService {
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
 
-        return DateTimeUtil.getDate();
+        return modified;
     }
 }
