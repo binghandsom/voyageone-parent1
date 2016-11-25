@@ -14,7 +14,7 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.saveInfo = {
                 orgName: this.sourceData !== 'add' ? this.sourceData.orgName : '',
-                parentId: this.sourceData !== 'add' ? this.sourceData.parentId + '' : '',
+                parentId:this.sourceData !== 'add' ? this.sourceData.parentId:'',
                 weight: this.sourceData !== 'add' ? this.sourceData.weight : '',
                 active: this.sourceData !== 'add' ? this.sourceData.active + '' : '1',
                 id: this.sourceData.id !== 'add' ? this.sourceData.id : ''

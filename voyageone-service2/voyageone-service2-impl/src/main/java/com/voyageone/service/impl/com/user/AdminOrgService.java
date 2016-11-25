@@ -134,7 +134,7 @@ public class AdminOrgService extends BaseService {
         map.put("orgName" , model.getOrgName());
         map.put("parentId" , model.getParentId());
 
-        if(comOrganizationDao.selectCount(map) > 0)
+        if(comOrganizationDao.selectCount(map) > 1)
         {
             throw new BusinessException("组织名称在系统中已存在。");
         }

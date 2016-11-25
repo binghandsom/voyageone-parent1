@@ -8,7 +8,7 @@
 
 	<!-- dataSource -->
 	<bean id="dataSourceSec" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="url" value="jdbc:mysql://10.0.0.24:3306/voyageone_core?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round" />
+		<property name="url" value="jdbc:mysql://10.0.0.83:3306/voyageone_core?autoReconnect=true&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=round" />
 		<property name="username" value="app_my_dev" />
 		<property name="password" value="s28Bw_1IL1bz" />
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
