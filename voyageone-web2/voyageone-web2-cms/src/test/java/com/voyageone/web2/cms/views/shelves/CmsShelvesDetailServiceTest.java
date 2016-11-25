@@ -61,15 +61,16 @@ public class CmsShelvesDetailServiceTest {
 
         try {
             List<String> images = new ArrayList<>();
-            images.add("h:/20161026-240x342-jiarugouwuche.png");
-            images.add("h:/20161026-240x342-jiarugouwuche.png");
-            images.add("h:/20161026-240x342-jiarugouwuche.png");
-            images.add("h:/20161026-240x342-jiarugouwuche.png");
-            images.add("h:/20161026-240x342-jiarugouwuche2.png");
-            images.add("h:/20161026-240x342-jiarugouwuche2.png");
-            images.add("h:/20161026-240x342-jiarugouwuche2.png");
-            images.add("h:/20161026-240x342-jiarugouwuche2.png");
-            byte[]  a = creatImage(images,2);
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
+            images.add("C:\\usr\\web\\contents\\cms\\shelves\\shelves1\\51A2GJ94W4-0DTA600.jpg");
+            byte[]  a = cmsShelvesDetailService.createAppImage(images,2);
+            try(FileOutputStream fileOutputStream = new FileOutputStream((new File("H:\\shelves\\merge.png")))) {
+                fileOutputStream.write(a);
+            }catch (Exception e){
+
+            }
             Integer i=0;
             i++;
         }catch (Exception e){

@@ -207,7 +207,7 @@ class CmsShelvesDetailService extends BaseViewService {
     }
 
 
-    private byte[] createAppImage(List<String> urls, int numPerLine) {
+    public byte[] createAppImage(List<String> urls, int numPerLine) {
         int spacingX = 0;
         int spacingY = 0;
         try {
