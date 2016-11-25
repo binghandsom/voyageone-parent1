@@ -184,9 +184,6 @@ public class SellerCatService extends BaseService {
             throw new BusinessException("重复的店铺内分类名!");
         }
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        if(cartId == Integer.parseInt(CartEnums.Cart.TT.getId())){
-            shopBean = Shops.getShop(channelId, 23);
-        }
         if (shopBean == null) {
             throw new BusinessException("未配置店铺的销售平台!");
         }
