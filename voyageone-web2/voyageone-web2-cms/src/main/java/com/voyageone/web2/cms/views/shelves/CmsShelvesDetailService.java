@@ -208,8 +208,8 @@ class CmsShelvesDetailService extends BaseViewService {
 
 
     private byte[] createAppImage(List<String> urls, int numPerLine) {
-        int spacingX = 5;
-        int spacingY = 5;
+        int spacingX = 0;
+        int spacingY = 0;
         try {
             $info(urls.get(0));
             InputStream imagein = new FileInputStream(urls.get(0));
