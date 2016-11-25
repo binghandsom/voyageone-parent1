@@ -119,6 +119,24 @@ public class Jingdong_928_Jiangxinjie_DictTest {
             }
 
             {
+                // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" />"));
+
+                RuleExpression imageTemplate = new RuleExpression();
+                imageTemplate.addRuleWord(new TextWord(""));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord(C_自定义图片));
+
+                RuleExpression useOriUrl = new RuleExpression();
+                useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+
+            {
                 {
                     // 产品展示标题图
                     String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2986/244/1446991714/7866/d2e26f50/5783655fN10ab7f3e.jpg\">";
