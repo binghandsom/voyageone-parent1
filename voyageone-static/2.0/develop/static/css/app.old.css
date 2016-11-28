@@ -848,6 +848,9 @@ pre {
 .v-bottom {
     vertical-align: bottom !important;
 }
+.v-sub {
+    vertical-align: sub !important;
+}
 .vbox {
     display: table;
     border-spacing: 0;

@@ -240,7 +240,7 @@ s-field textarea.s-html {
     list-style-type: none;
 }
 
-.category_drag_list_dp ul li{
+.category_drag_list_dp ul li {
     height: 30px;
 }
 
@@ -429,7 +429,7 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
-.product-shema-detail .border-col-gray{
+.product-shema-detail .border-col-gray {
     color: #fff;
     border: 1px solid #ccc;
 }
@@ -438,8 +438,8 @@ s-field textarea.s-html {
     max-height: 100px;
 }
 
-.product-shema-detail .thumbInfo{
-    margin:0px auto;
+.product-shema-detail .thumbInfo {
+    margin: 0px auto;
     max-width: 100px;
     border-right: 1px solid #ddd
 }
@@ -488,6 +488,7 @@ s-field textarea.s-html {
 .product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
+
 .product-shema-detail span a {
     color: #e67e22;
     text-decoration: underline;
@@ -973,9 +974,10 @@ schema .ng-invalid.focus-error {
     width: 90px;
 }
 
-.clear-margin-bottom{
-    margin-bottom:0;
+.clear-margin-bottom {
+    margin-bottom: 0;
 }
+
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
 
 /* 高级检索附加样式 */
@@ -989,12 +991,29 @@ schema .ng-invalid.focus-error {
 }
 
 /**高级检索样式*/
-#advanceSearch .dropdown-menu-ul{
+#advanceSearch .dropdown-menu-ul {
     max-height: 350px;
     overflow: auto;
 }
 
-#advanceSearch .opacityBtn{
+#advanceSearch .opacityBtn {
+    border: none;
+    background: none;
+}
+
+/**类目排序样式*/
+#newCategory .btn-group li {
+    width: 120px;
+    border: 1px solid #c3bdbd;
+    border-radius: 3px;
+    height: 27px;
+    line-height: 20px;
+    text-align: center;
+    margin: 4px auto;
+
+}
+
+#newCategory .opacityBtn{
     border: none;
     background: none;
 }
