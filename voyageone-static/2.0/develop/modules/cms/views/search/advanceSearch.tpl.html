@@ -837,7 +837,7 @@
                                         <th class="text-left" ng-repeat="prop1 in vm.commonProps">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
-                                                                            ng-click="ctrlAdvance.columnOrder(prop1.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.value)}}"></i></button>
+                                                                            ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
                                         </th>
                                         <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps">{{prop2.name}}</th>
                                         <th class="text-center" ng-repeat="prop3 in vm.selSalesType">
@@ -848,7 +848,7 @@
                                         <th class="text-center" ng-repeat="prop4 in vm.selBiDataList">
                                             {{prop4.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
-                                                                        ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
+                                                                        ng-click="ctrlAdvance.columnOrder(prop4.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop4.value)}}"></i></button>
                                         </th>
                                     </tr>
                                 </thead>
