@@ -598,6 +598,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             } else if (searchValue.getSortOneName().startsWith("bi.sum")) {
                 // 按指定bi数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if (searchValue.getSortOneName().startsWith("sales")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             }
