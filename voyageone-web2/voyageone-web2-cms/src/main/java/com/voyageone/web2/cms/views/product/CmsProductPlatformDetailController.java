@@ -131,7 +131,7 @@ public class CmsProductPlatformDetailController extends CmsController {
             throw new BusinessException(errcode);
         } else if (isUpdate){
             return doUpdateProductPlatform(params);
-        } else return null;
+        } else return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHECK_CATEGORY)
