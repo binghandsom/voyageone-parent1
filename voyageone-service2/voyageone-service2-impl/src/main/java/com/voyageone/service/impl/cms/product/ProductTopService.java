@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.producttop.ProductInfo;
@@ -11,9 +12,12 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,15 +26,11 @@ import java.util.stream.Collectors;
  * Created by dell on 2016/11/28.
  */
 public class ProductTopService extends BaseService {
-
     @Autowired
     CmsBtProductTopDao dao;
-
     @Autowired
     CmsBtProductDao cmsBtProductDao;
-
     public List<ProductInfo> getPage(ProductTopPageParameter param, String channelId) {
-
 
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
@@ -40,16 +40,43 @@ public class ProductTopService extends BaseService {
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
-//        return changeToBeanList(list, channelId, lang);
-        return null;
+        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f,param)).collect(Collectors.toList());
+        return listResult;
     }
-
     public Object getCount(ProductTopPageParameter param, String channelId) {
 
         JongoQuery queryObject = getJongoQuery(param);
 
         return cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
     }
+
+    ProductInfo mapProductInfo(CmsBtProductModel f,ProductTopPageParameter param)
+    {
+        ProductInfo info = new ProductInfo();
+        info.setBrand(f.getCommon().getFields().getBrand());
+        info.setCode(f.getCommon().getFields().getCode());
+        info.setModel(f.getCommon().getFields().getModel());
+        info.setProductName(f.getCommon().getFields().getProductNameEn());
+        info.setQuantity(f.getCommon().getFields().getQuantity());
+        //图片
+        List<CmsBtProductModel_Field_Image> imgList = f.getCommonNotNull().getFieldsNotNull().getImages6();
+        if (!imgList.isEmpty()) {
+            info.setImage1(imgList.get(0).getName());
+        }
+        if(StringUtil.isEmpty(info.getImage1())){
+            imgList = f.getCommonNotNull().getFieldsNotNull().getImages1();
+            if (!imgList.isEmpty()) {
+                info.setImage1(imgList.get(0).getName());
+            }
+        }
+        CmsBtProductModel_Platform_Cart platform_Cart= f.getPlatform(param.getCartId());
+        if(platform_Cart!=null) {
+            info.setSkuCount(platform_Cart.getSkus().size());
+        }
+        return info;
+    }
+
+
 
      JongoQuery getJongoQuery(ProductTopPageParameter param) {
         JongoQuery queryObject = new JongoQuery();

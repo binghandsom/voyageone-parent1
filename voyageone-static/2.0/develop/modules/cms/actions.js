@@ -143,6 +143,11 @@ define(function () {
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
                     "getPutOnOffLogList": "getPutOnOffLogList"
+                },
+                productTopService:{
+                    "root": "/cms/producttop",
+                    "getPage":"getPage",
+                    "getCount":"getCount"
                 }
             },
             "mapping": {

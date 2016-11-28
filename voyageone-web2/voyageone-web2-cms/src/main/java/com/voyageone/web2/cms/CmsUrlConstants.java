@@ -664,8 +664,11 @@ public interface CmsUrlConstants {
             String GetPage = "getPage";
         }
     }
-
-
+    interface ProductTop {
+        String ROOT = "/cms/producttop";
+        String GetPage = "getPage";
+        String GetCount = "getCount";
+    }
     // 商品编辑
     interface GROUP {
 
