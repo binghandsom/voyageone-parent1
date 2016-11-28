@@ -143,7 +143,7 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
     /**
      * 单个code
      */
-    private void executeSingleCode(String channelId, int cartId, String code, String runType) {
+    public void executeSingleCode(String channelId, int cartId, String code, String runType) {
         // 上新数据
         SxData sxData;
 
