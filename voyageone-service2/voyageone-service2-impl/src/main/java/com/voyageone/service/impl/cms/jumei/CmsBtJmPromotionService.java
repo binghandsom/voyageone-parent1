@@ -658,6 +658,22 @@ public class CmsBtJmPromotionService extends BaseService {
                 srcJmPromotionSaveBean.getExtModel().setId(null);
                 srcJmPromotionSaveBean.getExtModel().setJmpromotionId(null);
                 srcJmPromotionSaveBean.getExtModel().setPromotionId(null);
+                String pageId = srcJmPromotionSaveBean.getExtModel().getAppPageId();
+                if(!StringUtil.isEmpty(pageId)){
+                    String idDate = DateTimeUtil.getDateTime(new Date(), DateTimeUtil.DATE_TIME_FORMAT_3);
+                    String idTime = Long.toString(Long.parseLong(DateTimeUtil.getDateTime(new Date(), "HHmmssSSS")),32);
+                    String temp[] = pageId.split("_");
+
+                    if(temp.length > 2) {
+                        srcJmPromotionSaveBean.getExtModel().setAppPageId(srcJmPromotionSaveBean.getExtModel().getAppPageId().replace(temp[temp.length - 2], idTime));
+                        srcJmPromotionSaveBean.getExtModel().setPcPageId(srcJmPromotionSaveBean.getExtModel().getPcPageId().replace(temp[temp.length - 2], idTime));
+                        if (temp.length > 3 && temp[temp.length - 3].indexOf("20") == 0) {
+                            srcJmPromotionSaveBean.getExtModel().setAppPageId(srcJmPromotionSaveBean.getExtModel().getAppPageId().replace(temp[temp.length - 3], idDate));
+                            srcJmPromotionSaveBean.getExtModel().setPcPageId(srcJmPromotionSaveBean.getExtModel().getPcPageId().replace(temp[temp.length - 3], idDate));
+                        }
+                    }
+
+                }
             }
             srcJmPromotionSaveBean.getTagList().forEach(tag -> {
                 CmsBtTagModel newTag = new CmsBtTagModel();
