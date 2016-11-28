@@ -453,6 +453,9 @@ define([
                 case "TH":
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
                     break;
+                case "likingCn":
+                    $location.path(cRoutes.channel_new_category.url);
+                    break;
                 default:
                     $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
                     break;
