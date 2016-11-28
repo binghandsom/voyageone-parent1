@@ -1,0 +1,192 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_USER_MANAGEMENT'|translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 账号 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.userAccount"/>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 角色 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ROLE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.roleId">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{role.roleId}}" ng-repeat="role in ctrl.roleList">&nbsp;{{role.roleName}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 状态 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.active">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="0">{{'BTN_INACTIVE'|translate}}</option>
+                                            <option value="1">{{'BTN_ACTIVE'|translate}}</option>
+                                            <option value="2">锁定</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 渠道 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList" ng-bind="channel.name"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 组织 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orgId">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{org.id}}" ng-repeat="org in ctrl.orgList" ng-bind="org.orgName"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- 仓库 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList" ng-bind="store.storeName"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 系统 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group"><!-- Company -->
+                                    <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.company">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{company.id}}" ng-repeat="company in ctrl.companyList" ng-bind="company.company"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-body-new">
+            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm m-r-xs">
+                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
+                    <button class="btn btn-default" ng-click="ctrl.vieAuthority()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-eye-slash"></i>&nbsp;查看权限</button>
+                    <button class="btn btn-default" ng-click="ctrl.resetPass()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-key"></i>&nbsp;重置密码</button>
+                </div>
+            </div>
+                <table class="table table-hover-new table-hover table_main table_fixed">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl" style="padding-left: 0;padding-right: 0;">
+                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                            <input type="checkbox" ng-click="selectAll(ctrl.adminUserSelList)"
+                                   ng-checked="isAllSelected(ctrl.adminUserSelList)" >
+                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-left mfb-xxt" translate="TXT_ACCOUNT"></th>
+                    <th class="text-left mfb-xt" translate="TXT_USER_NAME"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_EMAIL"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_ROLE"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_ORGANIZE"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CHANNEL"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
+                    <th class="text-left mfb-xt" translate="TXT_SYSTEM"></th>
+                    <th class="text-center mfb-xt" translate="TXT_STATUS"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CART_COMPANY_NAME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-if="ctrl.adminList.length==0">
+                    <td if-no-rows="ctrl.adminList.length||ctrl.adminList" colspan="13" style="padding: 0px"></td>
+                </tr>
+                    <tr ng-repeat="list in ctrl.adminList">
+                        <td class="text-left v-middle">
+                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                <input ng-model="ctrl.adminUserSelList.selFlag[list.id]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.id, ctrl.adminUserSelList)">
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </td>
+                        <td class="text-left v-middle">{{list.userAccount}}</td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.userName.length <= 10">{{list.userName}}</label>
+                            <label ng-if="list.userName.length > 10"><popover-text content="list.userName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle wrap">
+                            <label ng-if="list.email.length <= 10">{{list.email}}</label>
+                            <label ng-if="list.email.length > 10"><popover-text content="list.email" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.roleName.length <= 10">{{list.roleName}}</label>
+                            <label ng-if="list.roleName.length > 10"><popover-text content="list.roleName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle">{{ctrl.getName(list.orgId)}}</td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.channelName.length <= 10">{{list.channelName}}</label>
+                            <label ng-if="list.channelName.length > 10"><popover-text content="list.channelName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle">
+                            <label ng-if="list.storeName.length <= 10">{{list.storeName}}</label>
+                            <label ng-if="list.storeName.length > 10"><popover-text content="list.storeName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
+                        </td>
+                        <td class="text-left v-middle wrap">
+                            <label ng-if="list.application.length <= 8">{{list.application}}</label>
+                            <label ng-if="list.application.length > 8"><popover-text content="list.application" direct="top" popover-trigger="mouseenter" size="10"></popover-text></label>
+                        </td>
+                        <td class="text-center v-middle">{{ctrl.getActive(list.active)}}</td>
+                        <td class="text-left v-middle">{{list.company}}</td>
+                        <td class="text-left v-middle">{{list.modifier}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.adminList.length>0"></vpagination>
+    </div>
+</div>

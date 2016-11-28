@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.TmChannelShopDaoExt">
+
+	<resultMap id="cartShopBeanMap" type="com.voyageone.service.bean.com.TmChannelShopBean" />
+	
+	<resultMap id="cartShopConfigBeanMap" type="com.voyageone.service.bean.com.TmChannelShopConfigBean" />
+	
+	<sql id="selectCartShopFilter">
+		<where>
+			<if test="orderChannelId != null and orderChannelId != ''">
+				and tcs.order_channel_id = #{orderChannelId}
+			</if>
+			<if test="cartId != null">
+				and tcs.cart_id = #{cartId}
+			</if>
+			<if test="shopName != null and shopName != ''">
+				and tcs.shop_name like concat('%', #{shopName}, '%')
+			</if>
+			<if test="active != null">
+				and tcs.active = #{active}
+			</if>
+		</where>
+	</sql>
+	
+	<sql id="selectCartShopConfigFilter">
+		<where>
+			<if test="orderChannelId != null and orderChannelId != ''">
+				and tcsc.order_channel_id = #{orderChannelId}
+			</if>
+			<if test="cartId != null and cartId != ''">
+				and tcsc.cart_id = #{cartId}
+			</if>
+			<if test="cfgName != null and cfgName != ''">
+				and tcsc.cfg_name like concat('%', #{cfgName}, '%')
+			</if>
+			<if test="cfgVal != null and cfgVal != ''">
+				and (
+					tcsc.cfg_val1 like concat('%', #{cfgVal}, '%') or tcsc.cfg_val2 like concat('%', #{cfgVal}, '%')
+				)
+			</if>
+		</where>
+	</sql>
+	
+	<select id="selectCartShopByPage" resultMap="cartShopBeanMap">
+		select toc.name as channel_name, tcs.order_channel_id, tcs.cart_id, tcs.shop_name, tcs.app_url,
+			tcs.appKey, tcs.appSecret, tcs.sessionKey, tcs.`comment`, tcs.active, cc.name as cart_name,
+			tcs.created, tcs.creater, tcs.modified, tcs.modifier
+		from tm_channel_shop tcs left join tm_order_channel toc on toc.order_channel_id = tcs.order_channel_id
+			left join ct_cart cc on cc.cart_id = tcs.cart_id
+		<include refid="selectCartShopFilter"/>
+		order by modified desc
+	</select>
+	
+	<select id="selectCartShopCount" resultType="integer">
+		select count(0) from tm_channel_shop tcs
+		<include refid="selectCartShopFilter"/>
+	</select>
+	
+	<select id="selectCartShopConfigByPage" resultMap="cartShopConfigBeanMap">
+		select toc.name as channel_name, cc.name as cart_name, tcsc.order_channel_id, tcsc.cart_id,
+			tcsc.cfg_name, tcsc.cfg_val1, tcsc.cfg_val2, tcsc.`comment`
+		from tm_channel_shop_config tcsc left join ct_cart cc on cc.cart_id = tcsc.cart_id
+			left join tm_order_channel toc on toc.order_channel_id = tcsc.order_channel_id
+		<include refid="selectCartShopConfigFilter"/>
+	</select>
+	
+	<select id="selectCartShopConfigCount" resultType="integer">
+		select count(0) from tm_channel_shop_config tcsc
+		<include refid="selectCartShopConfigFilter"/>
+	</select>
+
+</mapper>

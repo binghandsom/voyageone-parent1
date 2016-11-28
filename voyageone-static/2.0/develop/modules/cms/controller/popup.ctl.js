@@ -9,7 +9,13 @@ define([
     'modules/cms/enums/MappingTypes'
 ], function (cms, _, MappingTypes) {
 
-    cms.constant('popActions', {
+    angular.module('com.voyageone.popups',[]).constant('popActions', {
+        "modifyPass": {
+            "templateUrl": "views/pop/modifyPass/modifyPass.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/modifyPass/modifyPass.ctl",
+            "controller": 'ModifyPassController as ctrl',
+            "size": 'md'
+        },
         "authority": {
             "new": {
                 "templateUrl": "views/pop/authority/new.tpl.html",
@@ -605,7 +611,9 @@ define([
             });
             return defer.promise;
         }
-
+        $scope.openModifyPass= function openModifyPass(context) {
+            return openModal(popActions.modifyPass, context);
+        };
         /**
          * 打开新建权限页面
          * @type {openAuthority}

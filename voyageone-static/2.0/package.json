@@ -11,6 +11,7 @@
   "author": "VoyageOne",
   "license": "ISC",
   "dependencies": {
+    "angular-ui-router": "^0.3.1",
     "chart.js": "^2.1.4",
     "uglify-js": "^2.7.0"
   },

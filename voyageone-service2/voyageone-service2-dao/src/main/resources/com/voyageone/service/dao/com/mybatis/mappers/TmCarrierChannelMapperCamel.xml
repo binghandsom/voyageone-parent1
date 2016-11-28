@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.com.TmCarrierChannelDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.TmCarrierChannelModel" />
+    <sql id="Base_Column_List" >
+        `order_channel_id`, `carrier`, `api_key`, `api_user`, `api_pwd`, `card_number`, `cusite`, 
+        `cusname`, `customer`, `useKd100_flg`, `allow_delete_flg`, `wsdl_url`, `comments`,
+        `active`, `creater`, `created`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.com.TmCarrierChannelKey" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_carrier_channel
+        where `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+          and `carrier` = #{carrier,jdbcType=VARCHAR}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.com.TmCarrierChannelModel" >
+        update tm_carrier_channel
+        <set >
+            <if test="apiKey != null" >
+                `api_key` = #{apiKey,jdbcType=VARCHAR},
+            </if>
+            <if test="apiUser != null" >
+                `api_user` = #{apiUser,jdbcType=VARCHAR},
+            </if>
+            <if test="apiPwd != null" >
+                `api_pwd` = #{apiPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="cardNumber != null" >
+                `card_number` = #{cardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="cusite != null" >
+                `cusite` = #{cusite,jdbcType=VARCHAR},
+            </if>
+            <if test="cusname != null" >
+                `cusname` = #{cusname,jdbcType=VARCHAR},
+            </if>
+            <if test="customer != null" >
+                `customer` = #{customer,jdbcType=VARCHAR},
+            </if>
+            <if test="usekd100Flg != null" >
+                `useKd100_flg` = #{usekd100Flg,jdbcType=VARCHAR},
+            </if>
+            <if test="allowDeleteFlg != null" >
+                `allow_delete_flg` = #{allowDeleteFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="wsdlUrl != null" >
+                `wsdl_url` = #{wsdlUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="comments != null" >
+                `comments` = #{comments,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+          and `carrier` = #{carrier,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="delete" parameterType="com.voyageone.service.model.com.TmCarrierChannelKey" >
+        delete from tm_carrier_channel
+        where `order_channel_id` = #{orderChannelId,jdbcType=VARCHAR}
+          and `carrier` = #{carrier,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_carrier_channel
+        <where >
+            <if test="apiKey != null" >
+                and `api_key` = #{apiKey,jdbcType=VARCHAR}
+            </if>
+            <if test="apiUser != null" >
+                and `api_user` = #{apiUser,jdbcType=VARCHAR}
+            </if>
+            <if test="apiPwd != null" >
+                and `api_pwd` = #{apiPwd,jdbcType=VARCHAR}
+            </if>
+            <if test="cardNumber != null" >
+                and `card_number` = #{cardNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="cusite != null" >
+                and `cusite` = #{cusite,jdbcType=VARCHAR}
+            </if>
+            <if test="cusname != null" >
+                and `cusname` = #{cusname,jdbcType=VARCHAR}
+            </if>
+            <if test="customer != null" >
+                and `customer` = #{customer,jdbcType=VARCHAR}
+            </if>
+            <if test="usekd100Flg != null" >
+                and `useKd100_flg` = #{usekd100Flg,jdbcType=VARCHAR}
+            </if>
+            <if test="allowDeleteFlg != null" >
+                and `allow_delete_flg` = #{allowDeleteFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="wsdlUrl != null" >
+                and `wsdl_url` = #{wsdlUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="comments != null" >
+                and `comments` = #{comments,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_carrier_channel
+        <where >
+            <if test="apiKey != null" >
+                and `api_key` = #{apiKey,jdbcType=VARCHAR}
+            </if>
+            <if test="apiUser != null" >
+                and `api_user` = #{apiUser,jdbcType=VARCHAR}
+            </if>
+            <if test="apiPwd != null" >
+                and `api_pwd` = #{apiPwd,jdbcType=VARCHAR}
+            </if>
+            <if test="cardNumber != null" >
+                and `card_number` = #{cardNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="cusite != null" >
+                and `cusite` = #{cusite,jdbcType=VARCHAR}
+            </if>
+            <if test="cusname != null" >
+                and `cusname` = #{cusname,jdbcType=VARCHAR}
+            </if>
+            <if test="customer != null" >
+                and `customer` = #{customer,jdbcType=VARCHAR}
+            </if>
+            <if test="usekd100Flg != null" >
+                and `useKd100_flg` = #{usekd100Flg,jdbcType=VARCHAR}
+            </if>
+            <if test="allowDeleteFlg != null" >
+                and `allow_delete_flg` = #{allowDeleteFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="wsdlUrl != null" >
+                and `wsdl_url` = #{wsdlUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="comments != null" >
+                and `comments` = #{comments,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from tm_carrier_channel
+        <where >
+            <if test="apiKey != null" >
+                and `api_key` = #{apiKey,jdbcType=VARCHAR}
+            </if>
+            <if test="apiUser != null" >
+                and `api_user` = #{apiUser,jdbcType=VARCHAR}
+            </if>
+            <if test="apiPwd != null" >
+                and `api_pwd` = #{apiPwd,jdbcType=VARCHAR}
+            </if>
+            <if test="cardNumber != null" >
+                and `card_number` = #{cardNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="cusite != null" >
+                and `cusite` = #{cusite,jdbcType=VARCHAR}
+            </if>
+            <if test="cusname != null" >
+                and `cusname` = #{cusname,jdbcType=VARCHAR}
+            </if>
+            <if test="customer != null" >
+                and `customer` = #{customer,jdbcType=VARCHAR}
+            </if>
+            <if test="usekd100Flg != null" >
+                and `useKd100_flg` = #{usekd100Flg,jdbcType=VARCHAR}
+            </if>
+            <if test="allowDeleteFlg != null" >
+                and `allow_delete_flg` = #{allowDeleteFlg,jdbcType=VARCHAR}
+            </if>
+            <if test="wsdlUrl != null" >
+                and `wsdl_url` = #{wsdlUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="comments != null" >
+                and `comments` = #{comments,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.com.TmCarrierChannelModel" >
+        insert into tm_carrier_channel
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                `order_channel_id`,
+            </if>
+            <if test="carrier != null" >
+                `carrier`,
+            </if>
+            <if test="apiKey != null" >
+                `api_key`,
+            </if>
+            <if test="apiUser != null" >
+                `api_user`,
+            </if>
+            <if test="apiPwd != null" >
+                `api_pwd`,
+            </if>
+            <if test="cardNumber != null" >
+                `card_number`,
+            </if>
+            <if test="cusite != null" >
+                `cusite`,
+            </if>
+            <if test="cusname != null" >
+                `cusname`,
+            </if>
+            <if test="customer != null" >
+                `customer`,
+            </if>
+            <if test="usekd100Flg != null" >
+                `useKd100_flg`,
+            </if>
+            <if test="allowDeleteFlg != null" >
+                `allow_delete_flg`,
+            </if>
+            <if test="wsdlUrl != null" >
+                `wsdl_url`,
+            </if>
+            <if test="comments != null" >
+                `comments`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="orderChannelId != null" >
+                #{orderChannelId,jdbcType=VARCHAR},
+            </if>
+            <if test="carrier != null" >
+                #{carrier,jdbcType=VARCHAR},
+            </if>
+            <if test="apiKey != null" >
+                #{apiKey,jdbcType=VARCHAR},
+            </if>
+            <if test="apiUser != null" >
+                #{apiUser,jdbcType=VARCHAR},
+            </if>
+            <if test="apiPwd != null" >
+                #{apiPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="cardNumber != null" >
+                #{cardNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="cusite != null" >
+                #{cusite,jdbcType=VARCHAR},
+            </if>
+            <if test="cusname != null" >
+                #{cusname,jdbcType=VARCHAR},
+            </if>
+            <if test="customer != null" >
+                #{customer,jdbcType=VARCHAR},
+            </if>
+            <if test="usekd100Flg != null" >
+                #{usekd100Flg,jdbcType=VARCHAR},
+            </if>
+            <if test="allowDeleteFlg != null" >
+                #{allowDeleteFlg,jdbcType=VARCHAR},
+            </if>
+            <if test="wsdlUrl != null" >
+                #{wsdlUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="comments != null" >
+                #{comments,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

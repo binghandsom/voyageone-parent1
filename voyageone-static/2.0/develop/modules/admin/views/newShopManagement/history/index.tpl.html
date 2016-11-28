@@ -1,0 +1,100 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_NEWSHOP_HISTORY' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_ID' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" maxlength="3" class="form-control" ng-model="ctrl.searchInfo.channelId"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.channelName"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_CART_UPDATE_TIME' | translate}}</label>
+                                    <div class="col-sm-9 form-inline">
+                                        <div class="col-sm-5 input-group">
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
+                                                   ng-model="ctrl.searchInfo.modifiedFrom" onpaste="return false" maxlength="10"
+                                                   max-date="ctrl.searchInfo.modifiedTo" is-open="datePicker1" close-text="Close"/>
+													  <span class="input-group-btn">
+														<button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+													  </span>
+                                        </div>
+                                        &nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group">
+                                            <input type="date" date-model-format="yyyy-MM-dd" class="form-control" uib-datepicker-popup
+                                                   ng-model="ctrl.searchInfo.modifiedTo" onpaste="return false" maxlength="10"
+                                                   min-date="ctrl.searchInfo.modifiedFrom" is-open="datePicker2" close-text="Close"/>
+													  <span class="input-group-btn">
+														<button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+													  </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-body-new">
+            <table class="table table-hover-new table-hover table_main">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-xt" translate="TXT_CART_CHANNEL_ID"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_CART_CHANNEL_NAME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td if-no-rows="ctrl.historyList.length||ctrl.historyList" colspan="5" style="padding: 0px"></td>
+                </tr>
+                <tr ng-repeat="list in ctrl.historyList">
+                    <td class="text-left v-middle">{{list.channelId}}</td>
+                    <td class="text-left v-middle">{{list.channelName}}</td>
+                    <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td class="text-center v-middle">{{list.modifier}}</td>
+                    <td class="text-center v-middle">
+                        <button class="btn btn-default" ng-click="ctrl.edit(list)"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                        <button class="btn btn-default" ng-click="ctrl.delete(list)"><i class="fa fa-ban"></i>&nbsp;删除</button>
+                        <a class="btn btn-default" ng-href="/admin/newshop/self/downloadNewShopSql?newShopId={{list.id}}"><i class="fa fa-pencil"></i>&nbsp;下载</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.historyList.length>0"></vpagination>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-12">
+                <div class="row form-group"><!-- 特定权限 -->
+                    <label class="col-sm-2 control-label">{{'TXT_SYSTEM' | translate}}</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" ng-model="ctrl.saveInfo.application" ng-change="ctrl.changeApp(ctrl.saveInfo.application)">
+                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
+                        </select>
+                    </div><!-- 全部权限 -->
+                    <div ng-if="ctrl.popType=='分配权限'">
+                        <label class="col-sm-2 control-label">全部权限</label>
+                        <div class="col-sm-4">
+                            <label class="checkbox-inline c-checkbox" >
+                                <input type="checkbox" value="1" ng-model="ctrl.hasAllAuth">
+                                <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;ALL
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group"><!-- 特定权限 -->
+                    <label class="col-sm-2 control-label text-left">特定权限</label>
+                </div>
+                <div class="row form-group" >
+                    <div class="wrapper" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
+                        <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none;word-break: break-all;">
+                            <thead>
+                            <tr>
+                                <th class="cell-input" style="padding: 5px; width: 13px;">
+                                    <input ng-click="toggleAllCheckboxes($event,ctrl.resList, ctrl.selectedList)" type="checkbox" />
+                                </th>
+                                <th class="text-left mfb-xxt" translate="TXT_MENU_NAME"></th>
+                                <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
+                                <th class="cell-members text-left mfb-xxt" translate="TXT_URL"></th>
+                                <th class="text-left mfb-xt" translate="TXT_TYPE"></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.resList"></tbody>
+                        </table>
+
+                        <script id="table_tree.html" type="text/ng-template">
+                            <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:true})">
+                                <td class="cell-input" style="padding: 4px;">
+                                    <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
+                                </td>
+                                <td class="cell-name text-left tooltips" ng-click="item.opened = !item.opened" style="width: 238px;">
+                                    <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">
+                                        {{item.resName}}
+                                    </div>
+                                </td>
+                                <td class="text-left tooltips">
+                                    {{item.resKey}}
+                                </td>
+                                <td class="text-left tooltips">
+                                   {{item.resUrl}}
+                                </td>
+                                <td ng-class="{'text-center':level>=1}">{{ctrl.getResType(item.resType)}}</td>
+                            </tr>
+                            <tr class="children" ng-if="item.children&&item.children.length>0">
+                                <td colspan="5">
+                                    <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;border:none;word-break: break-all;">
+                                        <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer" ng-if="ctrl.saveInfo.application">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>
