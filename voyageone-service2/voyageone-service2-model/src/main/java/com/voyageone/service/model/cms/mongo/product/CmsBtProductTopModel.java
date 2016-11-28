@@ -1,12 +1,13 @@
 package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.List;
 
-public class CmsBtProductTopModel extends BaseMongoModel {
+public class CmsBtProductTopModel extends ChannelPartitionModel {
     private String channelId;
-    private String catId;
+    private String catId;//分类
     private Long productTopId;
     private List<String> productCodeList;//置顶列表
     private String sortColumnName;// 排序列名称

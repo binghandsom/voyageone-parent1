@@ -1,39 +1,17 @@
 package com.voyageone.service.dao.cms.mongo;
 
-import com.voyageone.base.dao.mongodb.BaseMongoDao;
-import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.util.MongoUtils;
+import com.voyageone.base.dao.mongodb.BaseMongoChannelDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.springframework.stereotype.Repository;
-import java.util.List;
 
 @Repository
-public class CmsBtProductTopDao extends BaseMongoDao<CmsBtProductTopModel> {
-
-    public CmsBtProductTopModel selectByTemplateId(long productTopId) {
-        JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{\"productTopId\":" + productTopId + "}");
-        return selectOneWithQuery(queryObject);
-    }
-
-    public void update(CmsBtProductTopModel model) {
-        super.update(model);
-    }
-
+public class CmsBtProductTopDao extends BaseMongoChannelDao<CmsBtProductTopModel> {
     /**
-     * 根据channelId和catId列表
+     * 根据catId返回数据
      */
-    public List<CmsBtProductTopModel> selectTemplateForImageUpload(String channelId, String catId) {
-
-        StringBuilder sbQuery = new StringBuilder();
-
-        sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
-
-        sbQuery.append(",");
-        sbQuery.append(MongoUtils.splicingValue("catId", catId));
-
-        String query = "{" + sbQuery.toString() + "}";
-
-        return select(query);
+    public CmsBtProductTopModel selectByCatId(String catId, String channelId) {
+        String query = "{\"catId\":\"" + catId + "\"}";
+        return selectOneWithQuery(query, channelId);
     }
+
 }
