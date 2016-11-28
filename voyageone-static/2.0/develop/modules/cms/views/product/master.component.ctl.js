@@ -327,6 +327,7 @@ define([
                             imagesType: imagesType,
                             images: productComm.fields[imagesType]
                         }).then(function () {
+                            initialize();
                             notify.success("删除成功！");
                         });
 
@@ -346,6 +347,7 @@ define([
                         imagesType: imagesType,
                         images: imgSource
                     }).then(function () {
+                        initialize();
                         notify.success("排序成功！");
                     });
 
