@@ -343,7 +343,7 @@
                             <div class="row">
                                 <div class="col-sm-5 col-md-offset-7 text-right">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="vm.status != 'Approved'">
+                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="vm.status != 'Approved'||!isPublishSucceed">
                                             <i class="fa fa-refresh"></i>&nbsp;更新价格
                                         </button>
                                     </div>
