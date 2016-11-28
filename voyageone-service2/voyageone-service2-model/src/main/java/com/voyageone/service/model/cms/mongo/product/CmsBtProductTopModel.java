@@ -11,7 +11,7 @@ public class CmsBtProductTopModel extends ChannelPartitionModel {
     private Long productTopId;
     private List<String> productCodeList;//置顶列表
     private String sortColumnName;// 排序列名称
-    private int sortType;//排序类型  1：升序 0：降序
+    private int sortType;//排序类型  1：升序  -1：降序
 
     public String getChannelId() {
         return channelId;

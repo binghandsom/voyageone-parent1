@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CmsBtProductTopDao extends BaseMongoChannelDao<CmsBtProductTopModel> {
+
     /**
      * 根据catId返回数据
      */
@@ -13,4 +14,5 @@ public class CmsBtProductTopDao extends BaseMongoChannelDao<CmsBtProductTopModel
         String query = "{\"catId\":\"" + catId + "\"}";
         return selectOneWithQuery(query, channelId);
     }
+
 }
