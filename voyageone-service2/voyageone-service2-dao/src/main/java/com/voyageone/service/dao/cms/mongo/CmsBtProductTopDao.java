@@ -13,5 +13,4 @@ public class CmsBtProductTopDao extends BaseMongoChannelDao<CmsBtProductTopModel
         String query = "{\"catId\":\"" + catId + "\"}";
         return selectOneWithQuery(query, channelId);
     }
-
 }
