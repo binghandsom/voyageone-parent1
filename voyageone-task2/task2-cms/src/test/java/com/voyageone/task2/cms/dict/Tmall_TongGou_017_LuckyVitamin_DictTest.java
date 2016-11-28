@@ -213,7 +213,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
             }
 
             {
-                // 店铺介绍图
+                // 店铺介绍图 - 0
                 RuleExpression htmlTemplate = new RuleExpression();
                 htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
 
@@ -225,7 +225,66 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+            {
+                // 店铺介绍图 - 1
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("1"));
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+
+            {
+                // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" width=790px />"));
+
+                RuleExpression imageTemplate = new RuleExpression();
+                imageTemplate.addRuleWord(new TextWord(""));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord(C_自定义图片));
+
+                RuleExpression useOriUrl = new RuleExpression();
+                useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
+
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+            {
+                // 店铺介绍图 - 2
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img width=\"790px\" src=\"%s\" /></div>"));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("2"));
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -263,24 +322,6 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
                 String html = "<br /><br />";
                 TextWord word = new TextWord(html);
                 ruleRoot.addRuleWord(word);
-            }
-
-            {
-                // 所有自定义图(getAllImages（注意参数里要设置使用原图）)
-                RuleExpression htmlTemplate = new RuleExpression();
-                htmlTemplate.addRuleWord(new TextWord("<img src=\"%s\" />"));
-
-                RuleExpression imageTemplate = new RuleExpression();
-                imageTemplate.addRuleWord(new TextWord(""));
-
-                RuleExpression imageType = new RuleExpression();
-                imageType.addRuleWord(new TextWord(C_自定义图片));
-
-                RuleExpression useOriUrl = new RuleExpression();
-                useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
-
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
-                ruleRoot.addRuleWord(new CustomWord(word));
             }
 
             {
