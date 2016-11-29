@@ -1013,7 +1013,13 @@ schema .ng-invalid.focus-error {
 
 }
 
-#newCategory .opacityBtn{
+#newCategory .opacityBtn {
     border: none;
     background: none;
+}
+
+#newCategory .span-order {
+    padding-bottom: 4px;
+    vertical-align: middle;
+    border-bottom: 2px solid #6dc37f;
 }

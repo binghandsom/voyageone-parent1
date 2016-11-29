@@ -44,9 +44,9 @@
                     <ul class="list-inline">
                         <li class="jm-sortable-product" style="width: 300px">
                             <div class="jm-sortable-product-handle" style="height: 160px">
-                                <div class="row">
+                                <div class="row" style="height: 24px">
                                     <div class="col-sm-8">
-                                        code: <span class="ng-binding">28974</span>
+                                        <strong>code:</strong> <span class="ng-binding">28974</span>
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="button" class="close" ng-click="ctrl.remove($index, product)"><i class="fa fa-close"></i></button>
@@ -54,7 +54,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <img image="010-SJ9020SZW-1" title="" alt="010-SJ9020SZW-1" class="ng-isolate-scope" src="http://image.sneakerhead.com/is/image/sneakerhead/010-SJ9020SZW-1">
+                                        <img image="010-SJ9020SZW-1" title="" alt="010-SJ9020SZW-1" class="thumb ng-isolate-scope" src="http://image.sneakerhead.com/is/image/sneakerhead/010-SJ9020SZW-1">
                                     </div>
                                     <div class="col-sm-8">
                                         <div class="row">
@@ -103,21 +103,24 @@
                 <div class="row">
                     <div class="col-md-4 form-horizontal">
                         <div class="row form-group">
-                            <div class="col-md-4 text-right">
-                                <button class="btn btn-info btn-pop"><i class="fa fa-star"></i>&nbsp; 品牌</button>&emsp;
-                            </div>
+                            <label class="col-md-4 control-label"><strong>品牌</strong></label>
                             <div class="col-md-8">
                                 <div class="row">
-                                    <label>
-                                        <label> <input type="radio" class="v-top" name="brand" value="0">&nbsp;include </label>
+                                    &emsp;<label style="padding-top: 3px">
+                                        <label> <input type="radio" class="v-sub" name="brand" value="0">&nbsp;include </label>
                                     </label>&emsp;
-                                    <label>
-                                        <label> <input type="radio" class="v-top" name="brand" value="1">&nbsp;exclude </label>
+                                    <label style="padding-top: 3px">
+                                        <label> <input type="radio" class="v-sub" name="brand" value="1">&nbsp;exclude </label>
                                     </label>
                                 </div>
-                                <div class="row">
-                                    <textarea class="form-control no-resize"></textarea>
-                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-sm-7 col-md-offset-4">
+                                <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
+                                        ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
+                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -168,25 +171,34 @@
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            时间&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            时间升序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-asc"></i></button>
                                         </li>
                                         <li>
-                                            售价&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            时间降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
                                         </li>
                                         <li>
-                                            库存&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            售价升序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-asc"></i></button>
                                         </li>
                                         <li>
-                                            7天销售&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            售价降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
                                         </li>
                                         <li>
-                                            30天销售&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            库存降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
                                         </li>
                                         <li>
-                                            总销售&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-unsorted"></i></button>
+                                            7天销售降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
+                                        </li>
+                                        <li>
+                                            30天销售降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
+                                        </li>
+                                        <li>
+                                            总销售降序&nbsp;<button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" ><i class="fa fa-sort-desc"></i></button>
                                         </li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="span-order">30天销售降序</span>
                             </div>
                         </div>
                     </div>
