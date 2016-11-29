@@ -16,7 +16,7 @@
     border: none;
 }
 .table-nested .cell-input {
-    width: 20px;
+    width: 12px;
     padding-left: 5px;
 }
 .table-nested .cell-members {
@@ -52,4 +52,18 @@
 }
 .table-nested .opened > .children {
     display: table-row;
+}
+
+/*开新店guide页面样式*/
+#status-buttons a{
+    padding:0 20px;
+}
+#status-buttons a.inactive> span,#status-buttons a.active> span{
+    padding: 4px 9px;
+    border-radius: 18px;
+    background: #999;
+    color: #fff;
+}
+#status-buttons a.active> span{
+    background: #e67e22;
 }
