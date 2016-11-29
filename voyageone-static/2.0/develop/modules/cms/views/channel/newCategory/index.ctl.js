@@ -1,13 +1,15 @@
 define([
     'cms',
+    './sortEnum',
     './service.dev'
-], function (cms) {
+], function (cms,sortEnum) {
 
     cms.controller("newCategoryController", (function () {
 
         function NewCategoryCtl($routeParams,productTopService) {
             var self = this;
             self.routeParams = angular.fromJson($routeParams.cartInfo);
+            self.sortList = sortEnum.getSortByCd(self.routeParams.cartId);
             self.productTopService = productTopService;
             self.searchInfo = {};
             self.sort = {};
@@ -27,6 +29,12 @@ define([
             //brandList,sortColumnName,sortType
             productTopService.init({cartId:routeParams.cartId}).then(function(res){
                 self.brandList = res.brandList;
+
+                self.sort = _.find(self.sortList,function(ele){
+                    return ele.sValue == res.sortColumnName;
+                });
+
+                console.log("sort",self.sort);
             });
 
 
