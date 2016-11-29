@@ -18,6 +18,7 @@
         <module>voyageone-service2-impl</module>
         <module>voyageone-service2-model</module>
         <module>voyageone-service2-dao</module>
+        <module>voyageone-service2-security</module>
     </modules>
     <properties>
         <!--<voyageone.service2.base.version>0.0.1-SNAPSHOT</voyageone.service2.base.version>-->
