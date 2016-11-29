@@ -57,6 +57,8 @@
 /*开新店guide页面样式*/
 #status-buttons a{
     padding:0 20px;
+    margin-top: 15px;
+    display: inline-block;
 }
 #status-buttons a.inactive> span,#status-buttons a.active> span{
     padding: 4px 9px;
