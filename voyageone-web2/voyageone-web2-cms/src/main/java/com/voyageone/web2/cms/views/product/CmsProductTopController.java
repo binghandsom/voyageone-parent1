@@ -36,11 +36,11 @@ public class CmsProductTopController extends CmsController {
 
         return success(service.getCount(param, getUser().getSelChannelId()));
     }
+
     @RequestMapping(CmsUrlConstants.ProductTop.GetTopList)
     public AjaxResponse getTopList(GetTopListParameter parameter) {
         return success(service.getTopList(parameter, getUser().getSelChannelId()));
 
     }
 
-
-    }
+}

@@ -147,7 +147,8 @@ define(function () {
                 productTopService:{
                     "root": "/cms/producttop",
                     "getPage":"getPage",
-                    "getCount":"getCount"
+                    "getCount":"getCount",
+                    "getTopList":"getTopList"
                 }
             },
             "mapping": {
