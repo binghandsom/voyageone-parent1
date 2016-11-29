@@ -52,13 +52,13 @@ public class ProductTopService extends BaseService {
     }
 
     //置顶区查询
-    public List<ProductInfo> getTopList(GetTopListParameter parameter) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getCartId(), parameter.getChannelId());
+    public List<ProductInfo> getTopList(GetTopListParameter parameter,String channelId) {
+        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getCartId(),channelId);
         if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
             return new ArrayList<>();
 
         JongoQuery jongoQuery = getTopListJongoQuery(parameter, topModel);
-        List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, parameter.getChannelId());
+        List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, channelId);
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
         return listResult;
     }
