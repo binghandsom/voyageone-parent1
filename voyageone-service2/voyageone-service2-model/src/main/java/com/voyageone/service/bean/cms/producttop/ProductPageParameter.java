@@ -6,7 +6,6 @@ import java.util.List;
  * Created by dell on 2016/11/28.
  */
 public class ProductPageParameter {
-    String channelId;
     int cartId;//平台id
     List<String> brandList;//品牌名称
     boolean isInclude;//  brand是否包含
@@ -18,13 +17,6 @@ public class ProductPageParameter {
     int sortType;//排序类型   1：升序         -1：降序
     int pageIndex;//当前页
     int pageSize;//当前页行数
-    public String getChannelId() {
-        return channelId;
-    }
-
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public int getCartId() {
         return cartId;
