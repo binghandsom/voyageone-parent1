@@ -165,14 +165,7 @@ define([
                 self.channelTempAllList = [];
                 self.storeTempAllList = [];
                 self.channelIds = [];
-                if (item.isFilter == true) {
-                    _.forEach(self.channelList, function (channel) {
-                        self.channelIds.push(channel.orderChannelId);
-                    });
-                    self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
-                        self.storeAllListCopy = res.data;
-                    });
-                }
+
                 switch (item.type) {
                     case'channel':
                         // 从AllChannelList过滤出已经选择的channel，组成新的可以选择的list
@@ -194,31 +187,15 @@ define([
                         self.channelAllList = self.channelTempAllList;
                         break;
                     case'store':
-                        if (item.isFilter == true) {
-                            _.forEach(self.storeAllListCopy, function (filteredStoreList) {
-                                filteredStoreList.storeName = filteredStoreList.storeName.indexOf('(') < 0 ? '(' + filteredStoreList.channelId + ')' + filteredStoreList.storeName : filteredStoreList.storeName;
-                            });
-                            _.filter(self.storeAllList.length < self.storeAllListCopy.length ? self.storeAllListCopy : self.storeAllList, function (data) {
-                                if (data.channelId == item.value) {
-                                    data.storeName = data.storeName.indexOf('(') < 0 ? '(' + data.channelId + ')' + data.storeName : data.storeName;
-                                    self.storeTempAllList.push(data);
-                                }
-                            });
-                            if (self.storeTempAllList.length == 0) {
-                                return self.storeTempAllList = self.storeAllListCopy;
-                            } else {
-                                return self.storeTempAllList;
+                        _.filter(self.storeAllListCopy, function (data) {
+                            if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
+                                self.storeTempAllList.push(data)
                             }
-                        } else {
-                            _.filter(self.storeAllListCopy, function (data) {
-                                if (data.storeName.toUpperCase().indexOf(item.value.toUpperCase()) > -1) {
-                                    self.storeTempAllList.push(data)
-                                }
-                            });
-                            self.storeAllList = self.storeTempAllList;
-                        }
+                        });
+                        self.storeAllList = self.storeTempAllList;
                         break;
                 }
+
             },
             channelMove: function (type) {
                 var self = this;
@@ -257,6 +234,7 @@ define([
                         });
                         self.storeMove('');
                         self.channelAllList = [];
+                        self.filterStoreAllList({'type': 'showAllStore'});
                         break;
                     case 'include':
                         if (self.rightSelectedFlg == true) {
@@ -270,18 +248,7 @@ define([
                                 self.channelList.push(self.data);
                                 self.channelAllList.splice(self.channelAllList.indexOf(self.data), 1);
                                 self.selectedChannelId = '';
-                                var data = self.search({
-                                    'type': 'store',
-                                    'value': self.data.orderChannelId,
-                                    'isFilter': true
-                                });
-                                if (self.storeAllList.length < self.storeAllListCopy.length) {
-                                    _.forEach(data, function (item) {
-                                        self.storeAllList.push(item);
-                                    })
-                                } else {
-                                    self.storeAllList = data;
-                                }
+                                self.filterStoreAllList({'value': self.data.orderChannelId});
                                 break;
                             }
                         } else {
@@ -300,6 +267,7 @@ define([
                                 self.channelAllList.push(self.data);
                                 self.channelList.splice(self.channelList.indexOf(self.data), 1);
                                 self.selectedChannelId = '';
+                                self.filterStoreAllList({ 'value': self.data.orderChannelId });
                                 break;
                             }
                         } else {
@@ -311,6 +279,7 @@ define([
                             self.channelAllList.push(item);
                         });
                         self.channelList = [];
+                        self.filterStoreAllList({'type': 'showAllStore'});
                         break;
                 }
             },
@@ -461,6 +430,47 @@ define([
                         _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                         self.$uibModalInstance.close(result);
                     })
+                }
+            },
+            filterStoreAllList:function(item) {
+                var self = this;
+                self.channelTempAllList = [];
+                self.storeTempAllList = [];
+                self.channelIds = [];
+                if(item.type=='showAllStore'){
+                    self.storeService.getAllStore(null).then(function (res) {
+                        _.forEach(res.data, function (filteredStoreList) {
+                            filteredStoreList.storeName = filteredStoreList.storeName.indexOf('(') < 0 ? '(' + filteredStoreList.channelId + ')' + filteredStoreList.storeName : filteredStoreList.storeName;
+                        });
+                        return self.storeAllList = res.data;
+                    });
+                }else{
+                    _.forEach(self.channelList, function (channel) {
+                        self.channelIds.push(channel.orderChannelId);
+                    });
+                    self.storeService.getStoreByChannelIds(self.channelIds).then(function (res) {
+                        self.storeAllListCopy = res.data;
+                        callback(self.channelIds);
+                        function callback(channelIds) {
+                            _.forEach(self.storeAllListCopy, function (filteredStoreList) {
+                                filteredStoreList.storeName = filteredStoreList.storeName.indexOf('(') < 0 ? '(' + filteredStoreList.channelId + ')' + filteredStoreList.storeName : filteredStoreList.storeName;
+                            });
+                            _.filter(self.storeAllList.length < self.storeAllListCopy.length ? self.storeAllListCopy : self.storeAllList, function (data) {
+                                _.forEach(channelIds,function(i){
+                                    if (data.channelId == i) {
+                                        data.storeName = data.storeName.indexOf('(') < 0 ? '(' + data.channelId + ')' + data.storeName : data.storeName;
+                                        self.storeTempAllList.push(data);
+                                    }
+                                })
+                            });
+                            if (self.storeTempAllList.length == 0) {
+                                self.storeTempAllList = self.storeAllListCopy;
+                                return self.storeAllList = self.storeTempAllList
+                            } else {
+                                return self.storeAllList = self.storeTempAllList;
+                            }
+                        }
+                    });
                 }
             }
         };
