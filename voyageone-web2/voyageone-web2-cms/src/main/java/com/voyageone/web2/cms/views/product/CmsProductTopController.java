@@ -1,13 +1,12 @@
 package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.service.bean.cms.producttop.GetTopListParameter;
-import com.voyageone.service.bean.cms.producttop.ProductInfo;
 import com.voyageone.service.bean.cms.producttop.ProductPageParameter;
 import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.apache.ibatis.annotations.Param;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +27,10 @@ public class CmsProductTopController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
     public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
-
-        return success(service.getPage(param, getUser().getSelChannelId()));
+        UserSessionBean userSessionBean = getUser();
+        return success(service.getPage(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName()));
     }
+
 
     @RequestMapping(CmsUrlConstants.ProductTop.GetCount)
     public Object getCount(@RequestBody ProductPageParameter param) {

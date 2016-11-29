@@ -2,12 +2,14 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.producttop.GetTopListParameter;
 import com.voyageone.service.bean.cms.producttop.ProductInfo;
 import com.voyageone.service.bean.cms.producttop.ProductPageParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -27,24 +29,61 @@ public class ProductTopService extends BaseService {
     CmsBtProductTopDao dao;
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    MongoSequenceService mongoSequenceService;
     //普通区查询 获取指定页
-    public List<ProductInfo> getPage(ProductPageParameter param, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
+    public List<ProductInfo> getPage(ProductPageParameter param, String channelId,String userName) {
+
+        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        //保存排序字段
+        saveSortColumnName(param,topModel,channelId,userName);
+
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
-        JongoQuery queryObject = getJongoQuery(param,topModel);
+        JongoQuery queryObject = getJongoQuery(param, topModel);
         queryObject.setProjection("");
-        queryObject.setSort("{prodId:-1}");
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
+        //排序字段
+        if (!com.voyageone.common.util.StringUtils.isEmpty(param.getSortColumnName())) {
+            queryObject.setSort(String.format("{%s:%s}", param.getSortColumnName(), param.getSortType()));
+        } else {
+            queryObject.setSort("{prodId:-1}");
+        }
+
+
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
         return listResult;
     }
 
+    public  void  saveSortColumnName(ProductPageParameter param,CmsBtProductTopModel topModel,String channelId,String userName) {
+        if (!StringUtils.isEmpty(param.getSortColumnName())) {
+            boolean isAdd = false;
+            if (topModel == null) {
+                isAdd = true;
+                topModel = new CmsBtProductTopModel();
+                topModel.setProductTopId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CmsBtProductTopID));
+
+                topModel.setChannelId(channelId);
+                topModel.setCatId(param.getpCatId());
+                topModel.setCreated(DateTimeUtil.getNow());
+                topModel.setCreater(userName);
+            }
+            topModel.setSortColumnName(param.getSortColumnName());
+            topModel.setSortType(param.getSortType());
+            if (isAdd) {
+                dao.insert(topModel);
+            } else {
+                dao.update(topModel);
+            }
+        }
+    }
+
     //普通区查询 获取总数量
     public Object getCount(ProductPageParameter param, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
 
         JongoQuery queryObject = getJongoQuery(param, topModel);
 
@@ -53,7 +92,7 @@ public class ProductTopService extends BaseService {
 
     //置顶区查询
     public List<ProductInfo> getTopList(GetTopListParameter parameter,String channelId) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getCartId(),channelId);
+        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getpCatId(),channelId);
         if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
             return new ArrayList<>();
 
