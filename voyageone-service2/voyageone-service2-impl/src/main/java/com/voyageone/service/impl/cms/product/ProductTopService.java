@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.product;
-
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.producttop.GetTopListParameter;
@@ -17,8 +18,11 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +36,21 @@ public class ProductTopService extends BaseService {
 
     @Autowired
     MongoSequenceService mongoSequenceService;
+
+    public Map<String, Object> init(String channelId,String catId, String language) throws IOException {
+
+        Map<String, Object> data = new HashMap<>();
+        CmsBtProductTopModel topModel = dao.selectByCatId(catId, channelId);
+
+        if (topModel != null) {
+            data.put("sortColumnName", topModel.getSortColumnName());
+        }
+        // 获取brand list
+        data.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
+
+        return data;
+    }
+
     //普通区查询 获取指定页
     public List<ProductInfo> getPage(ProductPageParameter param, String channelId,String userName) {
 

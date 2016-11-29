@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/11/28.
@@ -24,7 +26,12 @@ public class CmsProductTopController extends CmsController {
 
     @Autowired
     ProductTopService service;
-
+    @RequestMapping(CmsUrlConstants.ProductTop.Init)
+    public AjaxResponse init(@RequestBody Map<String,Object> map) throws IOException {
+        String catId = map.get("catId").toString();
+        UserSessionBean userSessionBean = getUser();
+        return success(service.init(userSessionBean.getSelChannelId(), "catId", getLang()));
+    }
     @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
     public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
         UserSessionBean userSessionBean = getUser();

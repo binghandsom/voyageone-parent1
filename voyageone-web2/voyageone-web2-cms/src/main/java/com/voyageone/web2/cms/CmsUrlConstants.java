@@ -666,6 +666,7 @@ public interface CmsUrlConstants {
     }
     interface ProductTop {
         String ROOT = "/cms/producttop";
+        String Init="init";
         String GetPage = "getPage";
         String GetCount = "getCount";
         String GetTopList="getTopList";
