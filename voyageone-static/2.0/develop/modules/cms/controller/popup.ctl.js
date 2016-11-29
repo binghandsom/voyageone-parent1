@@ -568,6 +568,17 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
+            },
+            "skuMoveConfirm": {
+                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
+                "controller": 'SkuMoveConfirmController as ctrl'
+            },
+            "moveResult": {
+                "templateUrl": "views/pop/product/move_result.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
+                "controller": 'MoveResultController as ctrl',
+                "size": 'sm'
             }
         },
         "shelves" : {
@@ -1397,6 +1408,15 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
+
+        /**移动SKU确认*/
+        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
+            return openModal(popActions.product.skuMoveConfirm, context);
+        };
+        /**移动SKU的结果确认*/
+        $scope.openMoveResult = function openMoveResult(context) {
+            return openModal(popActions.product.moveResult, context);
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 
