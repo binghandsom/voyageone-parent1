@@ -3676,6 +3676,15 @@ public class SxProductService extends BaseService {
 						singleCheckField.setValue(o.toString());
 						retMap.put(field.getId(), singleCheckField);
 						break;
+                    case MULTICHECK:
+                        MultiCheckField multiCheckField = (MultiCheckField) field;
+                        List<Value> lstValue = new ArrayList<>();
+                        Value v = new Value();
+                        v.setValue(o.toString());
+                        lstValue.add(v);
+                        multiCheckField.setValues(lstValue);
+                        retMap.put(field.getId(), multiCheckField);
+                        break;
 				}
 			}
 
@@ -3726,6 +3735,23 @@ public class SxProductService extends BaseService {
             case MULTIINPUT:
                 break;
             case MULTICHECK:
+                MultiCheckField multiCheckField = (MultiCheckField) field;
+
+                String multiVal = "";
+
+                // 使用第一个候选项
+                if (multiCheckField.getOptions() != null && multiCheckField.getOptions().size() > 0) {
+                    multiVal = multiCheckField.getOptions().get(0).getValue();
+                }
+                if (!StringUtils.isEmpty(multiVal)) {
+                    List<Value> lstValue = new ArrayList<>();
+                    Value v = new Value();
+                    v.setValue(multiVal);
+                    lstValue.add(v);
+                    multiCheckField.setValues(lstValue);
+                    retMap.put(field.getId(), multiCheckField);
+                }
+
                 break;
             case COMPLEX:
                 break;
