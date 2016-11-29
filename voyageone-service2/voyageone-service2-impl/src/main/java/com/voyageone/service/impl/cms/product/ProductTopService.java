@@ -56,10 +56,11 @@ public class ProductTopService extends BaseService {
 
     //加入置顶区
     public  void addTopProduct(SaveTopProductParameter param,String channelId,String userName) {
+
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
 
-        if(param.isSeachAdd())
-        {
+        if (param.isSeachAdd()) {
+
 
         }
 
@@ -74,12 +75,22 @@ public class ProductTopService extends BaseService {
             topModel.setChannelId(channelId);
             topModel.setCatId(param.getpCatId());
         }
+        if (topModel.getProductCodeList() == null) topModel.setProductCodeList(new ArrayList<>());
+
+        //加入code
+        final CmsBtProductTopModel saveTopModel = topModel;
+        param.getCodeList().stream().forEach(code -> {
+            if (!saveTopModel.getProductCodeList().contains(code)) {
+                saveTopModel.getProductCodeList().add(code);
+            }
+        });
         topModel.setProductCodeList(param.getCodeList());
         if (isAdd) {
             dao.insert(topModel);
         } else {
             dao.update(topModel);
         }
+
     }
 
     //保存置顶区
