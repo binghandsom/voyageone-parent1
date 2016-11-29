@@ -287,6 +287,8 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setStringAttribute("pReallyStatus",pReallyStatus);
     }
 
+    public String getIsNewSku(){ return  getStringAttribute("isNewSku"); }
+    public void setIsNewSku(String isNewSku){setStringAttribute("isNewSku", isNewSku);}
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {

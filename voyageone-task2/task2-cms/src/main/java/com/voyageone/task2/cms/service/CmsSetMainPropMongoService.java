@@ -2539,6 +2539,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             entry.getValue().setSkus(new ArrayList<BaseMongoMap<String, Object>>());
                         }
                         entry.getValue().getSkus().add(skuInfo);
+                        // 已经approved的商品如果用新的sku的场合 platforms.Pxx.isNewSku = "1" james CMSDOC-340
+                        if(entry.getValue().getCartId() != 928 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())){
+                            entry.getValue().setIsNewSku("1");
+                        }
                     }
                 }
             }
