@@ -49,8 +49,9 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
         if (!matches) {
             String cryptoPassword = new Md5Hash(password, username + MD5_FIX_SALT, MD5_HASHITERATIONS).toHex();
 
-            if (cryptoPassword.equals(info.getCredentials())) ;
-            matches = true;
+            if (cryptoPassword.equals(info.getCredentials())) {
+                matches = true;
+            }
         }
 
         if (matches) {

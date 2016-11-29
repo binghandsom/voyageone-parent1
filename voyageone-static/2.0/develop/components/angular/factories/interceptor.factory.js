@@ -47,31 +47,32 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     /**
      * 对会话超时和未登录进行特殊处理(Admin)
      */
-    function adminSessionTimeout(res) {
-        if (res.code != MSG_MISSAUTHENTICATION) {
-            return false;
-        }
-        // 会话超时,默认跳转到登陆页
-        location.href = "/adminLogin.html";
-        return true;
-    }
+    //function adminSessionTimeout(res) {
+    //    if (res.code != MSG_MISSAUTHENTICATION) {
+    //        return false;
+    //    }
+    //    // 会话超时,默认跳转到登陆页
+    //    location.href = "/adminLogin.html";
+    //    return true;
+    //}
 
-    function adminResetPassword(res) {
-        if (res.code != MSG_CHANGEPASS) {
-            return false;
-        }
-        // 密码输入错误,默认跳转到重置密码界面
-        location.href = "/adminResetPass.html";
-        return true;
-    }
-    function adminReLogin(res) {
-        if (res.code != MSG_LOGINAGAIN) {
-            return false;
-        }
-        // 密码输入错误,默认跳转到重置密码界面
-        location.href = "/adminLogin.html";
-        return true;
-    }
+    //function adminResetPassword(res) {
+    //    if (res.code != MSG_CHANGEPASS) {
+    //        return false;
+    //    }
+    //    // 密码输入错误,默认跳转到重置密码界面
+    //    location.href = "/adminResetPass.html";
+    //    return true;
+    //}
+
+    //function adminReLogin(res) {
+    //    if (res.code != MSG_LOGINAGAIN) {
+    //        return false;
+    //    }
+    //    // 密码输入错误,默认跳转到重置密码界面
+    //    location.href = "/adminLogin.html";
+    //    return true;
+    //}
 
     /**
      * 处理位置的异常
@@ -97,7 +98,8 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         response: function (res) {
             var result = res.data;
             // 特殊处理部分内容
-            if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
+           // if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
+            if (autoRedirect(result) || sessionTimeout(result)) {
                 return res;
             }
             unknownException(res);
