@@ -65,14 +65,14 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     //    return true;
     //}
 
-    //function adminReLogin(res) {
-    //    if (res.code != MSG_LOGINAGAIN) {
-    //        return false;
-    //    }
-    //    // 密码输入错误,默认跳转到重置密码界面
-    //    location.href = "/adminLogin.html";
-    //    return true;
-    //}
+    function adminReLogin(res) {
+        if (res.code != MSG_LOGINAGAIN) {
+            return false;
+        }
+        // 密码输入错误,默认跳转到重置密码界面
+        location.href = "/";
+        return true;
+    }
 
     /**
      * 处理位置的异常
@@ -99,7 +99,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
             var result = res.data;
             // 特殊处理部分内容
            // if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
-            if (autoRedirect(result) || sessionTimeout(result)) {
+            if (autoRedirect(result) || sessionTimeout(result)||adminReLogin(result)) {
                 return res;
             }
             unknownException(res);
