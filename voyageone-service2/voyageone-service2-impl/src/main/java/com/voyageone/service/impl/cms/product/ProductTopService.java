@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class ProductTopService extends BaseService {
     @Autowired
     CmsBtProductTopDao dao;
+
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
