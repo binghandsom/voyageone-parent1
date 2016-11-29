@@ -1678,7 +1678,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             // TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
                             // TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
                             // TODO 最终应该是让聚美提供API, 进行关联
-                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据") && !sbPrice.toString().contains("不在售卖状态")) {
                                 // 价格更新失败throw出去
 //                                throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
                                 errMsg += String.format("聚美MALL新增时第%s批%s个sku的聚美商城商品价格更新失败!%s ", updateCnt, updateData.size(), sbPrice.toString());
@@ -1789,7 +1789,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                             // TODO 目前是先做成: 只要错误信息里有"不存在关系售卖数据"这几个字, 就认为是正常的不报错
                             // TODO 之后应该改成: 必须是全部错误都是"不存在关系售卖数据"的场合, 才认为是正常的不报错
                             // TODO 最终应该是让聚美提供API, 进行关联
-                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据")) {
+                            if (!StringUtils.isEmpty(sbPrice.toString()) && !sbPrice.toString().contains("不存在关系售卖数据") && !sbPrice.toString().contains("不在售卖状态")) {
                                 // 价格更新失败throw出去
     //                                throw new BusinessException("聚美商城的商品价格更新失败!" + sbPrice.toString());
                                 errMsg += String.format("聚美MALL更新时第%s批%s个sku的聚美商城商品价格更新失败!%s ", updateCnt, updateData.size(), sbPrice.toString());
