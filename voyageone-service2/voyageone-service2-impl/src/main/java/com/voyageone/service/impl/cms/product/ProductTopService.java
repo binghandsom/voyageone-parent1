@@ -1,24 +1,21 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.bean.cms.producttop.GetTopListParameter;
 import com.voyageone.service.bean.cms.producttop.ProductInfo;
-import com.voyageone.service.bean.cms.producttop.ProductTopPageParameter;
+import com.voyageone.service.bean.cms.producttop.ProductPageParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,27 +27,60 @@ public class ProductTopService extends BaseService {
     CmsBtProductTopDao dao;
     @Autowired
     CmsBtProductDao cmsBtProductDao;
-    public List<ProductInfo> getPage(ProductTopPageParameter param, String channelId) {
-
+    public List<ProductInfo> getPage(ProductPageParameter param, String channelId) {
+        CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
-        JongoQuery queryObject = getJongoQuery(param);
+        JongoQuery queryObject = getJongoQuery(param,topModel);
         queryObject.setProjection("");
         queryObject.setSort("{prodId:-1}");
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
-        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f,param)).collect(Collectors.toList());
+        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
         return listResult;
     }
-    public Object getCount(ProductTopPageParameter param, String channelId) {
+    public Object getCount(ProductPageParameter param, String channelId) {
+        CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
 
-        JongoQuery queryObject = getJongoQuery(param);
+        JongoQuery queryObject = getJongoQuery(param, topModel);
 
         return cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
     }
+    public List<ProductInfo> getTopList(GetTopListParameter parameter) {
+        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getCartId(), parameter.getChannelId());
+        if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
+            return new ArrayList<>();
 
-    ProductInfo mapProductInfo(CmsBtProductModel f,ProductTopPageParameter param)
+        JongoQuery jongoQuery = getTopListJongoQuery(parameter, topModel);
+        List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, parameter.getChannelId());
+        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
+        return listResult;
+    }
+
+    JongoQuery getTopListJongoQuery(GetTopListParameter param,CmsBtProductTopModel topModel) {
+        JongoQuery queryObject = new JongoQuery();
+
+        //平台cartId    商品分类
+        queryObject.addQuery("{'platforms.P#.pCatId':#}");
+        queryObject.addParameters(param.getCartId(), param.getpCatId());
+
+        // 获取code list用于检索code
+        if (topModel.getProductCodeList() != null
+                && topModel.getProductCodeList().size() > 0) {
+            List<String> inputCodeList = topModel.getProductCodeList();
+            inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
+            if (inputCodeList.size() > 0) {
+                Object inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
+                queryObject.addQuery("{'common.fields.code':{$in:#}}");
+                queryObject.addParameters(inputCodeArr);
+            }
+        }
+        return queryObject;
+    }
+
+
+    ProductInfo mapProductInfo(CmsBtProductModel f,int cartId)
     {
         ProductInfo info = new ProductInfo();
         info.setBrand(f.getCommon().getFields().getBrand());
@@ -69,34 +99,43 @@ public class ProductTopService extends BaseService {
                 info.setImage1(imgList.get(0).getName());
             }
         }
-        CmsBtProductModel_Platform_Cart platform_Cart= f.getPlatform(param.getCartId());
+        CmsBtProductModel_Platform_Cart platform_Cart= f.getPlatform(cartId);
         if(platform_Cart!=null) {
             info.setSkuCount(platform_Cart.getSkus().size());
         }
         return info;
     }
 
-
-
-     JongoQuery getJongoQuery(ProductTopPageParameter param) {
+     JongoQuery getJongoQuery(ProductPageParameter param, CmsBtProductTopModel topModel) {
         JongoQuery queryObject = new JongoQuery();
 
         //平台cartId    商品分类
         queryObject.addQuery("{'platforms.P#.pCatId':#}");
         queryObject.addParameters(param.getCartId(), param.getpCatId());
 
+        // 获取code list用于检索code  not in
+         if (topModel!=null&&topModel.getProductCodeList() != null
+                 && topModel.getProductCodeList().size() > 0) {
+             List<String> inputCodeList = topModel.getProductCodeList();
+             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
+             if (inputCodeList.size() > 0) {
+                 Object inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
+                 queryObject.addQuery("{'common.fields.code':{$nin:#}}");
+                 queryObject.addParameters(inputCodeArr);
+             }
+         }
         //品牌
-        if (!StringUtils.isEmpty(param.getBrand())) {
-            if (param.isInclude()) {
-                //包含
-                queryObject.addQuery("{'common.fields.brand':#}");
-                queryObject.addParameters(param.getBrand());
-            } else {
-                //不包含
-                queryObject.addQuery("{'common.fields.brand':{$ne:#}}");
-                queryObject.addParameters(param.getBrand());
-            }
-        }
+         if (param.getBrandList() !=  null && param.getBrandList().size() > 0) {
+             if (param.isInclude()) {
+                 queryObject.addQuery("{'common.fields.brand':{$in:#}}");
+                 queryObject.addParameters(param.getBrandList());
+             } else {
+                 // 不在指定范围
+                 queryObject.addQuery("{'common.fields.brand':{$nin:#}}");
+                 queryObject.addParameters(param.getBrandList());
+             }
+         }
+
 
         //库存 quantity
         if (StringUtils.isNotEmpty(param.getCompareType()) && param.getQuantity() != null) {

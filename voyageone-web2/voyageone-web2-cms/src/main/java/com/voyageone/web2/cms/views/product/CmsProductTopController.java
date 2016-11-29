@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.product;
 
-import com.voyageone.service.bean.cms.producttop.ProductTopPageParameter;
+import com.voyageone.service.bean.cms.producttop.ProductPageParameter;
 import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -22,13 +22,13 @@ public class CmsProductTopController extends CmsController {
     ProductTopService service;
 
     @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
-    public AjaxResponse getPage(@RequestBody ProductTopPageParameter param) {
+    public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
 
         return success(service.getPage(param, getUser().getSelChannelId()));
     }
 
     @RequestMapping(CmsUrlConstants.ProductTop.GetCount)
-    public Object getCount(@RequestBody ProductTopPageParameter param) {
+    public Object getCount(@RequestBody ProductPageParameter param) {
 
         return success(service.getCount(param, getUser().getSelChannelId()));
     }

@@ -1,6 +1,4 @@
 package com.voyageone.service.model.cms.mongo.product;
-
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 
 import java.util.List;
