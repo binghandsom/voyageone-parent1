@@ -7,6 +7,7 @@ import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +39,7 @@ public class CmsProductTopController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.ProductTop.GetTopList)
-    public AjaxResponse getTopList(GetTopListParameter parameter) {
+    public AjaxResponse getTopList(@RequestBody GetTopListParameter parameter) {
         return success(service.getTopList(parameter, getUser().getSelChannelId()));
 
     }

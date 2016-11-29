@@ -5,7 +5,7 @@ package com.voyageone.service.bean.cms.producttop;
  */
 public class GetTopListParameter {
     int cartId;//平台id
-    String pCatId;
+    String pCatId;//分类id
 
     public String getpCatId() {
         return pCatId;
