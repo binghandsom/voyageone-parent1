@@ -16,7 +16,7 @@
             MAX(modified) as modified
         FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
-            publish_status=0
+            (publish_status=0 or publish_status=3)
         <if test="channel_id != null">
         AND
             channel_id=#{channel_id}
@@ -46,7 +46,7 @@
         MAX(modified) as modified
         FROM voyageone_cms2.cms_bt_sx_workload
         WHERE
-        publish_status=0
+        (publish_status=0 or publish_status=3)
         <if test="channel_id != null">
             AND
             channel_id=#{channel_id}
@@ -158,7 +158,7 @@
         AND
         group_id = #{groupId}
         AND
-         publish_status=0
+         (publish_status=0 or publish_status=3)
          ]]>
     </update>
 
@@ -179,7 +179,7 @@
         AND
         group_id =  #{groupId}
         AND
-         publish_status = 0
+         (publish_status=0 or publish_status=3)
          ]]>
     </update>
 </mapper>

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by dell on 2016/5/31.
  */
 public class BatchDeleteProductParameter {
-    List<Long> listPromotionProductId;
+    List<Integer> listPromotionProductId;
     int promotionId;
     List<String> listProductCode;
     public List<String> getListProductCode() {
@@ -27,11 +27,11 @@ public class BatchDeleteProductParameter {
         this.promotionId = promotionId;
     }
 
-    public List<Long> getListPromotionProductId() {
+    public List<Integer> getListPromotionProductId() {
         return listPromotionProductId;
     }
 
-    public void setListPromotionProductId(List<Long> listPromotionProductId) {
+    public void setListPromotionProductId(List<Integer> listPromotionProductId) {
         this.listPromotionProductId = listPromotionProductId;
     }
 }

@@ -49,7 +49,7 @@ define([
         $scope.search = function () {
             var data = getSearchInfo(),
                 size = $scope.dataPageOption.size ? $scope.dataPageOption.size : 10;
-                console.log(size);
+                //console.log(size);
             goPage(1, size);
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
@@ -171,8 +171,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
                 //jmPromotionDetailService.delete(data.id).then(function () {
                 //    $scope.vm.modelList.splice(index, 1);
@@ -334,8 +332,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         };
@@ -369,8 +365,6 @@ define([
                 else {
                     alert($translate.instant('TXT_FAIL'));
                 }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.synchAllPrice = function () {
@@ -383,8 +377,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -419,8 +411,6 @@ define([
                 else {
                     alert($translate.instant('TXT_FAIL'));
                 }
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
         $scope.copyDealAll = function () {
@@ -434,8 +424,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -467,8 +455,6 @@ define([
                     else {
                         alert($translate.instant('TXT_FAIL'));
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -489,8 +475,6 @@ define([
                     else {
                         alert(res.data.msg);
                     }
-                }, function (res) {
-                    alert($translate.instant('TXT_FAIL'));
                 });
             });
         }
@@ -573,22 +557,40 @@ define([
 
             return minPrice + "~" +maxPrice;
         };
-        $scope.changeSelectTag=function(m) {
+        $scope.changeSelectTag=function(m,oldTagNameList) {
+            //获取删除的tag
+            var delTagNameList = _.filter(oldTagNameList, function (tagName) {
+                return !_.contains(m.tagNameList, tagName);
+            });
+            //获取新增的tag
+            var addTagNameList = _.filter(m.tagNameList, function (tagName) {
+                return !_.contains(oldTagNameList, tagName);
+            });
+
+            // console.log("delTagNameList")
+            // console.log(delTagNameList)
+            // console.log("addTagNameList")
+            // console.log(addTagNameList)
+
             var productTagList = [];
-            for (var i = 0; i < m.tagNameList.length; i++) {
-                var tagName = m.tagNameList[i];
+            _.each(delTagNameList, function (tagName) {
                 var tag = _.find($scope.vm.tagList, function (tag) {
                     return tag.tagName == tagName;
                 });
-                productTagList.push({tagId: tag.id, tagName: tag.tagName});
-            }
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 0});
+            });
+            _.each(addTagNameList, function (tagName) {
+                var tag = _.find($scope.vm.tagList, function (tag) {
+                    return tag.tagName == tagName;
+                });
+                productTagList.push({tagId: tag.id, tagName: tag.tagName, checked: 2});
+            });
+
             var parameter = {};
             parameter.tagList = productTagList;
             parameter.id = m.id;
             jmPromotionDetailService.updatePromotionProductTag(parameter).then(function (res) {
                 //   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
             //$scope.vm.tagList.
             // alert(m.tagNameList.toString());
@@ -597,8 +599,6 @@ define([
         $scope.refreshPrice=function () {
             jmPromotionDetailService.refreshPrice($scope.vm.promotionId).then(function (res) {
                   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
 
         }
@@ -608,8 +608,6 @@ define([
             var parameter={jmPromotionProductId:item.id,remark:item.remark};
             jmPromotionDetailService.updateRemark(parameter).then(function (res) {
                 //   alert($translate.instant('TXT_SUCCESS'));
-            }, function (res) {
-                alert($translate.instant('TXT_FAIL'));
             });
         }
 

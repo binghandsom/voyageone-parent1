@@ -1,0 +1,78 @@
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;<span translate="TXT_CHANNEL_SELECT"></span></h4>
+        </div>
+        <div class="panel-body">
+            <div class="row form-inline">
+                <div class="col-sm-4 text-center">
+                    <div class="form-group">
+                        <label translate="TXT_CHANNEL_SELECT"></label>
+                        <span>&nbsp;</span>
+                        <select ng-model="selectChannel" ng-change="changeChannel()" ng-options="channel as channel.channelName  for channel in vm.channels">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="m-t-sm m-b-sm">
+        <button type="button" class="btn btn-info btn-pop" ng-click="popNewChannelConfig()">
+            <i class="fa fa-plus"></i>&nbsp;<span translate="TXT_CHANNEL_CONFIG_CREATE"></span>
+        </button>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new vo_table tableWordBreak">
+                <thead>
+                <tr>
+                    <th class="mfb-xt3 text-center" translate="TXT_SEQ"></th>
+                    <th class="mfb-xxt text-left" translate="TXT_CHANNEL_CONFIG_KEY"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_CODE"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_VALUE1"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_VALUE2"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_VALUE3"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_COMMENT"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_STATUS"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CHANNEL_CONFIG_TYPE"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_UPDATE_TIME"></th>
+                    <th class="mfb-xt3 text-left" translate="TXT_UPDATER"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_CREATE_TIME"></th>
+                    <th class="mfb-xt3 text-left" translate="TXT_CREATER"></th>
+                    <th class="mfb-xt3 text-center" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td if-no-rows="configs.length" colspan="7" style="padding: 0px"></td>
+                </tr>
+                <tr ng-repeat="config in vm.configs">
+                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                    <td class="mfb-xt3 text-left">
+                        {{config.configKey}}
+                    </td>
+                    <td class="mfb-xt3 text-center">{{config.configCode}}</td>
+                    <td class="mfb-xt3 text-center">{{config.configValue1}}</td>
+                    <td class="mfb-xt3 text-center">{{config.configValue2}}</td>
+                    <td class="mfb-xt3 text-center">{{config.configValue3}}</td>
+                    <td class="mfb-xt3 text-center">{{config.comment}}</td>
+                    <td class="mfb-xt3 text-center">{{config.status}}</td>
+                    <td class="mfb-xt3 text-center">{{config.configType}}</td>
+
+                    <td class="mfb-xt3 text-center">{{config.modified | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td class="mfb-xt3 text-left">{{config.modifier}}</td>
+                    <td class="mfb-xt3 text-center">{{config.created | date: 'yyyy-MM-dd HH:mm:ss'}}</td>
+                    <td class="mfb-xt3 text-left">{{config.creater}}</td>
+                    <td class="mfb-xt3 text-center">
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="popEditChannelConfig(config)" >
+                            <i class="fa fa-pencil"></i>
+                        </button>&emsp;
+                        <button title="删除" class="btn btn-danger btn-xs" ng-click="delChannelConfig(config)">
+                            <i class="fa  fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

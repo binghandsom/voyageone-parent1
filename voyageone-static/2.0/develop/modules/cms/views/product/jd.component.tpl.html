@@ -46,6 +46,11 @@
                                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
                                             </a>
                                         </li>
+                                        <li ng-if="vm.publishEnabled">
+                                        	<a href="javascript:void(0)" ng-click="openIntelApprove(vm.mastData.productCode,cartInfo.value)">
+                                        		<i class="fa fa-arrow-circle-right"></i>&nbsp;智能上新历史
+                                        	</a>
+                                        </li>
                                     </ul>
                                 </div>&nbsp;&nbsp;
                                 <div ng-if="cartInfo.value!=27" class="btn-group" uib-dropdown ng-controller="popupCtrl">
@@ -123,16 +128,24 @@
                         </div>
                         <div class="col-md-4">
                             <!--应运营要求，保存按钮跳过check，一直为pending状态，除了平台类目为必选-->
-                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'" ng-hide="isPublishSucceed">
                                 <button class="btn btn-vo" ng-click="saveProduct('ready')" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
+                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Ready</button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'">
-                                <button class="btn btn-vo" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Pending'" ng-hide="isPublishSucceed">
+                                <button class="btn btn-vo" ng-click="saveProduct('temporary')" ng-disabled="vm.checkFlag.category != 1">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
                             </div>
-                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved'">
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.status == 'Ready' || vm.status == 'Approved' || isPublishSucceed">
                                 <button class="btn btn-vo" ng-click="saveProduct()" ng-disabled="vm.checkFlag.translate != 1 || vm.checkFlag.tax != 1 ||
-                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false"><i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                                                                                        vm.checkFlag.category != 1 || vm.checkFlag.attribute == false">
+                                    <i class="glyphicon glyphicon-floppy-disk"></i>Approved</button>
+                            </div>
+                            <div class="pull-right m-t-xs m-r-xs" ng-if="vm.publishEnabled">
+                            	<button class="btn btn-vo" ng-click="publishProduct()" ng-disabled="vm.checkFlag.tax != 1 || !vm.platform.pBrandName || vm.checkFlag.category != 1">
+                            		<i class="glyphicon glyphicon-floppy-disk"></i>智能上新
+                            	</button>
                             </div>
                             <div class="pull-right text-warnings" style="padding-left:0px">
                                 <i class="icon fa fa-bell-o"></i>&nbsp;【Save】按钮，用于数据临时保存；【Ready】/【Approve】按钮，用于数据正式保存并确认，设计产品状态变更，将启动必填属性检查机制，一旦检查发现异常，保存即失败。
@@ -163,19 +176,39 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>Group Info</strong></label>
+                                <div class="col-md-2">
+                                    <div class="row text-right">
+                                        <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
+                                    </div>
+                                </div>
                                 <div class="col-md-8">
                                     <div class="row">
-                                        <div class="col-xs-6 col-md-2" ng-repeat="image in vm.mastData.images">
-                                            <a href="javascript:void(0)" class="thumbnail current" ng-if="image.productCode == vm.mastData.productCode">
+                                        <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images">
+                                            <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" ng-if="image.productCode == productInfo.masterField.code" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
-                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail" ng-if="image.productCode != vm.mastData.productCode" target="_blank">
+                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{image.imageName}}" title="{{image.productCode}}">
                                             </a>
+                                            <div class="thumbInfo">
+                                                <div class="row">
+                                                    <div class="col-md-4"><strong title="中国最终售价" style="cursor: help">￥:</strong></div>
+                                                    <div class="col-md-8 text-right">
+                                                        <span class="text-wrap">
+                                                            <span ng-if="image.priceSaleSt == image.priceSaleEd">{{image.priceSaleSt | currency:''}}</span>
+                                                            <span ng-if="!image.priceSaleSt == image.priceSaleEd">{{image.priceSaleSt | currency:''}}&nbsp;-&nbsp;{{image.priceSaleEd | currency:''}}</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-5"><strong>库存:</strong></div>
+                                                    <div class="col-md-7 text-right">{{image.qty}}</div>
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -224,7 +257,7 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.mastData.productCode" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productCode" readonly>
                                     <div class="text-warnings" style="padding-left:0px" ng-if="cartInfo.value != 27">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
@@ -233,7 +266,7 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_NAME"|translate}}</strong></label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.mastData.productName" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productName" readonly>
                                 </div>
                             </div>
                             <div class="row form-group">
@@ -244,7 +277,7 @@
                                     <span>{{cartInfo.name}}&nbsp;{{"TXT_BRAND" | translate}}</span>
                                 </button>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
+                                    <input class="form-control" ng-model="vm.platform.pBrandName" readonly>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如没有显示品牌，请先确认是否在{{cartInfo.name}}后台申请过相应品牌，点击左侧的【品牌】按钮，或者在【店铺管理=>平台品牌设置页面】进行设置
                                     </div>
@@ -306,11 +339,11 @@
                 <!------------------------------------------------以下为产品SKU------------------------------------------------------->
                 <div class="container-fluid" id="sku">
                     <div class="panel panel-default">
-                        <div class="panel-heading" ng-if="cartInfo.value == 23">
+                        <div class="panel-heading">
                             <div class="row">
                                 <div class="col-sm-5 col-md-offset-7 text-right">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="vm.status != 'Approved'">
+                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="vm.status != 'Approved'||!isPublishSucceed">
                                             <i class="fa fa-refresh"></i>&nbsp;更新价格
                                         </button>
                                     </div>

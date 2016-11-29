@@ -229,6 +229,22 @@
                 </a>
             </li>
 
+            <!-- 店铺配置 -->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/channel/channel_config_list">-->
+                    <!--<i class="fa fa-minus icon text-vo"></i>-->
+                    <!--<span translate="TXT_CHANNEL_CONFIG"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+
+            <!-- 货架一览 -->
+            <li ui-sref-active="active">
+                <a href="#/shelves/management">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span>货架一览</span>
+                </a>
+            </li>
+
         </ul>
     </li>
 
@@ -450,6 +466,26 @@
                         <a ng-href="#/maintain/common/masterBrandApplication/">
                             <i class="fa fa-minus icon text-vo"></i>
                             <span TRANSLATE="TXT_MASTER_BRAND_SETTING"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <!-- 当前店铺设置-->
+            <li ui-sref-active="active">
+                <a class="auto">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span translate="TXT_CURRENT_CHANNEL_SETTING"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" >
+                    <!-- 主品牌设置-->
+                    <li ui-sref-active="active">
+                        <a ng-href="#/shelves/template/management/">
+                            <i class="fa fa-minus icon text-vo"></i>
+                            <span TRANSLATE="TXT_SHELVES_TEMPLATE_MANAGEMENT"></span>
                         </a>
                     </li>
                 </ul>

@@ -23,7 +23,7 @@ public class ProductSaveInfo {
     //不做保存处理 保存异常时 导出用
     public ProductImportBean _importProduct;
     //不做保存处理 保存异常时 导出用
-    public List<SkuImportBean> _listSkuImport=new ArrayList<>();
+    public List<SkuImportBean> _listSkuImportError =new ArrayList<>();
     //输入参数
     public  CmsBtProductModel productInfo;
     public CmsBtProductModel_Platform_Cart p_Platform_Cart;

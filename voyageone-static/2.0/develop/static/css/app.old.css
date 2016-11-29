@@ -5187,6 +5187,9 @@ a.text-black:hover {
 .show {
     visibility: visible;
 }
+.cur-m{
+   cursor: move;
+}
 .line {
     width: 100%;
     height: 2px;
@@ -6468,6 +6471,21 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
     opacity:1;
 }
 
+.btn-upLoad {
+    color: #ffffff !important;
+    background-color: #23b7e5;
+    border-color: #23b7e5;
+    filter:alpha(opacity=60);
+    opacity:0.4;
+}
+.btn-upLoad:hover {
+    color: #ffffff !important;
+    background-color: #23b7e5;
+    border-color: #23b7e5;
+    filter:alpha(opacity=60);
+    opacity:1;
+}
+
 /*NEW CMS*/
 .channel-main-con{
     margin:0 auto;
@@ -6748,21 +6766,37 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 
 /*菜单*/
 .nav li input {
-    position:absolute;left:0;margin-left:0;opacity:0;z-index:2;cursor:pointer;height:1em;width:1em;top:0;
+    position:absolute;
+    left:0;
+    margin-left:0;
+    opacity:0;
+    z-index:2;
+    cursor:pointer;
+    height:1em;
+    width:1em;top:0;
 }
 input + ol {
     display:none;
 }
 input + ol > li {
-    height:0;overflow:hidden;margin-left:-14px!important;padding-left:1px;
+    height:0;
+    overflow:hidden;
+    margin-left:-14px!important;
+    padding-left:1px;
     list-style-type: none;
 }
 li label {
-    cursor:pointer;display:block;padding-left:17px;background: no-repeat 0px 1px;
+    cursor:pointer;
+    display:block;
+   /* padding-left:17px;*/
+    background: no-repeat 0px 1px;
     list-style-type: none;
 }
 input:checked + ol {
-    background:44px 5px no-repeat;margin:-22px 0 0 -44px;padding:27px 0 0 80px;height:auto;display:block;
+    background:44px 5px no-repeat;
+    margin:-22px 0 0 -44px;
+    padding:27px 0 0 80px;
+    height:auto;display:block;
     list-style-type: none;
 }
 input:checked + ol > li {

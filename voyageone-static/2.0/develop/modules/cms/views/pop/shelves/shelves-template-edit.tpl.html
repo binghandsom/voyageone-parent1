@@ -1,0 +1,225 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-pencil"></i> &nbsp; <span translate="TXT_SHELVES_TEMPLATE_EDIT"></span> </h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form class="form-horizontal" name="shelvesTemplateForm" novalidate>
+            <input type="hidden" name="id" ng-model="modelBean.id" />
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHELVES_TEMPLATE_TYPE"></label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline">
+                        <input type="radio" name="templateType" disabled ng-checked="true" ng-model="modelBean.templateType" value="{{modelBean.templateType}}"/>&nbsp;
+                        <span ng-bind="vm.templateTypes[modelBean.templateType]"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.templateType"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_VIEW_TYPE"></label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.clientTypes">
+                        <input type="radio" name="clientType" required  ng-model="modelBean.clientType" value="{{key}}"/>{{value}}端
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.clientType"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
+                <div class="col-sm-8">
+                    <label class="checkbox-inline" ng-repeat="(key,value) in vm.carts">
+                        <input type="radio" name="cartId" required ng-model="modelBean.cartId" value="{{key}}"/>{{value}}
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.cartId"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_SHELVES_TEMPLATE_NAME"></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" required  name="templateName"  ng-model="modelBean.templateName" maxlength="255">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.templateName"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" translate="TXT_COMMENT"></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control"  name="remark"  ng-model="modelBean.remark" maxlength="255">
+                </div>
+            </div>
+
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NUM_PERLINE"></label>
+                <div class="col-sm-8">
+                    <input type="number" class="form-control" min="1" name="numPerLine"  ng-model="modelBean.numPerLine" maxlength="11" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.numPerLine"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-md-8 col-md-offset-3">
+                    <label class="label label-success" translate="TXT_HTML"></label>
+                </div>
+            </div>
+
+            <!-- 头部 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_HEAD"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlHead" ng-model="modelBean.htmlHead" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlHead"></vo-message>
+                </div>
+            </div>
+
+            <!-- 标题模块 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label" translate="TXT_HTML_TITLE"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" name="htmlModuleTitle" ng-model="modelBean.htmlModuleTitle" />
+                </div>
+            </div>
+
+            <!-- 搜索模块 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label" translate="TXT_HTML_SEARCH"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" name="htmlModuleSearch" ng-model="modelBean.htmlModuleSearch" />
+                </div>
+            </div>
+
+            <!-- 清除浮动 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_CLEARFIX"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlClearfix1" ng-model="modelBean.htmlClearfix1" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlClearfix1"></vo-message>
+                </div>
+            </div>
+
+            <!-- 大图模块 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label" translate="TXT_HTML_BIG_IMAGE"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" name="htmlBigImage" ng-model="modelBean.htmlBigImage" />
+                </div>
+            </div>
+
+            <!-- 小图模块 -->
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" ng-class="{vo_reqfield:commonRequired}" translate="TXT_HTML_SMALL_IMAGE"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="commonRequired" name="htmlSmallImage" ng-model="modelBean.htmlSmallImage" />
+                </div>
+            </div>
+
+            <div class="row" ng-if="commonRequired">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlSmallImage"></vo-message>
+                </div>
+            </div>
+
+            <!-- 清除浮动 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_CLEARFIX"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlClearfix2" ng-model="modelBean.htmlClearfix2" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlClearfix2"></vo-message>
+                </div>
+            </div>
+
+            <!-- 尾部 -->
+            <div class="row form-group" ng-show="layout">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_FOOT"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="layoutRequired" name="htmlFoot" ng-model="modelBean.htmlFoot" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlFoot"></vo-message>
+                </div>
+            </div>
+
+            <!-- 最后一个小图模块 -->
+            <div class="row form-group" ng-show="single">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_LAST_IMAGE"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="singleRequired" name="htmlLastImage" ng-model="modelBean.htmlLastImage" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlLastImage"></vo-message>
+                </div>
+            </div>
+
+            <!-- 图片模板 -->
+            <div class="row form-group" ng-show="single">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_HTML_IMAGE_TEMPLATE"></label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" ng-required="singleRequired" ng-change="checkPreview()" name="htmlImageTemplate" ng-model="modelBean.htmlImageTemplate" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.htmlImageTemplate"></vo-message>
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="editSubmit()" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-default-green" ng-show="previewFlag" ng-click="preview()">预览</button>
+    </div>
+</div>

@@ -2,12 +2,10 @@ var fs = require('fs');
 var gulp = require('gulp');
 var debug = require('gulp-debug');
 var ngAnnotate = require('gulp-ng-annotate');
-var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
-var ngHtml2Js = require('gulp-ng-html2js');
 var header = require('gulp-header');
 var footer = require('gulp-footer');
 var glob = require('glob');
@@ -107,10 +105,16 @@ gulp.task(tasks.beta.modules, function () {
 
     // 压缩js文件
     gulp.src(publish.modules.js)
+        .pipe(replace('version=', 'v='+ Date.parse(new Date())))
         .pipe(gulp.dest(publish.release.modules));
 
     // 压缩html文件
     gulp.src(publish.modules.html)
+        .pipe(replace('version=', 'v='+ Date.parse(new Date())))
+        .pipe(gulp.dest(publish.release.modules));
+
+    // 压缩css文件
+    gulp.src(publish.modules.css)
         .pipe(gulp.dest(publish.release.modules));
 
     // copy json文件

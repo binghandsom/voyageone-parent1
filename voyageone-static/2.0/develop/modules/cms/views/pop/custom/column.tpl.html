@@ -14,9 +14,11 @@
                 {{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
             <div class="column_overflow column_overflow_2">
                 <div ng-repeat="commonData in cus.commonProps" class="m-t-xs">
-                    <label class="checkbox-inline c-checkbox">
-                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk" ng-change="chkItemStatus(1)">
-                    <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label>
+                	<div ng-if="commonData.propId != 'skuCnt'">
+	                    <label class="checkbox-inline c-checkbox">
+	                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk" ng-change="chkItemStatus(1)">
+	                    <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label>
+                    </div>
                 </div>
             </div>
         </div>

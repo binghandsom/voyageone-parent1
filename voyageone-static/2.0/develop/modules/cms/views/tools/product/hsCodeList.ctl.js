@@ -120,7 +120,7 @@ define([
                 self.searchDetail.pageNum = self.searchInfo.curr;
                 self.searchDetail.pageSize = self.searchInfo.size;
                 self.$feedSearchService.search(self.searchDetail).then(function (res) {
-                    console.log(res.data.feedList);
+                    //console.log(res.data.feedList);
                     self.feedInfo = res.data.feedList;
                     // 统计属性数
                     var attsMap = self.feedInfo[0].attribute;

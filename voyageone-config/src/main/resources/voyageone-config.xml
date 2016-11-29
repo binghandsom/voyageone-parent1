@@ -29,6 +29,7 @@
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/redis-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/solr-config.xml"/>-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-security-config.xml"/>-->
 
 
 </beans>

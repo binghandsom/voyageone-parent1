@@ -2,6 +2,11 @@
  * bootstrap 的部分样式定制覆盖
  */
 
+p.form-control-static {
+    padding-bottom: 0;
+    min-height: 0;
+}
+
 .h1,
 .h2,
 .h3,

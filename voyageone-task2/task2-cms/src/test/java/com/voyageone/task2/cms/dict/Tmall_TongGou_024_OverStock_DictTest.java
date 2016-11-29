@@ -21,7 +21,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class Tmall_024_OverStock_DictTest {
+public class Tmall_TongGou_024_OverStock_DictTest {
 	@Autowired
 	private SxProductService sxProductService;
 
@@ -121,6 +121,16 @@ public class Tmall_024_OverStock_DictTest {
 		{
 			// feed_info的modelLongdescription
 			FeedOrgWord word = new FeedOrgWord("modelLongdescription");
+			ruleRoot.addRuleWord(word);
+		}
+		{
+			// 回车一个
+			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
+			ruleRoot.addRuleWord(word);
+		}
+		{
+			// 中文长描述
+			MasterWord word = new MasterWord("longDesCn");
 			ruleRoot.addRuleWord(word);
 		}
 		{

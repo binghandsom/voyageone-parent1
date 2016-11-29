@@ -67,6 +67,9 @@ import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.math.NumberUtils;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -1071,6 +1074,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置店铺共通的店铺内分类信息
                     setSellerCats(feed, cmsProduct);
 
+                    // 设置sku数
+                    cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     //james g kg 计算
                     weightCalculate(cmsProduct);
 
@@ -1145,6 +1150,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     $info("doSaveItemDetails:" +  (System.currentTimeMillis() - startTime));
                     // tom 20160510 追加 END
 
+                    platFromAttributeCopyFromMainProduct(cmsProduct);
                     // 更新价格相关项目
                     cmsProduct = doSetPrice(channelId, feed, cmsProduct);
                     $info("doSetPrice:" +  (System.currentTimeMillis() - startTime));
@@ -1154,7 +1160,9 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                     //james g kg 计算
                     weightCalculate(cmsProduct);
-                    $info("weightCalculate:" +  (System.currentTimeMillis() - startTime));
+
+                    // 设置sku数
+                    cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
                     productService.createProduct(channelId, cmsProduct, getTaskName());
                     $info("createProduct:" +  (System.currentTimeMillis() - startTime));
 
@@ -1239,70 +1247,38 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
 
         /**
-         * 默认不忽略mapping check的场合, 需要做mapping check
-         *
-         * @param mapping         feed与main的匹配关系
-         * @param cmsProduct      产品对象
-         * @param channelId       渠道id
-         * @param feed           原始Feed
-         * @return check结果
+         * 平台属性冲主商品复制
+         * @param cmsBtProductModel
          */
-        // delete desmond 2016/07/04 start
-//        private boolean checkMapping(CmsBtFeedMappingModel mapping, CmsBtProductModel cmsProduct, String channelId, CmsBtFeedInfoModel feed) {
-//            // 默认不忽略mapping check的场合, 需要做mapping check
-//            if (!this.skip_mapping_check) {
-//                // 查看类目是否匹配完成
-//                if (mapping == null) {
-//                    // 记下log, 跳过当前记录
-//                    if (cmsProduct == null) {
-//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-//                    } else {
-//                        //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-//                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCommon().getCatPath()));
-//                    }
-//                    // 设置更新时间,更新者
-//                    feed.setModifier(getTaskName());
-//                    cmsBtFeedInfoDao.update(feed);
-//                    return false;
-//                }
-//                // 查看属性是否匹配完成
-//                if (mapping.getMatchOver() == 0) {
-//                    // 如果没有匹配完成的话, 那就看看是否有共通
-//                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getMainCategoryPath());
-//                    if (mapping == null || mapping.getMatchOver() == 0) {
-//                        // 没有共通mapping, 或者没有匹配完成
-//                        // 记下log, 跳过当前记录
-//                        //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-//                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping == null ? "" : mapping.getMainCategoryPath()));
-//                        // 设置更新时间,更新者
-//                        feed.setModifier(getTaskName());
-//                        cmsBtFeedInfoDao.update(feed);
-//                        return false;
-//                    }
-//
-//                }
-//            }
-//            return true;
-//        }
-        // delete desmond 2016/07/04 end
+        private void platFromAttributeCopyFromMainProduct(CmsBtProductModel cmsBtProductModel) {
 
-        /**
-         * 生成Fields的内容
-         *
-         * @param feed               feed的商品信息
-         * @param newFlg             新建flg (true:新建商品 false:更新的商品)
-         * @param productCommonField 共通商品属性
-         * @param isSplit            是否拆分对象
-         * @param originalCode       原始Code
-         * @return 返回整个儿的Fields的内容
-         */
-        // update desmond 2016/07/01 start
-        // 删除product外面的Fields
-        // jeff 2016/04 change start
-        // private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
-//        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel,
-//                                                                       boolean newFlg, CmsBtProductModel_Field productField, CmsBtProductModel_Field ,boolean isSplit, String originalCode) {
+            cmsBtProductModel.getPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+                if(cmsBtProductModel_platform_cart.getCartId() > 20 && cmsBtProductModel_platform_cart.getCartId() < 900 ){
+                    if(cmsBtProductModel_platform_cart.getpIsMain() == 0 && !StringUtil.isEmpty(cmsBtProductModel_platform_cart.getMainProductCode())){
+                        CmsBtProductModel mainProduct = productService.getProductByCode(cmsBtProductModel.getChannelId(), cmsBtProductModel_platform_cart.getMainProductCode());
+                        if(mainProduct != null && mainProduct.getPlatform(cmsBtProductModel_platform_cart.getCartId()) != null){
+                            CmsBtProductModel_Platform_Cart mainPlatform  =  mainProduct.getPlatform(cmsBtProductModel_platform_cart.getCartId());
+                            cmsBtProductModel_platform_cart.setpCatId(mainPlatform.getpCatId());
+                            cmsBtProductModel_platform_cart.setpCatPath(mainPlatform.getpCatPath());
+                            cmsBtProductModel_platform_cart.setpCatStatus(mainPlatform.getpCatStatus());
+                            cmsBtProductModel_platform_cart.setpAttributeSetter(mainPlatform.getpAttributeSetter());
+                            cmsBtProductModel_platform_cart.setpAttributeSetTime(mainPlatform.getpAttributeSetTime());
+                            cmsBtProductModel_platform_cart.setpAttributeStatus(mainPlatform.getpAttributeStatus());
+                            cmsBtProductModel_platform_cart.setFields(mainPlatform.getFields());
+                            cmsBtProductModel_platform_cart.setpBrandId(mainPlatform.getpBrandId());
+                            cmsBtProductModel_platform_cart.setpBrandName(mainPlatform.getpBrandName());
+                            cmsBtProductModel_platform_cart.setSellerCats(mainPlatform.getSellerCats());
+                            if("Approved".equalsIgnoreCase(mainPlatform.getStatus()) || "Ready".equalsIgnoreCase(mainPlatform.getStatus())){
+                                cmsBtProductModel_platform_cart.setStatus(CmsConstants.ProductStatus.Ready);
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
+
         private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, boolean newFlg,
                                                                        CmsBtProductModel_Field productCommonField,
                                                                        boolean isSplit, String originalCode) {
@@ -1575,6 +1551,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            {
 //                if (newFlg) {
             List<Map<String, Object>> multiComplex = new LinkedList<>();
+            List<Map<String, Object>> multiComplex2 = new LinkedList<>();
             List<Map<String, Object>> multiComplex6 = new LinkedList<>();
 
             // jeff 2016/05 change start
@@ -1593,7 +1570,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             // jeff 2016/05 change end
             if (lstImageOrg != null && lstImageOrg.size() > 0) {
                 for (String imgOrg : lstImageOrg) {
-                    Map<String, Object> multiComplexChildren = new HashMap<>();
+                       Map<String, Object> multiComplexChildren = new HashMap<>();
                     Map<String, Object> multiComplexChildren6 = new HashMap<>();
                     // jeff 2016/04 change start
                     // multiComplexChildren.put("image1", imgOrg);
@@ -1605,7 +1582,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     multiComplex6.add(multiComplexChildren6);
                 }
             }
-
 //            productField.put("images1", multiComplex);
             productCommonField.put("images1", multiComplex);
             // 新增商品时，根据设置决定是否同时设置PC端自拍商品图images6,更新商品时不更新images6(老的数据里面本来就没有images6的时候更新)
@@ -1617,6 +1593,21 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设置PC端自拍商品图images6
                     productCommonField.put("images6", multiComplex6);
                 }
+            }
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+            if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null
+                    &&feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+
+                if (feed.getAttribute() != null && feed.getAttribute().get("boximages") != null) {
+                    for(String images : feed.getAttribute().get("boximages")){
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        String picName = doUpdateImage(feed.getChannelId(), feed.getCode(), images);
+                        multiComplexChildren.put("image2", picName);
+                        multiComplex2.add(multiComplexChildren);
+                    }
+
+                }
+                productCommonField.put("images2", multiComplex2);
             }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
@@ -2731,7 +2722,32 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 if (!CartEnums.Cart.JM.getId().equals(shop.getValue())
                         && !CartEnums.Cart.CN.getId().equals(shop.getValue())) {
                     // 取得product.model对应的group信息
-                    group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(feed.getChannelId(), CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
+
+                    if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null&&
+                            feed.getChannelId().equals(cmsChannelConfigBean.getChannelId())){
+
+                        //根据当前feed的code判断是否属于最新的group还是创建group
+                        DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+                        //取得当前code的创建的时间
+                        LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
+                        //取得当前group的创建的时间
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                        if (groupCode != null) {
+                            LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
+                            //feed和group的创建时间作比较
+                            if (feedDate.getYearOfCentury() == groupDate.getYearOfCentury()
+                                    &&Math.ceil(feedDate.getMonthOfYear()/4)==Math.ceil(groupDate.getMonthOfYear()/4)) {
+                                group = groupCode;
+                            } else {
+                                //根据当前model取得最新的group
+                                group = null;
+                            }
+                        }
+                    }else {
+                        group = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
+                    }
+
                 }
 
                 // 看看同一个model里是否已经有数据在cms里存在的
@@ -2825,7 +2841,6 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
             return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
         }
-
         /**
          * 根据code, 到group表中去查找所有的group信息
          *
@@ -2966,6 +2981,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 //            param.setOriginalUrl(originalUrl);
 //            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
             CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE,"0");
 
             // 不存在则插入
             if (findImage == null) {
@@ -2993,12 +3009,21 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 newModel.setChannelId(channelId);
                 newModel.setOriginalUrl(originalUrl);
                 newModel.setCode(code);
-                newModel.setUpdFlg(0);
+
                 newModel.setCreater(getTaskName());
                 newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
-                newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
+                if(cmsChannelConfigBean!=null&&cmsChannelConfigBean.getChannelId()!=null&&
+                        channelId.equals(cmsChannelConfigBean.getChannelId())){
+                    String[] imgName = originalUrl.split("/");
+                    newModel.setImgName(imgName[imgName.length - 1]);
+                    newModel.setUpdFlg(1);
+                }else{
+                    newModel.setUpdFlg(0);
+                    newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
+                }
+
                 imagesService.insert(newModel);
 
                 return newModel.getImgName();
@@ -3919,6 +3944,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         }
         //1磅(lb)=453.59237克(g)
         if(weight != null){
+            cmsProduct.getCommon().getFields().setWeightLb(weight);
             BigDecimal b = new BigDecimal(weight * 453.59237);
             cmsProduct.getCommon().getFields().setWeightG(b.setScale(0,BigDecimal.ROUND_HALF_UP).intValue());
             b = new BigDecimal(weight * 453.59237 / 1000.0);

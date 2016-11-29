@@ -431,7 +431,7 @@
             if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                 return;
 
-            var contentContainer = angular.element('<s-tip>');
+            var contentContainer = angular.element('<s-tip ng-if="showTip">');
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
@@ -957,9 +957,23 @@
 
                 if (showName)
                     container.append(angular.element('<s-header>'));
+                //sofia
+                each(rules, function (content, key) {
 
+                    if (key.indexOf('$') === 0)
+                        return;
+
+                    if (key.indexOf('Rule') > 0 && key !== 'tipRule')
+                        return;
+
+                    var contentContainer = angular.element('<s-tip-new ng-click="showTip=!showTip">');
+                    container.append(contentContainer);
+                });
+                innerElement = angular.element('<div class="s-wrapper" style="margin-left:15px">');
+                //sofia
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="s-wrapper">');
+                // innerElement = angular.element('<div class="s-wrapper">');
+
                 container.append(innerElement);
                 container = innerElement;
 

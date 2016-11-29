@@ -48,7 +48,7 @@
                             <label for="assignInfo-priority" class="control-label col-md-2" translate="TXT_DISTRIBUTION_RULE"></label>
                             <div class="col-md-6">
                                 <select id="assignInfo-priority" class="form-control" ng-model="ctrl.assignInfo.priority" ng-options="option.value as option.name for option in ctrl.vm.sortFieldOptions">
-                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                    <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                                 </select>
                             </div>
                             <div class="col-md-4" ng-if="ctrl.assignInfo.priority=='quantity'">
@@ -182,6 +182,34 @@
                                             <input class="form-control" ng-model="ctrl.vm.taskDetail.commonFields.feedCategory" disabled="disabled">
                                         </div>
                                     </div>
+                                    <!-- Group Info Begin -->
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <div class="row text-right">
+                                                <label class="control-label" style="min-height:107px;"><strong>Group Info</strong></label>
+                                                <!--<br>-->
+                                                <!--<label class="control-label"><strong>库存</strong></label>-->
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="row product-shema-detail">
+                                                <div class="col-xs-6 col-md-2"  ng-repeat="groupProduct in ctrl.vm.taskDetail.groupProducts">
+                                                    <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" style="height: 115px;">
+                                                        <strong class="main" ng-if="groupProduct.code == ctrl.vm.taskDetail.productCode"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
+                                                        <img class="thumb-group" src="http://s7d5.scene7.com/is/image/sneakerhead/{{groupProduct.iamge}}" title="{{groupProduct.code}}">
+                                                    </a>
+                                                    <div class="thumbInfo">
+                                                        <div class="row">
+                                                            <div class="col-md-5"><strong>库存:</strong></div>
+                                                            <div class="col-md-7 text-right ng-binding">{{groupProduct.inventory}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Group Info End -->
+
                                 </div>
                                 <div class="col-sm-2 imageContainer">
                                     <a ng-if="ctrl.vm.taskDetail.commonFields.images1.length > 0" ng-click="ctrl.popUpImages(ctrl.vm.taskDetail)">
@@ -275,7 +303,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label s-not-required">材质(英文)</label>
+                        <label class="col-sm-2 control-label s-not-required">材质(英文){{ctrl.vm.taskDetail.testMsg}}</label>
                         <div class="col-sm-8">
                             <textarea name="usageCn" class="form-control inherited" rows="4" readonly ng-model="ctrl.vm.taskDetail.commonFields.materialEn"></textarea>
                         </div>

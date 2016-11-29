@@ -31,7 +31,7 @@ define([
         };
 
         $scope.ok = function () {
-            console.log($scope.vm);
+
             if (listPromotionProduct.length == 0) {
                 alert("请选择修改价格的商品!");
                 return;
@@ -92,7 +92,6 @@ define([
             parameter.optType=$scope.vm.optType;
             parameter.roundType=$scope.vm.roundType;
 
-            console.log(parameter);
             jmPromotionDetailService.batchUpdateSkuDealPrice(parameter).then(function (res) {
                 if (!res.data.result) {
                     alert(res.data.msg);

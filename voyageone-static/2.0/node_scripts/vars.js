@@ -92,6 +92,7 @@ var publish = {
     modules: {
         js: 'develop/modules/**/*.js',
         html: 'develop/modules/**/*.html',
+        css: 'develop/modules/**/*.css',
         json: 'develop/modules/**/*.json'
     },
     release: {

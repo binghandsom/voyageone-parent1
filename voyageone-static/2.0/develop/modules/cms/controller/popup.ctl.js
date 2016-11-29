@@ -59,6 +59,13 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+            "platformFieldEdit": {
+                "templateUrl": "views/pop/bulkUpdate/platformFieldEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/bulkUpdate/platformFieldEdit.ctl",
+                "controller": 'popPlatformFieldEditCtl',
+                "backdrop": 'static',
+                "size": 'md'
+            },
             "category": {
                 "templateUrl": "views/pop/bulkUpdate/masterCategory.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategory.ctl",
@@ -143,6 +150,16 @@ define([
                 "controller": 'BrandMappingConfirmController as ctrl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "newChannelConfig": {
+                "templateUrl": "views/pop/channel/channelConfigAdd.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/channelConfigAdd.ctl",
+                "controller": "channelConfigAddController as ctrl"
+            },
+            "editChannelConfig": {
+                "templateUrl": "views/pop/channel/channelConfigEdit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/channel/channelConfigEdit.ctl",
+                "controller": "channelConfigEditController as ctrl"
             }
         },
         "custom": {
@@ -267,6 +284,12 @@ define([
                 "controllerUrl": "modules/cms/views/pop/history/productStatus.ctl",
                 "controller": "ProductStatusPopupController as ctrl",
                 "size": "lg"
+            },
+            "intelApprove": {
+                "templateUrl": "views/pop/history/intelApprove.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/history/intelApprove.ctl",
+                "controller": "intelApproveController as ctrl",
+                "size": "lg"
             }
         },
         "promotion": {
@@ -385,6 +408,13 @@ define([
                     "templateUrl": "views/pop/jm/tagmodify.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/jm/tagmodify.ctl",
                     "controller": 'popTagModifyCtl'
+                },
+                "encore": {
+                    "templateUrl": "views/pop/jm/promotionEncore.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/jm/promotionEncore.ctl",
+                    "controller": 'popJMPromotionEncoreCtl',
+                    "backdrop": "static",
+                    "size": 'lg'
                 }
             },
             "jmImageManage": {
@@ -414,8 +444,14 @@ define([
                 "controller": 'popCodeDetailCtl',
                 "backdrop": 'static',
                 "size": 'md'
+            },
+            "joinPromotion": {
+                "templateUrl": "views/pop/search/joinPromotion.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/joinPromotion.ctl",
+                "controller": 'joinPromotionCtl as ctrl',
+                "backdrop": 'static',
+                "size": 'lg'
             }
-
         },
         "system": {
             "channelsetting": {
@@ -439,20 +475,20 @@ define([
                 "controller": 'popChannelListCtl'
             }
         },
-        "maintain":{
+        "maintain": {
             "masterBrandCheck": {
                 "templateUrl": "views/pop/maintain/masterBrandCheck.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandCheck.ctl",
                 "controller": 'masterBrandCheckCtl as ctrl',
-                "size":"lg"
+                "size": "lg"
             },
             "masterBrandMapDetail": {
                 "templateUrl": "views/pop/maintain/masterBrandMapDetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandMapDetail.ctl",
                 "controller": 'masterBrandMapDetailCtl as ctrl',
-                "size":"lg"
+                "size": "lg"
             },
-            "masterBrandEdit":{
+            "masterBrandEdit": {
                 "templateUrl": "views/pop/maintain/masterBrandEdit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/maintain/masterBrandEdit.ctl",
                 "controller": 'masterBrandEditCtl as ctrl'
@@ -532,18 +568,31 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
-            },
-            "skuMoveConfirm": {
-                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
-                "controller": 'SkuMoveConfirmController as ctrl'
-            },
-            "moveResult": {
-                "templateUrl": "views/pop/product/move_result.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
-                "controller": 'MoveResultController as ctrl',
-                "size": 'sm'
             }
+        },
+        "shelves" : {
+            "shelvesTemplateAdd" : {
+                "templateUrl": "views/pop/shelves/shelves-template-add.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-add.ctl",
+                "controller": 'ShelvesTemplateAddController as ctrl'
+            },
+            "shelvesTemplateEdit" : {
+                "templateUrl": "views/pop/shelves/shelves-template-edit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/shelves/shelves-template-edit.ctl",
+                "controller": 'ShelvesTemplateEditController as ctrl'
+            },
+            newShelves: {
+                templateUrl: "views/pop/shelves/new-shelves.tpl.html",
+                controllerUrl: "modules/cms/views/pop/shelves/new-shelves.ctl",
+                controller: 'NewShelvesPopupController as $ctrl',
+                size: 'md'
+            }
+        },
+        confirmProductRefresh: {
+            templateUrl: "views/pop/platformMapping/confirmProductRefresh.html",
+            controllerUrl: "modules/cms/views/pop/platformMapping/confirmProductRefresh.controller",
+            controller: 'ConfirmProductRefreshController as $ctrl',
+            size: 'md'
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -667,6 +716,15 @@ define([
             return openModal(popActions.bulkUpdate.category, context);
         };
 
+        /**
+         * 打开类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupPlatformPopOptions = function popupPlatformPopOptions(context) {
+
+            return openModal(popActions.bulkUpdate.platformFieldEdit, context);
+        };
         /**
          * 打开多选类目选择页面
          * @param context
@@ -1185,6 +1243,15 @@ define([
             });
         };
 
+        $scope.openJmPromotionEncore = function openJmPromotionEncore(context, fnInitial,ctrl) {
+            popActions.jumei.jmPromotionDetail.encore.size = 'lg';
+            openModal(popActions.jumei.jmPromotionDetail.encore, context).then(function (res) {
+                if (fnInitial) {
+                    fnInitial(res,ctrl);
+                }
+            });
+        };
+
         $scope.openJmPromotionProductImport = function openJmPromotionProductImport(context, fnInitial) {
             openModal(popActions.jumei.jmPromotionDetail.import, context).then(function () {
                 if (fnInitial) {
@@ -1287,14 +1354,49 @@ define([
             return openModal(popActions.jumei.promotion.imageBatchUpload, context)
         };
 
-        /**移动SKU确认*/
-        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
-            return openModal(popActions.product.skuMoveConfirm, context);
+        /**
+         * 高级检索加入活动
+         */
+        $scope.openJoinPromotion = function openJoinPromotion(context) {
+            return openModal(popActions.search.joinPromotion, context)
         };
+
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
-        }
+        };
+        /**新增店铺配置(channelconfig)*/
+        $scope.newChannelConfig = function newChannelConfig(context) {
+            return openModal(popActions.channel.newChannelConfig, context);
+        };
+        /**编辑店铺配置*/
+        $scope.editChannelConfig = function editChannelConfig(context) {
+            return openModal(popActions.channel.editChannelConfig, context);
+        };
+
+        /** 智能上新操作历史 */
+        $scope.openIntelApprove = function openIntelApprove(code, cartId) {
+            return openModal(popActions.history.intelApprove, {code: code, cartId: cartId});
+        };
+
+        $scope.confirmProductRefresh = function confirmProductRefresh(field, mappingInfo) {
+            return openModal(popActions.confirmProductRefresh, {
+                field: field,
+                mappingInfo: mappingInfo
+            });
+        };
+
+        /**新建货架模板*/
+        $scope.shelvesTemplateAdd = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateAdd, context)
+        };
+        $scope.shelvesTemplateEdit = function (context) {
+            return openModal(popActions.shelves.shelvesTemplateEdit, context)
+        };
+
+        $scope.popNewShelves = function popNewShelves(context) {
+            return openModal(popActions.shelves.newShelves, context)
+        };
 
     }).factory('popups', function ($controller, $rootScope) {
 

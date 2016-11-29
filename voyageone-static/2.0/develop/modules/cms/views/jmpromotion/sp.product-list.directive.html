@@ -214,8 +214,8 @@
                         <th class="text-left">Tag Name</th>
                         <th class="text-left">Color</th>
                         <th class="text-right" style="width: 170px">Price</th>
-                        <th class="text-right">聚美价格</th>
-                        <th class="text-right">聚美MallId</th>
+                        <th class="text-right" style="width: 150px">聚美价格</th>
+                        <th class="text-left">聚美MallId</th>
                         <th class="text-left">聚美Hash ID</th>
                         <th class="text-center">折扣</th>
                         <th class="text-center">SKU数</th>
@@ -240,7 +240,7 @@
                         </td>
                         <td>{{model.productLongName}}</td>
                         <td>
-                            <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model)" ng-model="model.tagNameList"
+                            <select multiple chosen class="form-control" width="'100%'"  ng-change="changeSelectTag(model,{{model.tagNameList}})" ng-model="model.tagNameList"
                                     ng-options="m.tagName as m.tagName for m in vm.tagList">
                             </select>
                         </td>
@@ -263,8 +263,8 @@
                                 </ul>
                             </div>
                         </td>
-                        <td class="text-right">
-                            <div class="table_main" style="width: 100px;">
+                        <td class="text-right" style="width: 130px;">
+                            <div class="table_main">
                                 <ul>
                                     <li>市场价:{{getMarketPrice(model)}}</li>
                                     <li>团购价:{{getDealPrice(model)}}</li>

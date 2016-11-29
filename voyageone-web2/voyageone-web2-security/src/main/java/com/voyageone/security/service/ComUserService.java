@@ -58,7 +58,7 @@ public class ComUserService {
      * @param password
      */
     public ComUserModel login(String account, String password, String app) {
-        logout();
+//        logout();
 
         Subject user = SecurityUtils.getSubject();
 

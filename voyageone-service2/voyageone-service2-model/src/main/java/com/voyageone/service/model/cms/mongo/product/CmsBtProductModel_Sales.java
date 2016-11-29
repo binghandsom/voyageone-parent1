@@ -23,7 +23,9 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public final static String CARTID = "cartId";
     public final static String CARTID_0 = "cartId0";
     public final static String SKUS = "skus";
-
+    // 年销量
+    public static final String CODE_SUM_YEAR = "codeSumYear";
+    
     public CmsBtProductModel_Sales() {
     }
 
@@ -47,7 +49,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     }
 
     //code_sum_30
-    public BaseMongoMap getCodeSum30() {
+    public Map getCodeSum30() {
         return getAttribute(CODE_SUM_30);
     }
     public void setCodeSum30(BaseMongoMap codeSum30) {
@@ -62,8 +64,11 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     }
 
     //code_sum_all
-    public BaseMongoMap getCodeSumAll() {
+    public Map getCodeSumAll() {
         return getAttribute(CODE_SUM_ALL);
+    }
+    public Map getCodeSumYear() {
+        return getAttribute(CODE_SUM_YEAR);
     }
     public void setCodeSumAll(BaseMongoMap codeSumAll) {
         setAttribute(CODE_SUM_ALL, codeSumAll);

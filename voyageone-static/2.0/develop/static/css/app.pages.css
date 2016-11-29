@@ -240,6 +240,10 @@ s-field textarea.s-html {
     list-style-type: none;
 }
 
+.category_drag_list_dp ul li{
+    height: 30px;
+}
+
 .category_drag_list_dp li a:link {
     float: left;
     width: 100%;
@@ -425,8 +429,19 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
+.product-shema-detail .border-col-gray{
+    color: #fff;
+    border: 1px solid #ccc;
+}
+
 .product-shema-detail a .thumb-group {
     max-height: 100px;
+}
+
+.product-shema-detail .thumbInfo{
+    margin:0px auto;
+    max-width: 100px;
+    border-right: 1px solid #ddd
 }
 
 .panel-default .panel-detail-head {
@@ -463,10 +478,16 @@ s-field textarea.s-html {
     color: white;
 }
 
+.product-shema-detail .btn-image {
+    position: absolute;
+    display: block;
+    bottom: 5px;
+    right: 13px;
+}
+
 .product-shema-detail .btn-nav-pop {
     box-shadow: 1px 1px 2px #ADCAE2;
 }
-
 .product-shema-detail span a {
     color: #e67e22;
     text-decoration: underline;
@@ -496,7 +517,9 @@ s-field textarea.s-html {
 
 .product-shema-detail .thumbnail {
     max-width: 100px;
-    max-height: 110px;
+    /*height: 105px;*/
+    max-height: 115px;
+    margin: 0px auto;
 }
 
 .product-shema-detail .thumbnail.current {
@@ -862,13 +885,12 @@ schema .ng-invalid.focus-error {
 }
 
 /**默认属性设置*/
-.default-attr .nav {
-    position: fixed;
-    width: 100px;
-    margin-left: 25px;
-    cursor: pointer;
-    border-width: 2px;
-    border-style: dotted;
+.default-attr .nav-stacked {
+    min-width: 180px;
+}
+
+.default-attr .nav-stacked .btn {
+    width: 105px;
 }
 
 /*clear margin*/
@@ -890,7 +912,7 @@ schema .ng-invalid.focus-error {
     border-radius: 5px;
 }
 
-.jm-sortable-product-modal .arrow-button button{
+.jm-sortable-product-modal .arrow-button button {
     background: #fff;
     border: none;
     padding: 0px;
@@ -951,15 +973,28 @@ schema .ng-invalid.focus-error {
     width: 90px;
 }
 
+.clear-margin-bottom{
+    margin-bottom:0;
+}
 /* 聚美专场v2模块画面，商品排序弹出框样式 END */
 
-/*clear margin*/
-.clear-margin-bottom {
-    margin-bottom: 0;
+/* 高级检索附加样式 */
+#advanceSearch td .popover {
+    max-width: 350px;
+}
+
+#advanceSearch td .mainPrd {
+    color: white;
+    font-weight: bold;
 }
 
 /**高级检索样式*/
 #advanceSearch .dropdown-menu-ul{
     max-height: 350px;
     overflow: auto;
+}
+
+#advanceSearch .opacityBtn{
+    border: none;
+    background: none;
 }

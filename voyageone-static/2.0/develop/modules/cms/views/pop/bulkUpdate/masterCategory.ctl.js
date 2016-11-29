@@ -23,7 +23,7 @@ define(['cms',
 
             /**
              * 画面传递的上下文
-             * @type {{categories: object[], from: string, divType: string}}
+             * @type {{categories: object[], from: string, divType: string, canSelectParent: boolean}}
              */
             this.context = context;
             /**
@@ -47,6 +47,10 @@ define(['cms',
              * @type {String}
              */
             this.divType = ">";
+            /**
+             * 影响最后判断，是否可以返回父节点
+             */
+            this.canSelectParent = context.canSelectParent;
         }
 
         PopCategoryController.prototype = {
@@ -118,7 +122,8 @@ define(['cms',
                     return;
                 }
 
-                if (this.selected.isParent === 1) {
+                // 如果不能选择父类目，并且还真选的是父类目，那就报提示信息
+                if (this.canSelectParent !== true && this.selected.isParent === 1) {
                     this.notify.danger(this.$translate.instant('TXT_MSG_IS_NOT_CHILE_CATEGORY'));
                     return;
                 }

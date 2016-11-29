@@ -1,5 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
+import com.voyageone.service.bean.cms.jumei.SkuImportBean;
 import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionSkuModel;
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
@@ -37,9 +38,11 @@ public interface CmsBtJmPromotionSkuDaoExt {
 
     List<SkuPriceBean> selectJmSkuPriceInfoListByPromotionProductId(int promotionProductId);
 
-    int batchDeleteSku(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int batchDeleteSku(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     int deleteAllSku(@Param("promotionId") int promotionId);
     List<MapModel> selectViewListByPromotionProductId(@Param("promotionProductId") int promotionProductId,@Param("jmPromotionId") int jmPromotionId);
+
+    List<SkuImportBean> selectProductByJmPromotionId(int promotionProductId);
     //jm2 end
 }

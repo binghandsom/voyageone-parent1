@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtShelvesTemplateDaoExt" >
+
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtShelvesTemplateModel" />
+    <sql id="Base_Column_List" >
+        `id`, `template_name`, `template_type`, `client_type`, `cart_id`, `channel_id`, `remark`,
+        `num_per_line`, `html_head`, `html_module_title`, `html_module_search`, `html_big_image`,
+        `html_small_image`, `html_foot`, `html_clearfix1`, `html_clearfix2`, `html_last_image`,
+        `html_image_template`, `creater`, `created`, `modifier`, `modified`, `active`
+    </sql>
+
+    <select id="search" resultMap="BaseResultMap" parameterType="com.voyageone.service.bean.cms.shelves.CmsBtShelvesTemplateBean">
+        select
+        <include refid="Base_Column_List" />
+        from cms_bt_shelves_template
+        <where >
+            `active` = 1
+            <if test="templateName != null" >
+                and `template_name` like concat('%', #{templateName,jdbcType=VARCHAR}, '%')
+            </if>
+            <if test="templateType != null" >
+                and `template_type` = #{templateType,jdbcType=INTEGER}
+            </if>
+            <if test="clientType != null" >
+                and `client_type` = #{clientType,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="templateTypes != null and templateTypes.size() > 0">
+                and `template_type` in
+                <foreach item="item" index="index" collection="templateTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="clientTypes != null and clientTypes.size() > 0">
+                and `client_type` in
+                <foreach item="item" index="index" collection="clientTypes" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="carts != null and carts.size() > 0">
+                and `cart_id` in
+                <foreach item="item" index="index" collection="carts" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectByChannelIdAndName" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM cms_bt_shelves_template WHERE `active` = 1
+        AND `channel_id` = #{channelId, jdbcType=VARCHAR} AND `template_name` = #{templateName, jdbcType=VARCHAR}
+    </select>
+</mapper>

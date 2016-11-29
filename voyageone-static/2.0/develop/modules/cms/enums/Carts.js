@@ -29,6 +29,26 @@ define(['underscore'], function (_) {
          */
         FEED:new Cart('FEED' , 1 , 'Feed数据',''),
         /**
+         * Feed
+         */
+        FEED:new Cart('SN' , 1 , 'Sneakerhead',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('WS' , 3 , 'Sneakerhead WS',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('AM' , 5 , 'Amazon',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('RX' , 7 , 'Sneaker RX',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile',''),
+        /**
          * 天猫
          */
         TM: new Cart('TM', 20, '天猫', ''),

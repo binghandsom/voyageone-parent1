@@ -23,6 +23,7 @@ public enum CustomMappingType {
     CSPU(15), // 产品规格
     PRODUCT_ID(16), // 货品Id
     DARWIN_SKU(17), // darwin_sku
+    IS_XINPIN(18),  // 商品是否为新品
     ;
     // added by morse.lu 2016/06/29 end
 
@@ -99,6 +100,8 @@ public enum CustomMappingType {
                 return PRODUCT_ID;
             case 17:
                 return DARWIN_SKU;
+            case 18:
+                return IS_XINPIN;
             // added by morse.lu 2016/06/29 end
             default:
                 return null;

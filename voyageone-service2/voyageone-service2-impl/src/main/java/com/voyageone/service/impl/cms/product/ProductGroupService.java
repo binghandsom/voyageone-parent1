@@ -5,6 +5,8 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -183,13 +185,22 @@ public class ProductGroupService extends BaseService {
         //String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"fields.isMasterMain\":1},{\"fields.code\":1}", modelCode);
         // 检索条件(feed.orgAtts.modelCode = modelCode && common.fields.isMasterMain = 1)
 //        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"common.fields.isMasterMain\":1},{\"common.fields.code\":1}", modelCode);
-        String query = "";
+        JongoQuery query = new JongoQuery();
 //        String query = String.format("{\"common.fields.model\":\"%s\"},{\"common.fields.code\":1}", modelCode);
         if (!StringUtils.isEmpty(orgChannelId)) {
             // 由于可能存在2个子店的Product.model相同的情况，如果不加orgChannelId只用model去查product的话，会导致查出来别的店铺的product对应的group
-            query = String.format("{\"common.fields.model\":\"%s\", orgChannelId:\"%s\"},{\"common.fields.code\":1}", modelCode, orgChannelId);
+            query.setQuery(String.format("{\"common.fields.model\":\"%s\", orgChannelId:\"%s\"}", modelCode, orgChannelId));
+            query.setProjectionExt("common.fields.code");
         } else {
-            query = String.format("{\"common.fields.model\":\"%s\"},{\"common.fields.code\":1}", modelCode);
+            CmsChannelConfigBean  cmsChannelConfigBean= CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SPLIT_QUARTER_BY_CODE, "0");
+            if(cmsChannelConfigBean != null && channelId.equals(cmsChannelConfigBean.getChannelId())){
+                query.setQuery(String.format("{\"common.fields.model\":\"%s\"}", modelCode));
+                query.setProjectionExt("common.fields.code","created");
+                query.setSort("{\"created\":-1}");
+            }else {
+                query.setQuery(String.format("{\"common.fields.model\":\"%s\"}", modelCode));
+                query.setProjectionExt("common.fields.code");
+            }
         }
         // desmond 2016/07/04 update end
         // jeff 2016/04 change end
@@ -384,7 +395,8 @@ public class ProductGroupService extends BaseService {
     public List<String> getUnPublishedProducts(CmsBtProductGroupModel model) {
         // 获取未上新过的产品信息,用于判断是否需要更新publishTime
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
+//        queryObject.setQuery("{'common.fields.code':{$in:#}, 'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}");
+        queryObject.setQuery("{'common.fields.code':{$in:#}, $or: [{'platforms.P" + model.getCartId() + ".pStatus':{$in:[null, '', 'WaitingPublish']}}, {'platforms.P" + model.getCartId() + ".pPublishTime':{$in:[null, '']}}]}");
         queryObject.setParameters(model.getProductCodes());
 
         // 如果该产品已经上新过,则对应值为true,否则为false

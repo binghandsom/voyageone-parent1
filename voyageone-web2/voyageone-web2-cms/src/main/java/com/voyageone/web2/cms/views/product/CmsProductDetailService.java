@@ -24,6 +24,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -36,6 +37,8 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.wms.InventoryCenterLogicService;
+import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -101,6 +104,8 @@ public class CmsProductDetailService extends BaseViewService {
     private PriceService priceService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private InventoryCenterLogicService inventoryCenterLogicService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -572,6 +577,7 @@ public class CmsProductDetailService extends BaseViewService {
                 image.put("imageName", product.getCommon().getFields().getImages1().get(0).get("image1"));
                 image.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(s1));
                 image.put("prodId", product.getProdId());
+                image.put("qty",product.getCommon().getFields().getQuantity());
                 images.add(image);
             }
         });
@@ -594,6 +600,8 @@ public class CmsProductDetailService extends BaseViewService {
         Map<String, Object> mastData = new HashMap<>();
         mastData.put("images", images);
         mastData.put("lock", cmsBtProduct.getLock());
+        mastData.put("appSwitch",productComm.getFields().getAppSwitch());
+        mastData.put("translateStatus",productComm.getFields().getTranslateStatus());
         mastData.put("isMain", cmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
 
         // 获取各个平台的状态
@@ -640,11 +648,17 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
+        Map<String,Integer> skuinvs = null;
+        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(channelId, cmsBtProduct.getCommon().getFields().getCode());
+        if(stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())){
+            skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase).collect(Collectors.toMap(WmsCodeStoreInvBean.StocksBean.BaseBean::getSku,WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
+        }
+
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuModel.getQty());
+            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null?0:skuinvs.get(skuModel.getSkuCode()));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
@@ -668,6 +682,8 @@ public class CmsProductDetailService extends BaseViewService {
             skuInfo.put("imageUrl", imageUrl);
             skuList.add(skuInfo);
         }
+
+
         result.put("skuList", skuList);
         return result;
     }
@@ -728,7 +744,7 @@ public class CmsProductDetailService extends BaseViewService {
                         });
                         cmsBtPriceConfirmLogService.addConfirmed(channelId, newProduct.getCommon().getFields().getCode(), platform, modifier);
                     }
-                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更");
+                    productService.updateProductPlatform(channelId, prodId, platform, modifier, false, EnumProductOperationType.WebEdit, "税号变更",true);
                 }
             });
 
@@ -1500,7 +1516,7 @@ public class CmsProductDetailService extends BaseViewService {
         return common;
     }
 
-    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform) {
+    public void updateSkuPrice(String channelId, int cartId, Long prodId, String userName,CmsBtProductModel_Platform_Cart platform,boolean isUpdateJmDealPrice) throws Exception {
 
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -1522,8 +1538,37 @@ public class CmsProductDetailService extends BaseViewService {
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
         cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
 
+
         //刷新价格
         CmsBtProductModel productInfo = productService.getProductById(channelId, prodId);
-        priceService.updateSkuPrice(channelId, cartId, productInfo);
+        priceService.updateSkuPrice(channelId, cartId, productInfo,isUpdateJmDealPrice);
+
+    }
+
+    /**
+     * 修改产品共通属性中的图片
+     * @param imageType   图片类型
+     * @param images      图片集合
+     * @return 系统当前时间
+     */
+    public String restoreImg(String channelId, Long prodId, String imageType,List<String> images,String modifier){
+
+        String modified = DateTimeUtil.getNowTimeStamp();
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put(String.format("common.fields.images%s", imageType.substring(imageType.length()-1,imageType.length())), images);
+        updateMap.put("common.modifier", modifier);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+
+        return modified;
     }
 }

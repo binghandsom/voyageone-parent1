@@ -672,13 +672,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         paramLogistics.put("volume", getValueFromPageOrCondition("logistics_volume", "", mainProductPlatformCart, sxData, shopProp));
         // 物流模板ID
         paramLogistics.put("template_id", getValueFromPageOrCondition("logistics_template_id", "", mainProductPlatformCart, sxData, shopProp));
+        // 物流模板是否是包邮模板(只能整个店铺共通设置一个，画面上不需要,不用加在共通schema里面)
+        String shipFlag = getConditionPropValue(sxData, "logistics_template_ship_flag", shopProp);
+        if ("true".equalsIgnoreCase(shipFlag)) {
+            // 是否包邮设置为包邮("2":包邮)
+            // 参加活动天猫给付费广告位的话，还需要商品收藏数达到一定量才可以.
+            paramLogistics.put("ship", "2");
+        }
         // 省(国家)
         paramLogistics.put("province", getValueFromPageOrCondition("logistics_province", "", mainProductPlatformCart, sxData, shopProp));
         // 城市
         paramLogistics.put("city", getValueFromPageOrCondition("logistics_city", "", mainProductPlatformCart, sxData, shopProp));
         // 货源地
         paramLogistics.put("start_from", getValueFromPageOrCondition("logistics_start_from", "", mainProductPlatformCart, sxData, shopProp));
-        if ("017".equals(sxData.getChannelId())) paramLogistics.put("ship", "2");
+
         productInfoMap.put("logistics", JacksonUtil.bean2Json(paramLogistics));
 
         // skus(必填)
@@ -744,7 +751,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         paramExtends.put("original_title", getValueFromPageOrCondition("extends_original_title", "", mainProductPlatformCart, sxData, shopProp));
         // 店铺内分类id(非必填)  格式："shop_cats":"111111,222222,333333"
         String extends_shop_cats = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+        if (mainProductPlatformCart != null
                 && ListUtils.notNull(mainProductPlatformCart.getSellerCats())) {
             List<String> sellerCatIdList = new ArrayList<>();
             for (CmsBtProductModel_SellerCat sellerCat : mainProductPlatformCart.getSellerCats()) {

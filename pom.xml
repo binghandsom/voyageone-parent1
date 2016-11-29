@@ -102,6 +102,7 @@
         <voyageone.components.ftp.version>0.0.1-SNAPSHOT</voyageone.components.ftp.version>
         <voyageone.components.overstock.version>0.0.1-SNAPSHOT</voyageone.components.overstock.version>
         <voyageone.components.solr.version>0.0.1-SNAPSHOT</voyageone.components.solr.version>
+        <voyageone.components.sneakerhead.version>0.0.1-SNAPSHOT</voyageone.components.sneakerhead.version>
 
     </properties>
 

@@ -42,6 +42,11 @@ public class CmsSearchInfoBean2 implements Serializable {
     // MINI MALL 店铺时查询原始CHANNEL
     private int supplierType = 0;
     private List<String> supplierList = null;
+    
+    private String productSelType;
+    private String sizeSelType;
+    private List<String> productTypeList;
+    private List<String> sizeTypeList;
 
     // ** 平台搜索条件 **
     private Integer cartId = 0;
@@ -95,7 +100,10 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     // ** 其它未定
     private String compareType;
-
+    // NumIID
+    private String numIIds;
+    // 自定义条件组合类型
+    private String custGroupType;
 
     public List<String> getCidValue() {
         return cidValue;
@@ -521,7 +529,39 @@ public class CmsSearchInfoBean2 implements Serializable {
         this.lockFlg = lockFlg;
     }
 
-    @Override
+	public String getProductSelType() {
+		return productSelType;
+	}
+
+	public void setProductSelType(String productSelType) {
+		this.productSelType = productSelType;
+	}
+
+	public String getSizeSelType() {
+		return sizeSelType;
+	}
+
+	public void setSizeSelType(String sizeSelType) {
+		this.sizeSelType = sizeSelType;
+	}
+	
+	public List<String> getProductTypeList() {
+		return productTypeList;
+	}
+
+	public void setProductTypeList(List<String> productTypeList) {
+		this.productTypeList = productTypeList;
+	}
+
+	public List<String> getSizeTypeList() {
+		return sizeTypeList;
+	}
+
+	public void setSizeTypeList(List<String> sizeTypeList) {
+		this.sizeTypeList = sizeTypeList;
+	}
+
+	@Override
     public String toString() {
         return JsonUtil.getJsonString(this);
     }
@@ -533,4 +573,21 @@ public class CmsSearchInfoBean2 implements Serializable {
     public void setSupplierType(int supplierType) {
         this.supplierType = supplierType;
     }
+
+	public String getNumIIds() {
+		return numIIds;
+	}
+
+	public void setNumIIds(String numIIds) {
+		this.numIIds = numIIds;
+	}
+
+	public String getCustGroupType() {
+		return custGroupType;
+	}
+
+	public void setCustGroupType(String custGroupType) {
+		this.custGroupType = custGroupType;
+	}
+	
 }

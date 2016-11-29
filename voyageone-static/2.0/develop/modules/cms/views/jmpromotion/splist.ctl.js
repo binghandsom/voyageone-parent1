@@ -50,9 +50,15 @@ define([
 
         //获取分页参数及其条件
         function getPageParameter() {
-            var pageParameter = {};
-            $scope.searchInfo.cartId = 27;
-            pageParameter.parameters = angular.copy($scope.searchInfo);
+            var pageParameter = {},
+                searchInfo = $scope.searchInfo;
+
+            //如果品牌的字符串数组为空时后台会报错    脆弱的后台！
+            if(!searchInfo.jmBrandName || searchInfo.jmBrandName.length == 0)
+                searchInfo.jmBrandName = null;
+
+            searchInfo.cartId = 27;
+            pageParameter.parameters = angular.copy(searchInfo);
             return pageParameter;
         }
 

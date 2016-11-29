@@ -5,7 +5,7 @@
 /**
  * angular component head file。
  * 声明各个组件的父模块
- *
+ * 
  * create by Jonas on 2016-06-01 14:00:39
  */
 
@@ -126,8 +126,23 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
+
+    $scope.templateAction = {
+        "promotionDetailPopover":{
+            templateUrl: 'promotionDetailTemplate.html',
+            title: 'Title'
+        },
+        "advanceSkuPopover":{
+            templateUrl: 'advanceSkuTemplate.html',
+            title: 'Title'
+        }
+    };
+
     $scope.showInfo = showInfo;
+    $scope.popoverAdvanceSku = popoverAdvanceSku;
+    $scope.popoverPromotionDetail = popoverPromotionDetail;
+
     function showInfo(values) {
         if (values == undefined || values == '') {
             return '';
@@ -140,10 +155,70 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     tempHtml += "<br>";
                 }
             });
-        } else {
+        }
+        else if(values.isUseComplexTemplate == true){
+            $scope.dynamicPopover = {
+                type: values.type,
+                value1: values.value,
+                value2: values.value2,
+                value3: values.value3,
+                templateUrl: 'dynamicPopoverTemplate.html'
+            };
+        }else {
             tempHtml += values;
         }
         return tempHtml;
+    }
+
+    /**
+     * 高级检索   显示sku
+     */
+    function popoverAdvanceSku(code, skus , entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
+
+        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+            var skuDetails = [],
+                skuInventories = resp.data;
+            _.forEach(skus, function(sku) {
+                var inventory = null;
+                _.forEach(skuInventories, function(skuInventory) {
+                    if (skuInventory.sku == sku.skuCode) {
+                        inventory = skuInventory.qtyChina;
+                        return false;
+                    }
+                });
+                skuDetails.push({
+                    skuCode: sku.skuCode,
+                    size: sku.size,
+                    inventory: inventory
+                });
+            });
+
+            $scope.advanceSku = skuDetails;
+        });
+
+    }
+
+    /**
+     * 高级线索   显示活动详情
+     */
+    function popoverPromotionDetail(code,entity){
+
+        if(entity.isOpen){
+            entity.isOpen = false;
+            return;
+        }
+        entity.isOpen = true;
+
+        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+            $scope.promotionDetail = resp.data;
+        });
+
     }
 });
 
@@ -1161,7 +1236,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             if (key.indexOf('Rule') > 0 && key !== 'tipRule')
                 return;
 
-            var contentContainer = angular.element('<s-tip>');
+            var contentContainer = angular.element('<s-tip ng-if="showTip">');
             container.append(contentContainer);
 
             // 有的 tip 中有 url 属性, 有的话, 就增加 a 标签
@@ -1687,9 +1762,23 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
                 if (showName)
                     container.append(angular.element('<s-header>'));
+                //sofia
+                each(rules, function (content, key) {
 
+                    if (key.indexOf('$') === 0)
+                        return;
+
+                    if (key.indexOf('Rule') > 0 && key !== 'tipRule')
+                        return;
+
+                    var contentContainer = angular.element('<s-tip-new ng-click="showTip=!showTip">');
+                    container.append(contentContainer);
+                });
+                innerElement = angular.element('<div class="s-wrapper" style="margin-left:15px">');
+                //sofia
                 // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                innerElement = angular.element('<div class="s-wrapper">');
+                // innerElement = angular.element('<div class="s-wrapper">');
+
                 container.append(innerElement);
                 container = innerElement;
 
@@ -2745,14 +2834,14 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     /**
      * 对会话超时和未登录进行特殊处理(Admin)
      */
-    function adminSessionTimeout(res) {
-        if (res.code != MSG_MISSAUTHENTICATION) {
-            return false;
-        }
-        // 会话超时,默认跳转到登陆页
-        location.href = "/adminLogin.html";
-        return true;
-    }
+    //function adminSessionTimeout(res) {
+    //    if (res.code != MSG_MISSAUTHENTICATION) {
+    //        return false;
+    //    }
+    //    // 会话超时,默认跳转到登陆页
+    //    location.href = "/adminLogin.html";
+    //    return true;
+    //}
 
     function adminResetPassword(res) {
         if (res.code != MSG_CHANGEPASS) {
@@ -2767,7 +2856,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
             return false;
         }
         // 密码输入错误,默认跳转到重置密码界面
-        location.href = "/adminLogin.html";
+        location.href = "/";
         return true;
     }
 
@@ -2795,7 +2884,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         response: function (res) {
             var result = res.data;
             // 特殊处理部分内容
-            if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
+            if (autoRedirect(result) || sessionTimeout(result)  || adminResetPassword(result)||adminReLogin(result)) {
                 return res;
             }
             unknownException(res);
@@ -3169,6 +3258,33 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
 /*****************************/
 
 /**
+ * @description 格林威治时间转换为当地时区时间
+ */
+angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) {
+
+    return function (input,format) {
+
+        var miliTimes;
+
+        if (!input){
+            console.warn("没有要转换的日期");
+            return '';
+        }
+
+        input = typeof input === 'string' ? new Date(input) : input;
+
+        miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
+
+        return $filter('date')(new Date(miliTimes), format);
+
+    };
+
+});
+
+
+/*****************************/
+
+/**
  * @description
  *
  * 自动创建基于地址定义的数据访问 service.
@@ -3298,7 +3414,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 else
                     this._a.post(_url, args, option).then(function (res) {
                         result = _resolve(res);
-
+                        
                         switch (_cacheFlag) {
                             case 2:
                                 session[hash] = result;
@@ -3307,7 +3423,7 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                                 local[hash] = result;
                                 break;
                         }
-
+                        
                         deferred.resolve(result);
                     }, function (res) {
                         result = _reject(res);
@@ -3633,12 +3749,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-
+    
     languages: {
         en: "en",
         zh: "zh"
     },
-
+    
     /**
      * set the web side language type.
      */
@@ -3649,7 +3765,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-
+    
     /**
      * get the browser language type.
      * @returns {string}

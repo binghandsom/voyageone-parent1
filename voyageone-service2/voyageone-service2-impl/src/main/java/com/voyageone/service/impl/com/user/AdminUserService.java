@@ -363,12 +363,13 @@ public class AdminUserService extends BaseService {
         model.setId(userId);
         model.setPassword(pass);
         model.setModifier(username);
+        String account = comUserDao.select(userId).getUserAccount();
+        model.setUserAccount(account);
         encryptPassword(model);
         if (!(comUserDao.update(model) > 0)) {
             throw new BusinessException("重设密码失败");
         }
         //清除该用户的登录缓存
-        String account = comUserDao.select(userId).getUserAccount();
         comUserService.clearCachedAuthenticationInfo(account);
 
     }

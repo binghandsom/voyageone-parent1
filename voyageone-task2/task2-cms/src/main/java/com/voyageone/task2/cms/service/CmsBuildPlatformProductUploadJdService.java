@@ -1,8 +1,12 @@
 package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.ImageReadService.Image;
+import com.jd.open.api.sdk.domain.ware.Sku;
+import com.mongodb.BulkWriteResult;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -23,6 +27,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.bean.JdProductBean;
 import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -47,6 +52,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -139,6 +145,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     private MongoSequenceService sequenceService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private JdSkuService jdSkuService;
+    @Autowired
+    private CmsPlatformTitleTranslateMqService cmsTranslateMqService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -255,7 +265,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         boolean updateWare = false;
 
         try {
-            // 上新用的商品数据信息取得
+            // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            cmsTranslateMqService.executeSingleCode(channelId, cartId, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
@@ -426,8 +438,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             // 编辑京东共通属性
+            boolean blnForceSmartSx = false;
+            if (3 == cmsBtSxWorkloadModel.getPublishStatus()) {
+                blnForceSmartSx = true;
+            }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
-                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap);
+                    jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
 
             // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
             List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -634,6 +650,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 上新成功时状态回写操作
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), platformStatus, "", getTaskName());
+
+                // 上新成功之后回写jdSkuId操作
+                updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -713,6 +732,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param skuLogicQtyMap Map<String, Integer>  SKU逻辑库存
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return JdProductBean 京东上新用bean
      * @throws BusinessException
      */
@@ -720,7 +740,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                                                  long groupId, ShopBean shopProp,
                                                  CmsMtPlatformCategorySchemaModel jdCommonSchema,
                                                  CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                 Map<String, Integer> skuLogicQtyMap) throws BusinessException {
+                                                 Map<String, Integer> skuLogicQtyMap,
+                                                 boolean blnForceSmartSx) throws BusinessException {
         CmsBtProductModel mainProduct = sxData.getMainProduct();
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -731,7 +752,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         String cartId = sxData.getCartId().toString();
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
-        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser);
+        Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
 
         // 京东上新产品共通属性设定
         JdProductBean jdProductBean = new JdProductBean();
@@ -880,7 +901,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setService(mainProduct.getXXX());                   // 不使用
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
-        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser);
+        Map<String, String> jdProductAttrMap = getJdProductAttributes(platformSchemaData, shopProp, expressionParser, blnForceSmartSx);
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1(必须)
         // 如输入类型input_type为1或2，则attributes为必填属性；如输入类型input_type为3，则用字段input_str填入属性的值
         jdProductBean.setAttributes(jdProductAttrMap.get(Attrivutes));
@@ -930,10 +951,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param jdCommonSchema CmsMtPlatformCategorySchemaModel  京东共通schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东商品共通属性
      */
     private Map<String, String> getJdCommonInfo(CmsMtPlatformCategorySchemaModel jdCommonSchema,
-                                                ShopBean shopBean, ExpressionParser expressionParser) {
+                                                ShopBean shopBean, ExpressionParser expressionParser,
+                                                boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得京东共通schema数据中的propsItem(XML字符串)
@@ -949,7 +972,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东共通Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), jdCommonSchema.getCatId());
@@ -1007,10 +1030,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param platformSchemaData CmsMtPlatformCategorySchemaModel  主产品类目对应的平台schema数据
      * @param shopBean ShopBean  店铺信息
      * @param expressionParser ExpressionParser  解析子
+     * @param blnForceSmartSx 是否强制使用智能上新
      * @return Map<String, String> 京东类目属性
      */
     private Map<String, String> getJdProductAttributes(CmsMtPlatformCategorySchemaModel platformSchemaData,
-                                                       ShopBean shopBean, ExpressionParser expressionParser) {
+                                                       ShopBean shopBean, ExpressionParser expressionParser,
+                                                       boolean blnForceSmartSx) {
         Map<String, String> retAttrMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
@@ -1026,7 +1051,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         try {
             // 取得平台Schema所有field对应的属性值（不使用platform_mapping，直接从mainProduct中取得fieldId对应的值）
-            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser);
+            attrMap = sxProductService.constructPlatformProps(itemFieldList, shopBean, expressionParser, blnForceSmartSx);
         } catch (Exception ex) {
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
@@ -2286,5 +2311,86 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         return result;
+    }
+
+    /**
+     * 从京东平台取得skuId回写到mongDB的product中
+     */
+    public void updateSkuIds(ShopBean shop, String wareId, boolean updateFlg) {
+        if (shop == null || StringUtils.isEmpty(wareId)) return;
+
+        String channelId = shop.getOrder_channel_id();
+        String cartId = shop.getCart_id();
+        StringBuilder failCause = new StringBuilder("");
+        List<Sku> skus;
+
+        try {
+            // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
+            skus = jdSkuService.getSkusByWareId(shop, wareId, failCause);
+
+            if (ListUtils.isNull(skus)) return;
+
+            // 循环取得的sku信息列表，把jdSkuId批量更新到product中去
+            BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+            BulkWriteResult rs;
+            for (Sku sku : skus) {
+                JongoUpdate updObj = new JongoUpdate();
+                updObj.setQuery("{'platforms.P"+ cartId +".skus.skuCode':#}");
+                updObj.setQueryParameters(sku.getOuterId());
+                updObj.setUpdate("{$set:{'platforms.P"+ cartId +".skus.$.jdSkuId':#,'modified':#,'modifier':#}}");
+                updObj.setUpdateParameters(StringUtils.toString(sku.getSkuId()), DateTimeUtil.getNowTimeStamp(), getTaskName());
+                rs = bulkList.addBulkJongo(updObj);
+                if (rs != null) {
+                    $debug("京东上新成功之后回写jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, skuCode=%s, skuId=%s, jdSkuId更新结果=%s",
+                            channelId, cartId, wareId, sku.getOuterId(), StringUtils.toString(sku.getSkuId()), rs.toString());
+                }
+            }
+
+            rs = bulkList.execute();
+            if (rs != null) {
+                $debug("京东上新成功之后回写jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, jdSkuId更新结果=%s", channelId, cartId, wareId, rs.toString());
+            }
+
+            // 如果是更新商品且取得skuId没有出错时，看看wareId对应的jdSkuId非空sku中，哪些sku在京东平台上没有,把删除的sku的jdSkuId清空
+            if (updateFlg && StringUtils.isEmpty(failCause.toString())) {
+                // 先取得wareId对应的所有产品有jdSkuId的platforms.PXX.skus.skuCode
+                JongoQuery queryObj = new JongoQuery();
+                queryObj.setQuery("{'platforms.P"+ cartId +".pNumIId':#}");
+                queryObj.setParameters(wareId);
+                queryObj.setProjectionExt("platforms.P"+ cartId +".skus");
+                List<CmsBtProductModel> productList = cmsBtProductDao.select(queryObj, channelId);
+                if (ListUtils.notNull(productList)) {
+                    BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+                    BulkWriteResult rs2;
+                    for (CmsBtProductModel product : productList) {
+                        List<BaseMongoMap<String, Object>> prodPlatformSkus = product.getPlatformNotNull(NumberUtils.toInt(cartId)).getSkus();
+                        if (ListUtils.isNull(prodPlatformSkus)) continue;
+                        for (BaseMongoMap<String, Object> currentSku : prodPlatformSkus) {
+                            // 如果当前sku的jdSkuId不为空，并且在京东平台上取得的sku列表中不存在的时候，需要把数据库中的jdSkuId清空
+                            if (!StringUtils.isEmpty(currentSku.getStringAttribute("jdSkuId"))
+                                    && skus.stream().filter(p -> currentSku.getStringAttribute("skuCode").equals(p.getOuterId())).count() == 0) {
+                                // 构造更新语句
+                                JongoUpdate updObj = new JongoUpdate();
+                                updObj.setQuery("{'platforms.P"+ cartId +".skus.skuCode':#}");
+                                updObj.setQueryParameters(currentSku.getStringAttribute("skuCode"));
+                                updObj.setUpdate("{$set:{'platforms.P"+ cartId +".skus.$.jdSkuId':#,'modified':#,'modifier':#}}");
+                                updObj.setUpdateParameters("", DateTimeUtil.getNowTimeStamp(), getTaskName());
+                                rs2 = bulkList2.addBulkJongo(updObj);
+                                if (rs2 != null) {
+                                    $debug("京东上新回写jdSkuId之后，清空平台上已被删除的jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, skuCode=%s, jdSkuId清空更新结果=%s",
+                                            channelId, cartId, wareId, currentSku.getStringAttribute("skuCode"), rs.toString());
+                                }
+                            }
+                        }
+                    }
+                    rs2 = bulkList2.execute();
+                    if (rs2 != null) {
+                        $debug("京东上新回写jdSkuId之后，清空平台上已被删除的jdSkuId处理 channelId=%s, cartId=%s, wareId=%s, jdSkuId清空更新结果=%s", channelId, cartId, wareId, rs2.toString());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            $warn(String.format("京东上新成功之后，回写jdSkuId时出错！[wareId:%s] [errMsg:%s]", wareId, failCause.toString()));
+        }
     }
 }

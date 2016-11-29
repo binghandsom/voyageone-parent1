@@ -36,6 +36,8 @@
             `jm_coupons_money` = #{jmCouponsMoney,jdbcType=DECIMAL},
             `vo_coupons` = #{voCoupons,jdbcType=INTEGER},
             `vo_coupons_money` = #{voCouponsMoney,jdbcType=DECIMAL},
+            `brand_logo` = #{brandLogo,jdbcType=DECIMAL},
+            `is_checked_brand_logo` = #{isCheckedBrandLogo,jdbcType=DECIMAL},
             `modified` = now(),
             `modifier` = #{modifier,jdbcType=VARCHAR}
         </set>
@@ -154,6 +156,12 @@
             <if test="voCouponsMoney != null" >
                 `vo_coupons_money`,
             </if>
+            <if test="brandLogo != null" >
+                `brand_logo`,
+            </if>
+            <if test="isCheckedBrandLogo != null" >
+                `is_checked_brand_logo`,
+            </if>
             `creater`,
             `created`,
         </trim>
@@ -254,6 +262,12 @@
             </if>
             <if test="voCouponsMoney != null" >
                 #{voCouponsMoney,jdbcType=DECIMAL},
+            </if>
+            <if test="brandLogo != null" >
+                #{brandLogo,jdbcType=DECIMAL},
+            </if>
+            <if test="isCheckedBrandLogo != null" >
+                #{isCheckedBrandLogo,jdbcType=DECIMAL},
             </if>
             #{creater,jdbcType=VARCHAR},
             now(),

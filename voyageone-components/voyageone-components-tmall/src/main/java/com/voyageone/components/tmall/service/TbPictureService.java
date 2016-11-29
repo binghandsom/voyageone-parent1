@@ -4,10 +4,12 @@ import com.taobao.api.ApiException;
 import com.taobao.api.FileItem;
 import com.taobao.api.request.*;
 import com.taobao.api.response.*;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.bean.TbGetPicCategoryParam;
-import com.voyageone.components.tmall.bean.TbGetPictureParam;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,41 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TbPictureService extends TbBase {
+
+    /**
+     * 普通的Appkey转官网同购上新用的Appkey
+     * @param shopBean 普通的Appkey
+     * @return 官网同购的Appkey
+     */
+    private ShopBean getTonggouShopBean(ShopBean shopBean) {
+        // 这里需要判断一下， 如果不是官网同购， 那么就直接原样返回
+        if (!CartEnums.Cart.isSimple(CartEnums.Cart.getValueByID(shopBean.getCart_id()))) {
+            return shopBean;
+        }
+
+        ShopBean newShopBean = new ShopBean();
+
+        String tm_tt_sx = "tm_tt_sx";
+        ThirdPartyConfigBean shopConfig = ThirdPartyConfigs.getThirdPartyConfig(shopBean.getOrder_channel_id(), tm_tt_sx);
+
+        newShopBean.setCart_id(shopBean.getCart_id());
+        newShopBean.setCart_type(shopBean.getCart_type());
+        newShopBean.setPlatform_id(shopBean.getPlatform_id());
+        newShopBean.setOrder_channel_id(shopBean.getOrder_channel_id());
+        if (shopConfig != null) {
+            newShopBean.setApp_url(shopConfig.getProp_val1());
+            newShopBean.setAppKey(shopConfig.getProp_val2());
+            newShopBean.setAppSecret(shopConfig.getProp_val3());
+            newShopBean.setSessionKey(shopConfig.getProp_val4());
+        }
+        newShopBean.setShop_name(shopBean.getShop_name());
+        newShopBean.setPlatform(shopBean.getPlatform());
+        newShopBean.setComment(shopBean.getComment());
+        newShopBean.setCart_name(shopBean.getCart_name());
+
+        return newShopBean;
+    }
+
     /**
      * 提交图片到指定目录。
      * <p>
@@ -40,7 +77,7 @@ public class TbPictureService extends TbBase {
         request.setImg(image);
         request.setImageInputTitle(title);
 
-        return reqTaobaoApi(shopBean, request);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), request);
     }
 
     /**
@@ -62,57 +99,23 @@ public class TbPictureService extends TbBase {
         PictureReplaceRequest request = new PictureReplaceRequest();
         request.setPictureId(pictureId);
         request.setImageData(image);
-        return reqTaobaoApi(shopBean, request);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), request);
     }
 
     /**
      * 获取图片信息
      * 淘宝接口名：taobao.picture.get
      * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:138
-     *
-     * @param shopBean 店铺
-     * @param param    查询参数
-     * @return 接口的返回信息
-     * @throws ApiException
-     */
-    public PictureGetResponse getPictures(ShopBean shopBean, TbGetPictureParam param) throws ApiException {
-
-        PictureGetRequest req = new PictureGetRequest();
-
-        req.setTitle(param.getTitle());
-
-        req.setUrls(param.getUrls());
-
-        req.setPageNo(param.getPageNo());
-
-        req.setPageSize(param.getPageSize());
-
-        req.setPictureCategoryId(param.getPictureCategoryId());
-
-        req.setPictureId(param.getPictureId());
-
-        return reqTaobaoApi(shopBean, req);
-    }
-
-    /**
-     * 获取图片信息
-     * 淘宝接口名：taobao.picture.get
-     *
-     * @param shopBean    店铺
-     * @param title       图片名
-     * @param category_id 目录 id
-     * @return 接口的返回信息
-     * @throws ApiException
      */
     public PictureGetResponse getPictures(ShopBean shopBean, String title, Long category_id) throws ApiException {
 
-        TbGetPictureParam param = new TbGetPictureParam();
+        PictureGetRequest req = new PictureGetRequest();
 
-        param.setTitle(title);
+        req.setTitle(title);
 
-        param.setPictureCategoryId(category_id);
+        req.setPictureCategoryId(category_id);
 
-        return getPictures(shopBean, param);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), req);
     }
 
     /**
@@ -127,7 +130,7 @@ public class TbPictureService extends TbBase {
         PictureDeleteRequest req = new PictureDeleteRequest();
         req.setPictureIds(StringUtils.join(pictureIds, ","));
 
-        return reqTaobaoApi(shopBean, req);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), req);
     }
 
     /**
@@ -151,7 +154,7 @@ public class TbPictureService extends TbBase {
 
         req.setParentId(param.getParentId());
 
-        return reqTaobaoApi(shopBean, req);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), req);
     }
 
     /**
@@ -170,7 +173,7 @@ public class TbPictureService extends TbBase {
         req.setPictureCategoryName(name);
         req.setParentId(parent);
 
-        return reqTaobaoApi(shopBean, req);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), req);
     }
 
     /**
@@ -182,7 +185,7 @@ public class TbPictureService extends TbBase {
      * @return 接口的返回结果
      */
     public PictureCategoryAddResponse addCategory(ShopBean shopBean, String name) throws ApiException {
-        return addCategory(shopBean, name, 0L);
+        return addCategory(getTonggouShopBean(shopBean), name, 0L);
     }
 
     /**
@@ -194,7 +197,7 @@ public class TbPictureService extends TbBase {
      * @throws ApiException
      */
     public ItemImgUploadResponse uploadItemPicture(ShopBean shopBean, ItemImgUploadRequest request) throws ApiException {
-        return reqTaobaoApi(shopBean, request);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), request);
     }
 
     /**
@@ -206,6 +209,6 @@ public class TbPictureService extends TbBase {
      * @throws ApiException
      */
     public ItemImgDeleteResponse deleteItemPicture(ShopBean shopBean, ItemImgDeleteRequest request) throws ApiException {
-        return reqTaobaoApi(shopBean, request);
+        return reqTaobaoApi(getTonggouShopBean(shopBean), request);
     }
 }

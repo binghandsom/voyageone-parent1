@@ -2,6 +2,7 @@ package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.bean.cms.businessmodel.ProductIdListInfo;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.ParameterUpdateDealEndTimeAll;
+import com.voyageone.service.bean.cms.jumei.ProductImportBean;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductExtModel;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.util.MapModel;
@@ -70,7 +71,7 @@ public interface CmsBtJmPromotionProductDaoExt {
 
     int copyDealAll_UpdateSynchStatus(int promotionId);
 
-    int batchDeleteProduct(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    int batchDeleteProduct(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
     int deleteAllProduct(int promotionId);
 
@@ -98,12 +99,15 @@ public interface CmsBtJmPromotionProductDaoExt {
     CmsBtJmPromotionProductModel selectOnSaleByNoPromotionId(@Param("channelId") String channelId, @Param("cmsBtJmPromotionId") int cmsBtJmPromotionId, @Param("nowDate") Date nowDate);
 
     //获取synch_status!=2的商品
-    List<CmsBtJmPromotionProductModel> selectNotSynchListByPromotionProductIds(@Param("listPromotionProductId") List<Long> listPromotionProductId);
+    List<CmsBtJmPromotionProductModel> selectNotSynchListByPromotionProductIds(@Param("listPromotionProductId") List<Integer> listPromotionProductId);
 
+    List<CmsBtJmPromotionProductModel> selectNotSynchListByProductCodes(@Param("jmPromotionId") int jmPromotionId,@Param("listProductCode") List<String> listProductCode);
     //更新synch_status==2 的errorMsg
-    int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Long> listPromotionProductId, @Param("errorMsg") String errorMsg);
+    int updateSynch2ErrorMsg(@Param("listPromotionProductId") List<Integer> listPromotionProductId, @Param("errorMsg") String errorMsg);
 
     List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId(Integer tagId);
+
+    List<CmsBtJmPromotionProductExtModel> selectProductInfoByTagId2(Integer tagId);
 
     int updateRemark(@Param("jmPromotionProductId") int jmPromotionProductId,@Param("remark") String remark);
 
@@ -119,4 +123,7 @@ public interface CmsBtJmPromotionProductDaoExt {
      * 更新活动下的产品的库存数据
      */
     int updateProductStockInfo(@Param("jmPromotionProductList") List<CmsBtJmPromotionProductModel> productList);
+
+
+    List<ProductImportBean> selectProductByJmPromotionId(Integer jmPromotionId);
 }
