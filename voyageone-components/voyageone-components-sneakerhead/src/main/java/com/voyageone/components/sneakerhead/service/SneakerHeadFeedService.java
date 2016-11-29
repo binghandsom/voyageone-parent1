@@ -5,6 +5,7 @@ import com.overstock.mp.mpc.externalclient.api.exception.ClientException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.sneakerhead.SneakerHeadBase;
+import com.voyageone.components.sneakerhead.bean.CmsBtProductModel_SalesBean;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
 import org.jetbrains.annotations.NotNull;
@@ -57,4 +58,21 @@ public class SneakerHeadFeedService extends SneakerHeadBase {
         ResponseEntity<String> responseEntity = getRestTemplate().exchange(sneakerCountUrl, HttpMethod.POST, httpEntity, String.class);
         return objectMapper.readValue(responseEntity.getBody(), Integer.class);
     }
+
+    /**
+     * 取得销售数据
+     * @param codeList
+     * @return
+     * @throws Exception
+     */
+    public List<CmsBtProductModel_SalesBean> sneakerHeadSale(List<String> codeList) throws Exception {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType(contentType));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(codeList);
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+        ResponseEntity<String> responseEntity = getRestTemplate().exchange(sneakerSaleUrl, HttpMethod.POST, httpEntity, String.class);
+        return objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructParametricType(List.class, CmsBtProductModel_SalesBean.class));
+
+    };
 }
