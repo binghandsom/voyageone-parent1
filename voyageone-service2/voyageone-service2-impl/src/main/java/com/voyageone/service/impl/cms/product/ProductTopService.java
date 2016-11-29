@@ -27,6 +27,7 @@ public class ProductTopService extends BaseService {
     CmsBtProductTopDao dao;
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+    //普通区查询 获取指定页
     public List<ProductInfo> getPage(ProductPageParameter param, String channelId) {
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
         int pageIndex = param.getPageIndex();
@@ -40,6 +41,8 @@ public class ProductTopService extends BaseService {
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
         return listResult;
     }
+
+    //普通区查询 获取总数量
     public Object getCount(ProductPageParameter param, String channelId) {
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getCartId(), channelId);
 
@@ -47,6 +50,8 @@ public class ProductTopService extends BaseService {
 
         return cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
     }
+
+    //置顶区查询
     public List<ProductInfo> getTopList(GetTopListParameter parameter) {
         CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getCartId(), parameter.getChannelId());
         if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
