@@ -455,7 +455,7 @@ define([
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + encodeCatPath);
                     break;
                 case "likingCn":
-                    $location.path(cRoutes.channel_new_category.url + angular.toJson({catPath:catPath,catId:catId}));
+                    $location.path(cRoutes.channel_new_category.url + angular.toJson({catPath:catPath,catId:catId,cartId:$rootScope.platformType.cartId}));
                     break;
                 default:
                     $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + encodeCatPath);
