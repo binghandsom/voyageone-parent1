@@ -8,7 +8,7 @@
                 <div class="col-md-6 form-group">
                     <label class="col-md-2 control-label"><strong>当前类目</strong></label>
                     <div class="col-md-4">
-                        <input type="text" class="form-control" value="xx/xxx/xx/"readonly>
+                        <input type="text" class="form-control" ng-model="ctrl.routeParams.catPath" readonly>
                     </div>
                 </div>
             </div>
@@ -58,12 +58,12 @@
                                     </div>
                                     <div class="col-sm-8">
                                         <div class="row">
-                                            <label class="col-md-4"><strong>品牌</strong></label>
-                                            <label class="col-md-8"><span title="Jewelry.com">Jewelry.com 925...</span></label>
+                                            <label class="col-md-3"><strong>品牌</strong></label>
+                                            <label class="col-md-9"><span title="Jewelry.com">Jewelry.com 925...</span></label>
                                         </div>
                                         <div class="row">
-                                            <label class="col-md-4"><strong>库存</strong></label>
-                                            <label class="col-md-8">123123</label>
+                                            <label class="col-md-3"><strong>库存</strong></label>
+                                            <label class="col-md-9">123123</label>
                                         </div>
                                     </div>
                                 </div>
@@ -101,25 +101,24 @@
 
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-4 form-horizontal">
+                    <div class="col-md-3 form-horizontal">
                         <div class="row form-group">
                             <label class="col-md-4 control-label"><strong>品牌</strong></label>
                             <div class="col-md-8">
                                 <div class="row">
                                     &emsp;<label style="padding-top: 3px">
-                                        <label> <input type="radio" class="v-sub" name="brand" value="0">&nbsp;include </label>
+                                        <label> <input type="radio" class="v-sub" name="brand" value="0" ng-model="ctrl.searchInfo.isInclude">&nbsp;include </label>
                                     </label>&emsp;
                                     <label style="padding-top: 3px">
-                                        <label> <input type="radio" class="v-sub" name="brand" value="1">&nbsp;exclude </label>
+                                        <label> <input type="radio" class="v-sub" name="brand" value="1" ng-model="ctrl.searchInfo.isInclude">&nbsp;exclude </label>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-sm-7 col-md-offset-4">
-                                <select multiple chosen width="'100%'" class="form-control" ng-model="vm.searchInfo.brandList"
-                                        ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
-                                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                <select multiple chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.brandList"
+                                        ng-options="brand.value as brand.name for brand in ctrl.brandList">
                                 </select>
                             </div>
                         </div>
@@ -128,14 +127,14 @@
                         <div class="row form-group">
                             <label class="control-label col-md-4"><strong>库存</strong></label>
                             <div class="col-md-4">
-                                <select class="form-control">
-                                    <option value="">大于</option>
-                                    <option value="">小于</option>
-                                    <option value="">等于</option>
+                                <select class="form-control" ng-model="ctrl.searchInfo.compareType">
+                                    <option value="$qt">大于</option>
+                                    <option value="$lt">小于</option>
+                                    <option value="$eq">等于</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <input type="number" class="form-control" ng-model="" scale="15,2">
+                                <input type="number" class="form-control" ng-model="ctrl.searchInfo.quantity" scale="15,2">
                             </div>
                         </div>
                     </div>
@@ -143,14 +142,17 @@
                         <div class="row form-group">
                             <label class="col-md-4 control-label"><strong>款号/Code/SKU</strong></label>
                             <div class="col-md-8">
-                                <textarea class="form-control no-resize"></textarea>
+                                <textarea class="form-control no-resize" ng-model="ctrl.codeStr"></textarea>
+                                <div class="text-warnings" style="padding-left:0px">
+                                    <i class="icon fa fa-bell-o"></i>&nbsp;多项查询,精确查询，包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割)
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row text-center">
-                    <button class="btn btn-default btn-pop"><i class="fa fa-remove"></i>&nbsp;清除</button>
-                    <button class="btn btn-success btn-pop"><i class="fa fa-search"></i>&nbsp;检索</button>
+                    <button class="btn btn-default btn-pop" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+                    <button class="btn btn-success btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;检索</button>
                 </div>
             </div>
 
@@ -221,21 +223,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr ng-repeat="item in ctrl.pageList">
                                     <td class="mfb-xt text-center"><input type="checkbox" class="v-sub"></td>
-                                    <td class="mfb-xxt text-center">图片</td>
-                                    <td class="mfb-xxt text-center">商品页面编号</td>
-                                    <td class="mfb-xxt text-center">款号</td>
-                                    <td class="mfb-xxt text-left">商品名称</td>
-                                    <td class="mfb-xxt text-left">品牌</td>
-                                    <td class="mfb-xxt text-center">Code</td>
-                                    <td class="mfb-xxt text-right">中国最终售价</td>
-                                    <td class="mfb-xxt text-right">库存</td>
-                                    <td class="mfb-xxt text-right">sku数</td>
+                                    <td class="mfb-xxt text-center">
+                                        <img class="thumb-sm-search" ng-src="{{item.image1}}">
+                                    </td>
+                                    <td class="mfb-xxt text-center">{{item.pNumIId}}</td>
+                                    <td class="mfb-xxt text-center">{{item.model}}</td>
+                                    <td class="mfb-xxt text-left">{{item.productName}}</td>
+                                    <td class="mfb-xxt text-left">{{item.brand}}</td>
+                                    <td class="mfb-xxt text-center">{{item.code}}</td>
+                                    <td class="mfb-xxt text-right">{{item.pPriceSaleEd}}</td>
+                                    <td class="mfb-xxt text-right">{{item.quantity}}</td>
+                                    <td class="mfb-xxt text-right">{{item.skuCount}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <vpagination config="ctrl.paging"></vpagination>
                 </div>
             </div>
 
