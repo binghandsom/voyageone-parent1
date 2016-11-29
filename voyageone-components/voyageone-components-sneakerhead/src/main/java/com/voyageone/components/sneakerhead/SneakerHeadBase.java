@@ -9,8 +9,8 @@ import org.springframework.web.client.RestTemplate;
  */
 public class SneakerHeadBase extends ComponentBase {
 
-    protected static final String sneakerInfoUrl = "http://10.0.1.24:52233/api/feed/feed_info";
-    protected static final String sneakerCountUrl = "http://10.0.1.24:52233/api/feed/feed_sum";
+    protected static final String sneakerInfoUrl = "http://47.180.64.158:52233/api/feed/feed_info";
+    protected static final String sneakerCountUrl = "http://47.180.64.158:52233/api/feed/feed_sum";
     protected static final String contentType = "application/json;charset=UTF-8";
 
     protected RestTemplate getRestTemplate() {
