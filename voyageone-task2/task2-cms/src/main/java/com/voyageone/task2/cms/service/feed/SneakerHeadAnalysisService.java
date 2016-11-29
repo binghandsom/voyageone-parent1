@@ -11,7 +11,7 @@ import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
-import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
+import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadSkuModel;
 import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -91,19 +91,19 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 getFeedDate = new Date(0);
             }
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(getFeedDate);
+            int anInt = sneakerHeadFeedService.getFeedCount(getFeedDate);
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
                 for (int i = 1; i <= (anInt / 100 + 1); i++) {
-                    SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
-                    sneakerHeadRequest.setPageNumber(i);
-                    sneakerHeadRequest.setPageSize(100);
-                    sneakerHeadRequest.setTime(getFeedDate);
+                    SneakerHeadFeedInfoRequest sneakerHeadFeedInfoRequest = new SneakerHeadFeedInfoRequest();
+                    sneakerHeadFeedInfoRequest.setPageNumber(i);
+                    sneakerHeadFeedInfoRequest.setPageSize(100);
+                    sneakerHeadFeedInfoRequest.setTime(getFeedDate);
                     List<SneakerHeadCodeModel> feedList = null;
                     int tried = 0;
                     do {
                         try {
-                            feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest);
+                            feedList = sneakerHeadFeedService.getFeedInfo(sneakerHeadFeedInfoRequest);
                         } catch (Exception e) {
                             tried++;
                             e.printStackTrace();

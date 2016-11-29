@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * Created by gjl on 2016/11/15.
  */
-public class SneakerHeadRequest {
+public class SneakerHeadFeedInfoRequest {
 
     private int PageSize =10;
 
