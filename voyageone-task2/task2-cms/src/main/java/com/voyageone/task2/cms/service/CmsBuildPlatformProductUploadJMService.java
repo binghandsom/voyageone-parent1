@@ -1528,7 +1528,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param jmSku
      * @return
      */
-    private CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> jmSku, String sizeStr ) {
+    protected CmsBtJmSkuModel fillNewCmsBtJmSkuModel(String channelId, String productCode, BaseMongoMap<String, Object> jmSku, String sizeStr ) {
         CmsBtJmSkuModel cmsBtJmSkuModel = new CmsBtJmSkuModel();
         cmsBtJmSkuModel.setChannelId(channelId);
         cmsBtJmSkuModel.setProductCode(productCode);
