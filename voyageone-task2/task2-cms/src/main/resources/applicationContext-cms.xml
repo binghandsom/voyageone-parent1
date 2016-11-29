@@ -185,7 +185,7 @@
         <!--<task:scheduled ref="CmsBuildPlatformImageUploadCnJob" method="run" cron="0 0 0/2 * * ?"/>-->
 
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
-        <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 0 3 * * ?"/>
+        <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 
