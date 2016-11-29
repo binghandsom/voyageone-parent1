@@ -79,6 +79,7 @@ public class ProductTopService extends BaseService {
         return listResult;
     }
 
+    //保存排序字段
     public  void  saveSortColumnName(ProductPageParameter param,CmsBtProductTopModel topModel,String channelId,String userName) {
         if (!StringUtils.isEmpty(param.getSortColumnName())) {
             boolean isAdd = false;
