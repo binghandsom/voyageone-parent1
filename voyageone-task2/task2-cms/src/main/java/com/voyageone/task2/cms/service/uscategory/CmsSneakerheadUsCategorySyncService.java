@@ -4,12 +4,12 @@ import com.google.common.collect.ArrayListMultimap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
 import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
+import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by vantis on 2016/11/28.
  * 闲舟江流夕照晚 =。=
  */
 @Service
-public class CmsSneakerheadUsCategorySyncService extends VOAbsLoggable/* extends BaseCronTaskService*/ {
+public class CmsSneakerheadUsCategorySyncService extends BaseCronTaskService {
 
     private final SneakerHeadFeedService sneakerHeadFeedService;
     private final FeedCategoryTreeService feedCategoryTreeService;
@@ -39,17 +40,17 @@ public class CmsSneakerheadUsCategorySyncService extends VOAbsLoggable/* extends
         this.productService = productService;
     }
 
-    //    @Override
+    @Override
     protected String getTaskName() {
         return this.getClass().getSimpleName();
     }
 
-    //    @Override
+    @Override
     protected SubSystem getSubSystem() {
         return SubSystem.CMS;
     }
 
-    //    @Override
+    @Override
     public void onStartup(List<TaskControlBean> taskControlBeanList) {
         $info("开始导入美国分类和产品信息...");
 
@@ -69,7 +70,7 @@ public class CmsSneakerheadUsCategorySyncService extends VOAbsLoggable/* extends
             categoryNames.parallelStream().forEach(categoryName -> {
                 Date start = new Date();
                 feedCategoryTreeService.addCategory(channelId, categoryName, this.getClass().getSimpleName());
-                $info("插入 category: " + categoryName + " 用时 " + (new Date().getTime() - start.getTime()) + " 毫秒");
+                $debug("插入 category: " + categoryName + " 用时 " + (new Date().getTime() - start.getTime()) + " 毫秒");
             });
             $info("插入 category 完毕 解析更新 product 下 subCategory 的参数...");
 
@@ -133,7 +134,13 @@ public class CmsSneakerheadUsCategorySyncService extends VOAbsLoggable/* extends
                         + categoryModel.getName().replaceAll("-", "－");
 
         CmsMtFeedCategoryTreeModel currentCategoryModel =
-                feedCategoryTreeService.getFeedCategoryByCategory(channelId, currentCategoryName);
+                Optional.ofNullable(feedCategoryTreeService.getCategoryNote(channelId, currentCategoryName))
+                        .orElseGet(() -> {
+                            CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = new CmsMtFeedCategoryTreeModel();
+                            cmsMtFeedCategoryTreeModel.setCatPath(currentCategoryName);
+                            cmsMtFeedCategoryTreeModel.setCatName(categoryModel.getName().replaceAll("-", "－"));
+                            return cmsMtFeedCategoryTreeModel;
+                        });
 
         if (null != categoryModel.getCodeList()) {
             categoryModel.getCodeList().forEach(code -> codeTree.put(code, currentCategoryModel));

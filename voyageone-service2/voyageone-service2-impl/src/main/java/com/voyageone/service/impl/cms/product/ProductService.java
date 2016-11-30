@@ -1079,7 +1079,6 @@ public class ProductService extends BaseService {
     public void updateProductFeedSubCategory(String channelId,
                                              Map<String, Collection<CmsMtFeedCategoryTreeModel>> requests,
                                              String modifier) {
-        // TODO: 2016/11/29 更新子category vantis
         List<BulkUpdateModel> bulkList = requests.entrySet().stream()
                 .map(entry -> {
                     String code = entry.getKey();
@@ -1105,8 +1104,13 @@ public class ProductService extends BaseService {
                 .collect(Collectors.toList());
 
         List<List<BulkUpdateModel>> partedBulkList = Lists.partition(bulkList, 100);
-        partedBulkList.forEach(subBulkList ->
-                cmsBtProductDao.bulkUpdateWithMap(channelId, subBulkList, modifier, "$set"));
+        partedBulkList.parallelStream().forEach(subBulkList -> {
+            Date start = new Date();
+            cmsBtProductDao.bulkUpdateWithMap(channelId, subBulkList, modifier, "$set");
+            $debug("更新了 " + subBulkList.size() + " 个 product 的subCategories 共耗时 " +
+                    (new Date().getTime() - start.getTime()) + " 毫秒");
+        });
+
     }
 
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {
