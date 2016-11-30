@@ -101,17 +101,10 @@
             <artifactId>voyageone-components-solr</artifactId>
             <version>${voyageone.components.solr.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-web2-security</artifactId>
-            <version>${voyageone.web2.security.version}</version>
-        </dependency>
         
         <dependency>
 		    <groupId>org.freemarker</groupId>
 		    <artifactId>freemarker</artifactId>
-		    <version>2.3.20</version>
 		</dependency>
 
     </dependencies>

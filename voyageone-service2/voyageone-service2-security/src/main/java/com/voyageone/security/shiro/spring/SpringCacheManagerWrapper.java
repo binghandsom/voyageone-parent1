@@ -4,7 +4,7 @@
  */
 package com.voyageone.security.shiro.spring;
 
-import net.sf.ehcache.Ehcache;
+//import net.sf.ehcache.Ehcache;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
@@ -71,41 +71,43 @@ public class SpringCacheManagerWrapper implements CacheManager {
 
         
         public int size() {
-            if(springCache.getNativeCache() instanceof Ehcache) {
-                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
-                return ehcache.getSize();
-            }
-            throw new UnsupportedOperationException("invoke spring cache abstract size method not supported");
+//            if(springCache.getNativeCache() instanceof Ehcache) {
+//                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
+//                return ehcache.getSize();
+//            }
+//            throw new UnsupportedOperationException("invoke spring cache abstract size method not supported");
+            return 0;
         }
 
         
         public Set keys() {
-            if(springCache.getNativeCache() instanceof Ehcache) {
-                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
-                return new HashSet(ehcache.getKeys());
-            }
-            throw new UnsupportedOperationException("invoke spring cache abstract keys method not supported");
+//            if(springCache.getNativeCache() instanceof Ehcache) {
+//                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
+//                return new HashSet(ehcache.getKeys());
+//            }
+//            throw new UnsupportedOperationException("invoke spring cache abstract keys method not supported");
+            return new HashSet();
         }
 
         
         public Collection values() {
-            if(springCache.getNativeCache() instanceof Ehcache) {
-                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
-                List keys = ehcache.getKeys();
-                if (!CollectionUtils.isEmpty(keys)) {
-                    List values = new ArrayList(keys.size());
-                    for (Object key : keys) {
-                        Object value = get(key);
-                        if (value != null) {
-                            values.add(value);
-                        }
-                    }
-                    return Collections.unmodifiableList(values);
-                } else {
+//            if(springCache.getNativeCache() instanceof Ehcache) {
+//                Ehcache ehcache = (Ehcache) springCache.getNativeCache();
+//                List keys = ehcache.getKeys();
+//                if (!CollectionUtils.isEmpty(keys)) {
+//                    List values = new ArrayList(keys.size());
+//                    for (Object key : keys) {
+//                        Object value = get(key);
+//                        if (value != null) {
+//                            values.add(value);
+//                        }
+//                    }
+//                    return Collections.unmodifiableList(values);
+//                } else {
                     return Collections.emptyList();
-                }
-            }
-            throw new UnsupportedOperationException("invoke spring cache abstract values method not supported");
+//                }
+//            }
+//            throw new UnsupportedOperationException("invoke spring cache abstract values method not supported");
         }
     }
 }

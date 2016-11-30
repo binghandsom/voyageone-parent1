@@ -122,7 +122,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                     // 如果没有上传上传一张吊牌图片，会返回错误码：isv.invalid-parameter:isXinpin 发布新品，必须上传一张吊牌图片,但正常情况下天猫上新
                     // 都会上传吊牌图的(如果没有吊牌图会上传一张白色背景图)，所以如果出现必须上传吊牌图的错误，就抛出错误
                     if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
                         continue;
@@ -131,7 +131,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                     throw new BusinessException(e.getMessage());
                 } catch (BusinessException e) {
                     if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次新增商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
                         continue;
@@ -147,7 +147,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                 } catch (ApiException e) {
 //                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
                     if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
                         continue;
@@ -156,7 +156,7 @@ public class CmsBuildPlatformProductUploadTmItemService extends BaseService {
                     throw new BusinessException(e.getMessage());
                 } catch (BusinessException e) {
                     if (retry == 0
-                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin"))) {
+                            && (e.getMessage().contains("isv.invalid-permission:add-xinpin") || e.getMessage().contains("isv.invalid-parameter:xinpin") || e.getMessage().contains("isv.invalid-parameter:isXinpin"))) {
                         // 把field列表中的"是否新品"从"是(true)"->"否(false)",再做一次更新商品
                         sxProductService.setFieldValue(fields, "is_xinpin", "false");
                         continue;
