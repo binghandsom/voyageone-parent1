@@ -80,7 +80,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         //将取得的订单明细，按照client_order_id，放入取得的订单信息中
         for (VmsBtClientOrdersModel m : ordersModels) {
             OrderModel orderModel = new OrderModel();
-            orderModel.setId(m.getOrderChannelId());
+            orderModel.setId(m.getClientOrderId());
             OrderAddressModel buyerOrderAddressModel = new OrderAddressModel();
             buyerOrderAddressModel.setAddressLine1(m.getBuyerAddressLine1());
             buyerOrderAddressModel.setAddressLine2(m.getBuyerAddressLine2());
@@ -159,7 +159,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         //将取得的订单明细，按照client_order_id，放入取得的订单信息中
 
         OrderModel orderModel = new OrderModel();
-        orderModel.setId(m.getOrderChannelId());
+        orderModel.setId(m.getClientOrderId());
         OrderAddressModel buyerOrderAddressModel = new OrderAddressModel();
         buyerOrderAddressModel.setAddressLine1(m.getBuyerAddressLine1());
         buyerOrderAddressModel.setAddressLine2(m.getBuyerAddressLine2());
