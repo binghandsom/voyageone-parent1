@@ -70,6 +70,7 @@ public class CmsProductTopController extends CmsController {
     public AjaxResponse saveTopProduct(@RequestBody SaveTopProductParameter param, String channelId, String userName) {
         UserSessionBean userSessionBean = getUser();
         service.saveTopProduct(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+
         return success(null);
     }
 }

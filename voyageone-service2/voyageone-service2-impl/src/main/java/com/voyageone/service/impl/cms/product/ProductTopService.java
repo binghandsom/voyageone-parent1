@@ -57,6 +57,7 @@ public class ProductTopService extends BaseService {
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
 
         if (param.isSeachAdd()) {
+            //全量加入
 
 
         }
