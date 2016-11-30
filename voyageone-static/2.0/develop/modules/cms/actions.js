@@ -146,7 +146,7 @@ define(function () {
                 },
                 productTopService: {
                     "root": "/cms/producttop",
-                    init: "init",
+                    "init": "init",
                     "getPage": "getPage",
                     "getCount": "getCount",
                     "getTopList": "getTopList",

@@ -15,6 +15,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 /**
  * Created by dell on 2016/11/28.
  */
+@Service
 public class ProductTopService extends BaseService {
     @Autowired
     CmsBtProductTopDao dao;
@@ -57,6 +59,7 @@ public class ProductTopService extends BaseService {
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
 
         if (param.isSeachAdd()) {
+            //全量加入
 
 
         }
