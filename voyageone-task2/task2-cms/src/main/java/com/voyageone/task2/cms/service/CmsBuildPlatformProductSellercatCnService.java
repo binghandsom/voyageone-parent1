@@ -100,6 +100,8 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
             List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             if (ListUtils.isNull(codes)) {
                 $warn("类目[%s]不存在一个上新过的code!", catId);
+                // 理论上不会有这类垃圾数据，以防万一一下
+                cnCategoryService.updateProductSellercatUpdFlg(channelId, new ArrayList<String>(){{add(catId);}}, "2", getTaskNameForUpdate());
                 continue;
             }
 
