@@ -129,11 +129,12 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
     public void getSku(int pageNum, Date lastDate) {
         int cnt = 0;
+        long threadNo =  Thread.currentThread().getId();
         synchronized(isErr){
             if(isErr) return;
         }
         List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
-        $info(String.format("正在取第%d页", pageNum));
+        $info(String.format("thread-" + threadNo + " 正在取第%d页", pageNum));
         SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
         sneakerHeadRequest.setPageNumber(pageNum);
         sneakerHeadRequest.setPageSize(100);
