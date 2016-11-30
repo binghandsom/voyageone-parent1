@@ -35,7 +35,7 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
     CMS_PLATFORM_Brand_block("CMS_PLATFORM_Brand_block", "", "", "", "黑名单数量", 1),
 
     CMS_PLATFORM_NEW_SKU("CMS_PLATFORM_NEW_SKU", "{'platforms.P%s.status':'Approved','platforms.P%s.isNewSku':'1'}", "/search/advanceSearch", "", "上新商品中有未上新SKU商品数", (m) -> {
-        return String.format(m.getQueryStr(), m.getCartId());
+        return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
     });
 
 
