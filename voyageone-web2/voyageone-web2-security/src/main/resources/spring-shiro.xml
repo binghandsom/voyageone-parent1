@@ -101,7 +101,7 @@
 
 	<!-- 会话验证调度器 -->
 	<!-- 全局的会话信息检测扫描信息间隔30分钟-->
-	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler2">
 		<property name="sessionValidationInterval" value="1800000"/>
 		<property name="sessionManager" ref="sessionManager"/>
 	</bean>
