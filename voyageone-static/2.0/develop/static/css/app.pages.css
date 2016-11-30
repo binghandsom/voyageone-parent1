@@ -1018,8 +1018,12 @@ schema .ng-invalid.focus-error {
     background: none;
 }
 
-#newCategory .span-order {
-    padding-bottom: 4px;
-    vertical-align: middle;
-    border-bottom: 2px solid #6dc37f;
+#newCategory .top-area{
+    margin-left: 37px;
+}
+
+#newCategory .top-element{
+    width: 300px;
+    padding: 7px;
+    margin: 6px;
 }
