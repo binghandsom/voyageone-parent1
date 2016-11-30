@@ -3804,7 +3804,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     ItemDetailsBean oldRecord = itemDetailsDao.selectBySku(channelId, feedSku.getSku());
                     if (oldRecord != null) {
                         // 如果该skuCode没变，但feed里面的code从A->B了，则报出异常, feedCode一致才更新
-                        if (!oldRecord.getItemcode().equals(feed.getCode())) {
+                        if (!oldRecord.getItemcode().equalsIgnoreCase(feed.getCode())) {
                             String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更," +
                                             "导致不能更新wms_bt_item_details表 [sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
                                     itemDetailsBean.getSku(),
