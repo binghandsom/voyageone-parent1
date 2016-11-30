@@ -1,7 +1,6 @@
 define([
     'cms',
-    './sortEnum',
-    './service.dev'
+    './sortEnum'
 ], function (cms, sortEnum) {
 
     cms.controller("newCategoryController", (function () {
@@ -19,6 +18,7 @@ define([
                     self.search();
                 }
             };
+            console.log(self.routeParams);
         }
 
         NewCategoryCtl.prototype.init = function () {
@@ -26,10 +26,9 @@ define([
                 productTopService = self.productTopService,
                 routeParams = self.routeParams;
 
-            self.getTopList();
+           // self.getTopList();
 
-            //brandList,sortColumnName,sortType
-            productTopService.init({cartId: routeParams.cartId}).then(function (res) {
+            productTopService.init({catId: routeParams.catId}).then(function (res) {
                 self.brandList = res.brandList;
 
                 self.sort = _.find(self.sortList, function (ele) {
