@@ -29,14 +29,14 @@ define([
            // self.getTopList();
 
             productTopService.init({catId: routeParams.catId}).then(function (res) {
-                self.brandList = res.brandList;
+                self.brandList = res.data.brandList;
 
                 self.sort = _.find(self.sortList, function (ele) {
-                    return ele.sValue == res.sortColumnName;
+                    return ele.sValue == res.data.sortColumnName;
                 });
 
                 if (self.sort)
-                    self.sort.sortType = res.sortType;
+                    self.sort.sortType = res.data.sortType;
             });
 
 
