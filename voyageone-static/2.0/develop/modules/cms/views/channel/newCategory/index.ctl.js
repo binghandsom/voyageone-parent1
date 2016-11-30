@@ -14,9 +14,7 @@ define([
             self.sort = {};
             self.codeStr = '';
             self.paging = {
-                curr: 1, total: 0, size: 10, fetch: function () {
-                    self.search();
-                }
+                curr: 1, total: 0, size: 10, fetch:goPage.bind(this)
             };
             console.log(self.routeParams);
         }
@@ -41,25 +39,40 @@ define([
 
 
         };
-
+        // int cartId;//平台id
+        // List<String> brandList;//品牌名称
+        // boolean isInclude;//  brand是否包含
+        // String compareType;
+        // Integer quantity;//库存数量
+        // String pCatId;//商品分类
+        // List<String> codeList;//   款号/Code/SKU   换行分隔
+        // String sortColumnName;// 排序列名称
+        // int sortType;//排序类型   1：升序         -1：降序
+        // int pageIndex;//当前页
+        // int pageSize;//当前页行数
         NewCategoryCtl.prototype.search = function () {
-            var self = this,
-                paging = self.paging,
-                upEntity = angular.copy(self.searchInfo),
-                productTopService = self.productTopService;
-
-            productTopService.getPage(angular.extend(upEntity, {
-                codeList: self.codeStr.split("\n")
-            })).then(function (res) {
-                self.pageList = res.data;
-            });
-
+            goPage(1, this.paging.size);
             productTopService.getCount().then(function (res) {
                 paging.total = res;
             });
 
         };
-
+        function getSearchInfo () {
+            var self = this;
+            var upEntity = angular.copy(self.searchInfo);
+            upEntity.cartId = routeParams.cartId;
+            upEntity.pCatId = routeParams.catId;
+            data.codeList = self.codeStr.split("\n");
+            return upEntity;
+        }
+        function goPage(pageIndex, size) {
+            var data = getSearchInfo();
+            data.pageIndex = pageIndex;
+            data.pageSize = size;
+            this.productTopService.getPage().then(function (res) {
+                self.pageList = res.data;
+            });
+        }
         NewCategoryCtl.prototype.sortSearch = function (sortColumnName, sortType) {
             var self = this,
                 _sort,
