@@ -666,8 +666,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                         pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
                                 if (group == null) {
                                     newPlatform.setpIsMain(0);
+                                    CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
+                                    if(cmsBtProductGroupModel != null){
+                                        newPlatform.setMainProductCode(cmsBtProductGroupModel.getMainProductCode());
+                                    }
                                 } else {
                                     newPlatform.setpIsMain(1);
+                                    newPlatform.setMainProductCode(pr.getCommonNotNull().getFieldsNotNull().getCode());
                                 }
 
                                 pr.getPlatforms().put("P" + StringUtils.toString(cartId), newPlatform);
