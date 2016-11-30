@@ -13,5 +13,4 @@
 
     <import resource="classpath*:context-web-core.xml"/>
     <import resource="classpath*:context-web-cms.xml"/>
-    <import resource="classpath*:spring-shiro.xml"/>
 </beans>

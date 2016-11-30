@@ -23,7 +23,6 @@
             <artifactId>voyageone-com</artifactId>
             <version>${voyageone.common.version}</version>
         </dependency>
-
     </dependencies>
     <build>
         <finalName>voyageone-service2-model</finalName>
