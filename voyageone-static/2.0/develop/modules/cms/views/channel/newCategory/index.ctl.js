@@ -59,6 +59,17 @@ define([
 
         };
 
+        NewCategoryCtl.prototype.getTopList = function(){
+            var self = this,
+                productTopService = self.productTopService;
+
+            productTopService.getTopList({
+
+            }).then(function(res){
+                console.log(res);
+            });
+        };
+
         return NewCategoryCtl;
 
     })());
