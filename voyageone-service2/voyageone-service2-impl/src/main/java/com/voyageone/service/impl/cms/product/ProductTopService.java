@@ -36,6 +36,7 @@ public class ProductTopService extends BaseService {
     @Autowired
     MongoSequenceService mongoSequenceService;
 
+    //获取初始化数据
     public Map<String, Object> init(String channelId,String catId, String language) throws IOException {
 
         Map<String, Object> data = new HashMap<>();
@@ -155,7 +156,7 @@ public class ProductTopService extends BaseService {
         return cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
     }
 
-    //置顶区查询
+    //获取置顶区 列表
     public List<ProductInfo> getTopList(GetTopListParameter parameter,String channelId) {
         CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getpCatId(),channelId);
         if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)

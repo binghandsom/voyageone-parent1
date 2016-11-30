@@ -670,6 +670,8 @@ public interface CmsUrlConstants {
         String GetPage = "getPage";
         String GetCount = "getCount";
         String GetTopList="getTopList";
+        String AddTopProduct="addTopProduct";
+        String SaveTopProduct="saveTopProduct";
     }
     // 商品编辑
     interface GROUP {
