@@ -46,8 +46,8 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     @Autowired
     SneakerHeadFeedService sneakerHeadFeedService;
 
-    static Boolean isErr;
-    static Integer sumCnt;
+    private static Boolean isErr;
+    private static Integer sumCnt;
 
     @Override
     protected void updateFull(List<String> itemIds) {
