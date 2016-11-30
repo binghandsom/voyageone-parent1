@@ -4,10 +4,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.bean.cms.producttop.GetTopListParameter;
-import com.voyageone.service.bean.cms.producttop.ProductInfo;
-import com.voyageone.service.bean.cms.producttop.ProductPageParameter;
-import com.voyageone.service.bean.cms.producttop.SaveTopProductParameter;
+import com.voyageone.service.bean.cms.producttop.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
@@ -53,9 +50,8 @@ public class ProductTopService extends BaseService {
 
         return data;
     }
-
     //加入置顶区
-    public  void addTopProduct(SaveTopProductParameter param,String channelId,String userName) {
+    public  void addTopProduct(AddTopProductParameter param, String channelId, String userName) {
 
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
 
@@ -63,7 +59,6 @@ public class ProductTopService extends BaseService {
 
 
         }
-
         boolean isAdd = false;
         if (topModel == null) {
             isAdd = true;
@@ -94,31 +89,10 @@ public class ProductTopService extends BaseService {
     }
 
     //保存置顶区
-    public  void saveTopProduct(SaveTopProductParameter param,String channelId,String userName) {
-            //        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
-            //
-            //        if(param.isSeachAdd())
-            //        {
-            //
-            //        }
-            //
-            //        boolean isAdd = false;
-            //        if (topModel == null) {
-            //            isAdd = true;
-            //            topModel = new CmsBtProductTopModel();
-            //            topModel.setProductTopId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CmsBtProductTopID));
-            //            topModel.setCreated(DateTimeUtil.getNow());
-            //            topModel.setCreater(userName);
-            //
-            //            topModel.setChannelId(channelId);
-            //            topModel.setCatId(param.getpCatId());
-            //        }
-            //        topModel.setProductCodeList(param.getCodeList());
-            //        if (isAdd) {
-            //            dao.insert(topModel);
-            //        } else {
-            //            dao.update(topModel);
-            //        }
+    public  void saveTopProduct(SaveTopProductParameter param, String channelId, String userName) {
+        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        topModel.setProductCodeList(param.getCodeList());
+        dao.update(topModel);
     }
 
     //普通区查询 获取指定页
