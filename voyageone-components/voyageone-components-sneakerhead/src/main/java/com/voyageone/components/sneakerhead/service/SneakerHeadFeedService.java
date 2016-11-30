@@ -62,10 +62,12 @@ public class SneakerHeadFeedService extends SneakerHeadBase {
      * @throws Exception 获取失败产生的异常
      */
     @Retryable
-    public SneakerheadCategoryModel getCategory(boolean withCode) throws IOException {
+    public List<SneakerheadCategoryModel> getCategory(boolean withCode) throws IOException {
         String responseJson = getResponse(SneakerheadRemoteUrlConstants.CATEGORY_URL, withCode);
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(responseJson, SneakerheadCategoryModel.class);
+        TypeFactory typeFactory = objectMapper.getTypeFactory();
+        JavaType type = typeFactory.constructParametrizedType(List.class, List.class, SneakerheadCategoryModel.class);
+        return objectMapper.readValue(responseJson, type);
     }
 
     private String getResponse(String url, Object param) throws JsonProcessingException {

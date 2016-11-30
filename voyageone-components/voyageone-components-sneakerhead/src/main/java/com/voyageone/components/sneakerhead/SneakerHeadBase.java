@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
  */
 public class SneakerHeadBase extends ComponentBase {
 
-    protected static final String SNEAKERHEAD_BASE_URL = "http://10.0.0.91:52233";
+    protected static final String SNEAKERHEAD_BASE_URL = "http://127.0.0.1:52233";
 
     protected static final String APPLICATION_JSON_UTF_8 = "application/json;charset=UTF-8";
 
