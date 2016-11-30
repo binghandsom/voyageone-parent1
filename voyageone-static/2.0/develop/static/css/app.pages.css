@@ -1020,8 +1020,6 @@ schema .ng-invalid.focus-error {
 
 #newCategory .top-area{
     margin-left: 37px;
-    max-height: 577px;
-    overflow-y: auto;
 }
 
 #newCategory .top-element{

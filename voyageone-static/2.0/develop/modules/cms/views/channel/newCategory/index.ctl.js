@@ -90,6 +90,53 @@ define([
             });
         };
 
+        NewCategoryCtl.prototype.remove = function(index){
+            this.topList.splice(index, 1);
+        };
+
+        NewCategoryCtl.prototype.moveKeys = {
+            up: 'up',
+            upToTop: 'upToTop',
+            down: 'down',
+            downToLast: 'downToLast'
+        };
+
+        NewCategoryCtl.prototype.moveProduct = function moveProduct(i, moveKey) {
+            var self = this,
+                source = self.topList,
+                moveKeys = self.moveKeys,
+                temp;
+
+            switch (moveKey) {
+                case moveKeys.up:
+                    if (i === 0)
+                        return;
+                    temp = source[i];
+                    source[i] = source[i - 1];
+                    source[i - 1] = temp;
+                    return;
+                case moveKeys.upToTop:
+                    if (i === 0)
+                        return;
+                    temp = source.splice(i, 1);
+                    source.splice(0, 0, temp[0]);
+                    return;
+                case moveKeys.down:
+                    if (i === source.length - 1)
+                        return;
+                    temp = source[i];
+                    source[i] = source[i + 1];
+                    source[i + 1] = temp;
+                    return;
+                case moveKeys.downToLast:
+                    if (i === source.length - 1)
+                        return;
+                    temp = source.splice(i, 1);
+                    source.push(temp[0]);
+                    return;
+            }
+        };
+
         return NewCategoryCtl;
 
     })());
