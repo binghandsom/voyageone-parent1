@@ -18,7 +18,7 @@
 		<!--<property name="dataSource" ref="dataSourceSec" />-->
 		<property name="dataSource" ref="dataSourceMaster"/>
 		<!-- 自动匹配Mapper映射文件 -->
-		<property name="mapperLocations" value="classpath*:com/voyageone/service/user/mybatis/mapper/*.xml"/>
+		<property name="mapperLocations" value="classpath*:com/voyageone/service/*/user/mybatis/mapper/*.xml"/>
 		<property name="typeAliasesPackage" value="com.voyageone.service.model.user"/>
 		<property name="configLocation" value="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"/>
 		<!-- 配置Mybatis的插件plugin-->
@@ -53,7 +53,7 @@
 	<!-- 事务配置 -->
 	<bean id="transactionManager"
 		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceSec" />
+		<property name="dataSource" ref="dataSourceMaster" />
 	</bean>
 
 </beans>
