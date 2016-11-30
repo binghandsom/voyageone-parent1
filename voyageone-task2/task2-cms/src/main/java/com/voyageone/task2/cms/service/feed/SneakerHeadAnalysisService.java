@@ -96,22 +96,19 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         sumCnt = 0;
         try {
             $info("SneakerHead取得full表里最新的时间");
-            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate();
-            if (getFeedDate == null) {
-                getFeedDate = new Date(0);
-            }
+            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate() ;
+            final Date lastDate = getFeedDate == null?new  Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(getFeedDate);
+            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate);
 
             int pageCnt = anInt / 100 + (anInt % 100 > 0 ? 1 : 0);
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
                 ExecutorService es = Executors.newFixedThreadPool(5);
                 for (int i = 1; i <= anInt; i++) {
-                    Date finalGetFeedDate = getFeedDate;
                     int finalI = i;
                     es.execute(() ->
-                            getSku(finalI, finalGetFeedDate)
+                            getSku(finalI, lastDate)
                     );
                 }
                 es.shutdown();
@@ -130,7 +127,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     }
 
 
-    public void getSku(int pageNum, Date getFeedDate) {
+    public void getSku(int pageNum, Date lastDate) {
         int cnt = 0;
         synchronized(isErr){
             if(isErr) return;
@@ -140,7 +137,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
         sneakerHeadRequest.setPageNumber(pageNum);
         sneakerHeadRequest.setPageSize(100);
-        sneakerHeadRequest.setTime(getFeedDate);
+        sneakerHeadRequest.setTime(lastDate);
         List<SneakerHeadCodeModel> feedList = null;
         int tried = 0;
         do {
