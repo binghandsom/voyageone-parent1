@@ -21,7 +21,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.TmOrderChannelBean;
 import com.voyageone.service.bean.com.TmOrderChannelConfigBean;
 import com.voyageone.service.impl.com.channel.ChannelService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmOrderChannelConfigKey;
 import com.voyageone.service.model.com.TmOrderChannelConfigModel;
 import com.voyageone.service.model.com.TmOrderChannelModel;
@@ -72,7 +72,7 @@ public class ChannelController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道信息
-		PageModel<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getOrderChannelId(),
+		PaginationBean<TmOrderChannelBean> channelPage = channelService.searchChannelByPage(form.getOrderChannelId(),
 				form.getChannelName(), form.getIsUsjoi(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelPage);
@@ -123,7 +123,7 @@ public class ChannelController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道配置信息
-		PageModel<TmOrderChannelConfigBean> channelConfigPage = channelService.searchChannelConfigByPage(
+		PaginationBean<TmOrderChannelConfigBean> channelConfigPage = channelService.searchChannelConfigByPage(
 				form.getOrderChannelId(), form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(channelConfigPage);

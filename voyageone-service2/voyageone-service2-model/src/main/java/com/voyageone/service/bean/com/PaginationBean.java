@@ -1,4 +1,4 @@
-package com.voyageone.service.model.com;
+package com.voyageone.service.bean.com;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import java.util.List;
  * @author Wangtd
  * @since 2.0.0 2016/8/10
  */
-public class PageModel<E> {
-	
+public class PaginationBean<E> {
+
 	private Integer count;
 	
 	private List<E> result;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.impl.com.cart.CartService;
 import com.voyageone.service.model.com.CtCartModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.cart.CartFormBean;
@@ -74,7 +74,7 @@ public class CartController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart信息
-		PageModel<CtCartModel> cartPage = cartService.searchCartByPage(form.getCartId(), form.getCartName(),
+		PaginationBean<CtCartModel> cartPage = cartService.searchCartByPage(form.getCartId(), form.getCartName(),
 				form.getCartType(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(cartPage);

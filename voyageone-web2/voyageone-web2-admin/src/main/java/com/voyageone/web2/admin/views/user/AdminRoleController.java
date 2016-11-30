@@ -1,19 +1,16 @@
 package com.voyageone.web2.admin.views.user;
 
-import com.google.common.base.Preconditions;
 import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.impl.AdminProperty;
 import com.voyageone.service.impl.com.user.AdminRoleService;
-import com.voyageone.service.model.com.PageModel;
-import com.voyageone.web2.admin.AdminConstants;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +39,7 @@ public class AdminRoleController extends AdminController {
      */
     @RequestMapping(AdminUrlConstants.User.Role.INIT)
     public AjaxResponse searchUser() {
-        PageModel<AdminRoleBean> result = adminRoleService.searchRole(1, DEFAULT_PAGE_SIZE);
+        PaginationBean<AdminRoleBean> result = adminRoleService.searchRole(1, DEFAULT_PAGE_SIZE);
         return success(result);
     }
 
@@ -71,7 +68,7 @@ public class AdminRoleController extends AdminController {
         Integer storeId = form.getStoreId();
         String application = form.getApplication();
 
-        PageModel<AdminRoleBean> result = adminRoleService.searchRole(roleName, roleType, channelId, active, storeId, application, pageNum, pageSize);
+        PaginationBean<AdminRoleBean> result = adminRoleService.searchRole(roleName, roleType, channelId, active, storeId, application, pageNum, pageSize);
 
         return success(result);
     }

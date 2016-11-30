@@ -20,7 +20,7 @@ import com.voyageone.service.bean.com.WmsMtStoreBean;
 import com.voyageone.service.impl.com.store.StoreService;
 import com.voyageone.service.model.com.CtStoreConfigKey;
 import com.voyageone.service.model.com.CtStoreConfigModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.WmsMtStoreKey;
 import com.voyageone.service.model.com.WmsMtStoreModel;
 import com.voyageone.web2.admin.AdminController;
@@ -78,7 +78,7 @@ public class StoreController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索仓库信息
-		PageModel<WmsMtStoreBean> storePage = storeService.searchStoreByPage(form.getOrderChannelId(), form.getStoreName(),
+		PaginationBean<WmsMtStoreBean> storePage = storeService.searchStoreByPage(form.getOrderChannelId(), form.getStoreName(),
 				form.getIsSale(), form.getStoreType(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(storePage);
@@ -142,7 +142,7 @@ public class StoreController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索仓库配置信息
-		PageModel<CtStoreConfigBean> storeConfigPage = storeService.searchStoreConfigByPage(form.getStoreId(),
+		PaginationBean<CtStoreConfigBean> storeConfigPage = storeService.searchStoreConfigByPage(form.getStoreId(),
 				form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(storeConfigPage);

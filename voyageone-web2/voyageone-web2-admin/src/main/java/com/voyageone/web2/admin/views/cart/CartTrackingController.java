@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.ComMtTrackingInfoConfigBean;
 import com.voyageone.service.impl.com.cart.CartTrackingService;
 import com.voyageone.service.model.com.ComMtTrackingInfoConfigModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.cart.CartTrackingFormBean;
@@ -38,7 +38,7 @@ public class CartTrackingController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart物流信息
-		PageModel<ComMtTrackingInfoConfigBean> cartTrackingPage = cartTrackingService.searchCartTrackingByPage(
+		PaginationBean<ComMtTrackingInfoConfigBean> cartTrackingPage = cartTrackingService.searchCartTrackingByPage(
 				form.getOrderChannelId(), form.getCartId(), form.getTrackingStatus(), form.getLocation(),
 				form.getActive(), form.getPageNum(), form.getPageSize());
 		

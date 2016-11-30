@@ -4,10 +4,8 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.security.model.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
-import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.dao.com.ComMtTypeDao;
-import com.voyageone.service.model.com.ComMtTypeModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,8 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ethan Shi on 2016-08-18.
@@ -37,7 +33,7 @@ public class AdminRoleServiceTest {
 
     @Test
     public void testSearchRole() throws Exception {
-        PageModel<AdminRoleBean> result =  adminRoleService.searchRole( null, null);
+        PaginationBean<AdminRoleBean> result =  adminRoleService.searchRole( null, null);
 
         System.out.println(JacksonUtil.bean2Json(result));
 

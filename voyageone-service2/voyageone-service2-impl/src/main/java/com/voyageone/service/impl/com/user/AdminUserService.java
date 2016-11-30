@@ -10,6 +10,7 @@ import com.voyageone.security.model.*;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.dao.com.*;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
@@ -103,10 +104,10 @@ public class AdminUserService extends BaseService {
      * @param pageSize
      * @return
      */
-    public PageModel<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
-                                               String channelId, Integer storeId, String application, Integer companyId, Integer pageNum, Integer pageSize) {
+    public PaginationBean<AdminUserBean> searchUser(String userAccount, Integer active, Integer orgId, Integer roleId,
+                                                    String channelId, Integer storeId, String application, Integer companyId, Integer pageNum, Integer pageSize) {
 
-        PageModel<AdminUserBean> pageModel = new PageModel<>();
+        PaginationBean<AdminUserBean> paginationBean = new PaginationBean<>();
 
         // 设置查询参数
         Map<String, Object> params = new HashMap<String, Object>();
@@ -124,7 +125,7 @@ public class AdminUserService extends BaseService {
         // 判断查询结果是否分页
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminUserDaoExt.selectUserCount(params));
+            paginationBean.setCount(adminUserDaoExt.selectUserCount(params));
             params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).addSort("modified", Order.Direction.DESC).toMap();
         } else {
             params = MySqlPageHelper.build(params).addSort("modified", Order.Direction.DESC).toMap();
@@ -132,10 +133,10 @@ public class AdminUserService extends BaseService {
 
         List<AdminUserBean> list = adminUserDaoExt.selectUserByPage(params);
         if (!needPage) {
-            pageModel.setCount(list.size());
+            paginationBean.setCount(list.size());
         }
-        pageModel.setResult(list);
-        return pageModel;
+        paginationBean.setResult(list);
+        return paginationBean;
     }
 
 

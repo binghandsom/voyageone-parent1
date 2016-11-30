@@ -14,7 +14,7 @@ import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.dao.com.TmCodeDao;
 import com.voyageone.service.daoext.com.TmCodeDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmCodeKey;
 import com.voyageone.service.model.com.TmCodeModel;
 
@@ -31,9 +31,9 @@ public class CodeService extends BaseService {
 	@Autowired
 	private TmCodeDaoExt codeDaoExt;
 
-	public PageModel<TmCodeModel> searchCodeByPage(String id, String code, String name, String des, Boolean active,
-			Integer pageNum, Integer pageSize) {
-		PageModel<TmCodeModel> pageModel = new PageModel<TmCodeModel>();
+	public PaginationBean<TmCodeModel> searchCodeByPage(String id, String code, String name, String des, Boolean active,
+														Integer pageNum, Integer pageSize) {
+		PaginationBean<TmCodeModel> paginationBean = new PaginationBean<TmCodeModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("id", id);
@@ -43,13 +43,13 @@ public class CodeService extends BaseService {
 		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(codeDaoExt.selectCodeCount(params));
+			paginationBean.setCount(codeDaoExt.selectCodeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Code信息
-		pageModel.setResult(codeDaoExt.selectCodeByPage(params));
+		paginationBean.setResult(codeDaoExt.selectCodeByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateCode(TmCodeModel model, String username, boolean append) {

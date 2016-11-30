@@ -22,7 +22,7 @@ import com.voyageone.service.bean.com.TmTaskControlBean;
 import com.voyageone.service.impl.com.task.TaskService;
 import com.voyageone.service.model.com.ComMtTaskModel;
 import com.voyageone.service.model.com.ComMtValueModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmTaskControlKey;
 import com.voyageone.service.model.com.TmTaskControlModel;
 import com.voyageone.web2.admin.AdminController;
@@ -90,7 +90,7 @@ public class TaskController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索任务信息
-		PageModel<ComMtTaskBean> taskPage = taskService.searchTaskByPage(form.getTaskType(), form.getTaskName(),
+		PaginationBean<ComMtTaskBean> taskPage = taskService.searchTaskByPage(form.getTaskType(), form.getTaskName(),
 				form.getTaskComment(), form.getPageNum(), form.getPageSize());
 		
 		return success(taskPage);
@@ -140,7 +140,7 @@ public class TaskController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索任务配置信息
-		PageModel<TmTaskControlBean> taskConfigPage = taskService.searchTaskConfigByPage(form.getTaskId(),
+		PaginationBean<TmTaskControlBean> taskConfigPage = taskService.searchTaskConfigByPage(form.getTaskId(),
 				form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(taskConfigPage);

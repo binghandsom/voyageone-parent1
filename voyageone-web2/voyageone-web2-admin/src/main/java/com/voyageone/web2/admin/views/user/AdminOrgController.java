@@ -1,10 +1,9 @@
 package com.voyageone.web2.admin.views.user;
 
-import com.voyageone.security.model.ComLogModel;
 import com.voyageone.security.model.ComOrganizationModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.impl.com.user.AdminOrgService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +44,7 @@ public class AdminOrgController extends AdminController {
      */
     @RequestMapping(AdminUrlConstants.User.Org.INIT)
     public AjaxResponse init() throws Exception {
-        PageModel<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
+        PaginationBean<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
         return success(result);
     }
 
@@ -73,7 +70,7 @@ public class AdminOrgController extends AdminController {
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
 
-       PageModel<AdminOrgBean> result = adminOrgService.searchOrg(orgName, active, pageNum, pageSize );
+       PaginationBean<AdminOrgBean> result = adminOrgService.searchOrg(orgName, active, pageNum, pageSize );
 
         return success(result);
     }

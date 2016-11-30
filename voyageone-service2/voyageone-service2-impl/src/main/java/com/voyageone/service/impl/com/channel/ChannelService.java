@@ -26,7 +26,7 @@ import com.voyageone.service.daoext.com.TmOrderChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.cart.CartService;
 import com.voyageone.service.model.com.CtCartModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmOrderChannelConfigKey;
 import com.voyageone.service.model.com.TmOrderChannelConfigModel;
 import com.voyageone.service.model.com.TmOrderChannelModel;
@@ -75,9 +75,9 @@ public class ChannelService extends BaseService {
 		return searchChannelByPage(channelId, channelName, isUsjoi, active, null, null).getResult();
 	}
 	
-	public PageModel<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
-			Integer active, Integer pageNum, Integer pageSize) {
-		PageModel<TmOrderChannelBean> pageModel = new PageModel<TmOrderChannelBean>();
+	public PaginationBean<TmOrderChannelBean> searchChannelByPage(String channelId, String channelName, Integer isUsjoi,
+																  Integer active, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmOrderChannelBean> paginationBean = new PaginationBean<TmOrderChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -87,7 +87,7 @@ public class ChannelService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(channelDaoExt.selectChannelCount(params));
+			paginationBean.setCount(channelDaoExt.selectChannelCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		
@@ -107,10 +107,10 @@ public class ChannelService extends BaseService {
 				}
 				newChannels.add(newChannel);
 			}
-			pageModel.setResult(newChannels);	
+			paginationBean.setResult(newChannels);
 		}
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public List<Map<String, Object>> getAllCompany() {
@@ -160,9 +160,9 @@ public class ChannelService extends BaseService {
 		return searchChannelConfigByPage(channelId, cfgName, cfgVal, 0, 0).getResult();
 	}
 	
-	public PageModel<TmOrderChannelConfigBean> searchChannelConfigByPage(String channelId, String cfgName,
-			String cfgVal, Integer pageNum, Integer pageSize) {
-		PageModel<TmOrderChannelConfigBean> pageModel = new PageModel<TmOrderChannelConfigBean>();
+	public PaginationBean<TmOrderChannelConfigBean> searchChannelConfigByPage(String channelId, String cfgName,
+																			  String cfgVal, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmOrderChannelConfigBean> paginationBean = new PaginationBean<TmOrderChannelConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -171,13 +171,13 @@ public class ChannelService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(channelDaoExt.selectChannelConfigCount(params));
+			paginationBean.setCount(channelDaoExt.selectChannelConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道配置信息
-		pageModel.setResult(channelDaoExt.selectChanneConfigByPage(params));
+		paginationBean.setResult(channelDaoExt.selectChanneConfigByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateChannelConfig(TmOrderChannelConfigModel model, boolean append) {

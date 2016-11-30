@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.NewShopBean;
 import com.voyageone.service.impl.com.newshop.NewShopService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmNewShopDataModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
@@ -65,7 +65,7 @@ public class NewShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索短信配置信息
-		PageModel<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
+		PaginationBean<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
 				form.getChannelName(), form.getModifiedFrom(), form.getModifiedTo(),
 				form.getPageNum(), form.getPageSize());
 		

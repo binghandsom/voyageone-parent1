@@ -14,7 +14,7 @@ import com.voyageone.service.bean.com.TmCarrierChannelBean;
 import com.voyageone.service.dao.com.TmCarrierChannelDao;
 import com.voyageone.service.daoext.com.TmCarrierChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmCarrierChannelKey;
 import com.voyageone.service.model.com.TmCarrierChannelModel;
 
@@ -35,9 +35,9 @@ public class CarrierConfigService extends BaseService {
 		return searchCarrierConfigByPage(channelId, null, null, null, null, null).getResult();
 	}
 
-	public PageModel<TmCarrierChannelBean> searchCarrierConfigByPage(String channelId, String carrier,
-			String useKd100Flg, Boolean active, Integer pageNum, Integer pageSize) {
-		PageModel<TmCarrierChannelBean> pageModel = new PageModel<TmCarrierChannelBean>();
+	public PaginationBean<TmCarrierChannelBean> searchCarrierConfigByPage(String channelId, String carrier,
+																		  String useKd100Flg, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmCarrierChannelBean> paginationBean = new PaginationBean<TmCarrierChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -47,13 +47,13 @@ public class CarrierConfigService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(carrierChannelDaoExt.selectCarrierConfigCount(params));
+			paginationBean.setCount(carrierChannelDaoExt.selectCarrierConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询快递信息
-		pageModel.setResult(carrierChannelDaoExt.selectCarrierConfigByPage(params));
+		paginationBean.setResult(carrierChannelDaoExt.selectCarrierConfigByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateCarrierConfig(TmCarrierChannelModel model, String username, boolean append) {

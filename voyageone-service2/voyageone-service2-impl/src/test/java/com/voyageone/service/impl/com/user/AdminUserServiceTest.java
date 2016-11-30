@@ -2,9 +2,8 @@ package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.AdminResourceBean;
-import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.bean.com.AdminUserBean;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class AdminUserServiceTest {
     @Test
     public void testSearchUserByPage() throws Exception {
 
-        PageModel<AdminUserBean> result =  adminUserService.searchUser(null, null, null, null, null,null, null, null,null, null);
+        PaginationBean<AdminUserBean> result =  adminUserService.searchUser(null, null, null, null, null,null, null, null,null, null);
 
         System.out.println(JacksonUtil.bean2Json(result));
 

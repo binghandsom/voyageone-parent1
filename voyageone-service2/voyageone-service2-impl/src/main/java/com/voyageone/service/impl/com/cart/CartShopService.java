@@ -17,7 +17,7 @@ import com.voyageone.service.dao.com.TmChannelShopConfigDao;
 import com.voyageone.service.dao.com.TmChannelShopDao;
 import com.voyageone.service.daoext.com.TmChannelShopDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmChannelShopConfigKey;
 import com.voyageone.service.model.com.TmChannelShopConfigModel;
 import com.voyageone.service.model.com.TmChannelShopKey;
@@ -43,7 +43,7 @@ public class CartShopService extends BaseService {
 		List<TmChannelShopBean> cartShops = searchCartShopByPage(channelId, cartId, null, null, null, null).getResult();
 		if (CollectionUtils.isNotEmpty(cartShops)) {
 			cartShops.forEach(cartShop -> {
-				PageModel<TmChannelShopConfigBean> cartShopConfigPage = searchCartShopConfigByPage(channelId,
+				PaginationBean<TmChannelShopConfigBean> cartShopConfigPage = searchCartShopConfigByPage(channelId,
 						String.valueOf(cartId), null, null, null, null);
 				cartShop.setCartShopConfig(cartShopConfigPage.getResult());
 			});
@@ -52,9 +52,9 @@ public class CartShopService extends BaseService {
 		return cartShops;
 	}
 
-	public PageModel<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
-			Boolean active, Integer pageNum, Integer pageSize) {
-		PageModel<TmChannelShopBean> pageModel = new PageModel<TmChannelShopBean>();
+	public PaginationBean<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
+																  Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmChannelShopBean> paginationBean = new PaginationBean<TmChannelShopBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -64,13 +64,13 @@ public class CartShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(cartShopDaoExt.selectCartShopCount(params));
+			paginationBean.setCount(cartShopDaoExt.selectCartShopCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Cart商店信息
-		pageModel.setResult(cartShopDaoExt.selectCartShopByPage(params));
+		paginationBean.setResult(cartShopDaoExt.selectCartShopByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateChannel(TmChannelShopModel model, String username, boolean append) {
@@ -112,9 +112,9 @@ public class CartShopService extends BaseService {
 		}
 	}
 
-	public PageModel<TmChannelShopConfigBean> searchCartShopConfigByPage(String channelId, String cartId,
-			String cfgName, String cfgVal, Integer pageNum, Integer pageSize) {
-		PageModel<TmChannelShopConfigBean> pageModel = new PageModel<TmChannelShopConfigBean>();
+	public PaginationBean<TmChannelShopConfigBean> searchCartShopConfigByPage(String channelId, String cartId,
+																			  String cfgName, String cfgVal, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmChannelShopConfigBean> paginationBean = new PaginationBean<TmChannelShopConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -124,13 +124,13 @@ public class CartShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
+			paginationBean.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Cart商店配置信息
-		pageModel.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
+		paginationBean.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateCartShopConfig(TmChannelShopConfigModel model, boolean append) {

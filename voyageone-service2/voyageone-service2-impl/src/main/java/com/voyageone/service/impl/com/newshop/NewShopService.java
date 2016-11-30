@@ -62,7 +62,7 @@ import com.voyageone.service.impl.com.channel.SmsConfigService;
 import com.voyageone.service.impl.com.channel.ThirdPartyConfigService;
 import com.voyageone.service.impl.com.store.StoreService;
 import com.voyageone.service.impl.com.task.TaskService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmNewShopDataModel;
 
 import freemarker.template.Configuration;
@@ -399,9 +399,9 @@ public class NewShopService extends BaseService {
 		return newShopDao.select(newShopId);
 	}
 
-	public PageModel<TmNewShopDataModel> searchNewShopByPage(String channelId, String channelName, String modifiedFrom,
-			String modifiedTo, Integer pageNum, Integer pageSize) {
-		PageModel<TmNewShopDataModel> pageModel = new PageModel<TmNewShopDataModel>();
+	public PaginationBean<TmNewShopDataModel> searchNewShopByPage(String channelId, String channelName, String modifiedFrom,
+																  String modifiedTo, Integer pageNum, Integer pageSize) {
+		PaginationBean<TmNewShopDataModel> paginationBean = new PaginationBean<TmNewShopDataModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("channelId", channelId);
@@ -411,13 +411,13 @@ public class NewShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(newShopDaoExt.selectNewShopCount(params));
+			paginationBean.setCount(newShopDaoExt.selectNewShopCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询开店脚本信息
-		pageModel.setResult(newShopDaoExt.selectNewShopByPage(params));
+		paginationBean.setResult(newShopDaoExt.selectNewShopByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 	
 }

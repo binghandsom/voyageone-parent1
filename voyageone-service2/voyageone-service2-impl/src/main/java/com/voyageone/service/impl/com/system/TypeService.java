@@ -14,7 +14,7 @@ import com.voyageone.service.dao.com.ComMtTypeDao;
 import com.voyageone.service.daoext.com.ComMtTypeDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtTypeModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 
 /**
  * @author Wangtd
@@ -33,9 +33,9 @@ public class TypeService extends BaseService {
 		return typeDao.selectList(Collections.emptyMap());
 	}
 
-	public PageModel<ComMtTypeModel> searchTypeByPage(Integer id, String name, String comment, Boolean active,
-			Integer pageNum, Integer pageSize) {
-		PageModel<ComMtTypeModel> pageModel = new PageModel<ComMtTypeModel>();
+	public PaginationBean<ComMtTypeModel> searchTypeByPage(Integer id, String name, String comment, Boolean active,
+														   Integer pageNum, Integer pageSize) {
+		PaginationBean<ComMtTypeModel> paginationBean = new PaginationBean<ComMtTypeModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("id", id);
@@ -45,13 +45,13 @@ public class TypeService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(typeDaoExt.selectTypeCount(params));
+			paginationBean.setCount(typeDaoExt.selectTypeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询类型信息
-		pageModel.setResult(typeDaoExt.selectTypeByPage(params));
+		paginationBean.setResult(typeDaoExt.selectTypeByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public ComMtTypeModel addOrUpdateType(ComMtTypeModel model, String username, boolean append) {

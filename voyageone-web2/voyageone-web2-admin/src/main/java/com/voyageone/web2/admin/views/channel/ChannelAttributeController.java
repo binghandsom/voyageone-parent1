@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.ComMtValueChannelBean;
 import com.voyageone.service.impl.com.channel.ChannelAttributeService;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.channel.ChannelAttributeFormBean;
@@ -38,7 +38,7 @@ public class ChannelAttributeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道属性信息
-		PageModel<ComMtValueChannelBean> channelAttrPage = channelAttributeService.searchChannelAttributeByPage(
+		PaginationBean<ComMtValueChannelBean> channelAttrPage = channelAttributeService.searchChannelAttributeByPage(
 				form.getChannelId(), form.getTypeId(), form.getLangId(), form.getName(), form.getValue(),
 				form.getActive(), form.getPageNum(), form.getPageSize());
 		

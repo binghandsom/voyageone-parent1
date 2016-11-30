@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.TmPortConfigDao;
 import com.voyageone.service.daoext.com.TmCodeDaoExt;
 import com.voyageone.service.daoext.com.TmPortConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmCodeModel;
 import com.voyageone.service.model.com.TmPortConfigModel;
 
@@ -41,9 +41,9 @@ public class PortConfigService extends BaseService {
 		return codeDaoExt.selectAllPort(PORT_CODE);
 	}
 
-	public PageModel<TmPortConfigBean> searchPortConfigByPage(String port, String cfgName, String cfgVal,
-			Integer pageNum, Integer pageSize) {
-		PageModel<TmPortConfigBean> pageModel = new PageModel<TmPortConfigBean>();
+	public PaginationBean<TmPortConfigBean> searchPortConfigByPage(String port, String cfgName, String cfgVal,
+																   Integer pageNum, Integer pageSize) {
+		PaginationBean<TmPortConfigBean> paginationBean = new PaginationBean<TmPortConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("port", port);
@@ -51,13 +51,13 @@ public class PortConfigService extends BaseService {
 		params.put("cfgVal", cfgVal);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(portConfigDaoExt.selectPortConfigCount(params));
+			paginationBean.setCount(portConfigDaoExt.selectPortConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询港口信息
-		pageModel.setResult(portConfigDaoExt.selectPortConfigByPage(params));
+		paginationBean.setResult(portConfigDaoExt.selectPortConfigByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdatePortConfig(TmPortConfigModel model, boolean append) {

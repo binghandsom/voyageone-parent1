@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.ComMtTrackingInfoConfigDao;
 import com.voyageone.service.daoext.com.ComMtTrackingInfoConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtTrackingInfoConfigModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 
 /**
  * @author Wangtd
@@ -34,9 +34,9 @@ public class CartTrackingService extends BaseService {
 		return searchCartTrackingByPage(channelId, cartId, null, null, null, null, null).getResult();
 	}
 
-	public PageModel<ComMtTrackingInfoConfigBean> searchCartTrackingByPage(String channelId, Integer cartId,
-			String trackingStatus, String location, Boolean active, Integer pageNum, Integer pageSize) {
-		PageModel<ComMtTrackingInfoConfigBean> pageModel = new PageModel<ComMtTrackingInfoConfigBean>();
+	public PaginationBean<ComMtTrackingInfoConfigBean> searchCartTrackingByPage(String channelId, Integer cartId,
+																				String trackingStatus, String location, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationBean<ComMtTrackingInfoConfigBean> paginationBean = new PaginationBean<ComMtTrackingInfoConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -46,13 +46,13 @@ public class CartTrackingService extends BaseService {
 		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(cartTrackingDaoExt.selectCartTrackingCount(params));
+			paginationBean.setCount(cartTrackingDaoExt.selectCartTrackingCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Catr物流信息
-		pageModel.setResult(cartTrackingDaoExt.selectCartTrackingByPage(params));
+		paginationBean.setResult(cartTrackingDaoExt.selectCartTrackingByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateCartTracking(ComMtTrackingInfoConfigModel model, String username, boolean append) {

@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.ComMtValueDao;
 import com.voyageone.service.daoext.com.ComMtValueDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtValueModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 
 /**
  * @author Wangtd
@@ -30,9 +30,9 @@ public class TypeAttributeService extends BaseService {
 	@Autowired
 	private ComMtValueDaoExt typeAttrDaoExt;
 
-	public PageModel<ComMtValueBean> searchTypeAttributeByPage(Integer typeId, String langId, String name, String value,
-			Boolean active, Integer pageNum, Integer pageSize) {
-		PageModel<ComMtValueBean> pageModel = new PageModel<ComMtValueBean>();
+	public PaginationBean<ComMtValueBean> searchTypeAttributeByPage(Integer typeId, String langId, String name, String value,
+																	Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationBean<ComMtValueBean> paginationBean = new PaginationBean<ComMtValueBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("typeId", typeId);
@@ -42,13 +42,13 @@ public class TypeAttributeService extends BaseService {
 		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(typeAttrDaoExt.selectTypeAttributeCount(params));
+			paginationBean.setCount(typeAttrDaoExt.selectTypeAttributeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询类型配置信息
-		pageModel.setResult(typeAttrDaoExt.selectTypeAttributeByPage(params));
+		paginationBean.setResult(typeAttrDaoExt.selectTypeAttributeByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateTypeAttribute(ComMtValueModel model, String username, boolean append) {

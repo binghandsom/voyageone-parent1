@@ -5,12 +5,10 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.security.dao.ComLogDao;
 import com.voyageone.security.model.ComLogModel;
-import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.daoext.core.AdminLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.beanutils.BeanMap;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,13 +30,13 @@ public class AdminLogService  extends BaseService {
     ComLogDao comLogDao;
 
 
-    public PageModel<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
+    public PaginationBean<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
         return  searchLog(new ComLogModel(), null, null, pageNum,  pageSize);
     }
 
-    public PageModel<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime,  Integer pageNum, Integer pageSize) {
+    public PaginationBean<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
-        PageModel<ComLogModel> pageModel = new PageModel<>();
+        PaginationBean<ComLogModel> paginationBean = new PaginationBean<>();
 
 
 
@@ -66,7 +64,7 @@ public class AdminLogService  extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminLogDaoExt.selectCount(newMap));
+            paginationBean.setCount(adminLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -78,11 +76,11 @@ public class AdminLogService  extends BaseService {
 
         List<ComLogModel> list = adminLogDaoExt.selectList(newMap);
         if (!needPage) {
-            pageModel.setCount(list.size());
+            paginationBean.setCount(list.size());
         }
 
-        pageModel.setResult(list);
-        return pageModel;
+        paginationBean.setResult(list);
+        return paginationBean;
     }
 
 

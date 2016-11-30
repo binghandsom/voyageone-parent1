@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.TmCarrierChannelBean;
 import com.voyageone.service.impl.com.channel.CarrierConfigService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmCarrierChannelKey;
 import com.voyageone.service.model.com.TmCarrierChannelModel;
 import com.voyageone.web2.admin.AdminController;
@@ -52,7 +52,7 @@ public class CarrierConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索渠道快递信息
-		PageModel<TmCarrierChannelBean> carrierConfigPage = carrierConfigService.searchCarrierConfigByPage(
+		PaginationBean<TmCarrierChannelBean> carrierConfigPage = carrierConfigService.searchCarrierConfigByPage(
 				form.getOrderChannelId(), form.getCarrier(), form.getUsekd100Flg(), form.getActive(),
 				form.getPageNum(), form.getPageSize());
 		

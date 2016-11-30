@@ -6,9 +6,8 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.security.model.ComLoginLogModel;
 import com.voyageone.service.daoext.core.AdminLoginLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.beanutils.BeanMap;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +26,13 @@ public class AdminLoginLogService extends BaseService {
     AdminLoginLogDaoExt adminLoginLogDaoExt;
 
 
-    public PageModel<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
+    public PaginationBean<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
         return  searchLog(new ComLoginLogModel(), null, null, pageNum,  pageSize);
     }
 
-    public PageModel<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
+    public PaginationBean<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
-        PageModel<ComLoginLogModel> pageModel = new PageModel<>();
+        PaginationBean<ComLoginLogModel> paginationBean = new PaginationBean<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
@@ -62,7 +61,7 @@ public class AdminLoginLogService extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminLoginLogDaoExt.selectCount(newMap));
+            paginationBean.setCount(adminLoginLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -74,11 +73,11 @@ public class AdminLoginLogService extends BaseService {
 
         List<ComLoginLogModel> list = adminLoginLogDaoExt.selectList(newMap);
         if (!needPage) {
-            pageModel.setCount(list.size());
+            paginationBean.setCount(list.size());
         }
 
-        pageModel.setResult(list);
-        return pageModel;
+        paginationBean.setResult(list);
+        return paginationBean;
     }
 
 }

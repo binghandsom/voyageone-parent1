@@ -5,17 +5,14 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.security.dao.ComOrganizationDao;
 import com.voyageone.security.model.ComOrganizationModel;
-import com.voyageone.security.model.ComResourceModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.daoext.core.AdminOrganizationDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
-import org.springframework.beans.BeanUtils;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by Ethan Shi on 2016-08-17.
@@ -54,14 +51,14 @@ public class AdminOrgService extends BaseService {
         return  retList;
     }
 
-    public PageModel<AdminOrgBean>  searchOrg(Integer pageNum, Integer pageSize)
+    public PaginationBean<AdminOrgBean> searchOrg(Integer pageNum, Integer pageSize)
     {
         return searchOrg(null, null, pageNum, pageSize);
     }
 
-    public PageModel<AdminOrgBean>  searchOrg(String orgName ,Integer active, Integer pageNum, Integer pageSize)
+    public PaginationBean<AdminOrgBean> searchOrg(String orgName , Integer active, Integer pageNum, Integer pageSize)
     {
-        PageModel<AdminOrgBean> pageModel = new PageModel<>();
+        PaginationBean<AdminOrgBean> paginationBean = new PaginationBean<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
@@ -72,7 +69,7 @@ public class AdminOrgService extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminOrganizationDaoExt.selectCount(newMap));
+            paginationBean.setCount(adminOrganizationDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -82,11 +79,11 @@ public class AdminOrgService extends BaseService {
 
         List<AdminOrgBean> list = adminOrganizationDaoExt.selectList(newMap);
         if (!needPage) {
-            pageModel.setCount(list.size());
+            paginationBean.setCount(list.size());
         }
 
-        pageModel.setResult(list);
-        return pageModel;
+        paginationBean.setResult(list);
+        return paginationBean;
     }
 
     public void addOrg(ComOrganizationModel model)

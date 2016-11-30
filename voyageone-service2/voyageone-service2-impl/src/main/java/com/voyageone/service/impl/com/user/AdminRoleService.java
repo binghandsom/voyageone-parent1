@@ -16,9 +16,8 @@ import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.daoext.core.AdminRoleDaoExt;
 import com.voyageone.service.daoext.core.AdminUserDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,7 +82,7 @@ public class AdminRoleService extends BaseService {
      * @param pageSize
      * @return
      */
-    public PageModel<AdminRoleBean> searchRole(Integer pageNum, Integer pageSize) {
+    public PaginationBean<AdminRoleBean> searchRole(Integer pageNum, Integer pageSize) {
         return searchRole(null, null, null, null, null, null, pageNum, pageSize);
     }
 
@@ -100,11 +99,11 @@ public class AdminRoleService extends BaseService {
      * @param pageSize
      * @return
      */
-    public PageModel<AdminRoleBean> searchRole(String roleName, Integer roleType, String channelId,
-                                               Integer active, Integer storeId, String application, Integer pageNum, Integer pageSize) {
+    public PaginationBean<AdminRoleBean> searchRole(String roleName, Integer roleType, String channelId,
+                                                    Integer active, Integer storeId, String application, Integer pageNum, Integer pageSize) {
 
 
-        PageModel<AdminRoleBean> pageModel = new PageModel<>();
+        PaginationBean<AdminRoleBean> paginationBean = new PaginationBean<>();
         // 设置查询参数
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("roleName", roleName);
@@ -118,16 +117,16 @@ public class AdminRoleService extends BaseService {
         boolean needPage = false;
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            pageModel.setCount(adminRoleDaoExt.selectRoleCount(params));
+            paginationBean.setCount(adminRoleDaoExt.selectRoleCount(params));
             params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
         }
 
         List<AdminRoleBean> list = adminRoleDaoExt.selectRoleByPage(params);
         if (!needPage) {
-            pageModel.setCount(list.size());
+            paginationBean.setCount(list.size());
         }
-        pageModel.setResult(list);
-        return pageModel;
+        paginationBean.setResult(list);
+        return paginationBean;
 
     }
 

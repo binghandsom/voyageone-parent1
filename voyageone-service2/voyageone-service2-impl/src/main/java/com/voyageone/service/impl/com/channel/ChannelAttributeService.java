@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.daoext.com.ComMtValueChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 
 /**
  * @author Wangtd
@@ -34,9 +34,9 @@ public class ChannelAttributeService extends BaseService {
 		return searchChannelAttributeByPage(channelId, null, null, null, null, null, null, null).getResult();
 	}
 
-	public PageModel<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
-			String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {
-		PageModel<ComMtValueChannelBean> pageModel = new PageModel<ComMtValueChannelBean>();
+	public PaginationBean<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
+																			  String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationBean<ComMtValueChannelBean> paginationBean = new PaginationBean<ComMtValueChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("channelId", channelId);
@@ -48,13 +48,13 @@ public class ChannelAttributeService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			pageModel.setCount(channelAttrDaoExt.selectChannelAttributeCount(params));
+			paginationBean.setCount(channelAttrDaoExt.selectChannelAttributeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道属性信息
-		pageModel.setResult(channelAttrDaoExt.selectChannelAttributeByPage(params));
+		paginationBean.setResult(channelAttrDaoExt.selectChannelAttributeByPage(params));
 		
-		return pageModel;
+		return paginationBean;
 	}
 
 	public void addOrUpdateChannelAttribute(ComMtValueChannelModel model, String username, boolean append) {

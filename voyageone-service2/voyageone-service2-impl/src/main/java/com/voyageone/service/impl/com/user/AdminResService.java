@@ -6,14 +6,11 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.security.dao.ComResourceDao;
 import com.voyageone.security.dao.ComUserDao;
-import com.voyageone.security.model.ComOrganizationModel;
 import com.voyageone.security.model.ComResourceModel;
-import com.voyageone.security.model.ComUserModel;
-import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +42,7 @@ public class AdminResService extends BaseService {
      * @param app
      * @return
      */
-    public PageModel<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize) {
+    public PaginationBean<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         if (!StringUtils.isNullOrBlank2(app)) {
             map.put("application", app);
@@ -75,11 +72,11 @@ public class AdminResService extends BaseService {
 
         result = convert2List(all, result);
 
-        PageModel<AdminResourceBean> pageModel = new PageModel<>();
+        PaginationBean<AdminResourceBean> paginationBean = new PaginationBean<>();
 
-        pageModel.setResult(result.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
-        pageModel.setCount(result.size());
-        return  pageModel;
+        paginationBean.setResult(result.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
+        paginationBean.setCount(result.size());
+        return paginationBean;
 
     }
 

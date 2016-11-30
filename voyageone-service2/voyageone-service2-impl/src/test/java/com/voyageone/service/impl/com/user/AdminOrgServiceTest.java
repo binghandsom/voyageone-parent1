@@ -2,8 +2,6 @@ package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.security.model.ComOrganizationModel;
-import com.voyageone.service.bean.com.AdminUserBean;
-import com.voyageone.service.model.com.PageModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

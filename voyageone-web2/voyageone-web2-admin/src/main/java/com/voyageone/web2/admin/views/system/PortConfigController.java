@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.TmPortConfigBean;
 import com.voyageone.service.impl.com.system.PortConfigService;
-import com.voyageone.service.model.com.PageModel;
+import com.voyageone.service.bean.com.PaginationBean;
 import com.voyageone.service.model.com.TmCodeModel;
 import com.voyageone.service.model.com.TmPortConfigModel;
 import com.voyageone.web2.admin.AdminController;
@@ -55,7 +55,7 @@ public class PortConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索港口信息
-		PageModel<TmPortConfigBean> portConfigPage = portConfigService.searchPortConfigByPage(form.getPort(),
+		PaginationBean<TmPortConfigBean> portConfigPage = portConfigService.searchPortConfigByPage(form.getPort(),
 				form.getCfgName(), form.getCfgVal(), form.getPageNum(), form.getPageSize());
 		
 		return success(portConfigPage);
