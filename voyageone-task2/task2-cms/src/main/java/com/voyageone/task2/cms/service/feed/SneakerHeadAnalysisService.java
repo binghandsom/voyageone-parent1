@@ -92,9 +92,12 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             }
             //取得sneakerHead的Feed的总数
             int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(getFeedDate);
+
+            int pageCnt = anInt / 100 + (anInt % 100 > 0?1:0);
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
-                for (int i = 1; i <= (anInt / 100 + 1); i++) {
+                for (int i = 1; i <= pageCnt ; i++) {
+                    $info(String.format("正在取第%d页/共%d页",i,pageCnt));
                     SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
                     sneakerHeadRequest.setPageNumber(i);
                     sneakerHeadRequest.setPageSize(100);
