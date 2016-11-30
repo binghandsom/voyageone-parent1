@@ -102,6 +102,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate);
 
             int pageCnt = anInt / 100 + (anInt % 100 > 0 ? 1 : 0);
+            $info("共"+pageCnt+"页");
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
                 ExecutorService es = Executors.newFixedThreadPool(5);
