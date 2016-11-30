@@ -16,7 +16,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.TmChannelShopBean;
 import com.voyageone.service.bean.com.TmChannelShopConfigBean;
 import com.voyageone.service.impl.com.cart.CartShopService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmChannelShopConfigKey;
 import com.voyageone.service.model.com.TmChannelShopConfigModel;
 import com.voyageone.service.model.com.TmChannelShopKey;
@@ -48,7 +48,7 @@ public class CartShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart商店信息
-		PaginationBean<TmChannelShopBean> cartShopPage = cartShopService.searchCartShopByPage(form.getOrderChannelId(),
+		PaginationResultBean<TmChannelShopBean> cartShopPage = cartShopService.searchCartShopByPage(form.getOrderChannelId(),
 				form.getCartId(), form.getShopName(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(cartShopPage);
@@ -105,7 +105,7 @@ public class CartShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Cart商店配置信息
-		PaginationBean<TmChannelShopConfigBean> channelConfigPage = cartShopService.searchCartShopConfigByPage(
+		PaginationResultBean<TmChannelShopConfigBean> channelConfigPage = cartShopService.searchCartShopConfigByPage(
 				form.getOrderChannelId(), form.getCartId(), form.getCfgName(), form.getCfgVal(), form.getPageNum(),
 				form.getPageSize());
 		

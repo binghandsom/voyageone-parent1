@@ -14,7 +14,7 @@ import com.voyageone.service.bean.com.TmSmsConfigBean;
 import com.voyageone.service.dao.com.TmSmsConfigDao;
 import com.voyageone.service.daoext.com.TmSmsConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmSmsConfigModel;
 
 /**
@@ -34,9 +34,9 @@ public class SmsConfigService extends BaseService {
 		return searchSmsConfigByPage(channelId, null, null, null, null, null, null).getResult();
 	}
 
-	public PaginationBean<TmSmsConfigBean> searchSmsConfigByPage(String channelId, String smsType, String content,
-																 String smsCode, Boolean active, Integer pageNum, Integer pageSize) {
-		PaginationBean<TmSmsConfigBean> paginationBean = new PaginationBean<TmSmsConfigBean>();
+	public PaginationResultBean<TmSmsConfigBean> searchSmsConfigByPage(String channelId, String smsType, String content,
+																	   String smsCode, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<TmSmsConfigBean> paginationResultBean = new PaginationResultBean<TmSmsConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -47,13 +47,13 @@ public class SmsConfigService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(smsConfigDaoExt.selectSmsConfigCount(params));
+			paginationResultBean.setCount(smsConfigDaoExt.selectSmsConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询短信配置信息
-		paginationBean.setResult(smsConfigDaoExt.selectSmsConfigByPage(params));
+		paginationResultBean.setResult(smsConfigDaoExt.selectSmsConfigByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateSmsConfig(TmSmsConfigModel model, String username, boolean append) {

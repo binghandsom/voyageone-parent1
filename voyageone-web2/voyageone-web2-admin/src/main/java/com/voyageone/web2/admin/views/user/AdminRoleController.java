@@ -5,7 +5,7 @@ import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.impl.AdminProperty;
 import com.voyageone.service.impl.com.user.AdminRoleService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
@@ -39,7 +39,7 @@ public class AdminRoleController extends AdminController {
      */
     @RequestMapping(AdminUrlConstants.User.Role.INIT)
     public AjaxResponse searchUser() {
-        PaginationBean<AdminRoleBean> result = adminRoleService.searchRole(1, DEFAULT_PAGE_SIZE);
+        PaginationResultBean<AdminRoleBean> result = adminRoleService.searchRole(1, DEFAULT_PAGE_SIZE);
         return success(result);
     }
 
@@ -68,7 +68,7 @@ public class AdminRoleController extends AdminController {
         Integer storeId = form.getStoreId();
         String application = form.getApplication();
 
-        PaginationBean<AdminRoleBean> result = adminRoleService.searchRole(roleName, roleType, channelId, active, storeId, application, pageNum, pageSize);
+        PaginationResultBean<AdminRoleBean> result = adminRoleService.searchRole(roleName, roleType, channelId, active, storeId, application, pageNum, pageSize);
 
         return success(result);
     }

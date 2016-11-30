@@ -10,7 +10,7 @@ import com.voyageone.service.model.user.ComResourceModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.daoext.core.AdminResourceDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class AdminResService extends BaseService {
      * @param app
      * @return
      */
-    public PaginationBean<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize) {
+    public PaginationResultBean<AdminResourceBean> searchRes(String app, Integer pageNum, Integer pageSize) {
         Map<String, Object> map = new HashMap<>();
         if (!StringUtils.isNullOrBlank2(app)) {
             map.put("application", app);
@@ -72,11 +72,11 @@ public class AdminResService extends BaseService {
 
         result = convert2List(all, result);
 
-        PaginationBean<AdminResourceBean> paginationBean = new PaginationBean<>();
+        PaginationResultBean<AdminResourceBean> paginationResultBean = new PaginationResultBean<>();
 
-        paginationBean.setResult(result.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
-        paginationBean.setCount(result.size());
-        return paginationBean;
+        paginationResultBean.setResult(result.stream().skip((pageNum - 1) * pageSize).limit(pageSize).collect(Collectors.toList()));
+        paginationResultBean.setCount(result.size());
+        return paginationResultBean;
 
     }
 

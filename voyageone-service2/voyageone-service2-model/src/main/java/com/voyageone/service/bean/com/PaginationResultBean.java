@@ -6,7 +6,7 @@ import java.util.List;
  * @author Wangtd
  * @since 2.0.0 2016/8/10
  */
-public class PaginationBean<E> {
+public class PaginationResultBean<E> {
 
 	private Integer count;
 	

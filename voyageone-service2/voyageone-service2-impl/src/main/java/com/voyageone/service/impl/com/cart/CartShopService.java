@@ -17,7 +17,7 @@ import com.voyageone.service.dao.com.TmChannelShopConfigDao;
 import com.voyageone.service.dao.com.TmChannelShopDao;
 import com.voyageone.service.daoext.com.TmChannelShopDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmChannelShopConfigKey;
 import com.voyageone.service.model.com.TmChannelShopConfigModel;
 import com.voyageone.service.model.com.TmChannelShopKey;
@@ -43,7 +43,7 @@ public class CartShopService extends BaseService {
 		List<TmChannelShopBean> cartShops = searchCartShopByPage(channelId, cartId, null, null, null, null).getResult();
 		if (CollectionUtils.isNotEmpty(cartShops)) {
 			cartShops.forEach(cartShop -> {
-				PaginationBean<TmChannelShopConfigBean> cartShopConfigPage = searchCartShopConfigByPage(channelId,
+				PaginationResultBean<TmChannelShopConfigBean> cartShopConfigPage = searchCartShopConfigByPage(channelId,
 						String.valueOf(cartId), null, null, null, null);
 				cartShop.setCartShopConfig(cartShopConfigPage.getResult());
 			});
@@ -52,9 +52,9 @@ public class CartShopService extends BaseService {
 		return cartShops;
 	}
 
-	public PaginationBean<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
-																  Boolean active, Integer pageNum, Integer pageSize) {
-		PaginationBean<TmChannelShopBean> paginationBean = new PaginationBean<TmChannelShopBean>();
+	public PaginationResultBean<TmChannelShopBean> searchCartShopByPage(String channelId, Integer cartId, String shopName,
+																		Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<TmChannelShopBean> paginationResultBean = new PaginationResultBean<TmChannelShopBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -64,13 +64,13 @@ public class CartShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(cartShopDaoExt.selectCartShopCount(params));
+			paginationResultBean.setCount(cartShopDaoExt.selectCartShopCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Cart商店信息
-		paginationBean.setResult(cartShopDaoExt.selectCartShopByPage(params));
+		paginationResultBean.setResult(cartShopDaoExt.selectCartShopByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateChannel(TmChannelShopModel model, String username, boolean append) {
@@ -112,9 +112,9 @@ public class CartShopService extends BaseService {
 		}
 	}
 
-	public PaginationBean<TmChannelShopConfigBean> searchCartShopConfigByPage(String channelId, String cartId,
-																			  String cfgName, String cfgVal, Integer pageNum, Integer pageSize) {
-		PaginationBean<TmChannelShopConfigBean> paginationBean = new PaginationBean<TmChannelShopConfigBean>();
+	public PaginationResultBean<TmChannelShopConfigBean> searchCartShopConfigByPage(String channelId, String cartId,
+																					String cfgName, String cfgVal, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<TmChannelShopConfigBean> paginationResultBean = new PaginationResultBean<TmChannelShopConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -124,13 +124,13 @@ public class CartShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
+			paginationResultBean.setCount(cartShopDaoExt.selectCartShopConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Cart商店配置信息
-		paginationBean.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
+		paginationResultBean.setResult(cartShopDaoExt.selectCartShopConfigByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateCartShopConfig(TmChannelShopConfigModel model, boolean append) {

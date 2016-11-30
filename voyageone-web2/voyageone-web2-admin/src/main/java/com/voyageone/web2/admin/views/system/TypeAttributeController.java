@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.ComMtValueBean;
 import com.voyageone.service.impl.com.system.TypeAttributeService;
 import com.voyageone.service.model.com.ComMtValueModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.channel.ChannelAttributeFormBean;
@@ -38,7 +38,7 @@ public class TypeAttributeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索类型属性信息
-		PaginationBean<ComMtValueBean> typeAttrPage = typeAttrService.searchTypeAttributeByPage(form.getTypeId(),
+		PaginationResultBean<ComMtValueBean> typeAttrPage = typeAttrService.searchTypeAttributeByPage(form.getTypeId(),
 				form.getLangId(), form.getName(), form.getValue(), form.getActive(),
 				form.getPageNum(), form.getPageSize());
 		

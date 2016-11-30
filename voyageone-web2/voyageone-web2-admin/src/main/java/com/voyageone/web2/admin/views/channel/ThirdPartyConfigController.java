@@ -15,7 +15,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.ComMtThirdPartyConfigBean;
 import com.voyageone.service.impl.com.channel.ThirdPartyConfigService;
 import com.voyageone.service.model.com.ComMtThirdPartyConfigModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.channel.ThirdPartyConfigFormBean;
@@ -38,7 +38,7 @@ public class ThirdPartyConfigController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索第三方配置信息
-		PaginationBean<ComMtThirdPartyConfigBean> thirdPartyPage = thirdPartyConfigService.searchThirdPartyConfigByPage(
+		PaginationResultBean<ComMtThirdPartyConfigBean> thirdPartyPage = thirdPartyConfigService.searchThirdPartyConfigByPage(
 				form.getChannelId(), form.getPropName(), form.getPropVal(), form.getActive(),
 				form.getPageNum(), form.getPageSize());
 		

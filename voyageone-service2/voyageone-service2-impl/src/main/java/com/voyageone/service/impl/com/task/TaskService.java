@@ -21,7 +21,7 @@ import com.voyageone.service.daoext.com.ComMtValueDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtTaskModel;
 import com.voyageone.service.model.com.ComMtValueModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmTaskControlKey;
 import com.voyageone.service.model.com.TmTaskControlModel;
 
@@ -70,9 +70,9 @@ public class TaskService extends BaseService {
 		return tasks;
 	}
 
-	public PaginationBean<ComMtTaskBean> searchTaskByPage(String taskType, String taskName, String taskComment,
-														  Integer pageNum, Integer pageSize) {
-		PaginationBean<ComMtTaskBean> paginationBean = new PaginationBean<ComMtTaskBean>();
+	public PaginationResultBean<ComMtTaskBean> searchTaskByPage(String taskType, String taskName, String taskComment,
+																Integer pageNum, Integer pageSize) {
+		PaginationResultBean<ComMtTaskBean> paginationResultBean = new PaginationResultBean<ComMtTaskBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskType", taskType);
@@ -81,13 +81,13 @@ public class TaskService extends BaseService {
 		params.put("taskAttrName", RUN_FLG_NAME);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(taskDaoExt.selectTypeCount(params));
+			paginationResultBean.setCount(taskDaoExt.selectTypeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询任务信息
-		paginationBean.setResult(taskDaoExt.selectTypeByPage(params));
+		paginationResultBean.setResult(taskDaoExt.selectTypeByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	@VOTransactional
@@ -169,9 +169,9 @@ public class TaskService extends BaseService {
 		}
 	}
 
-	public PaginationBean<TmTaskControlBean> searchTaskConfigByPage(String taskId, String cfgName, String cfgVal,
-																	Integer pageNum, Integer pageSize) {
-		PaginationBean<TmTaskControlBean> paginationBean = new PaginationBean<TmTaskControlBean>();
+	public PaginationResultBean<TmTaskControlBean> searchTaskConfigByPage(String taskId, String cfgName, String cfgVal,
+																		  Integer pageNum, Integer pageSize) {
+		PaginationResultBean<TmTaskControlBean> paginationResultBean = new PaginationResultBean<TmTaskControlBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("taskId", taskId);
@@ -179,13 +179,13 @@ public class TaskService extends BaseService {
 		params.put("cfgVal", cfgVal);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(taskDaoExt.selectTaskConfigCount(params));
+			paginationResultBean.setCount(taskDaoExt.selectTaskConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询任务配置信息
-		paginationBean.setResult(taskDaoExt.selectTaskConfigByPage(params));
+		paginationResultBean.setResult(taskDaoExt.selectTaskConfigByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addTaskConfig(TmTaskControlModel model) {

@@ -2,7 +2,7 @@ package com.voyageone.service.impl.com.log;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.model.user.ComLogModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class AdminLogServiceTest {
     @Test
     public void testSearchLog() throws Exception {
 
-        PaginationBean<ComLogModel> result = adminLogService.searchLog(new ComLogModel(), 10000L, null, 1, 10);
+        PaginationResultBean<ComLogModel> result = adminLogService.searchLog(new ComLogModel(), 10000L, null, 1, 10);
         System.out.println(JacksonUtil.bean2Json(result));
 
     }

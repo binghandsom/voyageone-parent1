@@ -31,7 +31,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.ComMtTaskBean;
 import com.voyageone.service.bean.com.ComMtTrackingInfoConfigBean;
 import com.voyageone.service.bean.com.CtStoreConfigBean;
-import com.voyageone.service.bean.com.NewShopBean;
+import com.voyageone.service.bean.com.OpenNewShopBean;
 import com.voyageone.service.bean.com.TmChannelShopBean;
 import com.voyageone.service.bean.com.TmOrderChannelBean;
 import com.voyageone.service.bean.com.TmTaskControlBean;
@@ -62,7 +62,7 @@ import com.voyageone.service.impl.com.channel.SmsConfigService;
 import com.voyageone.service.impl.com.channel.ThirdPartyConfigService;
 import com.voyageone.service.impl.com.store.StoreService;
 import com.voyageone.service.impl.com.task.TaskService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmNewShopDataModel;
 
 import freemarker.template.Configuration;
@@ -161,7 +161,7 @@ public class NewShopService extends BaseService {
 		return result;
 	}
 
-	public void saveChannelSeries(Long newShopId, NewShopBean bean, String username) {
+	public void saveChannelSeries(Long newShopId, OpenNewShopBean bean, String username) {
 		TmOrderChannelBean channel = bean.getChannel();
 		// 设置开新店信息
 		TmNewShopDataModel model = new TmNewShopDataModel();
@@ -198,13 +198,13 @@ public class NewShopService extends BaseService {
 		if (StringUtils.isBlank(newShop.getData())) {
 			throw new BusinessException("开新店数据信息为空");
 		}
-		NewShopBean bean = JacksonUtil.json2Bean(newShop.getData(), NewShopBean.class);
+		OpenNewShopBean bean = JacksonUtil.json2Bean(newShop.getData(), OpenNewShopBean.class);
 		
 		return handleChannelSeriesSql(bean, username);
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	protected File handleChannelSeriesSql(NewShopBean bean, String username) throws Exception {
+	protected File handleChannelSeriesSql(OpenNewShopBean bean, String username) throws Exception {
 		TmOrderChannelBean channel = bean.getChannel();
 		// 覆盖的参数
 		HashMap<String, Object> overrides = new HashMap<String, Object>();
@@ -399,9 +399,9 @@ public class NewShopService extends BaseService {
 		return newShopDao.select(newShopId);
 	}
 
-	public PaginationBean<TmNewShopDataModel> searchNewShopByPage(String channelId, String channelName, String modifiedFrom,
-																  String modifiedTo, Integer pageNum, Integer pageSize) {
-		PaginationBean<TmNewShopDataModel> paginationBean = new PaginationBean<TmNewShopDataModel>();
+	public PaginationResultBean<TmNewShopDataModel> searchNewShopByPage(String channelId, String channelName, String modifiedFrom,
+																		String modifiedTo, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<TmNewShopDataModel> paginationResultBean = new PaginationResultBean<TmNewShopDataModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("channelId", channelId);
@@ -411,13 +411,13 @@ public class NewShopService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(newShopDaoExt.selectNewShopCount(params));
+			paginationResultBean.setCount(newShopDaoExt.selectNewShopCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询开店脚本信息
-		paginationBean.setResult(newShopDaoExt.selectNewShopByPage(params));
+		paginationResultBean.setResult(newShopDaoExt.selectNewShopByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 	
 }

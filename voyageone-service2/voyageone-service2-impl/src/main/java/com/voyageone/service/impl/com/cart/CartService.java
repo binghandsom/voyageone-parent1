@@ -20,7 +20,7 @@ import com.voyageone.service.daoext.com.CtCartDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.channel.ChannelService;
 import com.voyageone.service.model.com.CtCartModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmOrderChannelModel;
 
 /**
@@ -61,9 +61,9 @@ public class CartService extends BaseService {
 		return cartDaoExt.selectCartByIds(iCartIds);
 	}
 
-	public PaginationBean<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType, Boolean active,
-														Integer pageNum, Integer pageSize) {
-		PaginationBean<CtCartModel> paginationBean = new PaginationBean<CtCartModel>();
+	public PaginationResultBean<CtCartModel> searchCartByPage(Integer cartId, String cartName, String cartType, Boolean active,
+															  Integer pageNum, Integer pageSize) {
+		PaginationResultBean<CtCartModel> paginationResultBean = new PaginationResultBean<CtCartModel>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("cartId", cartId);
@@ -72,13 +72,13 @@ public class CartService extends BaseService {
 		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(cartDaoExt.selectCartCount(params));
+			paginationResultBean.setCount(cartDaoExt.selectCartCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询Cart信息
-		paginationBean.setResult(cartDaoExt.selectCartByPage(params));
+		paginationResultBean.setResult(cartDaoExt.selectCartByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public List<Map<String, Object>> getAllPlatform() {

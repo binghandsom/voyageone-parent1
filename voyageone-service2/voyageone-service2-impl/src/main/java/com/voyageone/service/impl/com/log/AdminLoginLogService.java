@@ -6,7 +6,7 @@ import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.service.model.user.ComLoginLogModel;
 import com.voyageone.service.daoext.core.AdminLoginLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +26,13 @@ public class AdminLoginLogService extends BaseService {
     AdminLoginLogDaoExt adminLoginLogDaoExt;
 
 
-    public PaginationBean<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
+    public PaginationResultBean<ComLoginLogModel> searchLog(Integer pageNum, Integer pageSize) {
         return  searchLog(new ComLoginLogModel(), null, null, pageNum,  pageSize);
     }
 
-    public PaginationBean<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
+    public PaginationResultBean<ComLoginLogModel> searchLog(ComLoginLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
-        PaginationBean<ComLoginLogModel> paginationBean = new PaginationBean<>();
+        PaginationResultBean<ComLoginLogModel> paginationResultBean = new PaginationResultBean<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
@@ -61,7 +61,7 @@ public class AdminLoginLogService extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            paginationBean.setCount(adminLoginLogDaoExt.selectCount(newMap));
+            paginationResultBean.setCount(adminLoginLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -73,11 +73,11 @@ public class AdminLoginLogService extends BaseService {
 
         List<ComLoginLogModel> list = adminLoginLogDaoExt.selectList(newMap);
         if (!needPage) {
-            paginationBean.setCount(list.size());
+            paginationResultBean.setCount(list.size());
         }
 
-        paginationBean.setResult(list);
-        return paginationBean;
+        paginationResultBean.setResult(list);
+        return paginationResultBean;
     }
 
 }

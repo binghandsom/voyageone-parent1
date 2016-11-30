@@ -5,7 +5,7 @@ import com.voyageone.service.model.user.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.dao.com.ComMtTypeDao;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,7 @@ public class AdminRoleServiceTest {
 
     @Test
     public void testSearchRole() throws Exception {
-        PaginationBean<AdminRoleBean> result =  adminRoleService.searchRole( null, null);
+        PaginationResultBean<AdminRoleBean> result =  adminRoleService.searchRole( null, null);
 
         System.out.println(JacksonUtil.bean2Json(result));
 

@@ -19,7 +19,7 @@ import com.voyageone.service.daoext.com.WmsMtStoreDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.CtStoreConfigKey;
 import com.voyageone.service.model.com.CtStoreConfigModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.WmsMtStoreKey;
 import com.voyageone.service.model.com.WmsMtStoreModel;
 
@@ -63,9 +63,9 @@ public class StoreService extends BaseService {
 		return searchStoreByPage(channelId, storeName, isSale, storeType, active, null, null).getResult();
 	}
 
-	public PaginationBean<WmsMtStoreBean> searchStoreByPage(String channelId, String storeName, String isSale,
-															String storeType, Boolean active, Integer pageNum, Integer pageSize) {
-		PaginationBean<WmsMtStoreBean> paginationBean = new PaginationBean<WmsMtStoreBean>();
+	public PaginationResultBean<WmsMtStoreBean> searchStoreByPage(String channelId, String storeName, String isSale,
+																  String storeType, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<WmsMtStoreBean> paginationResultBean = new PaginationResultBean<WmsMtStoreBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -75,13 +75,13 @@ public class StoreService extends BaseService {
 		params.put("active", active);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(storeDaoExt.selectStoreCount(params));
+			paginationResultBean.setCount(storeDaoExt.selectStoreCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询仓库信息
-		paginationBean.setResult(storeDaoExt.selectStoreByPage(params));
+		paginationResultBean.setResult(storeDaoExt.selectStoreByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	@VOTransactional
@@ -140,9 +140,9 @@ public class StoreService extends BaseService {
 		}
 	}
 
-	public PaginationBean<CtStoreConfigBean> searchStoreConfigByPage(Long storeId, String cfgName, String cfgVal,
-																	 Integer pageNum, Integer pageSize) {
-		PaginationBean<CtStoreConfigBean> paginationBean = new PaginationBean<CtStoreConfigBean>();
+	public PaginationResultBean<CtStoreConfigBean> searchStoreConfigByPage(Long storeId, String cfgName, String cfgVal,
+																		   Integer pageNum, Integer pageSize) {
+		PaginationResultBean<CtStoreConfigBean> paginationResultBean = new PaginationResultBean<CtStoreConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("storeId", storeId);
@@ -150,13 +150,13 @@ public class StoreService extends BaseService {
 		params.put("cfgVal", cfgVal);
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(storeDaoExt.selectStoreConfigCount(params));
+			paginationResultBean.setCount(storeDaoExt.selectStoreConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询仓库配置信息
-		paginationBean.setResult(storeDaoExt.selectStoreConfigByPage(params));
+		paginationResultBean.setResult(storeDaoExt.selectStoreConfigByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateStoreConfig(CtStoreConfigModel model, boolean append) {

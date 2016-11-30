@@ -7,7 +7,7 @@ import com.voyageone.service.dao.user.ComLogDao;
 import com.voyageone.service.model.user.ComLogModel;
 import com.voyageone.service.daoext.core.AdminLogDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,13 +30,13 @@ public class AdminLogService  extends BaseService {
     ComLogDao comLogDao;
 
 
-    public PaginationBean<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
+    public PaginationResultBean<ComLogModel> searchLog(Integer pageNum, Integer pageSize) {
         return  searchLog(new ComLogModel(), null, null, pageNum,  pageSize);
     }
 
-    public PaginationBean<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
+    public PaginationResultBean<ComLogModel> searchLog(ComLogModel params, Long startTime, Long endTime, Integer pageNum, Integer pageSize) {
 
-        PaginationBean<ComLogModel> paginationBean = new PaginationBean<>();
+        PaginationResultBean<ComLogModel> paginationResultBean = new PaginationResultBean<>();
 
 
 
@@ -64,7 +64,7 @@ public class AdminLogService  extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            paginationBean.setCount(adminLogDaoExt.selectCount(newMap));
+            paginationResultBean.setCount(adminLogDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -76,11 +76,11 @@ public class AdminLogService  extends BaseService {
 
         List<ComLogModel> list = adminLogDaoExt.selectList(newMap);
         if (!needPage) {
-            paginationBean.setCount(list.size());
+            paginationResultBean.setCount(list.size());
         }
 
-        paginationBean.setResult(list);
-        return paginationBean;
+        paginationResultBean.setResult(list);
+        return paginationResultBean;
     }
 
 

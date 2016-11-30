@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
-import com.voyageone.service.bean.com.NewShopBean;
+import com.voyageone.service.bean.com.OpenNewShopBean;
 import com.voyageone.service.impl.com.newshop.NewShopService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmNewShopDataModel;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
@@ -45,7 +45,7 @@ public class NewShopController extends AdminController {
 		Preconditions.checkNotNull(form);
 		Preconditions.checkNotNull(form.getChannel());
 		// 处理开新店的SQL
-		NewShopBean bean = new NewShopBean();
+		OpenNewShopBean bean = new OpenNewShopBean();
 		BeanUtils.copyProperties(form, bean);
 		newShopService.saveChannelSeries(form.getId(), bean, getUser().getUserName());
 		return success(true);
@@ -65,7 +65,7 @@ public class NewShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索短信配置信息
-		PaginationBean<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
+		PaginationResultBean<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
 				form.getChannelName(), form.getModifiedFrom(), form.getModifiedTo(),
 				form.getPageNum(), form.getPageSize());
 		

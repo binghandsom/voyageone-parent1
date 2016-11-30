@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.impl.com.system.CodeService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmCodeKey;
 import com.voyageone.service.model.com.TmCodeModel;
 import com.voyageone.web2.admin.AdminController;
@@ -38,7 +38,7 @@ public class CodeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索Code信息
-		PaginationBean<TmCodeModel> codePage = codeService.searchCodeByPage(form.getId(), form.getCode(), form.getName(),
+		PaginationResultBean<TmCodeModel> codePage = codeService.searchCodeByPage(form.getId(), form.getCode(), form.getName(),
 				form.getDes(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(codePage);

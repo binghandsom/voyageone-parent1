@@ -8,7 +8,7 @@ import com.voyageone.service.model.user.ComOrganizationModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.daoext.core.AdminOrganizationDaoExt;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,14 +51,14 @@ public class AdminOrgService extends BaseService {
         return  retList;
     }
 
-    public PaginationBean<AdminOrgBean> searchOrg(Integer pageNum, Integer pageSize)
+    public PaginationResultBean<AdminOrgBean> searchOrg(Integer pageNum, Integer pageSize)
     {
         return searchOrg(null, null, pageNum, pageSize);
     }
 
-    public PaginationBean<AdminOrgBean> searchOrg(String orgName , Integer active, Integer pageNum, Integer pageSize)
+    public PaginationResultBean<AdminOrgBean> searchOrg(String orgName , Integer active, Integer pageNum, Integer pageSize)
     {
-        PaginationBean<AdminOrgBean> paginationBean = new PaginationBean<>();
+        PaginationResultBean<AdminOrgBean> paginationResultBean = new PaginationResultBean<>();
 
         // 判断查询结果是否分页
         boolean needPage = false;
@@ -69,7 +69,7 @@ public class AdminOrgService extends BaseService {
 
         if (pageNum != null && pageSize != null) {
             needPage = true;
-            paginationBean.setCount(adminOrganizationDaoExt.selectCount(newMap));
+            paginationResultBean.setCount(adminOrganizationDaoExt.selectCount(newMap));
             newMap = MySqlPageHelper.build(newMap).page(pageNum).limit(pageSize).addSort("created", Order.Direction.DESC).toMap();
         }
         else
@@ -79,11 +79,11 @@ public class AdminOrgService extends BaseService {
 
         List<AdminOrgBean> list = adminOrganizationDaoExt.selectList(newMap);
         if (!needPage) {
-            paginationBean.setCount(list.size());
+            paginationResultBean.setCount(list.size());
         }
 
-        paginationBean.setResult(list);
-        return paginationBean;
+        paginationResultBean.setResult(list);
+        return paginationResultBean;
     }
 
     public void addOrg(ComOrganizationModel model)

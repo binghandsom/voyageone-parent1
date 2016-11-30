@@ -3,7 +3,7 @@ package com.voyageone.web2.admin.views.user;
 import com.voyageone.service.model.user.ComOrganizationModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.impl.com.user.AdminOrgService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -44,7 +44,7 @@ public class AdminOrgController extends AdminController {
      */
     @RequestMapping(AdminUrlConstants.User.Org.INIT)
     public AjaxResponse init() throws Exception {
-        PaginationBean<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
+        PaginationResultBean<AdminOrgBean> result = adminOrgService.searchOrg(1, DEFAULT_PAGE_SIZE );
         return success(result);
     }
 
@@ -70,7 +70,7 @@ public class AdminOrgController extends AdminController {
         Integer  pageNum = (Integer) requestBean.getOrDefault("pageNum", 1);
         Integer  pageSize = (Integer) requestBean.getOrDefault("pageSize", DEFAULT_PAGE_SIZE);
 
-       PaginationBean<AdminOrgBean> result = adminOrgService.searchOrg(orgName, active, pageNum, pageSize );
+       PaginationResultBean<AdminOrgBean> result = adminOrgService.searchOrg(orgName, active, pageNum, pageSize );
 
         return success(result);
     }

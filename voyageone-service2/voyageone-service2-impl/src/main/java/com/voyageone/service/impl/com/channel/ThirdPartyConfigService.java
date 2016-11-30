@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.ComMtThirdPartyConfigDao;
 import com.voyageone.service.daoext.com.ComMtThirdPartyConfigDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtThirdPartyConfigModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 
 /**
  * @author Wangtd
@@ -34,9 +34,9 @@ public class ThirdPartyConfigService extends BaseService {
 		return searchThirdPartyConfigByPage(channelId, null, null, null, null, null).getResult();
 	}
 
-	public PaginationBean<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, String propName,
-																				  String propVal, Boolean active, Integer pageNum, Integer pageSize) {
-		PaginationBean<ComMtThirdPartyConfigBean> paginationBean = new PaginationBean<ComMtThirdPartyConfigBean>();
+	public PaginationResultBean<ComMtThirdPartyConfigBean> searchThirdPartyConfigByPage(String channelId, String propName,
+																						String propVal, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<ComMtThirdPartyConfigBean> paginationResultBean = new PaginationResultBean<ComMtThirdPartyConfigBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("orderChannelId", channelId);
@@ -46,13 +46,13 @@ public class ThirdPartyConfigService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(thirdPartyConfigDaoExt.selectThirdPartyConfigCount(params));
+			paginationResultBean.setCount(thirdPartyConfigDaoExt.selectThirdPartyConfigCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询第三方配置信息
-		paginationBean.setResult(thirdPartyConfigDaoExt.selectThirdPartyConfigByPage(params));
+		paginationResultBean.setResult(thirdPartyConfigDaoExt.selectThirdPartyConfigByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateThirdPartyConfig(ComMtThirdPartyConfigModel model, String username, boolean append) {

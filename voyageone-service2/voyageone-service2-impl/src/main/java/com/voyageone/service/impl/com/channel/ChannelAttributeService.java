@@ -15,7 +15,7 @@ import com.voyageone.service.dao.com.ComMtValueChannelDao;
 import com.voyageone.service.daoext.com.ComMtValueChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 
 /**
  * @author Wangtd
@@ -34,9 +34,9 @@ public class ChannelAttributeService extends BaseService {
 		return searchChannelAttributeByPage(channelId, null, null, null, null, null, null, null).getResult();
 	}
 
-	public PaginationBean<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
-																			  String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {
-		PaginationBean<ComMtValueChannelBean> paginationBean = new PaginationBean<ComMtValueChannelBean>();
+	public PaginationResultBean<ComMtValueChannelBean> searchChannelAttributeByPage(String channelId, Integer typeId,
+																					String langId, String name, String value, Boolean active, Integer pageNum, Integer pageSize) {
+		PaginationResultBean<ComMtValueChannelBean> paginationResultBean = new PaginationResultBean<ComMtValueChannelBean>();
 		// 设置查询参数
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("channelId", channelId);
@@ -48,13 +48,13 @@ public class ChannelAttributeService extends BaseService {
 		
 		// 判断查询结果是否分页
 		if (pageNum != null && pageSize != null) {
-			paginationBean.setCount(channelAttrDaoExt.selectChannelAttributeCount(params));
+			paginationResultBean.setCount(channelAttrDaoExt.selectChannelAttributeCount(params));
 			params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
 		}
 		// 查询渠道属性信息
-		paginationBean.setResult(channelAttrDaoExt.selectChannelAttributeByPage(params));
+		paginationResultBean.setResult(channelAttrDaoExt.selectChannelAttributeByPage(params));
 		
-		return paginationBean;
+		return paginationResultBean;
 	}
 
 	public void addOrUpdateChannelAttribute(ComMtValueChannelModel model, String username, boolean append) {

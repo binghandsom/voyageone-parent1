@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.impl.com.user.AdminUserService;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
@@ -55,7 +55,7 @@ public class AdminUserController extends AdminController {
 
         // 检索用户信息
 
-        PaginationBean<AdminUserBean> userPage = adminUserService.searchUser(form.getUserAccount(), form.getActive(),
+        PaginationResultBean<AdminUserBean> userPage = adminUserService.searchUser(form.getUserAccount(), form.getActive(),
                 form.getOrgId(),form.getRoleId(),  form.getChannelId(), form.getStoreId(), form.getApplication(), form.getCompanyId(), pageNum, pageSize );
 
         return success(userPage);
@@ -68,7 +68,7 @@ public class AdminUserController extends AdminController {
     @RequestMapping(AdminUrlConstants.User.Self.INIT)
     public AjaxResponse init()  {
         // 检索用户信息
-        PaginationBean<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null,null,null, 1, DEFAULT_PAGE_SIZE);
+        PaginationResultBean<AdminUserBean> userPage = adminUserService.searchUser(null, null, null, null, null,null,null,null, 1, DEFAULT_PAGE_SIZE);
 
         return success(userPage);
     }

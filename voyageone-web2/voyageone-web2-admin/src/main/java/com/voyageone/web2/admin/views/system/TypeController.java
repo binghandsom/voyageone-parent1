@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.Preconditions;
 import com.voyageone.service.impl.com.system.TypeService;
 import com.voyageone.service.model.com.ComMtTypeModel;
-import com.voyageone.service.bean.com.PaginationBean;
+import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
 import com.voyageone.web2.admin.bean.system.TypeFormBean;
@@ -53,7 +53,7 @@ public class TypeController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索类型信息
-		PaginationBean<ComMtTypeModel> typePage = typeService.searchTypeByPage(form.getId(), form.getName(),
+		PaginationResultBean<ComMtTypeModel> typePage = typeService.searchTypeByPage(form.getId(), form.getName(),
 				form.getComment(), form.getActive(), form.getPageNum(), form.getPageSize());
 		
 		return success(typePage);
