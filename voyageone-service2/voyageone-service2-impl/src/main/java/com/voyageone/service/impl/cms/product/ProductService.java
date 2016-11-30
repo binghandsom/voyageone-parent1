@@ -387,7 +387,7 @@ public class ProductService extends BaseService {
         //save
         cmsBtProductDao.insert(product);
 
-        insertProductHistory(channelId, product.getProdId());
+        insertProductHistory(channelId, product);
         // 记录价格变更履历
         addPriceUpdateHistory(product, modifier, "New");
     }
