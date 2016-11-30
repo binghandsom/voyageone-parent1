@@ -3,8 +3,8 @@ package com.voyageone.service.impl.com.log;
 
 import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
-import com.voyageone.security.dao.ComLogDao;
-import com.voyageone.security.model.ComLogModel;
+import com.voyageone.service.dao.user.ComLogDao;
+import com.voyageone.service.model.user.ComLogModel;
 import com.voyageone.service.daoext.core.AdminLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.bean.com.PaginationBean;

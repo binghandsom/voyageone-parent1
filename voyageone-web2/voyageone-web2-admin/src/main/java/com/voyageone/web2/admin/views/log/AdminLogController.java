@@ -1,7 +1,6 @@
 package com.voyageone.web2.admin.views.log;
 
-import com.voyageone.security.model.ComLogModel;
-import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.user.ComLogModel;
 import com.voyageone.service.impl.com.log.AdminLogService;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;

@@ -1,12 +1,12 @@
 package com.voyageone.security.log;
 
+import com.voyageone.service.dao.user.ComLogDao;
+import com.voyageone.service.model.user.ComLogModel;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.security.dao.ComLogDao;
-import com.voyageone.security.model.ComLogModel;
 
 /**
  * Created by Ethan Shi on 2016-08-23.

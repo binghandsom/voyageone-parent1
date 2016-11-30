@@ -1,6 +1,6 @@
 package com.voyageone.service.bean.com;
 
-import com.voyageone.security.model.ComOrganizationModel;
+import com.voyageone.service.model.user.ComOrganizationModel;
 
 /**
  * Created by Ethan Shi on 2016-08-24.

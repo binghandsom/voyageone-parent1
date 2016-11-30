@@ -7,7 +7,7 @@
  */
 package com.voyageone.service.daoext.core;
 
-import com.voyageone.security.model.ComLogModel;
+import com.voyageone.service.model.user.ComLogModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

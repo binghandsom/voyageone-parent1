@@ -1,7 +1,7 @@
 package com.voyageone.service.bean.com;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.user.ComResourceModel;
 
 import java.util.ArrayList;
 import java.util.List;

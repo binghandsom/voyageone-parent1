@@ -3,7 +3,7 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.model.user.ComRoleModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.base.BaseConstants;

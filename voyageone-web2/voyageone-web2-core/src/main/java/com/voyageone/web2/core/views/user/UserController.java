@@ -1,8 +1,7 @@
 package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.model.ComUserModel;
+import com.voyageone.service.model.user.ComUserModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.UserConfigBean;
@@ -12,21 +11,14 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

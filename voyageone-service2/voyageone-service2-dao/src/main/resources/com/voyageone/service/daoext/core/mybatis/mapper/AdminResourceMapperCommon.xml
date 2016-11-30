@@ -80,14 +80,14 @@
     </select>
 
 
-    <select id="selectResRoleList" resultType="com.voyageone.security.model.ComResRoleModel">
+    <select id="selectResRoleList" resultType="com.voyageone.service.model.user.ComResRoleModel">
         SELECT rr.* FROM com_res_role rr
         INNER JOIN com_resource re ON re.id = rr.res_id
         Where rr.role_id = #{roleId}
         AND re.application =   #{application}
     </select>
 
-    <select id="selectAllMenu" resultType="com.voyageone.security.model.ComResourceModel">
+    <select id="selectAllMenu" resultType="com.voyageone.service.model.user.ComResourceModel">
         SELECT re.* from com_resource re
         where
         application = #{application}

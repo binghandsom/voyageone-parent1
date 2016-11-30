@@ -2,13 +2,11 @@ package com.voyageone.web2.core.views.user;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.model.ComRoleModel;
-import com.voyageone.security.model.ComUserConfigModel;
+import com.voyageone.service.bean.user.ComChannelPermissionBean;
+import com.voyageone.service.model.user.ComUserConfigModel;
 import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.bean.com.UserConfigBean;
-import com.voyageone.service.daoext.com.UserDao;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;

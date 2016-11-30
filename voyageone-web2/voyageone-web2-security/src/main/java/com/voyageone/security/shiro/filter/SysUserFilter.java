@@ -1,12 +1,11 @@
 package com.voyageone.security.shiro.filter;
 
 
-import com.voyageone.security.dao.ComUserDao;
+import com.voyageone.service.dao.user.ComUserDao;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.inject.Inject;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.util.HashMap;

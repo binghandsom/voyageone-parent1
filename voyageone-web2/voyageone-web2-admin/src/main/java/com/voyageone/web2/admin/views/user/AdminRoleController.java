@@ -1,6 +1,6 @@
 package com.voyageone.web2.admin.views.user;
 
-import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.model.user.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.impl.AdminProperty;

@@ -1,14 +1,14 @@
 package com.voyageone.security.shiro;
 
 
-import com.voyageone.security.dao.ComResourceDao;
-import com.voyageone.security.model.ComResourceModel;
+
+import com.voyageone.service.dao.user.ComResourceDao;
+import com.voyageone.service.model.user.ComResourceModel;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.config.Ini;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.List;
 
 

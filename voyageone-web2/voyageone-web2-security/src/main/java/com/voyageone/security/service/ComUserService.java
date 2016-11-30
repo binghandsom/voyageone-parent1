@@ -1,16 +1,16 @@
 package com.voyageone.security.service;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.security.bean.ComChannelPermissionBean;
-import com.voyageone.security.dao.ComLoginLogDao;
-import com.voyageone.security.dao.ComUserConfigDao;
-import com.voyageone.security.dao.ComUserDao;
-import com.voyageone.security.daoext.ComUserDaoExt;
-import com.voyageone.security.model.ComLoginLogModel;
-import com.voyageone.security.model.ComRoleModel;
-import com.voyageone.security.model.ComUserConfigModel;
-import com.voyageone.security.model.ComUserModel;
+import com.voyageone.service.bean.user.ComChannelPermissionBean;
 import com.voyageone.security.shiro.MyRealm;
+import com.voyageone.service.dao.user.ComLoginLogDao;
+import com.voyageone.service.dao.user.ComUserConfigDao;
+import com.voyageone.service.dao.user.ComUserDao;
+import com.voyageone.service.daoext.user.ComUserDaoExt;
+import com.voyageone.service.model.user.ComLoginLogModel;
+import com.voyageone.service.model.user.ComRoleModel;
+import com.voyageone.service.model.user.ComUserConfigModel;
+import com.voyageone.service.model.user.ComUserModel;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;

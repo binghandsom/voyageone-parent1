@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.security.model.ComRoleModel;
+import com.voyageone.service.model.user.ComRoleModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminRoleBean;
 import com.voyageone.service.dao.com.ComMtTypeDao;

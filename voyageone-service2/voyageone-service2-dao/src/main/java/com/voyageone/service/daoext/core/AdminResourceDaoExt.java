@@ -1,7 +1,7 @@
 package com.voyageone.service.daoext.core;
 
-import com.voyageone.security.model.ComResRoleModel;
-import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.user.ComResRoleModel;
+import com.voyageone.service.model.user.ComResourceModel;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

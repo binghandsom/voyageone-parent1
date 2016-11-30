@@ -35,6 +35,18 @@
 			<artifactId>ehcache-core</artifactId>
 			<version>2.5.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-model</artifactId>
+			<version>${voyageone.service2.model.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-dao</artifactId>
+			<version>${voyageone.service2.dao.version}</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-web2-security</finalName>

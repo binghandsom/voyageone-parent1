@@ -4,7 +4,7 @@ import com.google.common.base.Joiner;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Stores;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.security.model.ComUserModel;
+import com.voyageone.service.model.user.ComUserModel;
 
 import java.util.ArrayList;
 import java.util.List;

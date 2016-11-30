@@ -108,7 +108,7 @@
         AND re.active = 1 AND ap.active = 1
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.security.model.ComUserModel" useGeneratedKeys="true" keyProperty="id" >
+    <insert id="insert" parameterType="com.voyageone.service.model.user.ComUserModel" useGeneratedKeys="true" keyProperty="id" >
         insert into com_user
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="id != null" >

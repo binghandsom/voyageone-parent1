@@ -1,9 +1,11 @@
 package com.voyageone.security.shiro;
 
 
-import com.voyageone.security.dao.*;
-import com.voyageone.security.daoext.ComUserDaoExt;
-import com.voyageone.security.model.*;
+
+import com.voyageone.service.dao.user.ComUserDao;
+import com.voyageone.service.daoext.user.ComUserDaoExt;
+import com.voyageone.service.model.user.ComUserModel;
+import com.voyageone.service.model.user.ViewResUserCompanyModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;

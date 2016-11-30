@@ -1,6 +1,6 @@
 package com.voyageone.web2.admin.views.user;
 
-import com.voyageone.security.model.ComOrganizationModel;
+import com.voyageone.service.model.user.ComOrganizationModel;
 import com.voyageone.service.bean.com.AdminOrgBean;
 import com.voyageone.service.impl.com.user.AdminOrgService;
 import com.voyageone.service.bean.com.PaginationBean;

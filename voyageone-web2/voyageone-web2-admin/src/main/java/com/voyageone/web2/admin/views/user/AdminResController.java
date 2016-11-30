@@ -1,6 +1,6 @@
 package com.voyageone.web2.admin.views.user;
 
-import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.user.ComResourceModel;
 import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;

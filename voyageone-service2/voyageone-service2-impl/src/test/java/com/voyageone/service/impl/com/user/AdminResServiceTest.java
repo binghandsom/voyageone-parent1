@@ -2,7 +2,7 @@ package com.voyageone.service.impl.com.user;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.AdminResourceBean;
-import com.voyageone.security.model.ComResourceModel;
+import com.voyageone.service.model.user.ComResourceModel;
 import com.voyageone.service.bean.com.PaginationBean;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Test;

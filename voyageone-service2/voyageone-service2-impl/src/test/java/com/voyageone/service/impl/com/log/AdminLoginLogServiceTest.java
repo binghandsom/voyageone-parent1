@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.com.log;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.security.model.ComLoginLogModel;
+import com.voyageone.service.model.user.ComLoginLogModel;
 import com.voyageone.service.bean.com.PaginationBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
