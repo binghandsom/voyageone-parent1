@@ -144,12 +144,14 @@ define(function () {
                     "root": "/cms/product/history/",
                     "getPutOnOffLogList": "getPutOnOffLogList"
                 },
-                productTopService:{
+                productTopService: {
                     "root": "/cms/producttop",
-                    init:"init",
-                    "getPage":"getPage",
-                    "getCount":"getCount",
-                    "getTopList":"getTopList"
+                    init: "init",
+                    "getPage": "getPage",
+                    "getCount": "getCount",
+                    "getTopList": "getTopList",
+                    "addTopProduct": "addTopProduct",
+                    "saveTopProduct": "saveTopProduct"
                 }
             },
             "mapping": {
