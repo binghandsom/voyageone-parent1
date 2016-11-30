@@ -28,7 +28,7 @@
 					<property name="properties">
 						<value>database_schema=voyageone_core</value>
 					</property>
-				</bean
+				</bean>
 				<bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
 					<property name="properties">
 						<value>id_filter=selectList,ByPage</value>
