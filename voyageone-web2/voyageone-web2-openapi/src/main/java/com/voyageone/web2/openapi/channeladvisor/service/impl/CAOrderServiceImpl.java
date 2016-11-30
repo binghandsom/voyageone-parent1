@@ -96,6 +96,23 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             buyerOrderAddressModel.setPostalCode(m.getBuyerPostalCode());
             buyerOrderAddressModel.setStateOrProvince(m.getBuyerStateOrProvince());
             orderModel.setBuyerAddress(buyerOrderAddressModel);
+            //shiping
+            OrderAddressModel shipAddressModel = new OrderAddressModel();
+            shipAddressModel.setAddressLine1(m.getShippingAddressLine1());
+            shipAddressModel.setAddressLine2(m.getShippingAddressLine2());
+            shipAddressModel.setCity(m.getShippingCity());
+            shipAddressModel.setCompanyName(m.getShippingCompanyName());
+            shipAddressModel.setCountry(m.getShippingCountry());
+            shipAddressModel.setDaytimePhone(m.getShippingDaytimePhone());
+            shipAddressModel.setEmailAddress(m.getShippingEmailAddress());
+            shipAddressModel.setEveningPhone(m.getShippingEveningPhone());
+            shipAddressModel.setFirstName(m.getShippingFirstName());
+            shipAddressModel.setLastName(m.getShippingLastName());
+            shipAddressModel.setNameSuffix(m.getShippingNameSuffix());
+            shipAddressModel.setPostalCode(m.getShippingPostalCode());
+            shipAddressModel.setStateOrProvince(m.getShippingStateOrProvince());
+            orderModel.setShippingAddress(shipAddressModel);
+            orderModel.setShippingLabelURL(m.getShippingLabelUrl());
             orderModel.setCurrency(m.getCurrency());
             orderModel.setDeliverByDateUtc(m.getDeliverByDate());
 
