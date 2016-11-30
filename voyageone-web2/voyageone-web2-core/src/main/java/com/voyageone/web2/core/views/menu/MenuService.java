@@ -3,8 +3,6 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.security.model.ComRoleModel;
-import com.voyageone.security.service.ComUserService;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.CoreConstants;
@@ -29,32 +27,27 @@ public class MenuService extends BaseViewService {
     @Autowired
     private UserRolePropertyDao userRolePropertyDao;
 
-    @Autowired
-    private ComUserService comUserService;
-
     public Map<String, Object> getMenuHeaderInfo(int userId,String channelId,String applicationId) {
 
         Map<String, Object> resultbean = new HashMap<>();
 
 
         // 获取menu列表.
-//        List<Map<String, Object>> menuList = this.getApplicationList(userId, channelId);
-//        resultbean.put("applicationList", menuList);
-        resultbean.put("applicationList", new ArrayList<>());
+        List<Map<String, Object>> menuList = this.getApplicationList(userId, channelId);
+        resultbean.put("applicationList", menuList);
         // 获取language列表.
         List<TypeBean> languageList = this.getLanguageList();
         resultbean.put("languageList", languageList);
-//        Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
-//        resultbean.put("menuTree", menuTree);
-        resultbean.put("menuTree", new ArrayList<>());
+        Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
+        resultbean.put("menuTree", menuTree);
         // TODO 临时对应翻译人员对应的权限
-//        Map<String, Object> param = new HashMap<>();
-//        param.put("userId", Integer.toString(userId));
-//        param.put("channelId", channelId);
-//        param.put("active", 1);
-//        param.put("roleId", "12");
-//        int roleList = userRolePropertyDao.selectUserRoleProperties(param);
-        resultbean.put("isTranslator", isTranslator(userId, channelId));
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", Integer.toString(userId));
+        param.put("channelId", channelId);
+        param.put("active", 1);
+        param.put("roleId", "12");
+        int roleList = userRolePropertyDao.selectUserRoleProperties(param);
+        resultbean.put("isTranslator", roleList == 1);
 
         return resultbean;
     }
@@ -217,24 +210,5 @@ public class MenuService extends BaseViewService {
         menuList.add(settingsMenu);
 
         return menuList;
-    }
-
-
-    /**
-     * 判断用户是否是是翻译，临时方案
-     *
-     * @param userId
-     * @return
-     */
-    public Boolean isTranslator(Integer userId, String channelId)
-    {
-
-        List<ComRoleModel> roles = comUserService.selectRolesByUserId(userId, channelId);
-
-        if(roles != null && roles.size() > 0)
-        {
-            return  roles.stream().filter(w -> w.getRoleType() == 7).count() > 0;
-        }
-        return  false;
     }
 }

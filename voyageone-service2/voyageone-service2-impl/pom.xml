@@ -101,11 +101,6 @@
             <artifactId>voyageone-components-solr</artifactId>
             <version>${voyageone.components.solr.version}</version>
         </dependency>
-        
-        <dependency>
-		    <groupId>org.freemarker</groupId>
-		    <artifactId>freemarker</artifactId>
-		</dependency>
 
     </dependencies>
     <build>
