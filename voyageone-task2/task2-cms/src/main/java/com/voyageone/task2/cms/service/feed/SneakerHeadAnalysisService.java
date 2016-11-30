@@ -105,7 +105,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
                 ExecutorService es = Executors.newFixedThreadPool(5);
-                for (int i = 1; i <= anInt; i++) {
+                for (int i = 1; i <= pageCnt; i++) {
                     int finalI = i;
                     es.execute(() ->
                             getSku(finalI, lastDate)
