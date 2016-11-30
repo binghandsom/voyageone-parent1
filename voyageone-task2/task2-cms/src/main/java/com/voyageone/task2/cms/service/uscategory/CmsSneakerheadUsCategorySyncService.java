@@ -42,7 +42,7 @@ public class CmsSneakerheadUsCategorySyncService extends BaseCronTaskService {
 
     @Override
     protected String getTaskName() {
-        return this.getClass().getSimpleName();
+        return "cmsUsCategorySyncJob";
     }
 
     @Override

@@ -187,6 +187,8 @@
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 0 3 * * ?"/>
 
+        <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
+        <task:scheduled ref="cmsUsCategorySyncJob" method="run" cron="0 45 1 * * ?"/>
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
