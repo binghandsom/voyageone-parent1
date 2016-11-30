@@ -23,7 +23,7 @@
             <div class="container-fluid">
                 <div class="row form-horizontal">
                     <div class="col-md-2 form-group">
-                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;9</label>
+                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;{{ctrl.topList.length}}</label>
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-default"><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
@@ -40,14 +40,14 @@
                 </div>
             </div>
 
-            <div class="panel panel-default m-t-md">
-                <div class="panel-body">
-                    <ul class="list-inline">
-                        <li class="jm-sortable-product" style="width: 300px">
+            <div class="panel panel-default m-t-md" id="topProducts">
+                <div class="panel-body top-area">
+                    <ul class="list-inline" sv-root sv-part="ctrl.topList">
+                        <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}">
                             <div class="jm-sortable-product-handle" style="height: 160px">
                                 <div class="row" style="height: 24px">
                                     <div class="col-sm-8">
-                                        <strong>code:</strong> <span class="ng-binding">28974</span>
+                                        <strong>code:</strong> <span class="ng-binding">{{product.code}}</span>
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="button" class="close" ng-click="ctrl.remove($index, product)"><i class="fa fa-close"></i></button>
@@ -55,23 +55,23 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <img image="010-SJ9020SZW-1" title="" alt="010-SJ9020SZW-1" class="thumb ng-isolate-scope" src="http://image.sneakerhead.com/is/image/sneakerhead/010-SJ9020SZW-1">
+                                        <img class="thumb" ng-src="{{product.image1}}">
                                     </div>
                                     <div class="col-sm-8">
                                         <div class="row">
                                             <label class="col-md-3"><strong>品牌</strong></label>
-                                            <label class="col-md-9"><span title="Jewelry.com">Jewelry.com 925...</span></label>
+                                            <label class="col-md-9"><span title="{{product.brand}}">{{product.brand}}</span></label>
                                         </div>
                                         <div class="row">
                                             <label class="col-md-3"><strong>库存</strong></label>
-                                            <label class="col-md-9">123123</label>
+                                            <label class="col-md-9">{{product.quantity}}</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div>
-                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">12312sdfsdf</label>
+                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{product.pPriceSaleEd}}</label>
                                         </div>
                                     </div>
                                     <ul class="col-sm-6 list-inline text-right arrow-button">
@@ -163,46 +163,40 @@
                         <div class="col-md-4">
                             <input type="checkbox" class="v-top">&nbsp;<label class="label label-success">检索全量</label>
                         </div>
-                        <div class="col-md-2 col-md-offset-6">
-                            <div class="col-md-4">
-                                <button class="btn btn-default btn-pop">移入置顶区</button>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="btn-group" uib-dropdown>
+                        <div class="col-md-3 col-md-offset-5 text-right">
+                                <button class="btn btn-default btn-pop">移入置顶区</button>&emsp;
+                                <div class="btn-group" uib-dropdown style="margin-right: 30px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                        &nbsp;数据排序&nbsp;<span class="caret"></span>
+                                        &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
+                                              <span ng-if="!ctrl.sort.sName">排序</span>&nbsp;<span class="caret"></span>
                                     </button>
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >时间升序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',1)" >时间升序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >时间降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >时间降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >售价升序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.p✓.pPriceSaleEd',1)" >售价升序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >售价降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.p✓.pPriceSaleEd',-1)" >售价降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >库存降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >库存降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >7天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSum7.cartId✓',-1)" >7天销售降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >30天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSum30.cartId✓',-1)" >30天销售降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrlAdvance.columnOrder('originalTitleCn')" >总销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSumYear.cartId✓,-1')" >总销售降序&nbsp;</button>
                                         </li>
                                     </ul>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <span class="span-order">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
-                            </div>
                         </div>
                     </div>
                 </div>
