@@ -67,7 +67,7 @@ public class CmsProductTopController extends CmsController {
 
     //保存置顶区
     @RequestMapping(CmsUrlConstants.ProductTop.SaveTopProduct)
-    public AjaxResponse saveTopProduct(@RequestBody SaveTopProductParameter param, String channelId, String userName) {
+    public AjaxResponse saveTopProduct(@RequestBody SaveTopProductParameter param) {
         UserSessionBean userSessionBean = getUser();
         service.saveTopProduct(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
 
