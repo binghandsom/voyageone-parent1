@@ -105,8 +105,14 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
 //            List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             List<String> codes = new ArrayList<>();
             CmsBtProductTopModel topModel = cmsBtProductTopDao.selectByCatId(catId, channelId);
-            codes.addAll(topModel.getProductCodeList()); // 置顶列表
-            codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, topModel.getSortColumnName(), topModel.getSortType(), topModel.getProductCodeList())); // 普通code排序
+            if (topModel == null) {
+                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, null, null, null)); // 普通code排序
+            } else {
+                if (ListUtils.notNull(topModel.getProductCodeList())) {
+                    codes.addAll(topModel.getProductCodeList()); // 置顶列表
+                }
+                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, topModel.getSortColumnName(), topModel.getSortType(), topModel.getProductCodeList())); // 普通code排序
+            }
             // modified by morse.lu 2016/11/30 end
             if (ListUtils.isNull(codes)) {
                 $warn("类目[%s]不存在一个上新过的code!", catId);
