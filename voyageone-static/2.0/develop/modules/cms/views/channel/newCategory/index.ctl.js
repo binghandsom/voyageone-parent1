@@ -34,7 +34,8 @@ define([
                     return ele.sValue == res.sortColumnName;
                 });
 
-                console.log("sort",self.sort);
+                if(self.sort)
+                    self.sort.sortType = res.sortType;
             });
 
 
