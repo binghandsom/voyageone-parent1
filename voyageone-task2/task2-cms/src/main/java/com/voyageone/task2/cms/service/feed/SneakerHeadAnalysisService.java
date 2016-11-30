@@ -49,6 +49,8 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     private static Boolean isErr;
     private static Integer sumCnt;
 
+    private static final int pageSize = 200;
+
     @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
@@ -101,7 +103,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             //取得sneakerHead的Feed的总数
             int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate);
 
-            int pageCnt = anInt / 100 + (anInt % 100 > 0 ? 1 : 0);
+            int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
             $info("共"+pageCnt+"页");
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
@@ -138,7 +140,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         $info(String.format("thread-" + threadNo + " 正在取第%d页", pageNum));
         SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
         sneakerHeadRequest.setPageNumber(pageNum);
-        sneakerHeadRequest.setPageSize(100);
+        sneakerHeadRequest.setPageSize(pageSize);
         sneakerHeadRequest.setTime(lastDate);
         List<SneakerHeadCodeModel> feedList = null;
         int tried = 0;
