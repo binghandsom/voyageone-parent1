@@ -7,7 +7,9 @@
  */
 package com.voyageone.service.model.com;
 
-public class WmsMtStoreKey extends AdminBaseModel {
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
+public class WmsMtStoreKey extends NoIdBaseModel {
     protected Long storeId;
 
     protected String orderChannelId;

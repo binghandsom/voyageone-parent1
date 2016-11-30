@@ -7,10 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
 /**
  * 
  */
-public class CtCartModel extends AdminBaseModel {
+public class CtCartModel extends NoIdBaseModel {
     protected Integer cartId;
 
     protected String name;

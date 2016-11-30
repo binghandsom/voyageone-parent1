@@ -7,7 +7,9 @@
  */
 package com.voyageone.service.model.com;
 
-public class CtStoreConfigKey extends AdminBaseModel {
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
+public class CtStoreConfigKey extends NoIdBaseModel {
     protected Long storeId;
 
     protected String cfgName;

@@ -7,7 +7,9 @@
  */
 package com.voyageone.service.model.com;
 
-public class TmCodeKey extends AdminBaseModel {
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
+public class TmCodeKey extends NoIdBaseModel {
     protected String id;
 
     protected String code;
