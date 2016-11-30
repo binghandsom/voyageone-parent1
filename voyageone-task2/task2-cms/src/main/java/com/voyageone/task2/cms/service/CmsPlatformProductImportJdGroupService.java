@@ -1,6 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.ware.Ware;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -24,7 +23,10 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -52,8 +54,6 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
     private JdSaleService jdSaleService;
     @Autowired
     private JdWareService jdWareService;
-
-    private static final int PAGE_SIZE = 100;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -126,7 +126,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
     }
 
     public void executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
-        Map<CmsConstants.PlatformStatus, List<String>> wareIdMap = getJdWareIdList(channelId, cartId);
+        Map<CmsConstants.PlatformStatus, List<String>> wareIdMap = jdSaleService.getJdWareIdList(channelId, cartId);
 
         wareIdMap.forEach((status, wareIdList) -> {
             for (String wareId : wareIdList) {
@@ -140,62 +140,6 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
                 }
             }
         });
-    }
-
-    /**
-     * 获取店铺全部的wareId
-     */
-    private Map<CmsConstants.PlatformStatus, List<String>> getJdWareIdList(String channelId, String cartId) {
-        List<String> inStockWareIdList = new ArrayList<>();
-        long pageNo = 1;
-        while(true) {
-            List<Ware> jdList;
-            try {
-                // 查询下架
-                jdList = jdSaleService.getDeListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
-                pageNo++;
-            } catch (JdException apiExp) {
-                $error(String.format("调用京东API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
-                break;
-            } catch (Exception exp) {
-                $error(String.format("调用京东API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
-                break;
-            }
-            if (jdList != null && jdList.size() > 0) {
-                inStockWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
-            }
-            if (jdList == null || jdList.size() < PAGE_SIZE) {
-                break;
-            }
-        }
-
-        List<String> onSaleWareIdList = new ArrayList<>();
-        pageNo = 1;
-        while(true) {
-            List<Ware> jdList;
-            try {
-                // 查询上架
-                jdList = jdSaleService.getOnListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
-                pageNo++;
-            } catch (JdException apiExp) {
-                $error(String.format("调用京东API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
-                break;
-            } catch (Exception exp) {
-                $error(String.format("调用京东API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
-                break;
-            }
-            if (jdList != null && jdList.size() > 0) {
-                onSaleWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
-            }
-            if (jdList == null || jdList.size() < PAGE_SIZE) {
-                break;
-            }
-        }
-
-        Map<CmsConstants.PlatformStatus, List<String>> retMap = new HashMap<>();
-        retMap.put(CmsConstants.PlatformStatus.InStock, inStockWareIdList);
-        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleWareIdList);
-        return retMap;
     }
 
     /**

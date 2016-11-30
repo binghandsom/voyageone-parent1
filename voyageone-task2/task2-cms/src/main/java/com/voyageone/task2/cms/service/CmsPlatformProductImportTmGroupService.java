@@ -1,7 +1,5 @@
 package com.voyageone.task2.cms.service;
 
-import com.taobao.api.ApiException;
-import com.taobao.api.domain.Item;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -50,8 +48,6 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     private ProductStatusHistoryService productStatusHistoryService;
     @Autowired
     private CmsPlatformProductImportTmFieldsService cmsPlatformProductImportTmFieldsService;
-
-    private static final int PAGE_SIZE = 200;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -124,7 +120,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     }
 
     public void executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
-        Map<CmsConstants.PlatformStatus, List<String>> numIIdMap = getTmNumIIdList(channelId, cartId);
+        Map<CmsConstants.PlatformStatus, List<String>> numIIdMap = tbSaleService.getTmNumIIdList(channelId, cartId);
 
         numIIdMap.forEach((status, numIIdList) -> {
             for (String numIId : numIIdList) {
@@ -138,60 +134,6 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 }
             }
         });
-    }
-
-    /**
-     * 获取店铺全部的numIId
-     */
-    private Map<CmsConstants.PlatformStatus, List<String>> getTmNumIIdList(String channelId, String cartId) {
-        List<String> inStockNumIIdList = new ArrayList<>();
-        long pageNo = 1;
-        while(true) {
-            List<Item> rsList;
-            try {
-                // 查询下架
-                rsList = tbSaleService.getInventoryProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
-            } catch (ApiException apiExp) {
-                $error(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
-                break;
-            } catch (Exception exp) {
-                $error(String.format("调用淘宝API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
-                break;
-            }
-            if (rsList != null && rsList.size() > 0) {
-                inStockNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
-            }
-            if (rsList == null || rsList.size() < PAGE_SIZE) {
-                break;
-            }
-        }
-
-        List<String> onSaleNumIIdList = new ArrayList<>();
-        pageNo = 1;
-        while(true) {
-            List<Item> rsList;
-            try {
-                // 查询上架
-                rsList = tbSaleService.getOnsaleProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
-            } catch (ApiException apiExp) {
-                $error(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
-                break;
-            } catch (Exception exp) {
-                $error(String.format("调用淘宝API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
-                break;
-            }
-            if (rsList != null && rsList.size() > 0) {
-                onSaleNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
-            }
-            if (rsList == null || rsList.size() < PAGE_SIZE) {
-                break;
-            }
-        }
-
-        Map<CmsConstants.PlatformStatus, List<String>> retMap = new HashMap<>();
-        retMap.put(CmsConstants.PlatformStatus.InStock, inStockNumIIdList);
-        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleNumIIdList);
-        return retMap;
     }
 
     /**
