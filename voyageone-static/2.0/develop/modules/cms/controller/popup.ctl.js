@@ -574,6 +574,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
                 "controller": 'CombinedProductEditController as ctrl',
                 "size": 'lg'
+            },
+            "combinedProductLogs" : {
+                "templateUrl": "views/pop/product/combined-product-logs.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-logs.ctl",
+                "controller": 'CombinedProductLogsController as ctrl'
             }
         },
         "shelves" : {
@@ -1405,9 +1410,12 @@ define([
         /**组合商品*/
         $scope.popNewCombinedProduct = function (context) {
             return openModal(popActions.product.combinedProductNew, context)
-        }
+        };
         $scope.popEditCombinedProduct = function (context) {
             return openModal(popActions.product.combinedProductEdit, context)
+        };
+        $scope.popCombinedProductLogs = function (context) {
+            return openModal(popActions.product.combinedProductLogs, context)
         }
 
     }).factory('popups', function ($controller, $rootScope) {

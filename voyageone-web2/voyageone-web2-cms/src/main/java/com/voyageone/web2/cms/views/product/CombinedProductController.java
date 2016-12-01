@@ -7,6 +7,7 @@ import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
 import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel_Sku_Item;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -111,5 +112,13 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse onOffShelves (@RequestBody CmsBtCombinedProductModel modelBean) {
         cmsBtCombinedProductService.onOffShelves(modelBean, getUser().getUserName());
         return success("");
+    }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_OPERATE_LOGS)
+    public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean modelBean) {
+        List<CmsBtCombinedProductLogModel> logs = cmsBtCombinedProductService.getOperateLogs(modelBean);
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("logs", logs);
+        return success(resultMap);
     }
 }

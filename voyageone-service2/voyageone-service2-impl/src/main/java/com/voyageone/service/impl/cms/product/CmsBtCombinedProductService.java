@@ -1,13 +1,18 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
+import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
+import com.taobao.api.response.ItemUpdateDelistingResponse;
+import com.taobao.api.response.ItemUpdateListingResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
 import com.taobao.top.schema.field.MultiComplexField;
+import com.taobao.top.schema.field.SingleCheckField;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -16,14 +21,20 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
+import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
 import com.voyageone.service.bean.cms.product.CombinedSkuInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.enums.PlatformType;
+import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductModel_Sku_Item;
@@ -56,6 +67,14 @@ public class CmsBtCombinedProductService extends BaseService {
     private ProductService productService;
     @Autowired
     private CmsBtCombinedProductDao cmsBtCombinedProductDao;
+    @Autowired
+    private TbSaleService tbSaleService;
+    @Autowired
+    private JdSaleService jdSaleService;
+    @Autowired
+    private JumeiSaleService jmSaleService;
+    @Autowired
+    private CmsBtCombinedProductLogDao cmsBtCombinedProductLogDao;
 
     public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
@@ -79,6 +98,9 @@ public class CmsBtCombinedProductService extends BaseService {
                         InputField titleField = (InputField) fieldMap.get("title");
                         productBean.setProductName(titleField.getDefaultValue()); // 组合商品名称
                         MultiComplexField skuField = (MultiComplexField) fieldMap.get("sku");
+                        // TODO
+                        SingleCheckField itemStatus = (SingleCheckField) fieldMap.get("item_status");
+                        Integer platformStatus = "0".equalsIgnoreCase(itemStatus.getDefaultValue())? 0 : 1;
                         if (null == skuField || null == skuField.getDefaultComplexValues() || skuField.getDefaultComplexValues().size() == 0) {
                             InputField outerIdField = (InputField) fieldMap.get("outer_id");
                             InputField priceField = (InputField) fieldMap.get("price");
@@ -150,6 +172,20 @@ public class CmsBtCombinedProductService extends BaseService {
         product.setChannelId(channelId);
         WriteResult rs = cmsBtCombinedProductDao.insert(product);
         $debug("新增 组合套装商品 结果 " + rs.toString());
+
+        // 添加操作日志
+        CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setNumId(product.getNumID());
+        logModel.setChannelId(product.getChannelId());
+        logModel.setCartId(product.getCartId());
+        logModel.setOperater(user);
+        logModel.setOperateTime(product.getCreated());
+        logModel.setOperateType("新建");
+        logModel.setOperateContent("新建成功");
+        logModel.setStatus(product.getStatus());
+        logModel.setPlatformStatus(product.getPlatformStatus());
+        WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        $debug("新增 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
     public Map<String, Object> search (int page, int pageSize, CmsBtCombinedProductBean searchBean) {
@@ -230,6 +266,20 @@ public class CmsBtCombinedProductService extends BaseService {
         updateObj.setUpdate("{$set:{'active':0, 'modifier':#, 'modified':#}}");
         updateObj.setUpdateParameters(user, DateTimeUtil.getNow());
         WriteResult rs = cmsBtCombinedProductDao.updateFirst(updateObj.getQuery(), updateObj.getUpdate());*/
+
+        // 添加操作日志
+        CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setNumId(modelBean.getNumID());
+        logModel.setChannelId(modelBean.getChannelId());
+        logModel.setCartId(modelBean.getCartId());
+        logModel.setOperater(user);
+        logModel.setOperateTime(modelBean.getModified());
+        logModel.setOperateType("删除");
+        logModel.setOperateContent("删除成功");
+        logModel.setStatus(modelBean.getStatus());
+        logModel.setPlatformStatus(modelBean.getPlatformStatus());
+        WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        $debug("删除 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
     /**
@@ -262,6 +312,20 @@ public class CmsBtCombinedProductService extends BaseService {
         model.setModified(DateTimeUtil.getNow());
         WriteResult rs = cmsBtCombinedProductDao.update(model);
         $debug("编辑 组合套装商品 结果 " + rs.toString());
+
+        // 添加操作日志
+        CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setNumId(model.getNumID());
+        logModel.setChannelId(model.getChannelId());
+        logModel.setCartId(model.getCartId());
+        logModel.setOperater(user);
+        logModel.setOperateTime(model.getModified());
+        logModel.setOperateType("编辑");
+        logModel.setOperateContent("编辑成功");
+        logModel.setStatus(model.getStatus());
+        logModel.setPlatformStatus(model.getPlatformStatus());
+        WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+        $debug("编辑 组合套装商品操作日志 结果 " + rs_log.toString());
     }
 
     /**
@@ -362,11 +426,117 @@ public class CmsBtCombinedProductService extends BaseService {
         if (platformStatus == null || !CmsBtCombinedProductPlatformStatus.KV.containsKey(platformStatus)) {
             throw new BusinessException("请先选择操作(上架/下架)!");
         }
-        targetModel.setPlatformStatus(platformStatus);
-        targetModel.setModified(DateTimeUtil.getNow());
-        targetModel.setModifier(user);
-        WriteResult rs = cmsBtCombinedProductDao.update(targetModel);
-        $debug("上下架 组合套装商品 结果 " + rs.toString());
+        // 先操作平台状态，根据反馈结果再更新CMS平台状态
+        ShopBean shopBean = Shops.getShop(modelBean.getChannelId(), modelBean.getCartId());
+        if (shopBean != null) {
+            CmsBtCombinedProductModel productBean = new CmsBtCombinedProductModel();
+            boolean updRsFlg = false; // 各平台上下架执行结果，true表示执行成功，false表示失败或错误
+            String errMsg = "";
+            if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
+                if (modelBean.getPlatformStatus().intValue() == CmsBtCombinedProductPlatformStatus.OFF_SHELVES) {
+                    // 下架
+                    ItemUpdateDelistingResponse response = tbSaleService.doWareUpdateDelisting(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用淘宝商品下架API失败";
+                    } else {
+                        if (org.apache.commons.lang3.StringUtils.isEmpty(response.getErrorCode())) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getBody();
+                        }
+                    }
+                }else {
+                    // 上架
+                    ItemUpdateListingResponse response = tbSaleService.doWareUpdateListing(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用淘宝商品上架API失败";
+                    } else {
+                        if (org.apache.commons.lang3.StringUtils.isEmpty(response.getErrorCode())) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getBody();
+                        }
+                    }
+                }
+            }else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
+                if (modelBean.getPlatformStatus().intValue() == CmsBtCombinedProductPlatformStatus.OFF_SHELVES) {
+                    // 下架
+                    WareUpdateDelistingResponse response = jdSaleService.doWareUpdateDelisting(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用京东商品下架API失败";
+                    } else {
+                        if ("0".equals(response.getCode())) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getMsg();
+                        }
+                    }
+                } else {
+                    // 上架
+                    WareUpdateListingResponse response = jdSaleService.doWareUpdateListing(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用京东商品上架API失败";
+                    } else {
+                        if ("0".equals(response.getCode())) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getMsg();
+                        }
+                    }
+                }
+            } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JM.getPlatformId().toString())) {
+                if (modelBean.getPlatformStatus().intValue() == CmsBtCombinedProductPlatformStatus.OFF_SHELVES) {
+                    // 下架
+                    HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateDelisting(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用聚美商品下架API失败";
+                    } else {
+                        if (response.isSuccess()) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getErrorMsg();
+                        }
+                    }
+                } else {
+                    // 上架
+                    HtMallStatusUpdateBatchResponse response = jmSaleService.doWareUpdateListing(shopBean, modelBean.getNumID());
+                    if (response == null) {
+                        errMsg = "调用聚美商品上架API失败";
+                    } else {
+                        if (response.isSuccess()) {
+                            updRsFlg = true;
+                        } else {
+                            errMsg = response.getErrorMsg();
+                        }
+                    }
+                }
+            } else {
+                throw new BusinessException("平台参数错误！");
+            }
+            if (!updRsFlg) {
+                $error("组合套装商品上下架->API调用返回错误结果，错误信息：" + errMsg);
+            }
+            // 平台操作OK，更新CMS数据
+            targetModel.setPlatformStatus(platformStatus);
+            targetModel.setModified(DateTimeUtil.getNow());
+            targetModel.setModifier(user);
+            WriteResult rs = cmsBtCombinedProductDao.update(targetModel);
+            $debug("上下架 组合套装商品 结果 " + rs.toString());
+
+            // 添加操作日志
+            CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+            logModel.setNumId(targetModel.getNumID());
+            logModel.setChannelId(targetModel.getChannelId());
+            logModel.setCartId(targetModel.getCartId());
+            logModel.setOperater(user);
+            logModel.setOperateTime(targetModel.getModified());
+            logModel.setOperateType(targetModel.getPlatformStatus().intValue() == CmsBtCombinedProductPlatformStatus.ON_SHELVES.intValue() ? "上架" : "下架");
+            logModel.setOperateContent(targetModel.getPlatformStatus().intValue() == CmsBtCombinedProductPlatformStatus.ON_SHELVES.intValue() ? "上架成功" : "下架成功");
+            logModel.setStatus(targetModel.getStatus());
+            logModel.setPlatformStatus(targetModel.getPlatformStatus());
+            WriteResult rs_log = cmsBtCombinedProductLogDao.insert(logModel);
+            $debug("上下架 组合套装商品操作日志 结果 " + rs_log.toString());
+        }
     }
 
 
@@ -402,4 +572,19 @@ public class CmsBtCombinedProductService extends BaseService {
         return suitSkuInfos;
     }
 
+    /**
+     * 查询组合套装商品操作日志
+     * @param modelBean
+     * @return
+     */
+    public List<CmsBtCombinedProductLogModel> getOperateLogs (CmsBtCombinedProductBean modelBean) {
+        if (modelBean != null && StringUtils.isNotBlank(modelBean.getNumID()) && StringUtils.isNotBlank(modelBean.getChannelId()) && modelBean.getCartId() != null) {
+            JongoQuery query = new JongoQuery();
+            query.setQuery("{'numID':#, 'channelId':#, 'cartId':#}");
+            query.setParameters(modelBean.getNumID(), modelBean.getChannelId(), modelBean.getCartId());
+            query.setSort("{'operateTime':-1}");
+            return cmsBtCombinedProductLogDao.select(query);
+        }
+        return null;
+    }
 }

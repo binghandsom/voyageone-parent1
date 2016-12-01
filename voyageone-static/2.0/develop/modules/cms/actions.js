@@ -154,7 +154,8 @@ define(function () {
                     "delete" : "delete",
                     "getCombinedProductDetail" : "getCombinedProductDetail",
                     "edit" : "edit",
-                    "onOffShelves" : "onOffShelves"
+                    "onOffShelves" : "onOffShelves",
+                    "getOperateLogs" : "getOperateLogs"
                 }
             },
             "mapping": {
