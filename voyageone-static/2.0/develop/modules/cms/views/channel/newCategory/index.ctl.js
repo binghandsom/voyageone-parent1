@@ -37,7 +37,6 @@ define([
                     self.sort.sortType = res.data.sortType;
             });
 
-
         };
         // int cartId;//平台id
         // List<String> brandList;//品牌名称
