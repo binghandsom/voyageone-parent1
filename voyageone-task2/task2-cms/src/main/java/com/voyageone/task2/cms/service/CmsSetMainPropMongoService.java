@@ -2443,9 +2443,15 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                     // 设定是否主商品
                     CmsBtProductGroupModel group = productGroupService.selectMainProductGroupByCode(feed.getChannelId(), product.getCommon().getFields().getCode(), Integer.parseInt(typeChannelBean.getValue()));
                     if (group == null) {
+                        CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(feed.getChannelId(), product.getCommon().getFields().getCode(), Integer.parseInt(typeChannelBean.getValue()));
                         platform.setpIsMain(0);
+                        if(cmsBtProductGroupModel != null){
+                            platform.setMainProductCode(cmsBtProductGroupModel.getMainProductCode());
+                        }
+
                     } else {
                         platform.setpIsMain(1);
+                        platform.setMainProductCode(product.getCommon().getFields().getCode());
                     }
 
                     // 平台类目状态(更新时，新增PXX平台属性时)

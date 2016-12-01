@@ -11,9 +11,10 @@ import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
-import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
+import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadSkuModel;
 import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
+import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -26,6 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -41,6 +45,11 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     SneakerHeadFeedDao sneakerHeadFeedDao;
     @Autowired
     SneakerHeadFeedService sneakerHeadFeedService;
+
+    private static Boolean isErr;
+    private static Integer sumCnt;
+
+    private static final int pageSize = 200;
 
     @Override
     protected void updateFull(List<String> itemIds) {
@@ -58,6 +67,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     protected void zzWorkClear() {
         sneakerHeadFeedDao.delete();
     }
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -65,116 +75,141 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
         zzWorkClear();
         int cnt = 0;
-        if("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))){
+        if ("1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
             cnt = fullCopyTemp();
-        }else {
+        } else {
             $info("产品信息插入开始");
             cnt = superFeedImport();
         }
         $info("产品信息插入完成 共" + cnt + "条数据");
         if (cnt > 0) {
-            if(!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
+            if (!"1".equalsIgnoreCase(TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.feed_full_copy_temp))) {
                 transformer.new Context(channel, this).transform();
             }
             postNewProduct();
         }
     }
+
     @Override
     protected int superFeedImport() {
         $info("SneakerHead产品api调用开始");
+        isErr = false;
         List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
-        int cnt = 0;
+        sumCnt = 0;
         try {
             $info("SneakerHead取得full表里最新的时间");
-            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate();
-            if (getFeedDate == null) {
-                getFeedDate = new Date(0);
-            }
+            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate() ;
+            final Date lastDate = getFeedDate == null?new  Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.getFeedCount(getFeedDate);
+            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate);
+
+            int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
+            $info("共"+pageCnt+"页");
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
-                for (int i = 1; i <= (anInt / 100 + 1); i++) {
-                    SneakerHeadFeedInfoRequest sneakerHeadFeedInfoRequest = new SneakerHeadFeedInfoRequest();
-                    sneakerHeadFeedInfoRequest.setPageNumber(i);
-                    sneakerHeadFeedInfoRequest.setPageSize(100);
-                    sneakerHeadFeedInfoRequest.setTime(getFeedDate);
-                    List<SneakerHeadCodeModel> feedList = null;
-                    int tried = 0;
-                    do {
-                        try {
-                            feedList = sneakerHeadFeedService.getFeedInfo(sneakerHeadFeedInfoRequest);
-                        } catch (Exception e) {
-                            tried++;
-                            e.printStackTrace();
-                        }
-                    } while (tried < 3 && null == feedList);
-
-                    if (null == feedList) throw new BusinessException("调用api时间超时");
-
-                    if (feedList.size() > 0) {
-                        for (SneakerHeadCodeModel model : feedList) {
-                            List<SneakerHeadSkuModel> skuList = model.getSkus();
-                            for (SneakerHeadSkuModel skuModel : skuList) {
-                                SuperFeedSneakerHeadBean superFeedSneakerHeadBean = new SuperFeedSneakerHeadBean();
-                                superFeedSneakerHeadBean.setSku(skuModel.getSku());
-                                superFeedSneakerHeadBean.setCode(model.getCode());
-                                superFeedSneakerHeadBean.setRelationshiptype(model.getRelationshipType());
-                                superFeedSneakerHeadBean.setVariationtheme(model.getVariationTheme());
-                                superFeedSneakerHeadBean.setTitle(model.getTitle());
-                                superFeedSneakerHeadBean.setBarcode(skuModel.getBarcode());
-                                superFeedSneakerHeadBean.setPrice(model.getPrice());
-                                superFeedSneakerHeadBean.setMsrp(model.getMsrp());
-                                superFeedSneakerHeadBean.setQuantity(skuModel.getQuantity());
-                                superFeedSneakerHeadBean.setWeight(model.getWeight());
-                                superFeedSneakerHeadBean.setImages(model.getImages());
-                                superFeedSneakerHeadBean.setDescription(model.getDescription());
-                                superFeedSneakerHeadBean.setShortdescription(model.getShortDescription());
-                                superFeedSneakerHeadBean.setProductorigin(model.getProductOrigin());
-                                superFeedSneakerHeadBean.setCategory(model.getCategory());
-                                superFeedSneakerHeadBean.setBrand(model.getBrand());
-                                superFeedSneakerHeadBean.setMaterials(model.getMaterials());
-                                superFeedSneakerHeadBean.setVendorproducturl(model.getVendorProductUrl());
-                                superFeedSneakerHeadBean.setSize(skuModel.getSize());
-                                superFeedSneakerHeadBean.setModel(model.getModel());
-                                superFeedSneakerHeadBean.setProducttype(model.getProductType());
-                                superFeedSneakerHeadBean.setSizetype(model.getSizeType());
-                                superFeedSneakerHeadBean.setColor(model.getColor());
-                                superFeedSneakerHeadBean.setBoximages(model.getBoxImages());
-                                superFeedSneakerHeadBean.setColormap(model.getColorMap());
-                                superFeedSneakerHeadBean.setAbstractdescription(model.getAbstractDescription());
-                                superFeedSneakerHeadBean.setAccessory(model.getAccessory());
-                                superFeedSneakerHeadBean.setUnisex(model.getUnisex());
-                                superFeedSneakerHeadBean.setSizeoffset(model.getSizeOffset());
-                                superFeedSneakerHeadBean.setBlogurl(model.getBlogUrl());
-                                superFeedSneakerHeadBean.setIsrewardeligible(model.getIsRewardEligible());
-                                superFeedSneakerHeadBean.setIsdiscounteligible(model.getIsDiscountEligible());
-                                superFeedSneakerHeadBean.setOrderlimitcount(model.getOrderLimitCount());
-                                superFeedSneakerHeadBean.setApproveddescriptions(model.getApprovedDescriptions());
-                                superFeedSneakerHeadBean.setUrlkey(model.getUrlKey());
-                                superFeedSneakerHeadBean.setCreated(skuModel.getCreated());
-                                superFeed.add(superFeedSneakerHeadBean);
-                                cnt++;
-                                if (superFeed.size() > 1000) {
-                                    transactionRunner.runWithTran(() -> insertSuperFeed(superFeed));
-                                    superFeed.clear();
-                                }
-                            }
-                        }
-
-                    }
+                ExecutorService es = Executors.newFixedThreadPool(5);
+                for (int i = 1; i <= pageCnt; i++) {
+                    int finalI = i;
+                    es.execute(() ->
+                            getSku(finalI, lastDate)
+                    );
                 }
-            }
-            if (superFeed.size() > 0) {
-                transactionRunner.runWithTran(() -> insertSuperFeed(superFeed));
-                superFeed.clear();
+                es.shutdown();
+                es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+                if(isErr){
+                    sumCnt = 0;
+                    throw new BusinessException("调用api时间超时");
+                }
             }
             $info("SneakerHead产品文件读入完成");
         } catch (Exception e) {
             $info("SneakerHead产品文件读入失败" + e.getMessage());
         }
-        $info("SneakerHead产品的sku个数:" + cnt);
-        return cnt;
+        $info("SneakerHead产品的sku个数:" + sumCnt);
+        return sumCnt;
+    }
+
+
+    public void getSku(int pageNum, Date lastDate) {
+        int cnt = 0;
+        long threadNo =  Thread.currentThread().getId();
+        synchronized(isErr){
+            if(isErr) return;
+        }
+        List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
+        $info(String.format("thread-" + threadNo + " 正在取第%d页", pageNum));
+        SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
+        sneakerHeadRequest.setPageNumber(pageNum);
+        sneakerHeadRequest.setPageSize(pageSize);
+        sneakerHeadRequest.setTime(lastDate);
+        List<SneakerHeadCodeModel> feedList = null;
+        int tried = 0;
+        do {
+            try {
+                feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest);
+            } catch (Exception e) {
+                tried++;
+                e.printStackTrace();
+            }
+        } while (tried < 3 && null == feedList);
+
+        if (null == feedList) {
+            synchronized(isErr){
+                isErr = true;
+                throw new BusinessException("pageNum:"+pageNum+" 调用api时间超时");
+            }
+        }
+
+        if (feedList.size() > 0) {
+            for (SneakerHeadCodeModel model : feedList) {
+                List<SneakerHeadSkuModel> skuList = model.getSkus();
+                for (SneakerHeadSkuModel skuModel : skuList) {
+                    SuperFeedSneakerHeadBean superFeedSneakerHeadBean = new SuperFeedSneakerHeadBean();
+                    superFeedSneakerHeadBean.setSku(skuModel.getSku());
+                    superFeedSneakerHeadBean.setCode(model.getCode());
+                    superFeedSneakerHeadBean.setRelationshiptype(model.getRelationshipType());
+                    superFeedSneakerHeadBean.setVariationtheme(model.getVariationTheme());
+                    superFeedSneakerHeadBean.setTitle(model.getTitle());
+                    superFeedSneakerHeadBean.setBarcode(skuModel.getBarcode());
+                    superFeedSneakerHeadBean.setPrice(model.getPrice());
+                    superFeedSneakerHeadBean.setMsrp(model.getMsrp());
+                    superFeedSneakerHeadBean.setQuantity(skuModel.getQuantity());
+                    superFeedSneakerHeadBean.setWeight(model.getWeight());
+                    superFeedSneakerHeadBean.setImages(model.getImages());
+                    superFeedSneakerHeadBean.setDescription(model.getDescription());
+                    superFeedSneakerHeadBean.setShortdescription(model.getShortDescription());
+                    superFeedSneakerHeadBean.setProductorigin(model.getProductOrigin());
+                    superFeedSneakerHeadBean.setCategory(model.getCategory());
+                    superFeedSneakerHeadBean.setBrand(model.getBrand());
+                    superFeedSneakerHeadBean.setMaterials(model.getMaterials());
+                    superFeedSneakerHeadBean.setVendorproducturl(model.getVendorProductUrl());
+                    superFeedSneakerHeadBean.setSize(skuModel.getSize());
+                    superFeedSneakerHeadBean.setModel(model.getModel());
+                    superFeedSneakerHeadBean.setProducttype(model.getProductType());
+                    superFeedSneakerHeadBean.setSizetype(model.getSizeType());
+                    superFeedSneakerHeadBean.setColor(model.getColor());
+                    superFeedSneakerHeadBean.setBoximages(model.getBoxImages());
+                    superFeedSneakerHeadBean.setColormap(model.getColorMap());
+                    superFeedSneakerHeadBean.setAbstractdescription(model.getAbstractDescription());
+                    superFeedSneakerHeadBean.setAccessory(model.getAccessory());
+                    superFeedSneakerHeadBean.setUnisex(model.getUnisex());
+                    superFeedSneakerHeadBean.setSizeoffset(model.getSizeOffset());
+                    superFeedSneakerHeadBean.setBlogurl(model.getBlogUrl());
+                    superFeedSneakerHeadBean.setIsrewardeligible(model.getIsRewardEligible());
+                    superFeedSneakerHeadBean.setIsdiscounteligible(model.getIsDiscountEligible());
+                    superFeedSneakerHeadBean.setOrderlimitcount(model.getOrderLimitCount());
+                    superFeedSneakerHeadBean.setApproveddescriptions(model.getApprovedDescriptions());
+                    superFeedSneakerHeadBean.setUrlkey(model.getUrlKey());
+                    superFeedSneakerHeadBean.setCreated(skuModel.getCreated());
+                    superFeed.add(superFeedSneakerHeadBean);
+                }
+            }
+            transactionRunner.runWithTran(() -> insertSuperFeed(superFeed));
+            synchronized(sumCnt) {
+                sumCnt += superFeed.size();
+            }
+            superFeed.clear();
+        }
     }
 
     /**
@@ -232,9 +267,9 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
                 List<String> values = new ArrayList<>();
 
-                if(key.equals("boximages")){
+                if (key.equals("boximages")) {
                     attribute.put(key, Arrays.asList(((String) temp.get(key)).split(",")));
-                }else {
+                } else {
                     values.add((String) temp.get(key));
                     attribute.put(key, values);
                 }

@@ -24,6 +24,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
 import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -36,6 +37,8 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.wms.InventoryCenterLogicService;
+import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel_Platform;
@@ -101,6 +104,8 @@ public class CmsProductDetailService extends BaseViewService {
     private PriceService priceService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private InventoryCenterLogicService inventoryCenterLogicService;
 
     /**
      * 获取类目以及类目属性信息.
@@ -643,11 +648,17 @@ public class CmsProductDetailService extends BaseViewService {
             feedInfoModel = feedInfoService.getProductByCode(channelId, StringUtils.isEmpty(cmsBtProduct.getCommon().getFields().getOriginalCode()) ? cmsBtProduct.getCommon().getFields().getCode() : cmsBtProduct.getCommon().getFields().getOriginalCode());
         }
 
+        Map<String,Integer> skuinvs = null;
+        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
+        if(stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())){
+            skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase).collect(Collectors.toMap(WmsCodeStoreInvBean.StocksBean.BaseBean::getSku,WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
+        }
+
         List<Map<String, Object>> skuList = new ArrayList<>();
         for (CmsBtProductModel_Sku skuModel : cmsBtProduct.getCommon().getSkus()) {
             Map<String, Object> skuInfo = new HashMap<>();
             skuInfo.put("skuCode", skuModel.getSkuCode());
-            skuInfo.put("qty", skuModel.getQty());
+            skuInfo.put("qty", skuinvs == null || skuinvs.get(skuModel.getSkuCode()) == null?0:skuinvs.get(skuModel.getSkuCode()));
             skuInfo.put("size", skuModel.getSize());
             skuInfo.put("barcode", skuModel.getBarcode());
             // 取得FeedInfo中的原始图片
@@ -671,6 +682,8 @@ public class CmsProductDetailService extends BaseViewService {
             skuInfo.put("imageUrl", imageUrl);
             skuList.add(skuInfo);
         }
+
+
         result.put("skuList", skuList);
         return result;
     }

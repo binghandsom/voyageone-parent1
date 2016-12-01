@@ -20,6 +20,7 @@ import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.model.cms.CmsBtJmSkuModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.junit.Test;
@@ -579,18 +580,22 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
 
     @Test
     public void testAddSkuNoToJumeiMall() {
-        // 手动追加skuNo到聚美mall中(如果聚美商城里面没有platformMallId的话，应该直接先删除product和group表
-        // 中的platformMallId，再approve应该就可以了，不用这个追加sku到商城)
-        // -- 删除聚美mallId(product和group表都要改)
-        // db.cms_bt_product_c009.find({'common.fields.code':'009-10054-BKRTSA'})
-        // db.cms_bt_product_group_c009.find({'productCodes':'009-10054-BKRTSA',cartId:27})
-        //
-        // db.cms_bt_product_c009.update({'common.fields.code':'009-10054-BKRTSA'},{$set:{'platforms.P27.pPlatformMallId':''}})
-        // db.cms_bt_product_group_c009.update({'productCodes':'009-10054-BKRTSA',cartId:27},{$set:{'platformMallId':''}})
-
-        String channelId = "009";
+        // 手动追加skuNo到聚美mall中
+        // ==================================================
+        //  聚美MALL更新时第1批5个sku的聚美商城商品价格更新失败! 批量修改商城商品价格[MALL](/v1/htMall/updateMallPriceBatch)时,
+        //      --  发生错误[302:未全部成功,包括全部失败(successCount对应成功的条数, msg对应失败原因, errorList对应失败的jumei_sku_no)]
+        //  {"error_code":"302","reason":"error","response":{"successCount":3,"errorList":[
+        //  {"jumei_sku_no":701311778,"error_message":"skuNo:701311778不在售卖状态, 请核实!","error_code":"100010"},
+        //  {"jumei_sku_no":701311779,"error_message":"skuNo:701311779不在售卖状态, 请核实!","error_code":"100010"}]}}
+        // -----------------------------
+        // 如果报上面的错误时:
+        //  1.先检查jumeiMallId是否存在，不存在就删除mallId,重新approve
+        //  2.如果mallId存在，再检查jumeiSpuNo是否存在，不存在就删除该sku的jmSpuNo,重新approve(不存在会报"该jumei_spu_no不存在"错误)
+        //  3.再用我们这个UploadJmTest.testAddSkuNoToJumeiMall()追加一个sku到聚美mall
+        // ==================================================
+        String channelId = "028";
         int CART_ID = 27;
-        String productCode = "009-10054-BKRTSA";
+        String productCode = "028-ps6080342";
         StringBuffer sbFault = new StringBuffer();
 
         ShopBean shopBean = Shops.getShop(channelId, CART_ID);
@@ -614,13 +619,14 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
         }
 
         List<String> addSkuList = new ArrayList() {{
-            add("009-SL-10054-BKRTSA");
+            add("028-3092447");
         }};
 
         //取库存
         Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(StringUtils.isNullOrBlank2(product.getOrgChannelId())? channelId :  product.getOrgChannelId(),
                 product.getPlatformNotNull(CART_ID).getSkus().stream().map(w->w.getStringAttribute("skuCode")).collect(Collectors.toList()));
 
+        String inserHeader = "INSERT INTO voyageone_cms2.cms_bt_jm_sku (channel_id, product_code, sku_code, jm_spu_no, jm_sku_no, format, upc, cms_size, jm_size, msrp_usd, msrp_rmb, retail_price, sale_price, creater, created, modified, modifier) VALUES(";
         // 追加sku
         if (ListUtils.notNull(addSkuList)) {
             List<BaseMongoMap<String, Object>> skuList = product.getPlatform(CART_ID).getSkus();
@@ -645,20 +651,29 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
                     skuInfo.setMarket_price(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
 
                     sbFault.setLength(0);
+                    String jumeiSkuNo = null;
                     try {
-                        String jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sbFault);
+                        jumeiSkuNo = jumeiHtMallService.addMallSku(shopBean, mallSkuAddInfo, sbFault);
                         if (StringUtils.isEmpty(jumeiSkuNo) || sbFault.length() > 0) {
                             // 价格更新失败throw出去
+                            // 如果jmSkuNo在平台上不存在会报"商城商品追加sku[MALL](v1/htSku/addMallSku)时,发生错误[100008:该jumei_spu_no不存在]
+                            // {"error_code":"100008","reason":"error","response":""}"
                             throw new BusinessException("聚美商城追加sku失败!" + sbFault.toString());
                         }
                     } catch (Exception e) {
                     }
 
                     // 回写(自己手动回写到mysql表吧)
-//                    String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
-//                    CmsBtJmSkuModel cmsBtJmSkuModel = fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
-//                    cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
-//                    cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
+                    String sizeStr = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name());
+                    CmsBtJmSkuModel cmsBtJmSkuModel = cmsBuildPlatformProductUploadJMService.fillNewCmsBtJmSkuModel(product.getChannelId(), product.getCommon().getFields().getCode(), sku, sizeStr);
+                    cmsBtJmSkuModel.setJmSpuNo(sku.getStringAttribute("jmSpuNo"));
+                    cmsBtJmSkuModel.setJmSkuNo(jumeiSkuNo);
+
+                    System.out.println(String.format("%s'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','system', now(), now(), 'system');",
+                            inserHeader, cmsBtJmSkuModel.getChannelId(), cmsBtJmSkuModel.getProductCode(), cmsBtJmSkuModel.getSkuCode(),
+                            cmsBtJmSkuModel.getJmSpuNo(), cmsBtJmSkuModel.getJmSkuNo(), cmsBtJmSkuModel.getFormat(), cmsBtJmSkuModel.getUpc(),
+                            cmsBtJmSkuModel.getCmsSize(), cmsBtJmSkuModel.getJmSize(), cmsBtJmSkuModel.getMsrpUsd(), cmsBtJmSkuModel.getMsrpRmb(),
+                            cmsBtJmSkuModel.getRetailPrice(), cmsBtJmSkuModel.getSalePrice()));
 ////                        cmsBtJmSkuDao.insert(cmsBtJmSkuModel);
 //                    insertOrUpdateCmsBtJmSku(cmsBtJmSkuModel, product.getChannelId(), product.getCommon().getFields().getCode());
 //

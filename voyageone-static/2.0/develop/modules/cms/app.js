@@ -5,10 +5,12 @@ define([
     'modules/cms/routes',
     'modules/cms/actions',
     'modules/cms/translate/en',
-    'modules/cms/translate/zh'
+    'modules/cms/translate/zh',
+    'modules/cms/controller/popup.ctl'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
+        'com.voyageone.popups',
         'ngRoute',
         'ngAnimate',
         'ngCookies',
@@ -342,6 +344,7 @@ define([
         function selectMenu(menu) {
             menuService.setMenu(menu.menuTitle).then(function (application) {
                 $window.location = cCommonRoutes.application.modules + application + cCommonRoutes.application.url;
+                vm.userInfo.application = menu.menuTitle;
             });
         }
 

@@ -1,0 +1,109 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;查看权限</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 用户名 -->
+                            <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData[0].userName" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 账号 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
+                            <div class="col-sm-8">
+                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.sourceData[0].userAccount" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 组织 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" ng-model="ctrl.sourceData[0].orgId" ng-disabled="true" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                                    <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-horizontal">
+                        <div class="row form-group"><!-- 角色名 -->
+                            <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
+                            <div class="col-sm-8">
+                                <textarea rows="2" class="form-control" ng-model="ctrl.sourceData[0].roleName" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="row form-group">
+                    <label class="col-sm-1 control-label">权限：</label>
+                    <label class="col-sm-1 control-label">系统</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" ng-model="ctrl.sourceData.application" ng-options="app.application as app.application for app in ctrl.appList" ng-change="ctrl.search(ctrl.sourceData.application)">
+                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group" ng-if="ctrl.sourceData.application"><!-- 说明 -->
+                    <div class="wrapper" ng-controller="treeTable" style="max-height:500px;overflow: auto;">
+                        <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th class="text-left mfb-xxt" translate="TXT_MENU_NAME" style="padding-left: 4px;"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
+                                    <th class="text-left mfb-xxt" translate="TXT_URL"></th>
+                                    <th class="text-center mfb-xt3" translate="TXT_TYPE"></th>
+                                </tr>
+                            </thead>
+                            <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.authList"></tbody>
+                        </table>
+                        <script id="table_tree.html" type="text/ng-template">
+                            <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:true})">
+                                <td class="mfb-xxt tooltips" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '5px':'0'}">
+                                    <div class="indent" style="padding-left: {{5*level}}px"></div>
+                                    <label class="v-middle" ng-if="item.resName.length <= 22">{{item.resName}}</label>
+                                    <label class="v-middle" ng-if="item.resName.length > 22" uib-tooltip="{{item.resName}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resName | stringCutter:true:22:' ...'}}</label>
+                                </td>
+                                <td class="text-left mfb-xxt tooltips">
+                                    <label class="v-middle" ng-if="item.resKey.length <= 38">{{item.resKey}}</label>
+                                    <label class="v-middle" ng-if="item.resKey.length > 38" uib-tooltip="{{item.resKey}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resKey | stringCutter:true:38:' ...'}}</label>
+                                </td>
+                                <td class="text-left mfb-xxt tooltips">
+                                    <label class="v-middle" ng-if="item.resUrl.length <= 35">{{item.resUrl}}</label>
+                                    <label class="v-middle" ng-if="item.resUrl.length > 35" uib-tooltip="{{item.resUrl}}"
+                                           tooltip-trigger="mouseenter" tooltip-placement="top">{{item.resUrl | stringCutter:true:35:' ...'}}</label>
+                                </td>
+                                <td class="mfb-xt3 text-center" ng-class="{'text-center':level>=1}">{{ctrl.getResType(item.resType)}}</td>
+                            </tr>
+                            <tr class="children" ng-if="item.children&&item.children.length>0">
+                                <td colspan="4">
+                                    <table style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                                        <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

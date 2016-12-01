@@ -1,7 +1,6 @@
 package com.voyageone.service.dao.com;
 
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;

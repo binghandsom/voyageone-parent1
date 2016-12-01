@@ -147,7 +147,7 @@
                                             </label>
                                         </div>
                                         <div ng-if="category.children.length > 0" ng-include="'categoryContainer'"
-                                             ng-init="categoryContainer = category.children;">
+                                             ng-init="categoryContainer = category.children;parentNode = category">
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +177,8 @@
                        ui-indeterminate="category.checked == 1"
                        ng-checked="category.checked == 2"
                        ng-click="ctrl.canSelectChild(category)"
-                       ng-model="ctrl.checkNodes[category.id]">
+                       ng-model="ctrl.checkNodes[category.id]"
+                       ng-disabled="parentNode.checked == 0 || parentNode.checked == 1">
                 &nbsp;{{category.name}}
             </label>
         </div>

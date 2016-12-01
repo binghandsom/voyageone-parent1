@@ -1,0 +1,57 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_CHANNEL_TYPE_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="100" class="form-control" ng-model="ctrl.sourceData.name" name="name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.name"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_COMMENTS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.comment" name="comment" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.comment"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                        <div class="col-sm-8 m-t-xs">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.active"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>

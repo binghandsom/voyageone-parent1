@@ -786,7 +786,7 @@
                             <table ng-controller="popupCtrl"  class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;" width="{{vm.tblWidth2}}" ng-style="{'border': vm.productList.length ? '1px solid #ddd': 'none'}">
                                 <thead>
                                     <tr style="background:#e67e22;color: #fff">
-                                        <th class="text-left" style="line-height:40px;padding-left:10px;" colspan="2">
+                                        <th class="text-left" style="line-height:40px;padding-left:10px;width: 120px;" colspan="2">
                                             <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                                 <input type="checkbox" ng-click="selectAll(vm.productSelList)"
                                                        ng-checked="isAllSelected(vm.productSelList)"
@@ -794,7 +794,7 @@
                                                 <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                             </label>
                                         </th>
-                                        <th class="text-left">
+                                        <th class="text-left" style="width: 150px;">
                                             <span translate="TXT_CODE"></span>&emsp;<button class="opacityBtn"
                                                                                              ng-if="vm.productList.length"
                                                                                              ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
@@ -804,48 +804,48 @@
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('originalTitleCn')"><i class="fa fa-{{ctrlAdvance.getArrowName('originalTitleCn')}}"></i></button>
                                         </th>
-                                        <th class="text-left">
+                                        <th class="text-left" style="width: 140px;">
                                             <span translate="TXT_BRAND"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('brand')"><i class="fa fa-{{ctrlAdvance.getArrowName('brand')}}"></i></button>
                                         </th>
-                                        <th class="text-center">
+                                        <th class="text-center" style="width: 80px;">
                                             <span translate="TXT_INVENTORY"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('quantity')"><i class="fa fa-{{ctrlAdvance.getArrowName('quantity')}}"></i></button>
                                         </th>
-                                        <th class="text-center">
+                                        <th class="text-center" style="width: 120px;">
                                             中国建议售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceMsrpEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center">
+                                        <th class="text-center" style="width: 120px;">
                                             中国指导售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceRetailSt',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceRetailSt',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center">
+                                        <th class="text-center" style="width: 120px;">
                                             中国最终售价&emsp;<button class="opacityBtn"
                                                                 ng-if="vm.productList.length && vm._cartType_"
                                                                 ng-click="ctrlAdvance.columnOrder('platforms.P✓.pPriceSaleEd',vm._cartType_.value)"><i class="fa fa-{{ctrlAdvance.getArrowName('platforms.P✓.pPriceSaleEd',vm._cartType_.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center">
+                                        <th class="text-center" style="width: 80px;">
                                             <span translate="TXT_SKU_COUNT"></span>&emsp;<button class="opacityBtn"
                                                                                                  ng-if="vm.productList.length"
                                                                                                  ng-click="ctrlAdvance.columnOrder('skuCnt')"><i class="fa fa-{{ctrlAdvance.getArrowName('skuCnt')}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps">
+                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width: 150px;">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
                                                                             ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps">{{prop2.name}}</th>
-                                        <th class="text-center" ng-repeat="prop3 in vm.selSalesType">
+                                        <th class="text-left" ng-repeat="prop2 in vm.sumCustomProps" style="width: 100px;">{{prop2.name}}</th>
+                                        <th class="text-center" ng-repeat="prop3 in vm.selSalesType" style="width: 150px;">
                                             {{prop3.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
                                                                         ng-click="ctrlAdvance.columnOrder(prop3.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop3.value)}}"></i></button>
                                         </th>
-                                        <th class="text-center" ng-repeat="prop4 in vm.selBiDataList">
+                                        <th class="text-center" ng-repeat="prop4 in vm.selBiDataList" style="width: 180px;">
                                             {{prop4.name}}&emsp;<button class="opacityBtn"
                                                                         ng-if="vm.productList.length"
                                                                         ng-click="ctrlAdvance.columnOrder(prop4.value)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop4.value)}}"></i></button>
@@ -870,7 +870,7 @@
                                                 <img image="{{productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length + 7}}" class="control-label text-left form-inline" style="height:27px; ">
+                                        <td colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length + 8}}" class="control-label text-left form-inline" style="height:27px; ">
                                             <!--Todo 活动详情pop的数据取得-->
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code, productInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
@@ -898,10 +898,13 @@
                                                         popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                             </span>
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
+                                            <span class="text-right">
+                                                <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
+                                            </span>
                                         </td>
-                                        <td class="text-right" colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length  + 1}}">
-                                            <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
-                                        </td>
+<!--                                        <td class="text-right" colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length  + 1}}">
+
+                                        </td>-->
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
                                         <td class="text-left">

@@ -95,7 +95,7 @@ public abstract class FeedStatusCheckBaseService extends BaseCronTaskService {
         cmsBtFeedInfoModel.getSkus().forEach(sku -> {
             CmsFeedLiveSkuModel cmsFeedLiveSku = selectOne(sku.getSku());
             if (sku.getIsSale() == 0 && cmsFeedLiveSku != null) {
-                $info(getChannel().getId()+ " " + sku.getClientSku() + " notSale -> sale");
+                $info(getChannel().getId()+ " " + sku.getSku() + " notSale -> sale");
                 feedSaleService.sale(getChannel().getId(),sku.getClientSku(),cmsBtFeedInfoModel.getQty());
                 sale.add(sku.getClientSku());
             } else if(sku.getIsSale() == 1 && cmsFeedLiveSku == null) {

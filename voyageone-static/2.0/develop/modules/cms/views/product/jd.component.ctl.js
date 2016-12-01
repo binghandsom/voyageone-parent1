@@ -403,7 +403,8 @@ define([
                     /**判断价格*/
                     var promise = productDetailService.updateProductPlatformChk({
                         prodId: scope.productInfo.productId,
-                        platform: scope.vm.platform
+                        platform: scope.vm.platform,
+                        isUpdate: mark !== 'intel' ? true : false
                     });
 
                     promise.then(function (resp) {

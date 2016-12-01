@@ -1,0 +1,31 @@
+<!-- navbar header -->
+<div class="navbar-header {{app.settings.navbarHeaderColor}}">
+    <a href="#/" class="navbar-brand text-lt"><span translate="TXT_VOYAGE_ONE"></span></a>
+</div>
+<!-- / navbar header -->
+<!-- navbar collapse -->
+<div class="collapse pos-rlt navbar-collapse box-shadow bg-black" ng-controller="headerCtrl as header" ng-init="initialize()">
+    <ul class="nav navbar-nav navbar-right hidden-sm">
+        <!-- user uib-dropdown -->
+        <li class="dropdown" uib-dropdown>
+            <a href class="dropdown-toggle clear" uib-dropdown-toggle>
+                <span class="" ng-bind="header.userInfo.name"></span> <b class="caret"></b>
+            </a>
+            <!-- uib-dropdown -->
+            <ul class="dropdown-menu arrow_box">
+                <li>
+                    <a href="" translate="TXT_CHANGEPASS" ng-controller="popupCtrl" ng-click="openModifyPass(header.userInfo.name)"></a>
+                </li>
+                <!--<li>-->
+                    <!--<a href="" translate="TXT_RESET_PASS" ng-click="resetPassword()"></a>-->
+                <!--</li>-->
+                <li>
+                    <a href="" translate="TXT_LOGOUT" ng-click="logout()"></a>
+                </li>
+            </ul>
+            <!-- / uib-dropdown -->
+        </li>
+    </ul>
+
+</div>
+<!-- / navbar collapse -->

@@ -19,11 +19,13 @@
 			<artifactId>voyageone-web2-cms</artifactId>
 			<version>${voyageone.web2.cms.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-web2-vms</artifactId>
 			<version>${voyageone.web2.vms.version}</version>
 		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-release</finalName>

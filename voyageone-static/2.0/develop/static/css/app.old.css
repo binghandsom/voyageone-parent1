@@ -6262,21 +6262,175 @@ a.text-black:hover {
 .category_mapping_bg_one:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
 .category_mapping_bg_list{margin-bottom:1px;padding:6px;color:#666}
 .category_mapping_bg_list:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
+.column_overflow {
+    height: 200px;
+    overflow-y: auto;
+    display: block
+}
 
-.platform_mapping_bg{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#282828}
-.platform_mapping_bg:hover{margin-bottom:1px;padding:6px;background:#f2f2f2;color:#e67e22}
-.platform_mapping_bg_one{margin-bottom:1px;padding:6px;background:#f2f2f2;color:#282828}
-.platform_mapping_bg_one:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
-.platform_mapping_bg_list{margin-bottom:1px;padding:6px;color:#666}
-.platform_mapping_bg_list:hover{margin-bottom:1px;padding:6px;background:#f8f8f8;color:#e67e22}
+.smatop {
+    padding-top: 10px
+}
 
-.feed_mapping_bg{margin:0px;padding:6px;color:#666;}
-.feed_mapping_bg:hover{margin:0px;padding:6px;background:#fdf5ed;color:#e67e22}
-.control-title-bg{
-    margin:2px 4px 6px 4px;
-    padding:1px 0px 1px 10px;
-    background:#f3f3f3;
-    color:#e67e22;
+.smaBot {
+    padding-bottom: 20px
+}
+
+.smacot {
+    text-align: center;
+    margin: 5px 0px 5px 0px;
+}
+
+.smaright {
+    text-align: right
+}
+
+.tab-ws {
+    width: 20px
+}
+
+.list-inline {
+    display: inline-block;
+}
+
+.img-thumbnails {
+    text-align: center;
+}
+
+.fontcolor {
+    color: #e67e22;
+}
+
+.fontcolor-h {
+    color: #999
+}
+
+.btnleft {
+    margin-left: 3px
+}
+
+.line-height {
+    height: 30px;
+    overflow-y: hidden;
+}
+
+.attribute_bg {
+    background: #efefef;
+    border-radius: 2px;
+    border-color: #d4cfcf;
+    padding: 10px 0px 10px 0px;
+    margin: 8px;
+}
+
+.attribute_top {
+    color: #999
+}
+
+.attribute_top li {
+    padding: 0px 0px 4px 0px;
+    color: #999
+}
+
+.category_mapping_bg {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #282828
+}
+
+.category_mapping_bg:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f2f2f2;
+    color: #e67e22
+}
+
+.category_mapping_bg_one {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f2f2f2;
+    color: #282828
+}
+
+.category_mapping_bg_one:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #e67e22
+}
+
+.category_mapping_bg_list {
+    margin-bottom: 1px;
+    padding: 6px;
+    color: #666
+}
+
+.category_mapping_bg_list:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #e67e22
+}
+
+.platform_mapping_bg {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #282828
+}
+
+.platform_mapping_bg:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f2f2f2;
+    color: #e67e22
+}
+
+.platform_mapping_bg_one {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f2f2f2;
+    color: #282828
+}
+
+.platform_mapping_bg_one:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #e67e22
+}
+
+.platform_mapping_bg_list {
+    margin-bottom: 1px;
+    padding: 6px;
+    color: #666
+}
+
+.platform_mapping_bg_list:hover {
+    margin-bottom: 1px;
+    padding: 6px;
+    background: #f8f8f8;
+    color: #e67e22
+}
+
+.feed_mapping_bg {
+    margin: 0px;
+    padding: 6px;
+    color: #666;
+}
+
+.feed_mapping_bg:hover {
+    margin: 0px;
+    padding: 6px;
+    background: #fdf5ed;
+    color: #e67e22
+}
+
+.control-title-bg {
+    margin: 2px 4px 6px 4px;
+    padding: 1px 0px 1px 10px;
+    background: #f3f3f3;
+    color: #e67e22;
     border-radius: 2px;
     border-bottom:1px solid #d6d5d5;
 }
@@ -6546,6 +6700,18 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 #content img:hover { border: 2px solid #fff; }
 
 /*category*/
+.table_fixed {
+    table-layout: fixed;
+}
+.table_fixed > tbody > tr > td{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /*height: 50px;*/
+}
+.table_fixed > tbody > tr > td .wrap{
+    white-space: normal;
+}
 .table_main{
     margin:0px;
     padding:0px 0px 0px 0px;
@@ -6557,6 +6723,9 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 }
 .table_main li{
     list-style-type: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .table_main span{
     color:#7c7c7c;
@@ -7402,4 +7571,5 @@ ul[uib-datepicker-popup-wrap] button { border: 0; }
     padding: 9px 14px;
     max-height: 330px;
     overflow: auto;
+    word-break: break-all;
 }

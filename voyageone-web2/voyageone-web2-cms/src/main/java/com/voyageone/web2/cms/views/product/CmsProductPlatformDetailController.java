@@ -1,22 +1,11 @@
 package com.voyageone.web2.cms.views.product;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.voyageone.service.bean.cms.CmsProductPlatformDetail.ProductPriceSalesInfo;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
-import com.voyageone.web2.core.bean.UserSessionBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -24,6 +13,15 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+import com.voyageone.web2.core.bean.UserSessionBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by lewis on 15-12-16.
@@ -120,6 +118,8 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Long prodId = Long.parseLong(String.valueOf(params.get("prodId")));
 
+        Boolean isUpdate = params.get("isUpdate") != null ? Boolean.valueOf(String.valueOf(params.get("isUpdate"))) : true;
+
         String channelId = getUser().getSelChannelId();
 
         Map<String, Object> result = new HashMap<>();
@@ -129,9 +129,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         if (errcode != null) {
             throw new BusinessException(errcode);
-        } else {
+        } else if (isUpdate){
             return doUpdateProductPlatform(params);
-        }
+        } else return success(null);
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.CHECK_CATEGORY)
