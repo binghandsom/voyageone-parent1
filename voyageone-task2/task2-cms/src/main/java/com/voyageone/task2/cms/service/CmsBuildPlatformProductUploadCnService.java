@@ -94,11 +94,11 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-//                {
-//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
-//                    // 独立域名商品信息新增或更新
-//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
-//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+                    // 独立域名商品信息新增或更新
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+                }
                 {
                     ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
                     // 独立域名商品信息新增或更新
@@ -328,18 +328,24 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
             for (Field field : fieldList) {
                 if ("ProductCode".equals(field.getId())) {
                     String code = getFieldValue(field);
-                    code = code.substring(1); // 推送的是 固定"C" + code
+                    if (cartId != CartEnums.Cart.CN.getValue()) {
+                        code = code.substring(1); // 推送的是 固定"C" + code
+                    }
                     model.setCode(code);
                     model.setOrgChannelId(mapProductOrgChannel.get(code));
                     model.setCategoryIds(mapProductCats.get(code).stream().collect(Collectors.joining(",")));
                 } else if ("Sku".equals(field.getId())) {
                     String sku = getFieldValue(field);
-                    sku = sku.substring(1); // 推送的是 固定"S" + sku
+                    if (cartId != CartEnums.Cart.CN.getValue()) {
+                        sku = sku.substring(1); // 推送的是 固定"S" + sku
+                    }
                     model.setSku(sku);
                 } else if ("Size".equals(field.getId())) {
                     model.setSize(getFieldValue(field));
                 } else if ("ShowSize".equals(field.getId())) {
                     model.setShowSize(getFieldValue(field));
+                } else if ("Eursize".equals(field.getId())) {
+                    model.setSize(getFieldValue(field));
                 } else if ("Msrp".equals(field.getId())) {
                     model.setMsrp(Double.valueOf(getFieldValue(field)));
                 } else if ("Price".equals(field.getId())) {

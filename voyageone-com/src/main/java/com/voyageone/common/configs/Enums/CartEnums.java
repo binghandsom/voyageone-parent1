@@ -194,7 +194,8 @@ public class CartEnums {
 		 * @since 2.10.0
 		 */
 		public static boolean isCommonCategorySchema(String cartId) {
-			return JM.getId().equals(cartId) || TT.getId().equals(cartId) || USTT.getId().equals(cartId) || LIKING.getId().equals(cartId);
+			return JM.getId().equals(cartId) || TT.getId().equals(cartId) || USTT.getId().equals(cartId) || CN.getId().equals(cart) || LIKING.getId().equals(cartId);
 		}
+
     }
 }

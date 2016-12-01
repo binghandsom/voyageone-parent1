@@ -93,7 +93,7 @@ public class PlatformSchemaService extends BaseService {
 //        if (CartEnums.Cart.JM.getValue() == cartId
 //                || CartEnums.Cart.TT.getValue() == cartId
 //                || CartEnums.Cart.USTT.getValue() == cartId
-////                || CartEnums.Cart.CN.getValue() == cartId
+//                || CartEnums.Cart.CN.getValue() == cartId
 //                || CartEnums.Cart.LIKING.getValue() == cartId
 //                ) {
         if (CartEnums.Cart.isCommonCategorySchema(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
