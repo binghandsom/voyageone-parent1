@@ -22,6 +22,7 @@ define([
         }
 
         NewCategoryCtl.prototype.init = function () {
+            //初始化方法
             var self = this,
                 productTopService = self.productTopService,
                 routeParams = self.routeParams;
@@ -39,11 +40,13 @@ define([
         };
 
         NewCategoryCtl.prototype.clear = function () {
+            //清空查询条件
             this.searchInfo = {};
             this.codeStr = "";
         };
 
         NewCategoryCtl.prototype.search = function (sortInfo) {
+            //查询
             var self = this;
             this.goPage(1, this.paging.size, sortInfo);
             var data = this.getSearchInfo();
@@ -54,7 +57,7 @@ define([
         };
 
         NewCategoryCtl.prototype.getSearchInfo = function () {
-
+         //获取搜索条件
             var self = this;
 
             var upEntity = angular.copy(self.searchInfo);
@@ -71,6 +74,7 @@ define([
         };
 
         NewCategoryCtl.prototype.goPage = function (pageIndex, size, sortInfo) {
+            //跳转到指定页
             var self = this;
             var data = this.getSearchInfo();
             data.pageIndex = pageIndex;
@@ -86,6 +90,7 @@ define([
 
 
         NewCategoryCtl.prototype.sortSearch = function (sortColumnName, sortType) {
+            //排序字段保存 搜索
             var self = this,
                 _sort,
                 routeParams = self.routeParams;
@@ -106,12 +111,14 @@ define([
             this.search({sortColumnName: _sort.sValue, sortType: sortType});
         };
         NewCategoryCtl.prototype.selectAll = function ($event) {
+            //全选
             var checkbox = $event.target;
             for (var i = 0; i < this.modelList.length; i++) {
                 this.modelList[i].isChecked = checkbox.checked;
             }
         };
         NewCategoryCtl.prototype.getSelectedCodeList = function () {
+            //获取选中商品的code
             var codeList = [];
             if (this.modelList) {
                 var lenght = this.modelList.length;
@@ -125,7 +132,7 @@ define([
         };
 
         NewCategoryCtl.prototype.addTopProductClick = function () {
-
+         //加入置顶区
             var parameter = {};
             if (this.isSeachAdd) {
                 //全量加入
@@ -152,6 +159,7 @@ define([
         }
 
         NewCategoryCtl.prototype.getTopList = function () {
+            //获取置顶区商品信息
             var self = this;
             var parameter = {};
             parameter.cartId = this.routeParams.cartId;
@@ -162,6 +170,7 @@ define([
         };
 
         NewCategoryCtl.prototype.getTopCodeList = function () {
+            //获取置顶区商品的code
             var codeList = [];
             if (this.topList) {
                 var lenght = this.topList.length;
@@ -172,6 +181,7 @@ define([
             return codeList;
         }
         NewCategoryCtl.prototype.saveTopProduct = function () {
+            //保存置顶区商品
             var self = this;
             var parameter = {};
             parameter.cartId = this.routeParams.cartId;
@@ -181,7 +191,9 @@ define([
                 self.notify.success('保存成功');
             });
         }
+
         NewCategoryCtl.prototype.clearTopProduct = function () {
+            //置顶区清空
             this.topList = [];
         }
         NewCategoryCtl.prototype.remove = function (index) {
