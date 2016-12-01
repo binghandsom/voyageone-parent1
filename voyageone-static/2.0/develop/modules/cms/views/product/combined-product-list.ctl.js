@@ -99,14 +99,24 @@ define([
                        });
                    };
                    // 组合套装商品上下架
-                   $scope.onShelves = function (product) {
-                       alert("上架");
-                   };
-                   $scope.offShelves = function (product) {
-                       alert("下架");
-                   }
+                   $scope.onOffShelves = function (product, platformStatus) {
+                       var confirmMsg = "";
+                       if (platformStatus == 0) {
+                           confirmMsg = "是否确认将该组合商品下架？";
+                       }else if (platformStatus == 1) {
+                           confirmMsg = "是否确认将该组合商品上架？";
+                       }
+                       if (confirmMsg == "") {
+                           return;
+                       }
+                       confirm(confirmMsg).then(function () {
+                           combinedProductService.onOffShelves(_.extend(angular.copy(product), {'platformStatus':platformStatus})).then(function () {
+                               getProductList();
+                           });
+                       });
 
-               }
+                   };
+               };
 
                return CombinedProductController;
 

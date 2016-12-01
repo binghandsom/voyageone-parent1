@@ -134,8 +134,8 @@
                             <span>组合套装商品名称：{{product.productName}}</span>
                             <span>
                                 <ul style="list-style: none;">
-                                    <li ng-if="product.platformStatus==0" ng-click="onShelves(product)">上架</li>
-                                    <li ng-if="product.platformStatus==1" ng-click="offShelves(product)">下架</li>
+                                    <li ng-if="product.platformStatus==0" ng-click="onOffShelves(product, 1)">上架</li>
+                                    <li ng-if="product.platformStatus==1" ng-click="onOffShelves(product, 0)">下架</li>
                                     <li ng-click="popEditCombinedProduct(product)">编辑</li>
                                     <li ng-click="deleteCombinedProduct(product)">删除</li>
                                     <li>操作历史</li>

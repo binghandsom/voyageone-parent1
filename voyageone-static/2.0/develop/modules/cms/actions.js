@@ -153,7 +153,8 @@ define(function () {
                     "getSkuDetail" : "getSkuDetail",
                     "delete" : "delete",
                     "getCombinedProductDetail" : "getCombinedProductDetail",
-                    "edit" : "edit"
+                    "edit" : "edit",
+                    "onOffShelves" : "onOffShelves"
                 }
             },
             "mapping": {
