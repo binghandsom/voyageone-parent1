@@ -66,7 +66,6 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
         }
 
 //        matches = true;
-
         //用redis做缓存了，先把这段逻辑注释掉
 //        if (matches) {
 //            // clear retry count
