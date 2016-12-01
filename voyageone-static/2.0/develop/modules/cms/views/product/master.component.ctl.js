@@ -370,6 +370,7 @@ define([
                                     prodId: scope.productInfo.productId,
                                     appSwitch: lock
                                 }).then(function () {
+                                    initialize();
                                     notify.success(_status ? "APP端已启用" : "APP端已关闭");
                                 });
                                 break;
@@ -379,6 +380,7 @@ define([
                                     translateStatus: lock
                                 }).then(function () {
                                     notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                    initialize();
                                     scope.productInfo.translateStatus = +lock;
                                     //通知子页面
                                     scope.productInfo.checkFlag = new Date().getTime();
@@ -389,6 +391,7 @@ define([
                                     prodId: scope.productInfo.productId,
                                     lock: lock
                                 }).then(function () {
+                                    initialize();
                                     notify.success(_status ? "商品已锁定" : "商品已接触锁定");
                                 });
                                 break;
