@@ -23,12 +23,12 @@ public class AddTopProductParameter {
     boolean isSeachAdd;//是否搜索 全量加入
 
 
-    public boolean isSeachAdd() {
+    public boolean getIsSeachAdd() {
         return isSeachAdd;
     }
 
-    public void setSeachAdd(boolean seachAdd) {
-        isSeachAdd = seachAdd;
+    public void setIsSeachAdd(boolean isSeachAdd) {
+        this.isSeachAdd = isSeachAdd;
     }
 
     public ProductPageParameter getSearchParameter() {

@@ -12,6 +12,7 @@ define([
             this.searchInfo = {};
             this.sort = {};
             this.codeStr = '';
+            this.isSeachAdd=false;
             this.paging = {
                 curr: 1, total: 0, size: 10, fetch:this.goPage.bind(this)
             };
@@ -33,6 +34,7 @@ define([
                 if (self.sort)
                     self.sort.sortType = res.data.sortType;
             });
+            self.search();
             self.getTopList();
         };
 
@@ -120,14 +122,23 @@ define([
         };
 
         NewCategoryCtl.prototype.addTopProductClick=function () {
-            var codeList = this.getSelectedCodeList();
-            if (codeList.length == 0) {
-                alert("请选择商品");
-            }
+
             var parameter = {};
+            if (this.isSeachAdd) {
+                //全量加入
+                parameter.isSeachAdd = this.isSeachAdd;
+                parameter.searchParameter = this.getSearchInfo();
+            }
+            else {
+                var codeList = this.getSelectedCodeList();
+                if (codeList.length == 0) {
+                    this.alert("请选择商品");
+                }
+                parameter.codeList = codeList;
+            }
             parameter.cartId = this.routeParams.cartId;
             parameter.sellerCatId = this.routeParams.catId;
-            parameter.codeList = codeList;
+
 
             var self = this;
             this.productTopService.addTopProduct(parameter).then(function (res) {
