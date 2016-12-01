@@ -3,11 +3,14 @@ package com.voyageone.components.sneakerhead.bean;
 import java.util.Date;
 
 /**
- * Created by gjl on 2016/11/15.
+ * SneakerHeadRequest
+ *
+ * @author gjl on 2016/11/15.
+ * @version 0.0.1
  */
 public class SneakerHeadRequest {
 
-    private int PageSize =10;
+    private int PageSize = 10;
 
     private int PageNumber = 1;
 

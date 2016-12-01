@@ -132,6 +132,15 @@ public class ProductGroupService extends BaseService {
     }
 
     /**
+     * 根据channelId和numIId检索
+     */
+    public CmsBtProductGroupModel selectProductGroupByNumIId(String channelId, Integer cartId, String numIId) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery(String.format("{\"numIId\": \"%s\", \"cartId\": %d}", numIId, cartId));
+        return getProductGroupByQuery(channelId, query);
+    }
+
+    /**
      * 更新group数据
      */
     public WriteResult update(CmsBtProductGroupModel model) {
@@ -594,6 +603,56 @@ public class ProductGroupService extends BaseService {
         groupModel.setPriceRetailEd(priceRetailEd);
         groupModel.setPriceMsrpSt(priceMsrpSt);
         groupModel.setPriceMsrpEd(priceMsrpEd);
+    }
+
+    /**
+     * 新建一个新的Group。
+     */
+    public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
+
+        CmsBtProductGroupModel group = new CmsBtProductGroupModel();
+
+        // 渠道id
+        group.setChannelId(channelId);
+
+        // cart id
+        group.setCartId(cartId);
+
+        // 获取唯一编号
+        group.setGroupId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
+
+        // 主商品Code
+        group.setMainProductCode(productCode);
+
+        // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
+        group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
+
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
+                , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
+                , String.valueOf(group.getCartId()));
+        if (cmsChannelConfigBean != null && !com.voyageone.common.util.StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            if (CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
+                group.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
+            } else {
+                // platform active:上新的动作: 暂时默认是放到:仓库中
+                group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+            }
+        } else {
+            // platform active:上新的动作: 暂时默认是放到:仓库中
+            group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
+        }
+
+        // ProductCodes
+        List<String> codes = new ArrayList<>();
+        codes.add(productCode);
+        group.setProductCodes(codes);
+        group.setCreater(getClass().getName());
+        group.setModifier(getClass().getName());
+
+        // 计算group价格区间
+        calculatePriceRange(group);
+
+        return group;
     }
 
     /**

@@ -138,6 +138,19 @@ public class TbProductService extends TbBase {
         return reqTaobaoApi(config, request);
     }
 
+    /**
+     * taobao.item.seller.get (获取单个商品详细信息)
+     *
+     * @param numIId numIId
+     * @param fields 需要返回的商品字段列表,“,”分隔
+     */
+    public ItemSellerGetResponse doGetItemInfo(String numIId, String fields, ShopBean config) throws ApiException {
+        ItemSellerGetRequest request = new ItemSellerGetRequest();
+        request.setNumIid(Long.parseLong(numIId));
+        request.setFields(fields);
+        return reqTaobaoApi(config, request);
+    }
+
     public Boolean isDarwin(Long categoryId, Long brandId, ShopBean config, StringBuffer failCause) throws ApiException {
         TmallBrandcatMetadataGetRequest req = new TmallBrandcatMetadataGetRequest();
         req.setCatId(categoryId);

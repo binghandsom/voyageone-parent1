@@ -387,9 +387,9 @@ public class ProductService extends BaseService {
         //save
         cmsBtProductDao.insert(product);
 
-        insertProductHistory(channelId, product.getProdId());
+        insertProductHistory(channelId, product);
         // 记录价格变更履历
-        addPriceUpdateHistory(product, modifier, "New");
+//        addPriceUpdateHistory(product, modifier, "New");
     }
 
     public WriteResult updateProduct(String channelId, Map paraMap, Map updateMap) {
@@ -1338,7 +1338,8 @@ public class ProductService extends BaseService {
 //        }
     }
 
-    public void updateProductPlatformIsMain(Integer isMain, String mainProductCode, String channelId, String productCode, Integer cartId, String modifier) {
+    public void updateProductPlatformIsMain(String mainProductCode, String channelId, String productCode, Integer cartId, String modifier) {
+        Integer isMain = mainProductCode.equals(productCode) ? 1 : 0;
         //更新mongo数据
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("common.fields.code", productCode);

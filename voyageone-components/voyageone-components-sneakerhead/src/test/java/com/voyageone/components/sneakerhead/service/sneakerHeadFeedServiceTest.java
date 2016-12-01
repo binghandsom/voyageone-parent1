@@ -27,7 +27,7 @@ public class sneakerHeadFeedServiceTest {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, 1, 1);
         sneakerHeadRequest.setTime(calendar.getTime());
-        List<SneakerHeadCodeModel> sneakerHeadCodeModels = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest);
+        List<SneakerHeadCodeModel> sneakerHeadCodeModels = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest, "47.180.64.158:52233");
         System.out.print(sneakerHeadCodeModels.size());
     }
 }

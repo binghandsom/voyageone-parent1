@@ -19,6 +19,7 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
     private String fullCatId;
     private int cartId;
     private String isSpecial;
+    private String urlKey;
 
     private List<CmsBtSellerCatModel> children;
 
@@ -115,5 +116,13 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
 
     public void setIsSpecial(String isSpecial) {
         this.isSpecial = isSpecial;
+    }
+
+    public String getUrlKey() {
+        return urlKey;
+    }
+
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
     }
 }

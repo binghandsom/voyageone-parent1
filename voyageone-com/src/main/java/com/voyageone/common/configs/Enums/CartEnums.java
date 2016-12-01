@@ -158,6 +158,17 @@ public class CartEnums {
 		}
 
 		/**
+		 * 判断给定的店铺是否是天猫系
+		 *
+		 * @param cart 某店铺
+		 * @return 是否是天猫系
+		 * @since 2.6.0
+		 */
+		public static boolean isTmSeries(Cart cart) {
+			return TM.equals(cart) || TG.equals(cart);
+		}
+
+		/**
 		 * 判断给定的店铺是否是京东系
 		 *
 		 * @param cart 某店铺
@@ -183,7 +194,8 @@ public class CartEnums {
 		 * @since 2.10.0
 		 */
 		public static boolean isCommonCategorySchema(String cartId) {
-			return JM.getId().equals(cartId) || TT.getId().equals(cartId) || USTT.getId().equals(cartId) || LIKING.getId().equals(cartId);
+			return JM.getId().equals(cartId) || TT.getId().equals(cartId) || USTT.getId().equals(cartId) || CN.getId().equals(cart) || LIKING.getId().equals(cartId);
 		}
+
     }
 }

@@ -93,7 +93,7 @@ public class PlatformSchemaService extends BaseService {
 //        if (CartEnums.Cart.JM.getValue() == cartId
 //                || CartEnums.Cart.TT.getValue() == cartId
 //                || CartEnums.Cart.USTT.getValue() == cartId
-////                || CartEnums.Cart.CN.getValue() == cartId
+//                || CartEnums.Cart.CN.getValue() == cartId
 //                || CartEnums.Cart.LIKING.getValue() == cartId
 //                ) {
         if (CartEnums.Cart.isCommonCategorySchema(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
@@ -144,7 +144,8 @@ public class PlatformSchemaService extends BaseService {
 
         // 产品
         String schemaProduct = platformCatSchemaModel.getPropsProduct();
-        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+//        if (CartEnums.Cart.JG.getValue() == cartId || CartEnums.Cart.JGJ.getValue() == cartId || CartEnums.Cart.JGY.getValue() == cartId) {
+        if (CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(String.valueOf(cartId)))) {
             // 京东的场合，产品schema是共通，写死 catId = 1
             CmsMtPlatformCategorySchemaModel platformCatSchemaModelJD = platformCategoryService.getPlatformCatSchema("1", cartId);
             if (platformCatSchemaModelJD == null) {
