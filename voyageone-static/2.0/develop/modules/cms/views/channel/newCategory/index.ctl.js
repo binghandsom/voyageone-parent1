@@ -14,7 +14,7 @@ define([
             self.sort = {};
             self.codeStr = '';
             self.paging = {
-                curr: 1, total: 0, size: 10, fetch:goPage.bind(this)
+                curr: 1, total: 0, size: 10, fetch:this.goPage.bind(this)
             };
             console.log(self.routeParams);
         }
@@ -51,25 +51,25 @@ define([
         // int pageIndex;//当前页
         // int pageSize;//当前页行数
         NewCategoryCtl.prototype.search = function () {
-            goPage(1, this.paging.size);
-            productTopService.getCount().then(function (res) {
+            this.goPage(1, this.paging.size);
+           var data= this.getSearchInfo();
+            this.productTopService.getCount(data).then(function (res) {
                 paging.total = res;
             });
-
         };
-        function getSearchInfo () {
+        NewCategoryCtl.prototype.getSearchInfo= function  () {
             var self = this;
             var upEntity = angular.copy(self.searchInfo);
-            upEntity.cartId = routeParams.cartId;
-            upEntity.pCatId = routeParams.catId;
-            data.codeList = self.codeStr.split("\n");
+            upEntity.cartId = this.routeParams.cartId;
+            upEntity.pCatId = this.routeParams.catId;
+            upEntity.codeList = self.codeStr.split("\n");
             return upEntity;
         }
-        function goPage(pageIndex, size) {
-            var data = getSearchInfo();
+        NewCategoryCtl.prototype.goPage= function(pageIndex, size) {
+            var data = this.getSearchInfo();
             data.pageIndex = pageIndex;
             data.pageSize = size;
-            this.productTopService.getPage().then(function (res) {
+            this.productTopService.getPage(data).then(function (res) {
                 self.pageList = res.data;
             });
         }

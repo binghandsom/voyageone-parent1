@@ -156,7 +156,7 @@ public class ProductTopService extends BaseService {
 
         JongoQuery queryObject = getJongoQuery(param, topModel);
 
-        return cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
+        return cmsBtProductDao.countByQuery(queryObject.getJongoQueryStr(), channelId);
     }
 
     //获取置顶区 列表

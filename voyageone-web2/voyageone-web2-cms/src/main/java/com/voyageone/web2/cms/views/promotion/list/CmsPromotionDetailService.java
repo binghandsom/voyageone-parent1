@@ -221,7 +221,7 @@ public class CmsPromotionDetailService extends BaseViewService {
         List<CmsBtPromotionCodesBean> promList = promotionCodeService.getPromotionCodeList(param);
 
         JongoQuery queryObject = new JongoQuery();
-        queryObject.setProjection("{'batchField':1,'common.fields.code':1,'_id':0}");
+        queryObject.setProjection("{'batchField':1,'common.fields.code':1,'common.fields.quantity':1,'_id':0}");
 
         if (!CollectionUtils.isEmpty(promList)) {
             promList.forEach(map -> {
