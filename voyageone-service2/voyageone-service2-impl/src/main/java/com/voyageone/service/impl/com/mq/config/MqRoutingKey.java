@@ -42,11 +42,13 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_FeedExportJob = "voyageone_cms_batchjob_FeedExportJob_queue";
 
-    public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_CMS_BATCH_TMFieldsImportCms2Job_queue";
-    public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_CMS_BATCH_TMGroupImportCms2Job_queue";
+    public static final String CMS_BATCH_TMFieldsImportCms2Job = "voyageone_cms_batchjob_TMFieldsImportCms2Job_queue";
+    public static final String CMS_BATCH_TMGroupImportCms2Job = "voyageone_cms_batchjob_TMGroupImportCms2Job_queue";
 
-    public static final String CMS_BATCH_JDFieldsImportCms2Job = "voyageone_CMS_BATCH_JDFieldsImportCms2Job_queue";
-    public static final String CMS_BATCH_JDGroupImportCms2Job = "voyageone_CMS_BATCH_JDGroupImportCms2Job_queue";
+    public static final String CMS_BATCH_JDFieldsImportCms2Job = "voyageone_cms_batchjob_JDFieldsImportCms2Job_queue";
+    public static final String CMS_BATCH_JDGroupImportCms2Job = "voyageone_cms_batchjob_JDGroupImportCms2Job_queue";
+
+    public static final String CMS_BATCH_PlatformSellercatJob = "voyageone_cms_batchjob_CmsPlatformSellercatJob_queue";
 
     /**
      * tmall mq task
