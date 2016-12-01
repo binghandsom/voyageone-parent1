@@ -51,6 +51,9 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
     private static final int pageSize = 200;
 
+    private static final String SNEAKER_HEAD_ACCESS_DOMAIN = "47.180.64.158:52233";
+
+
     @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
@@ -101,7 +104,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate() ;
             final Date lastDate = getFeedDate == null?new  Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate);
+            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate, SNEAKER_HEAD_ACCESS_DOMAIN);
 
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
             $info("共"+pageCnt+"页");
@@ -146,7 +149,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         int tried = 0;
         do {
             try {
-                feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest);
+                feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest, SNEAKER_HEAD_ACCESS_DOMAIN);
             } catch (Exception e) {
                 tried++;
                 e.printStackTrace();
