@@ -348,4 +348,21 @@ public class CmsBtCombinedProductService extends BaseService {
             }
         });
     }
+
+    public void onOffShelves(CmsBtCombinedProductModel modelBean){
+        if (modelBean == null || StringUtils.isBlank(modelBean.get_id())) {
+            throw new BusinessException("请先选择要上/下架的组合套装商品!");
+        }
+        CmsBtCombinedProductModel targetModel = cmsBtCombinedProductDao.selectById(modelBean.get_id());
+        if (targetModel == null) {
+            throw new BusinessException("要上/下架的组合套装商品不存在!");
+        }
+        Integer platformStatus = modelBean.getPlatformStatus();
+        if (platformStatus == null || !CmsBtCombinedProductPlatformStatus.KV.containsKey(platformStatus)) {
+            throw new BusinessException("请先选择操作(上架/下架)!");
+        }
+        targetModel.setPlatformStatus(platformStatus);
+//        targetModel.setModified();
+
+    }
 }

@@ -97,7 +97,15 @@ define([
                        popups.popEditCombinedProduct(_.extend({'product' : angular.copy(product)}, {'carts': $scope.vm.carts})).then(function () {
                            getProductList();
                        });
+                   };
+                   // 组合套装商品上下架
+                   $scope.onShelves = function (product) {
+                       alert("上架");
+                   };
+                   $scope.offShelves = function (product) {
+                       alert("下架");
                    }
+
                }
 
                return CombinedProductController;

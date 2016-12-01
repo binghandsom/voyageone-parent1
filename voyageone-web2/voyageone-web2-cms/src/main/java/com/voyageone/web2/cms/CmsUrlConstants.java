@@ -674,6 +674,7 @@ public interface CmsUrlConstants {
             String DELETE = "delete";
             String GET_COMBINED_PRODUCT_DETAIL = "getCombinedProductDetail";
             String EDIT = "edit";
+            String ON_OFF_SHELVES = "onOffShelves";
 
         }
     }

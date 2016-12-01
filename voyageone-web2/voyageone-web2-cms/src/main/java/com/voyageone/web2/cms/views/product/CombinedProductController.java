@@ -106,4 +106,9 @@ public class CombinedProductController extends CmsController {
         cmsBtCombinedProductService.editCombinedProduct(modelBean, getUser().getSelChannelId(), getUser().getUserName());
         return success("");
     }
+
+    @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.ON_OFF_SHELVES)
+    public AjaxResponse onOffShelves (@RequestBody CmsBtCombinedProductModel modelBean) {
+        return success("");
+    }
 }
