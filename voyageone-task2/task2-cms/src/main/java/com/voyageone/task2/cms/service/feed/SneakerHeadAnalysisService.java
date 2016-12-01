@@ -42,6 +42,8 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     @Autowired
     SneakerHeadFeedService sneakerHeadFeedService;
 
+    private static final String SNEAKER_HEAD_ACCESS_DOMAIN = "47.180.64.158:52233";
+
     @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
@@ -60,6 +62,9 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     }
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        // TODO: 2016/12/1 add get domain from taskcontrollist
+        //SNEAKER_HEAD_ACCESS_DOMAIN = taskControlList
 
         init();
 
@@ -91,7 +96,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 getFeedDate = new Date(0);
             }
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(getFeedDate);
+            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(getFeedDate, SNEAKER_HEAD_ACCESS_DOMAIN);
 
             int pageCnt = anInt / 100 + (anInt % 100 > 0?1:0);
             //根据feed取得总数取得对应的SKU并进行解析
@@ -106,7 +111,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                     int tried = 0;
                     do {
                         try {
-                            feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest);
+                            feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest, SNEAKER_HEAD_ACCESS_DOMAIN);
                         } catch (Exception e) {
                             tried++;
                             e.printStackTrace();

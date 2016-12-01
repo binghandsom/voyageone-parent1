@@ -28,7 +28,12 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
 
     private static final String SNEAKER_HEAD_CHANNEL = "001";
 
+    private static final String SNEAKER_HEAD_ACCESS_DOMAIN = "47.180.64.158:52233";
+
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        // TODO: 2016/12/1 add get domain from taskcontrollist
+        //SNEAKER_HEAD_ACCESS_DOMAIN = taskControlList
 
         $info("取得cms_bt_product_c001表的所有code开始:");
         //取得所有的code
@@ -57,13 +62,10 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
 
     /**
      * 调用sneakerHead接口取得各个code销售数量及计算总共的销售数量
-     *
-     * @param codeList
-     * @throws Exception
      */
-    public void getCodeSalesAndSumSales(List<String> codeList) throws Exception {
+    private void getCodeSalesAndSumSales(List<String> codeList) throws Exception {
         $info("调用sneakerHead接口取得各个code销售数量开始:");
-        List<CmsBtProductModel_SalesBean> saleList = sneakerHeadFeedService.sneakerHeadSale(codeList);
+        List<CmsBtProductModel_SalesBean> saleList = sneakerHeadFeedService.sneakerHeadSale(codeList, SNEAKER_HEAD_ACCESS_DOMAIN);
         $info("调用sneakerHead接口取得各个code销售数量:" + saleList.size());
         $info("调用sneakerHead接口取得各个code销售数量结束:");
 
@@ -85,10 +87,8 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
 
     /**
      * 计算销量3天7天全年和总销量
-     *
-     * @param saleList
      */
-    public void updateCmsBtProductModelSales(List<CmsBtProductModel_SalesBean> saleList) {
+    private void updateCmsBtProductModelSales(List<CmsBtProductModel_SalesBean> saleList) {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         if (saleList.size() == 0) return;
         for (CmsBtProductModel_SalesBean salesBean : saleList) {
@@ -163,9 +163,6 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
 
     /**
      * 取得3天7天全年和总销量
-     *
-     * @param sumMap
-     * @return getCartIdSalesSum
      */
     private int getCartIdSalesSum(Map<String, Object> sumMap) {
         return sumMap.entrySet().stream()
