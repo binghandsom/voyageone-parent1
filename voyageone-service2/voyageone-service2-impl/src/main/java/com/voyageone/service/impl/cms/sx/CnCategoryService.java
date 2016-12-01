@@ -81,7 +81,12 @@ public class CnCategoryService extends BaseService {
         {
             // 临时写死
             bean.setIsSneakerheadOnly("0");
-            bean.setIsEnableFilter("1");
+            if ("10".equals(catIds[0])) {
+                // SpecialCategory
+                bean.setIsEnableFilter("0");
+            } else {
+                bean.setIsEnableFilter("1");
+            }
         }
 
         return bean;
