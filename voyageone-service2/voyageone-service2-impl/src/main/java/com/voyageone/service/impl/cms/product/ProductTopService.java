@@ -177,7 +177,18 @@ public class ProductTopService extends BaseService {
         JongoQuery jongoQuery = getTopListJongoQuery(parameter, topModel);
         List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, channelId);
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
-        return listResult;
+
+        List<ProductInfo> listSortResult=new ArrayList<>();
+
+        topModel.getProductCodeList().forEach(f->{
+            Optional<ProductInfo> optional= listResult.stream().filter(ff->f.equals(ff.getCode())).findFirst();
+            if(optional!=null)
+            {
+                listSortResult.add(optional.get());
+            }
+        });
+
+        return listSortResult;
     }
 
     JongoQuery getTopListJongoQuery(GetTopListParameter param,CmsBtProductTopModel topModel) {
