@@ -19,11 +19,6 @@
             <version>${voyageone.common.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-web2-security</artifactId>
-            <version>${voyageone.web2.security.version}</version>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>

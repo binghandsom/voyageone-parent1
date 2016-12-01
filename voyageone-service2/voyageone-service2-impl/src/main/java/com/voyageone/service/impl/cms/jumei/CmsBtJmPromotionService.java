@@ -10,7 +10,6 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.bean.cms.jumei.ProductImportBean;
@@ -30,7 +29,6 @@ import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImages
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import com.voyageone.service.model.util.MapModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
-import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -660,7 +658,7 @@ public class CmsBtJmPromotionService extends BaseService {
                 srcJmPromotionSaveBean.getExtModel().setPromotionId(null);
                 String pageId = srcJmPromotionSaveBean.getExtModel().getAppPageId();
                 if(!StringUtil.isEmpty(pageId)){
-                    String idDate = DateTimeUtil.getDateTime(new Date(), DateTimeUtil.DATE_TIME_FORMAT_3);
+
                     String idTime = Long.toString(Long.parseLong(DateTimeUtil.getDateTime(new Date(), "HHmmssSSS")),32);
                     String temp[] = pageId.split("_");
 
@@ -668,6 +666,7 @@ public class CmsBtJmPromotionService extends BaseService {
                         srcJmPromotionSaveBean.getExtModel().setAppPageId(srcJmPromotionSaveBean.getExtModel().getAppPageId().replace(temp[temp.length - 2], idTime));
                         srcJmPromotionSaveBean.getExtModel().setPcPageId(srcJmPromotionSaveBean.getExtModel().getPcPageId().replace(temp[temp.length - 2], idTime));
                         if (temp.length > 3 && temp[temp.length - 3].indexOf("20") == 0) {
+                            String idDate = DateTimeUtil.getDateTime(cmsBtJmPromotionModel.getActivityStart(), DateTimeUtil.DATE_TIME_FORMAT_3);
                             srcJmPromotionSaveBean.getExtModel().setAppPageId(srcJmPromotionSaveBean.getExtModel().getAppPageId().replace(temp[temp.length - 3], idDate));
                             srcJmPromotionSaveBean.getExtModel().setPcPageId(srcJmPromotionSaveBean.getExtModel().getPcPageId().replace(temp[temp.length - 3], idDate));
                         }

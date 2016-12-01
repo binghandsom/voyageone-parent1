@@ -3,6 +3,8 @@ package com.voyageone.components.sneakerhead.bean;
 import java.util.Date;
 
 /**
+ * SneakerHeadSkuModel
+ *
  * @author vantis
  * @version 1.0.0
  * @since 1.0.0

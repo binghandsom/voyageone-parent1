@@ -799,7 +799,7 @@
                                                                                              ng-if="vm.productList.length"
                                                                                              ng-click="ctrlAdvance.columnOrder('code')"><i class="fa fa-{{ctrlAdvance.getArrowName('code')}}"></i></button>
                                         </th>
-                                        <th class="text-left">
+                                        <th class="text-left" style="min-width: 150px">
                                             <span translate="TXT_NAME"></span>&emsp;<button class="opacityBtn"
                                                                                             ng-if="vm.productList.length"
                                                                                             ng-click="ctrlAdvance.columnOrder('originalTitleCn')"><i class="fa fa-{{ctrlAdvance.getArrowName('originalTitleCn')}}"></i></button>
@@ -834,7 +834,7 @@
                                                                                                  ng-if="vm.productList.length"
                                                                                                  ng-click="ctrlAdvance.columnOrder('skuCnt')"><i class="fa fa-{{ctrlAdvance.getArrowName('skuCnt')}}"></i></button>
                                         </th>
-                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width: 150px;">
+                                        <th class="text-left" ng-repeat="prop1 in vm.commonProps" style="width: 170px;">
                                             {{prop1.propName}}&emsp;<button class="opacityBtn"
                                                                             ng-if="vm.productList.length"
                                                                             ng-click="ctrlAdvance.columnOrder(prop1.propId)"><i class="fa fa-{{ctrlAdvance.getArrowName(prop1.propId)}}"></i></button>
@@ -902,9 +902,6 @@
                                                 <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
                                             </span>
                                         </td>
-<!--                                        <td class="text-right" colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length  + 1}}">
-
-                                        </td>-->
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray">
                                         <td class="text-left">
