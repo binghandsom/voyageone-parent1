@@ -41,7 +41,7 @@ import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
-import com.voyageone.task2.cms.service.CmsPlatformProductImport2Service;
+import com.voyageone.task2.cms.service.CmsPlatformProductImportTmFieldsService;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import org.junit.Test;
@@ -92,7 +92,7 @@ public class SxGetProductInfoTest {
     private ProductGroupService productGroupService;
 
     @Autowired
-    private CmsPlatformProductImport2Service cmsPlatformProductImport2Service;
+    private CmsPlatformProductImportTmFieldsService cmsPlatformProductImportTmFieldsService;
 
     @Autowired
     TbProductService tbProductService;
