@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.config.Ini;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -43,7 +44,9 @@ public class ChainDefinitionSectionMetaSource implements FactoryBean<Ini.Section
 				String permission = "perms[" + res.getResKey() + "]";
 				// 不对角色进行权限验证
 				// 如需要则 permission = "roles[" + resources.getResKey() + "]";
-				section.put(res.getResUrl() + "", permission);
+				if(!section.containsKey(res.getResUrl() )) {
+					section.put(res.getResUrl(), permission);
+				}
 			}
 		}
 		// 所有资源的访问权限，必须放在最后

@@ -4,6 +4,7 @@ import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.security.service.ComUserService;
 import com.voyageone.service.dao.user.ComResourceDao;
 import com.voyageone.service.dao.user.ComUserDao;
 import com.voyageone.service.model.user.ComResourceModel;
@@ -34,6 +35,9 @@ public class AdminResService extends BaseService {
 
     @Autowired
     AdminResourceDaoExt adminResourceDaoExt;
+
+    @Autowired
+    ComUserService comUserService;
 
 
     /**
@@ -121,6 +125,8 @@ public class AdminResService extends BaseService {
         }
 
         comResourceDao.insert(model);
+        comUserService.reloadFilterChainDefinitionMap();
+        comUserService.clearAllCachedAuthorizationInfo();
     }
 
 
@@ -149,6 +155,8 @@ public class AdminResService extends BaseService {
         }
 
         comResourceDao.update(model);
+        comUserService.reloadFilterChainDefinitionMap();
+        comUserService.clearAllCachedAuthorizationInfo();
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.voyageone.security.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.spring.SpringContext;
+import com.voyageone.security.shiro.ChainDefinitionSectionMetaSource;
 import com.voyageone.service.bean.user.ComChannelPermissionBean;
 import com.voyageone.security.shiro.MyRealm;
 import com.voyageone.service.dao.user.ComLoginLogDao;
@@ -17,9 +19,14 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.config.Ini;
 import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.filter.mgt.DefaultFilterChainManager;
+import org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver;
+import org.apache.shiro.web.servlet.AbstractShiroFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -50,6 +57,7 @@ public class ComUserService {
 
     @Autowired
     ComUserDao comUserDao;
+
 
     /**
      * 登录，实际的验证逻辑在MyRealm中
@@ -194,6 +202,12 @@ public class ComUserService {
         }
     }
 
+    public void clearAllCachedAuthorizationInfo() {
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            myRealm.clearAllCachedAuthorizationInfo();
+    }
+
 
     /**
      * 清除登录缓存
@@ -215,6 +229,12 @@ public class ComUserService {
             SimplePrincipalCollection principals = new SimplePrincipalCollection(account, myRealm.getName());
             myRealm.clearCachedAuthenticationInfo(principals);
         }
+    }
+
+    public void clearAllCachedAuthenticationInfo() {
+            RealmSecurityManager securityManager = (RealmSecurityManager) SecurityUtils.getSecurityManager();
+            MyRealm myRealm = (MyRealm) securityManager.getRealms().iterator().next();
+            myRealm.clearAllCachedAuthenticationInfo();
     }
 
     /**
@@ -245,6 +265,49 @@ public class ComUserService {
         query.put("userId", userId);
 
         return comUserDaoExt.selectChannels(query);
+    }
+
+
+    public void reloadFilterChainDefinitionMap()
+    {
+        ShiroFilterFactoryBean shiroFilterFactoryBean = SpringContext.getBean(ShiroFilterFactoryBean.class);
+
+        Ini.Section chainDefinitionSectionMetaSource = ( Ini.Section)SpringContext.getBean("chainDefinitionSectionMetaSource");
+
+        synchronized (shiroFilterFactoryBean) {
+            AbstractShiroFilter shiroFilter = null;
+
+            try {
+                shiroFilter = (AbstractShiroFilter) shiroFilterFactoryBean.getObject();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // 获取过滤管理器
+            PathMatchingFilterChainResolver filterChainResolver = (PathMatchingFilterChainResolver) shiroFilter
+                    .getFilterChainResolver();
+            DefaultFilterChainManager manager = (DefaultFilterChainManager) filterChainResolver.getFilterChainManager();
+
+            // 清空初始权限配置
+            manager.getFilterChains().clear();
+            shiroFilterFactoryBean.getFilterChainDefinitionMap().clear();
+
+            // 重新构建生成
+            try {
+                shiroFilterFactoryBean.setFilterChainDefinitionMap(chainDefinitionSectionMetaSource);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Map<String, String> chains = shiroFilterFactoryBean.getFilterChainDefinitionMap();
+
+            for (Map.Entry<String, String> entry : chains.entrySet()) {
+                String url = entry.getKey();
+                String chainDefinition = entry.getValue().trim().replace(" ", "");
+                manager.createChain(url, chainDefinition);
+            }
+
+        }
+
     }
 
 }
