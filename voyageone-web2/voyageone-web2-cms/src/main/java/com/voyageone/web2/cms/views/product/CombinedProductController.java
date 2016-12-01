@@ -109,6 +109,7 @@ public class CombinedProductController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.ON_OFF_SHELVES)
     public AjaxResponse onOffShelves (@RequestBody CmsBtCombinedProductModel modelBean) {
+        cmsBtCombinedProductService.onOffShelves(modelBean, getUser().getUserName());
         return success("");
     }
 }

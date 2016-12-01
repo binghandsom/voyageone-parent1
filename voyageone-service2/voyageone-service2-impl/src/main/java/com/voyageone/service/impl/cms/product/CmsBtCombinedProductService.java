@@ -349,7 +349,7 @@ public class CmsBtCombinedProductService extends BaseService {
         });
     }
 
-    public void onOffShelves(CmsBtCombinedProductModel modelBean){
+    public void onOffShelves(CmsBtCombinedProductModel modelBean, String user){
         if (modelBean == null || StringUtils.isBlank(modelBean.get_id())) {
             throw new BusinessException("请先选择要上/下架的组合套装商品!");
         }
@@ -362,7 +362,9 @@ public class CmsBtCombinedProductService extends BaseService {
             throw new BusinessException("请先选择操作(上架/下架)!");
         }
         targetModel.setPlatformStatus(platformStatus);
-//        targetModel.setModified();
-
+        targetModel.setModified(DateTimeUtil.getNow());
+        targetModel.setModifier(user);
+        WriteResult rs = cmsBtCombinedProductDao.update(targetModel);
+        $debug("上下架 组合套装商品 结果 " + rs.toString());
     }
 }
