@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -217,13 +218,17 @@ public class CmsBtCombinedProductService extends BaseService {
         if (target.getActive() != null && target.getActive().intValue() != 1) {
             throw new BusinessException("要删除的组合套装商品已被删除，请勿重复操作！");
         }
-        JongoUpdate updateObj = new JongoUpdate();
+        target.setModifier(user);
+        target.setModified(DateTimeUtil.getNow());
+        target.setActive(0);
+        WriteResult rs = cmsBtCombinedProductDao.update(target);
+        $debug("删除 组合套装商品 结果 " + rs.toString());
+        /*JongoUpdate updateObj = new JongoUpdate();
         updateObj.setQuery("{'numID':#, 'channelId':#}");
         updateObj.setQueryParameters(modelBean.getNumID(), channelId);
         updateObj.setUpdate("{$set:{'active':0, 'modifier':#, 'modified':#}}");
         updateObj.setUpdateParameters(user, DateTimeUtil.getNow());
-        WriteResult rs = cmsBtCombinedProductDao.updateFirst(updateObj.getQuery(), updateObj.getUpdate());
-        $debug("删除 组合套装商品 结果 " + rs.toString());
+        WriteResult rs = cmsBtCombinedProductDao.updateFirst(updateObj.getQuery(), updateObj.getUpdate());*/
     }
 
     /**
