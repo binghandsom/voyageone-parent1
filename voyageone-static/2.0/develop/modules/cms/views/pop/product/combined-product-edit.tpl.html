@@ -2,38 +2,40 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title">&nbsp;<i class="fa fa-plus" translate="TXT_COMBINED_PRODUCT_EDIT"></i></h5>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-plus">&nbsp;<span translate="TXT_COMBINED_PRODUCT_EDIT"></span></i></h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="shelvesTemplateForm">
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM"></label>
-                <div class="col-sm-8">
-                    <select ng-model="vm.product.cartId">
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
+                <div class="col-sm-4">
+                    <select class="form-control" ng-model="vm.product.cartId">
                         <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
                     </select>
                 </div>
             </div>
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_WULIUBAO_PRODUCT_CODE"></label>
-                <div class="col-sm-8">
-                    <input type="text" ng-model="vm.product.wuliubaoProductCode"/><i>?</i>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoProductCode"/><i>?</i>
                     <div class="text-warnings" style="padding-left:0px">
                         <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
                     </div>
                 </div>
             </div>
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_COMBINED_NUM_ID"></label>
-                <div class="col-sm-8">
-                    <input type="text" required ng-model="vm.product.numID" />
-                    <button ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_NUM_ID"></strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" required ng-model="vm.product.numID" />
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-info btn-pop" ng-click="getCombinedProductInfo()">获取组合套装信息</button>
                 </div>
             </div>
             <div class="row form-group">
-                <label class="col-sm-3 control-label" translate="TXT_COMBINED_PRODUCT_NAME"></label>
-                <div class="col-sm-8">
-                    <input type="text" disabled ng-model="vm.product.productName">
+                <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                <div class="col-sm-4">
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" disabled></textarea>
                 </div>
             </div>
 
