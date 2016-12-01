@@ -806,12 +806,28 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setProducter(mainProduct.getXXX());                // 不使用
         // 包装规格 (非必须)
 //        jdProductBean.setWrap(mainProduct.getXXX());                     // 不使用
+
+		// 取得一下product默认属性
+		Map<String, Field> productSchemaFields = SchemaReader.readXmlForMap(jdCommonSchema.getPropsProduct());
+
         // 长(单位:mm)(必须)
         jdProductBean.setLength(jdCommonInfoMap.get("productLengthMm"));
+        if (StringUtils.isEmpty(jdProductBean.getLength())) {
+        	InputField f = (InputField) productSchemaFields.get("productLengthMm");
+        	jdProductBean.setLength(f.getDefaultValue());
+		}
         // 宽(单位:mm)(必须)
         jdProductBean.setWide(jdCommonInfoMap.get("productWideMm"));
+		if (StringUtils.isEmpty(jdProductBean.getWide())) {
+			InputField f = (InputField) productSchemaFields.get("productWideMm");
+			jdProductBean.setWide(f.getDefaultValue());
+		}
         // 高(单位:mm)(必须)
         jdProductBean.setHigh(jdCommonInfoMap.get("productHighMm"));
+		if (StringUtils.isEmpty(jdProductBean.getHigh())) {
+			InputField f = (InputField) productSchemaFields.get("productHighMm");
+			jdProductBean.setHigh(f.getDefaultValue());
+		}
         // 重量(单位:kg)(必须)
 //        Object objfieldItemValue = null;
 //        String strWeight = "1";  // 默认为1kg
