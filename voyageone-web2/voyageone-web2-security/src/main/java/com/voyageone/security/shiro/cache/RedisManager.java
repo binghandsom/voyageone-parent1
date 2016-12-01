@@ -2,6 +2,7 @@ package com.voyageone.security.shiro.cache;
 
 import java.util.Set;
 
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -19,6 +20,8 @@ public class RedisManager {
 	private int timeout = 0;
 	
 	private String password = "";
+
+	private JedisConnectionFactory connectionFactory = null;
 	
 	private static JedisPool jedisPool = null;
 	
@@ -31,6 +34,11 @@ public class RedisManager {
 	 */
 	public void init(){
 		if(jedisPool == null){
+			host = connectionFactory.getHostName();
+			port = connectionFactory.getPort();
+			timeout = connectionFactory.getTimeout();
+			password = connectionFactory.getPassword();
+
 			if(password != null && !"".equals(password)){
 				jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password);
 			}else if(timeout != 0){
@@ -191,7 +199,13 @@ public class RedisManager {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
+	public JedisConnectionFactory getConnectionFactory() {
+		return connectionFactory;
+	}
+
+	public void setConnectionFactory(JedisConnectionFactory connectionFactory) {
+		this.connectionFactory = connectionFactory;
+	}
 	
 }
