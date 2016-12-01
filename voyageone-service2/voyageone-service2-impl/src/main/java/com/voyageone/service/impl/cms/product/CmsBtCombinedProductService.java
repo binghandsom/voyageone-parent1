@@ -20,6 +20,7 @@ import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
+import com.voyageone.service.bean.cms.product.CombinedSkuInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.enums.PlatformType;
@@ -367,4 +368,38 @@ public class CmsBtCombinedProductService extends BaseService {
         WriteResult rs = cmsBtCombinedProductDao.update(targetModel);
         $debug("上下架 组合套装商品 结果 " + rs.toString());
     }
+
+
+    /**
+     * 获取组合套装商品SKU信息，供OMS调用
+     * @return
+     */
+    public List<CombinedSkuInfoBean> getSuitSkuInfo() {
+        /*String query = String.format("{'active':1}");*/
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{'active':#}");
+        query.setParameters(1);
+        query.setSort("{'modified':-1, 'created':-1}");
+        List<CmsBtCombinedProductModel> productModels = cmsBtCombinedProductDao.select(query);
+        List<CombinedSkuInfoBean> suitSkuInfos = new ArrayList<CombinedSkuInfoBean>();
+        if (CollectionUtils.isNotEmpty(productModels)) {
+            productModels.forEach(product -> {
+                product.getSkus().forEach(skuBean -> {
+                    skuBean.getSkuItems().forEach(skuItem -> {
+                        CombinedSkuInfoBean suitSkuInfo = new CombinedSkuInfoBean();
+                        suitSkuInfo.setOrder_channel_id(product.getChannelId());
+                        suitSkuInfo.setCart_id(String.valueOf(product.getCartId()));
+                        suitSkuInfo.setSku(skuBean.getSuitSkuCode());
+                        suitSkuInfo.setReal_sku(skuItem.getSkuCode());
+                        suitSkuInfo.setReal_sku_price(String.valueOf(skuItem.getPreferentialPrice()));
+                        suitSkuInfo.setReal_sku_name(product.getProductName());
+                        suitSkuInfo.setNum_iid(product.getNumID());
+                        suitSkuInfos.add(suitSkuInfo);
+                    });
+                });
+            });
+        }
+        return suitSkuInfos;
+    }
+
 }
