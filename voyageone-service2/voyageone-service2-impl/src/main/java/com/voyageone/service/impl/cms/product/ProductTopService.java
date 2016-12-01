@@ -104,7 +104,7 @@ public class ProductTopService extends BaseService {
 
         CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
         //保存排序字段
-        saveSortColumnName(param,topModel,channelId,userName);
+        topModel=saveSortColumnName(param, topModel, channelId, userName);
 
         int pageIndex = param.getPageIndex();
         int pageSize = param.getPageSize();
@@ -113,12 +113,11 @@ public class ProductTopService extends BaseService {
         queryObject.setLimit(pageSize);
         queryObject.setSkip((pageIndex - 1) * pageSize);
         //排序字段
-        if (!com.voyageone.common.util.StringUtils.isEmpty(param.getSortColumnName())) {
-            queryObject.setSort(String.format("{%s:%s}", param.getSortColumnName(), param.getSortType()));
+        if (topModel != null && !com.voyageone.common.util.StringUtils.isEmpty(topModel.getSortColumnName())) {
+            queryObject.setSort(String.format("{%s:%s}", topModel.getSortColumnName(), topModel.getSortType()));
         } else {
             queryObject.setSort("{prodId:-1}");
         }
-
 
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
@@ -126,7 +125,7 @@ public class ProductTopService extends BaseService {
     }
 
     //保存排序字段
-    public  void  saveSortColumnName(ProductPageParameter param,CmsBtProductTopModel topModel,String channelId,String userName) {
+    public  CmsBtProductTopModel  saveSortColumnName(ProductPageParameter param, CmsBtProductTopModel topModel,String channelId,String userName) {
         if (!StringUtils.isEmpty(param.getSortColumnName())) {
             boolean isAdd = false;
             if (topModel == null) {
@@ -147,6 +146,7 @@ public class ProductTopService extends BaseService {
                 dao.update(topModel);
             }
         }
+        return  topModel;
     }
 
 

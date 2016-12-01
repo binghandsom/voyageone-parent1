@@ -54,9 +54,9 @@ define([
             this.searchInfo = {};
             this.codeStr="";
         }
-        NewCategoryCtl.prototype.search = function () {
+        NewCategoryCtl.prototype.search = function (sortInfo) {
             var self = this;
-            this.goPage(1, this.paging.size);
+            this.goPage(1, this.paging.size,sortInfo);
            var data= this.getSearchInfo();
             this.productTopService.getCount(data).then(function (res) {
                 self.paging.total = res.data;
@@ -71,11 +71,16 @@ define([
             upEntity.codeList = self.codeStr.split("\n");
             return upEntity;
         }
-        NewCategoryCtl.prototype.goPage= function(pageIndex, size) {
+        NewCategoryCtl.prototype.goPage= function(pageIndex, size,sortInfo) {
             var self=this;
             var data = this.getSearchInfo();
             data.pageIndex = pageIndex;
             data.pageSize = size;
+            if(sortInfo)
+            {
+                data.sortColumnName=sortInfo.sortColumnName;
+                data.sortType=sortInfo.sortType;
+            }
             this.productTopService.getPage(data).then(function (res) {
                 self.pageList = res.data;
             });
@@ -98,6 +103,7 @@ define([
             self.sort = _sort;
 
             //调用搜索
+            this.search({sortColumnName:_sort.sValue,sortType:sortType});
         };
 
         NewCategoryCtl.prototype.getTopList = function () {
