@@ -182,8 +182,6 @@ define([
             });
         }
         NewCategoryCtl.prototype.clearTopProduct = function () {
-
-            alert("adadfsad");
             this.topList = [];
         }
         NewCategoryCtl.prototype.remove = function (index) {
