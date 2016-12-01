@@ -562,6 +562,18 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
+            },
+            "combinedProductNew" : {
+                "templateUrl": "views/pop/product/combined-product-new.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
+                "controller": 'CombinedProductDetailController as ctrl',
+                "size": 'lg'
+            },
+            "combinedProductEdit" : {
+                "templateUrl": "views/pop/product/combined-product-edit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
+                "controller": 'CombinedProductDetailController as ctrl',
+                "size": 'lg'
             }
         },
         "shelves" : {
@@ -1389,6 +1401,14 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
+
+        /**组合商品*/
+        $scope.popNewCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductNew, context)
+        }
+        $scope.popEditCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductEdit, context)
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

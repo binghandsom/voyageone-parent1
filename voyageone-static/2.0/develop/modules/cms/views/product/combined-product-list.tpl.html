@@ -1,0 +1,153 @@
+<style type="text/css">
+    ul{
+        list-style:none;
+    }
+    ul li{
+        float: left;
+        padding-left:10px;
+    }
+</style>
+<div class="wrapper-md" ng-init="initialize()">
+    <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+        <uib-accordion-group is-open="vm.config.open">
+            <uib-accordion-heading>
+                <i class="glyphicon glyphicon-star"></i>&nbsp;组合商品套装一览
+                <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.config.open, 'glyphicon-menu-down': !vm.config.open}"></i>
+            </uib-accordion-heading>
+            <div class="container-fluid m-t-sm m-b-md">
+                <div class="col-sm-12">
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_PLATFORM"></label>
+                                <div class="col-sm-7">
+                                    <select class="form-control" ng-model="vm.searchBean.cartId">
+                                        <option value="">All</option>
+                                        <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4 control-label" translate="TXT_COMBINED_PRODUCT_NAME"></label>
+                                <div class="col-sm-7">
+                                    <input type="text" ng-model="vm.searchBean.productName">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4 control-label" translate="TXT_COMBINED_PRODUCT_CODE"></label>
+                                <div class="col-sm-7">
+                                    <textarea ng-model="vm.searchBean.numIDs"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_COMBINED_PRODUCT_STATUS"></label>
+                                <div class="col-sm-7">
+                                    <label ng-repeat="(key,value) in vm.statuses">
+                                        <input type="checkbox" ng-model="vm.searchBean.statuses[key]" value="{{key}}"/>{{value}}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group" >
+                                <label class="col-sm-4  control-label" translate="TXT_COMBINED_PRODUCT_PLATFORMS_STATUS"></label>
+                                <div class="col-sm-7">
+                                    <label ng-repeat="(key,value) in vm.platformStatuses">
+                                        <input type="checkbox" ng-model="vm.searchBean.platformStatuses[key]" value="{{key}}"/>{{value}}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" translate="sku"></label>
+                                <div class="col-sm-7">
+                                    <textarea ng-model="vm.searchBean.skuCodes"></textarea>
+                                </div>
+                            </div>
+                        </div><!-- .form-group -->
+                    </div>
+                    <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
+                        <div class="form-inline">
+                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-accordion-group>
+    </uib-accordion>
+
+    <!-- .accordion -->
+    <div class="box">
+        <div class="box-body-new">
+            <div class="btn-group">
+                <button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" ng-click="popCombinedProduct()">
+                    {{'TXT_COMBINED_PRODUCT_NEW' | translate}}
+                </button>
+            </div>
+
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="text-left" translate="组合套装sku"></th>
+                    <th class="text-left" translate="组合套装中国最终售价"></th>
+                    <th class="text-left" translate="组合套装优惠售价"></th>
+                    <!--<th class="text-left" translate="库存"></th>-->
+                    <th class="text-left" translate="创建时间"></th>
+                    <th class="text-left" translate="更新时间"></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="product in vm.products">
+                    <tr>
+                        <td class="text-left" colspan="6">
+
+                            <span class="label m-t-xs m-r-sm ng-scope" style="padding-left: 10px; color: rgb(0, 0, 0); font-size: 12px; background-color: DeepSkyBlue;" ng-style="{&quot;background-color&quot;:&quot;DeepSkyBlue&quot;}" title="OnSale">
+                                <span class="ng-scope">
+                                    <a ng-href="https://detail.tmall.hk/hk/item.htm?id=542231992207" ng-class="{'mainPrd':cartsObj._isMain}" title="OnSale" target="_blank" class="ng-binding mainPrd" href="https://detail.tmall.hk/hk/item.htm?id=542231992207">TG:售</a>
+                                </span>
+                            </span>
+                            <span>商品编码：{{product.numID}}</span>
+                            <span>组合套装商品名称：{{product.productName}}</span>
+                            <span>
+                                <ul style="list-style: none;">
+                                    <li>上下架</li>
+                                    <li ng-click="popEditCombinedProduct(product)">编辑</li>
+                                    <li ng-click="deleteCombinedProduct(product)">删除</li>
+                                    <li>操作历史</li>
+                                </ul>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="sku in product.skus">
+                        <td class="text-left">{{sku.suitSkuCode}}</td>
+                        <td class="text-left">{{sku.suitSellingPriceCn}}</td>
+                        <td class="text-left">{{sku.suitPreferentialPrice}}</td>
+                        <!--<td class="text-left">100</td>-->
+                        <td class="text-left">{{product.created}}</td>
+                        <td class="text-left">{{product.modified}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div  if-no-rows="vm.products.length"></div>
+        </div><!-- /.box-body -->
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="vm.productPageOption"></vpagination>
+        </div>
+    </div>
+</div><!-- end .wrapper-md -->

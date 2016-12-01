@@ -1,0 +1,102 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-plus" translate="TXT_COMBINED_PRODUCT_EDIT"></i></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="shelvesTemplateForm">
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM"></label>
+                <div class="col-sm-8">
+                    <select ng-model="vm.product.cartId">
+                        <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_WULIUBAO_PRODUCT_CODE"></label>
+                <div class="col-sm-8">
+                    <input type="text" ng-model="vm.product.wuliubaoProductCode"/><i>?</i>
+                    <div class="text-warnings" style="padding-left:0px">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
+                    </div>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_COMBINED_NUM_ID"></label>
+                <div class="col-sm-8">
+                    <input type="text" required ng-model="vm.product.numID" />
+                    <button ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" translate="TXT_COMBINED_PRODUCT_NAME"></label>
+                <div class="col-sm-8">
+                    <input type="text" disabled ng-model="vm.product.productName">
+                </div>
+            </div>
+
+            <div class="row form-group" ng-show="vm.config.showFlag">
+                <table class="table table-hover-new text-center">
+                    <thead>
+                    <tr>
+                        <th class="text-left" translate="单品SKU"></th>
+                        <th class="text-left" translate="单品中国最终售价"></th>
+                        <th class="text-left" translate="单品优惠售价"></th>
+                        <th class="text-left" translate="商品名称"></th>
+                        <th class="text-left" tranate="操作"></th>
+                    </tr>
+                    </thead>
+                    <tbody ng-if="vm.product.skus">
+                    <tr ng-repeat="sku in vm.product.skus">
+                        <td colspan="5">
+                            <div class="text-left table_bg_gray">
+                                <div style="float: left">
+                                    组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
+                                    组合套装实际售价 ：{{sku.suitPreferentialPrice}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                </div>
+                                <div style="float: right; padding-right: 13px;">
+                                    <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="table table-hover-new text-center">
+                                <tbody>
+                                <tr ng-repeat="skuItem in sku.skuItems">
+
+                                    <td class="text-left">
+                                        <input type="text" required ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)">
+                                    </td>
+                                    <td class="text-left">{{skuItem.sellingPriceCn}}</td>
+                                    <td class="text-left"><input type="number" required ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)"></td>
+                                    <td class="text-left">{{skuItem.productName}}</td>
+                                    <td class="text-left">
+                                        <button type="submit" class="btn btn-success btn-xxs" ng-click="deleteSkuItem(sku,$index)">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+                            <div class="text-right table_bg_gray">
+                                组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn}}
+                                组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice}}
+                            </div>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="editSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+    </div>
+</div>
