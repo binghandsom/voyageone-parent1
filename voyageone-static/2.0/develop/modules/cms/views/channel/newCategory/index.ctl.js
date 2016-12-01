@@ -106,7 +106,12 @@ define([
             //调用搜索
             this.search({sortColumnName:_sort.sValue,sortType:sortType});
         };
-
+        NewCategoryCtl.prototype.selectAll = function ($event) {
+            var checkbox = $event.target;
+            for (var i = 0; i < this.modelList.length; i++) {
+                this.modelList[i].isChecked = checkbox.checked;
+            }
+        };
         NewCategoryCtl.prototype.getSelectedCodeList=function()
         {
             var codeList = [];
