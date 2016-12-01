@@ -566,13 +566,13 @@ define([
             "combinedProductNew" : {
                 "templateUrl": "views/pop/product/combined-product-new.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
-                "controller": 'CombinedProductDetailController as ctrl',
+                "controller": 'CombinedProductNewController as ctrl',
                 "size": 'lg'
             },
             "combinedProductEdit" : {
                 "templateUrl": "views/pop/product/combined-product-edit.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
-                "controller": 'CombinedProductDetailController as ctrl',
+                "controller": 'CombinedProductEditController as ctrl',
                 "size": 'lg'
             }
         },

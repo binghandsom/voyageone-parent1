@@ -5,9 +5,9 @@ define([
            "cms",
            "modules/cms/controller/popup.ctl"
        ], function (cms) {
-           cms.controller("CombinedProductDetailController", (function () {
+           cms.controller("CombinedProductNewController", (function () {
 
-               function CombinedProductDetailController($scope, context, combinedProductService, popups, confirm) {
+               function CombinedProductNewController($scope, context, combinedProductService, popups, confirm) {
                    $scope.vm = {
                        config:{
                            open:true,
@@ -89,7 +89,7 @@ define([
                    };
                }
 
-               return CombinedProductDetailController;
+               return CombinedProductNewController;
 
            })());
        }

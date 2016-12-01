@@ -5,9 +5,9 @@ define([
            "cms",
            "modules/cms/controller/popup.ctl"
        ], function (cms) {
-           cms.controller("CombinedProductDetailController", (function () {
+           cms.controller("CombinedProductEditController", (function () {
 
-               function CombinedProductDetailController($scope, context, combinedProductService, popups, confirm) {
+               function CombinedProductEditController($scope, context, combinedProductService, popups, confirm) {
                    $scope.vm = {
                        config:{
                            showFlag: true
@@ -101,7 +101,7 @@ define([
                    };
                }
 
-               return CombinedProductDetailController;
+               return CombinedProductEditController;
 
            })());
        }
