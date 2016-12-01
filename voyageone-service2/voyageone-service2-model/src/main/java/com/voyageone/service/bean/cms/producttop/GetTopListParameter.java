@@ -5,14 +5,14 @@ package com.voyageone.service.bean.cms.producttop;
  */
 public class GetTopListParameter {
     int cartId;//平台id
-    String pCatId;//分类id
+    String sellerCatId;//店铺内分类
 
-    public String getpCatId() {
-        return pCatId;
+    public String getSellerCatId() {
+        return sellerCatId;
     }
 
-    public void setpCatId(String pCatId) {
-        this.pCatId = pCatId;
+    public void setSellerCatId(String sellerCatId) {
+        this.sellerCatId = sellerCatId;
     }
 
     public int getCartId() {

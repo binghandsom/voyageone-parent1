@@ -5,7 +5,16 @@ import java.util.List;
 
 public class CmsBtProductTopModel extends ChannelPartitionModel {
     private String channelId;
-    private String catId;//分类
+    private String sellerCatId;//店铺内分类
+
+    public String getSellerCatId() {
+        return sellerCatId;
+    }
+
+    public void setSellerCatId(String sellerCatId) {
+        this.sellerCatId = sellerCatId;
+    }
+
     private Long productTopId;
     private List<String> productCodeList;//置顶列表
     private String sortColumnName;// 排序列名称
@@ -17,14 +26,6 @@ public class CmsBtProductTopModel extends ChannelPartitionModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
-    }
-
-    public String getCatId() {
-        return catId;
-    }
-
-    public void setCatId(String catId) {
-        this.catId = catId;
     }
 
     public Long getProductTopId() {

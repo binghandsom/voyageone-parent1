@@ -8,7 +8,17 @@ import java.util.List;
 public class SaveTopProductParameter {
 
     int cartId;//平台id
-    String pCatId;//商品分类
+    String sellerCatId;//店铺内分类
+
+    public String getSellerCatId() {
+        return sellerCatId;
+    }
+
+    public void setSellerCatId(String sellerCatId) {
+        this.sellerCatId = sellerCatId;
+    }
+
+
     List<String> codeList;//   /Code
 
     public int getCartId() {
@@ -17,14 +27,6 @@ public class SaveTopProductParameter {
 
     public void setCartId(int cartId) {
         this.cartId = cartId;
-    }
-
-    public String getpCatId() {
-        return pCatId;
-    }
-
-    public void setpCatId(String pCatId) {
-        this.pCatId = pCatId;
     }
 
     public List<String> getCodeList() {

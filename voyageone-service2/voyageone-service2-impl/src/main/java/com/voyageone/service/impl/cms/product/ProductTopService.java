@@ -39,10 +39,10 @@ public class ProductTopService extends BaseService {
     MongoSequenceService mongoSequenceService;
 
     //获取初始化数据
-    public Map<String, Object> init(String channelId,String catId, String language) throws IOException {
+    public Map<String, Object> init(String channelId,String sellerCatId, String language) throws IOException {
 
         Map<String, Object> data = new HashMap<>();
-        CmsBtProductTopModel topModel = dao.selectByCatId(catId, channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId);
 
         if (topModel != null) {
             data.put("sortColumnName", topModel.getSortColumnName());
@@ -56,7 +56,7 @@ public class ProductTopService extends BaseService {
     //加入置顶区
     public  void addTopProduct(AddTopProductParameter param, String channelId, String userName) {
 
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
 
         if (param.isSeachAdd()) {
             //全量加入
@@ -72,7 +72,7 @@ public class ProductTopService extends BaseService {
             topModel.setCreater(userName);
 
             topModel.setChannelId(channelId);
-            topModel.setCatId(param.getpCatId());
+            topModel.setSellerCatId(param.getSellerCatId());
         }
         if (topModel.getProductCodeList() == null) topModel.setProductCodeList(new ArrayList<>());
 
@@ -94,7 +94,7 @@ public class ProductTopService extends BaseService {
 
     //保存置顶区
     public  void saveTopProduct(SaveTopProductParameter param, String channelId, String userName) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(),channelId);
         topModel.setProductCodeList(param.getCodeList());
         dao.update(topModel);
     }
@@ -102,7 +102,7 @@ public class ProductTopService extends BaseService {
     //普通区查询 获取指定页
     public List<ProductInfo> getPage(ProductPageParameter param, String channelId,String userName) {
 
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(),channelId);
         //保存排序字段
         topModel=saveSortColumnName(param, topModel, channelId, userName);
 
@@ -134,7 +134,7 @@ public class ProductTopService extends BaseService {
                 topModel.setProductTopId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CmsBtProductTopID));
 
                 topModel.setChannelId(channelId);
-                topModel.setCatId(param.getpCatId());
+                topModel.setSellerCatId(param.getSellerCatId());
                 topModel.setCreated(DateTimeUtil.getNow());
                 topModel.setCreater(userName);
             }
@@ -152,7 +152,7 @@ public class ProductTopService extends BaseService {
 
     //普通区查询 获取总数量
     public Object getCount(ProductPageParameter param, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(param.getpCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
 
         JongoQuery queryObject = getJongoQuery(param, topModel);
 
@@ -161,7 +161,7 @@ public class ProductTopService extends BaseService {
 
     //获取置顶区 列表
     public List<ProductInfo> getTopList(GetTopListParameter parameter,String channelId) {
-        CmsBtProductTopModel topModel = dao.selectByCatId(parameter.getpCatId(),channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(parameter.getSellerCatId(),channelId);
         if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
             return new ArrayList<>();
 
@@ -176,7 +176,7 @@ public class ProductTopService extends BaseService {
 
         //平台cartId    商品分类
         queryObject.addQuery("{'platforms.P#.pCatId':#}");
-        queryObject.addParameters(param.getCartId(), param.getpCatId());
+        queryObject.addParameters(param.getCartId(), param.getSellerCatId());
 
         // 获取code list用于检索code
         if (topModel.getProductCodeList() != null
@@ -225,8 +225,8 @@ public class ProductTopService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
 
         //平台cartId    商品分类
-        queryObject.addQuery("{'platforms.P#.pCatId':#}");
-        queryObject.addParameters(param.getCartId(), param.getpCatId());
+        queryObject.addQuery("{ \"platforms.P#.sellerCats.cName\" :{'$regex':'^#'}}");
+        queryObject.addParameters(param.getCartId(), param.getSellerCatPath());
 
         // 获取code list用于检索code  not in
          if (topModel!=null&&topModel.getProductCodeList() != null

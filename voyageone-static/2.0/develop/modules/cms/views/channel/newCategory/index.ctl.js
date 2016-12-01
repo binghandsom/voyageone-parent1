@@ -5,17 +5,19 @@ define([
 
     cms.controller("newCategoryController", (function () {
 
-        function NewCategoryCtl($routeParams, productTopService) {
-            var self = this;
-            self.routeParams = angular.fromJson($routeParams.cartInfo);
-            self.sortList = sortEnum.getSortByCd(self.routeParams.cartId);
-            self.productTopService = productTopService;
-            self.searchInfo = {};
-            self.sort = {};
-            self.codeStr = '';
-            self.paging = {
+        function NewCategoryCtl($routeParams, productTopService,alert, confirm, notify) {
+            this.routeParams = angular.fromJson($routeParams.cartInfo);
+            this.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
+            this.productTopService = productTopService;
+            this.searchInfo = {};
+            this.sort = {};
+            this.codeStr = '';
+            this.paging = {
                 curr: 1, total: 0, size: 10, fetch:this.goPage.bind(this)
             };
+            this.notify=notify;
+            this.alert=alert;
+            console.log($routeParams);
         }
 
         NewCategoryCtl.prototype.init = function () {
@@ -50,11 +52,19 @@ define([
         };
 
         NewCategoryCtl.prototype.getSearchInfo= function  () {
+
             var self = this;
+
             var upEntity = angular.copy(self.searchInfo);
+
             upEntity.cartId = this.routeParams.cartId;
-            upEntity.pCatId = this.routeParams.catId;
+
+            upEntity.sellerCatId = this.routeParams.catId;
+
+            upEntity.sellerCatPath = this.routeParams.catPath;
+
             upEntity.codeList = self.codeStr.split("\n");
+
             return upEntity;
         };
 
@@ -111,18 +121,19 @@ define([
 
         NewCategoryCtl.prototype.addTopProductClick=function () {
             var codeList = this.getSelectedCodeList();
-            if (codeList.length==0) {
+            if (codeList.length == 0) {
                 alert("请选择商品");
             }
             var parameter = {};
             parameter.cartId = this.routeParams.cartId;
-            parameter.pCatId = this.routeParams.catId;
+            parameter.sellerCatId = this.routeParams.catId;
             parameter.codeList = codeList;
-            
-            var self=this;
+
+            var self = this;
             this.productTopService.addTopProduct(parameter).then(function (res) {
                 self.search();
                 self.getTopList();
+                self.notify.success('提交成功');
             });
         }
 
@@ -130,12 +141,33 @@ define([
             var self = this;
             var parameter = {};
             parameter.cartId = this.routeParams.cartId;
-            parameter.pCatId = this.routeParams.catId;
+            parameter.sellerCatId = this.routeParams.catId;
             this.productTopService.getTopList(parameter).then(function (res) {
                 self.topList = res.data;
             });
         };
 
+        NewCategoryCtl.prototype.getTopCodeList=function()
+        {
+            var codeList = [];
+            if (this.topList) {
+                var lenght = this.topList.length;
+                for (var i = 0; i < lenght; i++) {
+                    codeList.push(this.topList[i].code);
+                }
+            }
+            return codeList;
+        }
+         NewCategoryCtl.prototype.saveTopProduct=function () {
+             var self = this;
+             var parameter = {};
+             parameter.cartId = this.routeParams.cartId;
+             parameter.sellerCatId = this.routeParams.catId;
+             parameter.codeList = this.getTopCodeList();
+             this.productTopService.saveTopProduct(parameter).then(function (res) {
+                 self.notify.success('保存成功');
+             });
+         }
         NewCategoryCtl.prototype.remove = function(index){
             this.topList.splice(index, 1);
         };

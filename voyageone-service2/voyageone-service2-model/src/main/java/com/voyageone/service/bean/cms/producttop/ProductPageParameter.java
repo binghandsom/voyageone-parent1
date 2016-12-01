@@ -11,12 +11,39 @@ public class ProductPageParameter {
     boolean isInclude;//  brand是否包含
     String compareType;
     Integer quantity;//库存数量
-    String pCatId;//商品分类
+    String sellerCatId;//店铺内分类
+    String sellerCatPath;
     List<String> codeList;//   款号/Code/SKU   换行分隔
     String sortColumnName;// 排序列名称
     int sortType;//排序类型   1：升序         -1：降序
     int pageIndex;//当前页
     int pageSize;//当前页行数
+
+
+
+    public boolean isInclude() {
+        return isInclude;
+    }
+
+    public void setInclude(boolean include) {
+        isInclude = include;
+    }
+
+    public String getSellerCatId() {
+        return sellerCatId;
+    }
+
+    public void setSellerCatId(String sellerCatId) {
+        this.sellerCatId = sellerCatId;
+    }
+
+    public String getSellerCatPath() {
+        return sellerCatPath;
+    }
+
+    public void setSellerCatName(String sellerCatPath) {
+        this.sellerCatPath = sellerCatPath;
+    }
 
     public int getCartId() {
         return cartId;
@@ -57,14 +84,6 @@ public class ProductPageParameter {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public String getpCatId() {
-        return pCatId;
-    }
-
-    public void setpCatId(String pCatId) {
-        this.pCatId = pCatId;
     }
 
     public List<String> getCodeList() {
