@@ -43,16 +43,17 @@ define([
             if(this.statusData.pPublishError)
                 this.statusData.pStatus = "Error";
 
-            var _numberId = this.statusData.numberId;
+            var _numberId = this.statusData.numberId,
+                _cartId = +this.statusData.cartId;
+
+            this.cartEntity = carts.valueOf(_cartId);
 
             if(_numberId){
 
-                var _cartId = +this.statusData.cartId;
-
                 if(_cartId != 27){
-                    this.statusData.detailUrl = carts.valueOf(_cartId).pUrl + _numberId;
+                    this.statusData.detailUrl = this.cartEntity.pUrl + _numberId;
                 }else{
-                    this.statusData.detailUrl =carts.valueOf(_cartId).pUrl + _numberId + ".html";
+                    this.statusData.detailUrl =this.cartEntity.pUrl + _numberId + ".html";
                 }
 
             }
@@ -74,13 +75,13 @@ define([
             controllerAs: 'ctrl',
             template: "<span class='plateform-status' ng-if='ctrl.statusData.status != \"Approved\"'>"
                     + "<span class='label' ng-class='{\"pending\": ctrl.statusData.status == \"Pending\",\"ready\":ctrl.statusData.status == \"Ready\" }' title='{{ctrl.statusData.status}}'>"
-                    + "<span style='color:black'>{{ctrl.statusData.cartName}}</span>"
+                    + "<span style='color:black'>{{ctrl.cartEntity.name}}</span>"
                     + "</span>"
                     + "</span>"
                     + "<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
                     + "<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
-                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</a></span>"
-                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</span>"
+                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.cartEntity.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</a></span>"
+                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl.cartEntity.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</span>"
                     + "</span>"
                     + "</span>",
             link: function ($scope) {
