@@ -101,13 +101,13 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         sumCnt = 0;
         try {
             $info("SneakerHead取得full表里最新的时间");
-            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate() ;
-            final Date lastDate = getFeedDate == null?new  Date(0) : getFeedDate;
+            Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate();
+            final Date lastDate = getFeedDate == null ? new Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
             int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate, SNEAKER_HEAD_ACCESS_DOMAIN);
 
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
-            $info("共"+pageCnt+"页");
+            $info("共" + pageCnt + "页");
             //根据feed取得总数取得对应的SKU并进行解析
             if (anInt > 0) {
                 ExecutorService es = Executors.newFixedThreadPool(5);
@@ -119,7 +119,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 }
                 es.shutdown();
                 es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-                if(isErr){
+                if (isErr) {
                     sumCnt = 0;
                     throw new BusinessException("调用api时间超时");
                 }
@@ -135,9 +135,9 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
 
     public void getSku(int pageNum, Date lastDate) {
         int cnt = 0;
-        long threadNo =  Thread.currentThread().getId();
-        synchronized(isErr){
-            if(isErr) return;
+        long threadNo = Thread.currentThread().getId();
+        synchronized (isErr) {
+            if (isErr) return;
         }
         List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
         $info(String.format("thread-" + threadNo + " 正在取第%d页", pageNum));
@@ -157,9 +157,9 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         } while (tried < 3 && null == feedList);
 
         if (null == feedList) {
-            synchronized(isErr){
+            synchronized (isErr) {
                 isErr = true;
-                throw new BusinessException("pageNum:"+pageNum+" 调用api时间超时");
+                throw new BusinessException("pageNum:" + pageNum + " 调用api时间超时");
             }
         }
 
@@ -208,7 +208,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
                 }
             }
             transactionRunner.runWithTran(() -> insertSuperFeed(superFeed));
-            synchronized(sumCnt) {
+            synchronized (sumCnt) {
                 sumCnt += superFeed.size();
             }
             superFeed.clear();
