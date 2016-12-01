@@ -2,6 +2,7 @@ package com.voyageone.security.shiro;
 
 
 
+import com.voyageone.security.shiro.credentials.MySimpleAuthenticationInfo;
 import com.voyageone.service.dao.user.ComUserDao;
 import com.voyageone.service.daoext.user.ComUserDaoExt;
 import com.voyageone.service.model.user.ComUserModel;
@@ -127,9 +128,9 @@ public class MyRealm extends AuthorizingRealm {
 			// 当用户执行登录时,在方法处理上要实现user.login(token);
 			// 然后会自动进入这个类进行认证
 			// 交给AuthenticatingRealm使用CredentialsMatcher进行密码匹配，如果觉得人家的不好可以自定义实现
-			SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(username, // 用户名
+			MySimpleAuthenticationInfo authenticationInfo = new MySimpleAuthenticationInfo(username, // 用户名
 					userModel.getPassword(), // 密码
-					ByteSource.Util.bytes(username + "" + userModel.getCredentialSalt()),// salt=username+salt
+					username + "" + userModel.getCredentialSalt(),// salt=username+salt
 					getName() // realm name
 			);
 			// 把用户信息放在session里

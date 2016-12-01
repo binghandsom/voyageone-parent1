@@ -19,6 +19,8 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
 
     private Cache<String, AtomicInteger> passwordRetryCache;
 
+    private static final String RETRY_PRE_FIX = "_____retry_";
+
     public RetryLimitHashedCredentialsMatcher(CacheManager cacheManager) {
         passwordRetryCache = cacheManager.getCache("passwordRetryCache");
     }
@@ -31,11 +33,11 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
         String password = String.valueOf(((UsernamePasswordToken) token).getPassword());
 
         // retry count + 1
-        AtomicInteger retryCount = passwordRetryCache.get(username);
+        AtomicInteger retryCount = passwordRetryCache.get(RETRY_PRE_FIX + username);
 
         if (retryCount == null) {
             retryCount = new AtomicInteger(0);
-            passwordRetryCache.put(username, retryCount);
+            passwordRetryCache.put(RETRY_PRE_FIX + username, retryCount);
         }
 
         if (retryCount.incrementAndGet() > 10) {
@@ -43,7 +45,15 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
             throw new ExcessiveAttemptsException();
         }
 
-        boolean matches = super.doCredentialsMatch(token, info);
+        //把MySimpleAuthenticationInfo变回SimpleAuthenticationInfo
+        SimpleAuthenticationInfo sInfo =  new SimpleAuthenticationInfo();
+        sInfo.setPrincipals(info.getPrincipals());
+        sInfo.setCredentials(info.getCredentials());
+        if(info instanceof  MySimpleAuthenticationInfo) {
+            sInfo.setCredentialsSalt(ByteSource.Util.bytes(((MySimpleAuthenticationInfo) info).getCredentialsSalt()));
+        }
+
+        boolean matches = super.doCredentialsMatch(token, sInfo);
 
         //尝试用老密码登录
         if (!matches) {
@@ -58,7 +68,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
 
         if (matches) {
             // clear retry count
-            passwordRetryCache.remove(username);
+            passwordRetryCache.remove(RETRY_PRE_FIX + username);
         }
 
         return matches;

@@ -1,6 +1,7 @@
 package com.voyageone.service.model.user;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Date;
  *
  */
 
-public class CoreBaseModel {
+public class CoreBaseModel  implements Serializable {
 
     protected Integer id;
 
