@@ -108,10 +108,10 @@
                             <div class="col-md-8">
                                 <div class="row">
                                     &emsp;<label style="padding-top: 3px">
-                                        <label> <input type="radio" class="v-sub" name="brand" value="0" ng-model="ctrl.searchInfo.isInclude">&nbsp;include </label>
+                                        <label> <input type="radio" class="v-sub" name="brand" value="true" ng-model="ctrl.searchInfo.isInclude">&nbsp;include </label>
                                     </label>&emsp;
                                     <label style="padding-top: 3px">
-                                        <label> <input type="radio" class="v-sub" name="brand" value="1" ng-model="ctrl.searchInfo.isInclude">&nbsp;exclude </label>
+                                        <label> <input type="radio" class="v-sub" name="brand" value="false" ng-model="ctrl.searchInfo.isInclude">&nbsp;exclude </label>
                                     </label>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                             <label class="control-label col-md-4"><strong>库存</strong></label>
                             <div class="col-md-4">
                                 <select class="form-control" ng-model="ctrl.searchInfo.compareType">
-                                    <option value="$qt">大于</option>
+                                    <option value="$gt">大于</option>
                                     <option value="$lt">小于</option>
                                     <option value="$eq">等于</option>
                                 </select>

@@ -35,11 +35,11 @@ public class ProductPageParameter {
         this.brandList = brandList;
     }
 
-    public boolean isInclude() {
+    public boolean getIsInclude() {
         return isInclude;
     }
 
-    public void setInclude(boolean include) {
+    public void setIsInclude(boolean include) {
         isInclude = include;
     }
 

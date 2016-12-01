@@ -214,7 +214,9 @@ public class ProductTopService extends BaseService {
         }
         CmsBtProductModel_Platform_Cart platform_Cart= f.getPlatform(cartId);
         if(platform_Cart!=null) {
-            info.setSkuCount(platform_Cart.getSkus().size());
+            if(platform_Cart.getSkus()!=null) {
+                info.setSkuCount(platform_Cart.getSkus().size());
+            }
         }
         return info;
     }
@@ -239,7 +241,7 @@ public class ProductTopService extends BaseService {
          }
         //品牌
          if (param.getBrandList() !=  null && param.getBrandList().size() > 0) {
-             if (param.isInclude()) {
+             if (param.getIsInclude()) {
                  queryObject.addQuery("{'common.fields.brand':{$in:#}}");
                  queryObject.addParameters(param.getBrandList());
              } else {

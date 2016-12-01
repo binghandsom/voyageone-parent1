@@ -50,11 +50,17 @@ define([
         // int sortType;//排序类型   1：升序         -1：降序
         // int pageIndex;//当前页
         // int pageSize;//当前页行数
+        NewCategoryCtl.prototype.clear=function () {
+            this.searchInfo = {};
+            this.codeStr="";
+        }
         NewCategoryCtl.prototype.search = function () {
+            var self = this;
             this.goPage(1, this.paging.size);
            var data= this.getSearchInfo();
             this.productTopService.getCount(data).then(function (res) {
-                paging.total = res;
+                self.paging.total = res.data;
+                console.log(data);
             });
         };
         NewCategoryCtl.prototype.getSearchInfo= function  () {
@@ -66,6 +72,7 @@ define([
             return upEntity;
         }
         NewCategoryCtl.prototype.goPage= function(pageIndex, size) {
+            var self=this;
             var data = this.getSearchInfo();
             data.pageIndex = pageIndex;
             data.pageSize = size;
