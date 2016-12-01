@@ -54,7 +54,7 @@
 		<property name="credentialsMatcher" ref="credentialsMatcher" />
 		<property name="cachingEnabled" value="false" />
 		<!-- 如需要自定义缓存时间放开以下.修改 ehcache.xml-->
-		<property name="authenticationCachingEnabled" value="true"/>
+		<property name="authenticationCachingEnabled" value="false"/>
 		<property name="authenticationCacheName" value="authenticationCache"/>
 		<property name="authorizationCachingEnabled" value="true"/>
 		<property name="authorizationCacheName" value="authorizationCache"/>
