@@ -5,19 +5,19 @@ define([
 
     cms.controller("newCategoryController", (function () {
 
-        function NewCategoryCtl($routeParams, productTopService,alert, confirm, notify) {
+        function NewCategoryCtl($routeParams, productTopService, alert, confirm, notify) {
             this.routeParams = angular.fromJson($routeParams.cartInfo);
             this.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
             this.productTopService = productTopService;
             this.searchInfo = {};
             this.sort = {};
             this.codeStr = '';
-            this.isSeachAdd=false;
+            this.isSeachAdd = false;
             this.paging = {
-                curr: 1, total: 0, size: 10, fetch:this.goPage.bind(this)
+                curr: 1, total: 0, size: 10, fetch: this.goPage.bind(this)
             };
-            this.notify=notify;
-            this.alert=alert;
+            this.notify = notify;
+            this.alert = alert;
             console.log($routeParams);
         }
 
@@ -38,22 +38,22 @@ define([
             self.getTopList();
         };
 
-        NewCategoryCtl.prototype.clear=function () {
+        NewCategoryCtl.prototype.clear = function () {
             this.searchInfo = {};
-            this.codeStr="";
+            this.codeStr = "";
         };
 
         NewCategoryCtl.prototype.search = function (sortInfo) {
             var self = this;
-            this.goPage(1, this.paging.size,sortInfo);
-           var data= this.getSearchInfo();
+            this.goPage(1, this.paging.size, sortInfo);
+            var data = this.getSearchInfo();
             this.productTopService.getCount(data).then(function (res) {
                 self.paging.total = res.data;
                 console.log(data);
             });
         };
 
-        NewCategoryCtl.prototype.getSearchInfo= function  () {
+        NewCategoryCtl.prototype.getSearchInfo = function () {
 
             var self = this;
 
@@ -70,15 +70,14 @@ define([
             return upEntity;
         };
 
-        NewCategoryCtl.prototype.goPage= function(pageIndex, size,sortInfo) {
-            var self=this;
+        NewCategoryCtl.prototype.goPage = function (pageIndex, size, sortInfo) {
+            var self = this;
             var data = this.getSearchInfo();
             data.pageIndex = pageIndex;
             data.pageSize = size;
-            if(sortInfo)
-            {
-                data.sortColumnName=sortInfo.sortColumnName;
-                data.sortType=sortInfo.sortType;
+            if (sortInfo) {
+                data.sortColumnName = sortInfo.sortColumnName;
+                data.sortType = sortInfo.sortType;
             }
             this.productTopService.getPage(data).then(function (res) {
                 self.modelList = res.data;
@@ -104,7 +103,7 @@ define([
             self.sort = _sort;
 
             //调用搜索
-            this.search({sortColumnName:_sort.sValue,sortType:sortType});
+            this.search({sortColumnName: _sort.sValue, sortType: sortType});
         };
         NewCategoryCtl.prototype.selectAll = function ($event) {
             var checkbox = $event.target;
@@ -112,8 +111,7 @@ define([
                 this.modelList[i].isChecked = checkbox.checked;
             }
         };
-        NewCategoryCtl.prototype.getSelectedCodeList=function()
-        {
+        NewCategoryCtl.prototype.getSelectedCodeList = function () {
             var codeList = [];
             if (this.modelList) {
                 var lenght = this.modelList.length;
@@ -126,7 +124,7 @@ define([
             return codeList;
         };
 
-        NewCategoryCtl.prototype.addTopProductClick=function () {
+        NewCategoryCtl.prototype.addTopProductClick = function () {
 
             var parameter = {};
             if (this.isSeachAdd) {
@@ -163,8 +161,7 @@ define([
             });
         };
 
-        NewCategoryCtl.prototype.getTopCodeList=function()
-        {
+        NewCategoryCtl.prototype.getTopCodeList = function () {
             var codeList = [];
             if (this.topList) {
                 var lenght = this.topList.length;
@@ -174,22 +171,22 @@ define([
             }
             return codeList;
         }
-         NewCategoryCtl.prototype.saveTopProduct=function () {
-             var self = this;
-             var parameter = {};
-             parameter.cartId = this.routeParams.cartId;
-             parameter.sellerCatId = this.routeParams.catId;
-             parameter.codeList = this.getTopCodeList();
-             this.productTopService.saveTopProduct(parameter).then(function (res) {
-                 self.notify.success('保存成功');
-             });
-         }
-         NewCategoryCtl.prototype.clearTopProduct=function () {
+        NewCategoryCtl.prototype.saveTopProduct = function () {
+            var self = this;
+            var parameter = {};
+            parameter.cartId = this.routeParams.cartId;
+            parameter.sellerCatId = this.routeParams.catId;
+            parameter.codeList = this.getTopCodeList();
+            this.productTopService.saveTopProduct(parameter).then(function (res) {
+                self.notify.success('保存成功');
+            });
+        }
+        NewCategoryCtl.prototype.clearTopProduct = function () {
 
-             alert("adadfsad");
-             this.topList=[];
-         }
-        NewCategoryCtl.prototype.remove = function(index){
+            alert("adadfsad");
+            this.topList = [];
+        }
+        NewCategoryCtl.prototype.remove = function (index) {
             this.topList.splice(index, 1);
         };
 
