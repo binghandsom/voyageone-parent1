@@ -7,37 +7,66 @@
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal" name="shelvesTemplateForm">
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM"></label>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-3">
-                    <select class="form-control" ng-model="vm.product.cartId" required>
+                    <select class="form-control" name="cartId" ng-model="vm.product.cartId" required>
                         <option value=""></option>
                         <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
                     </select>
                 </div>
             </div>
+
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_WULIUBAO_PRODUCT_CODE"></label>
+                <div class="col-sm-3 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.cartId"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoProductCode"/>
+                    <input type="text" class="form-control" name="wuliubaoProductCode" ng-model="vm.product.wuliubaoProductCode" required/>
                     <div class="text-warnings">
-                        <i class="icon fa fa-bell-o" style="font-size: 17px;"></i>&nbsp;启用供应链管理的店铺必填！
+                        <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
                     </div>
                 </div>
                 <div class="col-sm-2 text-warnings">
-                    <i class="fa fa-question-circle"></i>
+                    <a href="javascript:void(0)" class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle"></i></a>
                 </div>
             </div>
+
             <div class="row form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_COMBINED_NUM_ID"></label>
-                <div class="col-sm-3">
-                    <input type="text" class="form-control" ng-model="vm.product.numID" required/>
-                    <button ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                <div class="col-sm-3 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.wuliubaoProductCode"></vo-message>
                 </div>
             </div>
+
             <div class="row form-group">
-                <label class="col-sm-3 control-label" translate="TXT_COMBINED_PRODUCT_NAME"></label>
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_NUM_ID"></strong></label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" ng-model="vm.product.productName" required>
+                    <input type="text" class="form-control" name="numID" ng-model="vm.product.numID" required/>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-info btn-pop" ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-sm-3 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.numID"></vo-message>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" name="productName" ng-model="vm.product.productName" required>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <div class="col-sm-3 col-sm-offset-3">
+                    <vo-message target="shelvesTemplateForm.productName"></vo-message>
                 </div>
             </div>
 
