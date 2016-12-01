@@ -164,7 +164,7 @@
                             <input type="checkbox" class="v-top">&nbsp;<label class="label label-success">检索全量</label>
                         </div>
                         <div class="col-md-3 col-md-offset-5 text-right">
-                                <button class="btn btn-default btn-pop"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
+                                <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
                                 <div class="btn-group" uib-dropdown style="margin-right: 30px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                         &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
@@ -218,8 +218,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in ctrl.pageList">
-                                    <td class="mfb-xt text-center"><input type="checkbox" class="v-sub"></td>
+                                <tr ng-repeat="item in ctrl.modelList">
+                                    <td class="mfb-xt text-center"><input type="checkbox" ng-true-value="true"
+                                                                                          ng-false-value="false"
+                                                                                          ng-model="item.isChecked" class="v-sub" /> </td>
                                     <td class="mfb-xxt text-center">
                                         <img class="thumb-sm-search" ng-src="{{item.image1}}">
                                     </td>

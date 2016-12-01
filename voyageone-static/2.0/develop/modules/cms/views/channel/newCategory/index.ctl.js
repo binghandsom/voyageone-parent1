@@ -16,43 +16,29 @@ define([
             self.paging = {
                 curr: 1, total: 0, size: 10, fetch:this.goPage.bind(this)
             };
-            console.log(self.routeParams);
         }
 
         NewCategoryCtl.prototype.init = function () {
             var self = this,
                 productTopService = self.productTopService,
                 routeParams = self.routeParams;
-
-           // self.getTopList();
-
             productTopService.init({catId: routeParams.catId}).then(function (res) {
                 self.brandList = res.data.brandList;
 
                 self.sort = _.find(self.sortList, function (ele) {
                     return ele.sValue == res.data.sortColumnName;
                 });
-
                 if (self.sort)
                     self.sort.sortType = res.data.sortType;
             });
-
+            self.getTopList();
         };
-        // int cartId;//平台id
-        // List<String> brandList;//品牌名称
-        // boolean isInclude;//  brand是否包含
-        // String compareType;
-        // Integer quantity;//库存数量
-        // String pCatId;//商品分类
-        // List<String> codeList;//   款号/Code/SKU   换行分隔
-        // String sortColumnName;// 排序列名称
-        // int sortType;//排序类型   1：升序         -1：降序
-        // int pageIndex;//当前页
-        // int pageSize;//当前页行数
+
         NewCategoryCtl.prototype.clear=function () {
             this.searchInfo = {};
             this.codeStr="";
-        }
+        };
+
         NewCategoryCtl.prototype.search = function (sortInfo) {
             var self = this;
             this.goPage(1, this.paging.size,sortInfo);
@@ -62,6 +48,7 @@ define([
                 console.log(data);
             });
         };
+
         NewCategoryCtl.prototype.getSearchInfo= function  () {
             var self = this;
             var upEntity = angular.copy(self.searchInfo);
@@ -69,7 +56,8 @@ define([
             upEntity.pCatId = this.routeParams.catId;
             upEntity.codeList = self.codeStr.split("\n");
             return upEntity;
-        }
+        };
+
         NewCategoryCtl.prototype.goPage= function(pageIndex, size,sortInfo) {
             var self=this;
             var data = this.getSearchInfo();
@@ -81,9 +69,11 @@ define([
                 data.sortType=sortInfo.sortType;
             }
             this.productTopService.getPage(data).then(function (res) {
-                self.pageList = res.data;
+                self.modelList = res.data;
             });
         }
+
+
         NewCategoryCtl.prototype.sortSearch = function (sortColumnName, sortType) {
             var self = this,
                 _sort,
@@ -105,11 +95,43 @@ define([
             this.search({sortColumnName:_sort.sValue,sortType:sortType});
         };
 
-        NewCategoryCtl.prototype.getTopList = function () {
-            var self = this,
-                productTopService = self.productTopService;
+        NewCategoryCtl.prototype.getSelectedCodeList=function()
+        {
+            var codeList = [];
+            if (this.modelList) {
+                var lenght = this.modelList.length;
+                for (var i = 0; i < lenght; i++) {
+                    if (this.modelList[i].isChecked) {
+                        codeList.push(this.modelList[i].code);
+                    }
+                }
+            }
+            return codeList;
+        };
 
-            productTopService.getTopList({}).then(function (res) {
+        NewCategoryCtl.prototype.addTopProductClick=function () {
+            var codeList = this.getSelectedCodeList();
+            if (codeList.length==0) {
+                alert("请选择商品");
+            }
+            var parameter = {};
+            parameter.cartId = this.routeParams.cartId;
+            parameter.pCatId = this.routeParams.catId;
+            parameter.codeList = codeList;
+            
+            var self=this;
+            this.productTopService.addTopProduct(parameter).then(function (res) {
+                self.search();
+                self.getTopList();
+            });
+        }
+
+        NewCategoryCtl.prototype.getTopList = function () {
+            var self = this;
+            var parameter = {};
+            parameter.cartId = this.routeParams.cartId;
+            parameter.pCatId = this.routeParams.catId;
+            this.productTopService.getTopList(parameter).then(function (res) {
                 self.topList = res.data;
             });
         };
