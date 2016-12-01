@@ -80,8 +80,13 @@ public class RedisCache<K, V> implements Cache<K, V> {
 			String preKey = this.keyPrefix + key;
     		return preKey.getBytes();
     	}else{
-    		return SerializeUtils.serialize(key);
-    	}
+			byte[] prefix = keyPrefix.getBytes();
+			byte[] keybytes  = SerializeUtils.serialize(key);
+			byte[] byte_3 = new byte[prefix.length + keybytes.length];
+			System.arraycopy(prefix, 0, byte_3, 0, prefix.length);
+			System.arraycopy(keybytes, 0, byte_3, prefix.length, keybytes.length);
+			return byte_3;
+		}
 	}
  	
 	@Override

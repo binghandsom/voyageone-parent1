@@ -33,17 +33,18 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
         String password = String.valueOf(((UsernamePasswordToken) token).getPassword());
 
         // retry count + 1
-        AtomicInteger retryCount = passwordRetryCache.get(RETRY_PRE_FIX + username);
-
-        if (retryCount == null) {
-            retryCount = new AtomicInteger(0);
-            passwordRetryCache.put(RETRY_PRE_FIX + username, retryCount);
-        }
-
-        if (retryCount.incrementAndGet() > 10) {
-            // if retry count > 5 throw
-            throw new ExcessiveAttemptsException();
-        }
+        //用redis做缓存了，先把这段逻辑注释掉
+//        AtomicInteger retryCount = passwordRetryCache.get(RETRY_PRE_FIX + username);
+//
+//        if (retryCount == null) {
+//            retryCount = new AtomicInteger(0);
+//            passwordRetryCache.put(RETRY_PRE_FIX + username, retryCount);
+//        }
+//
+//        if (retryCount.incrementAndGet() > 10) {
+//            // if retry count > 5 throw
+//            throw new ExcessiveAttemptsException();
+//        }
 
         //把MySimpleAuthenticationInfo变回SimpleAuthenticationInfo
         SimpleAuthenticationInfo sInfo =  new SimpleAuthenticationInfo();
@@ -66,10 +67,11 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
 
 //        matches = true;
 
-        if (matches) {
-            // clear retry count
-            passwordRetryCache.remove(RETRY_PRE_FIX + username);
-        }
+        //用redis做缓存了，先把这段逻辑注释掉
+//        if (matches) {
+//            // clear retry count
+//            passwordRetryCache.remove(RETRY_PRE_FIX + username);
+//        }
 
         return matches;
     }
