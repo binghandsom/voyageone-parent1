@@ -118,7 +118,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 天猫平台商品信息新增或更新(天猫)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
                 // 天猫国际商品信息新增或更新(天猫国际)
                 doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
                 // 淘宝商品信息新增或更新(淘宝)

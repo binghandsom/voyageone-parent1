@@ -179,7 +179,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
                 doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
@@ -1849,6 +1849,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
+            // added by morse.lu 2016/11/18 start
+            String newArrivalSellerCat = sxProductService.getNewArrivalSellerCat(sxData.getChannelId(), sxData.getCartId(), sxData.getPlatform().getPublishTime()); // 新品类目id
+            if (!StringUtils.isEmpty(newArrivalSellerCat)) {
+                // 需要添加新品类目
+                sbbuilder.append(newArrivalSellerCat);
+                sbbuilder.append(Separtor_Semicolon); // 用分号(";")分隔
+            }
+            // added by morse.lu 2016/11/18 end
             CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
             if (productPlatformCart != null && ListUtils.notNull(productPlatformCart.getSellerCats())) {
                 // 取得
@@ -1859,8 +1867,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         continue;
                     }
                     // 用连字符("-")连接 (1233797770-1233809821)
-                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
-                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    // modified by morse.lu 2016/11/18 start
+//                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
+//                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    String cids = sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen));
+                    if (!cids.equals(newArrivalSellerCat)) {
+                        sbbuilder.append(cids);
+                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    }
+                    // modified by morse.lu 2016/11/18 end
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了

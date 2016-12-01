@@ -250,6 +250,10 @@ public final class DateTimeUtil {
      * 缺省的日期时间显示格式：MMddyyyy
      */
     public static final String DATE_TIME_FORMAT_11 = "MM/dd/yyyy";
+    /**
+     * 缺省的日期时间显示格式：yyyy-MM
+     */
+    public static final String DATE_TIME_FORMAT_12 = "yyyy-MM";
 
     /**
      * 私有构造方法，禁止对该类进行实例化
