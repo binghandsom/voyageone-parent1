@@ -83,7 +83,6 @@ public class ProductTopService extends BaseService {
                 saveTopModel.getProductCodeList().add(code);
             }
         });
-        topModel.setProductCodeList(param.getCodeList());
         if (isAdd) {
             dao.insert(topModel);
         } else {
@@ -175,8 +174,8 @@ public class ProductTopService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
 
         //平台cartId    商品分类
-        queryObject.addQuery("{'platforms.P#.pCatId':#}");
-        queryObject.addParameters(param.getCartId(), param.getSellerCatId());
+        queryObject.addQuery("{'platforms.P"+param.getCartId()+"':{$exists: true}}");
+       // queryObject.addParameters(param.getCartId());
 
         // 获取code list用于检索code
         if (topModel.getProductCodeList() != null
@@ -225,8 +224,8 @@ public class ProductTopService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
 
         //平台cartId    商品分类
-        queryObject.addQuery("{ \"platforms.P#.sellerCats.cName\" :{'$regex':'^#'}}");
-        queryObject.addParameters(param.getCartId(), param.getSellerCatPath());
+        queryObject.addQuery("{'platforms.P"+param.getCartId()+".sellerCats.cName':{'$regex':'^"+param.getSellerCatPath()+"'}}");
+       // queryObject.addParameters(param.getCartId(), param.getSellerCatPath());
 
         // 获取code list用于检索code  not in
          if (topModel!=null&&topModel.getProductCodeList() != null
