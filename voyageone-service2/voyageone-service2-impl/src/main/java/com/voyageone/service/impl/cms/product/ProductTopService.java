@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -60,8 +57,10 @@ public class ProductTopService extends BaseService {
 
         if (param.isSeachAdd()) {
             //全量加入
-
-
+            List<String> codeList = getSearchCodeList(param, channelId);
+            if (codeList != null) {
+                param.setCodeList(codeList);
+            }
         }
         boolean isAdd = false;
         if (topModel == null) {
@@ -77,18 +76,29 @@ public class ProductTopService extends BaseService {
         if (topModel.getProductCodeList() == null) topModel.setProductCodeList(new ArrayList<>());
 
         //加入code
-        final CmsBtProductTopModel saveTopModel = topModel;
-        param.getCodeList().stream().forEach(code -> {
-            if (!saveTopModel.getProductCodeList().contains(code)) {
-                saveTopModel.getProductCodeList().add(code);
-            }
+        HashSet<String> codeSet = new HashSet<>();
+        if (param.getCodeList() != null) {
+            param.getCodeList().stream().forEach(code -> {
+                codeSet.add(code);
+            });
+        }
+        topModel.getProductCodeList().stream().forEach(code -> {
+            codeSet.add(code);
         });
+        topModel.setProductCodeList(codeSet.stream().collect(Collectors.toList()));
+
         if (isAdd) {
             dao.insert(topModel);
         } else {
             dao.update(topModel);
         }
-
+    }
+    public List<String> getSearchCodeList(AddTopProductParameter param, String channelId) {
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+        JongoQuery queryObject = getJongoQuery(param.getSearchParameter(), topModel);
+        queryObject.setProjectionExt("common.fields.code");
+        List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
+        return list.stream().map(f -> f.getCommon().getFields().getCode()).collect(Collectors.toList());
     }
 
     //保存置顶区
