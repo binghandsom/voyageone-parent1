@@ -1,10 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"></span></button>
+        <h5 class="modal-title">&nbsp;<span translate="组合商品操作历史"></span></i></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="row form-group">
+            <label class="control-label" style="float: left;"><strong translate="商品编码"></strong></label>
+            <div class="col-sm-4">
+                <label>{{vm.product.numID}}</label>
+            </div>
+        </div>
+        <div class="row form-group">
+            <label class="control-label" style="float: left;"><strong translate="平台"></strong></label>
+            <div class="col-sm-4">
+                <label>{{vm.carts[vm.product.cartId]}}</label>
+            </div>
+        </div>
 
-</body>
-</html>
+        <div class="row form-group">
+            <table class="table table-hover-new text-center">
+                <thead>
+                <tr>
+                    <th class="text-left" translate="操作时间"></th>
+                    <th class="text-left" translate="操作者"></th>
+                    <th class="text-left" translate="组合商品状态"></th>
+                    <th class="text-left" translate="组合商品平台状态"></th>
+                    <th class="text-left" translate="操作类型"></th>
+                    <th class="text-left" translate="操作内容"></th>
+                </tr>
+                </thead>
+                <tbody ng-if="vm.logs.length">
+                <tr ng-repeat="log in vm.logs">
+                    <td class="text-left">{{log.operateTime}}</td>
+                    <td class="text-left">{{log.operater}}</td>
+                    <td class="text-left">{{vm.statuses[log.status]}}</td>
+                    <td class="text-left">{{vm.platformStatuses[log.platformStatus]}}</td>
+                    <td class="text-left">{{log.operateType}}</td>
+                    <td class="text-left">{{log.operateContent}}</td>
+
+                </tr>
+                </tbody>
+            </table>
+            <div if-no-rows="vm.logs.length"></div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;关闭</button>
+    </div>
+</div>

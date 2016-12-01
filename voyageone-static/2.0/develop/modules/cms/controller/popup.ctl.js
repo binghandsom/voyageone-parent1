@@ -578,7 +578,8 @@ define([
             "combinedProductLogs" : {
                 "templateUrl": "views/pop/product/combined-product-logs.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-logs.ctl",
-                "controller": 'CombinedProductLogsController as ctrl'
+                "controller": 'CombinedProductLogsController as ctrl',
+                "size": 'lg'
             }
         },
         "shelves" : {

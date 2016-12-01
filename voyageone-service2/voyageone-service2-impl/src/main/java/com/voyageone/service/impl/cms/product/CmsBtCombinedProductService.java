@@ -175,7 +175,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
-        logModel.setNumId(product.getNumID());
+        logModel.setNumID(product.getNumID());
         logModel.setChannelId(product.getChannelId());
         logModel.setCartId(product.getCartId());
         logModel.setOperater(user);
@@ -269,7 +269,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
-        logModel.setNumId(modelBean.getNumID());
+        logModel.setNumID(modelBean.getNumID());
         logModel.setChannelId(modelBean.getChannelId());
         logModel.setCartId(modelBean.getCartId());
         logModel.setOperater(user);
@@ -315,7 +315,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
-        logModel.setNumId(model.getNumID());
+        logModel.setNumID(model.getNumID());
         logModel.setChannelId(model.getChannelId());
         logModel.setCartId(model.getCartId());
         logModel.setOperater(user);
@@ -525,7 +525,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
             // 添加操作日志
             CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
-            logModel.setNumId(targetModel.getNumID());
+            logModel.setNumID(targetModel.getNumID());
             logModel.setChannelId(targetModel.getChannelId());
             logModel.setCartId(targetModel.getCartId());
             logModel.setOperater(user);

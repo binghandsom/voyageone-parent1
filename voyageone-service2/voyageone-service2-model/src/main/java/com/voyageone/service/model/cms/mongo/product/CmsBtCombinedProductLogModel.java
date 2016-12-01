@@ -10,7 +10,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 public class CmsBtCombinedProductLogModel extends BaseMongoModel {
 
 
-    private String numId;
+    private String numID;
     private String channelId;
     private Integer cartId;
     /*操作人*/
@@ -26,12 +26,12 @@ public class CmsBtCombinedProductLogModel extends BaseMongoModel {
     /*操作内容*/
     private String operateContent;
 
-    public String getNumId() {
-        return numId;
+    public String getNumID() {
+        return numID;
     }
 
-    public void setNumId(String numId) {
-        this.numId = numId;
+    public void setNumID(String numID) {
+        this.numID = numID;
     }
 
     public String getChannelId() {

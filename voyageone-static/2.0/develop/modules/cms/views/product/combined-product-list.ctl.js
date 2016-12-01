@@ -116,6 +116,10 @@ define([
                        });
 
                    };
+                   // 操作日志
+                   $scope.popCombinedProductLogs = function (product) {
+                       popups.popCombinedProductLogs(_.extend({"product":angular.copy(product)}, {"carts":$scope.vm.carts, "statuses": $scope.vm.statuses, "platformStatuses":$scope.vm.platformStatuses}));
+                   }
                };
 
                return CombinedProductController;
