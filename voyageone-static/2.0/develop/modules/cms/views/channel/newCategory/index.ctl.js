@@ -184,6 +184,11 @@ define([
                  self.notify.success('保存成功');
              });
          }
+         NewCategoryCtl.prototype.clearTopProduct=function () {
+
+             alert("adadfsad");
+             this.topList=[];
+         }
         NewCategoryCtl.prototype.remove = function(index){
             this.topList.splice(index, 1);
         };

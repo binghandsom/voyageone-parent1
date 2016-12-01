@@ -26,7 +26,7 @@
                         <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;<ins>{{ctrl.topList.length}}</ins></label>
                     </div>
                     <div class="col-md-3">
-                        <button class="btn btn-default btn-pop"><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
+                        <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
                         <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
                     </div>
 
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-4">
-                                        <img class="thumb" ng-src="{{product.image1}}">
+                                        <img class="thumb" image="{{product.image1}}">
                                     </div>
                                     <div class="col-sm-8">
                                         <div class="row">
@@ -223,7 +223,7 @@
                                                                                           ng-false-value="false"
                                                                                           ng-model="item.isChecked" class="v-sub" /> </td>
                                     <td class="mfb-xxt text-center">
-                                        <img class="thumb-sm-search" ng-src="{{item.image1}}"  />
+                                        <img class="thumb-sm-search" image="{{item.image1}}"  />
                                     </td>
                                     <td class="mfb-xxt text-center">{{item.pNumIId}}</td>
                                     <td class="mfb-xxt text-center">{{item.model}}</td>
