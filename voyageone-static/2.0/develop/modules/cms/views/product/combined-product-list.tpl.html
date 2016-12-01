@@ -1,13 +1,4 @@
-<style type="text/css">
-    ul{
-        list-style:none;
-    }
-    ul li{
-        float: left;
-        padding-left:10px;
-    }
-</style>
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" id="combined-product" ng-init="initialize()">
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
         <uib-accordion-group is-open="vm.config.open">
             <uib-accordion-heading>
@@ -15,148 +6,160 @@
                 <i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.config.open, 'glyphicon-menu-down': !vm.config.open}"></i>
             </uib-accordion-heading>
             <div class="container-fluid m-t-sm m-b-md">
-                <div class="col-sm-12">
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group" >
-                                <label class="col-sm-4  control-label" translate="TXT_PLATFORM"></label>
-                                <div class="col-sm-7">
-                                    <select class="form-control" ng-model="vm.searchBean.cartId">
-                                        <option value="">All</option>
-                                        <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
-                                    </select>
+                <div class="row">
+                    <div class="col-md-10 col-md-offset-1">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-4  control-label"><strong translate="TXT_PLATFORM"></strong></label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" ng-model="vm.searchBean.cartId">
+                                            <option value="">All</option>
+                                            <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group" >
+                                    <label class="col-sm-4  control-label"><strong translate="TXT_COMBINED_PRODUCT_STATUS"></strong></label>
+                                    <div class="col-sm-7">
+                                        <label class="m-t-tx" ng-repeat="(key,value) in vm.statuses">
+                                            <input type="checkbox" class="v-top" ng-model="vm.searchBean.statuses[key]" value="{{key}}"/>&nbsp;&nbsp;<span class="v-top">{{value}}</span>&emsp;
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row form-group" >
+                                    <label class="col-sm-4  control-label"><strong translate="TXT_COMBINED_PRODUCT_PLATFORMS_STATUS"></strong></label>
+                                    <div class="col-sm-7">
+                                        <label class="m-t-tx" ng-repeat="(key,value) in vm.platformStatuses">
+                                            <input type="checkbox" ng-model="vm.searchBean.platformStatuses[key]" value="{{key}}"/>&nbsp;&nbsp;<span class="v-top">{{value}}</span>&emsp;
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <div class="form-horizontal">
-                            <div class="form-group" >
-                                <label class="col-sm-4 control-label" translate="TXT_COMBINED_PRODUCT_NAME"></label>
-                                <div class="col-sm-7">
-                                    <input type="text" ng-model="vm.searchBean.productName">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-4">
-                        <div class="form-horizontal">
-                            <div class="form-group" >
-                                <label class="col-sm-4 control-label" translate="TXT_COMBINED_PRODUCT_CODE"></label>
-                                <div class="col-sm-7">
-                                    <textarea ng-model="vm.searchBean.numIDs"></textarea>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-4 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" ng-model="vm.searchBean.productName">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-4 control-label"><strong translate="sku"></strong></label>
+                                    <div class="col-sm-6">
+                                        <textarea class="form-control no-resize" rows="3" cols="3" ng-model="vm.searchBean.skuCodes"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group" >
-                                <label class="col-sm-4  control-label" translate="TXT_COMBINED_PRODUCT_STATUS"></label>
-                                <div class="col-sm-7">
-                                    <label ng-repeat="(key,value) in vm.statuses">
-                                        <input type="checkbox" ng-model="vm.searchBean.statuses[key]" value="{{key}}"/>{{value}}
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group" >
-                                <label class="col-sm-4  control-label" translate="TXT_COMBINED_PRODUCT_PLATFORMS_STATUS"></label>
-                                <div class="col-sm-7">
-                                    <label ng-repeat="(key,value) in vm.platformStatuses">
-                                        <input type="checkbox" ng-model="vm.searchBean.platformStatuses[key]" value="{{key}}"/>{{value}}
-                                    </label>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-4 control-label"><strong translate="TXT_COMBINED_PRODUCT_CODE"></strong></label>
+                                    <div class="col-sm-7">
+                                        <textarea class="form-control no-resize" rows="3" cols="3" ng-model="vm.searchBean.numIDs"></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-4 control-label" translate="sku"></label>
-                                <div class="col-sm-7">
-                                    <textarea ng-model="vm.searchBean.skuCodes"></textarea>
-                                </div>
-                            </div>
-                        </div><!-- .form-group -->
-                    </div>
-                    <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
-                        <div class="form-inline">
-                            <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-                        </div>
                     </div>
                 </div>
+
+                <div class="row text-center m-t-sm" ng-controller="popupCtrl">
+                    <div class="form-inline">
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                    </div>
+                </div>
+
             </div>
         </uib-accordion-group>
     </uib-accordion>
 
-    <!-- .accordion -->
-    <div class="box">
-        <div class="box-body-new">
+    <div class="panel panel-default">
+        <div class="panel-heading">
             <div class="btn-group">
-                <button  type="button" class="btn btn-pop btn-default m-r-sm m-b-xs m-t-xs m-l-xs" ng-click="popCombinedProduct()">
+                <button  type="button" class="btn btn-default btn-pop" ng-click="popCombinedProduct()">
                     {{'TXT_COMBINED_PRODUCT_NEW' | translate}}
                 </button>
             </div>
+        </div>
+        <div class="panel-body">
+            <div class="box">
+                <div class="box-body-new">
+                    <table class="table table-hover-new text-center box-body">
+                        <thead>
+                            <tr>
+                                <th class="text-center" translate="组合套装sku"></th>
+                                <th class="text-left" translate="组合套装中国最终售价"></th>
+                                <th class="text-left" translate="组合套装优惠售价"></th>
+                                <th class="text-center" translate="创建时间"></th>
+                                <th class="text-center" translate="更新时间"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-repeat="product in vm.products">
+                        <tr>
+                            <td colspan="5">
+                                <div class="row text-left">
+                                    &emsp;
+                                    <span class="label" ng-class="{'label-info':product.status == 1,'label-default':product.status == 0}">{{vm.statuses[product.status]}}</span>&emsp;
 
-            <table class="table table-hover-new text-center">
-                <thead>
-                <tr>
-                    <th class="text-left" translate="组合套装sku"></th>
-                    <th class="text-left" translate="组合套装中国最终售价"></th>
-                    <th class="text-left" translate="组合套装优惠售价"></th>
-                    <!--<th class="text-left" translate="库存"></th>-->
-                    <th class="text-left" translate="创建时间"></th>
-                    <th class="text-left" translate="更新时间"></th>
-                </tr>
-                </thead>
-                <tbody ng-repeat="product in vm.products">
-                    <tr>
-                        <td class="text-left" colspan="6">
+                                    <span class="label" ng-class="{'label-primary':product.platformStatus == 1,
+                                                                   'label-danger':product.platformStatus == 0}">
+                                        {{vm.platformStatuses[product.platformStatus]}}
+                                    </span>&emsp;
 
-                            <!--商品状态-->
-                            <span class="m-l-sm">
-                                <span class="m-t-xs m-r-sm">
-                                    <span>{{vm.statuses[product.status]}}</span>
-                                </span>
-                            </span>
-                            <!--商品平台状态-->
-                            <span class="m-l-sm">
-                                <span class="m-t-xs m-r-sm">
-                                    <span>{{vm.platformStatuses[product.platformStatus]}}</span>
-                                </span>
-                            </span>
+                                    <strong>商品编码：</strong><a href="javascript:void(0)">{{product.numID}}</a>&emsp;
 
-                            <span>商品编码：{{product.numID}}</span>
-                            <span>组合套装商品名称：{{product.productName}}</span>
-                            <span>
-                                <ul style="list-style: none;">
-                                    <li ng-if="product.platformStatus==0" ng-click="onOffShelves(product, 1)">上架</li>
-                                    <li ng-if="product.platformStatus==1" ng-click="onOffShelves(product, 0)">下架</li>
-                                    <li ng-click="popEditCombinedProduct(product)">编辑</li>
-                                    <li ng-click="deleteCombinedProduct(product)">删除</li>
-                                    <li>操作历史</li>
-                                </ul>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr ng-repeat="sku in product.skus">
-                        <td class="text-left">{{sku.suitSkuCode}}</td>
-                        <td class="text-left">{{sku.suitSellingPriceCn}}</td>
-                        <td class="text-left">{{sku.suitPreferentialPrice}}</td>
-                        <!--<td class="text-left">100</td>-->
-                        <td class="text-left">{{product.created}}</td>
-                        <td class="text-left">{{product.modified}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div  if-no-rows="vm.products.length"></div>
-        </div><!-- /.box-body -->
-        <div class="col-sm-12 m-t-lg m-b-lg">
-            <vpagination config="vm.productPageOption"></vpagination>
+                                    <strong>组合套装商品名称：</strong><span>{{product.productName}}</span>
+
+
+                                    <div class="btn-group pull-right" uib-dropdown ng-if="vm.mastData.isMain != true" style="margin-right: 10px">
+                                        <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
+                                            &nbsp;Master操作&nbsp;<span class="caret"></span>
+                                        </button>
+                                        <ul uib-dropdown-menu>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="onOffShelves(product, 1)"><i class="fa fa-arrow-circle-right"></i>&nbsp;上架</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="onOffShelves(product, 0)"><i class="fa fa-arrow-circle-right"></i>&nbsp;下架</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="popEditCombinedProduct(product)"><i class="fa fa-arrow-circle-right"></i>&nbsp;编辑</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)" ng-click="deleteCombinedProduct(product)"><i class="fa fa-arrow-circle-right"></i>&nbsp;删除</a>
+                                            </li>
+                                            <li>
+                                                <a href="javascript:void(0)"><i class="fa fa-arrow-circle-right"></i>&nbsp;操作历史</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="sku in product.skus">
+                            <td class="text-center">{{sku.suitSkuCode}}</td>
+                            <td class="text-left">{{sku.suitSellingPriceCn}}</td>
+                            <td class="text-left">{{sku.suitPreferentialPrice}}</td>
+                            <td class="text-center">{{product.created}}</td>
+                            <td class="text-center">{{product.modified}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div  if-no-rows="vm.products.length"></div>
+                </div><!-- /.box-body -->
+                <div class="col-sm-12 m-t-lg m-b-lg">
+                    <vpagination config="vm.productPageOption"></vpagination>
+                </div>
+            </div>
         </div>
     </div>
-</div><!-- end .wrapper-md -->
+
+
+</div>
