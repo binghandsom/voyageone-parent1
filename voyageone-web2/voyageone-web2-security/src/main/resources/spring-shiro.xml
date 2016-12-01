@@ -18,30 +18,59 @@
 
 	<!-- 集群版,用Redis Cache -->
 	<!-- shiro redisManager -->
-	<bean id="redisManager" class="com.voyageone.security.shiro.cache.RedisManager">
-		<property name="expire" value="1800"/>
-		<property name="connectionFactory" ref="jedisConnectionFactory"/>
-	</bean>
+	<!--<bean id="redisManager" class="com.voyageone.security.shiro.cache.RedisManager">-->
+		<!--<property name="expire" value="1800"/>-->
+		<!--<property name="connectionFactory" ref="jedisConnectionFactory"/>-->
+	<!--</bean>-->
 
-	<bean id="shiroCacheManager" class="com.voyageone.security.shiro.cache.RedisCacheManager" >
-		<property name="redisManager" ref="redisManager" />
-	</bean>
+	<!--<bean id="shiroCacheManager" class="com.voyageone.security.shiro.cache.RedisCacheManager" >-->
+		<!--<property name="redisManager" ref="redisManager" />-->
+	<!--</bean>-->
+
+	<!--&lt;!&ndash; 用ServletContainerSessionManager可以沿用web.xml中配置的超时时间 &ndash;&gt;-->
+	<!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager"/>-->
 	<!-- 集群版,用Redis Cache End-->
 
 	<!--单机版Cache,用EhCache-->
 	<!--shiro缓存管理器 -->
-	<!--<bean id="shiroCacheManager" class="com.voyageone.security.shiro.spring.SpringCacheManagerWrapper" >-->
-		<!--<property name="cacheManager" ref="springCacheManager"/>-->
-	<!--</bean>-->
+	<bean id="shiroCacheManager" class="com.voyageone.security.shiro.spring.SpringCacheManagerWrapper" >
+		<property name="cacheManager" ref="springCacheManager"/>
+	</bean>
 
-	<!--<bean id="springCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">-->
-		<!--<property name="cacheManager" ref="ehcacheManager"/>-->
-	<!--</bean>-->
+	<bean id="springCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcacheManager"/>
+	</bean>
 
 	<!--ehcache-->
-	<!--<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">-->
-		<!--<property name="configLocation" value="classpath:ehcache.xml"/>-->
-	<!--</bean>-->
+	<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml"/>
+	</bean>
+
+	<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+
+	<!-- 会话DAO -->
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+	<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+	<property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+	</bean>
+
+	<!-- 会话验证调度器 -->
+	<!-- 全局的会话信息检测扫描信息间隔30分钟-->
+	<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler2">
+	<property name="sessionValidationInterval" value="1800000"/>
+	<property name="sessionManager" ref="sessionManager"/>
+	</bean>
+
+	<!-- 会话管理器 -->
+	<!-- 全局的会话信息设置成30分钟,sessionValidationSchedulerEnabled参数就是是否开启扫描  -->
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+	<property name="globalSessionTimeout" value="1800000"/>
+	<property name="deleteInvalidSessions" value="true"/>
+	<property name="sessionValidationSchedulerEnabled" value="true"/>
+	<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+	<property name="sessionDAO" ref="sessionDAO"/>
+	</bean>
+
 	<!--单机版Cache,用EhCache End -->
 
 	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
@@ -49,7 +78,7 @@
 	<!--自定义Realm -->
 	<bean id="myRealm" class="com.voyageone.security.shiro.MyRealm">
 		<property name="credentialsMatcher" ref="credentialsMatcher" />
-		<property name="cachingEnabled" value="false" />
+		<property name="cachingEnabled" value="true" />
 		<!-- 如需要自定义缓存时间放开以下.修改 ehcache.xml-->
 		<property name="authenticationCachingEnabled" value="false"/>
 		<property name="authenticationCacheName" value="authenticationCache"/>
@@ -103,35 +132,4 @@
 			</value>
 		</property>
 	</bean>
-
-
-	<!--<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>-->
-
-	<!-- 会话DAO -->
-	<!--<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">-->
-		<!--<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>-->
-		<!--<property name="sessionIdGenerator" ref="sessionIdGenerator"/>-->
-	<!--</bean>-->
-
-	<!-- 会话验证调度器 -->
-	<!-- 全局的会话信息检测扫描信息间隔30分钟-->
-	<!--<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler2">-->
-		<!--<property name="sessionValidationInterval" value="1800000"/>-->
-		<!--<property name="sessionManager" ref="sessionManager"/>-->
-	<!--</bean>-->
-
-	<!-- 会话管理器 -->
-	<!-- 全局的会话信息设置成30分钟,sessionValidationSchedulerEnabled参数就是是否开启扫描  -->
-	<!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">-->
-		<!--<property name="globalSessionTimeout" value="1800000"/>-->
-		<!--<property name="deleteInvalidSessions" value="true"/>-->
-		<!--<property name="sessionValidationSchedulerEnabled" value="true"/>-->
-		<!--<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>-->
-		<!--<property name="sessionDAO" ref="sessionDAO"/>-->
-	<!--</bean>-->
-
-	<!-- 用ServletContainerSessionManager可以沿用web.xml中配置的超时时间 -->
-	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager"/>
-
-
 </beans>
