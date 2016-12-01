@@ -210,6 +210,7 @@ public class ProductTopService extends BaseService {
         info.setModel(f.getCommon().getFields().getModel());
         info.setProductName(f.getCommon().getFields().getProductNameEn());
         info.setQuantity(f.getCommon().getFields().getQuantity());
+
         //图片
         List<CmsBtProductModel_Field_Image> imgList = f.getCommonNotNull().getFieldsNotNull().getImages6();
         if (!imgList.isEmpty()) {
@@ -223,6 +224,9 @@ public class ProductTopService extends BaseService {
         }
         CmsBtProductModel_Platform_Cart platform_Cart= f.getPlatform(cartId);
         if(platform_Cart!=null) {
+            info.setpNumIId(platform_Cart.getpNumIId());
+            info.setpPriceSaleSt(platform_Cart.getpPriceSaleSt());
+            info.setpPriceSaleEd(platform_Cart.getpPriceSaleEd());
             if(platform_Cart.getSkus()!=null) {
                 info.setSkuCount(platform_Cart.getSkus().size());
             }
