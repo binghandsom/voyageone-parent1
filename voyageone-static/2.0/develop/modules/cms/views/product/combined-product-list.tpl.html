@@ -117,16 +117,25 @@
                     <tr>
                         <td class="text-left" colspan="6">
 
-                            <span class="label m-t-xs m-r-sm ng-scope" style="padding-left: 10px; color: rgb(0, 0, 0); font-size: 12px; background-color: DeepSkyBlue;" ng-style="{&quot;background-color&quot;:&quot;DeepSkyBlue&quot;}" title="OnSale">
-                                <span class="ng-scope">
-                                    <a ng-href="https://detail.tmall.hk/hk/item.htm?id=542231992207" ng-class="{'mainPrd':cartsObj._isMain}" title="OnSale" target="_blank" class="ng-binding mainPrd" href="https://detail.tmall.hk/hk/item.htm?id=542231992207">TG:售</a>
+                            <!--商品状态-->
+                            <span class="m-l-sm">
+                                <span class="m-t-xs m-r-sm">
+                                    <span>{{vm.statuses[product.status]}}</span>
                                 </span>
                             </span>
+                            <!--商品平台状态-->
+                            <span class="m-l-sm">
+                                <span class="m-t-xs m-r-sm">
+                                    <span>{{vm.platformStatuses[product.platformStatus]}}</span>
+                                </span>
+                            </span>
+
                             <span>商品编码：{{product.numID}}</span>
                             <span>组合套装商品名称：{{product.productName}}</span>
                             <span>
                                 <ul style="list-style: none;">
-                                    <li>上下架</li>
+                                    <li ng-if="product.platformStatus==0">上架</li>
+                                    <li ng-if="product.platformStatus==1">下架</li>
                                     <li ng-click="popEditCombinedProduct(product)">编辑</li>
                                     <li ng-click="deleteCombinedProduct(product)">删除</li>
                                     <li>操作历史</li>
