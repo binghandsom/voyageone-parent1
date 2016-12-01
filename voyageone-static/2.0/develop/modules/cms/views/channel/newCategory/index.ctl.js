@@ -57,7 +57,7 @@ define([
         };
 
         NewCategoryCtl.prototype.getSearchInfo = function () {
-         //获取搜索条件
+            //获取搜索条件
             var self = this;
 
             var upEntity = angular.copy(self.searchInfo);
@@ -132,7 +132,7 @@ define([
         };
 
         NewCategoryCtl.prototype.addTopProductClick = function () {
-         //加入置顶区
+            //加入置顶区
             var parameter = {};
             if (this.isSeachAdd) {
                 //全量加入
