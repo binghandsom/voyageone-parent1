@@ -59,7 +59,7 @@
                 </a>
             </li>
             <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
-                <a class="auto" ng-if="item.isParent == 1">
+                <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
                       <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -67,7 +67,7 @@
                     <i class="fa fa-plus icon-small text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
-                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId,item)">
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId)">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
@@ -648,11 +648,11 @@
         </ul>
     </li>
 </ul>
-<!--end-->
+
 
 <script id="categoryMenu" type="text/ng-template">
     <li ng-repeat="item in categoryMenu">
-        <a class="auto" ng-if="item.isParent == 1">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
                 <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -660,7 +660,7 @@
             <i class="fa fa-plus icon-small text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId,item)">
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId)">
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
