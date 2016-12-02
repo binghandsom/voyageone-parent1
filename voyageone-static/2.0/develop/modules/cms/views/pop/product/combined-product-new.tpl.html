@@ -5,7 +5,7 @@
         <h5 class="modal-title">&nbsp;<i class="fa fa-plus"></i>&nbsp;<span translate="TXT_COMBINED_PRODUCT_NEW"></span></h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal" name="shelvesTemplateForm">
+        <form role="form" class="form-horizontal" name="shelvesTemplateForm" novalidate>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-3">
@@ -77,11 +77,11 @@
                 <table class="table table-hover-new text-center">
                     <thead>
                     <tr>
-                        <th class="text-left" translate="单品SKU"></th>
-                        <th class="text-left" translate="单品中国最终售价"></th>
-                        <th class="text-left" translate="单品优惠售价"></th>
-                        <th class="text-left" translate="商品名称"></th>
-                        <th class="text-left" tranate="操作"></th>
+                        <th class="mfb-xxs text-left">单品SKU</th>
+                        <th class="mfb-xxx text-left">单品中国最终售价</th>
+                        <th class="mfb-xxx text-left">单品优惠售价</th>
+                        <th class="mfb-xxxs text-left">商品名称</th>
+                        <th class="mfb-xxt text-center">操作</th>
                     </tr>
                     </thead>
                     <tbody ng-if="vm.product.skus">
@@ -92,7 +92,7 @@
                                         组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
                                         组合套装实际售价 ：{{sku.suitPreferentialPrice}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
                                     </div>
-                                    <div style="float: right; padding-right: 13px;">
+                                    <div style="float: right; padding-right: 37px;">
                                         <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
                                             <i class="fa fa-plus"></i>
                                         </button>
@@ -102,13 +102,13 @@
                                     <tbody>
                                         <tr ng-repeat="skuItem in sku.skuItems">
 
-                                            <td class="text-left">
-                                                <input type="text" required ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)">
+                                            <td class="mfb-xxs text-left">
+                                                <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
                                             </td>
-                                            <td class="text-left">{{skuItem.sellingPriceCn}}</td>
-                                            <td class="text-left"><input type="number" required ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)"></td>
-                                            <td class="text-left">{{skuItem.productName}}</td>
-                                            <td class="text-left">
+                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn}}</td>
+                                            <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)" required></td>
+                                            <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
+                                            <td class="mfb-xxt text-center">
                                                 <button type="submit" class="btn btn-success btn-xxs" ng-click="deleteSkuItem(sku,$index)">
                                                     <i class="fa fa-minus"></i>
                                                 </button>
