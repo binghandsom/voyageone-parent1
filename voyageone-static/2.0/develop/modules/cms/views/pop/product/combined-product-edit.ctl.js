@@ -9,9 +9,6 @@ define([
 
                function CombinedProductEditController($scope, context, combinedProductService, popups, confirm) {
                    $scope.vm = {
-                       config:{
-                           showFlag: true
-                       },
                        carts:{},
                        product:{}
                    };
@@ -37,10 +34,12 @@ define([
                            return;
                        }
                        combinedProductService.getCombinedProductDetail({"cartId" : cartId, "numID" : numID}).then(function (resp) {
-                           $scope.vm.config.showFlag = true;
                            $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
                            // carts集合中cart为string, product为int
                            $scope.vm.product.cartId = $scope.vm.product.cartId == null ? "" : $scope.vm.product.cartId + "";
+                           _.each($scope.vm.product.skus, function (element, index, list) {
+                               _.extend(element, {'tempSuitSellingPriceCn': element.suitSellingPriceCn}, {'tempSuitPreferentialPrice':element.suitPreferentialPrice})
+                           });
                        });
                    };
 

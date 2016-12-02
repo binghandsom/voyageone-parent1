@@ -17,16 +17,19 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoProductCode"/><i>?</i>
+                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoProductCode"/>
                     <div class="text-warnings" style="padding-left:0px">
                         <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
                     </div>
+                </div>
+                <div class="col-sm-2 text-warnings">
+                    <a href="javascript:void(0)" class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle"></i></a>
                 </div>
             </div>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_NUM_ID"></strong></label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" required ng-model="vm.product.numID" />
+                    <input type="text" class="form-control" disabled required ng-model="vm.product.numID" />
                 </div>
                 <div class="col-sm-3">
                     <button class="btn btn-info btn-pop" ng-click="getCombinedProductInfo()">获取组合套装信息</button>
@@ -39,7 +42,7 @@
                 </div>
             </div>
 
-            <div class="row form-group" ng-show="vm.config.showFlag">
+            <div class="row form-group">
                 <table class="table table-hover-new text-center">
                     <thead>
                     <tr>
@@ -99,6 +102,6 @@
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
         <button class="btn btn-vo" ng-click="editSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
     </div>
 </div>

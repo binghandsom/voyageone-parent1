@@ -60,7 +60,8 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" name="productName" ng-model="vm.product.productName" required>
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" disabled required></textarea>
+                    <!--<input type="text" class="form-control" name="productName" ng-model="vm.product.productName" required>-->
                 </div>
             </div>
 
@@ -130,6 +131,6 @@
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
         <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
     </div>
 </div>
