@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.service.bean.com.OpenNewShopBean;
-import com.voyageone.service.impl.com.newshop.NewShopService;
+import com.voyageone.service.impl.com.newshop.OpenNewShopService;
 import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.service.model.com.TmNewShopDataModel;
 import com.voyageone.web2.admin.AdminController;
@@ -32,11 +32,11 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 public class NewShopController extends AdminController {
 	
 	@Autowired
-	private NewShopService newShopService;
+	private OpenNewShopService openNewShopService;
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.GET_CHANNEL_SERIES)
 	public AjaxResponse getChannelSeries(@RequestBody String channelId) {
-		return success(newShopService.getChannelSeries(channelId));
+		return success(openNewShopService.getChannelSeries(channelId));
 	}
 
 	@RequestMapping(AdminUrlConstants.NewShop.Self.SAVE_CHANNEL_SERIES)
@@ -47,13 +47,13 @@ public class NewShopController extends AdminController {
 		// 处理开新店的SQL
 		OpenNewShopBean bean = new OpenNewShopBean();
 		BeanUtils.copyProperties(form, bean);
-		newShopService.saveChannelSeries(form.getId(), bean, getUser().getUserName());
+		openNewShopService.saveChannelSeries(form.getId(), bean, getUser().getUserName());
 		return success(true);
 	}
 	
 	@RequestMapping(value = AdminUrlConstants.NewShop.Self.DOWNLOAD_NEW_SHOP_SQL, method = RequestMethod.GET)
 	public ResponseEntity<byte[]> downloadNewShopSql(@RequestParam Long newShopId) throws Exception {
-		File sqlFile = newShopService.downloadNewShopSql(newShopId, getUser().getUserName());
+		File sqlFile = openNewShopService.downloadNewShopSql(newShopId, getUser().getUserName());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String downloadFileName = "new-shop-" + dateFormat.format(new Date()) + ".sql";
 		return genResponseEntityFromFile(downloadFileName, sqlFile.getPath());
@@ -65,7 +65,7 @@ public class NewShopController extends AdminController {
 		Preconditions.checkNotNull(form.getPageNum());
 		Preconditions.checkNotNull(form.getPageSize());
 		// 检索短信配置信息
-		PaginationResultBean<TmNewShopDataModel> smsConfigPage = newShopService.searchNewShopByPage(form.getChannelId(),
+		PaginationResultBean<TmNewShopDataModel> smsConfigPage = openNewShopService.searchNewShopByPage(form.getChannelId(),
 				form.getChannelName(), form.getModifiedFrom(), form.getModifiedTo(),
 				form.getPageNum(), form.getPageSize());
 		
@@ -74,13 +74,13 @@ public class NewShopController extends AdminController {
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.GET_NEW_SHOP_BY_ID)
 	public AjaxResponse getNewShopById(@RequestBody Long newShopId) {
-		return success(newShopService.getNewShopById(newShopId));
+		return success(openNewShopService.getNewShopById(newShopId));
 	}
 	
 	@RequestMapping(AdminUrlConstants.NewShop.Self.DELETE_NEW_SHOP)
 	public AjaxResponse deleteNewShop(@RequestBody Long newShopId) {
 		Preconditions.checkNotNull(newShopId);
-		newShopService.deleteNewShop(newShopId);
+		openNewShopService.deleteNewShop(newShopId);
 		return success(true);
 	}
 
