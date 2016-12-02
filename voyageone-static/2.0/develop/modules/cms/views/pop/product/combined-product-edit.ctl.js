@@ -1,5 +1,6 @@
 /**
- * Created by rex.wu on 2016/11/30.
+ * @author rex.wu
+ * @date 2016/11/30.
  */
 define([
         "cms",
@@ -8,7 +9,7 @@ define([
     ], function (cms) {
         cms.controller("CombinedProductEditController", (function () {
 
-               function CombinedProductEditController($scope, context, combinedProductService, popups, confirm) {
+               function CombinedProductEditController($scope, context, combinedProductService, $compile, $templateRequest, $document) {
                    $scope.vm = {
                        carts:{},
                        product:{}
@@ -78,7 +79,7 @@ define([
                     if (!sku || !sku.skuItems || sku.skuItems.length == 0) {
                         tempSuitPreferentialPrice = 0;
                     } else {
-                        _.each(sku.skuItems, function (element, index, list) {
+                        _.each(sku.skuItems, function (element) {
                             tempSuitPreferentialPrice += element.preferentialPrice;
                         });
                     }
@@ -86,7 +87,7 @@ define([
                     sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
                     // 动态统计套装组合SKU【组合套装中国最终售价 合计】
                     var suitSellingPriceCn = 0;
-                    _.each(sku.skuItems, function (item, index, list) {
+                    _.each(sku.skuItems, function (item) {
                         suitSellingPriceCn += item.sellingPriceCn;
                     });
                     sku.tempSuitSkuCode = suitSellingPriceCn;
