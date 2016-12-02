@@ -2,7 +2,6 @@ package com.voyageone.security.service;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.spring.SpringContext;
-import com.voyageone.security.shiro.ChainDefinitionSectionMetaSource;
 import com.voyageone.service.bean.user.ComChannelPermissionBean;
 import com.voyageone.security.shiro.MyRealm;
 import com.voyageone.service.dao.user.ComLoginLogDao;
