@@ -1,31 +1,59 @@
 package com.voyageone.task2.cms.bean;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Created by gjl on 2016/11/29.
  */
 public class SuperFeedFryeBean extends SuperFeedBean {
-
     private String variantsUpc;
+
+    private Long productId;
+
+    private Boolean isactive;
+
+    private Boolean istaxable;
+
+    private Double categoryid;
 
     private String metadataCategoryname;
 
-    private String metadataMinsaleprice;
+    private Double metadataUnitcost;
 
-    private String metadataMaxsaleprice;
+    private Double metadataPreviouscost;
 
-    private String metadataWeight;
+    private Double metadataMaxcost;
+
+    private Double metadataMincost;
+
+    private Double metadataMinregularprice;
+
+    private Double metadataMaxregularprice;
+
+    private Double metadataMinsaleprice;
+
+    private Double metadataMaxsaleprice;
+
+    private Boolean metadataSamemaxmin;
+
+    private Double metadataShippingsurcharge;
+
+    private Double metadataWeight;
+
+    private Boolean metadataDisplayoospopup;
+
+    private Boolean metadataShowwhenoos;
+
+    private Boolean metadataNonremovablefromcart;
 
     private String md5;
 
     private Integer updateflag;
 
-    private String productId;
-
     private String attributes;
 
     private String fabric;
-
-    private String isactive;
 
     private String variantsName;
 
@@ -41,8 +69,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     private String variantsOptionsSize;
 
-    private String istaxable;
-
     private String mfgsku;
 
     private String taxclassification;
@@ -54,8 +80,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     private String metatags;
 
     private String options;
-
-    private String categoryid;
 
     private String metadataCategoryextratext1;
 
@@ -79,33 +103,17 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     private String metadataDetail;
 
-    private String metadataUnitcost;
-
-    private String metadataPreviouscost;
-
-    private String metadataMaxcost;
-
-    private String metadataMincost;
-
-    private String metadataMinregularprice;
-
-    private String metadataMaxregularprice;
-
-    private String metadataSamemaxmin;
-
-    private String metadataShippingsurcharge;
-
     private String metadataSizecharturl;
 
     private String metadataPreorderavailabledate;
 
-    private String metadataDisplayoospopup;
-
-    private String metadataShowwhenoos;
-
-    private String metadataNonremovablefromcart;
-
     private String metadataProducturl;
+
+    private String origin;
+
+    private String variantsMediasFilepath;
+
+    private String sex;
 
     public String getVariantsUpc() {
         return variantsUpc;
@@ -113,6 +121,38 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setVariantsUpc(String variantsUpc) {
         this.variantsUpc = variantsUpc == null ? null : variantsUpc.trim();
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public Boolean getIsactive() {
+        return isactive;
+    }
+
+    public void setIsactive(Boolean isactive) {
+        this.isactive = isactive;
+    }
+
+    public Boolean getIstaxable() {
+        return istaxable;
+    }
+
+    public void setIstaxable(Boolean istaxable) {
+        this.istaxable = istaxable;
+    }
+
+    public Double getCategoryid() {
+        return categoryid;
+    }
+
+    public void setCategoryid(Double categoryid) {
+        this.categoryid = categoryid;
     }
 
     public String getMetadataCategoryname() {
@@ -123,32 +163,124 @@ public class SuperFeedFryeBean extends SuperFeedBean {
         this.metadataCategoryname = metadataCategoryname == null ? null : metadataCategoryname.trim();
     }
 
-    public String getMetadataMinsaleprice() {
+    public Double getMetadataUnitcost() {
+        return metadataUnitcost;
+    }
+
+    public void setMetadataUnitcost(Double metadataUnitcost) {
+        this.metadataUnitcost = metadataUnitcost;
+    }
+
+    public Double getMetadataPreviouscost() {
+        return metadataPreviouscost;
+    }
+
+    public void setMetadataPreviouscost(Double metadataPreviouscost) {
+        this.metadataPreviouscost = metadataPreviouscost;
+    }
+
+    public Double getMetadataMaxcost() {
+        return metadataMaxcost;
+    }
+
+    public void setMetadataMaxcost(Double metadataMaxcost) {
+        this.metadataMaxcost = metadataMaxcost;
+    }
+
+    public Double getMetadataMincost() {
+        return metadataMincost;
+    }
+
+    public void setMetadataMincost(Double metadataMincost) {
+        this.metadataMincost = metadataMincost;
+    }
+
+    public Double getMetadataMinregularprice() {
+        return metadataMinregularprice;
+    }
+
+    public void setMetadataMinregularprice(Double metadataMinregularprice) {
+        this.metadataMinregularprice = metadataMinregularprice;
+    }
+
+    public Double getMetadataMaxregularprice() {
+        return metadataMaxregularprice;
+    }
+
+    public void setMetadataMaxregularprice(Double metadataMaxregularprice) {
+        this.metadataMaxregularprice = metadataMaxregularprice;
+    }
+
+    public Double getMetadataMinsaleprice() {
         return metadataMinsaleprice;
     }
 
-    public void setMetadataMinsaleprice(String metadataMinsaleprice) {
-        this.metadataMinsaleprice = metadataMinsaleprice == null ? null : metadataMinsaleprice.trim();
+    public void setMetadataMinsaleprice(Double metadataMinsaleprice) {
+        this.metadataMinsaleprice = metadataMinsaleprice;
     }
 
-    public String getMetadataMaxsaleprice() {
+    public Double getMetadataMaxsaleprice() {
         return metadataMaxsaleprice;
     }
 
-    public void setMetadataMaxsaleprice(String metadataMaxsaleprice) {
-        this.metadataMaxsaleprice = metadataMaxsaleprice == null ? null : metadataMaxsaleprice.trim();
+    public void setMetadataMaxsaleprice(Double metadataMaxsaleprice) {
+        this.metadataMaxsaleprice = metadataMaxsaleprice;
     }
 
-    public String getMetadataWeight() {
+    public Boolean getMetadataSamemaxmin() {
+        return metadataSamemaxmin;
+    }
+
+    public void setMetadataSamemaxmin(Boolean metadataSamemaxmin) {
+        this.metadataSamemaxmin = metadataSamemaxmin;
+    }
+
+    public Double getMetadataShippingsurcharge() {
+        return metadataShippingsurcharge;
+    }
+
+    public void setMetadataShippingsurcharge(Double metadataShippingsurcharge) {
+        this.metadataShippingsurcharge = metadataShippingsurcharge;
+    }
+
+    public Double getMetadataWeight() {
         return metadataWeight;
     }
 
-    public void setMetadataWeight(String metadataWeight) {
-        this.metadataWeight = metadataWeight == null ? null : metadataWeight.trim();
+    public void setMetadataWeight(Double metadataWeight) {
+        this.metadataWeight = metadataWeight;
+    }
+
+    public Boolean getMetadataDisplayoospopup() {
+        return metadataDisplayoospopup;
+    }
+
+    public void setMetadataDisplayoospopup(Boolean metadataDisplayoospopup) {
+        this.metadataDisplayoospopup = metadataDisplayoospopup;
+    }
+
+    public Boolean getMetadataShowwhenoos() {
+        return metadataShowwhenoos;
+    }
+
+    public void setMetadataShowwhenoos(Boolean metadataShowwhenoos) {
+        this.metadataShowwhenoos = metadataShowwhenoos;
+    }
+
+    public Boolean getMetadataNonremovablefromcart() {
+        return metadataNonremovablefromcart;
+    }
+
+    public void setMetadataNonremovablefromcart(Boolean metadataNonremovablefromcart) {
+        this.metadataNonremovablefromcart = metadataNonremovablefromcart;
     }
 
     public String getMd5() {
-        return md5;
+        StringBuffer temp = new StringBuffer();
+        Set<String> noMd5Fields = new HashSet<>();
+        noMd5Fields.add("md5");
+        noMd5Fields.add("updateflag");
+        return  beanToMd5(this,noMd5Fields);
     }
 
     public void setMd5(String md5) {
@@ -162,15 +294,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     public void setUpdateflag(Integer updateflag) {
         this.updateflag = updateflag;
     }
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId == null ? null : productId.trim();
-    }
-
     public String getAttributes() {
         return attributes;
     }
@@ -185,14 +308,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setFabric(String fabric) {
         this.fabric = fabric == null ? null : fabric.trim();
-    }
-
-    public String getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(String isactive) {
-        this.isactive = isactive == null ? null : isactive.trim();
     }
 
     public String getVariantsName() {
@@ -251,14 +366,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
         this.variantsOptionsSize = variantsOptionsSize == null ? null : variantsOptionsSize.trim();
     }
 
-    public String getIstaxable() {
-        return istaxable;
-    }
-
-    public void setIstaxable(String istaxable) {
-        this.istaxable = istaxable == null ? null : istaxable.trim();
-    }
-
     public String getMfgsku() {
         return mfgsku;
     }
@@ -305,14 +412,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setOptions(String options) {
         this.options = options == null ? null : options.trim();
-    }
-
-    public String getCategoryid() {
-        return categoryid;
-    }
-
-    public void setCategoryid(String categoryid) {
-        this.categoryid = categoryid == null ? null : categoryid.trim();
     }
 
     public String getMetadataCategoryextratext1() {
@@ -403,70 +502,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
         this.metadataDetail = metadataDetail == null ? null : metadataDetail.trim();
     }
 
-    public String getMetadataUnitcost() {
-        return metadataUnitcost;
-    }
-
-    public void setMetadataUnitcost(String metadataUnitcost) {
-        this.metadataUnitcost = metadataUnitcost == null ? null : metadataUnitcost.trim();
-    }
-
-    public String getMetadataPreviouscost() {
-        return metadataPreviouscost;
-    }
-
-    public void setMetadataPreviouscost(String metadataPreviouscost) {
-        this.metadataPreviouscost = metadataPreviouscost == null ? null : metadataPreviouscost.trim();
-    }
-
-    public String getMetadataMaxcost() {
-        return metadataMaxcost;
-    }
-
-    public void setMetadataMaxcost(String metadataMaxcost) {
-        this.metadataMaxcost = metadataMaxcost == null ? null : metadataMaxcost.trim();
-    }
-
-    public String getMetadataMincost() {
-        return metadataMincost;
-    }
-
-    public void setMetadataMincost(String metadataMincost) {
-        this.metadataMincost = metadataMincost == null ? null : metadataMincost.trim();
-    }
-
-    public String getMetadataMinregularprice() {
-        return metadataMinregularprice;
-    }
-
-    public void setMetadataMinregularprice(String metadataMinregularprice) {
-        this.metadataMinregularprice = metadataMinregularprice == null ? null : metadataMinregularprice.trim();
-    }
-
-    public String getMetadataMaxregularprice() {
-        return metadataMaxregularprice;
-    }
-
-    public void setMetadataMaxregularprice(String metadataMaxregularprice) {
-        this.metadataMaxregularprice = metadataMaxregularprice == null ? null : metadataMaxregularprice.trim();
-    }
-
-    public String getMetadataSamemaxmin() {
-        return metadataSamemaxmin;
-    }
-
-    public void setMetadataSamemaxmin(String metadataSamemaxmin) {
-        this.metadataSamemaxmin = metadataSamemaxmin == null ? null : metadataSamemaxmin.trim();
-    }
-
-    public String getMetadataShippingsurcharge() {
-        return metadataShippingsurcharge;
-    }
-
-    public void setMetadataShippingsurcharge(String metadataShippingsurcharge) {
-        this.metadataShippingsurcharge = metadataShippingsurcharge == null ? null : metadataShippingsurcharge.trim();
-    }
-
     public String getMetadataSizecharturl() {
         return metadataSizecharturl;
     }
@@ -483,35 +518,35 @@ public class SuperFeedFryeBean extends SuperFeedBean {
         this.metadataPreorderavailabledate = metadataPreorderavailabledate == null ? null : metadataPreorderavailabledate.trim();
     }
 
-    public String getMetadataDisplayoospopup() {
-        return metadataDisplayoospopup;
-    }
-
-    public void setMetadataDisplayoospopup(String metadataDisplayoospopup) {
-        this.metadataDisplayoospopup = metadataDisplayoospopup == null ? null : metadataDisplayoospopup.trim();
-    }
-
-    public String getMetadataShowwhenoos() {
-        return metadataShowwhenoos;
-    }
-
-    public void setMetadataShowwhenoos(String metadataShowwhenoos) {
-        this.metadataShowwhenoos = metadataShowwhenoos == null ? null : metadataShowwhenoos.trim();
-    }
-
-    public String getMetadataNonremovablefromcart() {
-        return metadataNonremovablefromcart;
-    }
-
-    public void setMetadataNonremovablefromcart(String metadataNonremovablefromcart) {
-        this.metadataNonremovablefromcart = metadataNonremovablefromcart == null ? null : metadataNonremovablefromcart.trim();
-    }
-
     public String getMetadataProducturl() {
         return metadataProducturl;
     }
 
     public void setMetadataProducturl(String metadataProducturl) {
         this.metadataProducturl = metadataProducturl == null ? null : metadataProducturl.trim();
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    public String getVariantsMediasFilepath() {
+        return variantsMediasFilepath;
+    }
+
+    public void setVariantsMediasFilepath(String variantsMediasFilepath) {
+        this.variantsMediasFilepath = variantsMediasFilepath;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }

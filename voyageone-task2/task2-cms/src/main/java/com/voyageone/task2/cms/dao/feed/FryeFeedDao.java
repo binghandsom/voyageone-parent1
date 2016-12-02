@@ -4,8 +4,10 @@ import com.voyageone.task2.cms.bean.SuperFeedFragranceNetBean;
 import com.voyageone.task2.cms.bean.SuperFeedFryeBean;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoFragranceNetModel;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoFryeModel;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoSneakerHeadModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,4 +39,13 @@ public interface FryeFeedDao {
 
     void delete();
 
+    List<CmsBtFeedInfoFryeModel> selectSuperFeedModel(Map colums);
+
+    int fullCopyTemp();
+
+    int updateMd5();
+
+    int updateUpdateFlag();
+
+    Date selectSuperFeedModelDate();
 }
