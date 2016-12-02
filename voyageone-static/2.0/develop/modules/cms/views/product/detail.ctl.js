@@ -53,7 +53,7 @@ define([
 
             self.menuService.getPlatformType().then(function (resp) {
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value > 20;
+                    return element.value >= 20;
                 });
             });
 
