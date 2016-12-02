@@ -98,9 +98,10 @@ public class CmsBtCombinedProductService extends BaseService {
                         InputField titleField = (InputField) fieldMap.get("title");
                         productBean.setProductName(titleField.getDefaultValue()); // 组合商品名称
                         MultiComplexField skuField = (MultiComplexField) fieldMap.get("sku");
-                        // TODO
+                        // 平台状态
                         SingleCheckField itemStatus = (SingleCheckField) fieldMap.get("item_status");
-                        Integer platformStatus = "0".equalsIgnoreCase(itemStatus.getDefaultValue())? 0 : 1;
+                        Integer platformStatus = "0".equalsIgnoreCase(itemStatus.getDefaultValue())? 1 : 0;
+                        productBean.setPlatformStatus(platformStatus);
                         if (null == skuField || null == skuField.getDefaultComplexValues() || skuField.getDefaultComplexValues().size() == 0) {
                             InputField outerIdField = (InputField) fieldMap.get("outer_id");
                             InputField priceField = (InputField) fieldMap.get("price");
@@ -168,13 +169,14 @@ public class CmsBtCombinedProductService extends BaseService {
         if (product.getStatus() == null || !CmsBtCombinedProductStatus.KV.containsKey(product.getStatus())) {
             product.setStatus(CmsBtCombinedProductStatus.TEMPORAL); // 默认暂存状态
         }
-        product.setPlatformStatus(CmsBtCombinedProductPlatformStatus.OFF_SHELVES);
+        /*product.setPlatformStatus(CmsBtCombinedProductPlatformStatus.OFF_SHELVES);*/
         product.setChannelId(channelId);
         WriteResult rs = cmsBtCombinedProductDao.insert(product);
         $debug("新增 组合套装商品 结果 " + rs.toString());
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setProductId(product.get_id());
         logModel.setNumID(product.getNumID());
         logModel.setChannelId(product.getChannelId());
         logModel.setCartId(product.getCartId());
@@ -244,12 +246,10 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param channelId
      */
     public void deleteCombinedProduct(CmsBtCombinedProductBean modelBean, String user, String channelId) {
-        if (modelBean == null || StringUtils.isBlank(modelBean.getNumID())) {
-            throw new BusinessException("请先选择要删除的组合套装商品！");
-        }
-        String query = String.format("{'numID':'%s', 'channelId':'%s'}", modelBean.getNumID(), channelId);
-        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);
-        if (target == null) {
+        /*String query = String.format("{'numID':'%s', 'channelId':'%s'}", modelBean.getNumID(), channelId);
+        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);*/
+        CmsBtCombinedProductModel target = null;
+        if (modelBean == null || StringUtils.isBlank(modelBean.get_id()) || (target = cmsBtCombinedProductDao.selectById(modelBean.get_id())) == null) {
             throw new BusinessException("要删除的组合套装商品不存在！");
         }
         if (target.getActive() != null && target.getActive().intValue() != 1) {
@@ -260,15 +260,10 @@ public class CmsBtCombinedProductService extends BaseService {
         target.setActive(0);
         WriteResult rs = cmsBtCombinedProductDao.update(target);
         $debug("删除 组合套装商品 结果 " + rs.toString());
-        /*JongoUpdate updateObj = new JongoUpdate();
-        updateObj.setQuery("{'numID':#, 'channelId':#}");
-        updateObj.setQueryParameters(modelBean.getNumID(), channelId);
-        updateObj.setUpdate("{$set:{'active':0, 'modifier':#, 'modified':#}}");
-        updateObj.setUpdateParameters(user, DateTimeUtil.getNow());
-        WriteResult rs = cmsBtCombinedProductDao.updateFirst(updateObj.getQuery(), updateObj.getUpdate());*/
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setProductId(modelBean.get_id());
         logModel.setNumID(modelBean.getNumID());
         logModel.setChannelId(modelBean.getChannelId());
         logModel.setCartId(modelBean.getCartId());
@@ -311,6 +306,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
         // 添加操作日志
         CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+        logModel.setProductId(model.get_id());
         logModel.setNumID(model.getNumID());
         logModel.setChannelId(model.getChannelId());
         logModel.setCartId(model.getCartId());
@@ -386,7 +382,8 @@ public class CmsBtCombinedProductService extends BaseService {
         if (platformModel == null) {
             throw new BusinessException("组合套装(numID=" + model.getNumID() + ")在平台上不存在！");
         }
-        model.setProductName(platformModel.getProductName());
+        model.setProductName(platformModel.getProductName()); // 同步商品名称
+        model.setPlatformStatus(platformModel.getPlatformStatus()); // 同步平台状态
         Map<String, Double> platformSuitSkuMap = new HashMap<String, Double>();
         platformModel.getSkus().forEach(skuBean -> {
             if (StringUtils.isNotBlank(skuBean.getSuitSkuCode())) {
@@ -514,6 +511,7 @@ public class CmsBtCombinedProductService extends BaseService {
 
             // 添加操作日志
             CmsBtCombinedProductLogModel logModel = new CmsBtCombinedProductLogModel();
+            logModel.setProductId(targetModel.get_id());
             logModel.setNumID(targetModel.getNumID());
             logModel.setChannelId(targetModel.getChannelId());
             logModel.setCartId(targetModel.getCartId());
@@ -567,10 +565,17 @@ public class CmsBtCombinedProductService extends BaseService {
      * @return
      */
     public List<CmsBtCombinedProductLogModel> getOperateLogs (CmsBtCombinedProductBean modelBean) {
-        if (modelBean != null && StringUtils.isNotBlank(modelBean.getNumID()) && StringUtils.isNotBlank(modelBean.getChannelId()) && modelBean.getCartId() != null) {
+        /*if (modelBean != null && StringUtils.isNotBlank(modelBean.getNumID()) && StringUtils.isNotBlank(modelBean.getChannelId()) && modelBean.getCartId() != null) {
             JongoQuery query = new JongoQuery();
             query.setQuery("{'numID':#, 'channelId':#, 'cartId':#}");
             query.setParameters(modelBean.getNumID(), modelBean.getChannelId(), modelBean.getCartId());
+            query.setSort("{'operateTime':-1}");
+            return cmsBtCombinedProductLogDao.select(query);
+        }*/
+        if (modelBean != null && StringUtils.isNotBlank(modelBean.get_id())) {
+            JongoQuery query = new JongoQuery();
+            query.setQuery("{'productId':#}");
+            query.setParameters(modelBean.get_id());
             query.setSort("{'operateTime':-1}");
             return cmsBtCombinedProductLogDao.select(query);
         }
