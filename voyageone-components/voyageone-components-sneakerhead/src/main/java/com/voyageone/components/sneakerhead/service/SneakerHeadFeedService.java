@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voyageone.components.sneakerhead.SneakerHeadBase;
 import com.voyageone.components.sneakerhead.bean.CmsBtProductModel_SalesBean;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
-import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
+import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,7 @@ public class SneakerHeadFeedService extends SneakerHeadBase {
      * 批量查询商品
      */
     @Retryable
-    public List<SneakerHeadCodeModel> sneakerHeadResponse(SneakerHeadRequest request, String domain) throws Exception {
+    public List<SneakerHeadCodeModel> sneakerHeadResponse(SneakerHeadFeedInfoRequest request, String domain) throws Exception {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.parseMediaType(CONTENT_TYPE));
         ObjectMapper objectMapper = new ObjectMapper();

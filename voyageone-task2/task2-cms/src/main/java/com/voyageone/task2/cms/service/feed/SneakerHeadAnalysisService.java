@@ -11,10 +11,9 @@ import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
-import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
+import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadSkuModel;
 import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
-import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -141,7 +140,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         }
         List<SuperFeedSneakerHeadBean> superFeed = new ArrayList<>();
         $info(String.format("thread-" + threadNo + " 正在取第%d页", pageNum));
-        SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
+        SneakerHeadFeedInfoRequest sneakerHeadRequest = new SneakerHeadFeedInfoRequest();
         sneakerHeadRequest.setPageNumber(pageNum);
         sneakerHeadRequest.setPageSize(pageSize);
         sneakerHeadRequest.setTime(lastDate);
