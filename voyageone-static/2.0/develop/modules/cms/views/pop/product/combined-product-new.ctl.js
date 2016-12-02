@@ -87,6 +87,15 @@ define([
                            $scope.$close();
                        });
                    };
+
+                   /**
+                    * 模板展示
+                    * @type {{content: string, templateUrl: string, title: string}}
+                    */
+                   $scope.dynamicPopover = {
+                       templateUrl: 'example.html',
+                       title: '事例页面'
+                   };
                }
 
                return CombinedProductNewController;
