@@ -12,6 +12,7 @@ import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 public class RedisCache<K, V> implements Cache<K, V> {
 	
@@ -20,7 +21,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	/**
      * The wrapped Jedis instance.
      */
-	private RedisManager cache;
+	RedisTemplate cache;
 	
 	/**
 	 * The Redis key prefix for the sessions 
@@ -48,7 +49,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	/**
 	 * 通过一个JedisManager实例构造RedisCache
 	 */
-	public RedisCache(RedisManager cache){
+	public RedisCache(RedisTemplate cache){
 		 if (cache == null) {
 	         throw new IllegalArgumentException("Cache argument cannot be null.");
 	     }
@@ -61,31 +62,32 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	 * @param cache The cache manager instance
 	 * @param prefix The Redis key prefix
 	 */
-	public RedisCache(RedisManager cache, 
+	public RedisCache(RedisTemplate cache,
 				String prefix){
-		 
+
 		this( cache );
-		
+
 		// set the prefix
 		this.keyPrefix = prefix;
 	}
-	
+
 	/**
 	 * 获得byte[]型的key
 	 * @param key
 	 * @return
 	 */
-	private byte[] getByteKey(K key){
+	private String getPrifixKey(K key) throws Exception {
 		if(key instanceof String){
 			String preKey = this.keyPrefix + key;
-    		return preKey.getBytes();
+    		return preKey;
     	}else{
 			byte[] prefix = keyPrefix.getBytes();
-			byte[] keybytes  = SerializeUtils.serialize(key);
+			byte[] keybytes  = cache.getKeySerializer().serialize(key);
 			byte[] byte_3 = new byte[prefix.length + keybytes.length];
 			System.arraycopy(prefix, 0, byte_3, 0, prefix.length);
 			System.arraycopy(keybytes, 0, byte_3, prefix.length, keybytes.length);
-			return byte_3;
+			return new String(byte_3,"UTF-8");
+
 		}
 	}
  	
@@ -96,9 +98,8 @@ public class RedisCache<K, V> implements Cache<K, V> {
 			if (key == null) {
 	            return null;
 	        }else{
-	        	byte[] rawValue = cache.get(getByteKey(key));
-	        	@SuppressWarnings("unchecked")
-				V value = (V)SerializeUtils.deserialize(rawValue);
+
+				V value = (V)cache.opsForValue().get(getPrifixKey(key));
 	        	return value;
 	        }
 		} catch (Throwable t) {
@@ -111,7 +112,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	public V put(K key, V value) throws CacheException {
 		logger.debug("根据key从存储 key [" + key + "]");
 		 try {
-			 	cache.set(getByteKey(key), SerializeUtils.serialize(value));
+			 	cache.opsForValue().set(getPrifixKey(key), value);
 	            return value;
 	        } catch (Throwable t) {
 	            throw new CacheException(t);
@@ -123,7 +124,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 		logger.debug("从redis中删除 key [" + key + "]");
 		try {
             V previous = get(key);
-            cache.del(getByteKey(key));
+			cache.delete(getPrifixKey(key));
             return previous;
         } catch (Throwable t) {
             throw new CacheException(t);
@@ -132,9 +133,13 @@ public class RedisCache<K, V> implements Cache<K, V> {
 
 	@Override
 	public void clear() throws CacheException {
+		//do nothing
 		logger.debug("从redis中删除所有元素");
 		try {
-            cache.flushDB();
+            Set<K> keys = keys();
+			if (!CollectionUtils.isEmpty(keys)) {
+				cache.delete(keys);
+			}
         } catch (Throwable t) {
             throw new CacheException(t);
         }
@@ -143,8 +148,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	@Override
 	public int size() {
 		try {
-			Long longSize = new Long(cache.dbSize());
-            return longSize.intValue();
+			return keys().size();
         } catch (Throwable t) {
             throw new CacheException(t);
         }
@@ -154,12 +158,12 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	@Override
 	public Set<K> keys() {
 		try {
-            Set<byte[]> keys = cache.keys(this.keyPrefix + "*");
+            Set<K> keys = cache.keys(this.keyPrefix + "*");
             if (CollectionUtils.isEmpty(keys)) {
             	return Collections.emptySet();
             }else{
             	Set<K> newKeys = new HashSet<K>();
-            	for(byte[] key:keys){
+            	for(K key:keys){
             		newKeys.add((K)key);
             	}
             	return newKeys;

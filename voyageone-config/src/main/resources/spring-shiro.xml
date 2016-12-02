@@ -16,15 +16,8 @@
 		<property name="storedCredentialsHexEncoded" value="true" />
 	</bean>
 
-	<!-- 集群版,用Redis Cache -->
-	 <!--shiro redisManager-->
-	<bean id="redisManager" class="com.voyageone.security.shiro.cache.RedisManager">
-		<property name="expire" value="1800"/>
-		<property name="connectionFactory" ref="jedisConnectionFactory"/>
-	</bean>
-
 	<bean id="shiroCacheManager" class="com.voyageone.security.shiro.cache.RedisCacheManager" >
-		<property name="redisManager" ref="redisManager" />
+		<property name="redisManager" ref="redisTemplate" />
 		<property name="keyPrefix" value="voyageone_cms_" />
 	</bean>
 

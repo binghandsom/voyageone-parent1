@@ -8,6 +8,7 @@ import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 
 public class RedisCacheManager implements CacheManager {
 
@@ -17,7 +18,7 @@ public class RedisCacheManager implements CacheManager {
 	// fast lookup by name map
 	private final ConcurrentMap<String, Cache> caches = new ConcurrentHashMap<String, Cache>();
 
-	private RedisManager redisManager;
+	private RedisTemplate redisManager;
 
 	/**
 	 * The Redis key prefix for caches 
@@ -51,22 +52,23 @@ public class RedisCacheManager implements CacheManager {
 		if (c == null) {
 
 			// initialize the Redis manager instance
-			redisManager.init();
-			
+//			redisManager.init();
+
 			// create a new cache instance
-			c = new RedisCache<K, V>(redisManager, keyPrefix);
-			
+			c = new RedisCache<K, V>(redisManager, keyPrefix + name);
+
 			// add it to the cache collection
 			caches.put(name, c);
 		}
+
 		return c;
 	}
 
-	public RedisManager getRedisManager() {
+	public RedisTemplate getRedisManager() {
 		return redisManager;
 	}
 
-	public void setRedisManager(RedisManager redisManager) {
+	public void setRedisManager(RedisTemplate redisManager) {
 		this.redisManager = redisManager;
 	}
 
