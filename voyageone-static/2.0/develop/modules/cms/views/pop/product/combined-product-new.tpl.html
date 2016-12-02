@@ -32,8 +32,7 @@
                 </div>
                 <div class="col-sm-2">
                     <a href="javascript:void(0)"
-                       uib-popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" type="mouseenter"
-                       popover-placement="bottom"
+                       ng-click="popExamplePage()"
                        class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle text-warnings"></i></a>
                 </div>
             </div>
@@ -131,14 +130,6 @@
             </div>
         </form>
     </div>
-
-    <!--模板-->
-    <script type="text/ng-template" id="example.html">
-        <div>{{dynamicPopover.content}}</div>
-        <div class="container-fluid" style="width: 600px;">
-             <div class="combine-example"></div>
-        </div>
-    </script>
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
