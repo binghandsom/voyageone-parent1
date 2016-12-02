@@ -143,6 +143,19 @@ define(function () {
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
                     "getPutOnOffLogList": "getPutOnOffLogList"
+                },
+                "combinedProductService" : {
+                    "root": "/cms/combined/product",
+                    "init" : "init",
+                    "search" : "search",
+                    "getCombinedProductPlatformDetail" : "getCombinedProductPlatformDetail",
+                    "add" : "add",
+                    "getSkuDetail" : "getSkuDetail",
+                    "delete" : "delete",
+                    "getCombinedProductDetail" : "getCombinedProductDetail",
+                    "edit" : "edit",
+                    "onOffShelves" : "onOffShelves",
+                    "getOperateLogs" : "getOperateLogs"
                 }
             },
             "mapping": {
