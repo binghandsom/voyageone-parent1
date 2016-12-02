@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.uscategory;
+package com.voyageone.task2.cms.service.sneakerhead;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.voyageone.base.exception.BusinessException;
@@ -27,16 +27,16 @@ import static com.voyageone.components.sneakerhead.SneakerHeadBase.DEFAULT_DOMAI
  * 闲舟江流夕照晚 =。=
  */
 @Service
-public class CmsSneakerheadUsCategorySyncService extends BaseCronTaskService {
+public class CmsUsCategorySyncService extends BaseCronTaskService {
 
     private final SneakerheadApiService sneakerheadApiService;
     private final FeedCategoryTreeService feedCategoryTreeService;
     private final ProductService productService;
 
     @Autowired
-    public CmsSneakerheadUsCategorySyncService(SneakerheadApiService sneakerheadApiService,
-                                               FeedCategoryTreeService feedCategoryTreeService,
-                                               ProductService productService) {
+    public CmsUsCategorySyncService(SneakerheadApiService sneakerheadApiService,
+                                    FeedCategoryTreeService feedCategoryTreeService,
+                                    ProductService productService) {
         this.sneakerheadApiService = sneakerheadApiService;
         this.feedCategoryTreeService = feedCategoryTreeService;
         this.productService = productService;
