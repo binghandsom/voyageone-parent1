@@ -19,6 +19,7 @@
 	<bean id="shiroCacheManager" class="com.voyageone.security.shiro.cache.RedisCacheManager" >
 		<property name="redisManager" ref="redisTemplate" />
 		<property name="keyPrefix" value="voyageone_cms_" />
+		<property name="expireTime" value="1800" />
 	</bean>
 
 	<!-- 用ServletContainerSessionManager可以沿用web.xml中配置的超时时间 -->

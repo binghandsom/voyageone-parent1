@@ -24,6 +24,8 @@ public class RedisCacheManager implements CacheManager {
 	 * The Redis key prefix for caches 
 	 */
 	private String keyPrefix = "shiro_redis_cache:";
+
+	private int expireTime = 1800;
 	
 	/**
 	 * Returns the Redis session keys
@@ -42,7 +44,16 @@ public class RedisCacheManager implements CacheManager {
 	public void setKeyPrefix(String keyPrefix) {
 		this.keyPrefix = keyPrefix;
 	}
-	
+
+
+	public int getExpireTime() {
+		return expireTime;
+	}
+
+	public void setExpireTime(int expireTime) {
+		this.expireTime = expireTime;
+	}
+
 	@Override
 	public <K, V> Cache<K, V> getCache(String name) throws CacheException {
 		logger.debug("获取名称为: " + name + " 的RedisCache实例");
@@ -55,7 +66,7 @@ public class RedisCacheManager implements CacheManager {
 //			redisManager.init();
 
 			// create a new cache instance
-			c = new RedisCache<K, V>(redisManager, keyPrefix + name);
+			c = new RedisCache<K, V>(redisManager, keyPrefix + name, expireTime);
 
 			// add it to the cache collection
 			caches.put(name, c);

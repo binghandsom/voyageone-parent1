@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
@@ -27,6 +28,9 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	 * The Redis key prefix for the sessions 
 	 */
 	private String keyPrefix = "shiro_redis_session:";
+
+
+	private int expireTime = 0;
 	
 	/**
 	 * Returns the Redis session keys
@@ -62,13 +66,13 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	 * @param cache The cache manager instance
 	 * @param prefix The Redis key prefix
 	 */
-	public RedisCache(RedisTemplate cache,
-				String prefix){
+	public RedisCache(RedisTemplate cache, String prefix, int expireTime){
 
 		this( cache );
 
 		// set the prefix
 		this.keyPrefix = prefix;
+		this.expireTime = expireTime;
 	}
 
 	/**
@@ -100,6 +104,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	        }else{
 
 				V value = (V)cache.opsForValue().get(getPrifixKey(key));
+				cache.expire(getPrifixKey(key), expireTime, TimeUnit.SECONDS);
 	        	return value;
 	        }
 		} catch (Throwable t) {
@@ -113,6 +118,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 		logger.debug("根据key从存储 key [" + key + "]");
 		 try {
 			 	cache.opsForValue().set(getPrifixKey(key), value);
+			 	cache.expire(getPrifixKey(key), expireTime, TimeUnit.SECONDS);
 	            return value;
 	        } catch (Throwable t) {
 	            throw new CacheException(t);
