@@ -293,11 +293,7 @@ public class CmsBtCombinedProductService extends BaseService {
             throw new BusinessException("参数错误！");
         }
         String query = String.format("{'active':1, 'numID':'%s', 'channelId':'%s'}", model.getNumID(), channelId);
-        CmsBtCombinedProductModel target = cmsBtCombinedProductDao.selectOneWithQuery(query);
-        /*if (target == null) {
-            throw new BusinessException("查询不到要编辑的组合套装商品！");
-        }*/
-        return target;
+        return cmsBtCombinedProductDao.selectOneWithQuery(query);
     }
 
     /**
@@ -335,14 +331,10 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param actionType
      */
     public void checkCombinedProducrtModel (CmsBtCombinedProductModel model, String channelId, String actionType) {
-        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null) {
+        List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
+        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null || CollectionUtils.isEmpty((skus = model.getSkus()))) {
             throw new BusinessException("参数错误！");
         }
-        List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
-        if (CollectionUtils.isEmpty(skus)) {
-            throw new BusinessException("组合套装SKU为空！");
-        }
-
         CmsBtCombinedProductModel targetModel = null;
         if (ACTION_TYPE_EDIT.equals(actionType)) {
             String _id = model.get_id();
@@ -350,12 +342,9 @@ public class CmsBtCombinedProductService extends BaseService {
                 $error("要编辑的组合套装(id=" + _id + ")不存在！");
                 throw new BusinessException("要编辑的组合套装商品不存在！");
             }
+            /* 编辑组合套装商品时，不允许修改numID*/
             if (!targetModel.getNumID().equals(model.getNumID())) {
-                // 如果numID发生了变化，则需要校验新的numID是否已被占用
-                CmsBtCombinedProductModel existModel = this.getCombinedProduct(model, channelId);
-                if (existModel != null) {
-                    throw new BusinessException("组合套装商品(numID=" + model.getNumID() + ")已经存在了！");
-                }
+                throw new BusinessException("组合套装商品numID不允许修改！");
             }
         }else if (ACTION_TYPE_ADD.equals(actionType)) {
             CmsBtCombinedProductModel existModel = this.getCombinedProduct(model, channelId);
@@ -363,7 +352,7 @@ public class CmsBtCombinedProductService extends BaseService {
                 throw new BusinessException("组合套装商品(numID=" + model.getNumID() + ")已经存在了！");
             }
         }else {
-            throw new BusinessException("不明操作！");
+            throw new BusinessException("异常操作！");
         }
 
         Map<String, Double> suitSkuMap = new HashMap<String, Double>();
