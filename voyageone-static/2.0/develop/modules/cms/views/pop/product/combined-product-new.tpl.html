@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="initialize()">
+<div class="vo_modal" ng-init="initialize()" id="combined-product">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -30,8 +30,11 @@
                         <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
                     </div>
                 </div>
-                <div class="col-sm-2 text-warnings">
-                    <a href="javascript:void(0)" class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle"></i></a>
+                <div class="col-sm-2">
+                    <a href="javascript:void(0)"
+                       uib-popover-template="dynamicPopover.templateUrl" popover-title="{{dynamicPopover.title}}" type="mouseenter"
+                       popover-placement="bottom"
+                       class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle text-warnings"></i></a>
                 </div>
             </div>
 
@@ -127,6 +130,15 @@
             </div>
         </form>
     </div>
+
+    <!--模板-->
+    <script type="text/ng-template" id="example.html">
+        <div>{{dynamicPopover.content}}</div>
+        <div class="container-fluid" style="width: 600px;">
+             <div class="combine-example"></div>
+        </div>
+    </script>
+
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
         <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
