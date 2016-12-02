@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.sx.rule_parser;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
@@ -8,13 +9,13 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
  */
 public class MasterHtmlWordParser extends MasterWordParser {
 
-    public MasterHtmlWordParser(CmsBtProductModel cmsBtProductModel, int cartId) {
-        super(cmsBtProductModel, cartId);
+    public MasterHtmlWordParser(CmsBtProductModel cmsBtProductModel, int cartId, ExpressionParser expressionParser) {
+        super(cmsBtProductModel, cartId, expressionParser);
     }
 
     //目前只支持解析model级别的属性
-    public String parse(RuleWord ruleWord) {
-        String superResult = super.parse(ruleWord);
+    public String parse(RuleWord ruleWord, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        String superResult = super.parse(ruleWord, shopBean, user, extParameter);
         if (superResult == null) {
             return null;
         }

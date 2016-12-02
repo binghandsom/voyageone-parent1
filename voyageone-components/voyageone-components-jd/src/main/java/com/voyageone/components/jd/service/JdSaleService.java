@@ -11,16 +11,19 @@ import com.jd.open.api.sdk.response.ware.WareListingGetResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 京东运营类 api 调用服务 商品上下架，以及查询商品的在售/在库状态
@@ -29,6 +32,8 @@ import java.util.List;
  */
 @Component
 public class JdSaleService extends JdBase {
+
+    private static final int PAGE_SIZE = 100;
 
     /**
      * 商品上架
@@ -190,5 +195,57 @@ public class JdSaleService extends JdBase {
         Object[] objs = { strOrderChannelId, strCardId, "0".equals(response.getCode()) ? "total=" + response.getTotal() : response.getMsg() };
         logger.info("getDeListProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getWareInfos();
+    }
+
+    /**
+     * 获取店铺全部的wareId
+     */
+    public Map<CmsConstants.PlatformStatus, List<String>> getJdWareIdList(String channelId, String cartId) {
+        List<String> inStockWareIdList = new ArrayList<>();
+        long pageNo = 1;
+        while(true) {
+            List<Ware> jdList;
+            try {
+                // 查询下架
+                jdList = getDeListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                pageNo++;
+            } catch (JdException apiExp) {
+                throw new BusinessException(String.format("调用京东API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用京东API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (jdList != null && jdList.size() > 0) {
+                inStockWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
+            }
+            if (jdList == null || jdList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        List<String> onSaleWareIdList = new ArrayList<>();
+        pageNo = 1;
+        while(true) {
+            List<Ware> jdList;
+            try {
+                // 查询上架
+                jdList = getOnListProduct(channelId, cartId, Long.toString(pageNo), String.valueOf(PAGE_SIZE));
+                pageNo++;
+            } catch (JdException apiExp) {
+                throw new BusinessException(String.format("调用京东API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用京东API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (jdList != null && jdList.size() > 0) {
+                onSaleWareIdList.addAll(jdList.stream().map(ware -> ware.getWareId().toString()).collect(Collectors.toList()));
+            }
+            if (jdList == null || jdList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        Map<CmsConstants.PlatformStatus, List<String>> retMap = new HashMap<>();
+        retMap.put(CmsConstants.PlatformStatus.InStock, inStockWareIdList);
+        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleWareIdList);
+        return retMap;
     }
 }

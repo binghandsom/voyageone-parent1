@@ -66,11 +66,11 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-//                {
-//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
-//                    // 主处理
-//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
-//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+                    // 主处理
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+                }
                 {
                     ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
                     // 主处理
@@ -100,13 +100,18 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
             List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             if (ListUtils.isNull(codes)) {
                 $warn("类目[%s]不存在一个上新过的code!", catId);
+                // 理论上不会有这类垃圾数据，以防万一一下
+                cnCategoryService.updateProductSellercatUpdFlg(channelId, new ArrayList<String>(){{add(catId);}}, "2", getTaskNameForUpdate());
                 continue;
             }
 
             List<Field> fields = new ArrayList<>();
             fields.add(createInputField("Id", catId)); // Id
-//            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
-            fields.add(createInputField("ProductCodes", codes.stream().map(code-> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
+            if (cartId == CartEnums.Cart.CN.getValue()) {
+                fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+            } else {
+                fields.add(createInputField("ProductCodes", codes.stream().map(code -> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
+            }
 
             result.add(fields);
         }

@@ -26,18 +26,13 @@ import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
-import com.voyageone.ims.rule_expression.DictWord;
-import com.voyageone.ims.rule_expression.MasterWord;
-import com.voyageone.ims.rule_expression.RuleExpression;
-import com.voyageone.ims.rule_expression.RuleJsonMapper;
+import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.*;
-import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
+import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.dao.ims.ImsBtProductExceptDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
@@ -56,6 +51,7 @@ import com.voyageone.service.impl.cms.sx.sku_field.tmall.TmallGjSkuFieldBuilderI
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.enums.CustomMappingType;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel;
 import com.voyageone.service.model.cms.mongo.channel.*;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -73,6 +69,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.voyageone.common.util.DateTimeUtil.*;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * 上新相关共通逻辑
@@ -108,6 +108,8 @@ public class SxProductService extends BaseService {
     private ImageTemplateService imageTemplateService;
     @Autowired
     private TaobaoScItemService taobaoScItemService;
+    @Autowired
+    private CmsMtBrandService cmsMtBrandService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -146,9 +148,13 @@ public class SxProductService extends BaseService {
     @Autowired
     private CmsMtChannelSkuConfigDao cmsMtChannelSkuConfigDao;
     @Autowired
+    private CmsMtColorMappingDao cmsMtColorMappingDao;
+    @Autowired
     private CmsBtBrandBlockService cmsBtBrandBlockService;
     @Autowired
     private PlatformMappingService platformMappingService;
+    @Autowired
+    private CmsBtSellerCatDao cmsBtSellerCatDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -284,7 +290,13 @@ public class SxProductService extends BaseService {
         // 回写商品id(wareId->numIId)
         sxData.getPlatform().setNumIId(numIId);
         // 设置PublishTime
-        sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+        // modified by morse.lu 2016/11/18 start
+//        sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+        if (StringUtils.isEmpty(sxData.getPlatform().getPublishTime())) {
+            // 只有第一次上新成功才会保存
+            sxData.getPlatform().setPublishTime(DateTimeUtil.getNowTimeStamp());
+        }
+        // modified by morse.lu 2016/11/18 end
         // platformActive平台上新状态类型(ToOnSale/ToInStock)
         if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
             // platformActive是(ToOnSale)时，把platformStatus更新成"OnSale"
@@ -787,14 +799,21 @@ public class SxProductService extends BaseService {
                 // modified by morse.lu 2016/06/07 end
                 sxData.setCmsBtFeedInfoModel(feedInfo);
 
-                Map<String, Object> searchParam = new HashMap<>();
-                searchParam.put("channelId", channelId);
-                searchParam.put("cartId", cartId);
-                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
-                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
-                if (cmsMtBrandsMappingModel != null) {
-                    sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
+                // modified by morse.lu 2016/10/27 start
+//                Map<String, Object> searchParam = new HashMap<>();
+//                searchParam.put("channelId", channelId);
+//                searchParam.put("cartId", cartId);
+//                searchParam.put("cmsBrand", productModel.getCommon().getFields().getBrand());
+//                CmsMtBrandsMappingModel cmsMtBrandsMappingModel = cmsMtBrandsMappingDao.selectOne(searchParam);
+//                if (cmsMtBrandsMappingModel != null) {
+//                    sxData.setBrandCode(cmsMtBrandsMappingModel.getBrandId());
+//                }
+                CmsMtBrandsMappingBean brandsMappingBean = cmsMtBrandService.getModelByCart(productModel.getCommon().getFields().getBrand(), String.valueOf(cartId), channelId);
+                if (brandsMappingBean != null) {
+                    sxData.setBrandCode(brandsMappingBean.getBrandId());
+                    sxData.setpBrandName(brandsMappingBean.getpBrand());
                 }
+                // modified by morse.lu 2016/10/27 end
             }
 
             // 20160606 tom 增加对feed属性(feed.customIds, feed.customIdsCn)的排序 START
@@ -1086,7 +1105,11 @@ public class SxProductService extends BaseService {
         for (BaseMongoMap<String, Object> sku : skuList) {
             String size = sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name());
             String sizeNick = sku.getStringAttribute("sizeNick");
-            if (!StringUtils.isEmpty(sizeNick)) {
+            // modified by morse.lu 2016/10/26 start
+            // liking 不允许手动填写别名
+//            if (!StringUtils.isEmpty(sizeNick)) {
+            if (cartId != CartEnums.Cart.LIKING.getValue() && cartId != CartEnums.Cart.CN.getValue() && !StringUtils.isEmpty(sizeNick)) {
+                // modified by morse.lu 2016/10/26 end
                 // 直接用Nick
                 sku.setStringAttribute(CmsBtProductConstants.Platform_SKU_COM.sizeSx.name(), sizeNick);
 			} else {
@@ -1999,6 +2022,24 @@ public class SxProductService extends BaseService {
         return expressionParser.parse(rule, shopBean, user, null);
     }
 
+    /**
+     * 取feed里的数据
+     * 直接create一个FeedOrgWord的RuleExpression的方式去做
+     */
+    public String getProductValueByFeed(Field field, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        return getProductValueByFeed(StringUtil.replaceDot(field.getId()), shopBean, expressionParser, user);
+    }
+
+    /**
+     * 取feed里的数据
+     * 直接create一个FeedOrgWord的RuleExpression的方式去做
+     */
+    public String getProductValueByFeed(String field_id, ShopBean shopBean, ExpressionParser expressionParser, String user) throws Exception {
+        RuleExpression rule = new RuleExpression();
+        FeedOrgWord feedOrgWord = new FeedOrgWord(field_id);
+        rule.addRuleWord(feedOrgWord);
+        return expressionParser.parse(rule, shopBean, user, null);
+    }
 
     private Field deepCloneField(Field field) throws Exception {
         try {
@@ -2007,7 +2048,6 @@ public class SxProductService extends BaseService {
             throw new BusinessException(e.getMessage());
         }
     }
-
 
     /**
      * 特殊属性取得
@@ -2417,18 +2457,36 @@ public class SxProductService extends BaseService {
 //                            } catch (TopSchemaException | ApiException e) {
 //                                $error(e.getMessage(), e);
 //                            }
+                            // added by morse.lu 2016/11/18 start
+                            MultiCheckField multiCheckField = (MultiCheckField) field;
+                            String newArrivalSellerCatFull = getNewArrivalSellerCat(sxData.getChannelId(), sxData.getCartId(), sxData.getPlatform().getPublishTime()); // 新品类目id
+                            String newArrivalSellerCat = null;
+                            if (!StringUtils.isEmpty(newArrivalSellerCatFull)) {
+                                // 需要添加新品类目
+                                // 天猫只需要传叶子类目就可以了
+                                newArrivalSellerCat = newArrivalSellerCatFull.split("-")[1];
+                                multiCheckField.addValue(newArrivalSellerCat);
+                            }
+                            // added by morse.lu 2016/11/18 end
                             List<CmsBtProductModel_SellerCat> defaultValues = mainSxProduct.getPlatform(sxData.getCartId()).getSellerCats();
                             if (defaultValues != null && !defaultValues.isEmpty()) {
                                 // modified by morse.lu 2016/07/06 start
 //                                MultiCheckField multiCheckField = (MultiCheckField) FieldTypeEnum.createField(FieldTypeEnum.MULTICHECK);
-                                MultiCheckField multiCheckField = (MultiCheckField) field;
+//                                MultiCheckField multiCheckField = (MultiCheckField) field;
                                 // modified by morse.lu 2016/07/06 end
 //                                multiCheckField.setId(sellerCategoryPropId);
                                 for (CmsBtProductModel_SellerCat defaultValue : defaultValues) {
-                                    multiCheckField.addValue(defaultValue.getcId());
+                                    // modified by morse.lu 2016/11/18 start
+//                                    multiCheckField.addValue(defaultValue.getcId());
+                                    String cid = defaultValue.getcId();
+                                    if (!cid.equals(newArrivalSellerCat)) {
+                                        // 新品类目 有可能运营手动画面添加,就不要重复了
+                                        multiCheckField.addValue(cid);
+                                    }
+                                    // modified by morse.lu 2016/11/18 end
                                 }
-                                retMap.put(platformPropId, multiCheckField);
                             }
+                            retMap.put(platformPropId, multiCheckField);
                             // modified by morse.lu 2016/06/21 end
 //                        }
 //                    }
@@ -4387,6 +4445,123 @@ public class SxProductService extends BaseService {
                 break;
             default:
                 $error("复杂类型的属性:" + field.getType() + "不能使用setFieldValues来设值");
+        }
+    }
+
+    /**
+     * 取得新品上市的店铺内分类类目id
+     * 类目名格式：新品上市（2016）>2月
+     * cms_mt_channel_config表配置是否需要设定新品上市的店铺内分类(val1=1表示需要)，以及几个月内属于新品上市商品(val2=3表示近3个月,以publishTime作为基准来比较)
+     *
+     * @param publishTime 上新时间 null的话表示第一次上新，那么把当前时间作为基准
+     * @return 例:1233789505-1233788694
+     */
+    public String getNewArrivalSellerCat(String channelId, int cartId, String publishTime) {
+        if (StringUtils.isEmpty(publishTime)) {
+            publishTime = getNow();
+        }
+        Date date = parse(publishTime, DEFAULT_DATETIME_FORMAT);
+        if (date == null) {
+            throw new BusinessException("publishTime格式转换失败!");
+        }
+
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SELLER_CAT, String.valueOf(cartId));
+        if (config == null || !"1".equals(config.getConfigValue1()) || StringUtils.isEmpty(config.getConfigValue2())) {
+            // 未设定
+            return null;
+        }
+
+        int targetMonth = Integer.valueOf(config.getConfigValue2());
+        Date targetDate = addMonths(parse(getNow(DATE_TIME_FORMAT_12), DATE_TIME_FORMAT_12), -1 * (targetMonth - 1)); // 当月1号 - (targetMonth - 1)个月
+        if (date.before(targetDate)) {
+            // publishTime在设定的日期之前,不是新品了
+            return null;
+        }
+
+        int year = getDateYear(date);
+        int month = getDateMonth(date);
+
+        CmsBtSellerCatModel sellerCatModel = cmsBtSellerCatDao.selectByRootCatPath(channelId, cartId, String.format("新品上市（%d）", year));
+        if (sellerCatModel == null) {
+            throw new BusinessException(String.format("新品%d年的店铺内分类未创建!创建格式(括号大写):新品上市（%d）>%d月", year, year, month));
+        }
+        CmsBtSellerCatModel childSellerCatModel = sellerCatModel.getChildren().stream().filter(childCat-> String.format("%d月", month).equals(childCat.getCatName())).findFirst().orElse(null);
+        if (childSellerCatModel == null) {
+            throw new BusinessException(String.format("新品%d年%d月的店铺内分类未创建!创建格式(括号大写):新品上市（%d）>%d月", year, month, year, month));
+        }
+
+        return childSellerCatModel.getFullCatId();
+    }
+
+
+    /**
+     * 颜色转换(多种颜色)
+     *
+     * @param colorEn  Black / Black-White / Red
+     * @return 中文颜色, 按"/"分隔  黑色/白色/红色
+     */
+    public String getColor(String channelId, int cartId, String colorEn) {
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", channelId);
+        searchParam.put("cartId", cartId);
+        List<CmsMtColorMappingModel> listColorMappingModel = cmsMtColorMappingDao.selectList(searchParam);
+        // Map<colorEn, List<colorCn>> 暂定允许翻译成多种不一样的中文
+        Map<String, List<String>> mapColor = listColorMappingModel.stream().collect(
+                groupingBy(model -> model.getColorEn().toLowerCase(),
+                        collectingAndThen(
+                                toList(),
+                                model -> model.stream().map(CmsMtColorMappingModel::getColorCn).collect(toList())
+                        )
+                )
+        );
+
+        Set<String> listColorCn = new HashSet<>();
+        String[] colors = colorEn.split("/");
+        for (String color : colors) {
+            color = color.trim().toLowerCase(); // 去掉首尾空格,全小写比较
+            if (mapColor.containsKey(color)) {
+                // 找到此英文对应的中文
+                listColorCn.add(mapColor.get(color).get(0)); // 取第一个
+            } else {
+                // 没找到
+                String[] colorSubs = color.split("-");
+                if (colorSubs.length > 1) {
+                    // 有 多色
+                    for (String colorSub : colorSubs) {
+                        colorSub = colorSub.trim().toLowerCase(); // 去掉首尾空格,全小写比较
+                        if (mapColor.containsKey(colorSub)) {
+                            // 找到此英文对应的中文
+                            listColorCn.add(mapColor.get(colorSub).get(0)); // 取第一个
+                        } else {
+                            // 没找到翻译，用原值
+                            listColorCn.add(colorSub);
+                        }
+                    }
+                } else {
+                    // 没有再切分多色了，又没找到翻译，用原值
+                    listColorCn.add(color);
+                }
+            }
+        }
+
+        return listColorCn.stream().collect(joining("/"));
+    }
+
+    /**
+     * 颜色转换(单色)
+     *
+     * @return 中文颜色
+     */
+    public String getColorMap(String channelId, int cartId, String colorEn) {
+        Map<String, Object> searchParam = new HashMap<>();
+        searchParam.put("channelId", channelId);
+        searchParam.put("cartId", cartId);
+        searchParam.put("colorEn", colorEn);
+        CmsMtColorMappingModel colorMappingModel = cmsMtColorMappingDao.selectOne(searchParam);
+        if (colorMappingModel == null) {
+            return "";
+        } else {
+            return colorMappingModel.getColorCn();
         }
     }
 }
