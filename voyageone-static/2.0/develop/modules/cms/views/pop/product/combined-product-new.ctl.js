@@ -9,23 +9,28 @@ define([
     ], function (cms) {
         cms.controller("CombinedProductNewController", (function () {
 
-            function CombinedProductNewController($scope, context, combinedProductService, $compile, $templateRequest, $document) {
+            function CombinedProductNewController($scope, context, combinedProductService, $compile, $templateRequest, $document, alert) {
                 $scope.vm = {
                     config: {
                         open: true,
-                        showFlag: false
+                        showFlag: false,
+                        startSupplyChain : 0
                     },
                     carts: {},
                     product: {}
                 };
                 $scope.vm.carts = context.carts;
+                $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
 
                 $scope.getCombinedProductInfo = function () {
-                    var cartId = $scope.vm.product.cartId;
-                    var numID = $scope.vm.product.numID;
+                    var cartId = $scope.vm.product.cartId,
+                        numID = $scope.vm.product.numID;
+
                     if (!cartId || !numID) {
+                        alert("请确认平台和商品编码是否填写完整！");
                         return;
                     }
+
                     combinedProductService.getCombinedProductPlatformDetail({
                         "cartId": cartId,
                         "numID": numID

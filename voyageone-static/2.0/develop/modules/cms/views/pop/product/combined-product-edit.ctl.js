@@ -11,9 +11,13 @@ define([
 
             function CombinedProductEditController($scope, context, combinedProductService, $compile, $templateRequest, $document) {
                 $scope.vm = {
+                    config : {
+                        startSupplyChain:0
+                    },
                     carts: {},
                     product: {}
                 };
+                $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
                 $scope.vm.carts = context.carts;
 
                 $scope.initialize = function () {
@@ -36,7 +40,7 @@ define([
                     if (!cartId || !numID) {
                         return;
                     }
-                    combinedProductService.getCombinedProductDetail({
+                    combinedProductService.getCombinedProductPlatformDetail({
                         "cartId": cartId,
                         "numID": numID
                     }).then(function (resp) {

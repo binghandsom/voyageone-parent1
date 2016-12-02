@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.product;
 
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductBean;
 import com.voyageone.service.bean.cms.product.CmsBtCombinedProductPlatformStatus;
@@ -51,6 +54,13 @@ public class CombinedProductController extends CmsController {
         resultMap.put("carts", carts);
         resultMap.put("statuses", CmsBtCombinedProductStatus.KV);
         resultMap.put("platformStatuses", CmsBtCombinedProductPlatformStatus.KV);
+
+        int startSupplyChain = 0; // 店铺是否启动了供应链管理
+        CmsChannelConfigBean startSupplyChainConfig = CmsChannelConfigs.getConfigBeanNoCode(user.getSelChannelId(), CmsConstants.ChannelConfig.START_SUPPLY_CHAIN);
+        if (startSupplyChainConfig != null && "1".equals(startSupplyChainConfig.getConfigValue1())) {
+            startSupplyChain = 1;
+        }
+        resultMap.put("startSupplyChain", startSupplyChain);
         return success(resultMap);
     }
 
