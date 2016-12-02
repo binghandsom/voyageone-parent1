@@ -1,5 +1,8 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.jd.open.api.sdk.domain.ware.Sku;
+import com.jd.open.api.sdk.domain.ware.Ware;
+import com.jd.open.api.sdk.response.ware.WareListResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateDelistingResponse;
 import com.jd.open.api.sdk.response.ware.WareUpdateListingResponse;
 import com.mongodb.WriteResult;
@@ -25,6 +28,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.jd.service.JdSaleService;
+import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
 import com.voyageone.components.jumei.service.JumeiSaleService;
 import com.voyageone.components.tmall.service.TbProductService;
@@ -35,6 +39,7 @@ import com.voyageone.service.bean.cms.product.CmsBtCombinedProductStatus;
 import com.voyageone.service.bean.cms.product.CombinedSkuInfoBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCombinedProductLogDao;
+import com.voyageone.service.fields.cms.CmsBtShelvesProductModelStatus;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.enums.PlatformType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtCombinedProductLogModel;
@@ -75,27 +80,28 @@ public class CmsBtCombinedProductService extends BaseService {
     @Autowired
     private JdSaleService jdSaleService;
     @Autowired
+    private JdWareService jdWareService;
+    @Autowired
     private JumeiSaleService jmSaleService;
     @Autowired
     private CmsBtCombinedProductLogDao cmsBtCombinedProductLogDao;
 
     public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        shopBean.setAppKey("21008948");
+        /*shopBean.setAppKey("21008948");
         shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
         shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
         shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
-        shopBean.setShop_name("Target海外旗舰店");
+        shopBean.setShop_name("Target海外旗舰店");*/
         if (shopBean != null) {
+            long threadNo = Thread.currentThread().getId();
+            $info("threadNo:" + threadNo + " numiid:" + numId );
             CmsBtCombinedProductModel productBean = new CmsBtCombinedProductModel();
             productBean.setCartId(cartId);
             productBean.setNumID(numId);
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
                 try{
                     TmallItemUpdateSchemaGetResponse itemUpdateSchemaGetResponse = tbProductService.doGetWareInfoItem(numId, shopBean);
-                    long threadNo = Thread.currentThread().getId();
-                    $info("threadNo:" + threadNo + " numiid:" + numId );
-
                     if (null != itemUpdateSchemaGetResponse && itemUpdateSchemaGetResponse.isSuccess()) {
                         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(itemUpdateSchemaGetResponse.getUpdateItemResult());
                         InputField titleField = (InputField) fieldMap.get("title");
@@ -134,7 +140,31 @@ public class CmsBtCombinedProductService extends BaseService {
                     throw new BusinessException("获取天猫商品数据出错了！");
                 }
             } else if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.JD.getPlatformId().toString())) {
-                // nothing.......
+                try {
+                    WareListResponse wareListResponse = jdWareService.getJdProduct(shopBean, numId, "ware_id,skus");
+                    if (wareListResponse != null) {
+                        Ware ware = wareListResponse.getWareList().get(0);
+                        productBean.setProductName(ware.getTitle());
+                        Integer platformStatus = "ON_SALE".equalsIgnoreCase(ware.getWareStatus()) ? CmsBtCombinedProductPlatformStatus.ON_SHELVES : CmsBtCombinedProductPlatformStatus.OFF_SHELVES;
+                        productBean.setPlatformStatus(platformStatus);
+                        for (Sku item:wareListResponse.getWareList().get(0).getSkus()){
+                            CmsBtCombinedProductModel_Sku skuBean = new CmsBtCombinedProductModel_Sku();
+                            skuBean.setSuitSkuCode(item.getOuterId());
+                            skuBean.setSuitPreferentialPrice(Double.parseDouble(item.getJdPrice()));
+                            skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item()); // 在页面初始化一个空的SKU ITEM
+                            productBean.getSkus().add(skuBean);
+                        };
+                        return productBean;
+                    } else {
+                        $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
+                        throw new BusinessException("获取天猫商品数据出错了！");
+                    }
+                } catch (Exception e) {
+                    $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
+                    e.printStackTrace();
+                    $error(e);
+                    throw new BusinessException("获取京东商品数据出错了！");
+                }
             }
 
         }
