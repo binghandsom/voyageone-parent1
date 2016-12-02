@@ -59,7 +59,7 @@
                 </a>
             </li>
             <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
-                <a class="auto" ng-if="item.isParent == 1">
+                <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
                       <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -649,11 +649,11 @@
         </ul>
     </li>
 </ul>
-<!--end-->
+
 
 <script id="categoryMenu" type="text/ng-template">
     <li ng-repeat="item in categoryMenu">
-        <a class="auto" ng-if="item.isParent == 1">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
                 <i class="fa fa-fw fa-angle-down text-active"></i>

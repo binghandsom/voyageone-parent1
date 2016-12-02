@@ -415,11 +415,12 @@ define(function () {
             "controllerUrl": "modules/cms/views/shelves/shelves-list.ctl",
             "controller": "ShelvesListController as ctrl"
         },
-        "combined-product" : {
-            "hash": "/combined/product",
-            "templateUrl": "views/product/combined-product-list.tpl.html",
-            "controllerUrl": "modules/cms/views/product/combined-product-list.ctl",
-            "controller": "combinedProductController as ctrl"
+        "channel_new_category": {
+            "url":"/channel/newCategory/",
+            "hash": "/channel/newCategory/:cartInfo?",
+            "templateUrl": "views/channel/newCategory/index.tpl.html",
+            "controllerUrl": "modules/cms/views/channel/newCategory/index.ctl",
+            "controller": "newCategoryController as ctrl"
         }
     };
 });

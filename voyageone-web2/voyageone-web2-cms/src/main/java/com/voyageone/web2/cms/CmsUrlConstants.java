@@ -678,8 +678,15 @@ public interface CmsUrlConstants {
             String GET_OPERATE_LOGS = "getOperateLogs";
         }
     }
-
-
+    interface ProductTop {
+        String ROOT = "/cms/producttop";
+        String Init="init";
+        String GetPage = "getPage";
+        String GetCount = "getCount";
+        String GetTopList="getTopList";
+        String AddTopProduct="addTopProduct";
+        String SaveTopProduct="saveTopProduct";
+    }
     // 商品编辑
     interface GROUP {
 

@@ -429,7 +429,7 @@ s-field textarea.s-html {
     line-height: 24px;
 }
 
-.product-shema-detail .border-col-gray{
+.product-shema-detail .border-col-gray {
     color: #fff;
     border: 1px solid #ccc;
 }
@@ -999,6 +999,33 @@ schema .ng-invalid.focus-error {
 #advanceSearch .opacityBtn {
     border: none;
     background: none;
+}
+
+/**类目排序样式*/
+#newCategory .btn-group li {
+    width: 120px;
+    border: 1px solid #c3bdbd;
+    border-radius: 3px;
+    height: 27px;
+    line-height: 20px;
+    text-align: center;
+    margin: 4px auto;
+
+}
+
+#newCategory .opacityBtn {
+    border: none;
+    background: none;
+}
+
+#newCategory .top-area{
+    margin-left: 37px;
+}
+
+#newCategory .top-element{
+    width: 300px;
+    padding: 7px;
+    margin: 6px;
 }
 
 /**组合套装样式*/

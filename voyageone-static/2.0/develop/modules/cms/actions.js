@@ -156,6 +156,15 @@ define(function () {
                     "edit" : "edit",
                     "onOffShelves" : "onOffShelves",
                     "getOperateLogs" : "getOperateLogs"
+                },
+                productTopService: {
+                    "root": "/cms/producttop",
+                    "init": "init",
+                    "getPage": "getPage",
+                    "getCount": "getCount",
+                    "getTopList": "getTopList",
+                    "addTopProduct": "addTopProduct",
+                    "saveTopProduct": "saveTopProduct"
                 }
             },
             "mapping": {
