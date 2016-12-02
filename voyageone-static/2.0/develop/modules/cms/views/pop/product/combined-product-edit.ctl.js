@@ -22,7 +22,7 @@ define([
                         if ($scope.vm.product != null) {
                             $scope.vm.product.cartId = $scope.vm.product.cartId + "";
                         }
-                        _.each($scope.vm.product.skus, function (element, index, list) {
+                        _.each($scope.vm.product.skus, function (element) {
                             _.extend(element, {'tempSuitSellingPriceCn': element.suitSellingPriceCn}, {'tempSuitPreferentialPrice': element.suitPreferentialPrice})
                         });
                     });
@@ -39,7 +39,7 @@ define([
                            $scope.vm.product = resp.data.product == null ? {} : resp.data.product;
                            // carts集合中cart为string, product为int
                            $scope.vm.product.cartId = $scope.vm.product.cartId == null ? "" : $scope.vm.product.cartId + "";
-                           _.each($scope.vm.product.skus, function (element, index, list) {
+                           _.each($scope.vm.product.skus, function (element) {
                                _.extend(element, {'tempSuitSellingPriceCn': element.suitSellingPriceCn}, {'tempSuitPreferentialPrice':element.suitPreferentialPrice})
                            });
                        });
