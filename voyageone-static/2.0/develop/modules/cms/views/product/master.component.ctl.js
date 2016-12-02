@@ -310,17 +310,21 @@ define([
                 }
 
                 function removeImg(imagesType, imageName, $event) {
-                    var productComm = scope.vm.productComm;
+                    var productComm = scope.vm.productComm,
+                        pictures = productComm.fields[imagesType],
+                        _rmIndex = 0;
 
                     if (!imagesType)
                         return;
 
                     confirm("您确认要删除该图片吗？").then(function () {
-                        _.each(productComm.fields[imagesType], function (ele, index, list) {
+                        _.each(pictures, function (ele, index) {
                             if (ele[imagesType.replace('images','image')] === imageName) {
-                                list.splice(list.indexOf(ele), 1);
+                                _rmIndex = index;
                             }
                         });
+
+                        pictures.splice(_rmIndex, 1);
 
                         productDetailService.restoreImg({
                             prodId: scope.productInfo.productId,
