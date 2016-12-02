@@ -11,7 +11,8 @@ define([
             function CombinedProductController($scope, combinedProductService, popups, confirm) {
                 $scope.vm = {
                     config: {
-                        open: true
+                        open: true,
+                        startSupplyChain:0
                     },
                     carts: {},
                     products: [],
@@ -64,12 +65,13 @@ define([
                         $scope.vm.carts = resp.data.carts == null ? {} : resp.data.carts;
                         $scope.vm.statuses = resp.data.statuses == null ? {} : resp.data.statuses;
                         $scope.vm.platformStatuses = resp.data.platformStatuses == null ? {} : resp.data.platformStatuses;
+                        $scope.vm.startSupplyChain = resp.data.startSupplyChain == null ? 0 : resp.data.startSupplyChain;
                     });
                     getProductList();
                 };
 
-                $scope.popCombinedProduct = function () {
-                    popups.popNewCombinedProduct({"carts": $scope.vm.carts}).then(function () {
+                $scope.popNewCombinedProduct = function () {
+                    popups.popNewCombinedProduct(_.extend({"carts": $scope.vm.carts}, {"startSupplyChain":$scope.vm.config.startSupplyChain})).then(function () {
                         getProductList();
                     });
                 };
@@ -99,7 +101,7 @@ define([
                 // 编辑组合套装商品
                 $scope.popEditCombinedProduct = function (product) {
 
-                    popups.popEditCombinedProduct(_.extend({'product': angular.copy(product)}, {'carts': $scope.vm.carts})).then(function () {
+                    popups.popEditCombinedProduct(_.extend({'product': angular.copy(product)}, {'carts': $scope.vm.carts}, {"startSupplyChain":$scope.vm.config.startSupplyChain})).then(function () {
                         getProductList();
                     });
                 };

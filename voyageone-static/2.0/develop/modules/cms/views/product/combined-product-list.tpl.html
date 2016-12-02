@@ -83,7 +83,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="btn-group">
-                <button  type="button" class="btn btn-success btn-pop" ng-click="popCombinedProduct()">
+                <button  type="button" class="btn btn-success btn-pop" ng-click="popNewCombinedProduct()">
                     <i class="fa fa-plus"></i> &nbsp;{{'TXT_COMBINED_PRODUCT_NEW' | translate}}
                 </button>
             </div>
@@ -113,7 +113,7 @@
                                         {{vm.platformStatuses[product.platformStatus]}}
                                     </span>&emsp;
 
-                                    <strong>商品编码：</strong><a href="javascript:void(0)">{{product.numID}}</a>&emsp;
+                                    <strong>商品编码：</strong><a href="javascript:void(0)" ng-click="popEditCombinedProduct(product)">{{product.numID}}</a>&emsp;
 
                                     <strong>组合套装商品名称：</strong><span>{{product.productName}}</span>
 

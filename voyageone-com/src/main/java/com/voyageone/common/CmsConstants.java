@@ -177,6 +177,9 @@ public class CmsConstants {
 
         //feed的code按不同季度拆分
         String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
+
+        // 店铺是否启动了供应链管理
+        String START_SUPPLY_CHAIN = "START_SUPPLY_CHAIN";
     }
 
     public interface DataAmount {

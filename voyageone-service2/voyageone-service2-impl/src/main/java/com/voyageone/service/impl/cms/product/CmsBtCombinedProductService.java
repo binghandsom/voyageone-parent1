@@ -17,7 +17,10 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -330,6 +333,11 @@ public class CmsBtCombinedProductService extends BaseService {
         List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
         if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null || CollectionUtils.isEmpty((skus = model.getSkus()))) {
             throw new BusinessException("参数错误！");
+        }
+        int startSupplyChain = 0; // 店铺是否启动了供应链管理
+        CmsChannelConfigBean startSupplyChainConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.START_SUPPLY_CHAIN);
+        if (startSupplyChainConfig != null && "1".equals(startSupplyChainConfig.getConfigValue1()) && StringUtils.isBlank(model.getWuliubaoCode())) {
+            throw new BusinessException("店铺启用了供应链管理，请填写物流宝商品后台编码！");
         }
         CmsBtCombinedProductModel targetModel = null;
         if (ACTION_TYPE_EDIT.equals(actionType)) {

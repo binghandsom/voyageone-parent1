@@ -13,12 +13,14 @@ define([
                 $scope.vm = {
                     config: {
                         open: true,
-                        showFlag: false
+                        showFlag: false,
+                        startSupplyChain : 0
                     },
                     carts: {},
                     product: {}
                 };
                 $scope.vm.carts = context.carts;
+                $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
 
                 $scope.getCombinedProductInfo = function () {
                     var cartId = $scope.vm.product.cartId,
