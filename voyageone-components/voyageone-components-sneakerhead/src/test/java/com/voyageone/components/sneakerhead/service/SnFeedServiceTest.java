@@ -1,7 +1,7 @@
 package com.voyageone.components.sneakerhead.service;
 
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
-import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
+import com.voyageone.components.sneakerhead.bean.SneakerHeadRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,18 +16,18 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class SnFeedServiceTest {
+public class sneakerHeadFeedServiceTest {
     @Autowired
     private SneakerHeadFeedService sneakerHeadFeedService;
     @Test
     public void testSneakerHeadResponse() throws Exception {
-        SneakerHeadFeedInfoRequest sneakerHeadFeedInfoRequest = new SneakerHeadFeedInfoRequest();
-        sneakerHeadFeedInfoRequest.setPageNumber(1);
-        sneakerHeadFeedInfoRequest.setPageSize(100);
+        SneakerHeadRequest sneakerHeadRequest = new SneakerHeadRequest();
+        sneakerHeadRequest.setPageNumber(1);
+        sneakerHeadRequest.setPageSize(100);
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, 1, 1);
-        sneakerHeadFeedInfoRequest.setTime(calendar.getTime());
-        List<SneakerHeadCodeModel> sneakerHeadCodeModels = sneakerHeadFeedService.getFeedInfo(sneakerHeadFeedInfoRequest);
+        sneakerHeadRequest.setTime(calendar.getTime());
+        List<SneakerHeadCodeModel> sneakerHeadCodeModels = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest, "47.180.64.158:52233");
         System.out.print(sneakerHeadCodeModels.size());
     }
 }
