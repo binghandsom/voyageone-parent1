@@ -41,7 +41,13 @@ public class ChainDefinitionSectionMetaSource implements FactoryBean<Ini.Section
 		for (ComResourceModel res : list) {
 			// 构成permission字符串
 			if (StringUtils.isNotEmpty(res.getResUrl()) && StringUtils.isNotEmpty(res.getResKey())) {
-				String permission = "perms[" + res.getResKey() + "]" + ",channel[" + res.getResKey() + "]";
+				String permission  = "";
+				if(res.getResUrl().startsWith("/cms"))
+				{
+					permission = "channel[" + res.getResKey() + "], ";
+				}
+				permission = permission + "perms[" + res.getResKey() + "]";
+
 				// 不对角色进行权限验证
 				// 如需要则 permission = "roles[" + resources.getResKey() + "]";
 				if(!section.containsKey(res.getResUrl() )) {
