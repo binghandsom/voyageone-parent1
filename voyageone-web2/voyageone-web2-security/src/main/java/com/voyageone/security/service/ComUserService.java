@@ -65,7 +65,7 @@ public class ComUserService {
      * @param password
      */
     public ComUserModel login(String account, String password, String app) {
-//        logout();
+         logout();
 
         Subject user = SecurityUtils.getSubject();
 
@@ -119,7 +119,14 @@ public class ComUserService {
 
 
     public void logout() {
-        SecurityUtils.getSubject().logout();
+        try {
+            SecurityUtils.getSubject().logout();
+        }
+        catch (Exception e)
+        {
+            //do nothing
+            e.printStackTrace();
+        }
     }
 
 

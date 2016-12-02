@@ -107,12 +107,14 @@
 			<util:map>
 				<entry key="perms" value-ref="permission"/>
 				<entry key="authc" value-ref="authc"/>
+				<entry key="channel" value-ref="channel"/>
 			</util:map>
 		</property>
 	</bean>
 
 	<bean id="permission" class="com.voyageone.security.shiro.filter.MyPermissionFilter"/>
 	<bean id="authc" class="com.voyageone.security.shiro.filter.MyAuthenticationFilter"/>
+	<bean id="channel" class="com.voyageone.security.shiro.filter.ChannelCheckFilter"/>
 
 	<!--自定义filterChainDefinitionMap -->
 	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
