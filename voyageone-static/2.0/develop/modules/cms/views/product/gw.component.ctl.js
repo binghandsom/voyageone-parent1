@@ -42,6 +42,7 @@ define([
                 scope.focusError = focusError;
                 scope.copyMainProduct = copyMainProduct;
                 scope.moveToGroup = moveToGroup;
+                scope.choseBrand = choseBrand;
 
                 /**
                  * 获取京东页面初始化数据
@@ -451,6 +452,27 @@ define([
                     });
 
                     return result;
+                }
+
+                /**
+                 *  商品品牌选择
+                 */
+                function choseBrand(openPlatformMappingSetting) {
+
+                    var mainBrand = scope.productInfo.masterField.brand,
+                        platform = scope.vm.platform;
+
+                    openPlatformMappingSetting({
+                        cartId: scope.cartInfo.value,
+                        cartName: scope.cartInfo.name,
+                        masterName: mainBrand,
+                        pBrandId: platform.pBrandId ? platform.pBrandId : null
+                    }).then(function (context) {
+                        scope.vm.platform.pBrandName = context.pBrand;
+                        if (platform.schemaFields && platform.schemaFields.product)
+                            initBrand(platform.schemaFields.product, context.brandId);
+                    });
+
                 }
 
             }
