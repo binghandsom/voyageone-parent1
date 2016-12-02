@@ -190,6 +190,9 @@
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
+        <!-- 从老Cms系统取得销售数据（每天早上4：40点一次） -->
+        <task:scheduled ref="CmsSumSneakerHeadSalesHisInfoJob" method="run" cron="0 40 20 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
