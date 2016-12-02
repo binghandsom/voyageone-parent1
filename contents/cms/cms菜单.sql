@@ -1,5 +1,5 @@
 
-DELETE FROM com_resource  WHERE id>8000;
+-- DELETE FROM com_resource  WHERE id>8000;
 
 -- feed管理
 INSERT  INTO `com_resource`(`id`,`application`,`res_name`,`res_key`,`res_type`,`res_url`,`icon`,`parent_id`,`parent_ids`,`weight`,`active`,`description`,`created`,`creater`,`modified`,`modifier`,`origin_id`,`origin_table`,`origin_name`,`show_in_menu`,`menu_title`) 
