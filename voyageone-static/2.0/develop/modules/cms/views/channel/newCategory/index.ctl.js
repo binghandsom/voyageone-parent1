@@ -5,7 +5,7 @@ define([
 
     cms.controller("newCategoryController", (function () {
 
-        function NewCategoryCtl($routeParams, productTopService, alert, confirm, notify) {
+        function NewCategoryCtl($routeParams, productTopService, alert, notify) {
             this.routeParams = angular.fromJson($routeParams.cartInfo);
             this.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
             this.productTopService = productTopService;
@@ -18,7 +18,6 @@ define([
             };
             this.notify = notify;
             this.alert = alert;
-            console.log($routeParams);
         }
 
         NewCategoryCtl.prototype.init = function () {
@@ -26,6 +25,7 @@ define([
             var self = this,
                 productTopService = self.productTopService,
                 routeParams = self.routeParams;
+
             productTopService.init({catId: routeParams.catId}).then(function (res) {
                 self.brandList = res.data.brandList;
 
@@ -35,6 +35,7 @@ define([
                 if (self.sort)
                     self.sort.sortType = res.data.sortType;
             });
+
             self.search();
             self.getTopList();
         };
@@ -45,38 +46,46 @@ define([
             this.codeStr = "";
         };
 
+        /**
+         * 查询操作  调用查询结果集和获取总数两个接口
+         * @param sortInfo
+         */
         NewCategoryCtl.prototype.search = function (sortInfo) {
-            //查询
-            var self = this;
-            this.goPage(1, this.paging.size, sortInfo);
-            var data = this.getSearchInfo();
-            this.productTopService.getCount(data).then(function (res) {
+            var self = this,
+                productTopService = self.productTopService;
+
+            self.goPage(1, self.paging.size, sortInfo);
+
+            productTopService.getCount(self.getSearchInfo()).then(function (res) {
                 self.paging.total = res.data;
-                console.log(data);
             });
         };
 
+        /**
+         * @returns 返回查询上行参数
+         */
         NewCategoryCtl.prototype.getSearchInfo = function () {
-            //获取搜索条件
-            var self = this;
-
-            var upEntity = angular.copy(self.searchInfo);
+            var self = this,
+                upEntity = angular.copy(self.searchInfo);
 
             upEntity.cartId = this.routeParams.cartId;
-
             upEntity.sellerCatId = this.routeParams.catId;
-
             upEntity.sellerCatPath = this.routeParams.catPath;
-
             upEntity.codeList = self.codeStr.split("\n");
 
             return upEntity;
         };
 
+        /**
+         * 跳转到指定页
+         * @param pageIndex
+         * @param size
+         * @param sortInfo
+         */
         NewCategoryCtl.prototype.goPage = function (pageIndex, size, sortInfo) {
-            //跳转到指定页
-            var self = this;
-            var data = this.getSearchInfo();
+            var self = this,
+                data = this.getSearchInfo();
+
             data.pageIndex = pageIndex;
             data.pageSize = size;
             if (sortInfo) {
@@ -86,11 +95,14 @@ define([
             this.productTopService.getPage(data).then(function (res) {
                 self.modelList = res.data;
             });
-        }
+        };
 
-
+        /**
+         * 排序字段保存 搜索
+         * @param sortColumnName
+         * @param sortType
+         */
         NewCategoryCtl.prototype.sortSearch = function (sortColumnName, sortType) {
-            //排序字段保存 搜索
             var self = this,
                 _sort,
                 routeParams = self.routeParams;
@@ -107,95 +119,126 @@ define([
 
             self.sort = _sort;
 
-            //调用搜索
-            this.search({sortColumnName: _sort.sValue, sortType: sortType});
+            self.search({sortColumnName: _sort.sValue, sortType: sortType});
         };
+
+        /**
+         * 普通商品区全选操作
+         * @param $event
+         */
         NewCategoryCtl.prototype.selectAll = function ($event) {
-            //全选
             var checkbox = $event.target;
+
             for (var i = 0; i < this.modelList.length; i++) {
                 this.modelList[i].isChecked = checkbox.checked;
             }
         };
+
+        /**
+         * 获取选中商品的code
+         * @returns Array
+         */
         NewCategoryCtl.prototype.getSelectedCodeList = function () {
-            //获取选中商品的code
+
             var codeList = [];
-            if (this.modelList) {
-                var lenght = this.modelList.length;
-                for (var i = 0; i < lenght; i++) {
+
+            if (this.modelList && this.modelList.length > 0) {
+                for (var i = 0, length = this.modelList.length; i < length; i++) {
                     if (this.modelList[i].isChecked) {
                         codeList.push(this.modelList[i].code);
                     }
                 }
             }
+
             return codeList;
         };
 
+        /**
+         * 加入置顶区
+         */
         NewCategoryCtl.prototype.addTopProductClick = function () {
-            //加入置顶区
-            var parameter = {};
+            var self = this,
+                routeParams = self.routeParams,
+                parameter = {};
+
             if (this.isSeachAdd) {
                 //全量加入
                 parameter.isSeachAdd = this.isSeachAdd;
                 parameter.searchParameter = this.getSearchInfo();
-            }
-            else {
+            } else {
                 var codeList = this.getSelectedCodeList();
                 if (codeList.length == 0) {
                     this.alert("请选择商品");
                 }
                 parameter.codeList = codeList;
             }
-            parameter.cartId = this.routeParams.cartId;
-            parameter.sellerCatId = this.routeParams.catId;
 
+            parameter.cartId = routeParams.cartId;
+            parameter.sellerCatId = routeParams.catId;
 
-            var self = this;
-            this.productTopService.addTopProduct(parameter).then(function (res) {
+            self.productTopService.addTopProduct(parameter).then(function () {
                 self.search();
                 self.getTopList();
                 self.notify.success('提交成功');
             });
-        }
+        };
 
+        /**
+         * 获取置顶区商品信息
+         */
         NewCategoryCtl.prototype.getTopList = function () {
-            //获取置顶区商品信息
-            var self = this;
-            var parameter = {};
-            parameter.cartId = this.routeParams.cartId;
-            parameter.sellerCatId = this.routeParams.catId;
-            this.productTopService.getTopList(parameter).then(function (res) {
+            var self = this,
+                routeParams = self.routeParams;
+
+            self.productTopService.getTopList({
+                cartId: routeParams.cartId,
+                sellerCatId: routeParams.catId
+            }).then(function (res) {
                 self.topList = res.data;
             });
         };
 
+        /**
+         * 获取置顶区商品的code
+         * @returns {Array}
+         */
         NewCategoryCtl.prototype.getTopCodeList = function () {
-            //获取置顶区商品的code
-            var codeList = [];
-            if (this.topList) {
-                var lenght = this.topList.length;
-                for (var i = 0; i < lenght; i++) {
+            var self = this,
+                codeList = [];
+
+            if (self.topList) {
+                for (var i = 0, length = self.topList.length; i < length; i++) {
                     codeList.push(this.topList[i].code);
                 }
             }
+
             return codeList;
-        }
+        };
+
+        /**
+         * 保存置顶区商品
+         */
         NewCategoryCtl.prototype.saveTopProduct = function () {
-            //保存置顶区商品
-            var self = this;
-            var parameter = {};
-            parameter.cartId = this.routeParams.cartId;
-            parameter.sellerCatId = this.routeParams.catId;
-            parameter.codeList = this.getTopCodeList();
-            this.productTopService.saveTopProduct(parameter).then(function (res) {
+            var self = this,
+                routeParams = self.routeParams;
+
+            this.productTopService.saveTopProduct({
+                cartId: routeParams.cartId,
+                sellerCatId: routeParams.catId,
+                codeList: self.getTopCodeList()
+            }).then(function () {
                 self.notify.success('保存成功');
             });
-        }
+        };
 
+        /**
+         * 置顶区清空
+         */
         NewCategoryCtl.prototype.clearTopProduct = function () {
-            //置顶区清空
             this.topList = [];
-        }
+        };
+
+
         NewCategoryCtl.prototype.remove = function (index) {
             this.topList.splice(index, 1);
         };

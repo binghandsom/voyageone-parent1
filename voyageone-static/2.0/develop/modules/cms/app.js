@@ -444,8 +444,10 @@ define([
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
          */
-        function goSearchPage(catPath, catId) {
+        function goSearchPage(catPath, catId,item) {
             var encodeCatPath = encodeURIComponent(catPath);
+
+            console.log("item",item);
 
             switch ($rootScope.platformType.cTypeId) {
                 case "MT": // 已不使用
@@ -454,7 +456,7 @@ define([
                 case "TH":
                     $location.path(cRoutes.feed_product_list_param.url + "1/" + encodeCatPath);
                     break;
-                case "likingCn":
+                case "LCN":
                     $location.path(cRoutes.channel_new_category.url + angular.toJson({catPath:catPath,catId:catId,cartId:$rootScope.platformType.cartId}));
                     break;
                 default:
