@@ -36,7 +36,7 @@ define([
                     if (!cartId || !numID) {
                         return;
                     }
-                    combinedProductService.getCombinedProductDetail({
+                    combinedProductService.getCombinedProductPlatformDetail({
                         "cartId": cartId,
                         "numID": numID
                     }).then(function (resp) {
