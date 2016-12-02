@@ -329,7 +329,7 @@ define([
                         productDetailService.restoreImg({
                             prodId: scope.productInfo.productId,
                             imagesType: imagesType,
-                            images: productComm.fields[imagesType]
+                            images: pictures
                         }).then(function () {
                             initialize();
                             notify.success("删除成功！");
