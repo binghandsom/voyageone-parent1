@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
@@ -26,9 +26,6 @@ public class CmsPlatformSellercatMqService  extends BaseMQCmsService {
     @Autowired
     private SellerCatService sellerCatService;
 
-    @Autowired
-    private CmsBtSellerCatDao cmsBtSellerCatDao;
-
     /**
      * 入口
      *    输入参数:
@@ -44,12 +41,25 @@ public class CmsPlatformSellercatMqService  extends BaseMQCmsService {
         String channelId = (String) messageMap.get("channelId");
         String cartId = (String) messageMap.get("cartId");
 
-        doMain(channelId, Integer.valueOf(cartId));
+        try {
+            doMain(channelId, Integer.valueOf(cartId));
+        } catch (Exception e) {
+            if (StringUtils.isEmpty(e.getMessage())) {
+                $error("异常发生!");
+                e.printStackTrace();
+            } else {
+                $error("异常发生!" + e.getMessage());
+            }
+        }
+        $info("success end");
     }
 
     private void doMain(String channelId, int cartId) throws Exception {
+        $info("取得店铺内开始!");
         List<CmsBtSellerCatModel> root = sellerCatService.refreshSellerCat(channelId, cartId, getTaskName());
+        $info("开始插入mongoDB!根目录数为" + root.size());
         sellerCatService.save(root);
+        $info("成功插入mongoDB!");
     }
 
 }
