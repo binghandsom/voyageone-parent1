@@ -123,7 +123,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         Map<CmsConstants.PlatformStatus, List<String>> numIIdMap = tbSaleService.getTmNumIIdList(channelId, cartId);
 
         numIIdMap.forEach((status, numIIdList) -> {
+            int index = 1;
             for (String numIId : numIIdList) {
+                $info(String.format("%s-%s天猫[%s]分组 %d/%d", channelId, numIId, status.name(), index, numIIdList.size()));
                 try {
                     executeMove(shopBean, channelId, Integer.valueOf(cartId), numIId, status);
                 } catch (Exception e) {
@@ -132,6 +134,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                     }
                     e.printStackTrace();
                 }
+                index++;
             }
         });
     }

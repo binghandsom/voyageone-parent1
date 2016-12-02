@@ -12,6 +12,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -291,13 +292,32 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
     /**
      * 根据类目id找出所有code(检索时带上排序条件)
+     *
+     * @param sortKey 排序项目
+     * @param sortType 排序类型  1：升序  -1：降序
+     * @param expCodes 不要检索出来的code列表
      */
-    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId) {
+    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId, String sortKey, Integer sortType, List<String> expCodes) {
         JongoQuery jongoQuery = new JongoQuery();
-        jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}}, \"platforms.P%s.pStatus\":'%s'", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
-        jongoQuery.setParameters(channelId, catId);
+        // modified by morse.lu 2016/11/30 start
+//        jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}, \"platforms.P%s.pStatus\":'%s'}", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+//        jongoQuery.setParameters(channelId, catId);
+        jongoQuery.addQuery(String.format("{\"channelId\":#}, {\"platforms.P%s.sellerCats.cIds\":#}, {\"platforms.P%s.pNumIId\":{$nin: ['', null]}}, {\"platforms.P%s.pStatus\":'%s'}", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+        jongoQuery.addParameters(channelId, catId);
+        if (ListUtils.notNull(expCodes)) {
+            jongoQuery.addQuery("{'common.fields.code':{$nin:#}}");
+            jongoQuery.addParameters(expCodes);
+        }
+        // modified by morse.lu 2016/11/30 end
         jongoQuery.setProjection("{\"common.fields.code\": 1}");
-        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":-1}", cartId)); // 暂定pPublishTime
+        // modified by morse.lu 2016/11/30 start
+//        jongoQuery.setSort(String.format("{\"platforms.P%s.pPublishTime\":-1}", cartId)); // 暂定pPublishTime
+        if (!StringUtils.isEmpty(sortKey)) {
+            jongoQuery.setSort(String.format("{%s:%s}", sortKey, sortType));
+        } else {
+            jongoQuery.setSort("{prodId:-1}");
+        }
+        // modified by morse.lu 2016/11/30 start
 
         List<CmsBtProductModel> products = select(jongoQuery, channelId);
 

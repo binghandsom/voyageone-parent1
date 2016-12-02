@@ -129,7 +129,9 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         Map<CmsConstants.PlatformStatus, List<String>> wareIdMap = jdSaleService.getJdWareIdList(channelId, cartId);
 
         wareIdMap.forEach((status, wareIdList) -> {
+            int index = 1;
             for (String wareId : wareIdList) {
+                $info(String.format("%s-%s京东[%s]分组 %d/%d", channelId, wareId, status.name(), index, wareIdList.size()));
                 try {
                     executeMove(shopBean, channelId, Integer.valueOf(cartId), wareId, status);
                 } catch (Exception e) {
@@ -138,6 +140,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
                     }
                     e.printStackTrace();
                 }
+                index++;
             }
         });
     }
