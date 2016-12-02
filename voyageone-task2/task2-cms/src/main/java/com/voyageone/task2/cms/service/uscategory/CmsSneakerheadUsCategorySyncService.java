@@ -5,7 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
-import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
+import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.voyageone.components.sneakerhead.SneakerHeadBase.DEFAULT_DOMAIN;
+
 /**
  * Created by vantis on 2016/11/28.
  * 闲舟江流夕照晚 =。=
@@ -27,15 +29,15 @@ import java.util.Optional;
 @Service
 public class CmsSneakerheadUsCategorySyncService extends BaseCronTaskService {
 
-    private final SneakerHeadFeedService sneakerHeadFeedService;
+    private final SneakerheadApiService sneakerheadApiService;
     private final FeedCategoryTreeService feedCategoryTreeService;
     private final ProductService productService;
 
     @Autowired
-    public CmsSneakerheadUsCategorySyncService(SneakerHeadFeedService sneakerHeadFeedService,
+    public CmsSneakerheadUsCategorySyncService(SneakerheadApiService sneakerheadApiService,
                                                FeedCategoryTreeService feedCategoryTreeService,
                                                ProductService productService) {
-        this.sneakerHeadFeedService = sneakerHeadFeedService;
+        this.sneakerheadApiService = sneakerheadApiService;
         this.feedCategoryTreeService = feedCategoryTreeService;
         this.productService = productService;
     }
@@ -59,7 +61,7 @@ public class CmsSneakerheadUsCategorySyncService extends BaseCronTaskService {
         try {
             $info("调用接口 获取 category...");
             // 获得 category
-            List<SneakerheadCategoryModel> categoryList = sneakerHeadFeedService.getCategory(true);
+            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, DEFAULT_DOMAIN);
 
             $info("获取 category 完毕 拍平之...");
 

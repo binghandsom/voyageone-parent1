@@ -13,7 +13,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadSkuModel;
-import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
+import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.SN;
+import static com.voyageone.components.sneakerhead.SneakerHeadBase.DEFAULT_DOMAIN;
 
 /**
  * Created by gjl on 2016/11/15.
@@ -43,14 +44,12 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
     @Autowired
     SneakerHeadFeedDao sneakerHeadFeedDao;
     @Autowired
-    SneakerHeadFeedService sneakerHeadFeedService;
+    SneakerheadApiService sneakerheadApiService;
 
     private static Boolean isErr;
     private static Integer sumCnt;
 
     private static final int pageSize = 200;
-
-    private static final String SNEAKER_HEAD_ACCESS_DOMAIN = "47.180.64.158:52233";
 
 
     @Override
@@ -103,7 +102,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
             Date getFeedDate = sneakerHeadFeedDao.selectSuperFeedModelDate();
             final Date lastDate = getFeedDate == null ? new Date(0) : getFeedDate;
             //取得sneakerHead的Feed的总数
-            int anInt = sneakerHeadFeedService.sneakerHeadFeedCount(lastDate, SNEAKER_HEAD_ACCESS_DOMAIN);
+            int anInt = sneakerheadApiService.getFeedCount(lastDate, DEFAULT_DOMAIN);
 
             int pageCnt = anInt / pageSize + (anInt % pageSize > 0 ? 1 : 0);
             $info("共" + pageCnt + "页");
@@ -148,7 +147,7 @@ public class SneakerHeadAnalysisService extends BaseAnalysisService {
         int tried = 0;
         do {
             try {
-                feedList = sneakerHeadFeedService.sneakerHeadResponse(sneakerHeadRequest, SNEAKER_HEAD_ACCESS_DOMAIN);
+                feedList = sneakerheadApiService.getFeedInfo(sneakerHeadRequest, DEFAULT_DOMAIN);
             } catch (Exception e) {
                 tried++;
                 e.printStackTrace();
