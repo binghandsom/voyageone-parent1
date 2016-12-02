@@ -507,7 +507,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
             }
             // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
-            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList);
+            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList, mainProduct.getOrgChannelId());
 
             // 产品和颜色值的Mapping关系表(设置SKU属性时填入值，上传SKU图片时也会用到)
             Map<String, Object> productColorMap = new HashMap<>();
@@ -2334,22 +2334,29 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      *
      * @param cmsColorList List<CmsMtPlatformSkusModel> 颜色对象列表
      * @param cmsSizeList List<CmsMtPlatformSkusModel> 颜色对象列表
+     * @param orgChannelId String 原始channelId(子店channelId)
      * @return String 当前平台主类目对应的销售属性状况
      */
-    private String getSalePropStatus(List<CmsMtPlatformSkusModel> cmsColorList, List<CmsMtPlatformSkusModel> cmsSizeList) {
+    private String getSalePropStatus(List<CmsMtPlatformSkusModel> cmsColorList, List<CmsMtPlatformSkusModel> cmsSizeList, String orgChannelId) {
         // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
         String salePropStatus = "4";
 
-        // platformActive平台上新状态类型(ToOnSale/ToInStock)
-        if (ListUtils.notNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
-            // 1:颜色和尺寸属性都有
-            salePropStatus = "1";
-        } else if (ListUtils.notNull(cmsColorList) && ListUtils.isNull(cmsSizeList)) {
+        if ("017".equals(orgChannelId)) {
+            // 017:LuckyVitamin店一个SKU是一个CODE，所以他们希望全店都只有颜色，不要尺码
             // 2:只有颜色没有尺寸属性
             salePropStatus = "2";
-        } else if (ListUtils.isNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
-            // 3:没有颜色只有尺寸属性
-            salePropStatus = "3";
+        } else {
+            // platformActive平台上新状态类型(ToOnSale/ToInStock)
+            if (ListUtils.notNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+                // 1:颜色和尺寸属性都有
+                salePropStatus = "1";
+            } else if (ListUtils.notNull(cmsColorList) && ListUtils.isNull(cmsSizeList)) {
+                // 2:只有颜色没有尺寸属性
+                salePropStatus = "2";
+            } else if (ListUtils.isNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+                // 3:没有颜色只有尺寸属性
+                salePropStatus = "3";
+            }
         }
 
         return salePropStatus;
