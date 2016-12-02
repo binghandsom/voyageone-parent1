@@ -297,7 +297,13 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         //检索结果不存在的场合，Error ID 6000 的 异常抛出
 
         if (mList == null || mList.isEmpty()) {
-            throw new CAApiException(ErrorIDEnum.OrderNotFound);
+            //查订单是否存在
+            List<VmsBtClientOrderDetailsModel> mOrderList = caClientService.getClientOrderDetailById(channelId, orderID, null);
+            if(CollectionUtils.isEmpty(mOrderList)){
+                throw new CAApiException(ErrorIDEnum.OrderNotFound);
+            }else {
+                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
+            }
         }
 
         List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
