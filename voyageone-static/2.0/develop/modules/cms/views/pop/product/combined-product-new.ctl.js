@@ -54,6 +54,7 @@ define([
                 $scope.copySkuItem = function (skuItems) {
                     if (!skuItems || skuItems.length == 0)
                         return;
+
                     skuItems.push({});
                 };
 
@@ -61,13 +62,15 @@ define([
                     if (!sku || !sku.skuItems || sku.skuItems.length <= 1) {
                         return;
                     }
+
                     sku.skuItems.splice(index, 1);
                     dynamicSkuPrice(sku);
                 };
 
                 function dynamicSkuPrice(sku) {
                     // 动态统计套装组合SKU【组合套装优惠售价 合计】
-                    var tempSuitPreferentialPrice = 0;
+                    var tempSuitPreferentialPrice = 0,
+                        tempSuitSellingPriceCn = 0;
                     if (!sku || !sku.skuItems || sku.skuItems.length == 0) {
                         tempSuitPreferentialPrice = 0;
                     } else {
@@ -77,8 +80,8 @@ define([
                     }
                     sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
                     sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
+
                     // 动态统计套装组合SKU【组合套装中国最终售价 合计】
-                    var tempSuitSellingPriceCn = 0;
                     _.each(sku.skuItems, function (item) {
                         tempSuitSellingPriceCn += item.sellingPriceCn;
                     });
