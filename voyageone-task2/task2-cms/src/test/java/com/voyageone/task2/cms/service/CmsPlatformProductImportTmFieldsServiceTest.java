@@ -12,18 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2016/7/11.
  * @version 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsPlatformProductImport2ServiceTest {
+public class CmsPlatformProductImportTmFieldsServiceTest {
 
     @Autowired
-    CmsPlatformProductImport2Service cmsPlatformProductImport2Service;
+    CmsPlatformProductImportTmFieldsService cmsPlatformProductImportTmFieldsService;
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
@@ -33,6 +31,6 @@ public class CmsPlatformProductImport2ServiceTest {
         taskControlList.add(taskControlBean);
         Map<String,Object> parma= new HashMap<>();
         parma.put("channelId","018");
-        cmsPlatformProductImport2Service.onStartup(parma);
+        cmsPlatformProductImportTmFieldsService.onStartup(parma);
     }
 }

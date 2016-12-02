@@ -30,7 +30,7 @@ define([
     ]).constant('cActions', actions)
         .constant('cRoutes', routes)
         .constant('cLanguageType', {
-                en: {
+            en: {
                 name: "en",
                 value: enTranslate
             },
@@ -289,8 +289,8 @@ define([
         }
 
         /**cms配置信息，基于session缓存*/
-        function getCmsConfig(){
-            return $menuService.getCmsConfig().then(function(res){
+        function getCmsConfig() {
+            return $menuService.getCmsConfig().then(function (res) {
                 return res.data;
             });
         }
@@ -332,7 +332,7 @@ define([
         }
 
         function loadSearchAutoCompletes(query) {
-            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp)  {
+            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp) {
                 return resp.data;
             });
         }
@@ -448,16 +448,25 @@ define([
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
          */
         function goSearchPage(catPath, catId) {
-            var catPath = encodeURIComponent(catPath);
+            var encodeCatPath = encodeURIComponent(catPath);
+
             switch ($rootScope.platformType.cTypeId) {
                 case "MT": // 已不使用
-                    $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
+                    $location.path(cRoutes.search_advance_param.url + "1/" + encodeCatPath + "/" + catId);
                     break;
                 case "TH":
-                    $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
+                    $location.path(cRoutes.feed_product_list_param.url + "1/" + encodeCatPath);
+                    break;
+                case "CN":
+                case "LCN":
+                    $location.path(cRoutes.channel_new_category.url + angular.toJson({
+                            catPath: catPath,
+                            catId: catId,
+                            cartId: $rootScope.platformType.cartId
+                        }));
                     break;
                 default:
-                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
+                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + encodeCatPath);
                     break;
             }
         }

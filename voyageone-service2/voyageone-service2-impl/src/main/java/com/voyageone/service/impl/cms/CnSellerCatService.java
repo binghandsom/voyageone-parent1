@@ -36,7 +36,7 @@ public class CnSellerCatService {
         } else {
             catFullId = catFullId + "-" + catId;
         }
-        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName);
+        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName, null);
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");
@@ -46,7 +46,7 @@ public class CnSellerCatService {
     }
     public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
-        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");
@@ -54,7 +54,7 @@ public class CnSellerCatService {
     }
     public void  deleteSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
-        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName());
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,true,shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");

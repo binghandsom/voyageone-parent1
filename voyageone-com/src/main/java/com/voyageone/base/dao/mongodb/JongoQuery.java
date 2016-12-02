@@ -266,6 +266,20 @@ public class JongoQuery extends BaseCondition {
         return rs.toString();
     }
 
+    public String getJongoQueryStr() {
+        StringBuilder rs = new StringBuilder();
+        String queryStr = getQuery();
+        if (queryStr != null && queryStr.length() > 0) {
+            VOBsonQueryFactory queryFactory = new VOBsonQueryFactory();
+            Object[] params = getParameters();
+            if (params == null) {
+                params = new Object[0];
+            }
+            Query query = queryFactory.createQuery(queryStr, params);
+            queryStr = query.toDBObject().toString();
+        }
+        return queryStr;
+    }
     /**
      * 对单属性的简单查询提供一个简单的生成方法
      *

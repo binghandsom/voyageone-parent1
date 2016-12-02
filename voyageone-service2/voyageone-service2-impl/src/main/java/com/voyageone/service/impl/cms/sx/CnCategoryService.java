@@ -1,19 +1,20 @@
 package com.voyageone.service.impl.cms.sx;
 
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.bean.cms.cn.CnCategoryBean;
 import com.voyageone.service.dao.cms.CmsBtSxCnProductSellercatDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,8 @@ public class CnCategoryService extends BaseService {
     private CmsBtSxCnProductSellercatDao cmsBtSxCnProductSellercatDao;
     @Autowired
     private CmsBtSxCnProductSellercatDaoExt cmsBtSxCnProductSellercatDaoExt;
+    @Autowired
+    private CmsBtSellerCatDao cmsBtSellerCatDao;
 
     /**
      * 创建CnCategoryBean(要推送的属性)
@@ -45,14 +48,20 @@ public class CnCategoryService extends BaseService {
      * @param description 类目描述(画面上显示内容)
      * @return
      */
-    public CnCategoryBean createCnCategoryBean(String catFullId, String separator, String name, String description) {
+    public CnCategoryBean createCnCategoryBean(String catFullId, String separator, String name, String description, String urlKey) {
         CnCategoryBean bean = new CnCategoryBean();
 
         String[] catIds = catFullId.split(separator);
         int length = catIds.length;
 
         bean.setId(catIds[length - 1]); // 类目id
-        bean.setUrlKey(catIds[length - 1]); // 唯一（暂定用类目Id）
+        // added by morse.lu 2016/12/01 start
+        if (!StringUtils.isEmpty(urlKey)) {
+            bean.setUrlKey(urlKey);
+        } else {
+            // added by morse.lu 2016/12/01 end
+            bean.setUrlKey(catIds[length - 1]); // 唯一（暂定用类目Id）
+        }
         if (length > 1) {
             bean.setParentId(catIds[length - 2]); // 父类目Id
         } else {
@@ -72,10 +81,45 @@ public class CnCategoryService extends BaseService {
         {
             // 临时写死
             bean.setIsSneakerheadOnly("0");
-            bean.setIsEnableFilter("1");
+            if ("10".equals(catIds[0])) {
+                // SpecialCategory
+                bean.setIsEnableFilter("0");
+            } else {
+                bean.setIsEnableFilter("1");
+            }
         }
 
         return bean;
+    }
+
+    /**
+     * 全店店铺内分类更新(主要是为了刷类目顺序)
+     */
+    public void uploadAllCnCategory(String channelId, int cartId, ShopBean shopBean) {
+        List<CnCategoryBean> listBean = new ArrayList<>();
+        List<CmsBtSellerCatModel> sellerCatModels = cmsBtSellerCatDao.selectByChannelCart(channelId, cartId);
+        int childDisplayOrder = 1;
+        for (CmsBtSellerCatModel childSellerCatModel : sellerCatModels) {
+            if ("1".equals(childSellerCatModel.getCatId())) {
+                continue;
+            }
+            addCnCategoryBean(listBean, childSellerCatModel, childDisplayOrder);
+            childDisplayOrder++;
+        }
+
+        uploadCnCategory(listBean, false, shopBean);
+    }
+
+    private void addCnCategoryBean(List<CnCategoryBean> listBean, CmsBtSellerCatModel sellerCatModel, int displayOrder) {
+        CnCategoryBean bean = createCnCategoryBean(sellerCatModel.getFullCatId(), "-", sellerCatModel.getCatName(), sellerCatModel.getCatName(), sellerCatModel.getUrlKey());
+        bean.setDisplayOrder(displayOrder);
+        listBean.add(bean);
+
+        int childDisplayOrder = 1;
+        for (CmsBtSellerCatModel childSellerCatModel : sellerCatModel.getChildren()) {
+            addCnCategoryBean(listBean, childSellerCatModel, childDisplayOrder);
+            childDisplayOrder++;
+        }
     }
 
     /**

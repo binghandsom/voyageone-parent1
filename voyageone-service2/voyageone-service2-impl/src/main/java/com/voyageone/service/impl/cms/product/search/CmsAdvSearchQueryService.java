@@ -299,6 +299,11 @@ public class CmsAdvSearchQueryService extends BaseService {
             	}
                 queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
             }
+
+            if(searchValue.getIsNewSku() != null && searchValue.getIsNewSku()){
+                queryObject.addQuery("{'platforms.P#.isNewSku': '1'}");
+                queryObject.addParameters(cartId);
+            }
         }
 
         // 获取其他检索条件

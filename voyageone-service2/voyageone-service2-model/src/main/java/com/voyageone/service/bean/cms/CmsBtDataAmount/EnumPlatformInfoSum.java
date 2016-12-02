@@ -32,7 +32,11 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
     CMS_PLATFORM_pStatus_pReallyStatus_notEqual("CMS_PLATFORM_pStatus_pReallyStatus_notEqual", "{$or:[{'platforms.P%s.pReallyStatus':'OnSale','platforms.P%s.pStatus':{$ne:'OnSale'}},{'platforms.P%s.pReallyStatus':'InStock','platforms.P%s.pStatus':{$ne:'InStock'}}]}", "/search/advanceSearch", "", "商品平台状态与实际相异数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId(), m.getCartId(), m.getCartId());
     }),// priceSale
-    CMS_PLATFORM_Brand_block("CMS_PLATFORM_Brand_block", "", "", "", "黑名单数量", 1);
+    CMS_PLATFORM_Brand_block("CMS_PLATFORM_Brand_block", "", "", "", "黑名单数量", 1),
+
+    CMS_PLATFORM_NEW_SKU("CMS_PLATFORM_NEW_SKU", "{'platforms.P%s.status':'Approved','platforms.P%s.isNewSku':'1'}", "/search/advanceSearch", "", "上新商品中有未上新SKU商品数", (m) -> {
+        return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
+    });
 
 
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
