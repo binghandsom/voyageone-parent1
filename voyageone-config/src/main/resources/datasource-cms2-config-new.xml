@@ -69,6 +69,7 @@
         <property name="mapperLocations">
             <list>
                 <value>classpath*:com/voyageone/service/dao/com/**/*MapperCamel.xml</value>
+                <value>classpath*:com/voyageone/service/daoext/com/**/*MapperCamel.xml</value>
                 <value>classpath*:com/voyageone/service/daoext/bi/**/*MapperCamel.xml</value>
                 <value>classpath*:com/voyageone/service/daoext/com/**/*MapperCamel.xml</value>
             </list>
@@ -79,6 +80,11 @@
                 <bean class="com.voyageone.base.dao.mysql.MybatisSchemaInterceptor">
                     <property name="properties">
                         <value>database_schema=Synship</value>
+                    </property>
+                </bean>
+                <bean class="com.voyageone.base.dao.mysql.paginator.MybatisPaginatorInterceptor">
+                    <property name="properties">
+                        <value>id_filter=selectList,ByPage</value>
                     </property>
                 </bean>
             </array>
