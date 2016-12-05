@@ -434,6 +434,7 @@ define([
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
+        $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
 
         function initialize() {
             menuService.getPlatformType().then(function (data) {
@@ -458,6 +459,9 @@ define([
             });
         }
 
+        function goAdvanceSearchByFeedCat(catPath,catId) {
+            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/"+ catId);
+        }
         /**
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中

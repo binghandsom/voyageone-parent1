@@ -90,7 +90,7 @@ public class CmsMenuService extends BaseViewService {
         // 获取language列表.
         List<TypeBean> languageList = this.getLanguageList();
         resultbean.put("languageList", languageList);
-        List<CmsMtCategoryTreeModel> categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
+        List<CmsMtCategoryTreeModel> categoryTreeList = cmsFeedCategoriesService.getFeedCategoryTree(channelId);
         resultbean.put("feedCategoryTreeList",categoryTreeList);
 //        Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
 //        resultbean.put("menuTree", menuTree);

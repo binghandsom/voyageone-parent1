@@ -84,6 +84,12 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
+            console.log($routeParams);
+            if($routeParams.type ==10001 )
+            {
+                $scope.vm.searchInfo.fCatPathList=[$routeParams.value1];
+                $scope.vm.feedCats = [{catId:$routeParams.value2,catPath:$routeParams.value1}];
+            }
             if ($routeParams.type == "1") {
                 // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
