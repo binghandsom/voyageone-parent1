@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.com.CtApplicationDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.CtApplicationModel" />
+    <sql id="Base_Column_List" >
+        `id`, `application`, `active`, `description`, `order_by`, `default_url`, `show_in_menu`, 
+        `menu_title`, `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from ct_application
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.com.CtApplicationModel" >
+        update ct_application
+        <set >
+            <if test="application != null" >
+                `application` = #{application,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                `active` = #{active,jdbcType=BIT},
+            </if>
+            <if test="description != null" >
+                `description` = #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="orderBy != null" >
+                `order_by` = #{orderBy,jdbcType=INTEGER},
+            </if>
+            <if test="defaultUrl != null" >
+                `default_url` = #{defaultUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="showInMenu != null" >
+                `show_in_menu` = #{showInMenu,jdbcType=BIT},
+            </if>
+            <if test="menuTitle != null" >
+                `menu_title` = #{menuTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from ct_application
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from ct_application
+        <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
+            </if>
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
+            </if>
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from ct_application
+        <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
+            </if>
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
+            </if>
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from ct_application
+        <where >
+            <if test="application != null" >
+                and `application` = #{application,jdbcType=VARCHAR}
+            </if>
+            <if test="active != null" >
+                and `active` = #{active,jdbcType=BIT}
+            </if>
+            <if test="description != null" >
+                and `description` = #{description,jdbcType=VARCHAR}
+            </if>
+            <if test="orderBy != null" >
+                and `order_by` = #{orderBy,jdbcType=INTEGER}
+            </if>
+            <if test="defaultUrl != null" >
+                and `default_url` = #{defaultUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="showInMenu != null" >
+                and `show_in_menu` = #{showInMenu,jdbcType=BIT}
+            </if>
+            <if test="menuTitle != null" >
+                and `menu_title` = #{menuTitle,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.com.CtApplicationModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into ct_application
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="application != null" >
+                `application`,
+            </if>
+            <if test="active != null" >
+                `active`,
+            </if>
+            <if test="description != null" >
+                `description`,
+            </if>
+            <if test="orderBy != null" >
+                `order_by`,
+            </if>
+            <if test="defaultUrl != null" >
+                `default_url`,
+            </if>
+            <if test="showInMenu != null" >
+                `show_in_menu`,
+            </if>
+            <if test="menuTitle != null" >
+                `menu_title`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="application != null" >
+                #{application,jdbcType=VARCHAR},
+            </if>
+            <if test="active != null" >
+                #{active,jdbcType=BIT},
+            </if>
+            <if test="description != null" >
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="orderBy != null" >
+                #{orderBy,jdbcType=INTEGER},
+            </if>
+            <if test="defaultUrl != null" >
+                #{defaultUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="showInMenu != null" >
+                #{showInMenu,jdbcType=BIT},
+            </if>
+            <if test="menuTitle != null" >
+                #{menuTitle,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

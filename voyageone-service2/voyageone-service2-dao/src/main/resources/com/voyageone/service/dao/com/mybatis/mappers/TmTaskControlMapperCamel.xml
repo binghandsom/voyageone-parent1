@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.com.TmTaskControlDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.TmTaskControlModel" />
+    <sql id="Base_Column_List" >
+        `task_id`, `cfg_name`, `cfg_val1`, `cfg_val2`, `end_time`, `comment`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="com.voyageone.service.model.com.TmTaskControlKey" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_task_control
+        where `task_id` = #{taskId,jdbcType=VARCHAR}
+          and `cfg_name` = #{cfgName,jdbcType=VARCHAR}
+          and `cfg_val1` = #{cfgVal1,jdbcType=VARCHAR}
+          and `cfg_val2` = #{cfgVal2,jdbcType=VARCHAR}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.com.TmTaskControlModel" >
+        update tm_task_control
+        <set >
+            <if test="endTime != null" >
+                `end_time` = #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `task_id` = #{taskId,jdbcType=VARCHAR}
+          and `cfg_name` = #{cfgName,jdbcType=VARCHAR}
+          and `cfg_val1` = #{cfgVal1,jdbcType=VARCHAR}
+          and `cfg_val2` = #{cfgVal2,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="delete" parameterType="com.voyageone.service.model.com.TmTaskControlKey" >
+        delete from tm_task_control
+        where `task_id` = #{taskId,jdbcType=VARCHAR}
+          and `cfg_name` = #{cfgName,jdbcType=VARCHAR}
+          and `cfg_val1` = #{cfgVal1,jdbcType=VARCHAR}
+          and `cfg_val2` = #{cfgVal2,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_task_control
+        <where >
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from tm_task_control
+        <where >
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from tm_task_control
+        <where >
+            <if test="endTime != null" >
+                and `end_time` = #{endTime,jdbcType=VARCHAR}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.com.TmTaskControlModel" >
+        insert into tm_task_control
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="taskId != null" >
+                `task_id`,
+            </if>
+            <if test="cfgName != null" >
+                `cfg_name`,
+            </if>
+            <if test="cfgVal1 != null" >
+                `cfg_val1`,
+            </if>
+            <if test="cfgVal2 != null" >
+                `cfg_val2`,
+            </if>
+            <if test="endTime != null" >
+                `end_time`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="taskId != null" >
+                #{taskId,jdbcType=VARCHAR},
+            </if>
+            <if test="cfgName != null" >
+                #{cfgName,jdbcType=VARCHAR},
+            </if>
+            <if test="cfgVal1 != null" >
+                #{cfgVal1,jdbcType=VARCHAR},
+            </if>
+            <if test="cfgVal2 != null" >
+                #{cfgVal2,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null" >
+                #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
