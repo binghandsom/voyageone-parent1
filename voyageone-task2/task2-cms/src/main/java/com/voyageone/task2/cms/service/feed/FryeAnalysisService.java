@@ -144,7 +144,7 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         }
                         fryeBean.setMetadataCategoryname(metaDataBean.getCategoryName());
                         if(!StringUtil.isEmpty(metaDataBean.getCategoryName())){
-                            String[] categoryNameList = metaDataBean.getCategoryName().replace(" ","").trim().split("\\-\\>");
+                            String[] categoryNameList = metaDataBean.getCategoryName().replace(" ","").trim().split("->");
                             for(String categoryName:categoryNameList){
                                 if("women".equals(categoryName.toLowerCase())||"womens".equals(categoryName.toLowerCase())){
                                     fryeBean.setSex(categoryName);
@@ -325,7 +325,7 @@ public class FryeAnalysisService extends BaseAnalysisService {
                 if (temp.get(key) == null || StringUtil.isEmpty(temp.get(key).toString())) continue;
 
                 List<String> values = new ArrayList<>();
-                values.add((String) temp.get(key));
+                values.add(String.valueOf(temp.get(key)));
                 attribute.put(key, values);
             }
 
