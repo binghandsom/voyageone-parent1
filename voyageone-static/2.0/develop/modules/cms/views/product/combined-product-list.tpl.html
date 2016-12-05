@@ -14,7 +14,7 @@
                                     <label class="col-sm-4  control-label"><strong translate="TXT_PLATFORM"></strong></label>
                                     <div class="col-sm-6">
                                         <select class="form-control" ng-model="vm.searchBean.cartId">
-                                            <option value="">All</option>
+                                            <option value="">请选择...</option>
                                             <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
                                         </select>
                                     </div>
@@ -147,8 +147,8 @@
                             <td class="text-center">{{sku.suitSkuCode}}</td>
                             <td class="text-left">{{sku.suitSellingPriceCn}}</td>
                             <td class="text-left">{{sku.suitPreferentialPrice}}</td>
-                            <td class="text-center">{{product.created}}</td>
-                            <td class="text-center">{{product.modified}}</td>
+                            <td class="text-center">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="text-center">{{product.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                         </tr>
                         </tbody>
                     </table>

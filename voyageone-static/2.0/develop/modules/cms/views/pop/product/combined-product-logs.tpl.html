@@ -32,7 +32,7 @@
                 </thead>
                 <tbody ng-if="vm.logs.length">
                 <tr ng-repeat="log in vm.logs">
-                    <td class="text-left">{{log.operateTime}}</td>
+                    <td class="text-left">{{log.operateTime | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left">{{log.operater}}</td>
                     <td class="text-left">{{vm.statuses[log.status]}}</td>
                     <td class="text-left">{{vm.platformStatuses[log.platformStatus]}}</td>
