@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.user.ComUserDaoExt" >
+    <resultMap type="com.voyageone.service.bean.user.ComChannelPermissionBean" id="ctUserChannelPermissionMap">
+        <result column="channel_id" property="channelId"/>
+        <result column="full_name" property="channelName"/>
+        <result column="img_url" property="channelImgUrl"/>
+        <result column="company_id" property="companyId"/>
+        <result column="company" property="companyName"/>
+        <collection property="apps" javaType="List" ofType="Map">
+            <result column="application" property="application"/>
+            <result column="application_id" property="applicationId"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectPermissionChannel" resultMap="ctUserChannelPermissionMap" >
+        SELECT
+            re.application,
+            ap.id AS application_id,
+            re.channel_id,
+            re.full_name,
+            re.img_url,
+            re.company_id,
+            re.company
+        FROM
+            view_user_application re,
+            synship.ct_application ap
+        WHERE
+        ap.application = re.application
+        AND user_id =  #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="getPermissionUrls" resultType="java.lang.String">
+        SELECT DISTINCT res_url  from view_res_user_company
+        where res_type = 2 AND active = 1
+        and user_id =  #{userId,jdbcType=INTEGER}
+        and channel_id =  #{channelId,jdbcType=VARCHAR}
+        and application =  #{application,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectRolesByUserId" resultType="com.voyageone.service.model.user.ComRoleModel">
+        SELECT r.* from com_role r , com_user_role ur, com_user u, view_role_channel ch
+        WHERE r.id = ur.role_id AND ur.user_id = u.id AND ch.id = r.id
+        AND r.active =1
+        AND user_id =  #{userId,jdbcType=INTEGER}
+        AND channel_id =  #{channelId,jdbcType=VARCHAR}
+  		GROUP BY r.id , channel_id
+    </select>
+
+    <select id="selectAppsByUser" resultType="java.lang.String">
+        SELECT DISTINCT application from com_user u, com_role r, com_user_role ur, view_role_application ap
+        WHERE u.id = ur.user_id AND ur.role_id = r.id AND ap.id = r.id
+        AND u.active =1 AND r.active = 1
+        AND  u.id =  #{userId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAction"  resultType="com.voyageone.service.model.user.ViewResUserCompanyModel">
+        SELECT t.* , rc.channel_id
+        FROM
+        (
+			SELECT re.* , u.id as user_id , u.user_account as user_account, r.id as role_id
+						from com_resource re, com_res_role rr, com_role r, com_user_role ur, com_user u, Synship.ct_application ap
+            WHERE
+            re.active =1 AND r.active =1 AND u.active =1 AND ap.active = 1
+            AND re.id = rr.res_id AND rr.role_id = r.id AND r.id = ur.role_id AND ur.user_id = u.id  AND re.application = ap.application
+			AND  u.id = #{userId,jdbcType=INTEGER}
+			AND  re.application = #{application,jdbcType=VARCHAR}
+            AND  res_type = 2
+            GROUP BY re.id, u.id, r.id
+
+            UNION
+
+            SELECT re.* , u.id as user_id  , u.user_account as user_account, r.id as role_id
+						from com_resource re , com_role r, com_role_config rc, com_user_role ur, com_user u , Synship.ct_application ap
+            WHERE
+            re.active =1 AND r.active =1 AND u.active =1 AND ap.active = 1
+            AND r.id = ur.role_id AND ur.user_id = u.id  AND rc.role_id = r.id AND re.application = ap.application
+            AND rc.cfg_name = 'all_permission' AND rc.cfg_val1 = re.application
+			AND  u.id = #{userId,jdbcType=INTEGER}
+			AND  re.application = #{application,jdbcType=VARCHAR}
+            AND  res_type = 2
+            GROUP BY re.id, u.id, r.id
+        ) t
+        INNER JOIN view_role_channel rc ON t.role_id = rc.id
+        <where>
+            <if test="channelId != null" >
+                and  rc.channel_id = #{channelId,jdbcType=VARCHAR}
+            </if>
+        </where>
+        GROUP BY t.id, t.user_id,t.application
+    </select>
+
+    <select id="selectChannels" resultType="java.lang.String">
+        SELECT DISTINCT ch.channel_id
+        FROM  com_user u, com_user_role ur, com_role r, view_role_channel ch
+        WHERE u.id = ur.user_id AND ur.role_id = r.id AND r.id = ch.id
+        AND r.active =1
+        AND  u.id =  #{userId,jdbcType=INTEGER}
+    </select>
+
+
+</mapper>

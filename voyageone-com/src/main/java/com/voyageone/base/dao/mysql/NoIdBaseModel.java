@@ -1,4 +1,4 @@
-package com.voyageone.service.model.com;
+package com.voyageone.base.dao.mysql;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.util.DateTimeUtil;
@@ -10,7 +10,7 @@ import java.util.Date;
  * @author Jonas
  * @version 2.0.0, 12/4/15
  */
-public class AdminBaseModel {
+public class NoIdBaseModel {
 
 
     protected Date created;

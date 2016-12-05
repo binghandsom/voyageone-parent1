@@ -365,10 +365,13 @@ public class SizeChartService extends BaseService {
     }
 
     public boolean EXISTSName(String channelId, String sizeChartName, long sizeChartId) {
-        JongoQuery query = new JongoQuery().setQuery(new Criteria("sizeChartName").is(sizeChartName).and("sizeChartId").ne(sizeChartId).and("channelId").is(channelId));
-      // List<CmsBtProductModel> products = cmsBtProductDao.select(query, "010");
-       // long count = cmsBtSizeChartDao.countByQuery("{\"sizeChartName\":\"" + sizeChartName + "\"" + ",\"sizeChartId\": { $ne:" + sizeChartId + "}}");
-         long count = cmsBtSizeChartDao.countByQuery(query.getQuery());
+        JongoQuery query = new JongoQuery().setQuery(new Criteria("sizeChartName")
+                .is(sizeChartName)
+                .and("sizeChartId").ne(sizeChartId)
+                .and("channelId").is(channelId)
+                .and("active").is(1));
+
+        long count = cmsBtSizeChartDao.countByQuery(query.getQuery());
         return count > 0;
     }
 }

@@ -7,10 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
 /**
  * 
  */
-public class ComMtTaskModel extends AdminBaseModel {
+public class ComMtTaskModel extends NoIdBaseModel {
 	
     protected Integer taskId;
 

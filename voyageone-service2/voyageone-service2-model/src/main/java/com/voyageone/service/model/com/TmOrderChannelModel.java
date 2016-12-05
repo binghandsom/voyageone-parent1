@@ -7,10 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
 /**
  * 
  */
-public class TmOrderChannelModel extends AdminBaseModel {
+public class TmOrderChannelModel extends NoIdBaseModel {
     protected String orderChannelId;
 
     protected Integer companyId;

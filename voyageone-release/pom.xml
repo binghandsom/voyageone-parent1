@@ -19,6 +19,11 @@
 			<artifactId>voyageone-web2-cms</artifactId>
 			<version>${voyageone.web2.cms.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-admin</artifactId>
+			<version>${voyageone.web2.admin.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.voyageone</groupId>
@@ -26,6 +31,11 @@
 			<version>${voyageone.web2.vms.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-security</artifactId>
+			<version>${voyageone.web2.security.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>voyageone-release</finalName>

@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.domain.ware.Sku;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.common.configs.Shops;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -25,6 +25,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,16 +63,26 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
     public void testUploadProduct() throws Exception {
 
         String likingChannelId = "928";
-        int cartId = 28;
+        int cartId = 29;
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
-        workload.setId(762584);
+        workload.setId(864987);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "29","28","27"
-        workload.setGroupId(Long.parseLong("1314060"));
+        workload.setGroupId(Long.parseLong("834879"));
         workload.setPublishStatus(0);
 
-        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
+//        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
+        ShopBean shopProp = new ShopBean();
+        shopProp.setApp_url("https://api.jd.com/routerjson");
+        shopProp.setAppKey("");
+        shopProp.setAppSecret("");
+        shopProp.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+        shopProp.setOrder_channel_id(likingChannelId);
+        shopProp.setCart_id(StringUtils.toString(cartId));
+//        shopProp.setShop_name("京东国际匠心界全球购专营店");
+        shopProp.setShop_name("京东国际国际悦境店");
+        shopProp.setPlatform_id("2");
 
         // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
         Map<String, String> channelConfigValueMap = new ConcurrentHashMap<>();
@@ -102,6 +113,87 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
     }
 
     @Test
+    public void testIsSkuNoStock() throws Exception {
+        // 测试判断SKU逻辑库存是否为0的方法
+
+        Map<String, Integer> skuStockMap = new HashMap() {{
+            put("skuCode1", 1);
+            put("skuCode2", 0);
+            put("skuCode3", 2);
+            put("skuCode4", 3);
+        }};
+
+        System.out.println("测试结果:");
+        System.out.println("skuNotExistCode = " + (uploadJdService.isSkuNoStock("skuNotExistCode", skuStockMap) ? "true" : "false"));
+        System.out.println("skuCode1 = " + (uploadJdService.isSkuNoStock("skuCode1", skuStockMap) ? "true" : "false"));
+        System.out.println("skuCode2 = " + (uploadJdService.isSkuNoStock("skuCode2", skuStockMap) ? "true" : "false"));
+        System.out.println("skuCode3 = " + (uploadJdService.isSkuNoStock("skuCode3", skuStockMap) ? "true" : "false"));
+        System.out.println("skuCode4 = " + (uploadJdService.isSkuNoStock("skuCode4", skuStockMap) ? "true" : "false"));
+        System.out.println("skuCode5 = " + (uploadJdService.isSkuNoStock("skuCode5", skuStockMap) ? "true" : "false"));
+        System.out.println("测试结束!");
+    }
+
+    @Test
+    public void testDoJdForceWareListing() throws Exception {
+        // 强制上下架，并回写状态测试
+
+        String likingChannelId = "928";
+        int cartId = 28;
+        Long wareId = 1956992392L;
+        Long groupId = 864987L;
+
+//        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+        shopBean.setOrder_channel_id(likingChannelId);
+        shopBean.setCart_id(StringUtils.toString(cartId));
+        shopBean.setShop_name("京东国际匠心界全球购专营店");
+
+        // 测试用库存为0的SKU列表
+        List<String> codeList = new ArrayList() {{
+            add("022-EA3060501754");
+            add("022-EA3060538652");
+//            add("022-EA3060538852");
+        }};
+
+        System.out.println("京东强制上下架测试结果:");
+        uploadJdService.doJdForceWareListing(shopBean, wareId, groupId, CmsConstants.PlatformActive.ToInStock, codeList, true, "京东上新SKU总库存为0时强制下架处理");
+        System.out.println("京东强制上下架测试结束!");
+    }
+
+    @Test
+    public void testDeleteJdPlatformSku() throws Exception {
+        // 删除根据jdSkuId删除京东平台上商品SKU的测试
+
+        String likingChannelId = "928";
+        int cartId = 28;
+
+//        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
+        ShopBean shopBean = new ShopBean();
+        shopBean.setApp_url("https://api.jd.com/routerjson");
+        shopBean.setAppKey("");
+        shopBean.setAppSecret("");
+        shopBean.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
+        shopBean.setOrder_channel_id(likingChannelId);
+        shopBean.setCart_id(StringUtils.toString(cartId));
+        shopBean.setShop_name("京东国际匠心界全球购专营店");
+
+        // 测试用库存为0的SKU列表
+        List<String> skuIdListNoStock = new ArrayList() {{
+            add("1973738864");
+            add("1973738862");
+            add("1979999999");
+        }};
+
+        System.out.println("测试结果:");
+        uploadJdService.deleteJdPlatformSku(shopBean, skuIdListNoStock);
+        System.out.println("测试结束!");
+    }
+
+    @Test
     public void testCreateUpdateSkuIdsInfo() throws Exception {
 
         String likingChannelId = "928";
@@ -118,7 +210,7 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         shopBean.setShop_name("京东国际匠心界全球购专营店");
 
         // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
-        String wareIds = "1955562601,1956338285,1956343460,1956346635,1956850725,1956856320,1956847324,1956848623,1956853915,1956849824,1956849928,1956846729,1956854153,1956860243,1956864623,1956848426,1956847257,1956848741,1956854473,1956852935,1956846867,1956853961,1956854523,1956846576,1956851530,1956847945,1956847327,1956847033,1956847132,1956849825,1956852824,1956852618,1956846027,1956852924,1956848664,1956855450";
+        String wareIds = "1957082836,1957088131,1957089112,1957082744,1957087025,1957088515,1957084445,1957086825,1957084633,1957084921,1957138368,1957139645,1957142647,1957141547,1957143847,1957142955,1957139646,1957141743,1957139948,1957141546,1957143041,1957138654,1957140948,1957143044,1957138552,1957142559,1957143248,1957141340,1957138751,1957141248,1957143848,1957137178,1957139853,1957140842,1957138049,1957141246,1957137354,1957141740";
         String[] wareIdArray = wareIds.split(",");
         StringBuilder failCause = new StringBuilder("");
         List<Sku> skus;

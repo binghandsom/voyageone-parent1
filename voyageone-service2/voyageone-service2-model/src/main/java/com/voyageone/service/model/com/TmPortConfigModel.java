@@ -7,10 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
 /**
  * 
  */
-public class TmPortConfigModel extends AdminBaseModel {
+public class TmPortConfigModel extends NoIdBaseModel {
     protected Integer seq;
 
     protected String port;
