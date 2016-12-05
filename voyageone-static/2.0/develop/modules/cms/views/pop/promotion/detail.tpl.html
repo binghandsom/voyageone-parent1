@@ -43,9 +43,15 @@
                                uib-datepicker-popup
                                is-open="datePicker1"
                                max-date="editModel.promotionModel.prePeriodEnd"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.prePeriodStart)"
                                date-model-format="yyyy-MM-dd">
-                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
-                                    class="glyphicon glyphicon-calendar"></i></button></span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.prePeriodStart)"
+                                    ng-click="datePicker1 = !datePicker1">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
                     </div>
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
@@ -54,9 +60,15 @@
                                uib-datepicker-popup
                                is-open="datePicker2"
                                min-date="editModel.promotionModel.prePeriodStart"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.prePeriodEnd)"
                                date-model-format="yyyy-MM-dd">
-                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
-                                class="glyphicon glyphicon-calendar"></i></button></span>
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.prePeriodEnd)"
+                                    ng-click="datePicker2 = !datePicker2">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -70,9 +82,15 @@
                                uib-datepicker-popup
                                is-open="datePicker3"
                                max-date="editModel.promotionModel.preSaleEnd"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.preSaleStart)"
                                date-model-format="yyyy-MM-dd">
-						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i
-                                class="glyphicon glyphicon-calendar"></i></button></span>
+						<span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.preSaleStart)"
+                                    ng-click="datePicker3 = !datePicker3">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
                     </div>
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
@@ -82,9 +100,15 @@
                                uib-datepicker-popup
                                is-open="datePicker4"
                                min-date="editModel.promotionModel.preSaleStart"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.preSaleEnd)"
                                date-model-format="yyyy-MM-dd">
-						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i
-                                class="glyphicon glyphicon-calendar"></i></button></span>
+						<span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.preSaleEnd)"
+                                    ng-click="datePicker4 = !datePicker4">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -98,9 +122,15 @@
                                is-open="datePicker5"
                                max-date="editModel.promotionModel.activityEnd"
                                date-model-format="yyyy-MM-dd"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.activityStart)"
                                required>
-						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i
-                                class="glyphicon glyphicon-calendar"></i></button></span>
+						<span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.activityStart)"
+                                    ng-click="datePicker5 = !datePicker5">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </button>
+                        </span>
                     </div>
                     &nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
@@ -110,9 +140,14 @@
                                is-open="datePicker6"
                                min-date="editModel.promotionModel.activityStart"
                                date-model-format="yyyy-MM-dd"
+                               ng-disabled = "canTimeOut(editModel.promotionModel.activityEnd)"
                                required>
-						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i
-                                class="glyphicon glyphicon-calendar"></i></button></span>
+						<span class="input-group-btn">
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled = "canTimeOut(editModel.promotionModel.activityEnd)"
+                                    ng-click="datePicker6 = !datePicker6">
+                                <i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
                     </div>
                 </div>
             </div>

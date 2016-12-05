@@ -151,6 +151,10 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
 //            throw new BusinessException(String.format("天猫上的商品在cms里不存在! [numIId:%s] [Sku:%s]", numIId, tmSkuList));
             fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformWareInfoItem(numIId, shopBean));
             List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
+            if (tmSkuList.size() == 0) {
+                // 一般不会，出现的话要调查
+                throw new BusinessException(String.format("numIId:%s 天猫skuCode取得失败!", numIId));
+            }
             // 拆分出一个新的group
             doMoveCodeToNewGroup(tmSkuList, numIId, channelId, cartId, status);
         } else {
@@ -205,6 +209,10 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
      */
     private void doMoveCodeToAnotherGroup(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, CmsConstants.PlatformStatus status) {
         List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
+        if (tmSkuList.size() == 0) {
+            // 一般不会，出现的话要调查
+            throw new BusinessException(String.format("numIId:%s 天猫skuCode取得失败!", cmsBtProductGroup.getNumIId()));
+        }
 
         cmsBtProductGroup.getProductCodes().forEach(productCode -> {
             CmsBtProductModel productModel = cmsBtProductDao.selectByCode(productCode, channelId);
@@ -248,7 +256,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
      */
     private List<String> geTmSkuList(Map<String, Object> fieldMap) {
         List<String> tmSkuList = new ArrayList<>(); // 天猫上的sku列表
-        if (fieldMap.containsKey("sku")) {
+        if (fieldMap.containsKey("sku") && fieldMap.get("sku") != null && ((List) fieldMap.get("sku")).size() > 0) {
             // sku级
             List<Map<String, Object>> listSkuVal = (List) fieldMap.get("sku");
             // modified by morse.lu 2016/11/18 start
@@ -256,7 +264,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
 //            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
             tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
             // modified by morse.lu 2016/11/18 end
-        } else if (fieldMap.containsKey("darwin_sku")) {
+        } else if (fieldMap.containsKey("darwin_sku") && fieldMap.get("darwin_sku") != null && ((List) fieldMap.get("darwin_sku")).size() > 0) {
             // sku级
             List<Map<String, Object>> listSkuVal = (List) fieldMap.get("darwin_sku");
             // modified by morse.lu 2016/11/18 start
@@ -268,7 +276,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             // modified by morse.lu 2016/11/18 start
             // 全小写比较skuCode
 //            tmSkuList.add(fieldMap.get("outer_id").toString());
-            tmSkuList.add(fieldMap.get("outer_id").toString().toLowerCase());
+            if (fieldMap.get("outer_id") != null && !"".equals(fieldMap.get("outer_id").toString())) {
+                tmSkuList.add(fieldMap.get("outer_id").toString().toLowerCase());
+            }
             // modified by morse.lu 2016/11/18 end
         }
 

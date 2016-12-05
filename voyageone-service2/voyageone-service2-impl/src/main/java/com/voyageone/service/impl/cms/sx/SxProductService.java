@@ -1,10 +1,15 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.google.common.base.Joiner;
+import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
+import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -58,6 +63,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +77,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.voyageone.common.util.DateTimeUtil.*;
-
 import static java.util.stream.Collectors.*;
 
 /**
@@ -155,6 +160,10 @@ public class SxProductService extends BaseService {
     private PlatformMappingService platformMappingService;
     @Autowired
     private CmsBtSellerCatDao cmsBtSellerCatDao;
+    @Autowired
+    private MongoSequenceService sequenceService;
+    @Autowired
+    private CmsBtPlatformActiveLogDao platformActiveLogDao;
 
     public static String encodeImageUrl(String plainValue) {
         String endStr = "%&";
@@ -4562,6 +4571,121 @@ public class SxProductService extends BaseService {
             return "";
         } else {
             return colorMappingModel.getColorCn();
+        }
+    }
+
+    /**
+     * 回写上下架状态到product表和group表，并记录产品上下架历史
+     *
+     * @param channelId 渠道Id
+     * @param cartId    平台Id
+     * @param groupId   groupId
+     * @param codeList  group里面在当前平台上下架对象code列表(因为group下面的code不是所有的code都在当前平台上下架的)
+     * @param platformActive 上下架动作(ToOnSale/ToInStock)
+     * @param updRsFlg  上下架操作成功与否(true：成功，false:失败)
+     * @param errMsg    上下架操作失败时的错误信息
+     * @param modifier  更新者(可以填)
+     */
+    public void updateListingStatus(String channelId, String cartId, Long groupId, List<String> codeList, CmsConstants.PlatformActive platformActive, boolean updRsFlg, String errMsg, String modifier) {
+
+        if (StringUtils.isEmpty(channelId) || StringUtils.isEmpty(cartId) || groupId == null || ListUtils.isNull(codeList) || platformActive == null) return;
+
+        String platformStatus = null;
+
+        // 回写上下架状态productGroup表
+        JongoUpdate updateGroupObj = new JongoUpdate();
+        updateGroupObj.setQuery("{'groupId':#}");
+        updateGroupObj.setQueryParameters(groupId);
+        if (CmsConstants.PlatformActive.ToOnSale.name().equals(platformActive.name())) {
+            // 上架
+            platformStatus = CmsConstants.PlatformStatus.OnSale.name();
+            updateGroupObj.setUpdate("{$set:{'platformStatus':#,'onSaleTime':#,'modified':#,'modifier':#}}");
+            updateGroupObj.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNow(), modifier);
+        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(platformActive.name())) {
+            // 下架
+            platformStatus = CmsConstants.PlatformStatus.InStock.name();
+            updateGroupObj.setUpdate("{$set:{'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
+            updateGroupObj.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNow(), modifier);
+        }
+        cmsBtProductGroupDao.updateFirst(updateGroupObj, channelId);
+
+        // 回写上下架状态到product表
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+        BulkWriteResult rs;
+        for (String code : codeList) {
+            JongoUpdate updProductObj = new JongoUpdate();
+            updProductObj.setQuery("{'common.fields.code':#}");
+            updProductObj.setQueryParameters(code);
+            if (updRsFlg) {
+                updProductObj.setUpdate("{$set:{'platforms.P#.pStatus':#,'platforms.P#.pReallyStatus':#,'platforms.P#.pPublishError':'','platforms.P#.pPublishMessage':'','modified':#,'modifier':#}}");
+                updProductObj.setUpdateParameters(cartId, platformStatus, cartId, platformStatus, cartId, cartId, DateTimeUtil.getNow(), modifier);
+            } else {
+                updProductObj.setUpdate("{$set:{'platforms.P#.pPublishError':'Error','platforms.P#.pPublishMessage':#,'modified':#,'modifier':#}}");
+                updProductObj.setUpdateParameters(cartId, cartId, errMsg, DateTimeUtil.getNow(), modifier);
+            }
+            rs = bulkList.addBulkJongo(updProductObj);
+            if (rs != null) {
+                $debug("回写上下架到product表 channelId=%s, cartId=%s, code=%s, platformStatus=%s, 更新结果=%s",
+                        channelId, cartId, code, platformStatus, rs.toString());
+            }
+        }
+
+        rs = bulkList.execute();
+        if (rs != null) {
+            $debug("回写上下架到product表 channelId=%s, cartId=%s, platformStatus=%s, 更新结果=%s", channelId, cartId, platformStatus, rs.toString());
+        }
+
+        // 记录每个产品的上下架历史到mongoDB
+        addPlatformActiveLog(channelId, cartId, groupId, codeList, updRsFlg, modifier, modifier);
+
+    }
+
+    /**
+     * 记录上下架历史到mongoDB的到cms_bt_platform_active_log_cXXX表
+     *
+     * @param channelId 渠道Id
+     * @param cartId    平台Id
+     * @param groupId   groupId
+     * @param codeList  group里面在当前平台上下架对象code列表(因为group下面的code不是所有的code都在当前平台上下架的)
+     * @param updRsFlg  上下架操作成功与否(true：成功，false:失败)
+     * @param comment   说明
+     * @param modifier  更新者
+     */
+    public void addPlatformActiveLog(String channelId, String cartId, Long groupId, List<String> codeList, boolean updRsFlg, String comment, String modifier) {
+        long batchNo = sequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID);
+        // 先记录上下架操作历史（必须以group为单位）
+        JongoQuery queryObj = new JongoQuery();
+        // 取得group信息
+        queryObj.setQuery("{'groupId':#}");
+        queryObj.setParameters(groupId);
+        queryObj.setProjectionExt("mainProductCode", "productCodes", "groupId", "numIId", "platformMallId", "platformActive", "platformStatus");
+        List<CmsBtProductGroupModel> grpObjList = cmsBtProductGroupDao.select(queryObj, channelId);
+        if (ListUtils.isNull(grpObjList)) {
+            $error("SxProductService 记录商品上下架历史时发现产品group不存在 [channelId=%s] [cartId=%s] [groupId=%s]", channelId, cartId, groupId);
+            return;
+        }
+
+        CmsBtProductGroupModel grpObj = grpObjList.get(0);
+        for (String pCode : codeList) {
+            CmsBtPlatformActiveLogModel model = new CmsBtPlatformActiveLogModel();
+            model.setBatchNo(batchNo);
+            model.setCartId(NumberUtils.toInt(cartId));
+            model.setChannelId(channelId);
+            model.setActiveStatus(grpObj.getPlatformActive() == null ? "" : grpObj.getPlatformActive().name());
+            model.setPlatformStatus(grpObj.getPlatformStatus() == null ? "" : grpObj.getPlatformStatus().name());
+            model.setComment(comment);
+            model.setGroupId(grpObj.getGroupId());
+            model.setMainProdCode(grpObj.getMainProductCode());
+            model.setProdCode(pCode);
+            model.setNumIId(CartEnums.Cart.JM.getId().equals(String.valueOf(cartId)) ? grpObj.getPlatformMallId() : grpObj.getNumIId());
+            model.setResult(updRsFlg ? "1" : "2"); // 1:上/下架成功 2:上/下架失败 3:不满足上下架条件
+            model.setCreater(modifier);
+            model.setCreated(DateTimeUtil.getNow());
+            model.setModified("");
+            model.setModifier("");
+
+            WriteResult rs = platformActiveLogDao.insert(model);
+            $debug("SxProductService 记录商品上下架历史时成功! [channelId=%s] [cartId=%s] [groupId=%s], [platformActiveLog保存结果=%s]", channelId, cartId, pCode, rs.toString());
         }
     }
 }
