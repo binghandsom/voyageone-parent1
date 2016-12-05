@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -209,6 +210,9 @@ public class CmsAddChannelCategoryService extends BaseViewService {
         // 开始批处理
         params.put("_taskName", "saveChannelCategory");
         sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+
+       $info(JacksonUtil.bean2Json(params));
+
     }
 
     /**

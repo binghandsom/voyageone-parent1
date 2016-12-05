@@ -568,6 +568,24 @@ define([
                 "templateUrl": "views/pop/product/approveConfirm.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
+            },
+            "combinedProductNew" : {
+                "templateUrl": "views/pop/product/combined-product-new.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
+                "controller": 'CombinedProductNewController as ctrl',
+                "size": 'lg'
+            },
+            "combinedProductEdit" : {
+                "templateUrl": "views/pop/product/combined-product-edit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
+                "controller": 'CombinedProductEditController as ctrl',
+                "size": 'lg'
+            },
+            "combinedProductLogs" : {
+                "templateUrl": "views/pop/product/combined-product-logs.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-logs.ctl",
+                "controller": 'CombinedProductLogsController as ctrl',
+                "size": 'lg'
             }
         },
         "shelves" : {
@@ -611,9 +629,7 @@ define([
             });
             return defer.promise;
         }
-        $scope.openModifyPass= function openModifyPass(context) {
-            return openModal(popActions.modifyPass, context);
-        };
+
         /**
          * 打开新建权限页面
          * @type {openAuthority}
@@ -1397,6 +1413,17 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
+
+        /**组合商品*/
+        $scope.popNewCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductNew, context)
+        };
+        $scope.popEditCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductEdit, context)
+        };
+        $scope.popCombinedProductLogs = function (context) {
+            return openModal(popActions.product.combinedProductLogs, context)
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

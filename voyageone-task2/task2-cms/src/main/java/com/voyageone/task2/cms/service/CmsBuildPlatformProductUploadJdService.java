@@ -179,7 +179,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
                 doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
@@ -267,7 +267,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            cmsTranslateMqService.executeSingleCode(channelId, cartId, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
+            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
@@ -806,12 +806,28 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setProducter(mainProduct.getXXX());                // 不使用
         // 包装规格 (非必须)
 //        jdProductBean.setWrap(mainProduct.getXXX());                     // 不使用
+
+		// 取得一下product默认属性
+		Map<String, Field> productSchemaFields = SchemaReader.readXmlForMap(jdCommonSchema.getPropsProduct());
+
         // 长(单位:mm)(必须)
         jdProductBean.setLength(jdCommonInfoMap.get("productLengthMm"));
+        if (StringUtils.isEmpty(jdProductBean.getLength())) {
+        	InputField f = (InputField) productSchemaFields.get("productLengthMm");
+        	jdProductBean.setLength(f.getDefaultValue());
+		}
         // 宽(单位:mm)(必须)
         jdProductBean.setWide(jdCommonInfoMap.get("productWideMm"));
+		if (StringUtils.isEmpty(jdProductBean.getWide())) {
+			InputField f = (InputField) productSchemaFields.get("productWideMm");
+			jdProductBean.setWide(f.getDefaultValue());
+		}
         // 高(单位:mm)(必须)
         jdProductBean.setHigh(jdCommonInfoMap.get("productHighMm"));
+		if (StringUtils.isEmpty(jdProductBean.getHigh())) {
+			InputField f = (InputField) productSchemaFields.get("productHighMm");
+			jdProductBean.setHigh(f.getDefaultValue());
+		}
         // 重量(单位:kg)(必须)
 //        Object objfieldItemValue = null;
 //        String strWeight = "1";  // 默认为1kg
@@ -1849,6 +1865,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
+            // added by morse.lu 2016/11/18 start
+            String newArrivalSellerCat = sxProductService.getNewArrivalSellerCat(sxData.getChannelId(), sxData.getCartId(), sxData.getPlatform().getPublishTime()); // 新品类目id
+            if (!StringUtils.isEmpty(newArrivalSellerCat)) {
+                // 需要添加新品类目
+                sbbuilder.append(newArrivalSellerCat);
+                sbbuilder.append(Separtor_Semicolon); // 用分号(";")分隔
+            }
+            // added by morse.lu 2016/11/18 end
             CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
             if (productPlatformCart != null && ListUtils.notNull(productPlatformCart.getSellerCats())) {
                 // 取得
@@ -1859,8 +1883,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         continue;
                     }
                     // 用连字符("-")连接 (1233797770-1233809821)
-                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
-                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    // modified by morse.lu 2016/11/18 start
+//                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
+//                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    String cids = sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen));
+                    if (!cids.equals(newArrivalSellerCat)) {
+                        sbbuilder.append(cids);
+                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    }
+                    // modified by morse.lu 2016/11/18 end
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了

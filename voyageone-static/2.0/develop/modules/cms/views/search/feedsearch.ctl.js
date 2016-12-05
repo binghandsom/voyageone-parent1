@@ -114,7 +114,7 @@ define([
 
         $scope.getChannelName = function (selChannel){
 
-        }
+        };
 
         /**
          * 检索
@@ -271,9 +271,9 @@ define([
                         return null;
                     }
 
-                    $scope.vm.feedCats = _.filter($scope.vm.feedCats, function (item) {
+                    $scope.vm.feedCats = $scope.vm.searchInfo.category ?_.filter($scope.vm.feedCats, function (item) {
                         return $scope.vm.searchInfo.category.indexOf(item.catPath) > -1;
-                    });
+                    }) : '';
 
                     return popCategoryMul({
                         categories: res.data.categoryTree,

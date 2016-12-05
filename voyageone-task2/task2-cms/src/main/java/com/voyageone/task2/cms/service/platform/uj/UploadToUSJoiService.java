@@ -666,8 +666,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                         pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
                                 if (group == null) {
                                     newPlatform.setpIsMain(0);
+                                    CmsBtProductGroupModel cmsBtProductGroupModel = productGroupService.selectProductGroupByCode(usJoiChannelId, pr.getCommonNotNull().getFieldsNotNull().getCode(), cartId);
+                                    if(cmsBtProductGroupModel != null){
+                                        newPlatform.setMainProductCode(cmsBtProductGroupModel.getMainProductCode());
+                                    }
                                 } else {
                                     newPlatform.setpIsMain(1);
+                                    newPlatform.setMainProductCode(pr.getCommonNotNull().getFieldsNotNull().getCode());
                                 }
 
                                 pr.getPlatforms().put("P" + StringUtils.toString(cartId), newPlatform);
@@ -789,6 +794,10 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                         if (!updateFlg) {
                                             // 只有当当前code和originalCode里面都没有找到该skuCode，才会把它加到当前code中
                                             platformCart.getSkus().add(newSku);
+                                            // 子店到总店结束之后，如果该code已经上新，并且该code下存在新追加sku的情况是，设置platforms.Pxx.isNewSku = "1"
+                                            if (!StringUtils.isEmpty(platformCart.getpNumIId())) {
+                                                platformCart.setIsNewSku("1");
+                                            }
                                         }
 //                                    platformCart.setpPriceRetailSt(newPlatform.getpPriceRetailSt());
 //                                    platformCart.setpPriceRetailEd(newPlatform.getpPriceRetailEd());

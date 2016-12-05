@@ -515,6 +515,15 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //        productInfoMap.put("title", "测试请不要拍 " + valTitle);
         productInfoMap.put("title", valTitle);
 
+        // 子标题(卖点)(非必填)
+        String valSubTitle = "";
+        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("sub_title"))) {
+            // 画面上输入的platform的fields中的子标题(卖点)
+            valSubTitle = mainProductPlatformCart.getFields().getStringAttribute("sub_title");
+        }
+        productInfoMap.put("sub_title", valSubTitle);
+
         // 类目(必填)
         // 注意：使用天猫授权类目ID发布时，必须使用叶子类目的ID
         // 注意：使用商家自有系统类目路径发布时，不同层级的类目，使用&gt;进行分隔；使用系统匹配时，会有一定的badcase,

@@ -10,7 +10,9 @@ import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.cn.service.CnSchemaService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.cms.sx.CnCategoryService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -38,6 +40,8 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtProductTopDao cmsBtProductTopDao;
 
     @Override
     public SubSystem getSubSystem() {
@@ -66,11 +70,11 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {
             for (String channelId : channelIdList) {
-//                {
-//                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
-//                    // 主处理
-//                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
-//                }
+                {
+                    ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.CN.getId());
+                    // 主处理
+                    doUpload(channelId, Integer.parseInt(CartEnums.Cart.CN.getId()), shopBean);
+                }
                 {
                     ShopBean shopBean = Shops.getShop(channelId, CartEnums.Cart.LIKING.getId());
                     // 主处理
@@ -97,16 +101,33 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
 
         List<List<Field>> result = new ArrayList<>();
         for (String catId : listCatIds) {
-            List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
+            // modified by morse.lu 2016/11/30 start
+//            List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
+            List<String> codes = new ArrayList<>();
+            CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId);
+            if (topModel == null) {
+                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, null, null, null)); // 普通code排序
+            } else {
+                if (ListUtils.notNull(topModel.getProductCodeList())) {
+                    codes.addAll(topModel.getProductCodeList()); // 置顶列表
+                }
+                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, topModel.getSortColumnName(), topModel.getSortType(), topModel.getProductCodeList())); // 普通code排序
+            }
+            // modified by morse.lu 2016/11/30 end
             if (ListUtils.isNull(codes)) {
                 $warn("类目[%s]不存在一个上新过的code!", catId);
+                // 理论上不会有这类垃圾数据，以防万一一下
+                cnCategoryService.updateProductSellercatUpdFlg(channelId, new ArrayList<String>(){{add(catId);}}, "2", getTaskNameForUpdate());
                 continue;
             }
 
             List<Field> fields = new ArrayList<>();
             fields.add(createInputField("Id", catId)); // Id
-//            fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
-            fields.add(createInputField("ProductCodes", codes.stream().map(code-> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
+            if (cartId == CartEnums.Cart.CN.getValue()) {
+                fields.add(createInputField("ProductCodes", codes.stream().collect(Collectors.joining(",")))); // ProductCodes
+            } else {
+                fields.add(createInputField("ProductCodes", codes.stream().map(code -> "C" + code).collect(Collectors.joining(",")))); // ProductCodes
+            }
 
             result.add(fields);
         }

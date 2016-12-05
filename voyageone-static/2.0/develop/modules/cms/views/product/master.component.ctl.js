@@ -310,22 +310,26 @@ define([
                 }
 
                 function removeImg(imagesType, imageName, $event) {
-                    var productComm = scope.vm.productComm;
+                    var productComm = scope.vm.productComm,
+                        pictures = productComm.fields[imagesType],
+                        _rmIndex = 0;
 
                     if (!imagesType)
                         return;
 
                     confirm("您确认要删除该图片吗？").then(function () {
-                        _.each(productComm.fields[imagesType], function (ele, index, list) {
+                        _.each(pictures, function (ele, index) {
                             if (ele[imagesType.replace('images','image')] === imageName) {
-                                list.splice(list.indexOf(ele), 1);
+                                _rmIndex = index;
                             }
                         });
+
+                        pictures.splice(_rmIndex, 1);
 
                         productDetailService.restoreImg({
                             prodId: scope.productInfo.productId,
                             imagesType: imagesType,
-                            images: productComm.fields[imagesType]
+                            images: pictures
                         }).then(function () {
                             initialize();
                             notify.success("删除成功！");
@@ -370,6 +374,7 @@ define([
                                     prodId: scope.productInfo.productId,
                                     appSwitch: lock
                                 }).then(function () {
+                                    initialize();
                                     notify.success(_status ? "APP端已启用" : "APP端已关闭");
                                 });
                                 break;
@@ -379,6 +384,7 @@ define([
                                     translateStatus: lock
                                 }).then(function () {
                                     notify.success(_status ? "翻译已启用" : "翻译已关闭");
+                                    initialize();
                                     scope.productInfo.translateStatus = +lock;
                                     //通知子页面
                                     scope.productInfo.checkFlag = new Date().getTime();
@@ -389,6 +395,7 @@ define([
                                     prodId: scope.productInfo.productId,
                                     lock: lock
                                 }).then(function () {
+                                    initialize();
                                     notify.success(_status ? "商品已锁定" : "商品已接触锁定");
                                 });
                                 break;

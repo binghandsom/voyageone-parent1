@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.taobao.api.ApiException;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
@@ -685,6 +686,11 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
 
             if (platformProductIdList.isEmpty()) {
                 // 没有找到产品，需要新增
+                // added by morse.lu 2016/11/25 start
+                if (ChannelConfigEnums.Channel.SN.getId().equals(sxData.getChannelId())) {
+                    throw new BusinessException("Sneakerhead不能创建达尔文产品!");
+                }
+                // added by morse.lu 2016/11/25 end
 //                if (ListUtils.isNull(masterWordEvaluationContexts)) {
 //                    // 规格没有填
 //                    throw new BusinessException("这是新增的达尔文产品,所有规格都要填!");
@@ -701,6 +707,11 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
                 platformProductId = getUsefulProductId(sxData, platformProductIdList, shopBean);
                 if (judgeCspuNeedUpdate(sxData)) {
                     // 要更新
+                    // added by morse.lu 2016/11/25 start
+                    if (ChannelConfigEnums.Channel.SN.getId().equals(sxData.getChannelId())) {
+                        throw new BusinessException("Sneakerhead不能更新达尔文产品!");
+                    }
+                    // added by morse.lu 2016/11/25 end
                     updateTmallProduct(expressionParser, platformProductId, null, shopBean, modifier);
                  } else {
                     // 不要更新
@@ -721,6 +732,11 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
             platformProductId = getUsefulProductId(sxData, new ArrayList<String>(){{this.add(dbProductId);}}, shopBean);
             if (judgeCspuNeedUpdate(sxData)) {
                 // 要更新
+                // added by morse.lu 2016/11/25 start
+                if (ChannelConfigEnums.Channel.SN.getId().equals(sxData.getChannelId())) {
+                    throw new BusinessException("Sneakerhead不能更新达尔文产品!");
+                }
+                // added by morse.lu 2016/11/25 end
                 updateTmallProduct(expressionParser, platformProductId, null, shopBean, modifier);
             } else {
                 // 不要更新

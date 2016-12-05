@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComMtValueChannelModel" />
     <sql id="Base_Column_List" >
         `id`, `type_id`, `channel_id`, `value`, `name`, `add_name1`, `add_name2`, `lang_id`, 
-        `display_order`, `created`, `creater`, `modified`, `modifier`, `active`
+        `display_order`, `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -40,9 +40,6 @@
             </if>
             <if test="displayOrder != null" >
                 `display_order` = #{displayOrder,jdbcType=INTEGER},
-            </if>
-	    	<if test="active != null" >
-                `active` = #{active,jdbcType=BIT},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -226,9 +223,6 @@
             <if test="displayOrder != null" >
                 `display_order`,
             </if>
-            <if test="active != null" >
-                `active`,
-            </if>
             `created`,
             <if test="creater != null" >
                 `creater`,
@@ -265,9 +259,6 @@
             </if>
             <if test="displayOrder != null" >
                 #{displayOrder,jdbcType=INTEGER},
-            </if>
-            <if test="active != null" >
-                #{active,jdbcType=BIT},
             </if>
             <if test="created == null" >
                 now(),

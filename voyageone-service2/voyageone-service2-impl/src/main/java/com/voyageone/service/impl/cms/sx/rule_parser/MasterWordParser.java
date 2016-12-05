@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms.sx.rule_parser;
 
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.MasterWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -17,17 +20,19 @@ public class MasterWordParser extends VOAbsLoggable {
 
     private CmsBtProductModel cmsBtProductModel;
     private int cartId;
+    private ExpressionParser expressionParser;
 
     private List<Map<String, Object>> evaluationContextStack;
 
-    public MasterWordParser(CmsBtProductModel cmsBtProductModel, int cartId) {
+    public MasterWordParser(CmsBtProductModel cmsBtProductModel, int cartId, ExpressionParser expressionParser) {
         evaluationContextStack = new ArrayList<>();
         this.cmsBtProductModel = cmsBtProductModel;
         this.cartId = cartId;
+        this.expressionParser = expressionParser;
     }
 
     //目前只支持解析model级别的属性
-    public String parse(RuleWord ruleWord) {
+    public String parse(RuleWord ruleWord, ShopBean shopBean, String user, String[] extParameter) throws Exception {
         if (!WordType.MASTER.equals(ruleWord.getWordType())
                 && !WordType.MASTER_HTML.equals(ruleWord.getWordType())
                 && !WordType.MASTER_CLR_HTML.equals(ruleWord.getWordType())
@@ -61,9 +66,23 @@ public class MasterWordParser extends VOAbsLoggable {
                 }
             }
 
-            if (plainPropValueObj == null) {
-                return null;
+            // modified by morse.lu 2016/11/22 start
+            // 追加默认值属性
+//            if (plainPropValueObj == null) {
+//                return null;
+//            }
+            if (plainPropValueObj == null
+                    || (plainPropValueObj instanceof String && StringUtils.isEmpty(plainPropValueObj.toString()))
+                    || (plainPropValueObj instanceof List && ((List) plainPropValueObj).isEmpty())
+                    ) {
+                RuleExpression defaultExpression = masterWord.getDefaultExpression();
+                if (defaultExpression == null) {
+                    return null;
+                } else {
+                    return expressionParser.parse(defaultExpression, shopBean, user, extParameter);
+                }
             }
+            // modified by morse.lu 2016/11/22 end
             if (extra == null || extra.isEmpty()) {
                 // modified by morse.lu 2016/06/24 start
                 // 追加判断ArrayList

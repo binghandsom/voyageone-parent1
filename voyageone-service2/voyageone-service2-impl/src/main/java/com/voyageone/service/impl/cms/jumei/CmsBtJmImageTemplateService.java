@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.jumei;
 
-import com.mchange.v1.lang.BooleanUtils;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -15,7 +14,6 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
-import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel_TemplateUrls;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsMtJmConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -26,8 +24,9 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
-import java.util.*;
-import java.util.stream.Collector;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -112,8 +111,8 @@ public class CmsBtJmImageTemplateService {
                 cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
                 !StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
             //活动类型是大促专场或资源位大促专场 模板四
-            if ("3".equals(cmsBtJmPromotionSaveBean.getModel().getPromotionType())
-                    || "4".equals(cmsBtJmPromotionSaveBean.getModel().getPromotionType())) {
+            if (cmsBtJmPromotionSaveBean.getModel().getPromotionType() == 3
+                    || cmsBtJmPromotionSaveBean.getModel().getPromotionType() == 4) {
                 //模板三
                 index = 3;
             } else {

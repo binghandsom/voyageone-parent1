@@ -649,7 +649,7 @@ public class CmsProductDetailService extends BaseViewService {
         }
 
         Map<String,Integer> skuinvs = null;
-        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(channelId, cmsBtProduct.getCommon().getFields().getCode());
+        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(cmsBtProduct.getOrgChannelId(), cmsBtProduct.getCommon().getFields().getCode());
         if(stockDetail != null && !ListUtils.isNull(stockDetail.getStocks())){
             skuinvs = stockDetail.getStocks().stream().map(WmsCodeStoreInvBean.StocksBean::getBase).collect(Collectors.toMap(WmsCodeStoreInvBean.StocksBean.BaseBean::getSku,WmsCodeStoreInvBean.StocksBean.BaseBean::getTotal));
         }

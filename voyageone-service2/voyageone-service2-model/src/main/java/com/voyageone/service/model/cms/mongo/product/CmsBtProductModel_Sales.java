@@ -25,7 +25,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public final static String SKUS = "skus";
     // 年销量
     public static final String CODE_SUM_YEAR = "codeSumYear";
-    
+
     public CmsBtProductModel_Sales() {
     }
 
@@ -34,10 +34,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     }
 
     //code_sum_7
-    public Map getCodeSum7() {
+    public Map<String, Object> getCodeSum7() {
         return getAttribute(CODE_SUM_7);
     }
-    public void setCodeSum7(Map codeSum7) {
+    public void setCodeSum7(Map<String, Object> codeSum7) {
         setAttribute(CODE_SUM_7, codeSum7);
     }
     public Integer getCodeSum7(Integer cart) {
@@ -49,10 +49,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     }
 
     //code_sum_30
-    public Map getCodeSum30() {
+    public Map<String, Object> getCodeSum30() {
         return getAttribute(CODE_SUM_30);
     }
-    public void setCodeSum30(BaseMongoMap codeSum30) {
+    public void setCodeSum30(Map<String, Object> codeSum30) {
         setAttribute(CODE_SUM_30, codeSum30);
     }
     public Integer getCodeSum30(Integer cart) {
@@ -64,13 +64,10 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     }
 
     //code_sum_all
-    public Map getCodeSumAll() {
+    public Map<String, Object> getCodeSumAll() {
         return getAttribute(CODE_SUM_ALL);
     }
-    public Map getCodeSumYear() {
-        return getAttribute(CODE_SUM_YEAR);
-    }
-    public void setCodeSumAll(BaseMongoMap codeSumAll) {
+    public void setCodeSumAll(Map<String, Object> codeSumAll) {
         setAttribute(CODE_SUM_ALL, codeSumAll);
     }
     public Integer getCodeSumAll(Integer cart) {
@@ -143,5 +140,20 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
             }
         }
         return super.put(key, value);
+    }
+
+    //CODE_SUM_YEAR
+    public Map<String, Object> getCodeSumYear() {
+        return getAttribute(CODE_SUM_YEAR);
+    }
+    public void setCodeSumYear(Map<String, Object> codeSumAll) {
+        setAttribute(CODE_SUM_YEAR, codeSumAll);
+    }
+    public Integer getCodeSumYear(Integer cart) {
+        Map<String, Object> codeSum = getAttribute(CODE_SUM_YEAR);
+        if (codeSum != null) {
+            return (Integer) codeSum.get(CARTID + cart);
+        }
+        return 0;
     }
 }
