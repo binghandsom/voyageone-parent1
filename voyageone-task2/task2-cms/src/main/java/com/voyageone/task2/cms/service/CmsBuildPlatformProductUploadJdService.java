@@ -642,11 +642,18 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         skus.forEach(s -> {
                             String currentSkuCode = s.getOuterId();
                             String currentSkuId = StringUtils.toString(s.getSkuId());
-                            if (!StringUtils.isEmpty(currentSkuCode)
-                                    && isSkuNoStock(currentSkuCode, skuLogicQtyMap)
-                                    && !skuIdListNoStock.contains(currentSkuId)) {
-                                // 把由于isSale从true->false之后，残留在京东平台上商品的jdSkuId加入到待删除jdSkuId列表中
-                                skuIdListNoStock.add(currentSkuId);
+                            if (StringUtils.isEmpty(currentSkuCode)) {
+                                // 如果京东平台上的SKU没有填写商家ID(skuCode),这种SKU也要删除（运营手动追加的SKU有可能没有）
+                                if (!skuIdListNoStock.contains(currentSkuId)) {
+                                    skuIdListNoStock.add(currentSkuId);
+                                }
+                            } else {
+                                // 京东平台上的SKU填写了商家ID(skuCode)时
+                                if (isSkuNoStock(currentSkuCode, skuLogicQtyMap)
+                                        && !skuIdListNoStock.contains(currentSkuId)) {
+                                    // 把由于isSale从true->false之后，残留在京东平台上商品的jdSkuId加入到待删除jdSkuId列表中
+                                    skuIdListNoStock.add(currentSkuId);
+                                }
                             }
                         });
                     }
