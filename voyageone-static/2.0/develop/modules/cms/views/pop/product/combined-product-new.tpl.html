@@ -5,7 +5,7 @@
         <h5 class="modal-title">&nbsp;<i class="fa fa-plus"></i>&nbsp;<span translate="TXT_COMBINED_PRODUCT_NEW"></span></h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal" name="shelvesTemplateForm" novalidate>
+        <form role="form" class="form-horizontal" name="combinedProductForm" novalidate>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-3">
@@ -133,7 +133,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
+        <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
     </div>
 </div>
