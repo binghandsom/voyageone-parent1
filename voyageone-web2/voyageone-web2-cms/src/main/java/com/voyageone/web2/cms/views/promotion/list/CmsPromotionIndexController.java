@@ -69,7 +69,13 @@ public class CmsPromotionIndexController extends CmsController {
     //获取编辑数据
     @RequestMapping(PROMOTION.LIST.INDEX.GetEditModel)
     public AjaxResponse getEditModel(@RequestBody int promotionId) {
-        return success(promotionService.getEditModel(promotionId));
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("editModel",promotionService.getEditModel(promotionId));
+        result.put("currentTimeStamp",DateTimeUtil.getDate());
+
+        return success(result);
     }
 
     /**
