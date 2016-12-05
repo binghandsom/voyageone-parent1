@@ -206,6 +206,7 @@ public class ProductTopService extends BaseService {
                 criteria.and("common.fields.code").in(inputCodeList);
             }
         }
+        queryObject.setQuery(criteria);
         return queryObject;
     }
 
