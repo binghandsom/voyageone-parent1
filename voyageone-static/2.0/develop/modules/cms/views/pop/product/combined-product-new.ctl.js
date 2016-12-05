@@ -14,7 +14,7 @@ define([
                     config: {
                         open: true,
                         showFlag: false,
-                        startSupplyChain : 0
+                        startSupplyChain : false
                     },
                     carts: {},
                     product: {}

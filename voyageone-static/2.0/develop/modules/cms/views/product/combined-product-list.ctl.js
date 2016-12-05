@@ -65,7 +65,7 @@ define([
                         $scope.vm.carts = resp.data.carts == null ? {} : resp.data.carts;
                         $scope.vm.statuses = resp.data.statuses == null ? {} : resp.data.statuses;
                         $scope.vm.platformStatuses = resp.data.platformStatuses == null ? {} : resp.data.platformStatuses;
-                        $scope.vm.startSupplyChain = resp.data.startSupplyChain == null ? 0 : resp.data.startSupplyChain;
+                        $scope.vm.config.startSupplyChain = resp.data.startSupplyChain == null ? 0 : resp.data.startSupplyChain;
                     });
                     getProductList();
                 };
