@@ -1,22 +1,11 @@
 package com.voyageone.web2.cms.views.search;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.MongoUtils;
@@ -26,12 +15,19 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 /**
  * @author Edward
@@ -221,7 +217,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
         for (TypeChannelBean cartObj : cartList) {
             int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
-            if (cartId == 1 || cartId == -1) {
+            if ((cartId == 1 && CartType.FEED.getShortName().equals(cartObj.getAdd_name2())) || cartId == -1) {
                 continue;
             }
             String cartName = cartObj.getName();
