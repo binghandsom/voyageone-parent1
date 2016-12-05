@@ -25,8 +25,22 @@ public class RedisCacheManager implements CacheManager {
 	 */
 	private String keyPrefix = "shiro_redis_cache:";
 
+	private String altKeyPrefix = "alt_shiro_redis_cache:";
+
 	private int expireTime = 1800;
-	
+
+
+
+	public String getAltKeyPrefix() {
+		return altKeyPrefix;
+	}
+
+	public void setAltKeyPrefix(String altKeyPrefix) {
+		this.altKeyPrefix = altKeyPrefix;
+	}
+
+
+
 	/**
 	 * Returns the Redis session keys
 	 * prefix.

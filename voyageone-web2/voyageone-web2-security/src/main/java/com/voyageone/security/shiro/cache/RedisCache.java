@@ -29,6 +29,17 @@ public class RedisCache<K, V> implements Cache<K, V> {
 	 */
 	private String keyPrefix = "shiro_redis_session:";
 
+	private String altKeyPrefix = "alt_shiro_redis_cache:";
+
+
+	public String getAltKeyPrefix() {
+		return altKeyPrefix;
+	}
+
+	public void setAltKeyPrefix(String altKeyPrefix) {
+		this.altKeyPrefix = altKeyPrefix;
+	}
+
 
 	private int expireTime = 0;
 	
@@ -146,6 +157,10 @@ public class RedisCache<K, V> implements Cache<K, V> {
 			if (!CollectionUtils.isEmpty(keys)) {
 				cache.delete(keys);
 			}
+			Set<K> altKeys = altKeys();
+			if (!CollectionUtils.isEmpty(altKeys)) {
+				cache.delete(keys);
+			}
         } catch (Throwable t) {
             throw new CacheException(t);
         }
@@ -177,6 +192,24 @@ public class RedisCache<K, V> implements Cache<K, V> {
         } catch (Throwable t) {
             throw new CacheException(t);
         }
+	}
+
+
+	public Set<K> altKeys() {
+		try {
+			Set<K> keys = cache.keys(this.altKeys() + "*");
+			if (CollectionUtils.isEmpty(keys)) {
+				return Collections.emptySet();
+			}else{
+				Set<K> newKeys = new HashSet<K>();
+				for(K key:keys){
+					newKeys.add((K)key);
+				}
+				return newKeys;
+			}
+		} catch (Throwable t) {
+			throw new CacheException(t);
+		}
 	}
 
 	@Override
