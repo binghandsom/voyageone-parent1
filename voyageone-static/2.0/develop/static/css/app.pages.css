@@ -1048,7 +1048,7 @@ schema .ng-invalid.focus-error {
 
 #combined-product .combine-example {
     width: 100%;
-    height: 100%;
+    height: 400px;
     background: url(../img/combine-example.png) no-repeat 0px 0%;
 }
 
@@ -1056,13 +1056,13 @@ schema .ng-invalid.focus-error {
     position: fixed;
     top: 10px;
     left: 10px;
-    z-index: 1050;
-    background: white;
-    max-height: 577px;
-    max-width: 1077px;
-    margin: 0px auto;
     right: 10px;
     bottom: 10px;
     padding: 10px;
+    z-index: 1050;
+    background: white;
+    max-height: 489px;
+    max-width: 1077px;
+    margin: 0px auto;
     border-radius: 5px;
 }
