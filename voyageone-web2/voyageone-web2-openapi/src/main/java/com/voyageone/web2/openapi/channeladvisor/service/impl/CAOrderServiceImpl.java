@@ -320,7 +320,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<Long> tempReservationId = new ArrayList<>();
 
         Map<String, Integer> tempSkuQtyMap = request.getItems();
-        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
+        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
             if (tempSkuQtyMap.get(sku) != null && tempSkuQtyMap.get(sku) > 0) {
