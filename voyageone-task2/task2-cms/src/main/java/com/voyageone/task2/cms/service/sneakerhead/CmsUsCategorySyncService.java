@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.sneakerhead;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -8,9 +9,9 @@ import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
 import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
-import static com.voyageone.components.sneakerhead.SneakerHeadBase.DEFAULT_DOMAIN;
 
 /**
  * Created by vantis on 2016/11/28.
@@ -61,7 +59,7 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
         try {
             $info("调用接口 获取 category...");
             // 获得 category
-            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, DEFAULT_DOMAIN);
+            List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, "10.0.0.91:52233");
 
             $info("获取 category 完毕 拍平之...");
 
@@ -77,7 +75,7 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
             $info("插入 category 完毕 解析更新 product 下 subCategory 的参数...");
 
             // 过滤出来 code列表
-            final ArrayListMultimap<String, CmsMtFeedCategoryTreeModel> flattenedCodes =
+            final SetMultimap<String, String> flattenedCodes =
                     flattenCodes(channelId, categoryList);
             // 按照 code 列表丢到 cms_bt_product 里面=。=
 
@@ -118,34 +116,27 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
         return categoryNameTree;
     }
 
-    private ArrayListMultimap<String, CmsMtFeedCategoryTreeModel> flattenCodes(String channelId, List<SneakerheadCategoryModel> categoryModelList) {
-        ArrayListMultimap<String, CmsMtFeedCategoryTreeModel> result = ArrayListMultimap.create();
+    private SetMultimap<String, String> flattenCodes(String channelId, List<SneakerheadCategoryModel> categoryModelList) {
+        SetMultimap<String, String> result = HashMultimap.create();
         categoryModelList.stream()
                 .map(categoryModel -> flattenCodes(channelId, "", categoryModel))
                 .forEach(result::putAll);
         return result;
     }
 
-    private ArrayListMultimap<String, CmsMtFeedCategoryTreeModel> flattenCodes(String channelId, String parentCategoryName,
-                                                                               SneakerheadCategoryModel categoryModel) {
-        ArrayListMultimap<String, CmsMtFeedCategoryTreeModel> codeTree = ArrayListMultimap.create();
+    private SetMultimap<String, String> flattenCodes(String channelId, String parentCategoryName,
+                                                     SneakerheadCategoryModel categoryModel) {
+        SetMultimap<String, String> codeTree = HashMultimap.create();
         String currentCategoryName = null == parentCategoryName || "".equals(parentCategoryName) ?
                 categoryModel.getName().replaceAll("-", "－") :
                 parentCategoryName +
                         "-"
                         + categoryModel.getName().replaceAll("-", "－");
 
-        CmsMtFeedCategoryTreeModel currentCategoryModel =
-                Optional.ofNullable(feedCategoryTreeService.getCategoryNote(channelId, currentCategoryName))
-                        .orElseGet(() -> {
-                            CmsMtFeedCategoryTreeModel cmsMtFeedCategoryTreeModel = new CmsMtFeedCategoryTreeModel();
-                            cmsMtFeedCategoryTreeModel.setCatPath(currentCategoryName);
-                            cmsMtFeedCategoryTreeModel.setCatName(categoryModel.getName().replaceAll("-", "－"));
-                            return cmsMtFeedCategoryTreeModel;
-                        });
-
         if (null != categoryModel.getCodeList()) {
-            categoryModel.getCodeList().forEach(code -> codeTree.put(code, currentCategoryModel));
+            categoryModel.getCodeList().stream()
+                    .filter(code -> !StringUtils.isEmpty(code))
+                    .forEach(code -> codeTree.put(code, currentCategoryName));
         }
 
         if (null != categoryModel.getSubCategory() && categoryModel.getSubCategory().size() > 0)

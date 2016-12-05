@@ -17,21 +17,23 @@ public class SneakerheadApiServiceTest extends BaseTest {
     SneakerheadApiService sneakerheadApiService;
 
     @Test
-    public void getFeedInfo() throws Exception {
+    public void getFeedCount() throws Exception {
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, 1, 1);
-        $debug(String.valueOf("getFeedInfo works well: " + sneakerheadApiService.getFeedCount(calendar.getTime(), "10.0.0.91:52233")));
+        $debug(String.valueOf("getFeedCount works well: " +
+                sneakerheadApiService.getFeedCount(calendar.getTime(), "127.0.0.1:52233")));
     }
 
     @Test
-    public void getFeedCount() throws Exception {
+    public void getFeedInfo() throws Exception {
         SneakerHeadFeedInfoRequest sneakerHeadFeedInfoRequest = new SneakerHeadFeedInfoRequest();
         sneakerHeadFeedInfoRequest.setPageNumber(1);
         sneakerHeadFeedInfoRequest.setPageSize(100);
         Calendar calendar = Calendar.getInstance();
         calendar.set(2015, Calendar.FEBRUARY, 1);
         sneakerHeadFeedInfoRequest.setTime(calendar.getTime());
-        $debug(String.valueOf("getFeedCount works well: " + sneakerheadApiService.getFeedInfo(sneakerHeadFeedInfoRequest, "10.0.0.91:52233")));
+        $debug(String.valueOf("getFeedInfo works well: " +
+                sneakerheadApiService.getFeedInfo(sneakerHeadFeedInfoRequest, "10.0.0.91:52233")));
     }
 
     @Test

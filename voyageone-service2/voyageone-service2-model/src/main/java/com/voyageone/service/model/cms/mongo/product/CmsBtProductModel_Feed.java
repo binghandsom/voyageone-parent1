@@ -28,7 +28,7 @@ public class CmsBtProductModel_Feed  {
 
     private List<String> customIdsCn = new ArrayList<>();
 
-    private List<CmsBtProductModel_Feed_SubCategories> subCategories = new ArrayList<>();
+    private List<String> subCategories = new ArrayList<>();
 
     //catId
     public String getCatPath() {
@@ -86,11 +86,11 @@ public class CmsBtProductModel_Feed  {
         this.brand = brand;
     }
 
-    public List<CmsBtProductModel_Feed_SubCategories> getSubCategories() {
+    public List<String> getSubCategories() {
         return subCategories;
     }
 
-    public void setSubCategories(List<CmsBtProductModel_Feed_SubCategories> subCategories) {
+    public void setSubCategories(List<String> subCategories) {
         this.subCategories = subCategories;
     }
 }

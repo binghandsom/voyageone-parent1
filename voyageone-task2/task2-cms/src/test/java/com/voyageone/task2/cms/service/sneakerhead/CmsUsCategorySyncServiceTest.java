@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.service.sneakerhead.uscategory;
+package com.voyageone.task2.cms.service.sneakerhead;
 
 import com.voyageone.task2.cms.BaseTest;
 import com.voyageone.task2.cms.service.sneakerhead.CmsUsCategorySyncService;
@@ -12,6 +12,15 @@ import java.util.ArrayList;
  * 闲舟江流夕照晚 =。=
  */
 public class CmsUsCategorySyncServiceTest extends BaseTest {
+    @Test
+    public void getTaskName() throws Exception {
+
+    }
+
+    @Test
+    public void getSubSystem() throws Exception {
+
+    }
 
     @Autowired
     private CmsUsCategorySyncService cmsUsCategorySyncService;

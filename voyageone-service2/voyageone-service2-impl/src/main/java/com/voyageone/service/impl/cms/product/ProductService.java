@@ -44,7 +44,6 @@ import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.apache.commons.collections.CollectionUtils;
@@ -1081,25 +1080,17 @@ public class ProductService extends BaseService {
      * @param requests  key 为 code, value 为 subCategory的列表
      */
     public void updateProductFeedSubCategory(String channelId,
-                                             Map<String, Collection<CmsMtFeedCategoryTreeModel>> requests,
+                                             Map<String, Collection<String>> requests,
                                              String modifier) {
         List<BulkUpdateModel> bulkList = requests.entrySet().stream()
                 .map(entry -> {
                     String code = entry.getKey();
-                    Collection<CmsMtFeedCategoryTreeModel> subCategories = entry.getValue();
+                    Collection<String> subCategoryPaths = entry.getValue();
                     HashMap<String, Object> queryMap = new HashMap<>();
                     queryMap.put("channelId", channelId);
                     queryMap.put("common.fields.code", code);
                     HashMap<String, Object> updateMap = new HashMap<>();
-                    final List<HashMap<String, String>> subCategoryList = subCategories.stream()
-                            .map(subCategory -> {
-                                HashMap<String, String> subCategoryMap = new HashMap<>();
-                                subCategoryMap.put("catId", subCategory.getCatId());
-                                subCategoryMap.put("catPath", subCategory.getCatPath());
-                                return subCategoryMap;
-                            })
-                            .collect(Collectors.toList());
-                    updateMap.put("feed.subCategories", subCategoryList);
+                    updateMap.put("feed.subCategories", entry.getValue());
                     BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
                     bulkUpdateModel.setUpdateMap(updateMap);
                     bulkUpdateModel.setQueryMap(queryMap);
@@ -1114,7 +1105,21 @@ public class ProductService extends BaseService {
             $debug("更新了 " + subBulkList.size() + " 个 product 的subCategories 共耗时 " +
                     (new Date().getTime() - start.getTime()) + " 毫秒");
         });
+    }
 
+    /**
+     * 更新 usPlatforms
+     *
+     * @param channelId   channelId
+     * @param code        code
+     * @param usPlatforms 美国平台信息
+     * @param modifier    更正人
+     */
+    public void updateUsPlatforms(String channelId,
+                                  String code,
+                                  Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms,
+                                  String modifier) {
+        cmsBtProductDao.updateUsPlatforms(channelId, code, usPlatforms, modifier);
     }
 
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {

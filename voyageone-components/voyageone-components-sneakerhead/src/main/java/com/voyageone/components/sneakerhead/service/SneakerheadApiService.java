@@ -6,9 +6,12 @@ import com.voyageone.components.sneakerhead.bean.CmsBtProductModel_SalesBean;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
+import com.voyageone.components.sneakerhead.bean.platformstatus.usPlatformModel.CodeUsPlatformModel;
 import org.springframework.http.*;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ import java.util.List;
  * @version 0.0.1
  */
 @Service
+@EnableRetry
 public class SneakerheadApiService extends SneakerHeadBase {
     /**
      * 批量查询商品
@@ -84,5 +88,16 @@ public class SneakerheadApiService extends SneakerHeadBase {
         ResponseEntity<String> responseEntity = getRestTemplate().exchange(getCategoryUrl(domain), HttpMethod.POST, httpEntity, String.class);
         return objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, SneakerheadCategoryModel.class));
 
+    }
+
+    @Retryable
+    public List<CodeUsPlatformModel> getUsPlatformStatus(@RequestBody List<String> codes, String domain) throws IOException {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType(CONTENT_TYPE));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(codes);
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+        ResponseEntity<String> responseEntity = getRestTemplate().exchange(getUsPlatformStatusUrl(domain), HttpMethod.POST, httpEntity, String.class);
+        return objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, CodeUsPlatformModel.class));
     }
 }
