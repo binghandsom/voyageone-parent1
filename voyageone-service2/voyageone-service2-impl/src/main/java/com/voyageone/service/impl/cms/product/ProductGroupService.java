@@ -305,6 +305,11 @@ public class ProductGroupService extends BaseService {
                 // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
 
+                // 上新成功时，把platforms.Pxx.isNewSku设为"0"(子店到Liking总店上新不算，feed->master导入时928cart也没有设置成"1")
+                if (!"928".equals(model.getChannelId())) {
+                    bulkUpdateMap.put("platforms.P" + model.getCartId() + ".isNewSku", "0");
+                }
+
                 // 如果需要回写该平台的pCatId和pCatPath的时候
                 if (pCatInfoMap != null && pCatInfoMap.size() > 0) {
                     if (!StringUtils.isEmpty(pCatInfoMap.get("pCatId")))
