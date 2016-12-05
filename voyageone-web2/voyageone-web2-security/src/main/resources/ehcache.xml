@@ -36,7 +36,8 @@
            timeToLiveSeconds="0"  
            memoryStoreEvictionPolicy="LFU"  
            transactionalMode="off">  
-    </cache>  
+    </cache>
+
     
 
     <!-- 登录记录缓存 锁定10分钟 -->
