@@ -443,7 +443,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
         Map<String, CancellationReasonEnum> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
-        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
+        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
 
