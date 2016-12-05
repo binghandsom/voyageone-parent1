@@ -262,6 +262,14 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             throw new CAApiException(ErrorIDEnum.OrderNotFound);
         }
 
+        //判断订单状态
+        if(!StringUtils.isEmpty(m.getOrderStatus())){
+            /*Pending(1),ReleasedForShipment(2),AcknowledgedBySeller(3),PartiallyShipped(4),Shipped(5),Canceled(6);*/
+            if(m.getOrderStatus().equals(Canceled)||m.getOrderStatus().equals(Shipped)){
+                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
+            }
+
+        }
         // 更新【品牌方订单一览】vms_bt_client_orders
 
         caClientService.updateClientOrderStatusWithDetails(channelId, orderID, AcknowledgedBySeller, "acknowledgeOrder", true);
@@ -405,7 +413,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (request == null) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequest, "OrderCancellationRequest not found.");
+            throw new CAApiException(ErrorIDEnum.UnsupportedCancellationReason);
         }
 
         String channelId = getClientChannelId();
@@ -517,7 +525,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         }
 
         if (request == null) {
-            throw new CAApiException(ErrorIDEnum.InvalidRequest, "OrderCancellationRequest not found.");
+            throw new CAApiException(ErrorIDEnum.UnsupportedRefundReason);
         }
 
         String channelId = getClientChannelId();
