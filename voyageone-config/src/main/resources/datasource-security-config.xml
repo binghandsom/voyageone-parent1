@@ -49,10 +49,10 @@
 		<property name="annotationClass" value="org.springframework.stereotype.Repository"/>
 	</bean>
 
-	<!-- 事务配置 -->
-	<bean id="transactionManager"
-		  class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSourceMaster" />
-	</bean>
+	<!--&lt;!&ndash; 事务配置 &ndash;&gt;-->
+	<!--<bean id="transactionManager"-->
+		  <!--class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+		<!--<property name="dataSource" ref="dataSourceMaster" />-->
+	<!--</bean>-->
 
 </beans>
