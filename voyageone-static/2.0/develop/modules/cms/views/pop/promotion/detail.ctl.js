@@ -17,7 +17,8 @@ define([
         $scope.initialize = function () {
             if (items) {
                 promotionService.getEditModel(items.id).then(function (res) {
-                    loadData(res.data);
+                    $scope.currentTimeStamp = res.data.currentTimeStamp;
+                    loadData(res.data.editModel);
                 });
             } else {
                 $scope.editModel.tagList = [{"id": "", "channelId": "", "tagName": ""}];
@@ -71,11 +72,11 @@ define([
                 return;
             }
 
-            var hasTag = _.every($scope.editModel.tagList,function(element){
+            var hasTag = _.every($scope.editModel.tagList, function (element) {
                 return element.tagName;
             });
 
-            if(!hasTag)
+            if (!hasTag)
                 return;
 
             var _editModel = angular.copy($scope.editModel);
@@ -131,6 +132,18 @@ define([
             } else {
                 return null;
             }
+        }
+
+        $scope.canTimeOut = function (timeStr) {
+            if (items) {
+                if (!timeStr)
+                    return false;
+
+                return new Date(timeStr).getTime() < $scope.currentTimeStamp;
+            } else
+                return false;
+
+
         }
     });
 });
