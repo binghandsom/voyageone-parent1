@@ -250,13 +250,15 @@ public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
             // 未翻译的场合才会进行翻译
             int cartId = sxData.getCartId();
             String[] titleId = getTitleId(String.valueOf(cartId));
-            String oriVal;
+            String oriVal = null;
             if (cartId == 0) {
                 // common
                 oriVal = sxData.getMainProduct().getCommon().getFields().getStringAttribute(titleId[2]);
             } else {
                 // 各个平台
-                oriVal = sxData.getMainProduct().getPlatform(cartId).getFields().getStringAttribute(titleId[2]);
+                if (sxData.getMainProduct().getPlatform(cartId).getFields() != null) {
+                    oriVal = sxData.getMainProduct().getPlatform(cartId).getFields().getStringAttribute(titleId[2]);
+                }
             }
 
             if (StringUtils.isEmpty(oriVal)) {

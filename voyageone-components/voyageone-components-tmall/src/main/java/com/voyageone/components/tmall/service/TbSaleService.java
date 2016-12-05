@@ -10,13 +10,19 @@ import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
 import com.taobao.api.response.ItemsInventoryGetResponse;
 import com.taobao.api.response.ItemsOnsaleGetResponse;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.components.tmall.TbBase;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 商品上下架，以及查询商品的在售/在库状态
@@ -24,6 +30,8 @@ import java.util.List;
  */
 @Component
 public class TbSaleService extends TbBase {
+
+    private static final int PAGE_SIZE = 200;
 
     /**
      * 天猫/淘宝商品上架
@@ -128,5 +136,55 @@ public class TbSaleService extends TbBase {
         Object[] objs = { strOrderChannelId, strCardId, response.getErrorCode()==null ? "total=" + response.getTotalResults() : response.getBody() };
         logger.info("getInventoryProduct调用结果 channelid={}, cartid={}, 结果={}", objs);
         return response.getItems();
+    }
+
+    /**
+     * 获取店铺全部的numIId
+     */
+    public Map<CmsConstants.PlatformStatus, List<String>> getTmNumIIdList(String channelId, String cartId) {
+        List<String> inStockNumIIdList = new ArrayList<>();
+        long pageNo = 1;
+        while(true) {
+            List<Item> rsList;
+            try {
+                // 查询下架
+                rsList = getInventoryProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
+            } catch (ApiException apiExp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用淘宝API获取下架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (rsList != null && rsList.size() > 0) {
+                inStockNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            }
+            if (rsList == null || rsList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        List<String> onSaleNumIIdList = new ArrayList<>();
+        pageNo = 1;
+        while(true) {
+            List<Item> rsList;
+            try {
+                // 查询上架
+                rsList = getOnsaleProduct(channelId, cartId, pageNo++, Long.valueOf(PAGE_SIZE));
+            } catch (ApiException apiExp) {
+                throw new BusinessException(String.format("调用淘宝API获取上架商品时API出错 channelId=%s, cartId=%s", channelId, cartId), apiExp);
+            } catch (Exception exp) {
+                throw new BusinessException(String.format("调用淘宝API获取上架商品时出错 channelId=%s, cartId=%s", channelId, cartId), exp);
+            }
+            if (rsList != null && rsList.size() > 0) {
+                onSaleNumIIdList.addAll(rsList.stream().map(tmItem -> tmItem.getNumIid().toString()).collect(Collectors.toList()));
+            }
+            if (rsList == null || rsList.size() < PAGE_SIZE) {
+                break;
+            }
+        }
+
+        Map<CmsConstants.PlatformStatus, List<String>> retMap = new HashMap<>();
+        retMap.put(CmsConstants.PlatformStatus.InStock, inStockNumIIdList);
+        retMap.put(CmsConstants.PlatformStatus.OnSale, onSaleNumIIdList);
+        return retMap;
     }
 }

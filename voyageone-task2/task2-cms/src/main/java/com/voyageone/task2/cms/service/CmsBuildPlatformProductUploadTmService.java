@@ -12,6 +12,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
+import com.voyageone.components.tmall.service.TbSaleService;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionSkuBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -21,6 +22,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.PlatformMappingDeprecatedService;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
+import com.voyageone.service.impl.cms.TaobaoScItemService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -89,6 +91,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
     @Autowired
     private CmsBtProductGroupDao cmsBtProductGroupDao;
 
+    @Autowired
+    private TaobaoScItemService taobaoScItemService;
+    @Autowired
+    private TbSaleService tbSaleService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -118,7 +125,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             for (String channelId : channelIdList) {
                 // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 天猫平台商品信息新增或更新(天猫)
-//                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
+                doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TM.getId()));
                 // 天猫国际商品信息新增或更新(天猫国际)
                 doProductUpload(channelId, Integer.parseInt(CartEnums.Cart.TG.getId()));
                 // 淘宝商品信息新增或更新(淘宝)
@@ -478,6 +485,20 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 numIId = uploadTmItemService.uploadItem(expressionParser, platformProductId, cmsMtPlatformCategorySchemaModel, cmsMtPlatformMappingModel, shopProp, getTaskName());
                 // 新增或更新商品结果判断
                 if (!StringUtils.isEmpty(numIId)) {
+
+                    // 20161202 达尔文货品关联问题的对应 START
+                    // 达尔文的场合， 货品关联可能会丢失， 需要重新绑定货品
+                    if (sxData.isDarwin() && canSxDarwinItem) {
+                        // 自动设置天猫商品全链路库存管理（函数里会自动判断当前店铺是否需要处理全链路）
+                        taobaoScItemService.doSetScItem(shopProp, Long.parseLong(numIId));
+
+                        // 如果action是onsale的场合， 再做一次上架
+                        if (CmsConstants.PlatformActive.ToOnSale.equals(sxData.getPlatform().getPlatformActive())) {
+                            tbSaleService.doWareUpdateListing(shopProp, numIId);
+                        }
+                    }
+                    // 20161202 达尔文货品关联问题的对应 END
+
                     // 上传商品成功的时候
                     // 上新或更新成功后回写product group表中的numIId和platformStatus(Onsale/InStock)
                     sxProductService.updateProductGroupNumIIdStatus(sxData, numIId, getTaskName());

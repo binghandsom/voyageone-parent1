@@ -165,17 +165,19 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // 获取该任务可以运行的销售渠道
         List<String> channels = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
-
-        for (String channel : channels) {
-            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(LIMIT, channel, CART_ID);
-
-            if (groupList.size() > LIMIT) {
-                break;
-            }
-            if (workloadList != null) {
-                groupList.addAll(workloadList);
-            }
-        }
+//        for (String channel : channels) {
+//            List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithChannelIdCartIdGroupBy(LIMIT, channel, CART_ID);
+//
+//            if (groupList.size() > LIMIT) {
+//                break;
+//            }
+//            if (workloadList != null) {
+//                groupList.addAll(workloadList);
+//            }
+//        }
+        // 以前先找channelId，再看更新时间；改为在有效的channelId列表范围内优先看更新时间，谁的更新时间早就先上
+        List<CmsBtSxWorkloadModel> workloadList = cmsBtSxWorkloadDaoExt.selectSxWorkloadModelWithModifiedAscGroupBy(LIMIT, channels, CART_ID);
+        groupList.addAll(workloadList);
 
         if (groupList.size() == 0) {
             $error("上新任务表中没有该平台对应的任务列表信息！[CartId:%s]", CART_ID);

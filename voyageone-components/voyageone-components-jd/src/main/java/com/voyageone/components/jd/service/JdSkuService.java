@@ -3,9 +3,11 @@ package com.voyageone.components.jd.service;
 import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.ware.Sku;
 import com.jd.open.api.sdk.request.ware.SkuCustomGetRequest;
+import com.jd.open.api.sdk.request.ware.WareSkuDeleteRequest;
 import com.jd.open.api.sdk.request.ware.WareSkuPriceUpdateRequest;
 import com.jd.open.api.sdk.request.ware.WareSkusGetRequest;
 import com.jd.open.api.sdk.response.ware.SkuCustomGetResponse;
+import com.jd.open.api.sdk.response.ware.WareSkuDeleteResponse;
 import com.jd.open.api.sdk.response.ware.WareSkuPriceUpdateResponse;
 import com.jd.open.api.sdk.response.ware.WareSkusGetResponse;
 import com.voyageone.base.exception.BusinessException;
@@ -224,7 +226,7 @@ public class JdSkuService extends JdBase {
             } else {
                 // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
                 // 或app_url,app_key等不正确
-                throw new BusinessException("京东根据根据外部商家ID(skuCode)获取商品SKU信息API返回应答为空(response = null)");
+                throw new BusinessException("京东根据外部商家ID(skuCode)获取商品SKU信息API返回应答为空(response = null)");
             }
         } catch (Exception e) {
             String errMsg = String.format(shop.getShop_name() + "调用京东API根据外部商家ID(skuCode)获取商品SKU信息失败! [channelId:%s] [cartId:%s] [outerId:%s] " +
@@ -234,6 +236,44 @@ public class JdSkuService extends JdBase {
         }
 
         return resultSku;
+    }
+
+    /**
+     * 根据sku_id删除京东平台上商品的sku信息
+     *
+     * @param shop ShopBean  店铺信息
+     * @param jdSkuId String 京东skuId
+     */
+    public void deleteSkuBySkuId(ShopBean shop, String jdSkuId,StringBuilder failCause) {
+        if (StringUtils.isEmpty(jdSkuId)) {
+            failCause.append("根据sku_id删除京东平台上商品的sku信息时，参数传入的京东skuId为空！");
+            return;
+        }
+
+        WareSkuDeleteRequest request = new WareSkuDeleteRequest();
+        // 京东skuId(必须)
+        request.setSkuId(jdSkuId);
+
+        try {
+            // 调用京东根据京东skuId删除SKU信息API(360buy.ware.sku.delete)
+            WareSkuDeleteResponse response = reqApi(shop, request);
+            if (response != null) {
+                // 京东返回正常的场合
+                if (!JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("京东根据京东skuId删除SKU信息API返回应答为空(response = null)");
+            }
+        } catch (Exception e) {
+            String errMsg = String.format(shop.getShop_name() + "调用京东API根据京东skuId删除SKU信息失败! [channelId:%s] [cartId:%s] [jdSkuId:%s] " +
+                    "[errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(), jdSkuId, e.getMessage());
+            logger.error(errMsg);
+            failCause.append(errMsg);
+        }
     }
 
 }

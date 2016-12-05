@@ -147,11 +147,11 @@ public class TaobaoScItemService extends BaseService {
         {
             // 在sku里的场合
             MultiComplexField skuFields;
-            if (mapFields.containsKey("sku")) {
-                blnFound = true;
+            if (mapFields.containsKey("sku") && mapFields.get("sku") != null) {
                 skuFields = (MultiComplexField) mapFields.get("sku");
 
                 for (ComplexValue skuFieldValue : skuFields.getDefaultComplexValues()) {
+					blnFound = true;
                     String outerId = skuFieldValue.getInputFieldValue("sku_outerId");
                     String skuId = skuFieldValue.getInputFieldValue("sku_id");
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
@@ -164,11 +164,11 @@ public class TaobaoScItemService extends BaseService {
         if (!blnFound) {
             // 在达尔文sku里的场合
             MultiComplexField skuFields;
-            if (mapFields.containsKey("darwin_sku")) {
-                blnFound = true;
+            if (mapFields.containsKey("darwin_sku") && mapFields.get("darwin_sku") != null) {
                 skuFields = (MultiComplexField) mapFields.get("darwin_sku");
 
                 for (ComplexValue skuFieldValue : skuFields.getDefaultComplexValues()) {
+					blnFound = true;
                     String outerId = skuFieldValue.getInputFieldValue("sku_outerId");
                     String skuId = skuFieldValue.getInputFieldValue("sku_id");
                     String scProductId = skuFieldValue.getInputFieldValue("sku_scProductId");
