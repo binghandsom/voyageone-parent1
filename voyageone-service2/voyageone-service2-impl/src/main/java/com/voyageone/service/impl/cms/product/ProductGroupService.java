@@ -315,7 +315,7 @@ public class ProductGroupService extends BaseService {
                 bulkUpdateMap.put("platforms.P" + model.getCartId() + ".pPublishMessage", "");
 
                 // 上新成功时，把platforms.Pxx.isNewSku设为"0"(子店到Liking总店上新不算，feed->master导入时928cart也没有设置成"1")
-                if (!"928".equals(model.getChannelId())) {
+                if (928 != model.getCartId()) {
                     bulkUpdateMap.put("platforms.P" + model.getCartId() + ".isNewSku", "0");
                 }
 
