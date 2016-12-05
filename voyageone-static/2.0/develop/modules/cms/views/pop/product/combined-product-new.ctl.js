@@ -119,6 +119,7 @@ define([
                         $compile(modal)(modalChildScope);
                     });
                 };
+
             }
 
             return CombinedProductNewController;
