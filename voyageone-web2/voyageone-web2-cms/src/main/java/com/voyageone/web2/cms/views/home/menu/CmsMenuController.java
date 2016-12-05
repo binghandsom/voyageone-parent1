@@ -17,10 +17,12 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.core.CoreUrlConstants;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -176,5 +178,28 @@ public class CmsMenuController extends CmsController {
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CARTS)
     public AjaxResponse getCarts() {
         return success(TypeChannels.getTypeListSkuCarts(getUser().getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, getLang()));
+    }
+
+
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GetMenuHeaderInfo)
+    public AjaxResponse getMenuHeaderInfo() throws IOException {
+        //获取userId和channelId.
+        Integer userId = getUser().getUserId();
+        String channelId = getUser().getSelChannelId();
+        String applicationId=getUser().getApplicationId();
+        Map<String, Object> resultBean =menuService.getMenuHeaderInfo(userId,channelId,applicationId);
+
+
+        // 获取用户相关信息
+        Map<String, Object> userInfo = new HashMap<>();
+        userInfo.put("userName", getUser().getUserName());
+        userInfo.put("application",getUser().getApplication());
+        userInfo.put("channelName", getUser().getSelChannel().getFullName());
+        userInfo.put("language", getLang());
+
+        resultBean.put("userInfo", userInfo);
+
+        // 返回用户信息
+        return success(resultBean);
     }
 }
