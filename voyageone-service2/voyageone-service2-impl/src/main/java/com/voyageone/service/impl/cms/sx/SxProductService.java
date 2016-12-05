@@ -4607,7 +4607,6 @@ public class SxProductService extends BaseService {
             updateGroupObj.setUpdate("{$set:{'platformStatus':#,'inStockTime':#,'modified':#,'modifier':#}}");
             updateGroupObj.setUpdateParameters(platformStatus, DateTimeUtil.getNow(), DateTimeUtil.getNow(), modifier);
         }
-        updateGroupObj.setUpdateParameters(platformStatus, DateTimeUtil.getNowTimeStamp(), modifier);
         cmsBtProductGroupDao.updateFirst(updateGroupObj, channelId);
 
         // 回写上下架状态到product表

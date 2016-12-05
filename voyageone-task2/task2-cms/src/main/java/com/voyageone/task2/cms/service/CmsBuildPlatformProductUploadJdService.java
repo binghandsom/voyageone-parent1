@@ -627,7 +627,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     if (CmsConstants.PlatformStatus.OnSale.name().equals(mainProduct.getPlatform(cartId).getpReallyStatus())) {
                         // 上新对象产品Code列表
                         List<String> sxCodeList = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
-                        doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare);
+                        doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare, "京东上新SKU总库存为0时强制下架处理");
                     }
                     return;
                 }
@@ -2309,7 +2309,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param wareId long 商品id
      * @param updateFlg boolean 新增/更新商品flg
      */
-    protected void doJdForceWareListing(ShopBean shop, Long wareId, Long groupId, CmsConstants.PlatformActive platformActive, List<String> codeList, boolean updateFlg) {
+    protected void doJdForceWareListing(ShopBean shop, Long wareId, Long groupId, CmsConstants.PlatformActive platformActive, List<String> codeList, boolean updateFlg, String modifier) {
         if (shop == null || wareId == null || platformActive == null) return;
 
         // 商品上架/下架结果
@@ -2325,7 +2325,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         // 回写上下架状态到product和productGroup表，并插入mongoDB上下架履历表cms_bt_platform_active_log_cXXX
-        sxProductService.updateListingStatus(shop.getOrder_channel_id(), shop.getCart_id(), groupId, codeList, platformActive, updateListingResult, "", "京东上新根据总库存是否为0强制上下架处理");
+        sxProductService.updateListingStatus(shop.getOrder_channel_id(), shop.getCart_id(), groupId, codeList, platformActive, updateListingResult, "", modifier);
+
     }
 
     /**
