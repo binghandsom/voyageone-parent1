@@ -15,6 +15,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -178,8 +179,8 @@ public class ProductTopService extends BaseService {
         List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, channelId);
         List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
 
+        //排序
         List<ProductInfo> listSortResult=new ArrayList<>();
-
         topModel.getProductCodeList().forEach(f->{
             Optional<ProductInfo> optional= listResult.stream().filter(ff->f.equals(ff.getCode())).findFirst();
             if(optional!=null)
@@ -194,19 +195,15 @@ public class ProductTopService extends BaseService {
     JongoQuery getTopListJongoQuery(GetTopListParameter param,CmsBtProductTopModel topModel) {
         JongoQuery queryObject = new JongoQuery();
 
-        //平台cartId    商品分类
-        queryObject.addQuery("{'platforms.P"+param.getCartId()+"':{$exists: true}}");
-       // queryObject.addParameters(param.getCartId());
-
+        //平台cartId
+        Criteria criteria = new Criteria("platforms.P" + param.getCartId()).exists(true);
         // 获取code list用于检索code
         if (topModel.getProductCodeList() != null
                 && topModel.getProductCodeList().size() > 0) {
             List<String> inputCodeList = topModel.getProductCodeList();
             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
             if (inputCodeList.size() > 0) {
-                Object inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
-                queryObject.addQuery("{'common.fields.code':{$in:#}}");
-                queryObject.addParameters(inputCodeArr);
+                criteria.and("common.fields.code").in(inputCodeList);
             }
         }
         return queryObject;
@@ -246,11 +243,10 @@ public class ProductTopService extends BaseService {
     }
 
      JongoQuery getJongoQuery(ProductPageParameter param, CmsBtProductTopModel topModel) {
-        JongoQuery queryObject = new JongoQuery();
 
-        //平台cartId    商品分类
-        queryObject.addQuery("{'platforms.P"+param.getCartId()+".sellerCats.cName':{'$regex':'^"+param.getSellerCatPath()+"'}}");
-       // queryObject.addParameters(param.getCartId(), param.getSellerCatPath());
+        JongoQuery queryObject = new JongoQuery();
+         //平台cartId    商品分类
+         Criteria criteria=  new Criteria("platforms.P"+param.getCartId()+".sellerCats.cName").regex("^"+param.getSellerCatPath());
 
         // 获取code list用于检索code  not in
          if (topModel!=null&&topModel.getProductCodeList() != null
@@ -258,28 +254,33 @@ public class ProductTopService extends BaseService {
              List<String> inputCodeList = topModel.getProductCodeList();
              inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
              if (inputCodeList.size() > 0) {
-                 Object inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
-                 queryObject.addQuery("{'common.fields.code':{$nin:#}}");
-                 queryObject.addParameters(inputCodeArr);
+                 criteria.and("common.fields.code").nin(inputCodeList);
              }
          }
         //品牌
          if (param.getBrandList() !=  null && param.getBrandList().size() > 0) {
              if (param.getIsInclude()) {
-                 queryObject.addQuery("{'common.fields.brand':{$in:#}}");
-                 queryObject.addParameters(param.getBrandList());
+                 criteria.and("common.fields.brand").in(param.getBrandList());
              } else {
-                 // 不在指定范围
-                 queryObject.addQuery("{'common.fields.brand':{$nin:#}}");
-                 queryObject.addParameters(param.getBrandList());
+                 criteria.and("common.fields.brand").nin(param.getBrandList());
              }
          }
 
-
         //库存 quantity
         if (StringUtils.isNotEmpty(param.getCompareType()) && param.getQuantity() != null) {
-            queryObject.addQuery("{'common.fields.quantity':{#:#}}");
-            queryObject.addParameters(param.getCompareType(), param.getQuantity());
+            switch (param.getCompareType()) {
+                case "$gt":
+                    criteria.and("common.fields.quantity").gt(param.getQuantity());
+                    break;
+                case "$lt":
+                    criteria.and("common.fields.quantity").lt(param.getQuantity());
+                    break;
+                case "$eq":
+                    criteria.and("common.fields.quantity").is(param.getQuantity());
+                    break;
+                default:
+                    break;
+            }
         }
 
         // 获取code list用于检索code,model,sku
@@ -288,11 +289,10 @@ public class ProductTopService extends BaseService {
             List<String> inputCodeList = param.getCodeList();
             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
             if (inputCodeList.size() > 0) {
-                Object inputCodeArr = inputCodeList.toArray(new String[inputCodeList.size()]);
-                queryObject.addQuery("{$or:[{'common.fields.code':{$in:#}},{'common.fields.model':{$in:#}},{'common.skus.skuCode':{$in:#}}]}");
-                queryObject.addParameters(inputCodeArr, inputCodeArr, inputCodeArr);
+                criteria.orOperator(new Criteria("common.fields.code").in(inputCodeList),new Criteria("common.fields.model").in(inputCodeList),new Criteria("common.skus.skuCode").in(inputCodeList));
             }
         }
+         queryObject.setQuery(criteria);
         return queryObject;
     }
 }
