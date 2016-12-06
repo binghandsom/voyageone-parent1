@@ -4,6 +4,7 @@ import com.taobao.api.domain.Item;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -99,11 +100,16 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
             try {
 //                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
-                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
+                $info(String.format("%s-%s-%s天猫属性取得 %d/%d", channelId, cartId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
                 doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), finalSellerCat);
-                $info(String.format("numIId[%s]取得成功!", item.getNumIId()));
+                $info(String.format("channelId:%s, cartId:%s, numIId:%s 取得成功!", channelId, cartId, item.getNumIId()));
             } catch (Exception e) {
-                e.printStackTrace();
+                if (e instanceof BusinessException) {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!" + e.getMessage(), channelId, cartId, item.getNumIId()));
+                } else {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!", channelId, cartId, item.getNumIId()));
+                    e.printStackTrace();
+                }
             }
         }
     }

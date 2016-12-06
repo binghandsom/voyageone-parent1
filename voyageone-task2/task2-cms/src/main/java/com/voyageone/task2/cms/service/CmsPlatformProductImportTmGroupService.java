@@ -97,7 +97,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         try {
             if (StringUtils.isEmpty(numIId)) {
                 // 未指定某个商品，全店处理
-                executeAll(shopBean, channelId, cartId);
+                isSuccess = executeAll(shopBean, channelId, cartId);
             } else {
                 // 只处理指定的商品
                 executeMove(shopBean, channelId, Integer.valueOf(cartId), numIId, status);
@@ -120,25 +120,34 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         }
     }
 
-    public void executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
+    public boolean executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
         Map<CmsConstants.PlatformStatus, List<String>> numIIdMap = tbSaleService.getTmNumIIdList(channelId, cartId);
+        List<String> errorList = new ArrayList<>();
 
         numIIdMap.forEach((status, numIIdList) -> {
             int index = 1;
             for (String numIId : numIIdList) {
-                $info(String.format("%s-%s天猫[%s]分组 %d/%d", channelId, numIId, status.name(), index, numIIdList.size()));
+                $info(String.format("%s-%s-%s天猫[%s]分组 %d/%d", channelId, cartId, numIId, status.name(), index, numIIdList.size()));
                 try {
                     executeMove(shopBean, channelId, Integer.valueOf(cartId), numIId, status);
                 } catch (Exception e) {
+                    errorList.add(numIId);
                     if (e instanceof BusinessException) {
-                        $error(e.getMessage());
+                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!" + e.getMessage(), channelId, cartId, numIId));
                     } else {
+                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!", channelId, cartId, numIId));
                         e.printStackTrace();
                     }
                 }
                 index++;
             }
         });
+
+        if (errorList.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -203,7 +212,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                     "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + newGroupModel.getGroupId(), getTaskName());
         }
 
-        $info(String.format("新group做成! numIId:%s, productCodes:%s", numIId, moveCods.keySet()));
+        $info(String.format("新group做成! channelId:%s, cartId:%s, numIId:%s, productCodes:%s", channelId, String.valueOf(cartId), numIId, moveCods.keySet()));
     }
 
     /**
@@ -246,9 +255,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
         });
 
         if (moveCods.size() > 0) {
-            $info(String.format("group追加了code! numIId:%s, 追加的productCodes:%s", cmsBtProductGroup.getNumIId(), moveCods.keySet()));
+            $info(String.format("group追加了code! channelId:%s, cartId:%s, numIId:%s, 追加的productCodes:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId(), moveCods.keySet()));
         } else {
-            $info(String.format("group不需要追加code! numIId:%s", cmsBtProductGroup.getNumIId()));
+            $info(String.format("group不需要追加code! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId()));
         }
 
     }
