@@ -244,6 +244,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         return success(orderModel);
     }
 
+    @VOTransactional
     public ActionResponse acknowledgeOrder(String orderID) {
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
@@ -286,6 +287,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         return success();
     }
 
+    @VOTransactional
     public ActionResponse shipOrder(String orderID, ShipRequest request) {
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
@@ -343,6 +345,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         //根据Items.SellerSku对应的件数，更新 对应件数的明细。
 
         caClientService.updateItemsSkuList(matchModelList, "shipOrder");
+
+        //全部sku不存在
+        if(tempSkuQtyMap.keySet().size()==issueSkuNotExistList.size()){
+            throw new CAApiException(ErrorIDEnum.ShipmentFailed);
+        }
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
         if (!CollectionUtils.isEmpty(issueSkuNotExistList)) {
@@ -406,6 +413,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         return success();
     }
 
+    @VOTransactional
     public ActionResponse cancelOrder(String orderID, OrderCancellationRequest request) {
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
@@ -518,6 +526,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         return success();
     }
 
+    @VOTransactional
     public ActionResponse refundOrder(String orderID, OrderCancellationRequest request) {
         if (StringUtils.isEmpty(orderID)) {
             //If there is no order with that ID, return Error ID 6000 (OrderNotFound)
