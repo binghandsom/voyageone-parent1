@@ -57,15 +57,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
     @Autowired
     private IssueLog issueLog;
 
-    public static void main(String[] args) {
-        System.out.println(StringUtils.isNumeric(null));
-    }
-
     public ActionResponse getOrders(String status, String limit) {
         String channelId = getClientChannelId();
 
         //校验limit
-        if (!StringUtils.isNumeric(limit)) {
+        if (!StringUtils.isDigit(limit)) {
             throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
         }
 
