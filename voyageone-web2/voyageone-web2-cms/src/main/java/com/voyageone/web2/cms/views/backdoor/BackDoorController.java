@@ -32,6 +32,8 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -101,6 +103,9 @@ public class BackDoorController extends CmsController {
     private CmsBtJmProductDao cmsBtJmProductDao;
     @Autowired
     private SxProductService sxProductService;
+
+    @Autowired
+    private MqSender sender;
 
 
     /**
@@ -1843,7 +1848,24 @@ public class BackDoorController extends CmsController {
 
         return builder.toString();
     }
+    @RequestMapping(value = "procductPriceUpdate", method = RequestMethod.GET)
+    public Object procductPriceUpdate (@RequestParam("channelId") String channelId, @RequestParam("cartId") Integer cartId) {
+        JongoQuery query = new JongoQuery();
+        query.setProjection("{'prodId':1,'_id':0}");
 
+        List<CmsBtProductModel> productList = cmsBtProductDao.select(query, channelId);
+        List<Long> prodId = productList.stream().map(CmsBtProductModel::getProdId).collect(toList());
+
+        prodId.forEach(id-> {
+            Map<String,Object> newLog = new HashMap<>();
+            newLog.put("cartId",cartId);
+            newLog.put("productId",id.intValue());
+            newLog.put("channelId",channelId);
+            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,newLog);
+
+        });
+        return "finish";
+    }
 
     public class skuPlatformSizeAndQty {
         String skuCode;
