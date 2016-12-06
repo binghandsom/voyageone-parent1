@@ -2,7 +2,6 @@ package com.voyageone.service.impl.cms;
 
 import com.jayway.jsonpath.JsonPath;
 import com.mongodb.WriteResult;
-import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsMtPlatformCategoryExtendInfoDao;
@@ -15,13 +14,10 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaTmModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 /**
  * @author liang 2016/2/24.
@@ -326,7 +322,7 @@ public class PlatformCategoryService extends BaseService {
      */
     public boolean isLeafCategory(String categoryPath, String channelId, int cartId) {
         CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = platformCategoryDao.selectOne(categoryPath, channelId, cartId);
-        return cmsMtPlatformCategoryTreeModel.getChildren().isEmpty();
+        return cmsMtPlatformCategoryTreeModel == null ? false : cmsMtPlatformCategoryTreeModel.getIsParent() == 0;
     }
 
     /**

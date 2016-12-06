@@ -50,10 +50,10 @@ public class CmsProductMoveService extends BaseViewService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    private PromotionCodeService promotionCodeService;
+    private CmsProductCodeChangeGroupService cmsProductCodeChangeGroupService;
 
     @Autowired
-    private MongoSequenceService mongoSequenceService;
+    private PromotionCodeService promotionCodeService;
 
     @Autowired
     private ProductStatusHistoryService productStatusHistoryService;
@@ -460,35 +460,46 @@ public class CmsProductMoveService extends BaseViewService {
         // 处理目标Group
         // 目的Group如果不是一个新的Group，那么目的Group中加入这个Code（Group的productCodes中加入移动的Code），然后重算目的group价格区间。
         if ("select".equals(destGroupType)) {
-            // 目的Group中加入这个Code
-            destGroupModel.getProductCodes().add(productCode);
-            // 重算目的group价格区间
-            productGroupService.calculatePriceRange(destGroupModel);
-            // 更新目标Group
-            productGroupService.update(destGroupModel);
-
-            // 设定移动Code的Product信息的相关平台下pIsMain=0
-            productService.updateProductPlatformIsMain(0, destGroupModel.getMainProductCode(), channelId, productCode, cartId, modifier);
+            // modified by morse.lu 2016/11/08 start
+            // 放共通去做
+//            // 目的Group中加入这个Code
+//            destGroupModel.getProductCodes().add(productCode);
+//            // 重算目的group价格区间
+//            productGroupService.calculatePriceRange(destGroupModel);
+//            // 更新目标Group
+//            productGroupService.update(destGroupModel);
+//
+//            // 设定移动Code的Product信息的相关平台下pIsMain=0
+//            productService.updateProductPlatformIsMain(destGroupModel.getMainProductCode(), channelId, productCode, cartId, modifier);
+            cmsProductCodeChangeGroupService.moveToAnotherGroup(channelId, cartId, productCode, sourceGroupModel, destGroupModel, modifier);
+            // modified by morse.lu 2016/11/08 end
         } else {
-            // 目的Group如果是一个新的Group，那么建立一个新的Group（Group的mainProductCode=移动的Code，productCodes中就一个元素：移动的Code）
-            destGroupModel = createNewGroup(channelId, cartId, productCode);
-            productGroupService.insert(destGroupModel);
-
-            // 设定移动Code的Product信息的相关平台下pIsMain=1
-            productService.updateProductPlatformIsMain(1, productCode, channelId, productCode, cartId, modifier);
+            // modified by morse.lu 2016/11/08 start
+            // 放共通去做
+//            // 目的Group如果是一个新的Group，那么建立一个新的Group（Group的mainProductCode=移动的Code，productCodes中就一个元素：移动的Code）
+//            destGroupModel = productGroupService.createNewGroup(channelId, cartId, productCode);
+//            productGroupService.insert(destGroupModel);
+//
+//            // 设定移动Code的Product信息的相关平台下pIsMain=1
+//            productService.updateProductPlatformIsMain(productCode, channelId, productCode, cartId, modifier);
+            destGroupModel = cmsProductCodeChangeGroupService.moveToNewGroup(channelId, cartId, productCode, sourceGroupModel, modifier);
+            // modified by morse.lu 2016/11/08 end
         }
 
-        // 处理源Group
-        // 移动Code如果是源Group的最后一个Code，那么删除源Group信息
-        if (sourceGroupModel.getProductCodes().size() == 1) {
-            productGroupService.deleteGroup(sourceGroupModel);
-        } else {
-            // 移动Code如果不是源Group的最后一个Code，那么把这个Code从源Group信息中移除，然后重算源group价格区间。
-            sourceGroupModel.setProductCodes(sourceGroupModel.getProductCodes().stream().filter(code->!code.equals(productCode)).collect(Collectors.toList()));
-            sourceGroupModel.setModifier(modifier);
-            productGroupService.calculatePriceRange(sourceGroupModel);
-            productGroupService.update(sourceGroupModel);
-        }
+        // deleted by morse.lu 2016/11/08 start
+        // 共通去做了
+//        // 处理源Group
+//        // 移动Code如果是源Group的最后一个Code，那么删除源Group信息
+//        if (sourceGroupModel.getProductCodes().size() == 1) {
+//            productGroupService.deleteGroup(sourceGroupModel);
+//        } else {
+//            // 移动Code如果不是源Group的最后一个Code，那么把这个Code从源Group信息中移除，然后重算源group价格区间。
+//            sourceGroupModel.setProductCodes(sourceGroupModel.getProductCodes().stream().filter(code->!code.equals(productCode)).collect(Collectors.toList()));
+//            sourceGroupModel.setModifier(modifier);
+//            productGroupService.calculatePriceRange(sourceGroupModel);
+//            productGroupService.update(sourceGroupModel);
+//        }
+        // deleted by morse.lu 2016/11/08 end
 
         // 插入商品操作履历
         productStatusHistoryService.insert(channelId, productCode,
@@ -1004,7 +1015,7 @@ public class CmsProductMoveService extends BaseViewService {
             if ("new".equals(destGroupType)
                     || shop.getValue().equals(CartEnums.Cart.JM.getId())
                     || shop.getValue().equals(CartEnums.Cart.CN.getId())) {
-                productGroupService.insert(createNewGroup(channelId, Integer.parseInt(shop.getValue()), newFieldModel.getCode()));
+                productGroupService.insert(productGroupService.createNewGroup(channelId, Integer.parseInt(shop.getValue()), newFieldModel.getCode()));
             } else {
                 // 取得Group信息
                 CmsBtProductGroupModel groupModel = null;
@@ -1171,58 +1182,6 @@ public class CmsProductMoveService extends BaseViewService {
             }
         }
         return true;
-    }
-
-
-
-    /**
-     * 新建一个新的Group。
-     */
-    private CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
-
-        CmsBtProductGroupModel group = new CmsBtProductGroupModel();
-
-        // 渠道id
-        group.setChannelId(channelId);
-
-        // cart id
-        group.setCartId(cartId);
-
-        // 获取唯一编号
-        group.setGroupId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID));
-
-        // 主商品Code
-        group.setMainProductCode(productCode);
-
-        // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-        group.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
-
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBean(channelId
-                , CmsConstants.ChannelConfig.PLATFORM_ACTIVE
-                , String.valueOf(group.getCartId()));
-        if (cmsChannelConfigBean != null && !com.voyageone.common.util.StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-            if (CmsConstants.PlatformActive.ToOnSale.name().equals(cmsChannelConfigBean.getConfigValue1())) {
-                group.setPlatformActive(CmsConstants.PlatformActive.ToOnSale);
-            } else {
-                // platform active:上新的动作: 暂时默认是放到:仓库中
-                group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
-            }
-        } else {
-            // platform active:上新的动作: 暂时默认是放到:仓库中
-            group.setPlatformActive(CmsConstants.PlatformActive.ToInStock);
-        }
-
-        // ProductCodes
-        List<String> codes = new ArrayList<>();
-        codes.add(productCode);
-        group.setProductCodes(codes);
-        group.setCreater(getClass().getName());
-        group.setModifier(getClass().getName());
-
-        // 计算group价格区间
-        productGroupService.calculatePriceRange(group);
-
-        return group;
     }
 
     /**

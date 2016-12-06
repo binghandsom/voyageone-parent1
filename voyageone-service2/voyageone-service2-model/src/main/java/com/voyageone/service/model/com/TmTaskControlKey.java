@@ -7,7 +7,9 @@
  */
 package com.voyageone.service.model.com;
 
-public class TmTaskControlKey extends AdminBaseModel {
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
+public class TmTaskControlKey extends NoIdBaseModel {
     protected String taskId;
 
     protected String cfgName;

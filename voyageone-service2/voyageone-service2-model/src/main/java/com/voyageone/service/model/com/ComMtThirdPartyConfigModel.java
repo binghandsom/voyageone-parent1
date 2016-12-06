@@ -7,10 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
 /**
  * 
  */
-public class ComMtThirdPartyConfigModel extends AdminBaseModel {
+public class ComMtThirdPartyConfigModel extends NoIdBaseModel {
     protected Integer seq;
 
     protected String channelId;

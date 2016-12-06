@@ -538,8 +538,12 @@ public class ImageGroupService extends BaseService {
     }
 
     public boolean EXISTSName(String channelId, int cartId, String imageGroupName, long imageGroupId) {
-        JongoQuery query = new JongoQuery().setQuery(new Criteria("imageGroupName").is(imageGroupName).and("imageGroupId").ne(imageGroupId).and("channelId").is(channelId));
-        //  long count = cmsBtImageGroupDao.countByQuery("{\"channelId\":\"" + channelId + "\""+",\"cartId\":" + cartId +",\"imageGroupName\":\"" + imageGroupName + "\"" + ",\"imageGroupId\": { $ne:" + imageGroupId + "}}");
+        JongoQuery query = new JongoQuery().setQuery(new Criteria("imageGroupName").is(imageGroupName)
+                .and("imageGroupId").ne(imageGroupId)
+                .and("channelId").is(channelId)
+                .and("cartId").is(cartId)
+                .and("active").is(1));
+
         long count = cmsBtImageGroupDao.countByQuery(query.getQuery());
         return count > 0;
     }

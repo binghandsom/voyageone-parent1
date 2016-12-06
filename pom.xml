@@ -83,8 +83,6 @@
         <voyageone.service2.impl.version>0.0.1-SNAPSHOT</voyageone.service2.impl.version>
         <voyageone.service2.model.version>0.0.1-SNAPSHOT</voyageone.service2.model.version>
         <voyageone.service2.dao.version>0.0.1-SNAPSHOT</voyageone.service2.dao.version>
-        <voyageone.service2.security.version>0.0.1-SNAPSHOT</voyageone.service2.security.version>
-
 
         <!-- voyageone.service version -->
         <voyageone.components.base.version>0.0.1-SNAPSHOT</voyageone.components.base.version>
@@ -607,13 +605,6 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-solr</artifactId>
                 <version>1.5.5.RELEASE</version>
-            </dependency>
-
-            <!--freemarker-->
-            <dependency>
-                <groupId>org.freemarker</groupId>
-                <artifactId>freemarker</artifactId>
-                <version>2.3.20</version>
             </dependency>
 
         </dependencies>

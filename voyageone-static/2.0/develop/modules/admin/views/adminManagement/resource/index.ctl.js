@@ -88,7 +88,7 @@ define([
                             self.alert('只能选择一条数据哦！');
                         } else {
                             var data = _.filter(self.flatResList, function (Info) {
-                                return Info.id == self.selectedList[0].id
+                                return Info.id == selectedList[0].id
                             });
                             return self.popups.openRes(data[0]);
                         }

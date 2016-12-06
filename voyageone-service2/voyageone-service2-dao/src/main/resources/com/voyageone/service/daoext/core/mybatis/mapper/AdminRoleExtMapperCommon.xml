@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.core.AdminRoleDaoExt">
+
+    <resultMap id="comUserModelMap" type="com.voyageone.service.bean.com.AdminRoleBean" />
+
+    <sql id="selectRoleFilter">
+    	<where>
+            <if test="id != null" >
+                and r.id = #{id}
+            </if>
+
+            <if test="roleName != null and roleName != ''" >
+                and (
+                role_name like concat('%', #{roleName}, '%')
+                )
+            </if>
+
+            <if test="roleType != null" >
+                and role_type = #{roleType}
+            </if>
+
+            <if test="active != null" >
+                and r.active = #{active}
+            </if>
+
+            <if test="channelId != null and channelId != ''" >
+                and (concat(',', rc_channel.cfg_val1, ',')  like concat('%,', #{channelId}, ',%') or concat(',', rc_channel.cfg_val1, ',')  like '%,ALL,%')
+            </if>
+
+            <if test="storeId != null and storeId != ''" >
+                and (concat(',', rc_store.cfg_val1, ',')  like concat('%,', #{storeId}, ',%') or concat(',', rc_store.cfg_val1, ',')  like '%,ALL,%')
+            </if>
+
+            <if test="application != null and application != ''" >
+                and concat(',', application, ',')  like concat('%,', #{application}, ',%')
+            </if>
+
+        </where>
+    </sql>
+	
+
+	
+	<select id="selectRoleByPage" resultMap="comUserModelMap">
+        SELECT r.*, GROUP_CONCAT( DISTINCT application) as application ,
+        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id,  GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        FROM com_role r
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND  ch.active = 1 WHERE rc.cfg_name = 'channel_id') rc_channel ON  rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND  st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON  rc_store.role_id =r.id
+        <include refid="selectRoleFilter"/>
+        GROUP BY r.id
+
+
+	</select>
+	
+	<select id="selectRoleCount" resultType="Integer">
+        SELECT COUNT(0) FROM
+        (
+        SELECT r.*, GROUP_CONCAT( DISTINCT application) as application ,
+        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id, GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        FROM com_role r
+        LEFT JOIN view_role_application ap ON ap.id = r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND ch.active = 1 WHERE rc.cfg_name = 'channel_id')
+        rc_channel ON rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON
+        rc_store.role_id =r.id
+        <include refid="selectRoleFilter"/>
+        GROUP BY r.id
+        )t
+	</select>
+
+
+    <select id="selectAppByRole" resultType="java.util.Map">
+    SELECT application, res_id from view_role_application
+    WHERE id = #{roleId}
+    </select>
+
+
+</mapper>

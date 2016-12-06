@@ -25,40 +25,6 @@
                     <span TRANSLATE="TXT_FEED_PRODUCT_LIST"></span>
                 </a>
             </li>
-            <!-- feed分类 -->
-            <li ui-sref-active="active">
-                <a class="auto">
-                    <span class="pull-right text-muted">
-                      <i class="fa fa-fw fa-angle-right text"></i>
-                      <i class="fa fa-fw fa-angle-down text-active"></i>
-                    </span>
-                    <i class="fa fa-plus icon-small text-vo"></i>
-                    <span >feed分类</span>
-                </a>
-                <ul class="nav nav-sub dk">
-                    <li class="nav-sub-header">
-                        <a href>
-                            <span>feed分类</span>
-                        </a>
-                    </li>
-                    <li ng-repeat="item in feedCategoryTreeList" ng-init="_catPath=item.catPath">
-                        <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
-                    <span class="pull-right text-muted">
-                      <i class="fa fa-fw fa-angle-right text"></i>
-                      <i class="fa fa-fw fa-angle-down text-active"></i>
-                    </span>
-                            <i class="fa fa-plus icon-small text-vo"></i>
-                            <span ng-bind="item.catName"></span>
-                        </a>
-                        <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
-                            <i class="fa fa-minus icon text-vo"></i>
-                            <span ng-bind="item.catName"></span>
-                        </a>
-                        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
-                    </li>
-                </ul>
-            </li>
-            <!--feedCategoryTreeList-->
             <!-- 第三方类目一览 todo:页面未实现 -->
             <!--<li ui-sref-active="active">-->
                 <!--<a href="#/feed/category_list">-->
@@ -93,7 +59,7 @@
                 </a>
             </li>
             <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
-                <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+                <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
                     <span class="pull-right text-muted">
                       <i class="fa fa-fw fa-angle-right text"></i>
                       <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -101,11 +67,11 @@
                     <i class="fa fa-plus icon-small text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
-                <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId)">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span ng-bind="item.catName"></span>
                 </a>
-                <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
+                <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
             </li>
         </ul>
     </li>
@@ -276,6 +242,14 @@
                 <a href="#/shelves/management">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span>货架一览</span>
+                </a>
+            </li>
+
+            <!-- 货架一览 -->
+            <li ui-sref-active="active">
+                <a href="#/combined/product">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span>组合套装商品一览</span>
                 </a>
             </li>
 
@@ -675,11 +649,11 @@
         </ul>
     </li>
 </ul>
-<!--end-->
+
 
 <script id="categoryMenu" type="text/ng-template">
     <li ng-repeat="item in categoryMenu">
-        <a class="auto" ng-if="item.isParent == 1">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
                 <i class="fa fa-fw fa-angle-down text-active"></i>
@@ -692,23 +666,5 @@
             <span ng-bind="item.catName"></span>
         </a>
         <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
-    </li>
-</script>
-
-<script id="feedCategoryMenu" type="text/ng-template">
-    <li ng-repeat="item in categoryMenu">
-        <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
-            <span class="pull-right text-muted">
-                <i class="fa fa-fw fa-angle-right text"></i>
-                <i class="fa fa-fw fa-angle-down text-active"></i>
-            </span>
-            <i class="fa fa-plus icon-small text-vo"></i>
-            <span ng-bind="item.catName"></span>
-        </a>
-        <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath,item.catId)">
-            <i class="fa fa-minus icon text-vo"></i>
-            <span ng-bind="item.catName"></span>
-        </a>
-        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
     </li>
 </script>

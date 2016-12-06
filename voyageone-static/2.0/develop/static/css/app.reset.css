@@ -52,3 +52,6 @@ input::-webkit-inner-spin-button,
 input::-webkit-clear-button {
     display: none;
 }
+.tooltip.top{
+    word-wrap:break-word;
+}

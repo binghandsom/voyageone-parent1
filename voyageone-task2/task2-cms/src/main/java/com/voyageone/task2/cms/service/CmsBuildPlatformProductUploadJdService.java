@@ -57,10 +57,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -177,9 +174,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
             for (String channelId : channelIdList) {
-                // TODO 虽然workload表里不想上新的渠道，不会有数据，这里的循环稍微有点效率问题，后面再改
                 // 京东平台商品信息新增或更新(京东)
-//                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
+                doProductUpload(channelId, CartEnums.Cart.JD.getValue());
                 // 京东国际商品信息新增或更新(京东国际)
                 doProductUpload(channelId, CartEnums.Cart.JG.getValue());
                 // 京东平台商品信息新增或更新(京东国际 匠心界)
@@ -267,7 +263,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            cmsTranslateMqService.executeSingleCode(channelId, cartId, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
+            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
@@ -281,23 +277,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 // 有错误的时候，直接报错
                 throw new BusinessException(errorMsg);
             }
-            // delete by desmond 2016/07/08 start
-            // 所有sku的排序都在getSxProductDataByGroupId共通方法里面做了，外面不用再做了
-//            // 单个product内部的sku列表分别进行排序
-//            for (CmsBtProductModel cmsBtProductModel : sxData.getProductList()) {
-//                // modified by morse.lu 2016/06/28 start
-//                // product表结构变化
-////                sxProductService.sortSkuInfo(cmsBtProductModel.getSkus());
-//                sxProductService.sortSkuInfo(cmsBtProductModel.getCommon().getSkus());
-//                sxProductService.sortListBySkuCode(cmsBtProductModel.getPlatform(sxData.getCartId()).getSkus(),
-//                                                        cmsBtProductModel.getCommon().getSkus().stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
-//                // modified by morse.lu 2016/06/28 end
-//            }
-//            // added by morse.lu 2016/06/28 start
-//            // skuList也排序一下
-//            sxProductService.sortSkuInfo(sxData.getSkuList());
-//            // added by morse.lu 2016/06/28 end
-            // delete by desmond 2016/07/08 end
 
             // 如果一个产品的类目要求至少5张图片，但运营部愿意自己去补足图片导致大量图片上新错误，只好在这里手动给每个产品补足5张图片(用第一张图片补)
             // 但这里补足的图片不会回写到mongoDB的产品中，如果在京东平台上展示出来的效果运营不满意，让他们自己去补足图片
@@ -362,9 +341,70 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
+
+            // 判断新增商品还是更新商品
+            // 只要numIId不为空，则为更新商品
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                // 更新商品
+                updateWare = true;
+                // 取得更新对象商品id
+                jdWareId = Long.parseLong(sxData.getPlatform().getNumIId());
+            }
+
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             Map<String, Integer> skuLogicQtyMap = productService.getLogicQty(mainProduct.getOrgChannelId(), strSkuCodeList);
+
+            // 删除主产品的common.skus中库存为0的SKU
+            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
+                deleteNoStockCommonSku(sxData.getMainProduct().getCommonNotNull().getSkus(), skuLogicQtyMap);
+            }
+            // 删除主产品的PXX.skus中库存为0的SKU
+            if (ListUtils.notNull(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus())) {
+                deleteNoStockPlatformSku(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+            }
+            // 删除每个产品库存为0的sku
+            for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+                if (ListUtils.notNull(cmsBtProduct.getCommonNotNull().getSkus())) {
+                    deleteNoStockCommonSku(cmsBtProduct.getCommonNotNull().getSkus(), skuLogicQtyMap);
+                }
+                if (ListUtils.notNull(cmsBtProduct.getPlatformNotNull(cartId).getSkus())) {
+                    deleteNoStockPlatformSku(cmsBtProduct.getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+                }
+            }
+
+            // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
+            int totalSkusLogicQty = 0;
+            for(String skuCode : skuLogicQtyMap.keySet()) {
+                totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
+            }
+
+            // 京东上新的时候，以前库存为0的SKU也上，现在改为不上库存为0的SKU不要上新
+            // 无库存的skuId列表（包含之前卖，现在改为不在京东上售卖的SKU）,只在更新的时候用
+            List<String> skuIdListNoStock = new ArrayList<>();
+            Iterator<BaseMongoMap<String, Object>> skuIter = skuList.iterator();
+            StringBuilder sbFailCause = new StringBuilder("");
+            while (skuIter.hasNext()) {
+                BaseMongoMap<String, Object> sku = skuIter.next();
+                // 如果该skuCode对应的库存为0(或库存信息不存在)，则把该sku加到skuIdListNoStock列表中，后面会删除京东平台上该SKU
+                if (isSkuNoStock(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), skuLogicQtyMap)) {
+                    // 删除SxData.skuList里面库存为0的SKU，这样后面上新的时候，从这个列表中取得的都是有库存的SKU
+                    skuIter.remove();
+
+                    // 把库存为0的SKU的jdSkuId加到skuIdListNoStock列表中，后面会一起再京东平台上删除这些库存为0的SKU
+                    if (!StringUtils.isEmpty(sku.getStringAttribute("jdSkuId"))) {
+                        skuIdListNoStock.add(sku.getStringAttribute("jdSkuId"));
+                    } else if (!StringUtils.isEmpty(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()))){
+                        sbFailCause.setLength(0);
+                        // 如果本地数据库中没有jdSkuId,根据skuCode到京东平台上重新取得京东skuId
+                        Sku currentSku = jdSkuService.getSkuByOuterId(shopProp,
+                                sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), sbFailCause);
+                        if (currentSku != null) {
+                            skuIdListNoStock.add(StringUtils.toString(currentSku.getSkuId()));
+                        }
+                    }
+                }
+            }
 
             // 属性值准备
             // 2016/06/01 Delete by desmond start   京东不需要mapping表了
@@ -398,6 +438,24 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
             // 取得主产品的京东平台类目(用于取得京东平台该类目下的Schema信息)
             String platformCategoryId = mainProductPlatformCart.getpCatId();
+            if (updateWare) {
+                // added by morse.lu 2016/09/02 start
+                // 取一下最新的jd上的商品信息，可能catId被jd的管理员改掉了，就不能上了，如果改了，回写下表(pCatId,pCatPath)
+                String jdCatId = jdWareService.getJdProductCatId(shopProp, String.valueOf(jdWareId));
+                if (!StringUtils.isEmpty(jdCatId)) {
+                    if (!jdCatId.equals(platformCategoryId)) {
+                        // 不一样
+                        platformCategoryId = jdCatId;
+                        // 回写
+                        // 这一版回写完还是会直接尝试上新
+                        updateCategory(channelId, cartId, mainProduct.getCommon().getFields().getCode(), jdCatId);
+                    }
+                } else {
+                    // 有错误，没取到
+                    // 先不管，继续做下去吧
+                }
+                // added by morse.lu 2016/09/02 end
+            }
             $info("主产品的京东平台类目:" + platformCategoryId);
             // 取得平台类目schema信息
             CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchema = platformCategoryService.getPlatformCatSchema(platformCategoryId, cartId);
@@ -416,20 +474,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         ":" + mainProductPlatformCart.getpCatPath() + ")]");
             }
 
-            // delete by desmond 2016/07/08 start
-            // 加了个product.common.skus.sizeSx字段所有尺码转换都在SxProductService共通函数里面做，外面不用再做尺码变换
-//            // 获取尺码表
-//            // 7. product.fields（mongodb， 共通字段略）增加三个字段
-//            //       * sizeGroupId        <-设置SKU信息     //不是新任务列表中的groupid
-//            //       * sizeChartIdPc      <-上传图片用
-//            //       * sizeChartIdMobile  <-上传图片用
-//            //String sizeMapGroupId = ""; // TODO 这个字段还没加 sizeMapGroupId =  mainProduct.getFields().getSizeMapGroupId();
-//
-//            // 取得尺码转换信息
-//            Map<String, String> jdSizeMap = sxProductService.getSizeMap(channelId, mainProduct.getCommon().getFields().getBrand(),
-//                    mainProduct.getCommon().getFields().getProductType(), mainProduct.getCommon().getFields().getSizeType());
-            // delete by desmond 2016/07/08 end
-
             // 获取字典表(根据channel_id)上传图片的规格等信息
             List<CmsMtPlatformDictModel> cmsMtPlatformDictModelList = dictService.getModesByChannelCartId(channelId, cartId);
             if (cmsMtPlatformDictModelList == null || cmsMtPlatformDictModelList.size() == 0) {
@@ -444,6 +488,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
                     jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
+            // 更新时设置商品id
+            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
+                jdProductBean.setWareId(sxData.getPlatform().getNumIId());
+            }
 
             // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
             List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
@@ -459,7 +507,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
             }
             // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
-            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList);
+            String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList, mainProduct.getOrgChannelId());
 
             // 产品和颜色值的Mapping关系表(设置SKU属性时填入值，上传SKU图片时也会用到)
             Map<String, Object> productColorMap = new HashMap<>();
@@ -467,19 +515,16 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             // 返回结果是否成功状态
             boolean retStatus = false;
 
-            // 判断新增商品还是更新商品
-            // 只要numIId不为空，则为更新商品
-            if (!StringUtils.isEmpty(sxData.getPlatform().getNumIId())) {
-                // 更新商品
-                updateWare = true;
-                // 取得更新对象商品id
-                jdWareId = Long.parseLong(sxData.getPlatform().getNumIId());
-                jdProductBean.setWareId(sxData.getPlatform().getNumIId());
-            }
-
             // 新增或更新商品主处理
             if (!updateWare) {
                 // 新增商品的时候
+                // 京东没有库存时不能上新，如果所有产品所有SKU的库存之和为0时，直接报错
+                if (totalSkusLogicQty == 0) {
+                    String errMsg = String.format("京东新增商品时所有SKU的总库存为0，不能上新！请添加库存信息之后再做上新. " +
+                            "[ChannelId:%s] [CartId:%s] [GroupId:%s]", channelId, cartId, groupId);
+                    $error(errMsg);
+                    throw new BusinessException(errMsg);
+                }
 
                 // 调用京东新增商品API(360buy.ware.add)
                 jdWareId = jdWareService.addProduct(shopProp, jdProductBean);
@@ -576,22 +621,52 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
 
             } else {
-                // 更新商品的时候
-                // added by morse.lu 2016/09/02 start
-                // 取一下最新的jd上的商品信息，可能catId被jd的管理员改掉了，就不能上了，如果改了，回写下表(pCatId,pCatPath)
-                String jdCatId = jdWareService.getJdProductCatId(shopProp, String.valueOf(jdWareId));
-                if (!StringUtils.isEmpty(jdCatId)) {
-                    if (!jdCatId.equals(platformCategoryId)) {
-                        // 不一样
-                        // 回写
-                        // 这一版回写完还是会直接尝试上新
-                        updateCategory(channelId, cartId, mainProduct.getCommon().getFields().getCode(), jdCatId);
+                // 京东没有库存时不能上新，如果所有产品所有SKU的库存之和为0时，直接做下架处理，不报错
+                if (totalSkusLogicQty == 0) {
+                    // 如果商品真实状态为上架，则做强制下架操作，并回写上下架状态，记录上下架履历
+                    if (CmsConstants.PlatformStatus.OnSale.name().equals(mainProduct.getPlatform(cartId).getpReallyStatus())) {
+                        // 上新对象产品Code列表
+                        List<String> sxCodeList = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
+                        doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare, "京东上新SKU总库存为0时强制下架处理");
                     }
-                } else {
-                    // 有错误，没取到
-                    // 先不管，继续做下去吧
+                    return;
                 }
-                // added by morse.lu 2016/09/02 end
+
+                // 从京东平台上取得该商品下所有的sku列表，看看有没有本地库存为0的SKU(包含这个库存为0和isSale从true->false的SKU)
+                // 例如：有可能有第一次上新选的isSale的10个，第二次更新的时候只选了6个isSale.剩下的4个SKU也应该在京东平台上被删掉
+                try {
+                    sbFailCause.setLength(0);
+                    // 根据京东商品id取得京东平台上的sku信息列表(即使出错也不报出来，算上新成功，只是回写出错，以后再回写也可以)
+                    List<Sku> skus = jdSkuService.getSkusByWareId(shopProp, StringUtils.toString(jdWareId), sbFailCause);
+                    if (ListUtils.notNull(skus)) {
+                        skus.forEach(s -> {
+                            String currentSkuCode = s.getOuterId();
+                            String currentSkuId = StringUtils.toString(s.getSkuId());
+                            if (StringUtils.isEmpty(currentSkuCode)) {
+                                // 如果京东平台上的SKU没有填写商家ID(skuCode),这种SKU也要删除（运营手动追加的SKU有可能没有）
+                                if (!skuIdListNoStock.contains(currentSkuId)) {
+                                    skuIdListNoStock.add(currentSkuId);
+                                }
+                            } else {
+                                // 京东平台上的SKU填写了商家ID(skuCode)时
+                                if (isSkuNoStock(currentSkuCode, skuLogicQtyMap)
+                                        && !skuIdListNoStock.contains(currentSkuId)) {
+                                    // 把由于isSale从true->false之后，残留在京东平台上商品的jdSkuId加入到待删除jdSkuId列表中
+                                    skuIdListNoStock.add(currentSkuId);
+                                }
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    $warn(String.format("京东上新更新商品之前根据商品ID取得SKU信息失败！[wareId:%s] [errMsg:%s]", jdWareId, sbFailCause.toString()));
+                }
+
+                // 更新商品之前，先删除一下京东平台一些本地库存为0的SK
+                // 即先删除库存为0的SKU再更新库存不为0的SKU，这样才能在京东商品页面出现库存为0的SKU尺码显示出来但不能点的效果
+                String lastSkuId = null;
+                if (ListUtils.notNull(skuIdListNoStock)) {
+                    lastSkuId = deleteJdPlatformSku(shopProp, skuIdListNoStock);
+                }
 
                 // 设置更新用商品beanSKU属性 (更新用商品bean，共通属性前面已经设置)
                 jdProductBean = setJdProductSkuInfo(jdProductBean, sxData, shopProp, productColorMap,
@@ -603,6 +678,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 更新商品是否成功
                 if (!StringUtils.isEmpty(retModified)) {
+                    // 如果存在删除最后一条SKU失败的情况，前面上传库存不为0的SKU成功之后，再删除一下最后一条库存为0的SKU
+                    if (!StringUtils.isEmpty(lastSkuId)) {
+                        // 删除京东平台上SKU，必须删除SKU之后再更新一下商品才能达到想要的效果
+                        deleteJdPlatformSku(shopProp, lastSkuId);
+                        jdWareService.updateProduct(shopProp, jdProductBean);
+                    }
+
                     // 更新该商品下所有产品的图片
                     retStatus = uploadJdProductUpdatePics(shopProp, jdWareId, sxData, productColorMap, salePropStatus);
                     if (!retStatus) {
@@ -806,12 +888,28 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //        jdProductBean.setProducter(mainProduct.getXXX());                // 不使用
         // 包装规格 (非必须)
 //        jdProductBean.setWrap(mainProduct.getXXX());                     // 不使用
+
+		// 取得一下product默认属性
+		Map<String, Field> productSchemaFields = SchemaReader.readXmlForMap(jdCommonSchema.getPropsProduct());
+
         // 长(单位:mm)(必须)
         jdProductBean.setLength(jdCommonInfoMap.get("productLengthMm"));
+        if (StringUtils.isEmpty(jdProductBean.getLength())) {
+        	InputField f = (InputField) productSchemaFields.get("productLengthMm");
+        	jdProductBean.setLength(f.getDefaultValue());
+		}
         // 宽(单位:mm)(必须)
         jdProductBean.setWide(jdCommonInfoMap.get("productWideMm"));
+		if (StringUtils.isEmpty(jdProductBean.getWide())) {
+			InputField f = (InputField) productSchemaFields.get("productWideMm");
+			jdProductBean.setWide(f.getDefaultValue());
+		}
         // 高(单位:mm)(必须)
         jdProductBean.setHigh(jdCommonInfoMap.get("productHighMm"));
+		if (StringUtils.isEmpty(jdProductBean.getHigh())) {
+			InputField f = (InputField) productSchemaFields.get("productHighMm");
+			jdProductBean.setHigh(f.getDefaultValue());
+		}
         // 重量(单位:kg)(必须)
 //        Object objfieldItemValue = null;
 //        String strWeight = "1";  // 默认为1kg
@@ -1849,6 +1947,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         if (StringUtils.isEmpty(sbbuilder.toString())) {
             // 获取京东平台前台展示的商家自定义店内分类(从分平台信息里面取得sellerCats)
+            // added by morse.lu 2016/11/18 start
+            String newArrivalSellerCat = sxProductService.getNewArrivalSellerCat(sxData.getChannelId(), sxData.getCartId(), sxData.getPlatform().getPublishTime()); // 新品类目id
+            if (!StringUtils.isEmpty(newArrivalSellerCat)) {
+                // 需要添加新品类目
+                sbbuilder.append(newArrivalSellerCat);
+                sbbuilder.append(Separtor_Semicolon); // 用分号(";")分隔
+            }
+            // added by morse.lu 2016/11/18 end
             CmsBtProductModel_Platform_Cart productPlatformCart = sxData.getMainProduct().getPlatform(sxData.getCartId());
             if (productPlatformCart != null && ListUtils.notNull(productPlatformCart.getSellerCats())) {
                 // 取得
@@ -1859,8 +1965,15 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         continue;
                     }
                     // 用连字符("-")连接 (1233797770-1233809821)
-                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
-                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    // modified by morse.lu 2016/11/18 start
+//                    sbbuilder.append(sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen)));
+//                    sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    String cids = sellerCat.getcIds().stream().collect(Collectors.joining(Separtor_Hyphen));
+                    if (!cids.equals(newArrivalSellerCat)) {
+                        sbbuilder.append(cids);
+                        sbbuilder.append(Separtor_Semicolon);    // 用分号(";")分隔
+                    }
+                    // modified by morse.lu 2016/11/18 end
                 }
             }
             // 直接从Product中取得店铺内分类，不用从京东去取了
@@ -2197,27 +2310,61 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     }
 
     /**
+     * 商品强制上架/下架并回写状态记录历史处理
+     *
+     * @param shop ShopBean 店铺对象
+     * @param wareId long 商品id
+     * @param updateFlg boolean 新增/更新商品flg
+     */
+    protected void doJdForceWareListing(ShopBean shop, Long wareId, Long groupId, CmsConstants.PlatformActive platformActive, List<String> codeList, boolean updateFlg, String modifier) {
+        if (shop == null || wareId == null || platformActive == null) return;
+
+        // 商品上架/下架结果
+        boolean updateListingResult = false;
+
+        // platformActive平台上新状态类型(ToOnSale/ToInStock)
+        if (CmsConstants.PlatformActive.ToOnSale.name().equals(platformActive.name())) {
+            // platformActive是(ToOnSale)时，执行商品上架操作
+            updateListingResult = jdSaleService.doWareUpdateListing(shop, wareId, updateFlg);
+        } else if (CmsConstants.PlatformActive.ToInStock.name().equals(platformActive.name())) {
+            // platformActive是(ToInStock)时，执行商品下架操作
+            updateListingResult = jdSaleService.doWareUpdateDelisting(shop, wareId, updateFlg);
+        }
+
+        // 回写上下架状态到product和productGroup表，并插入mongoDB上下架履历表cms_bt_platform_active_log_cXXX
+        sxProductService.updateListingStatus(shop.getOrder_channel_id(), shop.getCart_id(), groupId, codeList, platformActive, updateListingResult, "", modifier);
+
+    }
+
+    /**
      * 取得当前平台主类目对应的销售属性状况
      * 1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性
      *
      * @param cmsColorList List<CmsMtPlatformSkusModel> 颜色对象列表
      * @param cmsSizeList List<CmsMtPlatformSkusModel> 颜色对象列表
+     * @param orgChannelId String 原始channelId(子店channelId)
      * @return String 当前平台主类目对应的销售属性状况
      */
-    private String getSalePropStatus(List<CmsMtPlatformSkusModel> cmsColorList, List<CmsMtPlatformSkusModel> cmsSizeList) {
+    private String getSalePropStatus(List<CmsMtPlatformSkusModel> cmsColorList, List<CmsMtPlatformSkusModel> cmsSizeList, String orgChannelId) {
         // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
         String salePropStatus = "4";
 
-        // platformActive平台上新状态类型(ToOnSale/ToInStock)
-        if (ListUtils.notNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
-            // 1:颜色和尺寸属性都有
-            salePropStatus = "1";
-        } else if (ListUtils.notNull(cmsColorList) && ListUtils.isNull(cmsSizeList)) {
+        if ("017".equals(orgChannelId)) {
+            // 017:LuckyVitamin店一个SKU是一个CODE，所以他们希望全店都只有颜色，不要尺码
             // 2:只有颜色没有尺寸属性
             salePropStatus = "2";
-        } else if (ListUtils.isNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
-            // 3:没有颜色只有尺寸属性
-            salePropStatus = "3";
+        } else {
+            // platformActive平台上新状态类型(ToOnSale/ToInStock)
+            if (ListUtils.notNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+                // 1:颜色和尺寸属性都有
+                salePropStatus = "1";
+            } else if (ListUtils.notNull(cmsColorList) && ListUtils.isNull(cmsSizeList)) {
+                // 2:只有颜色没有尺寸属性
+                salePropStatus = "2";
+            } else if (ListUtils.isNull(cmsColorList) && ListUtils.notNull(cmsSizeList)) {
+                // 3:没有颜色只有尺寸属性
+                salePropStatus = "3";
+            }
         }
 
         return salePropStatus;
@@ -2393,4 +2540,100 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             $warn(String.format("京东上新成功之后，回写jdSkuId时出错！[wareId:%s] [errMsg:%s]", wareId, failCause.toString()));
         }
     }
+
+    /**
+     * 判断指定sku的库存是否为0
+     *
+     * @param skuCode String skuCode
+     * @param skuLogicQtyMap sku级别的逻辑库存map
+     * @return boolean 该sku库存为0时返回true,否则返回false
+     */
+    public boolean isSkuNoStock(String skuCode, Map<String, Integer> skuLogicQtyMap) {
+        // 如果对象skuCode在库存信息map中不存在的时候，直接返回true
+        if (!skuLogicQtyMap.keySet().contains(skuCode)) return true;
+        return skuLogicQtyMap.entrySet().stream().filter(s -> skuCode.equals(s.getKey())).findFirst().get().getValue() == 0;
+    }
+
+    /**
+     * 删除产品中库存为0的common.sku
+     *
+     * @param skus List<CmsBtProductModel_Sku> common.sku列表
+     * @param skuLogicQtyMap sku级别的逻辑库存map
+     */
+    public void deleteNoStockCommonSku(List<CmsBtProductModel_Sku> skus, Map<String, Integer> skuLogicQtyMap) {
+        Iterator<CmsBtProductModel_Sku> skuIter = skus.iterator();
+        while (skuIter.hasNext()) {
+            CmsBtProductModel_Sku sku = skuIter.next();
+            // 如果该skuCode对应的库存为0(或库存信息不存在)，则把该sku加到skuListNoStock列表中，并在sxData.skuList中删除这个sku
+            if (isSkuNoStock(sku.getSkuCode(), skuLogicQtyMap)) {
+                // 已经Mapping过的颜色值从颜色列表中删除
+                skuIter.remove();
+            }
+        }
+    }
+
+    /**
+     * 删除产品中库存为0的pXX.sku
+     *
+     * @param skus List<BaseMongoMap<String, Object>> sku列表
+     * @param skuLogicQtyMap sku级别的逻辑库存map
+     */
+    public void deleteNoStockPlatformSku(List<BaseMongoMap<String, Object>> skus, Map<String, Integer> skuLogicQtyMap) {
+        Iterator<BaseMongoMap<String, Object>> skuIter = skus.iterator();
+        while (skuIter.hasNext()) {
+            BaseMongoMap<String, Object> sku = skuIter.next();
+            // 如果该skuCode对应的库存为0(或库存信息不存在)，则把该sku加到skuListNoStock列表中，并在sxData.skuList中删除这个sku
+            if (isSkuNoStock(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name()), skuLogicQtyMap)) {
+                // 已经Mapping过的颜色值从颜色列表中删除
+                skuIter.remove();
+            }
+        }
+    }
+
+    /**
+     * 删除一条京东平台上本地库存为0的SKU
+     *
+     * @param shop 店铺信息
+     * @param jdSkuId 库存为0的京东skuId
+     * @return String 如果平台上的SKU全部要删除时，返回最后一个不能删除的skuId;没有的报这个错的时候，返回null
+     */
+    public String deleteJdPlatformSku(ShopBean shop, String jdSkuId) {
+        List<String> skuIdListNoStock = new ArrayList<>();
+        skuIdListNoStock.add(jdSkuId);
+
+        return deleteJdPlatformSku(shop, skuIdListNoStock);
+    }
+
+    /**
+     * 删除京东平台上本地库存为0的SKU(不能删除平台上剩下的最后一个SKU)
+     * 这里先删除库存为0的SKU，后面再更新库存不为0的SKU信息到京东平台；如果后面不再更新一下的话，不能达到库存为0的SKU显示但不能选的效果
+     *
+     * @param shop 店铺信息
+     * @param skuIdListNoStock List<String> 库存为0的skuId列表
+     * @return String 如果平台上的SKU全部要删除时，返回最后一个不能删除的skuId;没有的报这个错的时候，返回null
+     */
+    public String deleteJdPlatformSku(ShopBean shop, List<String> skuIdListNoStock) {
+        if (shop == null || ListUtils.isNull(skuIdListNoStock)) return null;
+
+        String lastSkuId = null;
+        StringBuilder sbFailCause = new StringBuilder("");
+        // 删除京东平台上库存为0的SKU
+        for (String jdSkuId : skuIdListNoStock) {
+            sbFailCause.setLength(0);
+            // 根据jdSkuId删除京东平台商品的SKU信息
+            jdSkuService.deleteSkuBySkuId(shop, jdSkuId, sbFailCause);
+            if (!StringUtils.isEmpty(sbFailCause.toString())) {
+                // 删除库存为0的SKU失败输入错误消息，但不需要抛出异常
+                $debug(sbFailCause.toString());
+                // 京东删除商品最后一个SKU的时候，会报"此SKU为商品最后sku，不允许删除"错误
+                if (sbFailCause.toString().contains("此SKU为商品最后sku")) {
+                    lastSkuId = jdSkuId;
+                    break;
+                }
+            }
+        }
+
+        return lastSkuId;
+    }
+
 }

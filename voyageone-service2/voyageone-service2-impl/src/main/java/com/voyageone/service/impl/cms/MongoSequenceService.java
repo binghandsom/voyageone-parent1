@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.dao.cms.mongo.CommSequenceDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,8 @@ public class MongoSequenceService extends BaseService {
         CMS_BT_IMAGE_GROUP_ID("cms_bt_image_group_imageGroupId"),
         CMS_BT_IMAGE_TEMPLATE_ID("cms_bt_image_group_imageTemplateId"),
         CMS_BT_PRODUCT_PLATFORMACTIVEJOB_ID("cms_bt_product_platformActiveJobId"),
-        CMS_BT_CnShopCategory_ID("CMS_BT_CnShopCategory_ID");
+        CMS_BT_CnShopCategory_ID("CMS_BT_CnShopCategory_ID"),
+        CmsBtProductTopID("CmsBtProductTopID");
 
         // 成员变量
         private String name;

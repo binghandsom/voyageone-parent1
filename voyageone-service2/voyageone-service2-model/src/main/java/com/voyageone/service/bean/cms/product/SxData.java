@@ -27,6 +27,7 @@ public class SxData {
 
     private Double maxPrice; // 当前productList的所有sku中，最大的那个价格（销售的价格）
 	private String brandCode; // 主商品fields.Brand对应的BrandId(cms_mt_brands_mapping)
+	private String pBrandName; // 平台品牌名(cms_mt_platform_brands)
 
 	private boolean hasSku; // 库存更新时，要选择商品上传时是否有SKU属性
 	private boolean isDarwin; // 是不是达尔文
@@ -168,6 +169,14 @@ public class SxData {
 
 	public void setBrandCode(String brandCode) {
 		this.brandCode = brandCode;
+	}
+
+	public String getpBrandName() {
+		return pBrandName;
+	}
+
+	public void setpBrandName(String pBrandName) {
+		this.pBrandName = pBrandName;
 	}
 
 	public boolean isHasSku() {

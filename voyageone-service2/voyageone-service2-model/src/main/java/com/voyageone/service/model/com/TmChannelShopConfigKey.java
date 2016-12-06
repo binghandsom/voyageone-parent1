@@ -7,7 +7,9 @@
  */
 package com.voyageone.service.model.com;
 
-public class TmChannelShopConfigKey extends AdminBaseModel {
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
+
+public class TmChannelShopConfigKey extends NoIdBaseModel {
     protected String orderChannelId;
 
     protected String cartId;

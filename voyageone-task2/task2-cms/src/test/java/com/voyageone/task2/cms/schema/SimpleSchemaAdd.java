@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 官网同购共通schema xml内容生成
+ *
  * Created by zhujiaye on 16/8/22.
  */
 public class SimpleSchemaAdd {
 	public static void main(String[] args) {
-		// 生成XML(作为mongDB的cms_mt_platform_category_schema_p30(或P31)表中catId=1的共通schema记录的propsItem字段)
+		// 生成XML(作为mongDB的cms_mt_platform_category_schema_tm_c017(或c017)表中catId=1的天猫官网同购共通schema记录的propsProduct字段)
 		doCreateProduct();
 //		doCreateItem();
 	}
@@ -30,6 +32,7 @@ public class SimpleSchemaAdd {
 		List<Field> fieldList = new ArrayList<>();
 
 		fieldList.add(createInputField("title", "标题", false, null));
+		fieldList.add(createInputField("sub_title", "子标题(卖点)", false, null));
 
 		fieldList.add(createInputField("logistics_weight", "物流重量", false, "单位:千克"));
 		fieldList.add(createInputField("logistics_volume", "物流体积", false, "运费是基于重量, 所以这里可以随意填写"));

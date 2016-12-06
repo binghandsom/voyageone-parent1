@@ -7,12 +7,12 @@
  */
 package com.voyageone.service.model.com;
 
-import com.voyageone.service.model.com.AdminBaseModel;
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
 
 /**
  * 
  */
-public class ComMtValueChannelModel extends AdminBaseModel {
+public class ComMtValueChannelModel extends NoIdBaseModel {
     protected Integer id;
 
     protected Integer typeId;
