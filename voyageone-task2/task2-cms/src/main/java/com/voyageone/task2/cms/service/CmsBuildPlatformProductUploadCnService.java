@@ -207,7 +207,7 @@ public class CmsBuildPlatformProductUploadCnService extends BaseCronTaskService 
                 }
 
                 // 类目保存，用于之后上传类目下code以及排序
-                cnCategoryService.updateProductSellercatForUpload(channelId, catIds, getTaskName());
+                cnCategoryService.updateProductSellercatForUpload(channelId, cartId, catIds, getTaskName());
 
                 // 更新cms_bt_sx_cn_sku表，用于刷全量库存
                 updateSxCnSku(channelId, cartId, listSkuFields, mapProductCats, mapProductOrgChannel);

@@ -5,6 +5,8 @@ import com.voyageone.base.dao.mysql.BaseModel;
 public class CmsBtSxCnProductSellercatModel extends BaseModel {
     private String channelId;
 
+    private Integer cartId;
+
     private String catId;
 
     private String updFlg; // 0:未处理, 1:已处理
@@ -15,6 +17,14 @@ public class CmsBtSxCnProductSellercatModel extends BaseModel {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public String getCatId() {
