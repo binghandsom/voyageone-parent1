@@ -330,13 +330,13 @@ public class CmsAdvSearchQueryService extends BaseService {
                 }
                 parameters.add("^" + fCatPath);
             }
-            queryObject.addParameters(parameters.toArray());
-            // 2016-12-06 追加feed.subCategories
-            fCatPathStr.append(",{'feed.subCategories':{$in:#}}");
+            for (String fCatPath : searchValue.getfCatPathList()) {
+                fCatPathStr.append(",{\"feed.subCategories\":{\"$regex\":#}}");
+                parameters.add("^" + fCatPath);
+            }
             fCatPathStr.append("]}");
-            queryObject.addParameters(parameters);
             queryObject.addQuery(fCatPathStr.toString());
-
+            queryObject.addParameters(parameters.toArray());
         }
 
         // 获取 master category
