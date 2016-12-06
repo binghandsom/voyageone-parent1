@@ -1,0 +1,59 @@
+
+<ul class="nav"   ng-include="'menuChild'" ng-init="children= $root.menuTree.children"></ul>
+
+<script id="menuChild" type="text/ng-template">
+    <li ng-repeat="item in children">
+
+        <a  ng-if="!$root.isParentMenu(item)" href="{{item.resUrl}}">
+            <i class="{{item.icon}}"></i>
+            <span >{{item.resName}}</span>
+        </a>
+
+        <a class="auto" ng-if="$root.isParentMenu(item)" >
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+            <i class="{{item.icon}}"></i>
+            <span >{{item.resName}}</span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="$root.isParentMenu(item)" ng-include="'menuChild'" ng-init="children= item.children"></ul>
+    </li>
+</script>
+
+
+<script id="categoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath,item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>
+
+<script id="feedCategoryMenu" type="text/ng-template">
+    <li ng-repeat="item in categoryMenu">
+        <a class="auto" ng-if="item.isParent == 1" ng-click="goAdvanceSearchByFeedCat(item.catPath, item.catId)">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-plus icon-small text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <a ng-if="item.isParent == 0" ng-click="goAdvanceSearchByFeedCat(item.catPath,item.catId)">
+            <i class="fa fa-minus icon text-vo"></i>
+            <span ng-bind="item.catName"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'feedCategoryMenu'" ng-init="categoryMenu = item.children"></ul>
+    </li>
+</script>
