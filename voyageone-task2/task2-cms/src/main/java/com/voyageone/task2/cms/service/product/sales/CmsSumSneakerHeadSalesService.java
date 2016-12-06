@@ -4,7 +4,7 @@ import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.sneakerhead.bean.CmsBtProductModel_SalesBean;
-import com.voyageone.components.sneakerhead.service.SneakerHeadFeedService;
+import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Created by gjl on 2016/11/23.
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
     @Autowired
-    private SneakerHeadFeedService sneakerHeadFeedService;
+    private SneakerheadApiService sneakerheadApiService;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
@@ -33,7 +32,7 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // TODO: 2016/12/1 add get domain from taskcontrollist
-        //SNEAKER_HEAD_ACCESS_DOMAIN = taskControlList
+        //DEFAULT_DOMAIN = taskControlList
 
         $info("取得cms_bt_product_c001表的所有code开始:");
         //取得所有的code
@@ -65,7 +64,7 @@ public class CmsSumSneakerHeadSalesService extends BaseCronTaskService {
      */
     private void getCodeSalesAndSumSales(List<String> codeList) throws Exception {
         $info("调用sneakerHead接口取得各个code销售数量开始:");
-        List<CmsBtProductModel_SalesBean> saleList = sneakerHeadFeedService.sneakerHeadSale(codeList, SNEAKER_HEAD_ACCESS_DOMAIN);
+        List<CmsBtProductModel_SalesBean> saleList = sneakerheadApiService.getUsSales(codeList, SNEAKER_HEAD_ACCESS_DOMAIN);
         $info("调用sneakerHead接口取得各个code销售数量:" + saleList.size());
         $info("调用sneakerHead接口取得各个code销售数量结束:");
 
