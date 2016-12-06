@@ -457,6 +457,7 @@ define([
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
                 $rootScope.productUrl = data.productUrl;
+                console.log($scope.menuInfo.categoryTreeList);
             });
         }
 

@@ -1,30 +1,19 @@
 
-<!--<ul class="nav"   ng-include="'menuChild'" ng-init="children=$root.menuTree"></ul>-->
+<ul class="nav" ng-if="$root.menuTree"   ng-include="'menuChild'" ng-init="children=$root.menuTree"></ul>
 
-<ul class="nav">
-    <li ng-repeat="menu in $root.menuTree">
-        <a class="auto"  >
-                    <span class="pull-right text-muted">
-                      <i class="fa fa-fw fa-angle-right text"></i>
-                      <i class="fa fa-fw fa-angle-down text-active"></i>
-                    </span>
-            <i class="{{menu.icon}}"></i>
-            <span >{{menu.resName}}</span>
-        </a>
-        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="$root.isParentMenu(menu)" ng-include="'menuChild'" ng-init="children= menu.children"></ul>
-    </li>
-</ul>
 <script id="menuChild" type="text/ng-template">
     <li ng-repeat="item in children">
         <div ng-switch="item.resKey">
-            <!--feed分类-->
+            <!-- 加载 feed分类-->
             <div ng-switch-when="CMS_FEED_PRODUCT_CATEGORY">
 
                 <div ng-include="'feedCategoryMenuChild'" ng-init="categoryMenu = $root.feedCategoryTreeList"></div>
+
             </div>
-            <!--商品分类-->
+            <!-- 加载 商品分类 -->
             <div ng-switch-when="CMS_product_MANAGER">
 
+                <div ng-include="'categoryMenu'"></div>
 
             </div>
 
@@ -49,6 +38,40 @@
     </li>
 </script>
 <script id="categoryMenu" type="text/ng-template">
+    <div>
+        <a class="auto" ui-sref="cms.category">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+            <i class="glyphicon glyphicon-th-list icon text-vo"></i>
+            <span class="" translate="TXT_CATEGORY_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_CATEGORY_MANAGER"></span>
+                </a>
+            </li>
+            <li ng-repeat="item in menuInfo.categoryTreeList" ng-init="_catPath=item.catPath">
+                <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
+                    <span class="pull-right text-muted">
+                      <i class="fa fa-fw fa-angle-right text"></i>
+                      <i class="fa fa-fw fa-angle-down text-active"></i>
+                    </span>
+                    <i class="fa fa-plus icon-small text-vo"></i>
+                    <span ng-bind="item.catName"></span>
+                </a>
+                <a ng-if="item.isParent == 0" ng-click="goSearchPage(item.catPath, item.catId)">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span ng-bind="item.catName"></span>
+                </a>
+                <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenuChild'" ng-init="categoryMenu = item.children"></ul>
+            </li>
+        </ul>
+    </div>
+</script>
+<script id="categoryMenuChild" type="text/ng-template">
     <li ng-repeat="item in categoryMenu">
         <a class="auto" ng-if="item.isParent == 1" ng-click="goSearchPage(item.catPath, item.catId)">
             <span class="pull-right text-muted">
@@ -62,7 +85,7 @@
             <i class="fa fa-minus icon text-vo"></i>
             <span ng-bind="item.catName"></span>
         </a>
-        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
+        <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenuChild'" ng-init="categoryMenu = item.children"></ul>
     </li>
 </script>
 
