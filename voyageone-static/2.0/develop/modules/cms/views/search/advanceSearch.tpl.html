@@ -891,6 +891,16 @@
                                                     <span ng-if="!cartsObj._purl" ng-class="{'mainPrd':cartsObj._isMain}">{{cartsObj._pTxt}}</span>
                                                 </span>
                                             </span>
+                                            <!-- 美国商品平台状态 -->
+                                            <span class="label m-l-sm" ng-if="productInfo.usPlatforms">
+                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="usPlatform in productInfo.usPlatforms">
+                                                    <platform-status data="{cartId:usPlatform.cartId,
+                                                       status:usPlatform.status,
+                                                       pStatus:usPlatform.status,
+                                                       pReallyStatus:usPlatform.status}">
+                                                    </platform-status>
+                                                </span>
+                                            </span>
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
                                             <!-- Todo 标签 -->
                                             <span ng-if="productInfo.freeTags != null && productInfo.freeTags.length > 0 && productInfo._freeTagsInfo">&nbsp;&nbsp;

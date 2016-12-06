@@ -43,11 +43,10 @@ define([
             if(this.statusData.pPublishError)
                 this.statusData.pStatus = "Error";
 
-            var _numberId = this.statusData.numberId;
+            var _numberId = this.statusData.numberId,
+                _cartId = +this.statusData.cartId;
 
             if(_numberId){
-
-                var _cartId = +this.statusData.cartId;
 
                 if(_cartId != 27){
                     this.statusData.detailUrl = carts.valueOf(_cartId).pUrl + _numberId;
