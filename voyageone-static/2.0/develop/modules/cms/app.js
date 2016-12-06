@@ -334,6 +334,7 @@ define([
                 $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
+                console.log(data.menuTree)
             });
         }
         $rootScope.isParentMenu=function(item) {
