@@ -17,41 +17,67 @@ import java.util.Map;
 public class ConditionPropValueRepo {
     @Autowired
     private ConditionPropValueDao conditionPropValueDao;
-    private static Map<String, List<ConditionPropValueModel>> propValueRepo;
+//    private static Map<String, List<ConditionPropValueModel>> propValueRepo;
+//
+//    public ConditionPropValueRepo() {
+//        propValueRepo = new HashMap<>();
+//    }
+//
+//    public void init() {
+//        List<ConditionPropValueModel> conditionPropValueModelList = conditionPropValueDao.selectAllConditionPropValue();
+//
+//        if (conditionPropValueModelList != null)
+//        {
+//            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModelList) {
+//                List<ConditionPropValueModel> conditionPropValueModels = propValueRepo.get(encodeKey(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id()));
+//                if (conditionPropValueModels == null)
+//                {
+//                    conditionPropValueModels = new ArrayList<>();
+//                    put(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id(), conditionPropValueModels);
+//                }
+//                conditionPropValueModels.add(conditionPropValueModel);
+//            }
+//        }
+//    }
+//
+//    private String encodeKey(String channelId, String platformPropId) {
+//        return channelId + "_" + platformPropId;
+//    }
+//
+//    public void put(String channelId, String platformPropId, List<ConditionPropValueModel> value) {
+//        propValueRepo.put(encodeKey(channelId, platformPropId), value);
+//    }
+//
+//    public List<ConditionPropValueModel> get(String channelId, String platformPropId) {
+//        if (propValueRepo.isEmpty()) {
+//            init();
+//        }
+//        return propValueRepo.get(encodeKey(channelId, platformPropId));
+//    }
 
-    public ConditionPropValueRepo() {
-        propValueRepo = new HashMap<>();
-    }
+    /**
+     * 获取指定channel的condition表数据
+     * @param channelId 指定channel
+     * @return 按照属性名称整理好之后的map
+     */
+    public Map<String, List<ConditionPropValueModel>> getAllByChannelId(String channelId) {
+        // 抽取数据
+        List<ConditionPropValueModel> conditionPropValueModelList = conditionPropValueDao.selectConditionPropValueByChannelId(channelId);
 
-    public void init() {
-        List<ConditionPropValueModel> conditionPropValueModelList = conditionPropValueDao.selectAllConditionPropValue();
-
-        if (conditionPropValueModelList != null)
-        {
-            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModelList) {
-                List<ConditionPropValueModel> conditionPropValueModels = propValueRepo.get(encodeKey(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id()));
-                if (conditionPropValueModels == null)
-                {
-                    conditionPropValueModels = new ArrayList<>();
-                    put(conditionPropValueModel.getChannel_id(), conditionPropValueModel.getPlatform_prop_id(), conditionPropValueModels);
+        // 整理一下再返回
+        Map<String, List<ConditionPropValueModel>> result = new HashMap<>();
+        if (conditionPropValueModelList != null) {
+            for (ConditionPropValueModel model : conditionPropValueModelList) {
+                if (!result.containsKey(model.getPlatform_prop_id())) {
+                    List<ConditionPropValueModel> modelList = new ArrayList<>();
+                    modelList.add(model);
+                    result.put(model.getPlatform_prop_id(), modelList);
+                } else {
+                    result.get(model.getPlatform_prop_id()).add(model);
                 }
-                conditionPropValueModels.add(conditionPropValueModel);
             }
         }
-    }
 
-    private String encodeKey(String channelId, String platformPropId) {
-        return channelId + "_" + platformPropId;
-    }
-
-    public void put(String channelId, String platformPropId, List<ConditionPropValueModel> value) {
-        propValueRepo.put(encodeKey(channelId, platformPropId), value);
-    }
-
-    public List<ConditionPropValueModel> get(String channelId, String platformPropId) {
-        if (propValueRepo.isEmpty()) {
-            init();
-        }
-        return propValueRepo.get(encodeKey(channelId, platformPropId));
+        return result;
     }
 }
