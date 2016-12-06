@@ -334,11 +334,10 @@ define([
                 $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
-                console.log(data.menuTree);
             });
         }
         $rootScope.isParentMenu=function(item) {
-            return item.children != null && item.children.length > 0;
+            return item.children&& item.children.length > 0;
         }
         /**
          * go to channel selected page.
