@@ -32,8 +32,9 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
 
     private final SneakerheadApiService sneakerheadApiService;
     private final ProductService productService;
-    private final Integer DEFAULT_THREAD_COUNT = 10;
-    private final Integer DEFAULT_ATOM_COUNT = 100;
+
+    private static final Integer DEFAULT_THREAD_COUNT = 10;
+    private static final Integer DEFAULT_ATOM_COUNT = 100;
 
     @Autowired
     public CmsUsPlatformStatusSyncService(SneakerheadApiService sneakerheadApiService,
@@ -82,7 +83,7 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
 
     private Runnable manageRunnable(Integer page, Integer atomCount) {
         JongoQuery jongoQuery = new JongoQuery();
-       // jongoQuery.setProjection("{'common.fields.code':1,'_id':0}");
+        // jongoQuery.setProjection("{'common.fields.code':1,'_id':0}");
         jongoQuery.setSort("{\"_id\":1}");
 
         jongoQuery.setLimit(atomCount);
@@ -99,7 +100,7 @@ public class CmsUsPlatformStatusSyncService extends BaseCronTaskService {
 //                        .collect(Collectors.toList());
                 List<String> codeList =
                         productList.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode())
-                        .filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
+                                .filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
 
                 // 获取 code 的美国平台状态
                 List<CodeUsPlatformModel> usPlatformStatusList =
