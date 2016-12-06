@@ -9,7 +9,7 @@
 		<!--voyageone_cms2.cms_mt_channel_condition_config-->
 	<!--</select>-->
 
-	<select id="selectConditionPropValueByChannelId" parameterType="Map" resultType="com.voyageone.task2.cms.model.ConditionPropValueModel">
+	<select id="cms_bt_select_condition_prop_value_by_channel_id" parameterType="Map" resultType="com.voyageone.task2.cms.model.ConditionPropValueModel">
 		SELECT
 		*
 		FROM
