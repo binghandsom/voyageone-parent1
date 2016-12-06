@@ -6,12 +6,14 @@
           `cat_id`
         from cms_bt_sx_cn_product_sellercat
         where channel_id=#{channelId}
+        and  cart_id= #{cartId,jdbcType=INTEGER}
         and  upd_flg= '0'
     </select>
 
     <insert id="insertByList" >
         insert into voyageone_cms2.cms_bt_sx_cn_product_sellercat (
         channel_id,
+        cart_id,
         cat_id,
         upd_flg,
         created,
@@ -21,6 +23,7 @@
         ) value
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.channelId},
+            #{item.cartId},
             #{item.catId},
             '0',
             now(),
@@ -43,6 +46,7 @@
         </set>
         <where>
             `channel_id` = #{channelId,jdbcType=VARCHAR}
+            and  cart_id= #{cartId,jdbcType=INTEGER}
             and cat_id in
             <foreach item="item" index="index" collection="listCatId"
                      open="(" separator="," close=")">
