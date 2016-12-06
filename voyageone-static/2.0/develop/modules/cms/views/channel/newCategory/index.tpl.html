@@ -205,34 +205,34 @@
                         <table class="table table-hover-new table-hover" style="min-width:1200px">
                             <thead>
                                 <tr>
-                                    <th class="mfb-xt text-center"><input type="checkbox" ng-click="ctrl.selectAll($event)" class="v-sub">&nbsp;全选</th>
-                                    <th class="mfb-xxt text-center">图片</th>
-                                    <th class="mfb-xxt text-center">商品页面编号</th>
-                                    <th class="mfb-xxt text-center">款号</th>
-                                    <th class="mfb-xxt text-left">商品名称</th>
-                                    <th class="mfb-xxt text-left">品牌</th>
-                                    <th class="mfb-xxt text-center">Code</th>
-                                    <th class="mfb-xxt text-right">中国最终售价</th>
-                                    <th class="mfb-xxt text-right">库存</th>
-                                    <th class="mfb-xxt text-right">sku数</th>
+                                    <th class="mfb-xt text-center v-middle"><input type="checkbox" ng-click="ctrl.selectAll($event)" class="v-sub">&nbsp;全选</th>
+                                    <th class="mfb-xxt text-center v-middle">图片</th>
+                                    <th class="mfb-xxt text-center v-middle">商品页面编号</th>
+                                    <th class="mfb-xxt text-center v-middle">款号</th>
+                                    <th class="mfb-xxt text-left v-middle">商品名称</th>
+                                    <th class="mfb-xxt text-left v-middle">品牌</th>
+                                    <th class="mfb-xxt text-center v-middle">Code</th>
+                                    <th class="mfb-xxt text-right v-middle">中国最终售价</th>
+                                    <th class="mfb-xxt text-right v-middle">库存</th>
+                                    <th class="mfb-xxt text-right v-middle">sku数</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in ctrl.modelList">
-                                    <td class="mfb-xt text-center"><input type="checkbox" ng-true-value="true"
+                                    <td class="mfb-xt text-center v-middle"><input type="checkbox" ng-true-value="true"
                                                                                           ng-false-value="false"
                                                                                           ng-model="item.isChecked" class="v-sub" /> </td>
-                                    <td class="mfb-xxt text-center">
+                                    <td class="mfb-xxt text-center v-middle">
                                         <img class="thumb-sm-search" image="{{item.image1}}"  />
                                     </td>
-                                    <td class="mfb-xxt text-center">{{item.pNumIId}}</td>
-                                    <td class="mfb-xxt text-center">{{item.model}}</td>
-                                    <td class="mfb-xxt text-left">{{item.productName}}</td>
-                                    <td class="mfb-xxt text-left">{{item.brand}}</td>
-                                    <td class="mfb-xxt text-center">{{item.code}}</td>
-                                    <td class="mfb-xxt text-right">{{item.pPriceSaleEd}}</td>
-                                    <td class="mfb-xxt text-right">{{item.quantity}}</td>
-                                    <td class="mfb-xxt text-right">{{item.skuCount}}</td>
+                                    <td class="mfb-xxt text-center v-middle">{{item.pNumIId}}</td>
+                                    <td class="mfb-xxt text-center v-middle">{{item.model}}</td>
+                                    <td class="mfb-xxt text-left v-middle">{{item.productName}}</td>
+                                    <td class="mfb-xxt text-left v-middle">{{item.brand}}</td>
+                                    <td class="mfb-xxt text-center v-middle">{{item.code}}</td>
+                                    <td class="mfb-xxt text-right v-middle">{{item.pPriceSaleEd}}</td>
+                                    <td class="mfb-xxt text-right v-middle">{{item.quantity}}</td>
+                                    <td class="mfb-xxt text-right v-middle">{{item.skuCount}}</td>
                                 </tr>
                             </tbody>
                         </table>
