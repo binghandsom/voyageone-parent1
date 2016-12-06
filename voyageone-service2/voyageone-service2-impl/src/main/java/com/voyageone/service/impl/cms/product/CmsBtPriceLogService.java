@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,8 +79,17 @@ public class CmsBtPriceLogService extends BaseService {
         }
         int rs = priceLogDaoExt.insertCmsBtPriceLogList(paramList);
 
-        if(paramList.size()>0)
-            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(paramList.get(0))));
+        if(paramList.size()>0){
+            Map<String,CmsBtPriceLogModel> paramMap = new HashMap<>();
+            for(CmsBtPriceLogModel cmsBtPriceLogModel:paramList){
+                String key = String.format("%s-%d-%d",cmsBtPriceLogModel.getChannelId(),cmsBtPriceLogModel.getProductId(),cmsBtPriceLogModel.getCartId());
+                if(!paramMap.containsKey(key)){
+                    paramMap.put(key, cmsBtPriceLogModel);
+                }
+            }
+            paramMap.forEach((s, cmsBtPriceLogModel) -> sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(cmsBtPriceLogModel))));
+        }
+
 //        for (CmsBtPriceLogModel newLog : paramList)
 //            // 向Mq发送消息同步sku,code,group价格范围
 //            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(newLog)));

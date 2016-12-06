@@ -570,6 +570,187 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             // 千克(common.fields.WeighKG)
                             if (productModel.getCommon().getFields().getWeightKG().compareTo(0.0d) != 0)
                                 prCommonFields.setWeightKG(productModel.getCommon().getFields().getWeightKG());
+
+                            // CMCDOC-354 子店->总店更新产品common.fields时，总的原则是总店没有设置时，就用子店的设置（子店也有可能追加字段）
+                            // 款号(common.fields.model)
+                            if (StringUtil.isEmpty(prCommonFields.getModel())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getModel())) {
+                                prCommonFields.setModel(productModel.getCommonNotNull().getFieldsNotNull().getModel());
+                            }
+
+                            // 商品编码(common.fields.code)
+                            if (StringUtil.isEmpty(prCommonFields.getCode())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCode())) {
+                                prCommonFields.setCode(productModel.getCommonNotNull().getFieldsNotNull().getCode());
+                            }
+
+                            // 原始code 原商品编码(common.fields.originalCode)
+                            if (StringUtil.isEmpty(prCommonFields.getOriginalCode())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalCode())) {
+                                prCommonFields.setOriginalCode(productModel.getCommonNotNull().getFieldsNotNull().getOriginalCode());
+                            }
+
+                            // 品牌(common.fields.brand)
+                            if (StringUtil.isEmpty(prCommonFields.getBrand())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getBrand())) {
+                                prCommonFields.setBrand(productModel.getCommonNotNull().getFieldsNotNull().getBrand());
+                            }
+
+                            // 选择的尺码对照(common.fields.sizeChart)
+                            if (StringUtil.isEmpty(prCommonFields.getSizeChart())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart())) {
+                                prCommonFields.setSizeChart(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart());
+                            }
+
+                            // 产品名称英文(common.fields.productNameEn)
+                            if (StringUtil.isEmpty(prCommonFields.getProductNameEn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getProductNameEn())) {
+                                prCommonFields.setProductNameEn(productModel.getCommonNotNull().getFieldsNotNull().getProductNameEn());
+                            }
+
+                            // 产品名称中文(common.fields.originalTitleCn)
+                            if (StringUtil.isEmpty(prCommonFields.getOriginalTitleCn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn())) {
+                                prCommonFields.setOriginalTitleCn(productModel.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn());
+                            }
+
+                            // 简短描述英语(common.fields.shortDesEn)
+                            if (StringUtil.isEmpty(prCommonFields.getShortDesEn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getShortDesEn())) {
+                                prCommonFields.setShortDesEn(productModel.getCommonNotNull().getFieldsNotNull().getShortDesEn());
+                            }
+
+                            // 简短描述中文(common.fields.shortDesCn)
+                            if (StringUtil.isEmpty(prCommonFields.getShortDesCn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getShortDesCn())) {
+                                prCommonFields.setShortDesCn(productModel.getCommonNotNull().getFieldsNotNull().getShortDesCn());
+                            }
+
+                            // 详情描述英语(common.fields.longDesEn)
+                            if (StringUtil.isEmpty(prCommonFields.getLongDesEn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getLongDesEn())) {
+                                prCommonFields.setLongDesEn(productModel.getCommonNotNull().getFieldsNotNull().getLongDesEn());
+                            }
+
+                            // 详情描述中文(common.fields.longDesCn)
+                            if (StringUtil.isEmpty(prCommonFields.getLongDesCn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getLongDesCn())) {
+                                prCommonFields.setLongDesCn(productModel.getCommonNotNull().getFieldsNotNull().getLongDesCn());
+                            }
+
+                            // 材质英文(common.fields.materialEn)
+                            if (StringUtil.isEmpty(prCommonFields.getMaterialEn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn())) {
+                                prCommonFields.setMaterialEn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialEn());
+                            }
+
+                            // 材质中文(common.fields.materialCn)
+                            if (StringUtil.isEmpty(prCommonFields.getMaterialCn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getMaterialCn())) {
+                                prCommonFields.setMaterialCn(productModel.getCommonNotNull().getFieldsNotNull().getMaterialCn());
+                            }
+
+                            // 颜色/口味/香型等(common.fields.color)
+                            if (StringUtil.isEmpty(prCommonFields.getColor())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getColor())) {
+                                prCommonFields.setColor(productModel.getCommonNotNull().getFieldsNotNull().getColor());
+                            }
+
+                            // 产地(common.fields.origin)
+                            if (StringUtil.isEmpty(prCommonFields.getOrigin())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getOrigin())) {
+                                prCommonFields.setOrigin(productModel.getCommonNotNull().getFieldsNotNull().getOrigin());
+                            }
+
+                            // 产品分类(common.fields.productType)
+                            if (StringUtil.isEmpty(prCommonFields.getProductType())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                                prCommonFields.setProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            }
+
+                            // 适用人群(common.fields.sizeType)
+                            if (StringUtil.isEmpty(prCommonFields.getSizeType())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeType())) {
+                                prCommonFields.setSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            }
+
+                            // 库存(common.fields.quantity)
+                            if ((prCommonFields.getQuantity() == null || prCommonFields.getQuantity() == 0)
+                                    && (productModel.getCommonNotNull().getFieldsNotNull().getQuantity() != null && productModel.getCommonNotNull().getFieldsNotNull().getQuantity() != 0)) {
+                                prCommonFields.setQuantity(productModel.getCommonNotNull().getFieldsNotNull().getQuantity());
+                            }
+
+                            // 品牌方商品地址(common.fields.clientProductUrl)
+                            if (StringUtil.isEmpty(prCommonFields.getClientProductUrl())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getClientProductUrl())) {
+                                prCommonFields.setClientProductUrl(productModel.getCommonNotNull().getFieldsNotNull().getClientProductUrl());
+                            }
+
+                            // 类目设置状态(common.fields.categoryStatus)
+                            if (StringUtil.isEmpty(prCommonFields.getCategoryStatus())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus())) {
+                                prCommonFields.setCategoryStatus(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus());
+                            }
+
+                            // 类目设置者(common.fields.categorySetter)
+                            if (StringUtil.isEmpty(prCommonFields.getCategorySetter())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter())) {
+                                prCommonFields.setCategorySetter(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter());
+                            }
+
+                            // 类目设置时间(common.fields.categorySetTime)
+                            if (StringUtil.isEmpty(prCommonFields.getCategorySetTime())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime())) {
+                                prCommonFields.setCategorySetTime(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime());
+                            }
+
+                            // 商品翻译状态(common.fields.translateStatus)
+                            if (StringUtil.isEmpty(prCommonFields.getTranslateStatus())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
+                                prCommonFields.setTranslateStatus(productModel.getCommonNotNull().getFieldsNotNull().getTranslateStatus());
+                            }
+
+                            // 翻译者(common.fields.translator)
+                            if (StringUtil.isEmpty(prCommonFields.getTranslator())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getTranslator())) {
+                                prCommonFields.setTranslator(productModel.getCommonNotNull().getFieldsNotNull().getTranslator());
+                            }
+
+                            // 翻译时间(common.fields.translateTime)
+                            if (StringUtil.isEmpty(prCommonFields.getTranslateTime())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getTranslateTime())) {
+                                prCommonFields.setTranslateTime(productModel.getCommonNotNull().getFieldsNotNull().getTranslateTime());
+                            }
+
+                            // 商品特质英文（颜色/口味/香型等）(common.fields.codeDiff)
+                            if (StringUtil.isEmpty(prCommonFields.getCodeDiff())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff())) {
+                                prCommonFields.setCodeDiff(productModel.getCommonNotNull().getFieldsNotNull().getCodeDiff());
+                            }
+
+                            // 使用说明英语(common.fields.usageEn)
+                            if (StringUtil.isEmpty(prCommonFields.getUsageEn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getUsageEn())) {
+                                prCommonFields.setUsageEn(productModel.getCommonNotNull().getFieldsNotNull().getUsageEn());
+                            }
+
+                            // 使用说明中文(common.fields.usageCn)
+                            if (StringUtil.isEmpty(prCommonFields.getUsageCn())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getUsageCn())) {
+                                prCommonFields.setUsageCn(productModel.getCommonNotNull().getFieldsNotNull().getUsageCn());
+                            }
+
+                            // App端启用开关(用于控制所有平台的)(common.fields.appSwitch)只在主店未设置的时候COPY子店的，主店子店可以单独来设置
+                            if (prCommonFields.getAppSwitch() == null
+                                    && productModel.getCommonNotNull().getFieldsNotNull().getAppSwitch() != null) {
+                                prCommonFields.setAppSwitch(productModel.getCommonNotNull().getFieldsNotNull().getAppSwitch());
+                            }
+
+                            // VO佣金费率,商品级(common.fields.commissionRate)
+                            if ((prCommonFields.getCommissionRate() == null || prCommonFields.getCommissionRate().compareTo(0.0d) == 0)
+                                    && (productModel.getCommonNotNull().getFieldsNotNull().getCommissionRate() != null && productModel.getCommonNotNull().getFieldsNotNull().getCommissionRate().compareTo(0.0d) != 0)) {
+                                prCommonFields.setCommissionRate(productModel.getCommonNotNull().getFieldsNotNull().getCommissionRate());
+                            }
                         }
 
                         // ****************common.skus的更新(有的sku可能在拆分后的product中)****************
