@@ -42,7 +42,7 @@ import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmItemServic
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmProductService;
 import com.voyageone.task2.cms.service.CmsBuildPlatformProductUploadTmService;
 import com.voyageone.task2.cms.service.CmsPlatformProductImportTmFieldsService;
-import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
+//import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,8 +109,8 @@ public class SxGetProductInfoTest {
     @Autowired
     private CmsMtPlatformMappingDeprecatedDao cmsMtPlatformMappingDao;
 
-    @Autowired
-    private ConditionPropValueRepo conditionPropValueRepo;
+//    @Autowired
+//    private ConditionPropValueRepo conditionPropValueRepo;
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
@@ -2690,52 +2690,52 @@ public class SxGetProductInfoTest {
         System.out.println(val);
     }
 
-	/**
-     * 只是用来测试, 真实逻辑不是这样的
-     */
-    @Test
-    public void testShopCustomCategory() throws Exception {
-        String Separtor_Semicolon = ";";
-        ShopBean shop = new ShopBean();
-        shop.setOrder_channel_id("010");
-        shop.setCart_id("23");
-
-        // 多个条件表达式用分号分隔用
-        StringBuilder builder = new StringBuilder();
-        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids"加cartId
-        String platformPropId = "seller_cids_" + shop.getCart_id();
-
-        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
-
-        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
-        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
-
-        // 优先使用条件表达式
-        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
-            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
-                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
-                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
-                // ===================expressionParser会被共通函数替换掉================================
-                String propValue = expressionParser.parse(conditionExpression, shop, "tom", null);  // TODO No.8 调用共通函数
-//                String propValue = "";
-                // 多个表达式(2392231-4345291格式)用分号分隔
-                if (propValue != null) {
-                    builder.append(propValue);
-                    builder.append(Separtor_Semicolon);   // 用分号(";")分隔
-                }
-            }
-        }
-        // 移除最后的分号
-        if (builder.length() > 0) {
-            builder.deleteCharAt(builder.length() - 1);
-        }
-
-        // 店铺种类
-        System.out.println(builder.toString());
-
-    }
+//	/**
+//     * 只是用来测试, 真实逻辑不是这样的
+//     */
+//    @Test
+//    public void testShopCustomCategory() throws Exception {
+//        String Separtor_Semicolon = ";";
+//        ShopBean shop = new ShopBean();
+//        shop.setOrder_channel_id("010");
+//        shop.setCart_id("23");
+//
+//        // 多个条件表达式用分号分隔用
+//        StringBuilder builder = new StringBuilder();
+//        // 条件表达式表platform_prop_id字段的检索条件为"seller_cids"加cartId
+//        String platformPropId = "seller_cids_" + shop.getCart_id();
+//
+//        // 根据channelid和platformPropId取得cms_bt_condition_prop_value表的条件表达式
+//        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+//
+//        SxData sxData = sxProductService.getSxProductDataByGroupId("066", Long.valueOf("333"));
+//        ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
+//
+//        // 优先使用条件表达式
+//        if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
+//            RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//            for (ConditionPropValueModel conditionPropValueModel : conditionPropValueModels) {
+//                String conditionExpressionStr = conditionPropValueModel.getCondition_expression();
+//                RuleExpression conditionExpression = ruleJsonMapper.deserializeRuleExpression(conditionExpressionStr);
+//                // ===================expressionParser会被共通函数替换掉================================
+//                String propValue = expressionParser.parse(conditionExpression, shop, "tom", null);  // TODO No.8 调用共通函数
+////                String propValue = "";
+//                // 多个表达式(2392231-4345291格式)用分号分隔
+//                if (propValue != null) {
+//                    builder.append(propValue);
+//                    builder.append(Separtor_Semicolon);   // 用分号(";")分隔
+//                }
+//            }
+//        }
+//        // 移除最后的分号
+//        if (builder.length() > 0) {
+//            builder.deleteCharAt(builder.length() - 1);
+//        }
+//
+//        // 店铺种类
+//        System.out.println(builder.toString());
+//
+//    }
 
     @Test
     public void testJdPriceSection() throws Exception {
