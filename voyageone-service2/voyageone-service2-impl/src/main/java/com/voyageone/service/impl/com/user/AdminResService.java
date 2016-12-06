@@ -125,8 +125,8 @@ public class AdminResService extends BaseService {
         }
 
         comResourceDao.insert(model);
-        comUserService.reloadFilterChainDefinitionMap();
-        comUserService.clearAllCachedAuthorizationInfo();
+//        comUserService.reloadFilterChainDefinitionMap();
+//        comUserService.clearAllCachedAuthorizationInfo();
     }
 
 
@@ -155,8 +155,8 @@ public class AdminResService extends BaseService {
         }
 
         comResourceDao.update(model);
-        comUserService.reloadFilterChainDefinitionMap();
-        comUserService.clearAllCachedAuthorizationInfo();
+//        comUserService.reloadFilterChainDefinitionMap();
+//        comUserService.clearAllCachedAuthorizationInfo();
     }
 
     /**
