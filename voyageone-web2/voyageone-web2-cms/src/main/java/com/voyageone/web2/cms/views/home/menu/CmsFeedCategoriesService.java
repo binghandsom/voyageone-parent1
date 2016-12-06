@@ -62,7 +62,20 @@ public final class CmsFeedCategoriesService extends BaseViewService {
 
         return result;
     }
+    /**
+     * 获取feed类目树形结构
+     */
+    public List<CmsMtCategoryTreeModel> getFeedCategoryTree(String channelId) throws IOException {
 
+        // 获取整个类目树
+        List<CmsMtFeedCategoryTreeModel> feedCategorys = feedCategoryTreeService.getFeedAllCategoryTree(channelId);
+
+        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
+        for (CmsMtFeedCategoryTreeModel feedCategory : feedCategorys) {
+            result.add(buildFeedCategoryBean(feedCategory, null, false));
+        }
+        return result;
+    }
     /**
      * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
      */

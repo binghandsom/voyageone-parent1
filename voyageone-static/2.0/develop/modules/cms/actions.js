@@ -50,7 +50,8 @@ define(function () {
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
                     "getHomeSumData": "getHomeSumData",
-                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
+                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
+                    getMenuHeaderInfo:"getMenuHeaderInfo"
                 }
             },
             "search": {

@@ -177,29 +177,43 @@ define([
          */
         function getMenuHeaderInfo() {
             var defer = $q.defer();
-            ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-                .then(function (response) {
-                    var data = response.data;
+            $menuService.getMenuHeaderInfo().then(function (response) {
+                        var data = response.data;
+                        userlanguage = data.userInfo.language;
+                        // 设置画面用户显示的语言
+                        _.forEach(data.languageList, function (language) {
 
-                    // 获取用户语言
-                    //var userlanguage = translateService.getBrowserLanguage();
-                    //if (!_.isEmpty(cookieService.language()))
-                    //    userlanguage = cookieService.language();
-                    //else if (!_.isEmpty(data.userInfo.language))
-                    userlanguage = data.userInfo.language;
-
-                    // 设置画面用户显示的语言
-                    _.forEach(data.languageList, function (language) {
-
-                        if (_.isEqual(userlanguage, language.name)) {
-                            data.userInfo.language = language.add_name1;
-                            translateService.setLanguage(language.add_name2);
-                        }
-                    });
-
-                    //data.userInfo.application = cookieService.application();  服务端已经返回
-                    defer.resolve(data);
-                });
+                            if (_.isEqual(userlanguage, language.name)) {
+                                data.userInfo.language = language.add_name1;
+                                translateService.setLanguage(language.add_name2);
+                            }
+                        });
+                        //data.userInfo.application = cookieService.application();  服务端已经返回
+                        defer.resolve(data);
+            });
+            // ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
+            //     .then(function (response) {
+            //         var data = response.data;
+            //
+            //         // 获取用户语言
+            //         //var userlanguage = translateService.getBrowserLanguage();
+            //         //if (!_.isEmpty(cookieService.language()))
+            //         //    userlanguage = cookieService.language();
+            //         //else if (!_.isEmpty(data.userInfo.language))
+            //         userlanguage = data.userInfo.language;
+            //
+            //         // 设置画面用户显示的语言
+            //         _.forEach(data.languageList, function (language) {
+            //
+            //             if (_.isEqual(userlanguage, language.name)) {
+            //                 data.userInfo.language = language.add_name1;
+            //                 translateService.setLanguage(language.add_name2);
+            //             }
+            //         });
+            //
+            //         //data.userInfo.application = cookieService.application();  服务端已经返回
+            //         defer.resolve(data);
+            //     });
             return defer.promise;
         }
 
@@ -317,8 +331,10 @@ define([
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
                 $rootScope.menuTree = data.menuTree;
+                $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
+                console.log(data.feedCategoryTreeList);
             });
         }
 
@@ -418,6 +434,7 @@ define([
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
+        $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
 
         function initialize() {
             menuService.getPlatformType().then(function (data) {
@@ -442,6 +459,9 @@ define([
             });
         }
 
+        function goAdvanceSearchByFeedCat(catPath,catId) {
+            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/"+ catId);
+        }
         /**
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
