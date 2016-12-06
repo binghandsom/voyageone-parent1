@@ -333,6 +333,10 @@ public class CmsAdvSearchQueryService extends BaseService {
             fCatPathStr.append("]}");
             queryObject.addQuery(fCatPathStr.toString());
             queryObject.addParameters(parameters.toArray());
+            // 2016-12-06 追加feed.subCategories
+            queryObject.addQuery("{'feed.subCategories':{$in:#}}");
+            queryObject.addParameters(parameters);
+
         }
 
         // 获取 master category
