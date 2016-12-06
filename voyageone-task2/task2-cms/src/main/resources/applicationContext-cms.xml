@@ -119,8 +119,8 @@
         <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!-- sneakerhead 导入 cms2 -->
-        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
+        <!-- SneakerHead feed 导入 cms2 -->
+        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 0/2 * * ?"/>
 
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
