@@ -19,10 +19,13 @@ import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
+import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
+import com.voyageone.service.impl.cms.sx.CnCategoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -73,6 +76,10 @@ public class SellerCatService extends BaseService {
 
     @Autowired
     CnSellerCatService cnSellerCatService;
+    @Autowired
+    private CnCategoryService cnCategoryService;
+    @Autowired
+    private ProductStatusHistoryService productStatusHistoryService;
 
     /**
      * 获取店铺自定义分类的相关配置参数
@@ -135,6 +142,7 @@ public class SellerCatService extends BaseService {
      */
     private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
         CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
+        copyRoot.set_id(node.get_id());
         copyRoot.setCatId(node.getCatId());
         copyRoot.setCatName(node.getCatName());
         copyRoot.setParentCatId(node.getParentCatId());
@@ -216,6 +224,10 @@ public class SellerCatService extends BaseService {
             throw new BusinessException("重复的店铺内分类!");
         }
 
+        List<CmsBtSellerCatModel> sellercats1 = getSellerCatsByChannelCart(channelId, cartId, true);
+
+        int index = this.indexOfCurrentCat(sellercats1, currentNode.getParentCatId(), cId);
+
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         String shopCartId = shopBean.getCart_id();
         if (isJDPlatform(shopBean)) {
@@ -236,6 +248,28 @@ public class SellerCatService extends BaseService {
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
         }
+    }
+
+    private int indexOfCurrentCat (List<CmsBtSellerCatModel> sellercats, String parentCid, String cId) {
+        int index = -1;
+        if (CollectionUtils.isNotEmpty(sellercats)) {
+            for (CmsBtSellerCatModel node : sellercats) {
+                index++;
+                if (node.getParentCatId().equalsIgnoreCase(parentCid) && node.getCatId().equalsIgnoreCase(cId)) {
+                    return index;
+                }
+                List<CmsBtSellerCatModel> children = node.getChildren();
+                if (CollectionUtils.isNotEmpty(children)) {
+                    int temp = indexOfCurrentCat(children, node.getCatId(), cId);
+                    if (temp != -1) {
+                        return temp;
+                    }else {
+                        continue;
+                    }
+                }
+            }
+        }
+        return index;
     }
 
     /**
@@ -271,9 +305,28 @@ public class SellerCatService extends BaseService {
         //删除product表中所有的店铺内分类
         if (deleted != null) {
             List<CmsBtProductModel> list = cmsBtProductDao.deleteSellerCat(channelId, deleted, cartId, modifier);
-
             //插入上新表
             insert2SxWorkload(channelId, cartId, modifier, list);
+            // 商品目录删除，新增履历 add by rex.wu 2016-12-06
+            insertProductStatusHistor(channelId, cartId, modifier, list);
+        }
+    }
+
+    /**
+     * 商品所属分类被删除，插入履历
+     * @param channelId
+     * @param cartId
+     * @param modifier
+     * @param list
+     */
+    private void insertProductStatusHistor(String channelId, int cartId, String modifier, List<CmsBtProductModel> list) {
+        /*insertList(String channelId, List<String> codes, int cartId, EnumProductOperationType operationType, String comment, String modifier)*/
+        List<String> codes = new ArrayList<String>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            list.forEach(productModel -> {
+                codes.add(productModel.getCommonNotNull().getFieldsNotNull().getCode());
+            });
+            productStatusHistoryService.insertList(channelId, codes, cartId, EnumProductOperationType.CotegoryDeleted, "商品分配被删除", modifier);
         }
     }
 
@@ -625,6 +678,11 @@ public class SellerCatService extends BaseService {
             cmsBtSellerCatDao.insert(modelCat);
         }
         //重新设置店铺内分类的顺序
-//        doResetPlatformSellerCatIndex(channelId, cartId);
+        // doResetPlatformSellerCatIndex(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        if (shopBean != null && (CartEnums.Cart.LIKING.getId().equals(shopBean.getCart_id()) || CartEnums.Cart.CN.getId().equals(shopBean.getCart_id()))) {
+            cnCategoryService.uploadAllCnCategory(channelId, cartId, shopBean);
+        }
+
     }
 }
