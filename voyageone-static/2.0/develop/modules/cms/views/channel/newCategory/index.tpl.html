@@ -23,7 +23,7 @@
             <div class="container-fluid">
                 <div class="row form-horizontal">
                     <div class="col-md-2 form-group">
-                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;<ins>{{ctrl.topList.length}}</ins></label>
+                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;{{ctrl.topList.length}}&nbsp;个</label>
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
@@ -165,7 +165,7 @@
                         </div>
                         <div class="col-md-3 col-md-offset-5 text-right">
                                 <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
-                                <div class="btn-group" uib-dropdown style="margin-right: 30px">
+                                <div class="btn-group" uib-dropdown style="margin-right: 80px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                         &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
                                               <span ng-if="!ctrl.sort.sName">排序</span>&nbsp;<span class="caret"></span>
