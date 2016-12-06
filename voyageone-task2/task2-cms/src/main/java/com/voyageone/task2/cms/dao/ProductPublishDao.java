@@ -35,7 +35,7 @@ public class ProductPublishDao extends BaseDao {
     //  从oms系统导入产品前90天订单信息
     public List<Map> selectProductOrderCount(int cartId, String channelId, long oIdx, long oLimit) {
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("cartId", cartId);
+        dataMap.put("cartId", String.valueOf(cartId));
         dataMap.put("channelId", channelId);
         dataMap.put("oIdx", oIdx);
         dataMap.put("oLimit", oLimit);
