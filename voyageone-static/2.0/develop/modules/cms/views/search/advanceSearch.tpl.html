@@ -882,7 +882,7 @@
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
                                             </span>
-                                            <!-- 商品平台状态-->
+                                            <!-- Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.carts">
                                                 <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
                                                     <span ng-if="cartsObj._purl">
@@ -891,14 +891,13 @@
                                                     <span ng-if="!cartsObj._purl" ng-class="{'mainPrd':cartsObj._isMain}">{{cartsObj._pTxt}}</span>
                                                 </span>
                                             </span>
-                                            <!-- 美国商品平台状态 -->
-                                            <span class="label m-l-sm" ng-if="productInfo.usPlatforms">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="usPlatform in productInfo.usPlatforms">
+                                            <!-- Todo 美国商品平台状态 -->
+                                            <span ng-if="productInfo.usPlatforms">
+                                                <span class="m-t-xs"  ng-repeat="usPlatform in productInfo.usPlatforms">
                                                     <platform-status data="{cartId:usPlatform.cartId,
-                                                       status:usPlatform.status,
-                                                       pStatus:usPlatform.status,
-                                                       pReallyStatus:usPlatform.status}">
-                                                    </platform-status>
+                                                       status:'Approved',
+                                                       pStatus:usPlatform.status}">
+                                                    </platform-status>&nbsp;&nbsp;
                                                 </span>
                                             </span>
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
@@ -1057,12 +1056,22 @@
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>
+                                            <!-- Todo 商品平台状态 -->
                                             <span class="label m-l-sm" ng-if="groupInfo.carts">
                                                 <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in groupInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
                                                     <span ng-if="cartsObj._purl">
                                                         <a ng-href="{{cartsObj._purl}}" ng-class="{'mainPrd':cartsObj._isMain}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pTxt}}</a>
                                                     </span>
                                                     <span ng-if="!cartsObj._purl" ng-class="{'mainPrd':cartsObj._isMain}">{{cartsObj._pTxt}}</span>
+                                                </span>
+                                            </span>
+                                            <!-- Todo 美国商品平台状态 -->
+                                            <span ng-if="groupInfo.usPlatforms">
+                                                <span class="m-t-xs"  ng-repeat="usPlatform in groupInfo.usPlatforms">
+                                                    <platform-status data="{cartId:usPlatform.cartId,
+                                                       status:'Approved',
+                                                       pStatus:usPlatform.status}">
+                                                    </platform-status>&nbsp;&nbsp;
                                                 </span>
                                             </span>
                                             <span class="label m-r-sm m-l"
