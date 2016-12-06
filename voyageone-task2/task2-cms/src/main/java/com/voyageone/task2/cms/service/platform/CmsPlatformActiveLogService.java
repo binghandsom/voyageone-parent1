@@ -155,9 +155,9 @@ public class CmsPlatformActiveLogService extends BaseMQCmsService {
             platformStatus = CmsConstants.PlatformStatus.InStock.name();
         }
         // 调用实际的上下架Api，记录调用结果，在group表和product表更新相关状态
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, platformActiveLogDao, channelId);
-        BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, channelId);
-        BulkJongoUpdateList bulkList3 = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(100, platformActiveLogDao, channelId);
+        BulkJongoUpdateList bulkList2 = new BulkJongoUpdateList(100, cmsBtProductGroupDao, channelId);
+        BulkJongoUpdateList bulkList3 = new BulkJongoUpdateList(100, cmsBtProductDao, channelId);
 
         boolean updRsFlg;
         String errMsg;

@@ -28,6 +28,8 @@ public class CmsBtProductModel_Feed  {
 
     private List<String> customIdsCn = new ArrayList<>();
 
+    private List<String> subCategories = new ArrayList<>();
+
     //catId
     public String getCatPath() {
         return catPath;
@@ -82,5 +84,13 @@ public class CmsBtProductModel_Feed  {
 
     public void setBrand(String brand) {
         this.brand = brand;
+    }
+
+    public List<String> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List<String> subCategories) {
+        this.subCategories = subCategories;
     }
 }

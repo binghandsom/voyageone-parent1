@@ -107,6 +107,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         return "CmsBuildPlatformProductUploadTmTongGouJob";
     }
 
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     /**
      * 天猫国际官网同购上新处理
      *
@@ -122,7 +124,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueRepo.init();
+        channelConditionConfig = new HashMap<>();
+        if (ListUtils.notNull(channelIdList)) {
+            for (final String orderChannelID : channelIdList) {
+                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+            }
+        }
 
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
@@ -917,7 +924,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
         // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(sxData.getChannelId(), platformPropId);
+        List<ConditionPropValueModel> conditionPropValueModels = null;
+        if (channelConditionConfig.containsKey(sxData.getChannelId())) {
+            if (channelConditionConfig.get(sxData.getChannelId()).containsKey(platformPropId)) {
+                conditionPropValueModels = channelConditionConfig.get(sxData.getChannelId()).get(platformPropId);
+            }
+        }
 
         // 使用运费模板或关联版式条件表达式
         if (ListUtils.isNull(conditionPropValueModels))
@@ -1149,7 +1161,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 条件表达式表platform_prop_id字段的检索条件为条件表达式前缀加cartId
         String platformPropId = prePropId + "_" + StringUtils.toString(cartId);
         // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(channelId, platformPropId);
+        List<ConditionPropValueModel> conditionPropValueModels = null;
+        if (channelConditionConfig.containsKey(channelId)) {
+            if (channelConditionConfig.get(channelId).containsKey(platformPropId)) {
+                conditionPropValueModels = channelConditionConfig.get(channelId).get(platformPropId);
+            }
+        }
 
         // 使用运费模板或关联版式条件表达式
         if (ListUtils.notNull(conditionPropValueModels)) {

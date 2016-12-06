@@ -8,7 +8,7 @@ import java.util.Date;
  * @author gjl on 2016/11/15.
  * @version 0.0.1
  */
-public class SneakerHeadRequest {
+public class SneakerHeadFeedInfoRequest {
 
     private int PageSize = 10;
 

@@ -275,7 +275,7 @@ public class CnCategoryService extends BaseService {
      * @param listCatId 类目id列表
      * @return 更新件数
      */
-    public int updateProductSellercatForUpload(String channelId, Set<String> listCatId, String modifier) {
+    public int updateProductSellercatForUpload(String channelId, int cartId, Set<String> listCatId, String modifier) {
         int updateCnt = 0;
 
         Map<String, Object> searchParam = new HashMap<>();
@@ -290,6 +290,7 @@ public class CnCategoryService extends BaseService {
                 // insert
                 CmsBtSxCnProductSellercatModel model = new CmsBtSxCnProductSellercatModel();
                 model.setChannelId(channelId);
+                model.setCartId(cartId);
                 model.setCatId(catId);
                 model.setCreater(modifier);
                 listInsertData.add(model);
@@ -302,7 +303,7 @@ public class CnCategoryService extends BaseService {
             updateCnt += cmsBtSxCnProductSellercatDaoExt.insertByList(listInsertData);
         }
         if (!listUpdateData.isEmpty()) {
-            updateCnt += updateProductSellercatUpdFlg(channelId, listUpdateData, "0", modifier);
+            updateCnt += updateProductSellercatUpdFlg(channelId, cartId, listUpdateData, "0", modifier);
         }
 
         $info("cms_bt_sx_cn_product_sellercat更新了%d件!", updateCnt);
@@ -317,8 +318,8 @@ public class CnCategoryService extends BaseService {
      * @param updFlg 更新成的状态  0:未处理, 1:已处理
      * @return 更新件数
      */
-    public int updateProductSellercatUpdFlg(String channelId, List<String> listCatId, String updFlg, String modifier) {
-        int updateCnt = cmsBtSxCnProductSellercatDaoExt.updateFlgByCatIds(channelId, updFlg, modifier, listCatId);
+    public int updateProductSellercatUpdFlg(String channelId, int cartId, List<String> listCatId, String updFlg, String modifier) {
+        int updateCnt = cmsBtSxCnProductSellercatDaoExt.updateFlgByCatIds(channelId, cartId, updFlg, modifier, listCatId);
         $info("cms_bt_sx_cn_product_sellercat状态更新了%d件!", updateCnt);
         return updateCnt;
     }
@@ -328,7 +329,7 @@ public class CnCategoryService extends BaseService {
      *
      * @param channelId 渠道id
      */
-    public List<String> selectListWaitingUpload(String channelId) {
-        return cmsBtSxCnProductSellercatDaoExt.selectListWaitingUpload(channelId);
+    public List<String> selectListWaitingUpload(String channelId, int cartId) {
+        return cmsBtSxCnProductSellercatDaoExt.selectListWaitingUpload(channelId, cartId);
     }
 }
