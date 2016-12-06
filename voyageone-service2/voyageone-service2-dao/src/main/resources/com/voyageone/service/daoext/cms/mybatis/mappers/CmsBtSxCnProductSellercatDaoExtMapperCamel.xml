@@ -41,7 +41,7 @@
                 `modified` = now(),
             </if>
             <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
+                `modifier` = #{modifier,jdbcType=VARCHAR}
             </if>
         </set>
         <where>
