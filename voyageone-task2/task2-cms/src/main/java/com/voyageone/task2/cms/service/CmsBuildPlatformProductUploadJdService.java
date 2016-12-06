@@ -157,6 +157,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         return "CmsBuildPlatformProductUploadJdJob";
     }
 
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     /**
      * 京东平台上新处理
      *
@@ -169,7 +171,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueRepo.init();
+        channelConditionConfig = new HashMap<>();
+        if (ListUtils.notNull(channelIdList)) {
+            for (final String orderChannelID : channelIdList) {
+                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+            }
+        }
 
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
@@ -2019,7 +2026,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
         // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+        List<ConditionPropValueModel> conditionPropValueModels = null;
+        if (channelConditionConfig.containsKey(shop.getOrder_channel_id())) {
+            if (channelConditionConfig.get(shop.getOrder_channel_id()).containsKey(platformPropId)) {
+                conditionPropValueModels = channelConditionConfig.get(shop.getOrder_channel_id()).get(platformPropId);
+            }
+        }
 
         // 使用运费模板或关联版式条件表达式
         if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
