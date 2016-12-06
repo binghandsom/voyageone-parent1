@@ -114,11 +114,11 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         try {
             if ("2".equals(runType)) {
                 // 从cms_bt_platform_numiid表里抽出numIId去做
-                executeFromTable(shopBean, channelId, Integer.valueOf(cartId));
+                isSuccess = executeFromTable(shopBean, channelId, Integer.valueOf(cartId));
             } else
             if (StringUtils.isEmpty(numIId)) {
                 // 未指定某个商品，全店处理
-                executeAll(shopBean, channelId, cartId);
+                isSuccess = executeAll(shopBean, channelId, cartId);
             } else {
                 // 只处理指定的商品
                 executeMove(shopBean, channelId, Integer.valueOf(cartId), numIId, status);
@@ -141,22 +141,28 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         }
     }
 
-    private void executeFromTable(ShopBean shopBean, String channelId, int cartId) {
+    private boolean executeFromTable(ShopBean shopBean, String channelId, int cartId) {
         Map<String, Object> seachParam = new HashMap<>();
         seachParam.put("channelId", channelId);
         seachParam.put("cartId", cartId);
         seachParam.put("status", "0");
         List<CmsBtPlatformNumiidModel> listModel = cmsBtPlatformNumiidDao.selectList(seachParam);
+        if (ListUtils.isNull(listModel)) {
+            $warn("cms_bt_platform_numiid表未找到符合的数据!");
+            return false;
+        }
         List<String> listSuccessNumiid = new ArrayList<>();
         List<String> listErrorNumiid = new ArrayList<>();
+        boolean hasErrorData = false;
         int index = 1;
         for (CmsBtPlatformNumiidModel model : listModel) {
             String wareId = model.getNumIid();
-            $info(String.format("%s-%s京东分组 %d/%d", channelId, wareId, index, listModel.size()));
+            $info(String.format("%s-%s-%s京东分组 %d/%d", channelId, String.valueOf(cartId), wareId, index, listModel.size()));
             try {
                 executeMove(shopBean, channelId, cartId, wareId, model.getPlatformStatus());
                 listSuccessNumiid.add(wareId);
             } catch (Exception e) {
+                hasErrorData = true;
                 listErrorNumiid.add(wareId);
                 if (e instanceof BusinessException) {
                     $error(e.getMessage());
@@ -164,8 +170,20 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
                     e.printStackTrace();
                 }
             }
+            if (index % 300 == 0) {
+                // 怕中途断掉,300一更新
+                updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+                listSuccessNumiid.clear();
+                listErrorNumiid.clear();
+            }
             index++;
         }
+        updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+
+        return hasErrorData;
+    }
+
+    private void updateCmsBtPlatformNumiid(String channelId, int cartId, List<String> listSuccessNumiid, List<String> listErrorNumiid) {
         if (listSuccessNumiid.size() > 0) {
             cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, cartId, "1", getTaskName(), listSuccessNumiid);
         }
@@ -175,25 +193,34 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         $info(String.format("cms_bt_platform_numiid表里,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
     }
 
-    public void executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
+    public boolean executeAll(ShopBean shopBean, String channelId, String cartId) throws Exception {
         Map<CmsConstants.PlatformStatus, List<String>> wareIdMap = jdSaleService.getJdWareIdList(channelId, cartId);
+        List<String> errorList = new ArrayList<>();
 
         wareIdMap.forEach((status, wareIdList) -> {
             int index = 1;
             for (String wareId : wareIdList) {
-                $info(String.format("%s-%s京东[%s]分组 %d/%d", channelId, wareId, status.name(), index, wareIdList.size()));
+                $info(String.format("%s-%s-%s京东[%s]分组 %d/%d", channelId, cartId, wareId, status.name(), index, wareIdList.size()));
                 try {
                     executeMove(shopBean, channelId, Integer.valueOf(cartId), wareId, status);
                 } catch (Exception e) {
+                    errorList.add(wareId);
                     if (e instanceof BusinessException) {
-                        $error(e.getMessage());
+                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!" + e.getMessage(), channelId, cartId, wareId));
                     } else {
+                        $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!", channelId, cartId, wareId));
                         e.printStackTrace();
                     }
                 }
                 index++;
             }
         });
+
+        if (errorList.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -250,7 +277,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
                     "从Group:" + sourceGroupModel.getGroupId() + "移动到Group:" + newGroupModel.getGroupId(), getTaskName());
         }
 
-        $info(String.format("新group做成! numIId:%s, productCodes:%s", wareId, moveCods.keySet()));
+        $info(String.format("新group做成! channelId:%s, cartId:%s, numIId:%s, productCodes:%s", channelId, String.valueOf(cartId), wareId, moveCods.keySet()));
 
     }
 
@@ -291,9 +318,9 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         });
 
         if (moveCods.size() > 0) {
-            $info(String.format("group追加了code! numIId:%s, 追加的productCodes:%s", cmsBtProductGroup.getNumIId(), moveCods.keySet()));
+            $info(String.format("group追加了code! channelId:%s, cartId:%s, numIId:%s, 追加的productCodes:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId(), moveCods.keySet()));
         } else {
-            $info(String.format("group不需要追加code! numIId:%s", cmsBtProductGroup.getNumIId()));
+            $info(String.format("group不需要追加code! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId()));
         }
 
     }
