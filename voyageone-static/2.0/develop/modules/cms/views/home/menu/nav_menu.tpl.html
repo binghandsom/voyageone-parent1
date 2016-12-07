@@ -13,7 +13,7 @@
             <!-- 加载 商品分类 -->
             <div ng-switch-when="CMS_product_MANAGER">
 
-                <div ng-include="'categoryMenu'"></div>
+                <div ng-include="'categoryMenu'" ng-init="categoryTreeList=menuInfo.categoryTreeList"></div>
 
             </div>
 
@@ -38,7 +38,7 @@
 </script>
 
 <script id="categoryMenu" type="text/ng-template">
-    <div>
+    <div ng-if="categoryTreeList">
         <a class="auto" ui-sref="cms.category">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -47,6 +47,10 @@
             <i class="glyphicon glyphicon-th-list icon text-vo"></i>
             <span class="" translate="TXT_CATEGORY_MANAGER"></span>
         </a>
+        <!--为什么不行-->
+        <!--<ul class="nav nav-sub dk"  ng-if="categoryTreeList"  ng-include="'categoryMenuChild'" ng-init="categoryMenu =categoryTreeList"></ul>-->
+
+
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
