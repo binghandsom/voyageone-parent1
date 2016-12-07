@@ -365,7 +365,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, numIId));
             }
             tmSkuList.addAll(listSkuVal.stream()
-                    .filter(sku -> sku.get("sku_outerId") != null || !"".equals(sku.get("sku_outerId").toString()))
+                    .filter(sku -> sku.get("sku_outerId") != null && !"".equals(sku.get("sku_outerId").toString()))
                     .map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase())
                     .collect(Collectors.toList())); // 有OuterId为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
@@ -380,7 +380,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, numIId));
             }
             tmSkuList.addAll(listSkuVal.stream()
-                    .filter(sku -> sku.get("sku_outerId") != null || !"".equals(sku.get("sku_outerId").toString()))
+                    .filter(sku -> sku.get("sku_outerId") != null && !"".equals(sku.get("sku_outerId").toString()))
                     .map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase())
                     .collect(Collectors.toList())); // 有OuterId为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
