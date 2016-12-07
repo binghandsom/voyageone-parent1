@@ -144,6 +144,12 @@ public class AdminUserServiceTest {
     }
 
     @Test
+    public void testMovePermission2() throws Exception {
+        adminUserService.movePermission("018", 3 , "美国仓库角色");
+    }
+
+
+    @Test
     public void testMovePermission() throws Exception {
 
         adminUserService.movePermission("001", 2 , "普通客服1组");
