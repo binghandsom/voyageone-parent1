@@ -94,15 +94,15 @@
                     <table class="table table-hover-new text-center box-body">
                         <thead>
                             <tr>
-                                <th class="text-center" translate="组合套装sku"></th>
-                                <th class="text-left" translate="组合套装中国最终售价"></th>
-                                <th class="text-left" translate="组合套装优惠售价"></th>
-                                <th class="text-center" translate="创建时间"></th>
-                                <th class="text-center" translate="更新时间"></th>
+                                <th class="text-left" translate="组合套装sku"></th>
+                                <th class="text-right" translate="组合套装中国最终售价"></th>
+                                <th class="text-right" translate="组合套装优惠售价"></th>
+                                <th class="text-left" translate="创建时间"></th>
+                                <th class="text-left" translate="更新时间"></th>
                             </tr>
                         </thead>
                         <tbody ng-repeat="product in vm.products">
-                        <tr>
+                        <tr class="table_bg_gray">
                             <td colspan="5">
                                 <div class="row text-left">
                                     &emsp;
@@ -144,11 +144,11 @@
                             </td>
                         </tr>
                         <tr ng-repeat="sku in product.skus">
-                            <td class="text-center">{{sku.suitSkuCode}}</td>
-                            <td class="text-left">{{sku.suitSellingPriceCn}}</td>
-                            <td class="text-left">{{sku.suitPreferentialPrice}}</td>
-                            <td class="text-center">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
-                            <td class="text-center">{{product.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="text-left">{{sku.suitSkuCode}}</td>
+                            <td class="text-right">{{sku.suitSellingPriceCn}}</td>
+                            <td class="text-right">{{sku.suitPreferentialPrice}}</td>
+                            <td class="text-left">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="text-left">{{product.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                         </tr>
                         </tbody>
                     </table>
