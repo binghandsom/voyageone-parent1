@@ -2,7 +2,7 @@
  * Created by sofia on 2016/7/22.
  */
 
-angular.module("voyageone.angular.filter", []).filter("stringCutter", function() {
+angular.module("voyageone.angular.filter").filter("stringCutter", function() {
     return function (value, wordWise, max, tail) {
         if (!value) return '';
 
