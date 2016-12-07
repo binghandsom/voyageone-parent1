@@ -636,6 +636,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         List<String> sxCodeList = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
                         doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare, "京东上新SKU总库存为0时强制下架处理");
                     }
+                    // 上新成功时状态回写操作
+                    sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), CmsConstants.PlatformStatus.InStock, "", getTaskName());
                     return;
                 }
 
@@ -2106,7 +2108,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         Double resultPrice = 0.0;
         // 如果skuList为空（可能所有的sku都没有库存），直接返回0.0,否则后面会报"No value present"错误
-        if (ListUtils.isNull(skuList) || skuList.stream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).count() > 0) {
+        if (ListUtils.isNull(skuList) || skuList.stream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).count() == 0) {
             return 0.0;
         }
 
