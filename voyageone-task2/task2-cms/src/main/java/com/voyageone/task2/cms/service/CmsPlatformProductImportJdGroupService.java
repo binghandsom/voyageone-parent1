@@ -337,7 +337,8 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
             // modified by morse.lu 2016/11/18 start
             // 全小写比较skuCode
 //            return ware.getSkus().stream().map(sku -> sku.getOuterId()).collect(Collectors.toList());
-            return ware.getSkus().stream().map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList());
+//            return ware.getSkus().stream().map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList());
+            return ware.getSkus().stream().filter(sku -> !StringUtils.isEmpty(sku.getOuterId())).map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList()); // 有OuterI为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
         }
     }
