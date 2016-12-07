@@ -221,7 +221,7 @@ public class ProductTopService extends BaseService {
         if(cmsBtProductModel_sales!=null) {
             info.setSalesSum7(f.getSales().getCodeSum7(cartId));
             info.setSalesSum30(f.getSales().getCodeSum30(cartId));
-            info.setSalesSumYear(f.getSales().getCodeSumYear(cartId));
+            info.setSalesSum(f.getSales().getCodeSumAll(cartId));
         }
         //图片
         List<CmsBtProductModel_Field_Image> imgList = f.getCommonNotNull().getFieldsNotNull().getImages6();
