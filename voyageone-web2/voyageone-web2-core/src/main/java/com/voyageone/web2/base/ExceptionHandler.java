@@ -14,6 +14,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.base.log.LogService;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,8 +54,23 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
         this.debug = debug;
     }
 
+    private List<String> excludeUris;
+
+    public List<String> getExcludeUris() {
+        return excludeUris;
+    }
+
+    public void setExcludeUris(List<String> excludeUris) {
+        this.excludeUris = excludeUris;
+    }
+
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception exception) {
+
+        // ExClude return null
+        if (isExCludeUri(request)) {
+            return null;
+        }
 
         // 先创建默认的内容
         AjaxResponse result = new AjaxResponse();
@@ -235,6 +252,24 @@ public class ExceptionHandler extends VOAbsLoggable implements HandlerExceptionR
     @Override
     public int getOrder() {
         return 0;
+    }
+
+    /**
+     * isExCludeUri
+     */
+    private boolean isExCludeUri(HttpServletRequest request) {
+        if (!CollectionUtils.isEmpty(excludeUris)) {
+            String uri = request.getRequestURI();
+            if (uri != null) {
+                for (String excludeUri : excludeUris) {
+                    if(uri.contains(excludeUri)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
 
