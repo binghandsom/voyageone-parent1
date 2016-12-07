@@ -84,7 +84,6 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
-            console.log($routeParams);
             if($routeParams.type ==10001 )
             {
                 $scope.vm.searchInfo.fCatPathList=[$routeParams.value1];

@@ -1,5 +1,31 @@
-
--- DELETE FROM com_resource  WHERE id>8000;
+-- http://localhost:9091/modules/admin/app.html#/admin/resManage
+-- DELETE FROM com_resource  WHERE application='cms' and id>8000;
+-- CREATE TABLE IF NOT EXISTS `com_resource` (
+--   `id` INT(11) NOT NULL,
+--   `application` VARCHAR(10) DEFAULT NULL,
+--   `res_name` VARCHAR(100) DEFAULT NULL COMMENT '菜单资源名称',
+--   `res_key` VARCHAR(100) DEFAULT NULL COMMENT '资源Key',
+--   `res_type` INT(4) DEFAULT NULL COMMENT '菜单资源类型:0,系统;1,菜单,2,action;3,按钮;',
+--   `parent_id` INT(11) DEFAULT NULL COMMENT '父id',
+--   `parent_ids` VARCHAR(255) DEFAULT NULL,
+--   `weight` INT(11) DEFAULT '0',
+--   `res_url` VARCHAR(200) DEFAULT NULL,
+--   `icon` VARCHAR(100) DEFAULT NULL,
+--   `active` INT(1) DEFAULT '1',
+--   `description` VARCHAR(100) DEFAULT NULL,
+--   `created` TIMESTAMP NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '创建日期',
+--   `creater` VARCHAR(50) NOT NULL DEFAULT 'SYSTEM' COMMENT '创建人',
+--   `modified` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改日期',
+--   `modifier` VARCHAR(50) NOT NULL DEFAULT 'SYSTEM' COMMENT '修改人',
+--   `origin_id` INT(11) DEFAULT NULL,
+--   `origin_table` VARCHAR(30) DEFAULT NULL,
+--   `origin_name` VARCHAR(50) DEFAULT NULL,
+--   `show_in_menu` TINYINT(1) DEFAULT '1',
+--   `menu_title` VARCHAR(50) DEFAULT NULL,
+--   PRIMARY KEY (`id`),
+--   KEY `index_origin_id` (`origin_id`) USING BTREE,
+--   KEY `application` (`application`)
+-- ) ENGINE=INNODB DEFAULT CHARSET=utf8;
 
 -- feed管理
 INSERT  INTO `com_resource`(`id`,`application`,`res_name`,`res_key`,`res_type`,`res_url`,`icon`,`parent_id`,`parent_ids`,`weight`,`active`,`description`,`created`,`creater`,`modified`,`modifier`,`origin_id`,`origin_table`,`origin_name`,`show_in_menu`,`menu_title`) 
