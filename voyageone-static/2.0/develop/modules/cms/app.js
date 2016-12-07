@@ -334,10 +334,12 @@ define([
                 $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
-                console.log(data.feedCategoryTreeList);
+                console.log(data.menuTree)
             });
         }
-
+        $rootScope.isParentMenu=function(item) {
+            return item.children&& item.children.length > 0;
+        }
         /**
          * go to channel selected page.
          */
@@ -452,6 +454,7 @@ define([
          * @param cType
          */
         function selectPlatformType(cType) {
+            $scope.menuInfo.categoryTreeList=[];
             menuService.setPlatformType(cType).then(function (data) {
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;

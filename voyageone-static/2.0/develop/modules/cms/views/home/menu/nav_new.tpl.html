@@ -4,6 +4,7 @@
     <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
     <!-- Feed管理 -->
     <li ng-if="!$root.isTranslator">
+        <div>
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -74,10 +75,12 @@
                 <!--</a>-->
             <!--</li>-->
         </ul>
+        </div>
     </li>
 
     <!-- 商品管理 -->
     <li ng-if="!$root.isTranslator">
+        <div>
         <a class="auto" ui-sref="cms.category">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -108,10 +111,12 @@
                 <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
             </li>
         </ul>
+            </div>
     </li>
 
     <!-- 活动管理 -->
     <li ng-if="!$root.isTranslator">
+        <div>
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -168,6 +173,7 @@
                 </a>
             </li>
         </ul>
+            </div>
     </li>
 
     <!-- 素材管理 -->

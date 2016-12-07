@@ -3,8 +3,10 @@ package com.voyageone.web2.cms.views.home.menu;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.daoext.com.UserRolePropertyDao;
 import com.voyageone.service.impl.cms.SellerCatService;
+import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
@@ -78,8 +80,10 @@ public class CmsMenuService extends BaseViewService {
 
     @Autowired
     private UserRolePropertyDao userRolePropertyDao;
+    @Autowired
+    AdminResService adminResService;
 
-    public Map<String, Object> getMenuHeaderInfo(int userId, String channelId, String applicationId) throws IOException {
+    public Map<String, Object> getMenuHeaderInfo(int userId, String channelId,String userName) throws IOException {
 
         Map<String, Object> resultbean = new HashMap<>();
 
@@ -90,8 +94,14 @@ public class CmsMenuService extends BaseViewService {
         // 获取language列表.
         List<TypeBean> languageList = this.getLanguageList();
         resultbean.put("languageList", languageList);
+        //feed分类
         List<CmsMtCategoryTreeModel> categoryTreeList = cmsFeedCategoriesService.getFeedCategoryTree(channelId);
-        resultbean.put("feedCategoryTreeList",categoryTreeList);
+        resultbean.put("feedCategoryTreeList", categoryTreeList);
+
+        //菜单
+        List<AdminResourceBean> list = adminResService.getMenu("cms", userName);
+        resultbean.put("menuTree", list);
+
 //        Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
 //        resultbean.put("menuTree", menuTree);
         // TODO 临时对应翻译人员对应的权限

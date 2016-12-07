@@ -18,6 +18,7 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.CoreUrlConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -184,10 +185,11 @@ public class CmsMenuController extends CmsController {
     @RequestMapping(CmsUrlConstants.HOME.MENU.GetMenuHeaderInfo)
     public AjaxResponse getMenuHeaderInfo() throws IOException {
         //获取userId和channelId.
-        Integer userId = getUser().getUserId();
-        String channelId = getUser().getSelChannelId();
-        String applicationId=getUser().getApplicationId();
-        Map<String, Object> resultBean =menuService.getMenuHeaderInfo(userId,channelId,applicationId);
+        UserSessionBean userSessionBean=getUser();
+       String userName= userSessionBean.getUserName();
+        Integer userId =userSessionBean.getUserId();
+        String channelId = userSessionBean.getSelChannelId();
+        Map<String, Object> resultBean =menuService.getMenuHeaderInfo(userId,channelId,userName);
 
 
         // 获取用户相关信息
