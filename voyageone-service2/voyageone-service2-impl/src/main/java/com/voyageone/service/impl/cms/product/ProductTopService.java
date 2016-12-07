@@ -121,9 +121,9 @@ public class ProductTopService extends BaseService {
         queryObject.setSkip((pageIndex - 1) * pageSize);
         //排序字段
         if (topModel != null && !com.voyageone.common.util.StringUtils.isEmpty(topModel.getSortColumnName())) {
-            queryObject.setSort(String.format("{%s:%s}", topModel.getSortColumnName(), topModel.getSortType()));
+            queryObject.setSort(String.format("{\"%s\":%s}", topModel.getSortColumnName(), topModel.getSortType()));
         } else {
-            queryObject.setSort("{prodId:-1}");
+            queryObject.setSort("{\"prodId\":-1}");
         }
 
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
