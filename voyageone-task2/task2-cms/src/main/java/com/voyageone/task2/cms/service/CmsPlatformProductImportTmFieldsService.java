@@ -269,6 +269,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         // added by morse.lu 2016/11/25 start
         // 获取产品id和商品类目id并回填
         Item item = tbProductService.doGetItemInfo(cmsBtProductGroup.getNumIId(), "cid,product_id", shopBean).getItem();
+        if (item == null) {
+            throw new BusinessException(String.format("numIId:%s 天猫商品取得失败!", cmsBtProductGroup.getNumIId()));
+        }
         Long itemProductId = item.getProductId();
         String platformPid = null;
         if (itemProductId != null && itemProductId.intValue() != 0) {

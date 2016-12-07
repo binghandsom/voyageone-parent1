@@ -234,7 +234,10 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
 //            // TODO: 暂时没想到怎么解决，Group先拆出来，然后报个错出来吧
 //            throw new BusinessException(String.format("天猫上的商品在cms里不存在! [numIId:%s] [Sku:%s]", numIId, tmSkuList));
             fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformWareInfoItem(numIId, shopBean));
-            List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
+            if (fieldMap.size() == 0) {
+                throw new BusinessException(String.format("numIId:%s 天猫商品取得失败!", numIId));
+            }
+            List<String> tmSkuList = geTmSkuList(fieldMap, channelId, cartId, numIId); // 获取天猫上的sku列表
             if (tmSkuList.size() == 0) {
                 // 一般不会，出现的话要调查
                 throw new BusinessException(String.format("numIId:%s 天猫skuCode取得失败!", numIId));
@@ -247,6 +250,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
 //            fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformProduct(cmsBtProductGroup.getPlatformPid(), shopBean));
             // deleted by morse.lu 2016/11/09 end
             fieldMap.putAll(cmsPlatformProductImportTmFieldsService.getPlatformWareInfoItem(cmsBtProductGroup.getNumIId(), shopBean));
+            if (fieldMap.size() == 0) {
+                throw new BusinessException(String.format("numIId:%s 天猫商品取得失败!", numIId));
+            }
 
             // 拆分合并code
             doMoveCodeToAnotherGroup(fieldMap, cmsBtProductGroup, channelId, cartId, status);
@@ -296,7 +302,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
      * 拆分合并code(合并在现有的group)
      */
     private void doMoveCodeToAnotherGroup(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, CmsConstants.PlatformStatus status) {
-        List<String> tmSkuList = geTmSkuList(fieldMap); // 获取天猫上的sku列表
+        List<String> tmSkuList = geTmSkuList(fieldMap, channelId, cartId, cmsBtProductGroup.getNumIId()); // 获取天猫上的sku列表
         if (tmSkuList.size() == 0) {
             // 一般不会，出现的话要调查
             throw new BusinessException(String.format("numIId:%s 天猫skuCode取得失败!", cmsBtProductGroup.getNumIId()));
@@ -346,7 +352,7 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
     /**
      * 获取天猫上的sku列表
      */
-    private List<String> geTmSkuList(Map<String, Object> fieldMap) {
+    private List<String> geTmSkuList(Map<String, Object> fieldMap, String channelId, int cartId, String numIId) {
         List<String> tmSkuList = new ArrayList<>(); // 天猫上的sku列表
         if (fieldMap.containsKey("sku") && fieldMap.get("sku") != null && ((List) fieldMap.get("sku")).size() > 0) {
             // sku级
@@ -354,7 +360,14 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             // modified by morse.lu 2016/11/18 start
             // 全小写比较skuCode
 //            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+//            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+            if (listSkuVal.stream().filter(sku -> sku.get("sku_outerId") == null || "".equals(sku.get("sku_outerId").toString())).count() > 0) {
+                $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, numIId));
+            }
+            tmSkuList.addAll(listSkuVal.stream()
+                    .filter(sku -> sku.get("sku_outerId") != null || !"".equals(sku.get("sku_outerId").toString()))
+                    .map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase())
+                    .collect(Collectors.toList())); // 有OuterId为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
         } else if (fieldMap.containsKey("darwin_sku") && fieldMap.get("darwin_sku") != null && ((List) fieldMap.get("darwin_sku")).size() > 0) {
             // sku级
@@ -362,7 +375,14 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             // modified by morse.lu 2016/11/18 start
             // 全小写比较skuCode
 //            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> (String) skuInfo.get("sku_outerId")).collect(Collectors.toList()));
-            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+//            tmSkuList.addAll(listSkuVal.stream().map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase()).collect(Collectors.toList()));
+            if (listSkuVal.stream().filter(sku -> sku.get("sku_outerId") == null || "".equals(sku.get("sku_outerId").toString())).count() > 0) {
+                $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, numIId));
+            }
+            tmSkuList.addAll(listSkuVal.stream()
+                    .filter(sku -> sku.get("sku_outerId") != null || !"".equals(sku.get("sku_outerId").toString()))
+                    .map(skuInfo -> skuInfo.get("sku_outerId").toString().toLowerCase())
+                    .collect(Collectors.toList())); // 有OuterId为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
         } else {
             // modified by morse.lu 2016/11/18 start
