@@ -145,8 +145,8 @@
                         </tr>
                         <tr ng-repeat="sku in product.skus">
                             <td class="text-left">{{sku.suitSkuCode}}</td>
-                            <td class="text-right">{{sku.suitSellingPriceCn}}</td>
-                            <td class="text-right">{{sku.suitPreferentialPrice}}</td>
+                            <td class="text-right">{{sku.suitSellingPriceCn | currency:''}}</td>
+                            <td class="text-right">{{sku.suitPreferentialPrice | currency:''}}</td>
                             <td class="text-left">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="text-left">{{product.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                         </tr>

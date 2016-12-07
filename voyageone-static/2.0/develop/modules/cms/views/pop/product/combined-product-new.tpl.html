@@ -90,7 +90,7 @@
                                 <div class="text-left table_bg_gray">
                                     <div style="float: left">
                                         组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
-                                        组合套装实际售价 ：{{sku.suitPreferentialPrice}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                        组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
                                     </div>
                                     <div style="float: right; padding-right: 37px;">
                                         <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
@@ -105,7 +105,7 @@
                                             <td class="mfb-xxs text-left">
                                                 <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
                                             </td>
-                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn}}</td>
+                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
                                             <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)" required></td>
                                             <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
                                             <td class="mfb-xxt text-center">
@@ -118,8 +118,8 @@
 
                                 </table>
                                 <div class="text-right table_bg_gray">
-                                    组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn}}
-                                    组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice}}
+                                    组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn | currency:''}}
+                                    组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice | currency:''}}
                                 </div>
 
                             </td>
