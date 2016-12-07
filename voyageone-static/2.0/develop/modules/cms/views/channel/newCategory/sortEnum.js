@@ -12,19 +12,24 @@ define(function () {
             },
             {
                 sName: '最终售价',
-                sValue: 'platforms.p✓.pPriceSaleEd'
+                sValue: 'platforms.P✓.pPriceSaleEd'
             },
             {
                 sName: '7天销售排序',
-                sValue: 'codeSum7.cartId✓'
+                sValue: 'sales.codeSum7.cartId✓'
             },
             {
                 sName: '30天销售排序',
-                sValue: 'codeSum30.cartId✓'
+                sValue: 'sales.codeSum30.cartId✓'
             },
             {
+                sName: '年销售排序',
+                sValue: 'sales.codeSumYear.cartId✓'
+            }
+            ,
+            {
                 sName: '总销售降序',
-                sValue: 'codeSumYear.cartId✓'
+                sValue: 'sales.codeSumAll.cartId✓'
             }
         ],
         getSortByCd: function (cartId) {

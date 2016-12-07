@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd">
 
     <!-- Default bean name is 'mongo' -->
-    <mongo:mongo-client id="mongo" host="10.0.0.82" port="27017">
+    <mongo:mongo-client id="mongo" host="10.0.0.82" port="27017"  credentials="app_user:ad528_qYpN@cms">
         <mongo:client-options
                 connect-timeout="100000"
                 socket-timeout="100000"

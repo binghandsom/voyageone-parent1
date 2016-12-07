@@ -7,14 +7,13 @@
     <li ng-repeat="item in children" ui-sref-active="active">
         <div ng-switch="item.resKey">
             <!-- 加载 feed分类-->
-            <div ng-switch-when="CMS_FEED_PRODUCT_CATEGORY">
+            <div ng-switch-when="cms_feed_product_category">
 
                 <div ng-include="'feedCategoryMenuChild'" ng-init="categoryMenu = $root.feedCategoryTreeList"></div>
 
             </div>
             <!-- 加载 商品分类 -->
-            <div ng-switch-when="CMS_product_MANAGER">
-
+            <div ng-switch-when="cms_product_manager">
                 <div ng-include="'categoryMenu'" ></div>
 
             </div>
@@ -41,7 +40,6 @@
 
 <script id="categoryMenu" type="text/ng-template">
     <div>
-
         <a class="auto" ui-sref="cms.category">
              <span class="pull-right text-muted">
                <i class="fa fa-fw fa-angle-right text"></i>

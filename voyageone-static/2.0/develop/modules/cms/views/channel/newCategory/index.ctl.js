@@ -119,7 +119,7 @@ define([
 
             self.sort = _sort;
 
-            self.search({sortColumnName: _sort.sValue, sortType: sortType});
+            self.search({sortColumnName: sortColumnName.replace("✓", routeParams.cartId), sortType: sortType});
         };
 
         /**
