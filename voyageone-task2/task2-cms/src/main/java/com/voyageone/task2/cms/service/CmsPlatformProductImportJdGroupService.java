@@ -165,8 +165,9 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
                 hasErrorData = true;
                 listErrorNumiid.add(wareId);
                 if (e instanceof BusinessException) {
-                    $error(e.getMessage());
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!" + e.getMessage(), channelId, cartId, wareId));
                 } else {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 分组失败!", channelId, cartId, wareId));
                     e.printStackTrace();
                 }
             }
@@ -250,7 +251,11 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
     private void doMoveCodeToNewGroup(ShopBean shopBean, String wareId, String channelId, int cartId, CmsConstants.PlatformStatus status) {
         List<String> jdSkuList = geJdSkuList(shopBean, wareId); // 获取京东上的sku列表
         // 根据要移动的skuList取得code列表
-        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(wareId, channelId, jdSkuList);
+        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(wareId, channelId, cartId, jdSkuList);
+        if (moveCods.size() == 0) {
+            $error(String.format("需要新建group,但是没有一个sku在cms里存在! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), wareId));
+            return;
+        }
 
         boolean isFirst = true;
         CmsBtProductGroupModel newGroupModel = null;
@@ -303,7 +308,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         });
 
         // 根据要移动的skuList取得code列表
-        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(cmsBtProductGroup.getNumIId(), channelId, jdSkuList);
+        Map<String, CmsBtProductModel> moveCods = getMoveCodesBySkuList(cmsBtProductGroup.getNumIId(), channelId, cartId, jdSkuList);
 
         cmsBtProductGroup.setPlatformStatus(status);
 
@@ -320,7 +325,11 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
         if (moveCods.size() > 0) {
             $info(String.format("group追加了code! channelId:%s, cartId:%s, numIId:%s, 追加的productCodes:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId(), moveCods.keySet()));
         } else {
-            $info(String.format("group不需要追加code! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId()));
+            if (jdSkuList.size() != 0) {
+                $error(String.format("group需要追加code,但是没有一个要合并的sku在cms里存在! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId()));
+            } else {
+                $info(String.format("group不需要追加code! channelId:%s, cartId:%s, numIId:%s", channelId, String.valueOf(cartId), cmsBtProductGroup.getNumIId()));
+            }
         }
 
     }
@@ -350,14 +359,16 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
      * 根据要移动的skuList取得code列表
      * @return Map<code, CmsBtProductModel>
      */
-    private Map<String, CmsBtProductModel> getMoveCodesBySkuList(String numIId, String channelId, List<String> jdSkuList) {
+    private Map<String, CmsBtProductModel> getMoveCodesBySkuList(String numIId, String channelId, int cartId, List<String> jdSkuList) {
         Map<String, CmsBtProductModel> moveCods = new HashMap<>();
         for (String skuCode : jdSkuList) {
             // 剩下的是京东上有，但是group表里没有的sku
             // 那么把这些sku对应的code移到这个group下
             CmsBtProductModel productModel = cmsBtProductDao.selectBySkuIgnoreCase(skuCode, channelId);
             if (productModel == null) {
-                throw new BusinessException(String.format("京东上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
+//                throw new BusinessException(String.format("京东上存在一个cms里没有的sku! [numIId:%s] [Sku:%s]", numIId, skuCode));
+                $warn(String.format("京东上存在一个cms里没有的sku! channelId:%s, cartId:%s, numIId:%s, Sku:%s", channelId, String.valueOf(cartId), numIId, skuCode));
+                continue;
             }
 
             String code = productModel.getCommon().getFields().getCode();
