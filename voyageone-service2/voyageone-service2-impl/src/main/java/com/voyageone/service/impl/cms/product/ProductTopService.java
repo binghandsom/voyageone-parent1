@@ -9,10 +9,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductTopModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -219,7 +216,13 @@ public class ProductTopService extends BaseService {
         info.setModel(f.getCommon().getFields().getModel());
         info.setProductName(f.getCommon().getFields().getProductNameEn());
         info.setQuantity(f.getCommon().getFields().getQuantity());
-
+        info.setCreated(f.getCreated());
+        CmsBtProductModel_Sales cmsBtProductModel_sales=f.getSales();
+        if(cmsBtProductModel_sales!=null) {
+            info.setSalesSum7(f.getSales().getCodeSum7(cartId));
+            info.setSalesSum30(f.getSales().getCodeSum30(cartId));
+            info.setSalesSumYear(f.getSales().getCodeSumYear(cartId));
+        }
         //图片
         List<CmsBtProductModel_Field_Image> imgList = f.getCommonNotNull().getFieldsNotNull().getImages6();
         if (!imgList.isEmpty()) {
