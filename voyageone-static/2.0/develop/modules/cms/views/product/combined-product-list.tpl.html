@@ -106,14 +106,14 @@
                             <td colspan="5">
                                 <div class="row text-left">
                                     &emsp;
-                                    <span class="label" ng-class="{'label-info':product.status == 1,'label-default':product.status == 0}">{{vm.statuses[product.status]}}</span>&emsp;
+                                    <span class="label" ng-class="{'label-info':product.status == 1,'label-default':product.status == 0}">{{vm.cartsEnums.valueOf(product.cartId).name}}:{{vm.statuses[product.status]}}</span>&emsp;
 
                                     <span class="label" ng-class="{'label-primary':product.platformStatus == 1,
                                                                    'label-danger':product.platformStatus == 0}">
-                                        {{vm.platformStatuses[product.platformStatus]}}
+                                        {{vm.cartsEnums.valueOf(product.cartId).name}}:{{vm.platformStatuses[product.platformStatus]}}
                                     </span>&emsp;
 
-                                    <strong>商品编码：</strong><a href="javascript:void(0)" ng-click="popEditCombinedProduct(product)">{{product.numID}}</a>&emsp;
+                                    <strong>商品编码：</strong><a ng-href="{{getPlatFormUrl(product.cartId , product.numID)}}" target="_blank">{{product.numID}}</a>&emsp;
 
                                     <strong>组合套装商品名称：</strong><span>{{product.productName}}</span>
 

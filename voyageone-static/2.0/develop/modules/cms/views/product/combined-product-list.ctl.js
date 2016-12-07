@@ -4,17 +4,19 @@
  */
 define([
         "cms",
+        'modules/cms/enums/Carts',
         "modules/cms/controller/popup.ctl"
-    ], function (cms) {
+    ], function (cms,cartsEnums) {
         cms.controller("combinedProductController", (function () {
 
             function CombinedProductController($scope, combinedProductService, popups, confirm) {
                 $scope.vm = {
                     config: {
                         open: true,
-                        startSupplyChain:0
+                        startSupplyChain: 0
                     },
                     carts: {},
+                    cartsEnums:cartsEnums,
                     products: [],
                     productPageOption: {page: 1, total: 0, fetch: goPage.bind(this)},
                     statuses: {},
@@ -71,7 +73,7 @@ define([
                 };
 
                 $scope.popNewCombinedProduct = function () {
-                    popups.popNewCombinedProduct(_.extend({"carts": $scope.vm.carts}, {"startSupplyChain":$scope.vm.config.startSupplyChain})).then(function () {
+                    popups.popNewCombinedProduct(_.extend({"carts": $scope.vm.carts}, {"startSupplyChain": $scope.vm.config.startSupplyChain})).then(function () {
                         getProductList();
                     });
                 };
@@ -86,7 +88,9 @@ define([
                     $scope.vm.searchBean = {};
                 };
 
-                // 删除组合套装商品
+                /**
+                 *  删除组合套装商品
+                 */
                 $scope.deleteCombinedProduct = function (product) {
                     if (!product) {
                         return;
@@ -102,14 +106,16 @@ define([
                         });
                     });
                 };
-                // 编辑组合套装商品
+
+                /** 编辑组合套装商品 */
                 $scope.popEditCombinedProduct = function (product) {
 
-                    popups.popEditCombinedProduct(_.extend({'product': angular.copy(product)}, {'carts': $scope.vm.carts}, {"startSupplyChain":$scope.vm.config.startSupplyChain})).then(function () {
+                    popups.popEditCombinedProduct(_.extend({'product': angular.copy(product)}, {'carts': $scope.vm.carts}, {"startSupplyChain": $scope.vm.config.startSupplyChain})).then(function () {
                         getProductList();
                     });
                 };
-                // 组合套装商品上下架
+
+                /** 组合套装商品上下架 */
                 $scope.onOffShelves = function (product, platformStatus) {
                     var confirmMsg = "";
 
@@ -129,15 +135,32 @@ define([
 
                 };
 
-                // 操作日志
+                /** 操作日志 */
                 $scope.popCombinedProductLogs = function (product) {
                     popups.popCombinedProductLogs(_.extend({"product": angular.copy(product)}, {
                         "carts": $scope.vm.carts,
                         "statuses": $scope.vm.statuses,
                         "platformStatuses": $scope.vm.platformStatuses
                     }));
+                };
+
+                /**
+                 * 获取商品平台地址
+                 * @param cartId numberId
+                 */
+                $scope.getPlatFormUrl = function(cartId,numberId){
+                    var _cartObj = cartsEnums.valueOf(cartId);
+
+                    if(!numberId)
+                        return '';
+
+                    if(cartId != 27)
+                        return _cartObj.pUrl + numberId;
+                    else
+                        return _cartObj.pUrl + numberId + ".html";
+
                 }
-            };
+            }
 
             return CombinedProductController;
 
