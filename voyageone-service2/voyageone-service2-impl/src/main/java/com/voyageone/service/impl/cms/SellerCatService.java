@@ -417,7 +417,7 @@ public class SellerCatService extends BaseService {
             list.forEach(productModel -> {
                 codes.add(productModel.getCommonNotNull().getFieldsNotNull().getCode());
             });
-            productStatusHistoryService.insertList(channelId, codes, cartId, EnumProductOperationType.CotegoryDeleted, "商品分配被删除", modifier);
+            productStatusHistoryService.insertList(channelId, codes, cartId, EnumProductOperationType.CotegoryDeleted, "商品分类被删除", modifier);
         }
     }
 
