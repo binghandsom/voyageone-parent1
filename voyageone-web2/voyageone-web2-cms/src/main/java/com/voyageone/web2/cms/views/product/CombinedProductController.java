@@ -125,10 +125,8 @@ public class CombinedProductController extends CmsController {
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_OPERATE_LOGS)
-    public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean modelBean) {
-        List<CmsBtCombinedProductLogModel> logs = cmsBtCombinedProductService.getOperateLogs(modelBean);
-        Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("logs", logs);
+    public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean searchBean) {
+        Map<String, Object> resultMap = cmsBtCombinedProductService.getOperateLogs(searchBean.getPage(), searchBean.getPageSize(), searchBean);
         return success(resultMap);
     }
 }

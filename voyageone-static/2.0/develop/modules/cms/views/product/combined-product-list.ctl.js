@@ -92,14 +92,18 @@ define([
                            return;
                        }
 
-                       confirm("是否确认删除该组合套装商品？").then(function () {
-                           combinedProductService.delete(product).then(function () {
-                               getProductList();
-                           });
-                       });
-                   };
-                   // 编辑组合套装商品
-                   $scope.popEditCombinedProduct = function (product) {
+                    confirm("是否确认删除该组合套装商品？").then(function () {
+                        combinedProductService.delete(product).then(function () {
+                            //$scope.vm.productPageOption.total = $scope.vm.productPageOption.total - 1;
+                            if ($scope.vm.products.length == 1 && $scope.vm.productPageOption.page > 1) {
+                                $scope.vm.productPageOption.page = $scope.vm.productPageOption.page - 1;
+                            }
+                            getProductList();
+                        });
+                    });
+                };
+                // 编辑组合套装商品
+                $scope.popEditCombinedProduct = function (product) {
 
                        popups.popEditCombinedProduct(_.extend({'product': angular.copy(product)}, {'carts': $scope.vm.carts}, {"startSupplyChain":$scope.vm.config.startSupplyChain})).then(function () {
                            getProductList();

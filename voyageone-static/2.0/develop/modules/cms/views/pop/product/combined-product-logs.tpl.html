@@ -44,6 +44,9 @@
             </table>
             <div if-no-rows="vm.logs.length"></div>
         </div>
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="vm.logPageOption"></vpagination>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;关闭</button>
