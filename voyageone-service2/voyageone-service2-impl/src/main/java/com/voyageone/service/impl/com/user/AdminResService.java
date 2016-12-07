@@ -107,7 +107,7 @@ public class AdminResService extends BaseService {
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
 
-        if (model.getWeight() == null) {
+        if (model.getWeight() == null || model.getWeight() == 0) {
             model.setWeight(0);
             map.clear();
             map.put("parentId", model.getParentId());
@@ -138,7 +138,7 @@ public class AdminResService extends BaseService {
         ComResourceModel parent = comResourceDao.select(model.getParentId());
 
 
-        if (model.getWeight() == null) {
+        if (model.getWeight() == null || model.getWeight() == 0) {
             model.setWeight(0);
             map.clear();
             map.put("parentId", model.getParentId());

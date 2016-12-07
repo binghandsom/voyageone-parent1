@@ -25,6 +25,9 @@
     <!-- solr Config -->
     <import resource="classpath*:solr-config.xml"/>
 
+    <import resource="classpath*:datasource-security-config.xml"/>
+    <import resource="classpath*:datasource-admin-common-config.xml"/>
+
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>
 
