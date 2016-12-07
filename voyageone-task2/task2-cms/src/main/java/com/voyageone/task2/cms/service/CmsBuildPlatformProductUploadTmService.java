@@ -39,7 +39,6 @@ import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,8 +62,6 @@ import java.util.stream.Collectors;
 @Service
 public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService {
 
-    @Autowired
-    private ConditionPropValueRepo conditionPropValueRepo;
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
     @Autowired
@@ -116,9 +113,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
 
         // 获取该任务可以运行的销售渠道
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
-
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueRepo.init();
 
         // 循环所有销售渠道
         if (channelIdList != null && channelIdList.size() > 0) {

@@ -106,8 +106,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
             isSuccess = false;
             if (e instanceof BusinessException) {
                 $error(e.getMessage());
+            } else {
+                e.printStackTrace();
             }
-            e.printStackTrace();
         }
 
         if ("1".equals(runType) && StringUtils.isEmpty(numIId) && isSuccess) {
@@ -131,8 +132,9 @@ public class CmsPlatformProductImportTmGroupService extends BaseMQCmsService {
                 } catch (Exception e) {
                     if (e instanceof BusinessException) {
                         $error(e.getMessage());
+                    } else {
+                        e.printStackTrace();
                     }
-                    e.printStackTrace();
                 }
                 index++;
             }

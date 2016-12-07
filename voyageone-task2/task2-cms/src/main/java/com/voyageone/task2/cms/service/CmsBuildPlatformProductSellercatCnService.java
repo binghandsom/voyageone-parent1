@@ -94,7 +94,7 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
      */
     public void doUpload(String channelId, int cartId, ShopBean shopBean) {
         // 取得要更新的类目
-        List<String> listCatIds = cnCategoryService.selectListWaitingUpload(channelId);
+        List<String> listCatIds = cnCategoryService.selectListWaitingUpload(channelId, cartId);
         if (ListUtils.isNull(listCatIds)) {
             return;
         }
@@ -117,7 +117,7 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
             if (ListUtils.isNull(codes)) {
                 $warn("类目[%s]不存在一个上新过的code!", catId);
                 // 理论上不会有这类垃圾数据，以防万一一下
-                cnCategoryService.updateProductSellercatUpdFlg(channelId, new ArrayList<String>(){{add(catId);}}, "2", getTaskNameForUpdate());
+                cnCategoryService.updateProductSellercatUpdFlg(channelId, cartId, new ArrayList<String>(){{add(catId);}}, "2", getTaskNameForUpdate());
                 continue;
             }
 
@@ -148,7 +148,7 @@ public class CmsBuildPlatformProductSellercatCnService extends BaseCronTaskServi
 
         if (isSuccess) {
             // 状态更新成 1:已处理
-            cnCategoryService.updateProductSellercatUpdFlg(channelId, listCatIds, "1", getTaskNameForUpdate());
+            cnCategoryService.updateProductSellercatUpdFlg(channelId, cartId, listCatIds, "1", getTaskNameForUpdate());
         } else {
             // 只有网络问题推送失败才会false
             // 暂时什么都不做，下次重新推

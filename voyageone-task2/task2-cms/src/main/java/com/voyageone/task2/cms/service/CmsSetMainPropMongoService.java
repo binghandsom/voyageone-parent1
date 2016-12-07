@@ -155,6 +155,8 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         return "CmsSetMainPropMongoJob";
     }
 
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     /**
      * feed数据 -> 主数据
      * 关联代码1 (从天猫获取Fields):
@@ -171,7 +173,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
         List<String> orderChannelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueRepo.init();
+        channelConditionConfig = new HashMap<>();
+        if (ListUtils.notNull(orderChannelIdList)) {
+            for (final String orderChannelID : orderChannelIdList) {
+                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+            }
+        }
 
         // 默认线程池最大线程数
         int threadPoolCnt = 5;
@@ -4138,7 +4145,12 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
             // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-            List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(product.getChannelId(), platformPropId);
+            List<ConditionPropValueModel> conditionPropValueModels = null;
+            if (channelConditionConfig.containsKey(product.getChannelId())) {
+                if (channelConditionConfig.get(product.getChannelId()).containsKey(platformPropId)) {
+                    conditionPropValueModels = channelConditionConfig.get(product.getChannelId()).get(platformPropId);
+                }
+            }
             if (ListUtils.isNull(conditionPropValueModels))
                 continue;
 
