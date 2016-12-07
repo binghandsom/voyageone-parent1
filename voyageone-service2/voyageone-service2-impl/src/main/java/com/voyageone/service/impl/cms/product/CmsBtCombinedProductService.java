@@ -599,24 +599,31 @@ public class CmsBtCombinedProductService extends BaseService {
 
     /**
      * 查询组合套装商品操作日志
-     * @param modelBean
+     * @param searchBean
      * @return
      */
-    public List<CmsBtCombinedProductLogModel> getOperateLogs (CmsBtCombinedProductBean modelBean) {
-        /*if (modelBean != null && StringUtils.isNotBlank(modelBean.getNumID()) && StringUtils.isNotBlank(modelBean.getChannelId()) && modelBean.getCartId() != null) {
-            JongoQuery query = new JongoQuery();
-            query.setQuery("{'numID':#, 'channelId':#, 'cartId':#}");
-            query.setParameters(modelBean.getNumID(), modelBean.getChannelId(), modelBean.getCartId());
-            query.setSort("{'operateTime':-1}");
-            return cmsBtCombinedProductLogDao.select(query);
-        }*/
-        if (modelBean != null && StringUtils.isNotBlank(modelBean.get_id())) {
+    public Map<String, Object> getOperateLogs (int page, int pageSize, CmsBtCombinedProductBean searchBean) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        if (searchBean != null && StringUtils.isNotBlank(searchBean.get_id())) {
             JongoQuery query = new JongoQuery();
             query.setQuery("{'productId':#}");
-            query.setParameters(modelBean.get_id());
+            query.setParameters(searchBean.get_id());
+            long total = cmsBtCombinedProductLogDao.countByQuery(query.getQuery(), query.getParameters());
+            resultMap.put("total", total);
             query.setSort("{'operateTime':-1}");
-            return cmsBtCombinedProductLogDao.select(query);
+            if (page <= 0) {
+                page = 1;
+            }
+            if (pageSize < 0) {
+                pageSize = 10;
+            }
+            query.setSkip(pageSize * (page - 1)).setLimit(pageSize);
+
+            List<CmsBtCombinedProductLogModel> logs = cmsBtCombinedProductLogDao.select(query);
+            resultMap.put("logs", logs);
+        }else {
+            resultMap.put("total", 0);
         }
-        return null;
+        return resultMap;
     }
 }
