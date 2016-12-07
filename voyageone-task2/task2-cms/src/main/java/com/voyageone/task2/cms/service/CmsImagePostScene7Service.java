@@ -63,8 +63,13 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
                 ExecutorService es  = Executors.newFixedThreadPool(5);
                 try {
+                    List<CmsBtImagesModel> imageUrlList = new ArrayList<>();
+
                     // 获得该渠道要上传Scene7的图片url列表
-                    List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
+                    feedImage.setUpdFlg(4);
+                    imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
+                    feedImage.setUpdFlg(0);
+                    imageUrlList.addAll(cmsBtImagesDaoExt.selectImages(feedImage));
                     $debug(channelId + String.format("渠道本次有%d要推送NEXCESS图片服务器的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
 
