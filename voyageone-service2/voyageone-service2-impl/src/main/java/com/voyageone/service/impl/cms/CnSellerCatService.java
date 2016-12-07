@@ -44,9 +44,59 @@ public class CnSellerCatService {
 
         return catId;
     }
+
+    /**
+     * 重载：新增目录节点时指定新增节点在同级节点中的序号
+     * @param channelId
+     * @param parentCId
+     * @param catName
+     * @param shopBean
+     * @param index
+     * @return
+     */
+    public String addSellerCat(String channelId, String parentCId, String catName, ShopBean shopBean, int index) {
+        String catId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
+        String catFullId = "";
+        if (!StringUtils.isEmpty(parentCId)) {
+            CmsBtSellerCatModel parentCurrentNode = cmsBtSellerCatDao.selectByCatId(channelId, parentCId);
+            if (parentCurrentNode != null) {
+                catFullId = parentCurrentNode.getFullCatId();
+            }
+        }
+        if (StringUtils.isEmpty(catFullId)) {
+            catFullId = catId;
+        } else {
+            catFullId = catFullId + "-" + catId;
+        }
+        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName, null);
+        cnCategoryBean.setDisplayOrder(index);
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+
+        return catId;
+    }
+
     public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+    }
+
+    /**
+     * 重载上面的方法，独立官网修改单个类目的名称后，调用单个独立官网的类目更新接口时，需要传入该类目的index给类目
+     * @param currentNode
+     * @param shopBean
+     * @param index
+     */
+    public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean, int index)
+    {
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        cnCategoryBean.setDisplayOrder(index);
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");
