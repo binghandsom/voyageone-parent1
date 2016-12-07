@@ -18,21 +18,21 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class OpenApiBaseController extends VOAbsLoggable {
 
-    /**
-     * error Handler
-     */
-    @ExceptionHandler(Exception.class)
-    public Object errorHandler(HttpServletRequest request, Exception exception) {
-        String message = request.getRequestURL().toString();
-        $error("Error Message:=" + message);
-        $error(message, exception);
-
-        // channelAdvisor ExceptionHandler
-        if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
-            return ResponseUtils.buildCAError(exception);
-        }
-        return ResponseUtils.buildError(exception);
-    }
+//    /**
+//     * error Handler
+//     */
+//    @ExceptionHandler(Exception.class)
+//    public Object errorHandler(HttpServletRequest request, Exception exception) {
+//        String message = request.getRequestURL().toString();
+//        $error("Error Message:=" + message);
+//        $error(message, exception);
+//
+//        // channelAdvisor ExceptionHandler
+//        if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
+//            return ResponseUtils.buildCAError(exception);
+//        }
+//        return ResponseUtils.buildError(exception);
+//    }
 
     protected VoApiResponse simpleResponse(Object resultData) {
         return new SimpleResponse(resultData);

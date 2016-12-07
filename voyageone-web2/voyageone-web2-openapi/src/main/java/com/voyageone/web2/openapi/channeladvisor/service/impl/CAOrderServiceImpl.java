@@ -61,7 +61,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         String channelId = getClientChannelId();
 
         //校验limit
-        if (!StringUtils.isDigit(limit)) {
+        if (!StringUtils.isEmpty(limit) && !StringUtils.isDigit(limit)) {
             throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
         }
 
@@ -459,6 +459,14 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             if (item.getQuantity() < 0) {
                 throw new CAApiException(ErrorIDEnum.CancellationFailed);
             }
+
+            try {
+                if (!StringUtils.isEmpty(item.getReason())) {
+                    CancellationReasonEnum.valueOf(item.getReason());
+                }
+            } catch (Exception ex) {
+                throw new CAApiException(ErrorIDEnum.UnsupportedCancellationReason);
+            }
         }
 
 
@@ -487,7 +495,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<Map<String, Object>> tempRecords = new ArrayList<>();
 
         Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String, CancellationReasonEnum> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
         Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
@@ -498,7 +506,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 issueSkuNotExistList.remove(sku);
 
                 VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
-                tempUpdateModel.setCancelReason(tempSkuReasonMap.get(sku).name());
+                String tempSkuReasonStr = tempSkuReasonMap.get(sku);
+                if (!StringUtils.isEmpty(tempSkuReasonStr)) {
+                    tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                }
                 tempUpdateModel.setStatus(Canceled);
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
                 matchModelList.add(tempUpdateModel);
@@ -583,6 +594,13 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             if (item.getQuantity() < 0) {
                 throw new CAApiException(ErrorIDEnum.RefundFailed);
             }
+            try {
+                if (!StringUtils.isEmpty(item.getReason())) {
+                    CancellationReasonEnum.valueOf(item.getReason());
+                }
+            } catch (Exception ex) {
+                throw new CAApiException(ErrorIDEnum.UnsupportedRefundReason);
+            }
         }
 
         String channelId = getClientChannelId();
@@ -608,7 +626,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
         Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String, CancellationReasonEnum> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
 
         List<Map<String, Object>> tempRecords = new ArrayList<>();
         Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
@@ -620,7 +638,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 issueSkuNotExistList.remove(sku);
 
                 VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
-                tempUpdateModel.setCancelReason(tempSkuReasonMap.get(sku).name());
+                String tempSkuReasonStr = tempSkuReasonMap.get(sku);
+                if (!StringUtils.isEmpty(tempSkuReasonStr)) {
+                    tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                }
                 tempUpdateModel.setStatus(Canceled);
                 tempUpdateModel.setRefundFlg("1");
                 tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());

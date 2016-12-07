@@ -21,7 +21,7 @@ public class OrderItemCancellationModel extends CABaseModel {
     private Integer quantity;
 
     @JsonProperty("Reason")
-    private CancellationReasonEnum reason;
+    private String reason;
 
 
     public String getId() {
@@ -48,11 +48,11 @@ public class OrderItemCancellationModel extends CABaseModel {
         this.sellerSku = sellerSku;
     }
 
-    public CancellationReasonEnum getReason() {
+    public String getReason() {
         return reason;
     }
 
-    public void setReason(CancellationReasonEnum reason) {
+    public void setReason(String reason) {
         this.reason = reason;
     }
 }
