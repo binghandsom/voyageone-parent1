@@ -95,7 +95,7 @@
         re.active =1
         AND res_type &lt; 2
         AND
-        ((application = 'admin') or (application &lt;&gt; 'admin' AND show_in_menu = 1))
+        ((application = 'admin') or  (application = 'cms') or (application &lt;&gt; 'admin' AND application &lt;&gt; 'cms' AND show_in_menu = 1))
     </select>
 
 

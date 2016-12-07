@@ -12,7 +12,7 @@ define([
             function CombinedProductEditController($scope, context, combinedProductService, $compile, $templateRequest, $document) {
                 $scope.vm = {
                     config : {
-                        startSupplyChain:0
+                        startSupplyChain:false
                     },
                     carts: {},
                     product: {}

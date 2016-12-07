@@ -5,7 +5,7 @@
         <h5 class="modal-title">&nbsp;<i class="fa fa-plus">&nbsp;<span translate="TXT_COMBINED_PRODUCT_EDIT"></span></i></h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal" name="shelvesTemplateForm">
+        <form role="form" class="form-horizontal" name="combinedProductForm">
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-4">
@@ -103,7 +103,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="editSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
+        <button class="btn btn-vo" ng-click="editSubmit(0)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
     </div>
 </div>

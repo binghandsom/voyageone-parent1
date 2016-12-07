@@ -212,7 +212,7 @@
     <select id="selectUserByRoles"  resultType="java.lang.String">
         SELECT DISTINCT u.user_account, r.id from com_user u, com_user_role ur, com_role r
         WHERE r.id in
-        <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
         AND r.active = 1
