@@ -17,10 +17,13 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.jd.service.JdWareService;
+import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -56,26 +59,76 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private CmsBtPlatformNumiidDao cmsBtPlatformNumiidDao;
+    @Autowired
+    private CmsBtPlatformNumiidDaoExt cmsBtPlatformNumiidDaoExt;
 //    @Autowired
 //    private CmsBtSellerCatDao cmsBtSellerCatDao;
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
+        String channelId = null;
+        if (messageMap.containsKey("channelId")) {
+            channelId = String.valueOf(messageMap.get("channelId"));
+        }
+        String cartId = null;
+        if (messageMap.containsKey("cartId")) {
+            cartId = String.valueOf(messageMap.get("cartId"));
+            if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(cartId))) {
+                $error("入参的平台id不是京东系!");
+                return;
+            }
+        }
+        String numIId = null;
+        if (messageMap.containsKey("numIId")) {
+            numIId = String.valueOf(messageMap.get("numIId"));
+        }
+        String code = null;
+        if (messageMap.containsKey("code")) {
+            code = String.valueOf(messageMap.get("code"));
+        }
 
-        doMain((String) messageMap.get("channelId"), (String) messageMap.get("cartId"), (String) messageMap.get("code"));
+        String runType = null; // runType=2 从cms_bt_platform_numiid表里抽出numIId去做
+        if (messageMap.containsKey("runType")) {
+            runType = String.valueOf(messageMap.get("runType"));
+        }
+
+        doMain(channelId, cartId, numIId, code, runType);
     }
 
-    private void doMain(String channelId, String cartId, String code) throws Exception {
+    private void doMain(String channelId, String cartId, String numIId, String code, String runType) throws Exception {
         JongoQuery queryObject = new JongoQuery();
-        String query = "cartId:" + cartId + ",numIId:{$nin:[\"\",null]}";
-        if (!StringUtils.isEmpty(code)) {
-            query = query + "," + "productCodes:\"" + code + "\"";
+//        String query = "cartId:" + cartId + ",numIId:{$nin:[\"\",null]}";
+        String query = "cartId:" + cartId;
+        List<String> listAllNumiid = null;
+        List<String> listSuccessNumiid = new ArrayList<>();
+        List<String> listErrorNumiid = new ArrayList<>();
+        if ("2".equals(runType)) {
+            // 从cms_bt_platform_numiid表里抽出numIId去做
+            Map<String, Object> seachParam = new HashMap<>();
+            seachParam.put("channelId", channelId);
+            seachParam.put("cartId", cartId);
+            seachParam.put("status", "0");
+            List<CmsBtPlatformNumiidModel> listModel = cmsBtPlatformNumiidDao.selectList(seachParam);
+            if (ListUtils.isNull(listModel)) {
+                $warn("cms_bt_platform_numiid表未找到符合的数据!");
+                return;
+            }
+            listAllNumiid = listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.toList());
+            // 表的数据都是自己临时加的，一次处理多少件自己决定，因此暂时不分批处理了，尽量别一次处理太多，不然sql可能撑不住
+            query = query + "," + "numIId:{$in:[\"" + listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.joining("\",\"")) + "\"]}";
+        } else {
+            if (!StringUtils.isEmpty(numIId)) {
+                query = query + "," + "numIId:\"" + numIId + "\"";
+            } else {
+                query = query + ",numIId:{$nin:[\"\",null]}";
+            }
+            if (!StringUtils.isEmpty(code)) {
+                query = query + "," + "productCodes:\"" + code + "\"";
+            }
         }
         queryObject.setQuery("{" + query + "}");
-        if (!CartEnums.Cart.isJdSeries(CartEnums.Cart.getValueByID(cartId))) {
-            $error("入参的平台id不是京东系!");
-            return;
-        }
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
         ShopBean shopBean = Shops.getShop(channelId, cartId);
 
@@ -85,16 +138,54 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
 
         for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
-            try {
-                $info(String.format("%s-%s京东属性取得 %d/%d", channelId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
-                doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), listSellerCat);
-                $info(String.format("numIId[%s]取得成功!", item.getNumIId()));
-            } catch (Exception e) {
-                if (e instanceof BusinessException) {
-                    $error(e.getMessage());
-                }
-                e.printStackTrace();
+            if ("2".equals(runType)) {
+                listAllNumiid.remove(item.getNumIId());
             }
+            try {
+                $info(String.format("%s-%s-%s京东属性取得 %d/%d", channelId, cartId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
+                doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), listSellerCat);
+                listSuccessNumiid.add(item.getNumIId());
+                $info(String.format("channelId:%s, cartId:%s, numIId:%s 取得成功!", channelId, cartId, item.getNumIId()));
+            } catch (Exception e) {
+                listErrorNumiid.add(item.getNumIId());
+                if (e instanceof BusinessException) {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!" + e.getMessage(), channelId, cartId, item.getNumIId()));
+                } else {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!", channelId, cartId, item.getNumIId()));
+                    e.printStackTrace();
+                }
+            }
+
+            if ((i + 1) % 300 == 0) {
+                // 怕中途断掉,300一更新
+                if ("2".equals(runType)) {
+                    updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+                }
+                $info(String.format("京东属性取得,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
+                listSuccessNumiid.clear();
+                listErrorNumiid.clear();
+            }
+
+            // 做好一个稍微停一会，JD的响应不够快
+            Thread.sleep(1000);
+        }
+
+        $info(String.format("京东属性取得,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
+        if ("2".equals(runType)) {
+            updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+            if (ListUtils.notNull(listAllNumiid)) {
+                // 存在没有搜到的numIId
+                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listSuccessNumiid);
+            }
+        }
+    }
+
+    private void updateCmsBtPlatformNumiid(String channelId, String cartId, List<String> listSuccessNumiid, List<String> listErrorNumiid) {
+        if (listSuccessNumiid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "1", getTaskName(), listSuccessNumiid);
+        }
+        if (listErrorNumiid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "2", getTaskName(), listErrorNumiid);
         }
     }
 
@@ -191,7 +282,7 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         // 貌似不需要都设置，只要attributes和一些共通项目
 //        Map<String, Object> mapBean = JsonUtil.jsonToMap(JsonUtil.getJsonString(ware));
         // deleted by morse.lu 2016/11/09 end
-
+        final boolean[] hasErr = {false};
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(code -> {
             Map<String, Object> queryMap = new HashMap<>();
@@ -235,6 +326,9 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
                     // modified by morse.lu 2016/11/18 start
                     // 全小写比较skuCode
 //                    if (listSkuCode.contains(sku.getOuterId())) {
+                    if (StringUtils.isEmpty(sku.getOuterId())) {
+                        hasErr[0] = true;
+                    } else
                     if (listSkuCode.contains(sku.getOuterId().toLowerCase())) {
                         // modified by morse.lu 2016/11/18 end
                         hasPublishSku = true;
@@ -302,6 +396,10 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         });
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+
+        if (hasErr[0]) {
+            $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, cmsBtProductGroup.getNumIId()));
+        }
 
         // 回写group表
         String wareStatus = ware.getWareStatus(); // 商品状态

@@ -52,6 +52,8 @@ public class MqRoutingKey {
 
     public static final String CMS_BATCH_PlatformSellercatJob = "voyageone_cms_batchjob_CmsPlatformSellercatJob_queue";
 
+    public static final String CMS_BATCH_CmsProductGroupMergeJob = "voyageone_cms_batchjob_CmsProductGroupMergeJob_queue";
+
     /**
      * tmall mq task
      */

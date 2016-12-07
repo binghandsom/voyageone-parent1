@@ -157,6 +157,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         return "CmsBuildPlatformProductUploadJdJob";
     }
 
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
+
     /**
      * 京东平台上新处理
      *
@@ -169,7 +171,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         List<String> channelIdList = TaskControlUtils.getVal1List(taskControlList, TaskControlEnums.Name.order_channel_id);
 
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        conditionPropValueRepo.init();
+        channelConditionConfig = new HashMap<>();
+        if (ListUtils.notNull(channelIdList)) {
+            for (final String orderChannelID : channelIdList) {
+                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+            }
+        }
 
         // 循环所有销售渠道
         if (ListUtils.notNull(channelIdList)) {
@@ -828,6 +835,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
+        // 京东上新产品共通属性设定
+        JdProductBean jdProductBean = new JdProductBean();
+        // 如果去掉库存为0的sku之后一个sku都没有时，后面新增时报错/更新时下架，所有共通属性也不用设置了，直接返回空的JdProductBean
+        if (ListUtils.isNull(skuList)) return jdProductBean;
+
         // 渠道id
         String channelId = sxData.getChannelId();
         // 平台id
@@ -835,9 +847,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
         Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
-
-        // 京东上新产品共通属性设定
-        JdProductBean jdProductBean = new JdProductBean();
 
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
@@ -2019,7 +2028,12 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
         // 根据channelid和platformPropId取得cms_mt_channel_condition_config表的条件表达式
-        List<ConditionPropValueModel> conditionPropValueModels = conditionPropValueRepo.get(shop.getOrder_channel_id(), platformPropId);
+        List<ConditionPropValueModel> conditionPropValueModels = null;
+        if (channelConditionConfig.containsKey(shop.getOrder_channel_id())) {
+            if (channelConditionConfig.get(shop.getOrder_channel_id()).containsKey(platformPropId)) {
+                conditionPropValueModels = channelConditionConfig.get(shop.getOrder_channel_id()).get(platformPropId);
+            }
+        }
 
         // 使用运费模板或关联版式条件表达式
         if (conditionPropValueModels != null && !conditionPropValueModels.isEmpty()) {
@@ -2091,7 +2105,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         Double resultPrice = 0.0;
-        // 如果是平台售价(sale_price)，则取个平台相应的售价(platform.P29.sku.priceSale)
+        // 如果skuList为空（可能所有的sku都没有库存），直接返回0.0,否则后面会报"No value present"错误
+        if (ListUtils.isNull(skuList) || skuList.stream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).count() > 0) {
+            return 0.0;
+        }
+
         if (PriceType_jdprice.equals(priceType)) {
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else if (PriceType_marketprice.equals(priceType)) {

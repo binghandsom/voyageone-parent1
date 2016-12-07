@@ -71,11 +71,18 @@
 			<!-- 产品销量父子店数据同步修正 -->
 			<![CDATA[
 			and (
-				a.cart_id = #{cartId} or (
-					a.parent_order_channel_id = #{cartId} and a.parent_order_channel_id <> a.order_channel_id
-				)
+				-- 计算店铺自己的商品卖出的销量
+				case when a.parent_order_channel_id = a.order_channel_id then
+					a.parent_order_channel_id = #{channelId} and a.cart_id = #{cartId}
+				-- 计算总店帮子店卖掉的商品的销量
+				else
+					case when a.parent_order_channel_id = #{channelId}
+						then a.parent_order_channel_id = #{channelId} and a.cart_id = #{cartId}
+					else
+						a.order_channel_id = #{channelId} and a.parent_order_channel_id = #{cartId}
+					end
+				end
 			)
-			and a.order_channel_id = #{channelId}
 			and b.`status` not in ('Canceled', 'Returned')
 			and (a.order_date_time <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
 			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
