@@ -123,11 +123,11 @@
 		<property name="filterChainDefinitions">
 			<value>
 				/* = anon
-				/core/access/user/** = anon
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
 				/admin/user/self/getUserByToken = anon
-				/admin/* = anon
+				/core/access/user/* = anon
+				/rest/* = anon
 			</value>
 		</property>
 	</bean>
