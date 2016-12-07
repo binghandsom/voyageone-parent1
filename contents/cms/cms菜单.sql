@@ -1,4 +1,4 @@
-
+-- http://localhost:9091/modules/admin/app.html#/admin/resManage
 -- DELETE FROM com_resource  WHERE application='cms' and id>8000;
 -- CREATE TABLE IF NOT EXISTS `com_resource` (
 --   `id` INT(11) NOT NULL,
