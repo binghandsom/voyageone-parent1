@@ -1,5 +1,7 @@
 
+<!--加载菜单-->
 <ul class="nav" ng-if="$root.menuTree"  ng-include="'menuChild'" ng-init="children=$root.menuTree"></ul>
+
 
 <script id="menuChild" type="text/ng-template">
     <li ng-repeat="item in children" ui-sref-active="active">
