@@ -19,7 +19,15 @@ public class ProductInfo {
     String created;//创建时间
     int salesSum7;//7天销量
     int salesSum30;//30天销量
-    int salesSumYear;//年销量
+    int salesSum;//年销量
+
+    public int getSalesSum() {
+        return salesSum;
+    }
+
+    public void setSalesSum(int salesSum) {
+        this.salesSum = salesSum;
+    }
 
     public String getCreated() {
         return created;
@@ -45,13 +53,7 @@ public class ProductInfo {
         this.salesSum30 = salesSum30;
     }
 
-    public int getSalesSumYear() {
-        return salesSumYear;
-    }
 
-    public void setSalesSumYear(int salesSumYear) {
-        this.salesSumYear = salesSumYear;
-    }
 
     public String getImage1() {
         return image1;
