@@ -350,7 +350,7 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
             if (ware.getSkus().stream().filter(sku -> StringUtils.isEmpty(sku.getOuterId())).count() > 0) {
                 $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", shopBean.getOrder_channel_id(), shopBean.getCart_id(), wareId));
             }
-            return ware.getSkus().stream().filter(sku -> !StringUtils.isEmpty(sku.getOuterId())).map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList()); // 有OuterI为空的垃圾数据，清理一下
+            return ware.getSkus().stream().filter(sku -> !StringUtils.isEmpty(sku.getOuterId())).map(sku -> sku.getOuterId().toLowerCase()).collect(Collectors.toList()); // 有OuterId为空的垃圾数据，清理一下
             // modified by morse.lu 2016/11/18 end
         }
     }

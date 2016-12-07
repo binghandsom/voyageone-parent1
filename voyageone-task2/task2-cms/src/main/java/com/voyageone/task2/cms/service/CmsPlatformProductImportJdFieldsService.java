@@ -282,7 +282,7 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         // 貌似不需要都设置，只要attributes和一些共通项目
 //        Map<String, Object> mapBean = JsonUtil.jsonToMap(JsonUtil.getJsonString(ware));
         // deleted by morse.lu 2016/11/09 end
-
+        final boolean[] hasErr = {false};
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         cmsBtProductGroup.getProductCodes().forEach(code -> {
             Map<String, Object> queryMap = new HashMap<>();
@@ -326,6 +326,9 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
                     // modified by morse.lu 2016/11/18 start
                     // 全小写比较skuCode
 //                    if (listSkuCode.contains(sku.getOuterId())) {
+                    if (StringUtils.isEmpty(sku.getOuterId())) {
+                        hasErr[0] = true;
+                    } else
                     if (listSkuCode.contains(sku.getOuterId().toLowerCase())) {
                         // modified by morse.lu 2016/11/18 end
                         hasPublishSku = true;
@@ -393,6 +396,10 @@ public class CmsPlatformProductImportJdFieldsService extends BaseMQCmsService {
         });
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+
+        if (hasErr[0]) {
+            $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, cmsBtProductGroup.getNumIId()));
+        }
 
         // 回写group表
         String wareStatus = ware.getWareStatus(); // 商品状态
