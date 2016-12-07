@@ -123,7 +123,7 @@
 		<property name="filterChainDefinitions">
 			<value>
 				/* = anon
-				/core/** = anon
+				/core/access/user/** = anon
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
 				/admin/user/self/getUserByToken = anon
