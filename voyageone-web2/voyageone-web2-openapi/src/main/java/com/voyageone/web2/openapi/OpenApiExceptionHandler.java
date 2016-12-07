@@ -1,11 +1,11 @@
 package com.voyageone.web2.openapi;
 
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
 import com.voyageone.web2.openapi.util.ResponseUtils;
 import com.voyageone.web2.sdk.api.VoApiResponse;
-import org.apache.commons.beanutils.BeanMap;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -39,10 +39,10 @@ public class OpenApiExceptionHandler extends VOAbsLoggable implements HandlerExc
 
         if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
             ActionResponse responseCa = ResponseUtils.buildCAError(ex);
-            jsonView.setAttributesMap(new BeanMap(responseCa));
+            jsonView.setAttributesMap(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(responseCa)));
         } else {
             VoApiResponse responseVo = ResponseUtils.buildError(ex);
-            jsonView.setAttributesMap(new BeanMap(responseVo));
+            jsonView.setAttributesMap(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(responseVo)));
         }
 
         return mav;
