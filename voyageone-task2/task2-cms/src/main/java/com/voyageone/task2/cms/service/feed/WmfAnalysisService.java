@@ -38,7 +38,8 @@ public class WmfAnalysisService extends BaseAnalysisService {
     WmfFeedDao wmfFeedDao;
 
     private static String urlKey = "http://www.wmf.com/en/";
-    private static String mediaImage="https://www.wmf.com/media/catalog/product";
+    private static String mediaImage = "https://www.wmf.com/media/catalog/product";
+
     @Override
     protected void updateFull(List<String> itemIds) {
         if (itemIds.size() > 0) {
@@ -91,7 +92,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
             reader = new CsvReader(new FileInputStream(fileFullName), ',', Charset.forName(encode));
             // Body读入
             while (reader.readRecord()) {
-                if(reader.getCurrentRecord()<3)continue;
+                if (reader.getCurrentRecord() < 3) continue;
                 SuperFeedWmfBean wmfBean = new SuperFeedWmfBean();
                 int i = 0;
                 wmfBean.setEntityId(reader.get(i++));
@@ -100,15 +101,15 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setType(reader.get(i++));
                 wmfBean.setAttributeSet(reader.get(i++));
                 wmfBean.setCategory(reader.get(i++));
-                if(!StringUtil.isEmpty(wmfBean.getCategory())){
+                if (!StringUtil.isEmpty(wmfBean.getCategory())) {
                     String category = wmfBean.getCategory().split("\\|")[0];
                     wmfBean.setCategory(category);
-                }else {
+                } else {
                     wmfBean.setCategory("Root Catalog > Default Category >");
                 }
                 wmfBean.setCategoryValue(wmfBean.getCategory());
                 wmfBean.setStatus(reader.get(i++));
-                if("1".equals(wmfBean.getStatus())&&"4".equals(wmfBean.getVisibility()))continue;
+                if ("1".equals(wmfBean.getStatus()) && "4".equals(wmfBean.getVisibility())) continue;
                 wmfBean.setVisibility(reader.get(i++));
                 wmfBean.setTaxClassId(reader.get(i++));
                 wmfBean.setImage(reader.get(i++));
@@ -139,7 +140,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setEan(reader.get(i++));
                 wmfBean.setMaterial(reader.get(i++));
                 wmfBean.setUrlKey(reader.get(i++));
-                wmfBean.setUrlKey(urlKey+wmfBean.getUrlKey());
+                wmfBean.setUrlKey(urlKey + wmfBean.getUrlKey());
                 wmfBean.setMaterialeigenschaft(reader.get(i++));
                 wmfBean.setNebenmaterial(reader.get(i++));
                 wmfBean.setProdukteigenschaft(reader.get(i++));
@@ -211,21 +212,21 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setVideo3(reader.get(i++));
                 wmfBean.setVideo4(reader.get(i++));
                 StringBuffer sb = new StringBuffer();
-                if(!StringUtil.isEmpty(wmfBean.getMasseLaengeInCm())){
+                if (!StringUtil.isEmpty(wmfBean.getMasseLaengeInCm())) {
                     sb.append("Length:").append(wmfBean.getMasseLaengeInCm()).append("-");
                 }
-                if(!StringUtil.isEmpty(wmfBean.getMasseBreiteInCm())){
+                if (!StringUtil.isEmpty(wmfBean.getMasseBreiteInCm())) {
                     sb.append("Width:").append(wmfBean.getMasseBreiteInCm()).append("-");
                 }
-                if(!StringUtil.isEmpty(wmfBean.getMasseHoeheInCm())){
+                if (!StringUtil.isEmpty(wmfBean.getMasseHoeheInCm())) {
                     sb.append("Height:").append(wmfBean.getMasseHoeheInCm()).append("-");
                 }
-                if(!StringUtil.isEmpty(wmfBean.getMasseDmInCm())){
+                if (!StringUtil.isEmpty(wmfBean.getMasseDmInCm())) {
                     sb.append("Diameter:").append(wmfBean.getMasseDmInCm());
                 }
-                if(sb.length()==0){
+                if (sb.length() == 0) {
                     wmfBean.setItemISize("OneSize");
-                }else{
+                } else {
                     wmfBean.setItemISize(sb.toString());
                 }
                 superFeed.add(wmfBean);
@@ -306,10 +307,10 @@ public class WmfAnalysisService extends BaseAnalysisService {
             cmsBtFeedInfoModel.setAttribute(attribute);
             //取得图片开始
             List<String> imagesList = new ArrayList<>();
-            if(!StringUtil.isEmpty(vtmModelBean.getMediaImage())){
-                String images[] =vtmModelBean.getMediaImage().split("\\|");
-                for(String img:images){
-                    imagesList.add(mediaImage+img);
+            if (!StringUtil.isEmpty(vtmModelBean.getMediaImage())) {
+                String images[] = vtmModelBean.getMediaImage().split("\\|");
+                for (String img : images) {
+                    imagesList.add(mediaImage + img);
                 }
                 cmsBtFeedInfoModel.setImage(imagesList);
             }
@@ -327,15 +328,15 @@ public class WmfAnalysisService extends BaseAnalysisService {
                         sku.setWeightOrg(weightOrg);
                     }
                 }
+                //sku取得图片
                 sku.setWeightOrgUnit(sku.getWeightOrgUnit());
+                sku.setImage(cmsBtFeedInfoModel.getImage());
             }
             cmsBtFeedInfoModel.setSkus(skus);
             //设置重量结束
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
-                //sku取得图片
-                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);
