@@ -18,26 +18,15 @@ define([
                     carts: {},
                     cartsEnums:cartsEnums,
                     products: [],
-                    productPageOption: {page: 1, total: 0, fetch: goPage.bind(this)},
+                    productPageOption: {curr: 1,size:10, total: 0, fetch: function(){
+                        getProductList();
+                    }},
                     statuses: {},
                     platformStatuses: {},
                     searchBean: {
                         cartId: ""
                     }
                 };
-
-                //跳转指定页
-                function goPage(page, pageSize) {
-                    var pageParameter = angular.copy($scope.vm.searchBean);
-
-                    pageParameter.page = page;
-                    pageParameter.pageSize = pageSize;
-                    combinedProductService.search(pageParameter).then(function (res) {
-                        $scope.vm.products = res.data.products == null ? [] : res.data.products;
-                        $scope.vm.productPageOption.total = res.data.total;
-                    }, function (res) {
-                    })
-                }
 
                 /**
                  * 分页处理product数据
@@ -55,7 +44,7 @@ define([
 
                     copy_searchBean.statuses = statuses;
                     copy_searchBean.platformStatuses = platformStatuses;
-                    combinedProductService.search(copy_searchBean, $scope.vm.productPageOption)
+                    combinedProductService.search(_.extend(copy_searchBean, $scope.vm.productPageOption))
                         .then(function (resp) {
                             $scope.vm.products = resp.data.products == null ? [] : resp.data.products;
                             $scope.vm.productPageOption.total = resp.data.total;
@@ -79,8 +68,6 @@ define([
                 };
 
                 $scope.search = function () {
-                    $scope.vm.productPageOption.page = 1;
-                    $scope.vm.productPageOption.pageSize = 10;
                     getProductList();
                 };
 
@@ -99,8 +86,8 @@ define([
                     confirm("是否确认删除该组合套装商品？").then(function () {
                         combinedProductService.delete(product).then(function () {
                             //$scope.vm.productPageOption.total = $scope.vm.productPageOption.total - 1;
-                            if ($scope.vm.products.length == 1 && $scope.vm.productPageOption.page > 1) {
-                                $scope.vm.productPageOption.page = $scope.vm.productPageOption.page - 1;
+                            if ($scope.vm.products.length == 1 && $scope.vm.productPageOption.curr > 1) {
+                                $scope.vm.productPageOption.curr = $scope.vm.productPageOption.curr - 1;
                             }
                             getProductList();
                         });

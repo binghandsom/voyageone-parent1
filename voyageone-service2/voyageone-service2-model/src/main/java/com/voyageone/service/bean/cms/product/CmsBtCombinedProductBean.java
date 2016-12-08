@@ -13,10 +13,9 @@ public class CmsBtCombinedProductBean extends CmsBtCombinedProductModel {
     private List<Integer> statuses; // 组合套装状态，多值
     private List<Integer> platformStatuses; // 组合套装平台状态：多值
 
-    private int pageSize;
+    private int size;
     private int total;
-    private int page;
-    private int totalPages;
+    private int curr;
 
     public String getNumIDs() {
         return numIDs;
@@ -26,44 +25,12 @@ public class CmsBtCombinedProductBean extends CmsBtCombinedProductModel {
         this.numIDs = numIDs;
     }
 
-    public int getTotalPages() {
-        return totalPages;
+    public String getSkuCodes() {
+        return skuCodes;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
-    }
-
-    public int getPage() {
-        return page;
-    }
-
-    public void setPage(int page) {
-        this.page = page;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public List<Integer> getPlatformStatuses() {
-        return platformStatuses;
-    }
-
-    public void setPlatformStatuses(List<Integer> platformStatuses) {
-        this.platformStatuses = platformStatuses;
+    public void setSkuCodes(String skuCodes) {
+        this.skuCodes = skuCodes;
     }
 
     public List<Integer> getStatuses() {
@@ -74,11 +41,35 @@ public class CmsBtCombinedProductBean extends CmsBtCombinedProductModel {
         this.statuses = statuses;
     }
 
-    public String getSkuCodes() {
-        return skuCodes;
+    public List<Integer> getPlatformStatuses() {
+        return platformStatuses;
     }
 
-    public void setSkuCodes(String skuCodes) {
-        this.skuCodes = skuCodes;
+    public void setPlatformStatuses(List<Integer> platformStatuses) {
+        this.platformStatuses = platformStatuses;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getCurr() {
+        return curr;
+    }
+
+    public void setCurr(int curr) {
+        this.curr = curr;
     }
 }
