@@ -40,6 +40,11 @@ public class CmsProductTopController extends CmsController {
     @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
     public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
         UserSessionBean userSessionBean = getUser();
+
+        /**vo项目中默认分页字段为curr size , 字段转换*/
+        param.setPageIndex(param.getCurr());
+        param.setPageSize(param.getSize());
+
         return success(service.getPage(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName()));
     }
 
