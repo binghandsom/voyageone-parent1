@@ -15,7 +15,7 @@ define([
             self.codeStr = '';
             self.isSeachAdd = false;
             self.paging = {
-                curr: 1, total: 0, size: 5, fetch: function () {
+                curr: 1, total: 0, size: 10, fetch: function () {
                     self.search();
                 }
             };
