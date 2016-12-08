@@ -69,8 +69,9 @@ define([
 
             self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
                 if(res.data.length == 0 && self.paging.curr > 1){
-                    self.paging.curr = 1;
+                    self.paging.curr = self.paging.curr - 1;
                     self.search();
+                    return;
                 }
 
                 self.modelList = res.data;
