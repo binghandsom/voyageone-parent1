@@ -10,6 +10,9 @@ import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by dell on 2016/9/23.
  */
@@ -46,15 +49,16 @@ public class CnSellerCatService {
     }
 
     /**
-     * 重载：新增目录节点时指定新增节点在同级节点中的序号
+     * 重载：新增时设置index为当前层级的最后一位，附带urlKey
      * @param channelId
      * @param parentCId
      * @param catName
+     * @param urlKey
      * @param shopBean
      * @param index
      * @return
      */
-    public String addSellerCat(String channelId, String parentCId, String catName, ShopBean shopBean, int index) {
+    public Map<String, String> addSellerCat(String channelId, String parentCId, String catName, String urlKey, ShopBean shopBean, int index) {
         String catId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
         String catFullId = "";
         if (!StringUtils.isEmpty(parentCId)) {
@@ -68,14 +72,16 @@ public class CnSellerCatService {
         } else {
             catFullId = catFullId + "-" + catId;
         }
-        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName, null);
+        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName, urlKey);
         cnCategoryBean.setDisplayOrder(index);
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");
         }
-
-        return catId;
+        Map<String, String> resultMap = new HashMap<String, String>();
+        resultMap.put("catId", catId);
+        resultMap.put("urlKey", cnCategoryBean.getUrlKey());
+        return resultMap;
     }
 
     public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
