@@ -44,7 +44,7 @@ define([
 
                     copy_searchBean.statuses = statuses;
                     copy_searchBean.platformStatuses = platformStatuses;
-                    combinedProductService.search(copy_searchBean, $scope.vm.productPageOption)
+                    combinedProductService.search(_.extend(copy_searchBean, $scope.vm.productPageOption))
                         .then(function (resp) {
                             $scope.vm.products = resp.data.products == null ? [] : resp.data.products;
                             $scope.vm.productPageOption.total = resp.data.total;
