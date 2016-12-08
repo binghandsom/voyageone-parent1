@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by rex.wu on 2016/12/1.
  */
-public class OmsSuitSkuInfoResponse extends VoApiResponse {
+public class SuitSkuInfoForOmsResponse extends VoApiResponse {
 
     private List<CombinedSkuInfoBean> resultInfo;
 

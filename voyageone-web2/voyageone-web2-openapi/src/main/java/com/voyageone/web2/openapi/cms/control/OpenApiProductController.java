@@ -78,8 +78,8 @@ public class OpenApiProductController extends OpenApiBaseController {
      * @return
      */
     @RequestMapping("getSuitSkuInfo")
-    public OmsSuitSkuInfoResponse getSuitSkuInfo() {
-        OmsSuitSkuInfoResponse response = new OmsSuitSkuInfoResponse();
+    public SuitSkuInfoForOmsResponse getSuitSkuInfo() {
+        SuitSkuInfoForOmsResponse response = new SuitSkuInfoForOmsResponse();
         response.setResultInfo(cmsBtCombinedProductService.getSuitSkuInfo());
         return response;
     }
