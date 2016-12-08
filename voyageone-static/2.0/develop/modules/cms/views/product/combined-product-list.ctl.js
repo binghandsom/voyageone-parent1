@@ -18,7 +18,9 @@ define([
                     carts: {},
                     cartsEnums:cartsEnums,
                     products: [],
-                    productPageOption: {page: 1, total: 0, fetch: goPage.bind(this)},
+                    productPageOption: {curr: 1,size:10, total: 0, fetch: function(){
+                        getProductList();
+                    }},
                     statuses: {},
                     platformStatuses: {},
                     searchBean: {
@@ -26,41 +28,28 @@ define([
                     }
                 };
 
-                   //跳转指定页
-                   function goPage(page, pageSize) {
-                       var pageParameter = angular.copy($scope.vm.searchBean);
+                /**
+                 * 分页处理product数据
+                 */
+                function getProductList() {
+                    var statusesObj = _.pick($scope.vm.searchBean.statuses, function (value, key, object) {
+                            return value;
+                        }),
+                        statuses = _.keys(statusesObj),
+                        platformStatusesObj = _.pick($scope.vm.searchBean.platformStatuses, function (value, key, object) {
+                            return value;
+                        }),
+                        platformStatuses = _.keys(platformStatusesObj),
+                        copy_searchBean = angular.copy($scope.vm.searchBean);
 
-                       pageParameter.page = page;
-                       pageParameter.pageSize = pageSize;
-                       combinedProductService.search(pageParameter).then(function (res) {
-                           $scope.vm.products = res.data.products == null ? [] : res.data.products;
-                           $scope.vm.productPageOption.total = res.data.total;
-                       }, function (res) {
-                       })
-                   }
-
-                   /**
-                    * 分页处理product数据
-                    */
-                   function getProductList() {
-                       var statusesObj = _.pick($scope.vm.searchBean.statuses, function (value, key, object) {
-                               return value;
-                           }),
-                           statuses = _.keys(statusesObj),
-                           platformStatusesObj = _.pick($scope.vm.searchBean.platformStatuses, function (value, key, object) {
-                               return value;
-                           }),
-                           platformStatuses = _.keys(platformStatusesObj),
-                           copy_searchBean = angular.copy($scope.vm.searchBean);
-
-                       copy_searchBean.statuses = statuses;
-                       copy_searchBean.platformStatuses = platformStatuses;
-                       combinedProductService.search(copy_searchBean, $scope.vm.productPageOption)
-                           .then(function (resp) {
-                               $scope.vm.products = resp.data.products == null ? [] : resp.data.products;
-                               $scope.vm.productPageOption.total = resp.data.total;
-                           });
-                   }
+                    copy_searchBean.statuses = statuses;
+                    copy_searchBean.platformStatuses = platformStatuses;
+                    combinedProductService.search(copy_searchBean, $scope.vm.productPageOption)
+                        .then(function (resp) {
+                            $scope.vm.products = resp.data.products == null ? [] : resp.data.products;
+                            $scope.vm.productPageOption.total = resp.data.total;
+                        });
+                }
 
                 $scope.initialize = function () {
                     combinedProductService.init().then(function (resp) {
@@ -78,15 +67,13 @@ define([
                     });
                 };
 
-                   $scope.search = function () {
-                       $scope.vm.productPageOption.page = 1;
-                       $scope.vm.productPageOption.pageSize = 10;
-                       getProductList();
-                   };
+                $scope.search = function () {
+                    getProductList();
+                };
 
-                   $scope.clear = function () {
-                       $scope.vm.searchBean = {};
-                   };
+                $scope.clear = function () {
+                    $scope.vm.searchBean = {};
+                };
 
                 /**
                  *  删除组合套装商品
@@ -99,8 +86,8 @@ define([
                     confirm("是否确认删除该组合套装商品？").then(function () {
                         combinedProductService.delete(product).then(function () {
                             //$scope.vm.productPageOption.total = $scope.vm.productPageOption.total - 1;
-                            if ($scope.vm.products.length == 1 && $scope.vm.productPageOption.page > 1) {
-                                $scope.vm.productPageOption.page = $scope.vm.productPageOption.page - 1;
+                            if ($scope.vm.products.length == 1 && $scope.vm.productPageOption.curr > 1) {
+                                $scope.vm.productPageOption.curr = $scope.vm.productPageOption.curr - 1;
                             }
                             getProductList();
                         });
@@ -119,21 +106,21 @@ define([
                 $scope.onOffShelves = function (product, platformStatus) {
                     var confirmMsg = "";
 
-                       if (platformStatus == 0) {
-                           confirmMsg = "是否确认将该组合商品下架？";
-                       } else if (platformStatus == 1) {
-                           confirmMsg = "是否确认将该组合商品上架？";
-                       }
-                       if (confirmMsg == "") {
-                           return;
-                       }
-                       confirm(confirmMsg).then(function () {
-                           combinedProductService.onOffShelves(_.extend(angular.copy(product), {'platformStatus': platformStatus})).then(function () {
-                               getProductList();
-                           });
-                       });
+                    if (platformStatus == 0) {
+                        confirmMsg = "是否确认将该组合商品下架？";
+                    } else if (platformStatus == 1) {
+                        confirmMsg = "是否确认将该组合商品上架？";
+                    }
+                    if (confirmMsg == "") {
+                        return;
+                    }
+                    confirm(confirmMsg).then(function () {
+                        combinedProductService.onOffShelves(_.extend(angular.copy(product), {'platformStatus': platformStatus})).then(function () {
+                            getProductList();
+                        });
+                    });
 
-                   };
+                };
 
                 /** 操作日志 */
                 $scope.popCombinedProductLogs = function (product) {
@@ -162,9 +149,9 @@ define([
                 }
             }
 
-               return CombinedProductController;
+            return CombinedProductController;
 
-           })());
-       }
+        })());
+    }
 );
 
