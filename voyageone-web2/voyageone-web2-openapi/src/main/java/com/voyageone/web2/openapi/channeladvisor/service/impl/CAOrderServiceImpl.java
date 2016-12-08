@@ -450,6 +450,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (request == null) {
             throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
         }
+
+        if(!orderID.equals(request.getOrderId())){
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
+        }
+
         if (CollectionUtils.isEmpty(request.getItems())) {
             throw new CAApiException(ErrorIDEnum.CancellationFailed);
         }
@@ -612,6 +617,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (request == null) {
             throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
         }
+
+        if(!orderID.equals(request.getOrderId())){
+            throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter);
+        }
+
         if (CollectionUtils.isEmpty(request.getItems())) {
             throw new CAApiException(ErrorIDEnum.RefundFailed);
         }
