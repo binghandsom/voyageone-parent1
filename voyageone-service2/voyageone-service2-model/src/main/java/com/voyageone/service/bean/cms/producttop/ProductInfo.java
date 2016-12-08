@@ -20,7 +20,7 @@ public class ProductInfo {
     int salesSum7;//7天销量
     int salesSum30;//30天销量
     int salesSumYear;//年销量
-    int salesSumAll;//年销量
+    int salesSumAll;//总销量
 
     public int getSalesSumYear() {
         return salesSumYear;
