@@ -6259,6 +6259,10 @@ a.text-black:hover {
     cursor: move;
 }
 
+.cur-p {
+    cursor: pointer;
+}
+
 .line {
     width: 100%;
     height: 2px;
