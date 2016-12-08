@@ -5,6 +5,7 @@ import java.util.List;
 /**
  * Created by dell on 2016/11/28.
  */
+
 public class ProductPageParameter {
     int cartId;//平台id
     List<String> brandList;//品牌名称
@@ -18,8 +19,11 @@ public class ProductPageParameter {
     int sortType;//排序类型   1：升序         -1：降序
     int pageIndex;//当前页
     int pageSize;//当前页行数
-
-
+    /**
+     * 分页兼容字段
+     */
+    int curr;         //当前页
+    int size;         //每页行数
 
     public boolean isInclude() {
         return isInclude;
@@ -125,4 +129,12 @@ public class ProductPageParameter {
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
     }
+
+    public int getCurr() { return curr; }
+
+    public void setCurr(int curr) { this.curr = curr; }
+
+    public int getSize() {  return size; }
+
+    public void setSize(int size) { this.size = size; }
 }
