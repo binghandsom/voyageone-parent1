@@ -1013,6 +1013,16 @@ schema .ng-invalid.focus-error {
 
 }
 
+#newCategory .fix-img{
+    max-width: 100px;
+    max-height: 98px;
+    height: 98px;
+    padding: 10px;
+    margin-bottom: 6px;
+    border: 1px solid #e5bb23;
+    border-radius: 4px;
+}
+
 #newCategory .opacityBtn {
     border: none;
     background: none;
@@ -1028,7 +1038,10 @@ schema .ng-invalid.focus-error {
     margin: 6px;
 }
 
-/**组合套装样式*/
+#newCategory tbody tr{
+    height: 100px;
+}
+    /**组合套装样式*/
 #combined-product .btn-group li {
     margin-bottom: 3px;
 }

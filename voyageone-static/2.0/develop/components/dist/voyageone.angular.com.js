@@ -2843,14 +2843,15 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     //    return true;
     //}
 
-    function adminResetPassword(res) {
-        if (res.code != MSG_CHANGEPASS) {
-            return false;
-        }
-        // 密码输入错误,默认跳转到重置密码界面
-        location.href = "/adminResetPass.html";
-        return true;
-    }
+    //function adminResetPassword(res) {
+    //    if (res.code != MSG_CHANGEPASS) {
+    //        return false;
+    //    }
+    //    // 密码输入错误,默认跳转到重置密码界面
+    //    location.href = "/adminResetPass.html";
+    //    return true;
+    //}
+
     function adminReLogin(res) {
         if (res.code != MSG_LOGINAGAIN) {
             return false;
@@ -2884,7 +2885,8 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         response: function (res) {
             var result = res.data;
             // 特殊处理部分内容
-            if (autoRedirect(result) || sessionTimeout(result)  || adminResetPassword(result)||adminReLogin(result)) {
+           // if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
+            if (autoRedirect(result) || sessionTimeout(result)||adminReLogin(result)) {
                 return res;
             }
             unknownException(res);
@@ -2899,7 +2901,6 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
 }).config(function ($httpProvider) {
     $httpProvider.interceptors.push("interceptorFactory");
 });
-
 
 
 /*****************************/
@@ -3273,7 +3274,7 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
 
         switch (typeof input) {
             case 'string':
-                input  = new Date(input);
+                input = new Date(input);
                 miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
                 break;
             case 'number':
@@ -3283,13 +3284,37 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
                 console.error("传入了未知类型数据！！！");
         }
 
-
         return $filter('date')(new Date(miliTimes), format);
 
     };
 
 });
 
+
+/*****************************/
+
+/**
+ * Created by sofia on 2016/7/22.
+ */
+
+angular.module("voyageone.angular.filter").filter("stringCutter", function() {
+    return function (value, wordWise, max, tail) {
+        if (!value) return '';
+
+        max = parseInt(max, 10);
+        if (!max) return value;
+        if (value.length <= max) return value;
+
+        value = value.substr(0, max);
+        if (wordWise) {
+            var lastSpace = value.lastIndexOf(' ');
+            if (lastSpace != -1) {
+                value = value.substr(0, lastSpace);
+            }
+        }
+        return value + (tail || ' …');
+    };
+});
 
 /*****************************/
 
@@ -3785,26 +3810,3 @@ TranslateService.prototype = {
         return currentLang.substr(0, 2);
     }
 };
-/**
- * Created by sofia on 2016/7/22.
- */
-(function() {
-    angular.module("voyageone.angular.filter", []).filter("stringCutter", function() {
-        return function (value, wordWise, max, tail) {
-            if (!value) return '';
-
-            max = parseInt(max, 10);
-            if (!max) return value;
-            if (value.length <= max) return value;
-
-            value = value.substr(0, max);
-            if (wordWise) {
-                var lastSpace = value.lastIndexOf(' ');
-                if (lastSpace != -1) {
-                    value = value.substr(0, lastSpace);
-                }
-            }
-            return value + (tail || ' …');
-        };
-    });
-})();

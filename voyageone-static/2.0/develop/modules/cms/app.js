@@ -334,7 +334,6 @@ define([
                 $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
-                console.log(data.menuTree)
             });
         }
         $rootScope.isParentMenu=function(item) {
@@ -459,7 +458,6 @@ define([
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
                 $rootScope.productUrl = data.productUrl;
-                console.log($scope.menuInfo.categoryTreeList);
             });
         }
 

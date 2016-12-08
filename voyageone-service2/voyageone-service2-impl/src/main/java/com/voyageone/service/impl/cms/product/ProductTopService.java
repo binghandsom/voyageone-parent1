@@ -219,9 +219,10 @@ public class ProductTopService extends BaseService {
         info.setCreated(f.getCreated());
         CmsBtProductModel_Sales cmsBtProductModel_sales=f.getSales();
         if(cmsBtProductModel_sales!=null) {
-            info.setSalesSum7(f.getSales().getCodeSum7(cartId));
-            info.setSalesSum30(f.getSales().getCodeSum30(cartId));
-            info.setSalesSum(f.getSales().getCodeSumAll(cartId));
+            info.setSalesSum7(cmsBtProductModel_sales.getCodeSum7(cartId));
+            info.setSalesSum30(cmsBtProductModel_sales.getCodeSum30(cartId));
+            info.setSalesSumYear(cmsBtProductModel_sales.getCodeSumYear(cartId));
+            info.setSalesSumAll(cmsBtProductModel_sales.getCodeSumAll(cartId));
         }
         //图片
         List<CmsBtProductModel_Field_Image> imgList = f.getCommonNotNull().getFieldsNotNull().getImages6();
