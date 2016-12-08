@@ -211,7 +211,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setVideo2(reader.get(i++));
                 wmfBean.setVideo3(reader.get(i++));
                 wmfBean.setVideo4(reader.get(i++));
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 if (!StringUtil.isEmpty(wmfBean.getMasseLaengeInCm())) {
                     sb.append("Length:").append(wmfBean.getMasseLaengeInCm()).append("-");
                 }
