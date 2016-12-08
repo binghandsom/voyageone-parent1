@@ -22,7 +22,7 @@ class AuthorizationInterceptor {
     boolean preHandle(HttpServletRequest request) throws Exception {
 
         // TODO 开发阶段跳过全部检查
-        if (true) return true;
+        /*if (true) return true;*/
 
         HttpSession session = request.getSession();
         UserSessionBean user = (UserSessionBean) session.getAttribute(BaseConstants.SESSION_USER);
