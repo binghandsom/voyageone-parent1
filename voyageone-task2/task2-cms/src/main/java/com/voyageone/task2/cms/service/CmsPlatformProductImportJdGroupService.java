@@ -340,6 +340,9 @@ public class CmsPlatformProductImportJdGroupService extends BaseMQCmsService {
     private List<String> geJdSkuList(ShopBean shopBean, String wareId) {
         // 获取商品信息(360buy.ware.get)
         Ware ware = jdWareService.getWareInfo(shopBean, wareId, "skus");
+        if (ware == null) {
+            throw new BusinessException(String.format("numIId:%s 京东商品取得失败!", wareId));
+        }
         if (ListUtils.isNull(ware.getSkus())) {
             return Collections.emptyList();
         } else {
