@@ -150,7 +150,7 @@ public final class JacksonUtil {
      * @param jsonString String
      * @return List
      */
-    public static List<Map<String, Object>> jsonToMapList(String jsonString)  {
+    public static List<Map<String, Object>> jsonToMapList(String jsonString) {
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, Map.class);
         try {
@@ -169,8 +169,19 @@ public final class JacksonUtil {
         return objectMapper.readValue(json, cls);
     }
 
-    public static Boolean isArray(String json){
+    public static Boolean isArray(String json) {
         return json.trim().indexOf("[") == 0;
+    }
+
+    /**
+     * bean2Map
+     */
+    public static Map<String, Object> bean2Map(Object obj) {
+        ObjectMapper mapper = new ObjectMapper();
+        //Date to long
+        //mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        return mapper.convertValue(obj, new TypeReference<Map<String, Object>>() {
+        });
     }
 
 }
