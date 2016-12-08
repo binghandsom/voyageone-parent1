@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
@@ -24,6 +25,12 @@ import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
+import com.voyageone.components.sneakerhead.SneakerHeadBase;
+import com.voyageone.components.sneakerhead.bean.platformstatus.cnPlatformModel.CnPlatformStatusModel;
+import com.voyageone.components.sneakerhead.bean.platformstatus.cnPlatformModel.CodeCnPlatformStatusModel;
+import com.voyageone.components.sneakerhead.bean.platformstatus.cnPlatformModel.MqqCnPlatformStatusModel;
+import com.voyageone.components.sneakerhead.enums.CnPlatformStatus;
+import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.ims.rule_expression.DictWord;
@@ -32,6 +39,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.feed.FeedCustomPropWithValueBean;
+import com.voyageone.service.bean.cms.product.ProductMqqBean;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -108,6 +116,8 @@ public class SxProductService extends BaseService {
     private ImageTemplateService imageTemplateService;
     @Autowired
     private TaobaoScItemService taobaoScItemService;
+    @Autowired
+    private SneakerheadApiService sneakerheadApiService;
 
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
@@ -4388,5 +4398,51 @@ public class SxProductService extends BaseService {
             default:
                 $error("复杂类型的属性:" + field.getType() + "不能使用setFieldValues来设值");
         }
+    }
+
+    public int uploadCnInfo(SxData sxData) throws IOException {
+        CodeCnPlatformStatusModel codeCnPlatformStatusModel = new CodeCnPlatformStatusModel();
+        codeCnPlatformStatusModel.setCodes(sxData.getProductList().stream().map(product -> product.getCommon().getFields().getCode()).collect(Collectors.toList()));
+
+        CnPlatformStatusModel platformStatusModel = new CnPlatformStatusModel();
+        platformStatusModel.setNumIId(sxData.getPlatform().getNumIId());
+        platformStatusModel.setCartId(sxData.getCartId());
+        CmsConstants.PlatformStatus platformStatus = sxData.getPlatform().getPlatformStatus();
+        if (platformStatus == CmsConstants.PlatformStatus.OnSale) {
+            platformStatusModel.setStatus(CnPlatformStatus.OnSale);  // 上架
+        } else {
+            platformStatusModel.setStatus(CnPlatformStatus.InStock);  // 在库
+        }
+        // mmq
+        List<ProductMqqBean> mqqBeans = sxData.getMainProduct().getPlatformNotNull(sxData.getCartId()).getMqq();
+        if (ListUtils.notNull(mqqBeans)) {
+            platformStatusModel.setMqq(constructCnMqqModel(mqqBeans));
+        }
+
+        codeCnPlatformStatusModel.setStatuses(Lists.newArrayList(platformStatusModel));
+
+        return sneakerheadApiService.uploadCnInfo(codeCnPlatformStatusModel, SneakerHeadBase.DEFAULT_DOMAIN);
+    }
+
+    public List<MqqCnPlatformStatusModel> constructCnMqqModel(List<ProductMqqBean> mqqBeans) {
+        List<MqqCnPlatformStatusModel> mqqCnModels = new ArrayList<>();
+        for (ProductMqqBean mqqBean : mqqBeans) {
+            mqqCnModels.add(constructCnMqqModel(mqqBean));
+        }
+        return mqqCnModels;
+    }
+
+    public MqqCnPlatformStatusModel constructCnMqqModel(ProductMqqBean mqqBeans) {
+        MqqCnPlatformStatusModel mqqCnModel = new MqqCnPlatformStatusModel();
+        mqqCnModel.setMqqName(mqqBeans.getMqqName());
+        mqqCnModel.setNumIId(mqqBeans.getNumIId());
+        CmsConstants.PlatformStatus platformStatus = mqqBeans.getStatus();
+        if (platformStatus == CmsConstants.PlatformStatus.OnSale) {
+            mqqCnModel.setStatus(CnPlatformStatus.OnSale);  // 上架
+        } else {
+            mqqCnModel.setStatus(CnPlatformStatus.InStock);  // 在库
+        }
+
+        return mqqCnModel;
     }
 }

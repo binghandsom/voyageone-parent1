@@ -8,6 +8,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -49,6 +50,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -926,6 +928,17 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 $info("workload需要重试！[workId:%s][groupId:%s]", work.getId(), work.getGroupId());
                 return;
             }
+
+            // added by morse.lu 2016/12/08 start
+            if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                // Sneakerhead
+                try {
+                    sxProductService.uploadCnInfo(sxData);
+                } catch (IOException io) {
+                    throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                }
+            }
+            // added by morse.lu 2016/12/08 end
 
             saveWorkload(work, WORK_LOAD_SUCCESS);
 
