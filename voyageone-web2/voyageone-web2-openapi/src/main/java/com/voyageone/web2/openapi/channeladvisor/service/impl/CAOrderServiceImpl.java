@@ -1,8 +1,6 @@
 package com.voyageone.web2.openapi.channeladvisor.service.impl;
 
 import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -494,10 +492,26 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         List<Map<String, Object>> tempRecords = new ArrayList<>();
 
-        Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        //Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
+        //Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+
+        //sku数量map
+        Map<String,Integer> tempSkuQtyMap = new HashMap<>();
+        request.getItems().forEach(m->{
+            Integer already=tempSkuQtyMap.get(m.getSellerSku());
+            Integer current=m.getQuantity();
+            if(already!=null&&current!=null){
+                tempSkuQtyMap.put(m.getSellerSku(),already+current);
+            }else if(already==null&&current!=null){
+                tempSkuQtyMap.put(m.getSellerSku(),current);
+            }
+        });
 
         Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
+
+        //请求items
+        List<OrderItemCancellationModel> tempItems=new ArrayList<>(request.getItems());
+
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
 
@@ -505,19 +519,30 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
                 issueSkuNotExistList.remove(sku);
 
-                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
-                String tempSkuReasonStr = tempSkuReasonMap.get(sku);
-                if (!StringUtils.isEmpty(tempSkuReasonStr)) {
-                    tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                //从requestItems里边寻找相应数据
+                int matchIndex=-1;
+                for (int i = 0; i < tempItems.size(); i++) {
+                    OrderItemCancellationModel item=tempItems.get(i);
+                    //仅匹配sku，若匹配到，后续处理
+                    if(item.getSellerSku().equals(vmsBtClientOrderDetailsModel.getSellerSku())){
+                        matchIndex=i;
+                        VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
+                        String tempSkuReasonStr = item.getReason();
+                        if (!StringUtils.isEmpty(tempSkuReasonStr)) {
+                            tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                        }
+                        tempUpdateModel.setStatus(Canceled);
+                        tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
+                        matchModelList.add(tempUpdateModel);
+                        Map<String, Object> tempRecord = new HashMap<>();
+                        tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
+                        tempRecord.put("reason", tempUpdateModel.getCancelReason());
+                        tempRecords.add(tempRecord);
+                        break;
+                    }
                 }
-                tempUpdateModel.setStatus(Canceled);
-                tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
-                matchModelList.add(tempUpdateModel);
-
-                Map<String, Object> tempRecord = new HashMap<>();
-                tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
-                tempRecord.put("reason", tempUpdateModel.getCancelReason());
-                tempRecords.add(tempRecord);
+                if(matchIndex!=-1)
+                    tempItems.remove(matchIndex);
             }
         }
 
@@ -625,11 +650,26 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<VmsBtClientOrderDetailsModel> matchModelList = new ArrayList<>();
 
         //根据请求参数中Items.SellerSku， 匹配品牌方订单明细中的 seller_sku，找出对应的明细。
-        Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
-        Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+        //Map<String, Integer> tempSkuQtyMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getQuantity));
+        //Map<String, String> tempSkuReasonMap = request.getItems().stream().collect(Collectors.toMap(OrderItemCancellationModel::getSellerSku, OrderItemCancellationModel::getReason));
+
+        //sku数量map
+        Map<String,Integer> tempSkuQtyMap = new HashMap<>();
+        request.getItems().forEach(m->{
+            Integer already=tempSkuQtyMap.get(m.getSellerSku());
+            Integer current=m.getQuantity();
+            if(already!=null&&current!=null){
+                tempSkuQtyMap.put(m.getSellerSku(),already+current);
+            }else if(already==null&&current!=null){
+                tempSkuQtyMap.put(m.getSellerSku(),current);
+            }
+        });
 
         List<Map<String, Object>> tempRecords = new ArrayList<>();
-        Set<String> issueSkuNotExistList = tempSkuQtyMap.keySet();
+        Set<String> issueSkuNotExistList = new HashSet<>(tempSkuQtyMap.keySet());
+
+        //请求items
+        List<OrderItemCancellationModel> tempItems=new ArrayList<>(request.getItems());
 
         for (VmsBtClientOrderDetailsModel vmsBtClientOrderDetailsModel : mList) {
             String sku = vmsBtClientOrderDetailsModel.getSellerSku();
@@ -637,20 +677,31 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 tempSkuQtyMap.put(sku, tempSkuQtyMap.get(sku) - 1);
                 issueSkuNotExistList.remove(sku);
 
-                VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
-                String tempSkuReasonStr = tempSkuReasonMap.get(sku);
-                if (!StringUtils.isEmpty(tempSkuReasonStr)) {
-                    tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                //从requestItems里边寻找相应数据
+                int matchIndex=-1;
+                for (int i = 0; i < tempItems.size(); i++) {
+                    OrderItemCancellationModel item=tempItems.get(i);
+                    //仅匹配sku，若匹配到，后续处理
+                    if(item.getSellerSku().equals(vmsBtClientOrderDetailsModel.getSellerSku())){
+                        matchIndex=i;
+                        VmsBtClientOrderDetailsModel tempUpdateModel = new VmsBtClientOrderDetailsModel();
+                        String tempSkuReasonStr = item.getReason();
+                        if (!StringUtils.isEmpty(tempSkuReasonStr)) {
+                            tempUpdateModel.setCancelReason(CancellationReasonEnum.valueOf(tempSkuReasonStr).name());
+                        }
+                        tempUpdateModel.setStatus(Canceled);
+                        tempUpdateModel.setRefundFlg("1");
+                        tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
+                        matchModelList.add(tempUpdateModel);
+                        Map<String, Object> tempRecord = new HashMap<>();
+                        tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
+                        tempRecord.put("reason", tempUpdateModel.getCancelReason());
+                        tempRecords.add(tempRecord);
+                        break;
+                    }
                 }
-                tempUpdateModel.setStatus(Canceled);
-                tempUpdateModel.setRefundFlg("1");
-                tempUpdateModel.setId(vmsBtClientOrderDetailsModel.getId());
-                matchModelList.add(tempUpdateModel);
-
-                Map<String, Object> tempRecord = new HashMap<>();
-                tempRecord.put("reservation_id", vmsBtClientOrderDetailsModel.getReservationId());
-                tempRecord.put("reason", tempUpdateModel.getCancelReason());
-                tempRecords.add(tempRecord);
+                if(matchIndex!=-1)
+                    tempItems.remove(matchIndex);
             }
         }
 
