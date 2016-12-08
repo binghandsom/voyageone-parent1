@@ -573,7 +573,7 @@ public class CmsBtCombinedProductService extends BaseService {
         /*String query = String.format("{'active':1}");*/
         JongoQuery query = new JongoQuery();
         query.setQuery("{'active':#}");
-        query.setParameters(1);
+        query.addParameters(1);
         query.setSort("{'modified':-1, 'created':-1}");
         List<CmsBtCombinedProductModel> productModels = cmsBtCombinedProductDao.select(query);
         List<CombinedSkuInfoBean> suitSkuInfos = new ArrayList<CombinedSkuInfoBean>();

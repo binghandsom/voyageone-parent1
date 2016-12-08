@@ -79,7 +79,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     private final static String[] _DynColCNJMSKU = { "MallURL", "MallId", "SkuNo", "URL", "HashID", "商品名称", "类目", "官方建议售价(范围)", "指导售价(范围)", "最终售价(范围)" };
 
     // 产品数据（code级）固定输出列，用于过滤自定义显示列中相同项目
-    private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "model", "quantity", "color" };
+    private final static String[] _prodCol = { "code", "brand", "category", "productNameEn", "originalTitleCn", "mainCode", "model", "quantity", "color" };
 
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
@@ -611,6 +611,20 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceMsrpSt(), ptfObj.getpPriceMsrpEd()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceRetailSt(), ptfObj.getpPriceRetailEd()));
                 FileUtils.cell(row, index++, unlock).setCellValue(getOutputPrice(ptfObj.getpPriceSaleSt(), ptfObj.getpPriceSaleEd()));
+
+                // 2016-12-08  code级导出, 追加下载各个平台的店铺内分类, “ ， ”（空格逗号空格）进行分割显示
+                StringBuilder sellerCatVal = new StringBuilder();
+                List<CmsBtProductModel_SellerCat> sellerCats = ptfObj.getSellerCats();
+                if (CollectionUtils.isNotEmpty(sellerCats)) {
+                    int count = 0;
+                    for (CmsBtProductModel_SellerCat sellerCat:sellerCats) {
+                        count++;
+                        sellerCatVal.append(sellerCat.get)
+
+                    }
+                }
+                ptfObj.getSellerCats();
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpCatPath()));
             }
             nowIdx = index++;
             Cell cell = FileUtils.cell(row, nowIdx, unlock);
@@ -750,6 +764,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommon().getCatPath()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getProductNameEn()));
             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getOriginalTitleCn()));
+            // 2016-12-08 group级导出，追加下载主商品的code字段
+            FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getPlatformNotNull(0).getMainProductCode()));
 
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
