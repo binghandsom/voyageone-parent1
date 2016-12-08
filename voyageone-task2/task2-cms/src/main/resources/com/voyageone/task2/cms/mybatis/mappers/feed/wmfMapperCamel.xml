@@ -1,0 +1,1488 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.WmfFeedDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    <id column="sku" property="sku" jdbcType="VARCHAR" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="VARCHAR" />
+    <result column="special_price" property="specialPrice" jdbcType="VARCHAR" />
+    <result column="md5" property="md5" jdbcType="VARCHAR" />
+    <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedWmfBean" extends="BaseResultMap" >
+    <result column="entity_id" property="entityId" jdbcType="LONGVARCHAR" />
+    <result column="store" property="store" jdbcType="LONGVARCHAR" />
+    <result column="type" property="type" jdbcType="LONGVARCHAR" />
+    <result column="attribute_set" property="attributeSet" jdbcType="LONGVARCHAR" />
+    <result column="status" property="status" jdbcType="LONGVARCHAR" />
+    <result column="visibility" property="visibility" jdbcType="LONGVARCHAR" />
+    <result column="tax_class_id" property="taxClassId" jdbcType="LONGVARCHAR" />
+    <result column="image" property="image" jdbcType="LONGVARCHAR" />
+    <result column="small_image" property="smallImage" jdbcType="LONGVARCHAR" />
+    <result column="thumbnail" property="thumbnail" jdbcType="LONGVARCHAR" />
+    <result column="media_image" property="mediaImage" jdbcType="LONGVARCHAR" />
+    <result column="media_lable" property="mediaLable" jdbcType="LONGVARCHAR" />
+    <result column="media_position" property="mediaPosition" jdbcType="LONGVARCHAR" />
+    <result column="media_is_disabled" property="mediaIsDisabled" jdbcType="LONGVARCHAR" />
+    <result column="name" property="name" jdbcType="LONGVARCHAR" />
+    <result column="marke" property="marke" jdbcType="LONGVARCHAR" />
+    <result column="sap_status" property="sapStatus" jdbcType="LONGVARCHAR" />
+    <result column="meta_title" property="metaTitle" jdbcType="LONGVARCHAR" />
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+    <result column="produktart" property="produktart" jdbcType="LONGVARCHAR" />
+    <result column="meta_keyword" property="metaKeyword" jdbcType="LONGVARCHAR" />
+    <result column="short_description" property="shortDescription" jdbcType="LONGVARCHAR" />
+    <result column="produktart_2" property="produktart2" jdbcType="LONGVARCHAR" />
+    <result column="meta_description" property="metaDescription" jdbcType="LONGVARCHAR" />
+    <result column="kollektion" property="kollektion" jdbcType="LONGVARCHAR" />
+    <result column="special_from_date" property="specialFromDate" jdbcType="LONGVARCHAR" />
+    <result column="pl_short_text" property="plShortText" jdbcType="LONGVARCHAR" />
+    <result column="artikelanzahl" property="artikelanzahl" jdbcType="LONGVARCHAR" />
+    <result column="special_to_date" property="specialToDate" jdbcType="LONGVARCHAR" />
+    <result column="lieferumfang" property="lieferumfang" jdbcType="LONGVARCHAR" />
+    <result column="ean" property="ean" jdbcType="LONGVARCHAR" />
+    <result column="material" property="material" jdbcType="LONGVARCHAR" />
+    <result column="url_key" property="urlKey" jdbcType="LONGVARCHAR" />
+    <result column="materialeigenschaft" property="materialeigenschaft" jdbcType="LONGVARCHAR" />
+    <result column="nebenmaterial" property="nebenmaterial" jdbcType="LONGVARCHAR" />
+    <result column="produkteigenschaft" property="produkteigenschaft" jdbcType="LONGVARCHAR" />
+    <result column="made_in_germany" property="madeInGermany" jdbcType="LONGVARCHAR" />
+    <result column="induktionseignung" property="induktionseignung" jdbcType="LONGVARCHAR" />
+    <result column="pl_image_orientation" property="plImageOrientation" jdbcType="LONGVARCHAR" />
+    <result column="lieferland_ausschluss" property="lieferlandAusschluss" jdbcType="LONGVARCHAR" />
+    <result column="herdart" property="herdart" jdbcType="LONGVARCHAR" />
+    <result column="simple_msrp" property="simpleMsrp" jdbcType="LONGVARCHAR" />
+    <result column="country_of_manufacture" property="countryOfManufacture" jdbcType="LONGVARCHAR" />
+    <result column="temperatureignung" property="temperatureignung" jdbcType="LONGVARCHAR" />
+    <result column="simple_msrp_from_date" property="simpleMsrpFromDate" jdbcType="LONGVARCHAR" />
+    <result column="hitzebestaendigkeit" property="hitzebestaendigkeit" jdbcType="LONGVARCHAR" />
+    <result column="simple_msrp_to_date" property="simpleMsrpToDate" jdbcType="LONGVARCHAR" />
+    <result column="highlight_1" property="highlight1" jdbcType="LONGVARCHAR" />
+    <result column="deckelart" property="deckelart" jdbcType="LONGVARCHAR" />
+    <result column="highlight_2" property="highlight2" jdbcType="LONGVARCHAR" />
+    <result column="messerart" property="messerart" jdbcType="LONGVARCHAR" />
+    <result column="highlight_3" property="highlight3" jdbcType="LONGVARCHAR" />
+    <result column="eignung_anz_tassen_eier" property="eignungAnzTassenEier" jdbcType="LONGVARCHAR" />
+    <result column="highlight_4" property="highlight4" jdbcType="LONGVARCHAR" />
+    <result column="masse_laenge_in_cm" property="masseLaengeInCm" jdbcType="LONGVARCHAR" />
+    <result column="highlight_5" property="highlight5" jdbcType="LONGVARCHAR" />
+    <result column="masse_breite_in_cm" property="masseBreiteInCm" jdbcType="LONGVARCHAR" />
+    <result column="asin" property="asin" jdbcType="LONGVARCHAR" />
+    <result column="masse_hoehe_in_cm" property="masseHoeheInCm" jdbcType="LONGVARCHAR" />
+    <result column="masse_klingenlaenge_in_cm" property="masseKlingenlaengeInCm" jdbcType="LONGVARCHAR" />
+    <result column="masse_dm_in_cm" property="masseDmInCm" jdbcType="LONGVARCHAR" />
+    <result column="masse_dm_herdplattengr" property="masseDmHerdplattengr" jdbcType="LONGVARCHAR" />
+    <result column="masse_fassverm_in_l" property="masseFassvermInL" jdbcType="LONGVARCHAR" />
+    <result column="masse_fuellmenge_in_g" property="masseFuellmengeInG" jdbcType="LONGVARCHAR" />
+    <result column="masse_nettogewicht_in_g" property="masseNettogewichtInG" jdbcType="LONGVARCHAR" />
+    <result column="masse_bruttogewicht_in_g" property="masseBruttogewichtInG" jdbcType="LONGVARCHAR" />
+    <result column="umdrehungen_pro_minute" property="umdrehungenProMinute" jdbcType="LONGVARCHAR" />
+    <result column="leistung_in_w" property="leistungInW" jdbcType="LONGVARCHAR" />
+    <result column="leistung_in_v" property="leistungInV" jdbcType="LONGVARCHAR" />
+    <result column="leistung_in_hz" property="leistungInHz" jdbcType="LONGVARCHAR" />
+    <result column="farbbezeichnung_der_kollektion" property="farbbezeichnungDerKollektion" jdbcType="LONGVARCHAR" />
+    <result column="farbe" property="farbe" jdbcType="LONGVARCHAR" />
+    <result column="garantie" property="garantie" jdbcType="LONGVARCHAR" />
+    <result column="pflege" property="pflege" jdbcType="LONGVARCHAR" />
+    <result column="altersgruppe" property="altersgruppe" jdbcType="LONGVARCHAR" />
+    <result column="designer" property="designer" jdbcType="LONGVARCHAR" />
+    <result column="themen_motive" property="themenMotive" jdbcType="LONGVARCHAR" />
+    <result column="designpreis" property="designpreis" jdbcType="LONGVARCHAR" />
+    <result column="testauszeichnung" property="testauszeichnung" jdbcType="LONGVARCHAR" />
+    <result column="kollektionstext" property="kollektionstext" jdbcType="LONGVARCHAR" />
+    <result column="variantenzugehoerigkeit" property="variantenzugehoerigkeit" jdbcType="LONGVARCHAR" />
+    <result column="masse_volumen_in_l" property="masseVolumenInL" jdbcType="LONGVARCHAR" />
+    <result column="masse_umdrehungen_in_u_min" property="masseUmdrehungenInUMin" jdbcType="LONGVARCHAR" />
+    <result column="masse_umdrehungen_in_km_h" property="masseUmdrehungenInKmH" jdbcType="LONGVARCHAR" />
+    <result column="masse_leistung_in_w" property="masseLeistungInW" jdbcType="LONGVARCHAR" />
+    <result column="masse_leistung_in_v" property="masseLeistungInV" jdbcType="LONGVARCHAR" />
+    <result column="masse_leistung_in_hz" property="masseLeistungInHz" jdbcType="LONGVARCHAR" />
+    <result column="verpackung_hoehe_in_cm" property="verpackungHoeheInCm" jdbcType="LONGVARCHAR" />
+    <result column="verpackung_breite_in_cm" property="verpackungBreiteInCm" jdbcType="LONGVARCHAR" />
+    <result column="verpackung_tiefe_in_cm" property="verpackungTiefeInCm" jdbcType="LONGVARCHAR" />
+    <result column="name_testauszeichnung" property="nameTestauszeichnung" jdbcType="LONGVARCHAR" />
+    <result column="induktionsfaehigkeit" property="induktionsfaehigkeit" jdbcType="LONGVARCHAR" />
+    <result column="temperaturbestaendigkeit_korpu" property="temperaturbestaendigkeitKorpu" jdbcType="LONGVARCHAR" />
+    <result column="temperaturbestaendigkeit_decke" property="temperaturbestaendigkeitDecke" jdbcType="LONGVARCHAR" />
+    <result column="hitzebestaendig_bis" property="hitzebestaendigBis" jdbcType="LONGVARCHAR" />
+    <result column="herstellungshinweis" property="herstellungshinweis" jdbcType="LONGVARCHAR" />
+    <result column="anzahl_teile_dp" property="anzahlTeileDp" jdbcType="LONGVARCHAR" />
+    <result column="masse_durchmesser_in_cm_dp" property="masseDurchmesserInCmDp" jdbcType="LONGVARCHAR" />
+    <result column="masse_fassungsvermoegen_l_dp" property="masseFassungsvermoegenLDp" jdbcType="LONGVARCHAR" />
+    <result column="video_1" property="video1" jdbcType="LONGVARCHAR" />
+    <result column="video_2" property="video2" jdbcType="LONGVARCHAR" />
+    <result column="video_3" property="video3" jdbcType="LONGVARCHAR" />
+    <result column="video_4" property="video4" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "sku", "category", "price", "special_price", "md5", "updateFlag"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "entity_id", "store", "type", "attribute_set", "status", "visibility", "tax_class_id",
+    "image", "small_image", "thumbnail", "media_image", "media_lable", "media_position",
+    "media_is_disabled", "name", "marke", "sap_status", "meta_title", "description",
+    "produktart", "meta_keyword", "short_description", "produktart_2", "meta_description",
+    "kollektion", "special_from_date", "pl_short_text", "artikelanzahl", "special_to_date",
+    "lieferumfang", "ean", "material", "url_key", "materialeigenschaft", "nebenmaterial",
+    "produkteigenschaft", "made_in_germany", "induktionseignung", "pl_image_orientation",
+    "lieferland_ausschluss", "herdart", "simple_msrp", "country_of_manufacture", "temperatureignung",
+    "simple_msrp_from_date", "hitzebestaendigkeit", "simple_msrp_to_date", "highlight_1",
+    "deckelart", "highlight_2", "messerart", "highlight_3", "eignung_anz_tassen_eier",
+    "highlight_4", "masse_laenge_in_cm", "highlight_5", "masse_breite_in_cm", "asin",
+    "masse_hoehe_in_cm", "masse_klingenlaenge_in_cm", "masse_dm_in_cm", "masse_dm_herdplattengr",
+    "masse_fassverm_in_l", "masse_fuellmenge_in_g", "masse_nettogewicht_in_g", "masse_bruttogewicht_in_g",
+    "umdrehungen_pro_minute", "leistung_in_w", "leistung_in_v", "leistung_in_hz", "farbbezeichnung_der_kollektion",
+    "farbe", "garantie", "pflege", "altersgruppe", "designer", "themen_motive", "designpreis",
+    "testauszeichnung", "kollektionstext", "variantenzugehoerigkeit", "masse_volumen_in_l",
+    "masse_umdrehungen_in_u_min", "masse_umdrehungen_in_km_h", "masse_leistung_in_w",
+    "masse_leistung_in_v", "masse_leistung_in_hz", "verpackung_hoehe_in_cm", "verpackung_breite_in_cm",
+    "verpackung_tiefe_in_cm", "name_testauszeichnung", "induktionsfaehigkeit", "temperaturbestaendigkeit_korpu",
+    "temperaturbestaendigkeit_decke", "hitzebestaendig_bis", "herstellungshinweis", "anzahl_teile_dp",
+    "masse_durchmesser_in_cm_dp", "masse_fassungsvermoegen_l_dp", "video_1", "video_2",
+    "video_3", "video_4"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_zz_feed_wmf_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from cms_zz_feed_wmf_product_temp
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    insert into cms_zz_feed_wmf_product_temp ("sku", "category", "price",
+    "special_price", "md5", "updateFlag",
+    "entity_id", "store", "type",
+    "attribute_set", "status", "visibility",
+    "tax_class_id", "image", "small_image",
+    "thumbnail", "media_image", "media_lable",
+    "media_position", "media_is_disabled",
+    "name", "marke", "sap_status",
+    "meta_title", "description", "produktart",
+    "meta_keyword", "short_description",
+    "produktart_2", "meta_description", "kollektion",
+    "special_from_date", "pl_short_text", "artikelanzahl",
+    "special_to_date", "lieferumfang", "ean",
+    "material", "url_key", "materialeigenschaft",
+    "nebenmaterial", "produkteigenschaft",
+    "made_in_germany", "induktionseignung",
+    "pl_image_orientation", "lieferland_ausschluss",
+    "herdart", "simple_msrp", "country_of_manufacture",
+    "temperatureignung", "simple_msrp_from_date",
+    "hitzebestaendigkeit", "simple_msrp_to_date",
+    "highlight_1", "deckelart", "highlight_2",
+    "messerart", "highlight_3", "eignung_anz_tassen_eier",
+    "highlight_4", "masse_laenge_in_cm", "highlight_5",
+    "masse_breite_in_cm", "asin", "masse_hoehe_in_cm",
+    "masse_klingenlaenge_in_cm", "masse_dm_in_cm",
+    "masse_dm_herdplattengr", "masse_fassverm_in_l",
+    "masse_fuellmenge_in_g", "masse_nettogewicht_in_g",
+    "masse_bruttogewicht_in_g", "umdrehungen_pro_minute",
+    "leistung_in_w", "leistung_in_v", "leistung_in_hz",
+    "farbbezeichnung_der_kollektion", "farbe",
+    "garantie", "pflege", "altersgruppe",
+    "designer", "themen_motive", "designpreis",
+    "testauszeichnung", "kollektionstext",
+    "variantenzugehoerigkeit", "masse_volumen_in_l",
+    "masse_umdrehungen_in_u_min", "masse_umdrehungen_in_km_h",
+    "masse_leistung_in_w", "masse_leistung_in_v",
+    "masse_leistung_in_hz", "verpackung_hoehe_in_cm",
+    "verpackung_breite_in_cm", "verpackung_tiefe_in_cm",
+    "name_testauszeichnung", "induktionsfaehigkeit",
+    "temperaturbestaendigkeit_korpu", "temperaturbestaendigkeit_decke",
+    "hitzebestaendig_bis", "herstellungshinweis",
+    "anzahl_teile_dp", "masse_durchmesser_in_cm_dp",
+    "masse_fassungsvermoegen_l_dp", "video_1",
+    "video_2", "video_3", "video_4"
+    )
+    values (#{sku,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR},
+    #{specialPrice,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
+    #{entityId,jdbcType=LONGVARCHAR}, #{store,jdbcType=LONGVARCHAR}, #{type,jdbcType=LONGVARCHAR},
+    #{attributeSet,jdbcType=LONGVARCHAR}, #{status,jdbcType=LONGVARCHAR}, #{visibility,jdbcType=LONGVARCHAR},
+    #{taxClassId,jdbcType=LONGVARCHAR}, #{image,jdbcType=LONGVARCHAR}, #{smallImage,jdbcType=LONGVARCHAR},
+    #{thumbnail,jdbcType=LONGVARCHAR}, #{mediaImage,jdbcType=LONGVARCHAR}, #{mediaLable,jdbcType=LONGVARCHAR},
+    #{mediaPosition,jdbcType=LONGVARCHAR}, #{mediaIsDisabled,jdbcType=LONGVARCHAR},
+    #{name,jdbcType=LONGVARCHAR}, #{marke,jdbcType=LONGVARCHAR}, #{sapStatus,jdbcType=LONGVARCHAR},
+    #{metaTitle,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{produktart,jdbcType=LONGVARCHAR},
+    #{metaKeyword,jdbcType=LONGVARCHAR}, #{shortDescription,jdbcType=LONGVARCHAR},
+    #{produktart2,jdbcType=LONGVARCHAR}, #{metaDescription,jdbcType=LONGVARCHAR}, #{kollektion,jdbcType=LONGVARCHAR},
+    #{specialFromDate,jdbcType=LONGVARCHAR}, #{plShortText,jdbcType=LONGVARCHAR}, #{artikelanzahl,jdbcType=LONGVARCHAR},
+    #{specialToDate,jdbcType=LONGVARCHAR}, #{lieferumfang,jdbcType=LONGVARCHAR}, #{ean,jdbcType=LONGVARCHAR},
+    #{material,jdbcType=LONGVARCHAR}, #{urlKey,jdbcType=LONGVARCHAR}, #{materialeigenschaft,jdbcType=LONGVARCHAR},
+    #{nebenmaterial,jdbcType=LONGVARCHAR}, #{produkteigenschaft,jdbcType=LONGVARCHAR},
+    #{madeInGermany,jdbcType=LONGVARCHAR}, #{induktionseignung,jdbcType=LONGVARCHAR},
+    #{plImageOrientation,jdbcType=LONGVARCHAR}, #{lieferlandAusschluss,jdbcType=LONGVARCHAR},
+    #{herdart,jdbcType=LONGVARCHAR}, #{simpleMsrp,jdbcType=LONGVARCHAR}, #{countryOfManufacture,jdbcType=LONGVARCHAR},
+    #{temperatureignung,jdbcType=LONGVARCHAR}, #{simpleMsrpFromDate,jdbcType=LONGVARCHAR},
+    #{hitzebestaendigkeit,jdbcType=LONGVARCHAR}, #{simpleMsrpToDate,jdbcType=LONGVARCHAR},
+    #{highlight1,jdbcType=LONGVARCHAR}, #{deckelart,jdbcType=LONGVARCHAR}, #{highlight2,jdbcType=LONGVARCHAR},
+    #{messerart,jdbcType=LONGVARCHAR}, #{highlight3,jdbcType=LONGVARCHAR}, #{eignungAnzTassenEier,jdbcType=LONGVARCHAR},
+    #{highlight4,jdbcType=LONGVARCHAR}, #{masseLaengeInCm,jdbcType=LONGVARCHAR}, #{highlight5,jdbcType=LONGVARCHAR},
+    #{masseBreiteInCm,jdbcType=LONGVARCHAR}, #{asin,jdbcType=LONGVARCHAR}, #{masseHoeheInCm,jdbcType=LONGVARCHAR},
+    #{masseKlingenlaengeInCm,jdbcType=LONGVARCHAR}, #{masseDmInCm,jdbcType=LONGVARCHAR},
+    #{masseDmHerdplattengr,jdbcType=LONGVARCHAR}, #{masseFassvermInL,jdbcType=LONGVARCHAR},
+    #{masseFuellmengeInG,jdbcType=LONGVARCHAR}, #{masseNettogewichtInG,jdbcType=LONGVARCHAR},
+    #{masseBruttogewichtInG,jdbcType=LONGVARCHAR}, #{umdrehungenProMinute,jdbcType=LONGVARCHAR},
+    #{leistungInW,jdbcType=LONGVARCHAR}, #{leistungInV,jdbcType=LONGVARCHAR}, #{leistungInHz,jdbcType=LONGVARCHAR},
+    #{farbbezeichnungDerKollektion,jdbcType=LONGVARCHAR}, #{farbe,jdbcType=LONGVARCHAR},
+    #{garantie,jdbcType=LONGVARCHAR}, #{pflege,jdbcType=LONGVARCHAR}, #{altersgruppe,jdbcType=LONGVARCHAR},
+    #{designer,jdbcType=LONGVARCHAR}, #{themenMotive,jdbcType=LONGVARCHAR}, #{designpreis,jdbcType=LONGVARCHAR},
+    #{testauszeichnung,jdbcType=LONGVARCHAR}, #{kollektionstext,jdbcType=LONGVARCHAR},
+    #{variantenzugehoerigkeit,jdbcType=LONGVARCHAR}, #{masseVolumenInL,jdbcType=LONGVARCHAR},
+    #{masseUmdrehungenInUMin,jdbcType=LONGVARCHAR}, #{masseUmdrehungenInKmH,jdbcType=LONGVARCHAR},
+    #{masseLeistungInW,jdbcType=LONGVARCHAR}, #{masseLeistungInV,jdbcType=LONGVARCHAR},
+    #{masseLeistungInHz,jdbcType=LONGVARCHAR}, #{verpackungHoeheInCm,jdbcType=LONGVARCHAR},
+    #{verpackungBreiteInCm,jdbcType=LONGVARCHAR}, #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
+    #{nameTestauszeichnung,jdbcType=LONGVARCHAR}, #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
+    #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR}, #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
+    #{hitzebestaendigBis,jdbcType=LONGVARCHAR}, #{herstellungshinweis,jdbcType=LONGVARCHAR},
+    #{anzahlTeileDp,jdbcType=LONGVARCHAR}, #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR},
+    #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR}, #{video1,jdbcType=LONGVARCHAR},
+    #{video2,jdbcType=LONGVARCHAR}, #{video3,jdbcType=LONGVARCHAR}, #{video4,jdbcType=LONGVARCHAR}
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    insert into cms_zz_feed_wmf_product_temp
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        sku,
+      </if>
+      <if test="category != null" >
+        category,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="specialPrice != null" >
+        special_price,
+      </if>
+      <if test="md5 != null" >
+        md5,
+      </if>
+      <if test="updateflag != null" >
+        updateFlag,
+      </if>
+      <if test="entityId != null" >
+        entity_id,
+      </if>
+      <if test="store != null" >
+        store,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="attributeSet != null" >
+        attribute_set,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="visibility != null" >
+        visibility,
+      </if>
+      <if test="taxClassId != null" >
+        tax_class_id,
+      </if>
+      <if test="image != null" >
+        image,
+      </if>
+      <if test="smallImage != null" >
+        small_image,
+      </if>
+      <if test="thumbnail != null" >
+        thumbnail,
+      </if>
+      <if test="mediaImage != null" >
+        media_image,
+      </if>
+      <if test="mediaLable != null" >
+        media_lable,
+      </if>
+      <if test="mediaPosition != null" >
+        media_position,
+      </if>
+      <if test="mediaIsDisabled != null" >
+        media_is_disabled,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="marke != null" >
+        marke,
+      </if>
+      <if test="sapStatus != null" >
+        sap_status,
+      </if>
+      <if test="metaTitle != null" >
+        meta_title,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="produktart != null" >
+        produktart,
+      </if>
+      <if test="metaKeyword != null" >
+        meta_keyword,
+      </if>
+      <if test="shortDescription != null" >
+        short_description,
+      </if>
+      <if test="produktart2 != null" >
+        produktart_2,
+      </if>
+      <if test="metaDescription != null" >
+        meta_description,
+      </if>
+      <if test="kollektion != null" >
+        kollektion,
+      </if>
+      <if test="specialFromDate != null" >
+        special_from_date,
+      </if>
+      <if test="plShortText != null" >
+        pl_short_text,
+      </if>
+      <if test="artikelanzahl != null" >
+        artikelanzahl,
+      </if>
+      <if test="specialToDate != null" >
+        special_to_date,
+      </if>
+      <if test="lieferumfang != null" >
+        lieferumfang,
+      </if>
+      <if test="ean != null" >
+        ean,
+      </if>
+      <if test="material != null" >
+        material,
+      </if>
+      <if test="urlKey != null" >
+        url_key,
+      </if>
+      <if test="materialeigenschaft != null" >
+        materialeigenschaft,
+      </if>
+      <if test="nebenmaterial != null" >
+        nebenmaterial,
+      </if>
+      <if test="produkteigenschaft != null" >
+        produkteigenschaft,
+      </if>
+      <if test="madeInGermany != null" >
+        made_in_germany,
+      </if>
+      <if test="induktionseignung != null" >
+        induktionseignung,
+      </if>
+      <if test="plImageOrientation != null" >
+        pl_image_orientation,
+      </if>
+      <if test="lieferlandAusschluss != null" >
+        lieferland_ausschluss,
+      </if>
+      <if test="herdart != null" >
+        herdart,
+      </if>
+      <if test="simpleMsrp != null" >
+        simple_msrp,
+      </if>
+      <if test="countryOfManufacture != null" >
+        country_of_manufacture,
+      </if>
+      <if test="temperatureignung != null" >
+        temperatureignung,
+      </if>
+      <if test="simpleMsrpFromDate != null" >
+        simple_msrp_from_date,
+      </if>
+      <if test="hitzebestaendigkeit != null" >
+        hitzebestaendigkeit,
+      </if>
+      <if test="simpleMsrpToDate != null" >
+        simple_msrp_to_date,
+      </if>
+      <if test="highlight1 != null" >
+        highlight_1,
+      </if>
+      <if test="deckelart != null" >
+        deckelart,
+      </if>
+      <if test="highlight2 != null" >
+        highlight_2,
+      </if>
+      <if test="messerart != null" >
+        messerart,
+      </if>
+      <if test="highlight3 != null" >
+        highlight_3,
+      </if>
+      <if test="eignungAnzTassenEier != null" >
+        eignung_anz_tassen_eier,
+      </if>
+      <if test="highlight4 != null" >
+        highlight_4,
+      </if>
+      <if test="masseLaengeInCm != null" >
+        masse_laenge_in_cm,
+      </if>
+      <if test="highlight5 != null" >
+        highlight_5,
+      </if>
+      <if test="masseBreiteInCm != null" >
+        masse_breite_in_cm,
+      </if>
+      <if test="asin != null" >
+        asin,
+      </if>
+      <if test="masseHoeheInCm != null" >
+        masse_hoehe_in_cm,
+      </if>
+      <if test="masseKlingenlaengeInCm != null" >
+        masse_klingenlaenge_in_cm,
+      </if>
+      <if test="masseDmInCm != null" >
+        masse_dm_in_cm,
+      </if>
+      <if test="masseDmHerdplattengr != null" >
+        masse_dm_herdplattengr,
+      </if>
+      <if test="masseFassvermInL != null" >
+        masse_fassverm_in_l,
+      </if>
+      <if test="masseFuellmengeInG != null" >
+        masse_fuellmenge_in_g,
+      </if>
+      <if test="masseNettogewichtInG != null" >
+        masse_nettogewicht_in_g,
+      </if>
+      <if test="masseBruttogewichtInG != null" >
+        masse_bruttogewicht_in_g,
+      </if>
+      <if test="umdrehungenProMinute != null" >
+        umdrehungen_pro_minute,
+      </if>
+      <if test="leistungInW != null" >
+        leistung_in_w,
+      </if>
+      <if test="leistungInV != null" >
+        leistung_in_v,
+      </if>
+      <if test="leistungInHz != null" >
+        leistung_in_hz,
+      </if>
+      <if test="farbbezeichnungDerKollektion != null" >
+        farbbezeichnung_der_kollektion,
+      </if>
+      <if test="farbe != null" >
+        farbe,
+      </if>
+      <if test="garantie != null" >
+        garantie,
+      </if>
+      <if test="pflege != null" >
+        pflege,
+      </if>
+      <if test="altersgruppe != null" >
+        altersgruppe,
+      </if>
+      <if test="designer != null" >
+        designer,
+      </if>
+      <if test="themenMotive != null" >
+        themen_motive,
+      </if>
+      <if test="designpreis != null" >
+        designpreis,
+      </if>
+      <if test="testauszeichnung != null" >
+        testauszeichnung,
+      </if>
+      <if test="kollektionstext != null" >
+        kollektionstext,
+      </if>
+      <if test="variantenzugehoerigkeit != null" >
+        variantenzugehoerigkeit,
+      </if>
+      <if test="masseVolumenInL != null" >
+        masse_volumen_in_l,
+      </if>
+      <if test="masseUmdrehungenInUMin != null" >
+        masse_umdrehungen_in_u_min,
+      </if>
+      <if test="masseUmdrehungenInKmH != null" >
+        masse_umdrehungen_in_km_h,
+      </if>
+      <if test="masseLeistungInW != null" >
+        masse_leistung_in_w,
+      </if>
+      <if test="masseLeistungInV != null" >
+        masse_leistung_in_v,
+      </if>
+      <if test="masseLeistungInHz != null" >
+        masse_leistung_in_hz,
+      </if>
+      <if test="verpackungHoeheInCm != null" >
+        verpackung_hoehe_in_cm,
+      </if>
+      <if test="verpackungBreiteInCm != null" >
+        verpackung_breite_in_cm,
+      </if>
+      <if test="verpackungTiefeInCm != null" >
+        verpackung_tiefe_in_cm,
+      </if>
+      <if test="nameTestauszeichnung != null" >
+        name_testauszeichnung,
+      </if>
+      <if test="induktionsfaehigkeit != null" >
+        induktionsfaehigkeit,
+      </if>
+      <if test="temperaturbestaendigkeitKorpu != null" >
+        temperaturbestaendigkeit_korpu,
+      </if>
+      <if test="temperaturbestaendigkeitDecke != null" >
+        temperaturbestaendigkeit_decke,
+      </if>
+      <if test="hitzebestaendigBis != null" >
+        hitzebestaendig_bis,
+      </if>
+      <if test="herstellungshinweis != null" >
+        herstellungshinweis,
+      </if>
+      <if test="anzahlTeileDp != null" >
+        anzahl_teile_dp,
+      </if>
+      <if test="masseDurchmesserInCmDp != null" >
+        masse_durchmesser_in_cm_dp,
+      </if>
+      <if test="masseFassungsvermoegenLDp != null" >
+        masse_fassungsvermoegen_l_dp,
+      </if>
+      <if test="video1 != null" >
+        video_1,
+      </if>
+      <if test="video2 != null" >
+        video_2,
+      </if>
+      <if test="video3 != null" >
+        video_3,
+      </if>
+      <if test="video4 != null" >
+        video_4,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sku != null" >
+        #{sku,jdbcType=VARCHAR},
+      </if>
+      <if test="category != null" >
+        #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="specialPrice != null" >
+        #{specialPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="entityId != null" >
+        #{entityId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="store != null" >
+        #{store,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeSet != null" >
+        #{attributeSet,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="visibility != null" >
+        #{visibility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxClassId != null" >
+        #{taxClassId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image != null" >
+        #{image,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="smallImage != null" >
+        #{smallImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thumbnail != null" >
+        #{thumbnail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaImage != null" >
+        #{mediaImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaLable != null" >
+        #{mediaLable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaPosition != null" >
+        #{mediaPosition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaIsDisabled != null" >
+        #{mediaIsDisabled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="marke != null" >
+        #{marke,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sapStatus != null" >
+        #{sapStatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaTitle != null" >
+        #{metaTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produktart != null" >
+        #{produktart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaKeyword != null" >
+        #{metaKeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produktart2 != null" >
+        #{produktart2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaDescription != null" >
+        #{metaDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="kollektion != null" >
+        #{kollektion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialFromDate != null" >
+        #{specialFromDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plShortText != null" >
+        #{plShortText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="artikelanzahl != null" >
+        #{artikelanzahl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialToDate != null" >
+        #{specialToDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lieferumfang != null" >
+        #{lieferumfang,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ean != null" >
+        #{ean,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="urlKey != null" >
+        #{urlKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialeigenschaft != null" >
+        #{materialeigenschaft,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nebenmaterial != null" >
+        #{nebenmaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produkteigenschaft != null" >
+        #{produkteigenschaft,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="madeInGermany != null" >
+        #{madeInGermany,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="induktionseignung != null" >
+        #{induktionseignung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plImageOrientation != null" >
+        #{plImageOrientation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lieferlandAusschluss != null" >
+        #{lieferlandAusschluss,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="herdart != null" >
+        #{herdart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrp != null" >
+        #{simpleMsrp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfManufacture != null" >
+        #{countryOfManufacture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperatureignung != null" >
+        #{temperatureignung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrpFromDate != null" >
+        #{simpleMsrpFromDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hitzebestaendigkeit != null" >
+        #{hitzebestaendigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrpToDate != null" >
+        #{simpleMsrpToDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight1 != null" >
+        #{highlight1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="deckelart != null" >
+        #{deckelart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight2 != null" >
+        #{highlight2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="messerart != null" >
+        #{messerart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight3 != null" >
+        #{highlight3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eignungAnzTassenEier != null" >
+        #{eignungAnzTassenEier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight4 != null" >
+        #{highlight4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLaengeInCm != null" >
+        #{masseLaengeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight5 != null" >
+        #{highlight5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseBreiteInCm != null" >
+        #{masseBreiteInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="asin != null" >
+        #{asin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseHoeheInCm != null" >
+        #{masseHoeheInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseKlingenlaengeInCm != null" >
+        #{masseKlingenlaengeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDmInCm != null" >
+        #{masseDmInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDmHerdplattengr != null" >
+        #{masseDmHerdplattengr,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFassvermInL != null" >
+        #{masseFassvermInL,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFuellmengeInG != null" >
+        #{masseFuellmengeInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseNettogewichtInG != null" >
+        #{masseNettogewichtInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseBruttogewichtInG != null" >
+        #{masseBruttogewichtInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="umdrehungenProMinute != null" >
+        #{umdrehungenProMinute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInW != null" >
+        #{leistungInW,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInV != null" >
+        #{leistungInV,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInHz != null" >
+        #{leistungInHz,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="farbbezeichnungDerKollektion != null" >
+        #{farbbezeichnungDerKollektion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="farbe != null" >
+        #{farbe,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="garantie != null" >
+        #{garantie,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pflege != null" >
+        #{pflege,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="altersgruppe != null" >
+        #{altersgruppe,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="designer != null" >
+        #{designer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="themenMotive != null" >
+        #{themenMotive,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="designpreis != null" >
+        #{designpreis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="testauszeichnung != null" >
+        #{testauszeichnung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="kollektionstext != null" >
+        #{kollektionstext,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variantenzugehoerigkeit != null" >
+        #{variantenzugehoerigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseVolumenInL != null" >
+        #{masseVolumenInL,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseUmdrehungenInUMin != null" >
+        #{masseUmdrehungenInUMin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseUmdrehungenInKmH != null" >
+        #{masseUmdrehungenInKmH,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInW != null" >
+        #{masseLeistungInW,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInV != null" >
+        #{masseLeistungInV,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInHz != null" >
+        #{masseLeistungInHz,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungHoeheInCm != null" >
+        #{verpackungHoeheInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungBreiteInCm != null" >
+        #{verpackungBreiteInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungTiefeInCm != null" >
+        #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nameTestauszeichnung != null" >
+        #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="induktionsfaehigkeit != null" >
+        #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperaturbestaendigkeitKorpu != null" >
+        #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperaturbestaendigkeitDecke != null" >
+        #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hitzebestaendigBis != null" >
+        #{hitzebestaendigBis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="herstellungshinweis != null" >
+        #{herstellungshinweis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="anzahlTeileDp != null" >
+        #{anzahlTeileDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDurchmesserInCmDp != null" >
+        #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFassungsvermoegenLDp != null" >
+        #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video1 != null" >
+        #{video1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video2 != null" >
+        #{video2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video3 != null" >
+        #{video3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video4 != null" >
+        #{video4,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    update cms_zz_feed_wmf_product_temp
+    <set >
+      <if test="category != null" >
+        "category" = #{category,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        "price" = #{price,jdbcType=VARCHAR},
+      </if>
+      <if test="specialPrice != null" >
+        "special_price" = #{specialPrice,jdbcType=VARCHAR},
+      </if>
+      <if test="md5 != null" >
+        "md5" = #{md5,jdbcType=VARCHAR},
+      </if>
+      <if test="updateflag != null" >
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+      </if>
+      <if test="entityId != null" >
+        "entity_id" = #{entityId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="store != null" >
+        "store" = #{store,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="type != null" >
+        "type" = #{type,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="attributeSet != null" >
+        "attribute_set" = #{attributeSet,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="status != null" >
+        "status" = #{status,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="visibility != null" >
+        "visibility" = #{visibility,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="taxClassId != null" >
+        "tax_class_id" = #{taxClassId,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="image != null" >
+        "image" = #{image,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="smallImage != null" >
+        "small_image" = #{smallImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="thumbnail != null" >
+        "thumbnail" = #{thumbnail,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaImage != null" >
+        "media_image" = #{mediaImage,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaLable != null" >
+        "media_lable" = #{mediaLable,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaPosition != null" >
+        "media_position" = #{mediaPosition,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="mediaIsDisabled != null" >
+        "media_is_disabled" = #{mediaIsDisabled,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="name != null" >
+        "name" = #{name,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="marke != null" >
+        "marke" = #{marke,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="sapStatus != null" >
+        "sap_status" = #{sapStatus,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaTitle != null" >
+        "meta_title" = #{metaTitle,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="description != null" >
+        "description" = #{description,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produktart != null" >
+        "produktart" = #{produktart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaKeyword != null" >
+        "meta_keyword" = #{metaKeyword,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="shortDescription != null" >
+        "short_description" = #{shortDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produktart2 != null" >
+        "produktart_2" = #{produktart2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="metaDescription != null" >
+        "meta_description" = #{metaDescription,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="kollektion != null" >
+        "kollektion" = #{kollektion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialFromDate != null" >
+        "special_from_date" = #{specialFromDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plShortText != null" >
+        "pl_short_text" = #{plShortText,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="artikelanzahl != null" >
+        "artikelanzahl" = #{artikelanzahl,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="specialToDate != null" >
+        "special_to_date" = #{specialToDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lieferumfang != null" >
+        "lieferumfang" = #{lieferumfang,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="ean != null" >
+        "ean" = #{ean,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="material != null" >
+        "material" = #{material,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="urlKey != null" >
+        "url_key" = #{urlKey,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="materialeigenschaft != null" >
+        "materialeigenschaft" = #{materialeigenschaft,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nebenmaterial != null" >
+        "nebenmaterial" = #{nebenmaterial,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="produkteigenschaft != null" >
+        "produkteigenschaft" = #{produkteigenschaft,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="madeInGermany != null" >
+        "made_in_germany" = #{madeInGermany,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="induktionseignung != null" >
+        "induktionseignung" = #{induktionseignung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="plImageOrientation != null" >
+        "pl_image_orientation" = #{plImageOrientation,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="lieferlandAusschluss != null" >
+        "lieferland_ausschluss" = #{lieferlandAusschluss,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="herdart != null" >
+        "herdart" = #{herdart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrp != null" >
+        "simple_msrp" = #{simpleMsrp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="countryOfManufacture != null" >
+        "country_of_manufacture" = #{countryOfManufacture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperatureignung != null" >
+        "temperatureignung" = #{temperatureignung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrpFromDate != null" >
+        "simple_msrp_from_date" = #{simpleMsrpFromDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hitzebestaendigkeit != null" >
+        "hitzebestaendigkeit" = #{hitzebestaendigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="simpleMsrpToDate != null" >
+        "simple_msrp_to_date" = #{simpleMsrpToDate,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight1 != null" >
+        "highlight_1" = #{highlight1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="deckelart != null" >
+        "deckelart" = #{deckelart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight2 != null" >
+        "highlight_2" = #{highlight2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="messerart != null" >
+        "messerart" = #{messerart,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight3 != null" >
+        "highlight_3" = #{highlight3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="eignungAnzTassenEier != null" >
+        "eignung_anz_tassen_eier" = #{eignungAnzTassenEier,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight4 != null" >
+        "highlight_4" = #{highlight4,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLaengeInCm != null" >
+        "masse_laenge_in_cm" = #{masseLaengeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="highlight5 != null" >
+        "highlight_5" = #{highlight5,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseBreiteInCm != null" >
+        "masse_breite_in_cm" = #{masseBreiteInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="asin != null" >
+        "asin" = #{asin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseHoeheInCm != null" >
+        "masse_hoehe_in_cm" = #{masseHoeheInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseKlingenlaengeInCm != null" >
+        "masse_klingenlaenge_in_cm" = #{masseKlingenlaengeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDmInCm != null" >
+        "masse_dm_in_cm" = #{masseDmInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDmHerdplattengr != null" >
+        "masse_dm_herdplattengr" = #{masseDmHerdplattengr,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFassvermInL != null" >
+        "masse_fassverm_in_l" = #{masseFassvermInL,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFuellmengeInG != null" >
+        "masse_fuellmenge_in_g" = #{masseFuellmengeInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseNettogewichtInG != null" >
+        "masse_nettogewicht_in_g" = #{masseNettogewichtInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseBruttogewichtInG != null" >
+        "masse_bruttogewicht_in_g" = #{masseBruttogewichtInG,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="umdrehungenProMinute != null" >
+        "umdrehungen_pro_minute" = #{umdrehungenProMinute,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInW != null" >
+        "leistung_in_w" = #{leistungInW,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInV != null" >
+        "leistung_in_v" = #{leistungInV,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="leistungInHz != null" >
+        "leistung_in_hz" = #{leistungInHz,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="farbbezeichnungDerKollektion != null" >
+        "farbbezeichnung_der_kollektion" = #{farbbezeichnungDerKollektion,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="farbe != null" >
+        "farbe" = #{farbe,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="garantie != null" >
+        "garantie" = #{garantie,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="pflege != null" >
+        "pflege" = #{pflege,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="altersgruppe != null" >
+        "altersgruppe" = #{altersgruppe,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="designer != null" >
+        "designer" = #{designer,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="themenMotive != null" >
+        "themen_motive" = #{themenMotive,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="designpreis != null" >
+        "designpreis" = #{designpreis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="testauszeichnung != null" >
+        "testauszeichnung" = #{testauszeichnung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="kollektionstext != null" >
+        "kollektionstext" = #{kollektionstext,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="variantenzugehoerigkeit != null" >
+        "variantenzugehoerigkeit" = #{variantenzugehoerigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseVolumenInL != null" >
+        "masse_volumen_in_l" = #{masseVolumenInL,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseUmdrehungenInUMin != null" >
+        "masse_umdrehungen_in_u_min" = #{masseUmdrehungenInUMin,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseUmdrehungenInKmH != null" >
+        "masse_umdrehungen_in_km_h" = #{masseUmdrehungenInKmH,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInW != null" >
+        "masse_leistung_in_w" = #{masseLeistungInW,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInV != null" >
+        "masse_leistung_in_v" = #{masseLeistungInV,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseLeistungInHz != null" >
+        "masse_leistung_in_hz" = #{masseLeistungInHz,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungHoeheInCm != null" >
+        "verpackung_hoehe_in_cm" = #{verpackungHoeheInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungBreiteInCm != null" >
+        "verpackung_breite_in_cm" = #{verpackungBreiteInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="verpackungTiefeInCm != null" >
+        "verpackung_tiefe_in_cm" = #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="nameTestauszeichnung != null" >
+        "name_testauszeichnung" = #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="induktionsfaehigkeit != null" >
+        "induktionsfaehigkeit" = #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperaturbestaendigkeitKorpu != null" >
+        "temperaturbestaendigkeit_korpu" = #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="temperaturbestaendigkeitDecke != null" >
+        "temperaturbestaendigkeit_decke" = #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="hitzebestaendigBis != null" >
+        "hitzebestaendig_bis" = #{hitzebestaendigBis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="herstellungshinweis != null" >
+        "herstellungshinweis" = #{herstellungshinweis,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="anzahlTeileDp != null" >
+        "anzahl_teile_dp" = #{anzahlTeileDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseDurchmesserInCmDp != null" >
+        "masse_durchmesser_in_cm_dp" = #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="masseFassungsvermoegenLDp != null" >
+        "masse_fassungsvermoegen_l_dp" = #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video1 != null" >
+        "video_1" = #{video1,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video2 != null" >
+        "video_2" = #{video2,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video3 != null" >
+        "video_3" = #{video3,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="video4 != null" >
+        "video_4" = #{video4,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    update cms_zz_feed_wmf_product_temp
+    set "category" = #{category,jdbcType=VARCHAR},
+    "price" = #{price,jdbcType=VARCHAR},
+    "special_price" = #{specialPrice,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER},
+    "entity_id" = #{entityId,jdbcType=LONGVARCHAR},
+    "store" = #{store,jdbcType=LONGVARCHAR},
+    "type" = #{type,jdbcType=LONGVARCHAR},
+    "attribute_set" = #{attributeSet,jdbcType=LONGVARCHAR},
+    "status" = #{status,jdbcType=LONGVARCHAR},
+    "visibility" = #{visibility,jdbcType=LONGVARCHAR},
+    "tax_class_id" = #{taxClassId,jdbcType=LONGVARCHAR},
+    "image" = #{image,jdbcType=LONGVARCHAR},
+    "small_image" = #{smallImage,jdbcType=LONGVARCHAR},
+    "thumbnail" = #{thumbnail,jdbcType=LONGVARCHAR},
+    "media_image" = #{mediaImage,jdbcType=LONGVARCHAR},
+    "media_lable" = #{mediaLable,jdbcType=LONGVARCHAR},
+    "media_position" = #{mediaPosition,jdbcType=LONGVARCHAR},
+    "media_is_disabled" = #{mediaIsDisabled,jdbcType=LONGVARCHAR},
+    "name" = #{name,jdbcType=LONGVARCHAR},
+    "marke" = #{marke,jdbcType=LONGVARCHAR},
+    "sap_status" = #{sapStatus,jdbcType=LONGVARCHAR},
+    "meta_title" = #{metaTitle,jdbcType=LONGVARCHAR},
+    "description" = #{description,jdbcType=LONGVARCHAR},
+    "produktart" = #{produktart,jdbcType=LONGVARCHAR},
+    "meta_keyword" = #{metaKeyword,jdbcType=LONGVARCHAR},
+    "short_description" = #{shortDescription,jdbcType=LONGVARCHAR},
+    "produktart_2" = #{produktart2,jdbcType=LONGVARCHAR},
+    "meta_description" = #{metaDescription,jdbcType=LONGVARCHAR},
+    "kollektion" = #{kollektion,jdbcType=LONGVARCHAR},
+    "special_from_date" = #{specialFromDate,jdbcType=LONGVARCHAR},
+    "pl_short_text" = #{plShortText,jdbcType=LONGVARCHAR},
+    "artikelanzahl" = #{artikelanzahl,jdbcType=LONGVARCHAR},
+    "special_to_date" = #{specialToDate,jdbcType=LONGVARCHAR},
+    "lieferumfang" = #{lieferumfang,jdbcType=LONGVARCHAR},
+    "ean" = #{ean,jdbcType=LONGVARCHAR},
+    "material" = #{material,jdbcType=LONGVARCHAR},
+    "url_key" = #{urlKey,jdbcType=LONGVARCHAR},
+    "materialeigenschaft" = #{materialeigenschaft,jdbcType=LONGVARCHAR},
+    "nebenmaterial" = #{nebenmaterial,jdbcType=LONGVARCHAR},
+    "produkteigenschaft" = #{produkteigenschaft,jdbcType=LONGVARCHAR},
+    "made_in_germany" = #{madeInGermany,jdbcType=LONGVARCHAR},
+    "induktionseignung" = #{induktionseignung,jdbcType=LONGVARCHAR},
+    "pl_image_orientation" = #{plImageOrientation,jdbcType=LONGVARCHAR},
+    "lieferland_ausschluss" = #{lieferlandAusschluss,jdbcType=LONGVARCHAR},
+    "herdart" = #{herdart,jdbcType=LONGVARCHAR},
+    "simple_msrp" = #{simpleMsrp,jdbcType=LONGVARCHAR},
+    "country_of_manufacture" = #{countryOfManufacture,jdbcType=LONGVARCHAR},
+    "temperatureignung" = #{temperatureignung,jdbcType=LONGVARCHAR},
+    "simple_msrp_from_date" = #{simpleMsrpFromDate,jdbcType=LONGVARCHAR},
+    "hitzebestaendigkeit" = #{hitzebestaendigkeit,jdbcType=LONGVARCHAR},
+    "simple_msrp_to_date" = #{simpleMsrpToDate,jdbcType=LONGVARCHAR},
+    "highlight_1" = #{highlight1,jdbcType=LONGVARCHAR},
+    "deckelart" = #{deckelart,jdbcType=LONGVARCHAR},
+    "highlight_2" = #{highlight2,jdbcType=LONGVARCHAR},
+    "messerart" = #{messerart,jdbcType=LONGVARCHAR},
+    "highlight_3" = #{highlight3,jdbcType=LONGVARCHAR},
+    "eignung_anz_tassen_eier" = #{eignungAnzTassenEier,jdbcType=LONGVARCHAR},
+    "highlight_4" = #{highlight4,jdbcType=LONGVARCHAR},
+    "masse_laenge_in_cm" = #{masseLaengeInCm,jdbcType=LONGVARCHAR},
+    "highlight_5" = #{highlight5,jdbcType=LONGVARCHAR},
+    "masse_breite_in_cm" = #{masseBreiteInCm,jdbcType=LONGVARCHAR},
+    "asin" = #{asin,jdbcType=LONGVARCHAR},
+    "masse_hoehe_in_cm" = #{masseHoeheInCm,jdbcType=LONGVARCHAR},
+    "masse_klingenlaenge_in_cm" = #{masseKlingenlaengeInCm,jdbcType=LONGVARCHAR},
+    "masse_dm_in_cm" = #{masseDmInCm,jdbcType=LONGVARCHAR},
+    "masse_dm_herdplattengr" = #{masseDmHerdplattengr,jdbcType=LONGVARCHAR},
+    "masse_fassverm_in_l" = #{masseFassvermInL,jdbcType=LONGVARCHAR},
+    "masse_fuellmenge_in_g" = #{masseFuellmengeInG,jdbcType=LONGVARCHAR},
+    "masse_nettogewicht_in_g" = #{masseNettogewichtInG,jdbcType=LONGVARCHAR},
+    "masse_bruttogewicht_in_g" = #{masseBruttogewichtInG,jdbcType=LONGVARCHAR},
+    "umdrehungen_pro_minute" = #{umdrehungenProMinute,jdbcType=LONGVARCHAR},
+    "leistung_in_w" = #{leistungInW,jdbcType=LONGVARCHAR},
+    "leistung_in_v" = #{leistungInV,jdbcType=LONGVARCHAR},
+    "leistung_in_hz" = #{leistungInHz,jdbcType=LONGVARCHAR},
+    "farbbezeichnung_der_kollektion" = #{farbbezeichnungDerKollektion,jdbcType=LONGVARCHAR},
+    "farbe" = #{farbe,jdbcType=LONGVARCHAR},
+    "garantie" = #{garantie,jdbcType=LONGVARCHAR},
+    "pflege" = #{pflege,jdbcType=LONGVARCHAR},
+    "altersgruppe" = #{altersgruppe,jdbcType=LONGVARCHAR},
+    "designer" = #{designer,jdbcType=LONGVARCHAR},
+    "themen_motive" = #{themenMotive,jdbcType=LONGVARCHAR},
+    "designpreis" = #{designpreis,jdbcType=LONGVARCHAR},
+    "testauszeichnung" = #{testauszeichnung,jdbcType=LONGVARCHAR},
+    "kollektionstext" = #{kollektionstext,jdbcType=LONGVARCHAR},
+    "variantenzugehoerigkeit" = #{variantenzugehoerigkeit,jdbcType=LONGVARCHAR},
+    "masse_volumen_in_l" = #{masseVolumenInL,jdbcType=LONGVARCHAR},
+    "masse_umdrehungen_in_u_min" = #{masseUmdrehungenInUMin,jdbcType=LONGVARCHAR},
+    "masse_umdrehungen_in_km_h" = #{masseUmdrehungenInKmH,jdbcType=LONGVARCHAR},
+    "masse_leistung_in_w" = #{masseLeistungInW,jdbcType=LONGVARCHAR},
+    "masse_leistung_in_v" = #{masseLeistungInV,jdbcType=LONGVARCHAR},
+    "masse_leistung_in_hz" = #{masseLeistungInHz,jdbcType=LONGVARCHAR},
+    "verpackung_hoehe_in_cm" = #{verpackungHoeheInCm,jdbcType=LONGVARCHAR},
+    "verpackung_breite_in_cm" = #{verpackungBreiteInCm,jdbcType=LONGVARCHAR},
+    "verpackung_tiefe_in_cm" = #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
+    "name_testauszeichnung" = #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
+    "induktionsfaehigkeit" = #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
+    "temperaturbestaendigkeit_korpu" = #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR},
+    "temperaturbestaendigkeit_decke" = #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
+    "hitzebestaendig_bis" = #{hitzebestaendigBis,jdbcType=LONGVARCHAR},
+    "herstellungshinweis" = #{herstellungshinweis,jdbcType=LONGVARCHAR},
+    "anzahl_teile_dp" = #{anzahlTeileDp,jdbcType=LONGVARCHAR},
+    "masse_durchmesser_in_cm_dp" = #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR},
+    "masse_fassungsvermoegen_l_dp" = #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR},
+    "video_1" = #{video1,jdbcType=LONGVARCHAR},
+    "video_2" = #{video2,jdbcType=LONGVARCHAR},
+    "video_3" = #{video3,jdbcType=LONGVARCHAR},
+    "video_4" = #{video4,jdbcType=LONGVARCHAR}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
+    update cms_zz_feed_wmf_product_temp
+    set "category" = #{category,jdbcType=VARCHAR},
+    "price" = #{price,jdbcType=VARCHAR},
+    "special_price" = #{specialPrice,jdbcType=VARCHAR},
+    "md5" = #{md5,jdbcType=VARCHAR},
+    "updateFlag" = #{updateflag,jdbcType=INTEGER}
+    where "sku" = #{sku,jdbcType=VARCHAR}
+  </update>
+
+
+  <delete id="delete">
+    delete from voyageone_cms2.cms_zz_feed_wmf_product_temp
+  </delete>
+
+  <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoWmfModel" autoMapping="true">
+    <result column="category" property="category" />
+    <result column="channel_id" property="channelId" />
+    <result column="m_brand" property="brand" />
+    <result column="m_model" property="model" />
+    <result column="p_name" property="name" />
+    <result column="pe_short_description" property="shortDescription" />
+    <result column="pe_long_description" property="longDescription" />
+    <result column="m_size_type" property="sizeType" />
+    <result column="m_weight" property="weight" />
+    <result column="p_code" property="code" />
+    <result column="p_color" property="color" />
+    <result column="p_made_in_country" property="origin" />
+    <result column="client_product_url" property="clientProductURL"/>
+    <result column="product_type" property="productType"/>
+    <result column="material" property="material"/>
+    <result column="usage_en" property="usageEn"/>
+    <result column="clientProductURL" property="clientProductURL"/>
+    <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+      <result column="i_sku" property="sku" />
+      <result column="i_size" property="size" />
+      <result column="i_barcode" property="barcode" />
+      <result column="i_client_sku" property="clientSku" />
+      <result column="price_msrp" property="priceMsrp" />
+      <result column="price_current" property="priceCurrent" />
+      <result column="price_net" property="priceNet" />
+      <result column="price_client_retail" property="priceClientRetail" />
+      <result column="price_client_msrp" property="priceClientMsrp" />
+      <result column="quantity" property="qty" />
+      <result column="weight_org" property="weightOrg" />
+      <result column="weight_org_unit" property="weightOrgUnit" />
+    </collection>
+    <collection property="image" javaType="ArrayList" ofType="String" >
+      <result column="image" property="image" />
+    </collection>
+  </resultMap>
+  <select id="selectSuperFeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+    select
+    ${category} as category
+    ,#{channel_id} as channel_id
+    ,${m_brand} as m_brand
+    ,${m_model} as m_model
+    ,${m_size_type} as m_size_type
+    ,${m_weight} as m_weight
+    ,${p_code} as p_code
+    ,${p_name} as p_name
+    ,${p_color} as p_color
+    ,${p_made_in_country} as p_made_in_country
+    ,${pe_short_description} as pe_short_description
+    ,${pe_long_description} as pe_long_description
+    ,${price_client_msrp} as price_client_msrp
+    ,${price_client_retail}  as price_client_retail
+    ,${price_net}  as price_net
+    ,${price_current}  as price_current
+    ,${price_msrp}  as price_msrp
+    ,${i_sku} as i_sku
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    ,${image} as image
+    ,${client_product_url} as client_product_url
+    ,${product_type} as product_type
+    ,${quantity} as quantity
+    ,${material} as material
+    ,${usage_en} as usageEn
+    ,${weight_org} as weight_org
+    ,${weight_org_unit} as weight_org_unit
+    ,${weight_calc} as weightCalc
+    <if test="attr != null">
+      ,${attr}
+    </if>
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+  <update id="updateFlagBySku"  parameterType="java.util.List">
+    UPDATE voyageone_cms2.cms_zz_feed_wmf_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </update>
+
+  <insert id="insertFullBySku"  parameterType="java.util.List">
+    INSERT INTO voyageone_cms2.cms_zz_feed_wmf_product_full SELECT * from
+    voyageone_cms2.cms_zz_feed_wmf_product_temp where `sku` in
+    (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </insert>
+
+  <delete id="delFullBySku" parameterType="java.util.List">
+    DELETE
+    FROM
+    voyageone_cms2.cms_zz_feed_wmf_product_full
+    where `sku` in (
+    <foreach collection="list" item="itemIds" index="index" separator=",">
+      #{itemIds}
+    </foreach>
+    )
+  </delete>
+
+  <select id="selectSuperFeedModelDate" resultType="java.util.Date">
+    select created
+    from voyageone_cms2.cms_zz_feed_wmf_product_full
+    order by created desc
+    limit 1
+  </select>
+
+  <insert id="fullCopyTemp" >
+    INSERT INTO voyageone_cms2.cms_zz_feed_wmf_product_temp
+    SELECT * FROM voyageone_cms2.cms_zz_feed_wmf_product_full;
+  </insert>
+  <update id="updateMd5">
+    UPDATE voyageone_cms2.cms_zz_feed_wmf_product_full SET md5 = '1'
+  </update>
+  <update id="updateUpdateFlag">
+    UPDATE voyageone_cms2.cms_zz_feed_wmf_product_temp SET updateFlag = 1
+  </update>
+</mapper>
