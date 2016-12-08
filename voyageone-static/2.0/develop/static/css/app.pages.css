@@ -1013,6 +1013,15 @@ schema .ng-invalid.focus-error {
 
 }
 
+#newCategory .fix-img{
+    max-width: 100px;
+    max-height: 98px;
+    padding: 10px;
+    margin-bottom: 6px;
+    border: 1px solid #e5bb23;
+    border-radius: 4px;
+}
+
 #newCategory .opacityBtn {
     border: none;
     background: none;

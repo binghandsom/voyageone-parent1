@@ -169,6 +169,7 @@ define([
                 var codeList = this.getSelectedCodeList();
                 if (codeList.length == 0) {
                     this.alert("请选择商品");
+                    return;
                 }
                 parameter.codeList = codeList;
             }
