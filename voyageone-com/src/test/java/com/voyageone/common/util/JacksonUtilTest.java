@@ -100,4 +100,17 @@ public class JacksonUtilTest {
         }
         System.out.println(mapp);
     }
+
+
+    @Test
+    public void bean2Map() {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey("72");
+        shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
+        shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
+        shopBean.setApp_url(null);
+
+        Map mapp = JacksonUtil.bean2Map(shopBean);
+        System.out.println(mapp);
+    }
 }
