@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.jd.open.api.sdk.domain.sellercat.ShopCategory;
 import com.taobao.api.domain.SellerCat;
 import com.taobao.top.schema.field.Field;
@@ -142,9 +143,9 @@ public class SellerCatService extends BaseService {
      */
     private CmsBtSellerCatModel copyCmsBtSellerCatModel(CmsBtSellerCatModel node) {
         CmsBtSellerCatModel copyRoot = new CmsBtSellerCatModel();
-        copyRoot.set_id(node.get_id());
         copyRoot.setCatId(node.getCatId());
         copyRoot.setCatName(node.getCatName());
+        copyRoot.setUrlKey(node.getUrlKey());
         copyRoot.setParentCatId(node.getParentCatId());
         copyRoot.setIsParent(node.getIsParent());
         copyRoot.setChannelId(node.getChannelId());
@@ -186,7 +187,7 @@ public class SellerCatService extends BaseService {
     /**
      * addSellerCat
      */
-    public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator) {
+    public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator, String urlKey) {
         /*List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
         if (isDuplicateNode(sellerCats, cName, parentCId, null)) {
             throw new BusinessException("重复的店铺内分类名!");
@@ -194,6 +195,12 @@ public class SellerCatService extends BaseService {
         List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, true);
         if (isDuplicateNodeTree(sellerCats, cName, parentCId, null)) {
             throw new BusinessException("重复的店铺内分类名!");
+        }
+        // 如果urlKey不为空，则校验唯一性
+        if (org.apache.commons.lang.StringUtils.isNotBlank(urlKey)) {
+            if (isDuplicateUrlKey(sellerCats, urlKey)) {
+                throw new BusinessException("重复的目录urlKey!");
+            }
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
@@ -207,14 +214,16 @@ public class SellerCatService extends BaseService {
             cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
         } else if (isTMPlatform(shopCartId)) {
             cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
-//        } else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
         } else if (shopCartId.equals(CartEnums.Cart.LIKING.getId()) || shopCartId.equals(CartEnums.Cart.CN.getId())) {
             ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
-            int size = getBrotherSize(sellerCats, parentCId);
-            cId = cnSellerCatService.addSellerCat(channelId, parentCId, cName, shopBean, size + 1);
+            int size = getBrotherSize(sellerCats, parentCId); // 2016-12-07 新增节点时默认设置index为当前层级节点的最后一位
+            Map<String, String> resultMap = cnSellerCatService.addSellerCat(channelId, parentCId, cName, urlKey, shopBean, size + 1);
+            cId = resultMap.get("catId");
+            urlKey = resultMap.get("urlKey"); // 如果url传入为空，新增时向官网新增时生成urlKey，所以此处再次取值
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
-            cmsBtSellerCatDao.add(channelId, cartId, cName, parentCId, cId, creator);
+            // 2016-12-08 传入参数新增urlKey
+            cmsBtSellerCatDao.add(channelId, cartId, cName, urlKey, parentCId, cId, creator);
         }
     }
 
@@ -361,6 +370,28 @@ public class SellerCatService extends BaseService {
             }
         }
         return 0;
+    }
+
+    /**
+     * 判断urlKey是否在属性目录中存在
+     * @param sellerCats
+     * @param urlKey
+     * @return
+     */
+    private boolean isDuplicateUrlKey (List<CmsBtSellerCatModel> sellerCats, String urlKey) {
+        if (CollectionUtils.isEmpty(sellerCats) || org.apache.commons.lang.StringUtils.isBlank(urlKey)) {
+            return false;
+        }
+        for (CmsBtSellerCatModel node:sellerCats) {
+            if (urlKey.equalsIgnoreCase(node.getUrlKey())) {
+                return true;
+            }
+            boolean temp = isDuplicateUrlKey(node.getChildren(), urlKey);
+            if (temp) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
