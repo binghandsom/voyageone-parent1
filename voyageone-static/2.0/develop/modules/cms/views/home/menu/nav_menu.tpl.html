@@ -9,7 +9,7 @@
             <!-- 加载 feed分类-->
             <div ng-switch-when="cms_feed_product_category">
 
-                <div ng-include="'feedCategoryMenuChild'" ng-init="categoryMenu = $root.feedCategoryTreeList"></div>
+                <div ng-include="'feedCategoryMenu'"></div>
 
             </div>
             <!-- 加载 商品分类 -->
@@ -73,6 +73,25 @@
         </a>
         <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenuChild'" ng-init="categoryMenu = item.children"></ul>
     </li>
+</script>
+
+<script id="feedCategoryMenu" type="text/ng-template">
+    <div>
+        <a class="auto" ui-sref="cms.category">
+             <span class="pull-right text-muted">
+               <i class="fa fa-fw fa-angle-right text"></i>
+               <i class="fa fa-fw fa-angle-down text-active"></i>
+             </span>
+            <i class="glyphicon glyphicon-th-list icon text-vo"></i>
+            <span class="" translate="TXT_FEED_CATEGORY"></span>
+        </a>
+        <ul class="nav nav-sub dk" style="padding-left:10px"
+            ng-if="$root.feedCategoryTreeList.length>0"
+            ng-include="'feedCategoryMenuChild'"
+            ng-init="categoryMenu = $root.feedCategoryTreeList">
+        </ul>
+
+    </div>
 </script>
 
 <script id="feedCategoryMenuChild" type="text/ng-template">
