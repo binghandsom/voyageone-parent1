@@ -26,6 +26,7 @@ public class OrderModel extends CABaseModel {
     private List<OrderItemModel> items;
 
     @JsonProperty("OrderDateUtc")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
     private Date orderDateUtc;
 
     @JsonProperty("OrderStatus")
