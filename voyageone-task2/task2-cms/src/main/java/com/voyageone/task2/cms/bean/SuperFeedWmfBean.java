@@ -226,6 +226,10 @@ public class SuperFeedWmfBean extends SuperFeedBean {
 
     private String video4;
 
+    private String categoryValue;
+
+    private String itemISize;
+
     public String getSku() {
         return sku;
     }
@@ -1101,4 +1105,19 @@ public class SuperFeedWmfBean extends SuperFeedBean {
         this.video4 = video4 == null ? null : video4.trim();
     }
 
+    public String getCategoryValue() {
+        return categoryValue;
+    }
+
+    public void setCategoryValue(String categoryValue) {
+        this.categoryValue = categoryValue;
+    }
+
+    public String getItemISize() {
+        return itemISize;
+    }
+
+    public void setItemISize(String itemISize) {
+        this.itemISize = itemISize;
+    }
 }

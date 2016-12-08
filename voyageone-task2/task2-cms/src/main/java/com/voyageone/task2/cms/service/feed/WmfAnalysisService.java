@@ -106,6 +106,7 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 }else {
                     wmfBean.setCategory("Root Catalog > Default Category >");
                 }
+                wmfBean.setCategoryValue(wmfBean.getCategory());
                 wmfBean.setStatus(reader.get(i++));
                 if("1".equals(wmfBean.getStatus())&&"4".equals(wmfBean.getVisibility()))continue;
                 wmfBean.setVisibility(reader.get(i++));
@@ -209,6 +210,24 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setVideo2(reader.get(i++));
                 wmfBean.setVideo3(reader.get(i++));
                 wmfBean.setVideo4(reader.get(i++));
+                StringBuffer sb = new StringBuffer();
+                if(!StringUtil.isEmpty(wmfBean.getMasseLaengeInCm())){
+                    sb.append("Length:").append(wmfBean.getMasseLaengeInCm()).append("-");
+                }
+                if(!StringUtil.isEmpty(wmfBean.getMasseBreiteInCm())){
+                    sb.append("Width:").append(wmfBean.getMasseBreiteInCm()).append("-");
+                }
+                if(!StringUtil.isEmpty(wmfBean.getMasseHoeheInCm())){
+                    sb.append("Height:").append(wmfBean.getMasseHoeheInCm()).append("-");
+                }
+                if(!StringUtil.isEmpty(wmfBean.getMasseDmInCm())){
+                    sb.append("Diameter:").append(wmfBean.getMasseDmInCm());
+                }
+                if(sb.length()==0){
+                    wmfBean.setItemISize("OneSize");
+                }else{
+                    wmfBean.setItemISize(sb.toString());
+                }
                 superFeed.add(wmfBean);
                 $info(wmfBean.getSku());
                 cnt++;
@@ -255,13 +274,9 @@ public class WmfAnalysisService extends BaseAnalysisService {
         Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
         List<FeedBean> feedBeans = Feeds.getConfigs(channel.getId(), FeedEnums.Name.valueOf("attribute"));
-        List<String> attList = new ArrayList<>();
-        for (FeedBean feedConfig : feedBeans) {
-            if (!StringUtil.isEmpty(feedConfig.getCfg_val1())) {
-                attList.add(feedConfig.getCfg_val1());
-            }
-        }
-
+        List<String> attList = feedBeans.stream()
+                .filter(feedConfig -> !StringUtil.isEmpty(feedConfig.getCfg_val1()))
+                .map(FeedBean::getCfg_val1).collect(Collectors.toList());
         // 条件则根据类目筛选
         String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, column.get("category").toString(),
                 categorPath.replace("'", "\\\'"));

@@ -14,6 +14,7 @@
     <result column="store" property="store" jdbcType="LONGVARCHAR" />
     <result column="type" property="type" jdbcType="LONGVARCHAR" />
     <result column="attribute_set" property="attributeSet" jdbcType="LONGVARCHAR" />
+    <result column="category_value" property="categoryValue" jdbcType="LONGVARCHAR" />
     <result column="status" property="status" jdbcType="LONGVARCHAR" />
     <result column="visibility" property="visibility" jdbcType="LONGVARCHAR" />
     <result column="tax_class_id" property="taxClassId" jdbcType="LONGVARCHAR" />
@@ -101,6 +102,7 @@
     <result column="verpackung_breite_in_cm" property="verpackungBreiteInCm" jdbcType="LONGVARCHAR" />
     <result column="verpackung_tiefe_in_cm" property="verpackungTiefeInCm" jdbcType="LONGVARCHAR" />
     <result column="name_testauszeichnung" property="nameTestauszeichnung" jdbcType="LONGVARCHAR" />
+    <result column="item_i_size" property="itemISize" jdbcType="LONGVARCHAR" />
     <result column="induktionsfaehigkeit" property="induktionsfaehigkeit" jdbcType="LONGVARCHAR" />
     <result column="temperaturbestaendigkeit_korpu" property="temperaturbestaendigkeitKorpu" jdbcType="LONGVARCHAR" />
     <result column="temperaturbestaendigkeit_decke" property="temperaturbestaendigkeitDecke" jdbcType="LONGVARCHAR" />
@@ -118,13 +120,13 @@
     "sku", "category", "price", "special_price", "md5", "updateFlag"
   </sql>
   <sql id="Blob_Column_List" >
-    "entity_id", "store", "type", "attribute_set", "status", "visibility", "tax_class_id",
-    "image", "small_image", "thumbnail", "media_image", "media_lable", "media_position",
-    "media_is_disabled", "name", "marke", "sap_status", "meta_title", "description",
-    "produktart", "meta_keyword", "short_description", "produktart_2", "meta_description",
-    "kollektion", "special_from_date", "pl_short_text", "artikelanzahl", "special_to_date",
-    "lieferumfang", "ean", "material", "url_key", "materialeigenschaft", "nebenmaterial",
-    "produkteigenschaft", "made_in_germany", "induktionseignung", "pl_image_orientation",
+    "entity_id", "store", "type", "attribute_set", "category_value", "status", "visibility",
+    "tax_class_id", "image", "small_image", "thumbnail", "media_image", "media_lable",
+    "media_position", "media_is_disabled", "name", "marke", "sap_status", "meta_title",
+    "description", "produktart", "meta_keyword", "short_description", "produktart_2",
+    "meta_description", "kollektion", "special_from_date", "pl_short_text", "artikelanzahl",
+    "special_to_date", "lieferumfang", "ean", "material", "url_key", "materialeigenschaft",
+    "nebenmaterial", "produkteigenschaft", "made_in_germany", "induktionseignung", "pl_image_orientation",
     "lieferland_ausschluss", "herdart", "simple_msrp", "country_of_manufacture", "temperatureignung",
     "simple_msrp_from_date", "hitzebestaendigkeit", "simple_msrp_to_date", "highlight_1",
     "deckelart", "highlight_2", "messerart", "highlight_3", "eignung_anz_tassen_eier",
@@ -136,10 +138,10 @@
     "testauszeichnung", "kollektionstext", "variantenzugehoerigkeit", "masse_volumen_in_l",
     "masse_umdrehungen_in_u_min", "masse_umdrehungen_in_km_h", "masse_leistung_in_w",
     "masse_leistung_in_v", "masse_leistung_in_hz", "verpackung_hoehe_in_cm", "verpackung_breite_in_cm",
-    "verpackung_tiefe_in_cm", "name_testauszeichnung", "induktionsfaehigkeit", "temperaturbestaendigkeit_korpu",
-    "temperaturbestaendigkeit_decke", "hitzebestaendig_bis", "herstellungshinweis", "anzahl_teile_dp",
-    "masse_durchmesser_in_cm_dp", "masse_fassungsvermoegen_l_dp", "video_1", "video_2",
-    "video_3", "video_4"
+    "verpackung_tiefe_in_cm", "name_testauszeichnung", "item_i_size", "induktionsfaehigkeit",
+    "temperaturbestaendigkeit_korpu", "temperaturbestaendigkeit_decke", "hitzebestaendig_bis",
+    "herstellungshinweis", "anzahl_teile_dp", "masse_durchmesser_in_cm_dp", "masse_fassungsvermoegen_l_dp",
+    "video_1", "video_2", "video_3", "video_4"
   </sql>
   <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
     select
@@ -157,10 +159,10 @@
     insert into cms_zz_feed_wmf_product_temp ("sku", "category", "price",
     "special_price", "md5", "updateFlag",
     "entity_id", "store", "type",
-    "attribute_set", "status", "visibility",
-    "tax_class_id", "image", "small_image",
-    "thumbnail", "media_image", "media_lable",
-    "media_position", "media_is_disabled",
+    "attribute_set", "category_value", "status",
+    "visibility", "tax_class_id", "image",
+    "small_image", "thumbnail", "media_image",
+    "media_lable", "media_position", "media_is_disabled",
     "name", "marke", "sap_status",
     "meta_title", "description", "produktart",
     "meta_keyword", "short_description",
@@ -192,20 +194,20 @@
     "masse_leistung_in_w", "masse_leistung_in_v",
     "masse_leistung_in_hz", "verpackung_hoehe_in_cm",
     "verpackung_breite_in_cm", "verpackung_tiefe_in_cm",
-    "name_testauszeichnung", "induktionsfaehigkeit",
-    "temperaturbestaendigkeit_korpu", "temperaturbestaendigkeit_decke",
-    "hitzebestaendig_bis", "herstellungshinweis",
-    "anzahl_teile_dp", "masse_durchmesser_in_cm_dp",
-    "masse_fassungsvermoegen_l_dp", "video_1",
-    "video_2", "video_3", "video_4"
-    )
+    "name_testauszeichnung", "item_i_size",
+    "induktionsfaehigkeit", "temperaturbestaendigkeit_korpu",
+    "temperaturbestaendigkeit_decke", "hitzebestaendig_bis",
+    "herstellungshinweis", "anzahl_teile_dp",
+    "masse_durchmesser_in_cm_dp", "masse_fassungsvermoegen_l_dp",
+    "video_1", "video_2", "video_3",
+    "video_4")
     values (#{sku,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR}, #{price,jdbcType=VARCHAR},
     #{specialPrice,jdbcType=VARCHAR}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
     #{entityId,jdbcType=LONGVARCHAR}, #{store,jdbcType=LONGVARCHAR}, #{type,jdbcType=LONGVARCHAR},
-    #{attributeSet,jdbcType=LONGVARCHAR}, #{status,jdbcType=LONGVARCHAR}, #{visibility,jdbcType=LONGVARCHAR},
-    #{taxClassId,jdbcType=LONGVARCHAR}, #{image,jdbcType=LONGVARCHAR}, #{smallImage,jdbcType=LONGVARCHAR},
-    #{thumbnail,jdbcType=LONGVARCHAR}, #{mediaImage,jdbcType=LONGVARCHAR}, #{mediaLable,jdbcType=LONGVARCHAR},
-    #{mediaPosition,jdbcType=LONGVARCHAR}, #{mediaIsDisabled,jdbcType=LONGVARCHAR},
+    #{attributeSet,jdbcType=LONGVARCHAR}, #{categoryValue,jdbcType=LONGVARCHAR}, #{status,jdbcType=LONGVARCHAR},
+    #{visibility,jdbcType=LONGVARCHAR}, #{taxClassId,jdbcType=LONGVARCHAR}, #{image,jdbcType=LONGVARCHAR},
+    #{smallImage,jdbcType=LONGVARCHAR}, #{thumbnail,jdbcType=LONGVARCHAR}, #{mediaImage,jdbcType=LONGVARCHAR},
+    #{mediaLable,jdbcType=LONGVARCHAR}, #{mediaPosition,jdbcType=LONGVARCHAR}, #{mediaIsDisabled,jdbcType=LONGVARCHAR},
     #{name,jdbcType=LONGVARCHAR}, #{marke,jdbcType=LONGVARCHAR}, #{sapStatus,jdbcType=LONGVARCHAR},
     #{metaTitle,jdbcType=LONGVARCHAR}, #{description,jdbcType=LONGVARCHAR}, #{produktart,jdbcType=LONGVARCHAR},
     #{metaKeyword,jdbcType=LONGVARCHAR}, #{shortDescription,jdbcType=LONGVARCHAR},
@@ -237,13 +239,13 @@
     #{masseLeistungInW,jdbcType=LONGVARCHAR}, #{masseLeistungInV,jdbcType=LONGVARCHAR},
     #{masseLeistungInHz,jdbcType=LONGVARCHAR}, #{verpackungHoeheInCm,jdbcType=LONGVARCHAR},
     #{verpackungBreiteInCm,jdbcType=LONGVARCHAR}, #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
-    #{nameTestauszeichnung,jdbcType=LONGVARCHAR}, #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
-    #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR}, #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
-    #{hitzebestaendigBis,jdbcType=LONGVARCHAR}, #{herstellungshinweis,jdbcType=LONGVARCHAR},
-    #{anzahlTeileDp,jdbcType=LONGVARCHAR}, #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR},
-    #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR}, #{video1,jdbcType=LONGVARCHAR},
-    #{video2,jdbcType=LONGVARCHAR}, #{video3,jdbcType=LONGVARCHAR}, #{video4,jdbcType=LONGVARCHAR}
-    )
+    #{nameTestauszeichnung,jdbcType=LONGVARCHAR}, #{itemISize,jdbcType=LONGVARCHAR},
+    #{induktionsfaehigkeit,jdbcType=LONGVARCHAR}, #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR},
+    #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR}, #{hitzebestaendigBis,jdbcType=LONGVARCHAR},
+    #{herstellungshinweis,jdbcType=LONGVARCHAR}, #{anzahlTeileDp,jdbcType=LONGVARCHAR},
+    #{masseDurchmesserInCmDp,jdbcType=LONGVARCHAR}, #{masseFassungsvermoegenLDp,jdbcType=LONGVARCHAR},
+    #{video1,jdbcType=LONGVARCHAR}, #{video2,jdbcType=LONGVARCHAR}, #{video3,jdbcType=LONGVARCHAR},
+    #{video4,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedWmfBean" >
     insert into cms_zz_feed_wmf_product_temp
@@ -277,6 +279,9 @@
       </if>
       <if test="attributeSet != null" >
         attribute_set,
+      </if>
+      <if test="categoryValue != null" >
+        category_value,
       </if>
       <if test="status != null" >
         status,
@@ -539,6 +544,9 @@
       <if test="nameTestauszeichnung != null" >
         name_testauszeichnung,
       </if>
+      <if test="itemISize != null" >
+        item_i_size,
+      </if>
       <if test="induktionsfaehigkeit != null" >
         induktionsfaehigkeit,
       </if>
@@ -606,6 +614,9 @@
       </if>
       <if test="attributeSet != null" >
         #{attributeSet,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categoryValue != null" >
+        #{categoryValue,jdbcType=LONGVARCHAR},
       </if>
       <if test="status != null" >
         #{status,jdbcType=LONGVARCHAR},
@@ -868,6 +879,9 @@
       <if test="nameTestauszeichnung != null" >
         #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
       </if>
+      <if test="itemISize != null" >
+        #{itemISize,jdbcType=LONGVARCHAR},
+      </if>
       <if test="induktionsfaehigkeit != null" >
         #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
       </if>
@@ -935,6 +949,9 @@
       </if>
       <if test="attributeSet != null" >
         "attribute_set" = #{attributeSet,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="categoryValue != null" >
+        "category_value" = #{categoryValue,jdbcType=LONGVARCHAR},
       </if>
       <if test="status != null" >
         "status" = #{status,jdbcType=LONGVARCHAR},
@@ -1197,6 +1214,9 @@
       <if test="nameTestauszeichnung != null" >
         "name_testauszeichnung" = #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
       </if>
+      <if test="itemISize != null" >
+        "item_i_size" = #{itemISize,jdbcType=LONGVARCHAR},
+      </if>
       <if test="induktionsfaehigkeit != null" >
         "induktionsfaehigkeit" = #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
       </if>
@@ -1247,6 +1267,7 @@
     "store" = #{store,jdbcType=LONGVARCHAR},
     "type" = #{type,jdbcType=LONGVARCHAR},
     "attribute_set" = #{attributeSet,jdbcType=LONGVARCHAR},
+    "category_value" = #{categoryValue,jdbcType=LONGVARCHAR},
     "status" = #{status,jdbcType=LONGVARCHAR},
     "visibility" = #{visibility,jdbcType=LONGVARCHAR},
     "tax_class_id" = #{taxClassId,jdbcType=LONGVARCHAR},
@@ -1334,6 +1355,7 @@
     "verpackung_breite_in_cm" = #{verpackungBreiteInCm,jdbcType=LONGVARCHAR},
     "verpackung_tiefe_in_cm" = #{verpackungTiefeInCm,jdbcType=LONGVARCHAR},
     "name_testauszeichnung" = #{nameTestauszeichnung,jdbcType=LONGVARCHAR},
+    "item_i_size" = #{itemISize,jdbcType=LONGVARCHAR},
     "induktionsfaehigkeit" = #{induktionsfaehigkeit,jdbcType=LONGVARCHAR},
     "temperaturbestaendigkeit_korpu" = #{temperaturbestaendigkeitKorpu,jdbcType=LONGVARCHAR},
     "temperaturbestaendigkeit_decke" = #{temperaturbestaendigkeitDecke,jdbcType=LONGVARCHAR},
