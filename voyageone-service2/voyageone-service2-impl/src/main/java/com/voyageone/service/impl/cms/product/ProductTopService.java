@@ -43,6 +43,11 @@ public class ProductTopService extends BaseService {
             data.put("sortColumnName", topModel.getSortColumnName());
             data.put("sortType",topModel.getSortType());
         }
+        else
+        {
+            data.put("sortColumnName","created");
+            data.put("sortType",-1);
+        }
         // 获取brand list
         data.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, language));
 

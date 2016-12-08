@@ -44,7 +44,7 @@
                 <div class="panel-body top-area">
                     <ul class="list-inline" sv-root sv-part="ctrl.topList">
                         <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}">
-                            <div class="jm-sortable-product-handle" style="height: 160px">
+                            <div class="jm-sortable-product-handle cur-m" style="min-height: 180px">
                                 <div class="row" style="height: 24px">
                                     <div class="col-sm-8">
                                         <strong>code:</strong> <span class="ng-binding">{{product.code}}</span>
@@ -73,12 +73,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-12">
                                         <div>
-                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{product.pPriceSaleSt}}&nbsp;~&nbsp;{{product.pPriceSaleEd}}</label>
+                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{ctrl.showPriceSale(product.pPriceSaleSt,product.pPriceSaleEd)}}</label>
                                         </div>
                                     </div>
-                                    <ul class="col-sm-6 list-inline text-right arrow-button">
+                                </div>
+                                <div class="row m-t-tx">
+                                    <ul class="col-sm-6 col-md-offset-6 list-inline text-right arrow-button">
                                         <li>
                                             <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first" disabled="disabled"><i class="fa fa-fast-backward"></i></button>
                                         </li>
@@ -219,12 +221,12 @@
                                     <th class="text-left v-middle">品牌</th>
                                     <th class="text-left v-middle">Code</th>
                                     <th class="text-right v-middle">中国最终售价</th>
-                                    <th class="text-right v-middle">库存</th>
+                                    <th class="text-center v-middle">库存</th>
                                     <th class="text-center v-middle">sku数</th>
-                                    <th class="text-right v-middle">7天销量</th>
-                                    <th class="text-right v-middle">30天销量</th>
-                                    <th class="text-right v-middle">年销量</th>
-                                    <th class="text-right v-middle">总销量</th>
+                                    <th class="text-center v-middle">7天销量</th>
+                                    <th class="text-center v-middle">30天销量</th>
+                                    <th class="text-center v-middle">年销量</th>
+                                    <th class="text-center v-middle">总销量</th>
                                     <th class="text-center v-middle">创建时间</th>
                                 </tr>
                             </thead>
@@ -237,16 +239,16 @@
                                         <img class="thumb-sm-search" image="{{item.image1}}"  />
                                     </td>
                                     <td class="text-left v-middle">{{item.model}}</td>
-                                    <td class="text-left v-middle">{{item.productName}}</td>
-                                    <td class="text-left v-middle">{{item.brand}}</td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.productName" direct="left" size="20"></popover-text></td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.brand" direct="left" size="20"></popover-text></td>
                                     <td class="text-left v-middle">{{item.code}}</td>
-                                    <td class="text-right v-middle">{{item.pPriceSaleSt | currency:''}}~{{item.pPriceSaleEd | currency:''}}</td>
-                                    <td class="text-right v-middle">{{item.quantity}}</td>
+                                    <td class="text-right v-middle">{{ctrl.showPriceSale(item.pPriceSaleSt,item.pPriceSaleEd)}}</td>
+                                    <td class="text-center v-middle">{{item.quantity}}</td>
                                     <td class="text-center v-middle">{{item.skuCount}}</td>
-                                    <td class="text-right v-middle">{{item.salesSum7 | currency:''}}</td>
-                                    <td class="text-right v-middle">{{item.salesSum30 | currency:''}}</td>
-                                    <td class="text-right v-middle">{{item.salesSumYear | currency:''}}</td>
-                                    <td class="text-right v-middle">{{item.salesSum | currency:''}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum7}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum30}}</td>
+                                    <td class="text-center v-middle">{{item.salesSumYear}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum}}</td>
                                     <td class="text-center v-middle">{{item.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                                 </tr>
                             </tbody>

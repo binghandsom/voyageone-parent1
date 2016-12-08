@@ -5,7 +5,7 @@ define([
 
     cms.controller("newCategoryController", (function () {
 
-        function NewCategoryCtl($routeParams, productTopService, alert, notify, confirm) {
+        function NewCategoryCtl($routeParams, productTopService, alert, notify, confirm, $filter) {
             var self = this;
             self.routeParams = angular.fromJson($routeParams.cartInfo);
             self.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
@@ -21,6 +21,7 @@ define([
             };
             self.notify = notify;
             self.confirm = confirm;
+            self.$filter = $filter;
             self.alert = alert;
         }
 
@@ -171,15 +172,15 @@ define([
             parameter.cartId = routeParams.cartId;
             parameter.sellerCatId = routeParams.catId;
 
-            if(self.isSeachAdd){
-                confirm("您是否要全量移入置顶区").then(function(){
+            if (self.isSeachAdd) {
+                confirm("您是否要全量移入置顶区").then(function () {
                     self.callAddTopProduct(parameter);
                 });
-            }else
+            } else
                 self.callAddTopProduct(parameter);
         };
 
-        NewCategoryCtl.prototype.callAddTopProduct = function(para){
+        NewCategoryCtl.prototype.callAddTopProduct = function (para) {
             var self = this;
 
             self.productTopService.addTopProduct(para).then(function () {
@@ -302,6 +303,19 @@ define([
                     source.push(temp[0]);
                     return;
             }
+        };
+
+        NewCategoryCtl.prototype.showPriceSale = function (priceLow, priceHigh) {
+            var $filter = this.$filter;
+
+            if (!priceLow || !priceHigh)
+                return '';
+
+            if (priceLow === priceHigh)
+                return $filter('currency')(priceLow, '');
+            else
+                return $filter('currency')(priceLow, '') + "~"
+                    + $filter('currency')(priceHigh, '');
         };
 
         return NewCategoryCtl;
