@@ -57,7 +57,7 @@ define([
          */
         NewCategoryCtl.prototype.search = function () {
             var self = this,
-                data = this.getSearchInfo(),
+                data = self.getSearchInfo(),
                 paging = self.paging,
                 sort = self.sort,
                 productTopService = self.productTopService;
@@ -67,13 +67,21 @@ define([
                 data.sortType = sort.sortType;
             }
 
-            this.productTopService.getPage(_.extend(paging, data)).then(function (res) {
+            self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
+                if(res.data.length == 0 && self.paging.curr > 1){
+                    self.paging.curr = self.paging.curr - 1;
+                    self.search();
+                    return;
+                }
+
                 self.modelList = res.data;
             });
 
             productTopService.getCount(self.getSearchInfo()).then(function (res) {
                 self.paging.total = res.data;
             });
+
+            this.selAll = false;
         };
 
         /**
@@ -120,11 +128,11 @@ define([
          * 普通商品区全选操作
          * @param $event
          */
-        NewCategoryCtl.prototype.selectAll = function ($event) {
-            var checkbox = $event.target;
+        NewCategoryCtl.prototype.selectAll = function () {
+            var checked = this.selAll;
 
             for (var i = 0; i < this.modelList.length; i++) {
-                this.modelList[i].isChecked = checkbox.checked;
+                this.modelList[i].isChecked = checked;
             }
         };
 

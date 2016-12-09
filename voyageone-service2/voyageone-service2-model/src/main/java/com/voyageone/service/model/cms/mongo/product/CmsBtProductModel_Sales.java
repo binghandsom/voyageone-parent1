@@ -43,7 +43,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSum7(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_7);
         if (codeSum != null) {
-            return (Integer) codeSum.get(CARTID + cart);
+            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
         }
         return 0;
     }
@@ -58,7 +58,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSum30(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_30);
         if (codeSum != null) {
-            return (Integer) codeSum.get(CARTID + cart);
+            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
         }
         return 0;
     }
@@ -73,7 +73,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSumAll(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_ALL);
         if (codeSum != null) {
-            return (Integer) codeSum.get(CARTID + cart);
+            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
         }
         return 0;
     }
@@ -152,7 +152,7 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSumYear(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_YEAR);
         if (codeSum != null) {
-            return (Integer) codeSum.get(CARTID + cart);
+            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
         }
         return 0;
     }

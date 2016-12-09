@@ -263,7 +263,7 @@ public class CmsBtCombinedProductService extends BaseService {
         if (page <= 0) {
             page = 1;
         }
-        if (pageSize < 0) {
+        if (pageSize <= 0) {
             pageSize = 10;
         }
         queryObj.setSkip(pageSize * (page - 1)).setLimit(pageSize);
@@ -614,7 +614,7 @@ public class CmsBtCombinedProductService extends BaseService {
             if (page <= 0) {
                 page = 1;
             }
-            if (pageSize < 0) {
+            if (pageSize <= 0) {
                 pageSize = 10;
             }
             query.setSkip(pageSize * (page - 1)).setLimit(pageSize);

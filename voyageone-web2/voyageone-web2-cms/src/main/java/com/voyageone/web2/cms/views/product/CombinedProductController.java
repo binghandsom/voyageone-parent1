@@ -67,7 +67,7 @@ public class CombinedProductController extends CmsController {
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.SEARCH)
     public AjaxResponse search(@RequestBody CmsBtCombinedProductBean searchBean) {
         searchBean.setChannelId(getUser().getSelChannelId());
-        Map<String, Object> resultMap = cmsBtCombinedProductService.search(searchBean.getPage(), searchBean.getPageSize(), searchBean);
+        Map<String, Object> resultMap = cmsBtCombinedProductService.search(searchBean.getCurr(), searchBean.getSize(), searchBean);
         return success(resultMap);
     }
 
@@ -126,7 +126,7 @@ public class CombinedProductController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_OPERATE_LOGS)
     public AjaxResponse getOperateLogs(@RequestBody CmsBtCombinedProductBean searchBean) {
-        Map<String, Object> resultMap = cmsBtCombinedProductService.getOperateLogs(searchBean.getPage(), searchBean.getPageSize(), searchBean);
+        Map<String, Object> resultMap = cmsBtCombinedProductService.getOperateLogs(searchBean.getCurr(), searchBean.getSize(), searchBean);
         return success(resultMap);
     }
 }

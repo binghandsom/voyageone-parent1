@@ -39,10 +39,10 @@ public class OpenApiExceptionHandler extends VOAbsLoggable implements HandlerExc
 
         if (request.getRequestURI().contains(CAUrlConstants.ROOT)) {
             ActionResponse responseCa = ResponseUtils.buildCAError(ex);
-            jsonView.setAttributesMap(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(responseCa)));
+            jsonView.setAttributesMap(JacksonUtil.bean2Map(responseCa));
         } else {
             VoApiResponse responseVo = ResponseUtils.buildError(ex);
-            jsonView.setAttributesMap(JacksonUtil.jsonToMap(JacksonUtil.bean2Json(responseVo)));
+            jsonView.setAttributesMap(JacksonUtil.bean2Map(responseVo));
         }
 
         return mav;
