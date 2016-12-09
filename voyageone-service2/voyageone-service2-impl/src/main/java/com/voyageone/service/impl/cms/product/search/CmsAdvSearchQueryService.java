@@ -1,17 +1,5 @@
 package com.voyageone.service.impl.cms.product.search;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -22,6 +10,13 @@ import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -470,7 +465,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
-            queryObject.addQuery("{$or:[{'common.fields.productNameEn':{$regex:#}},{'common.fields.longDesEn':{$regex:#}},{'common.fields.shortDesEn':{$regex:#}},{'common.fields.originalTitleCn':{$regex:#}},{'common.fields.shortDesCn':{$regex:#}},{'common.fields.longDesCn':{$regex:#}}]}");
+            queryObject.addQuery("{$or:[{'common.fields.productNameEn':{$regex:#, $options:\"i\"}},{'common.fields.longDesEn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesEn':{$regex:#, $options:\"i\"}},{'common.fields.originalTitleCn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesCn':{$regex:#, $options:\"i\"}},{'common.fields.longDesCn':{$regex:#, $options:\"i\"}}]}");
             queryObject.addParameters(fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr);
         }
 
