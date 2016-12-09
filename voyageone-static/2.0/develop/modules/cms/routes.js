@@ -165,7 +165,7 @@ define(function () {
         },
         "search_advance_param": {
             "url": "/search/advanceSearch/",
-            "hash": "/search/advanceSearch/:type/:value1/:value2/:value3",
+            "hash": "/search/advanceSearch/:type/:value1/:value2?/:value3?",
             "templateUrl": "views/search/advanceSearch.tpl.html",
             "controllerUrl": "modules/cms/views/search/advanceSearch.ctl"
         },

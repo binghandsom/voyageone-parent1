@@ -119,8 +119,8 @@
         <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!-- sneakerhead 导入 cms2 -->
-        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
+        <!-- SneakerHead feed 导入 cms2 -->
+        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 0/2 * * ?"/>
 
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
@@ -189,6 +189,10 @@
 
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
+
+        <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
+        <task:scheduled ref="cmsUsCategorySyncJob" method="run" cron="0 45 1 * * ?"/>
+
 
         <!-- 从老Cms系统取得销售数据（每天早上4：40点一次） -->
         <task:scheduled ref="CmsSumSneakerHeadSalesHisInfoJob" method="run" cron="0 40 20 * * ?"/>

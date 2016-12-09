@@ -16,6 +16,7 @@ define([
             this.alert = alert;
             this.catName = "";
             this.catPath = "";
+            this.urlKey = "";
         }
 
         NewCategoryCtl.prototype.init = function () {
@@ -49,7 +50,7 @@ define([
 
             parentCatId = context.root ? "0" : selectObject.catId;
 
-            self.context.ctrl.save(context.root,selectObject, parentCatId, self.catName);
+            self.context.ctrl.save(context.root,selectObject, parentCatId, self.catName, self.urlKey);
             self.scope.$dismiss();
         };
 

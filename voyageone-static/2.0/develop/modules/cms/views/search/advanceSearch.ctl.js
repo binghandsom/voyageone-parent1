@@ -50,8 +50,8 @@ define([
         $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.initialize = initialize;
         $scope.clear = clear;
-        $scope.search = function () {
-            search();
+        $scope.search = function (curr) {
+            search(curr);
             $scope.vm._selall = false;
         };
         $scope.exportFile = exportFile;
@@ -84,6 +84,11 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
+            if($routeParams.type ==10001 )
+            {
+                $scope.vm.searchInfo.fCatPathList=[$routeParams.value1];
+                $scope.vm.feedCats = [{catId:$routeParams.value2,catPath:$routeParams.value1}];
+            }
             if ($routeParams.type == "1") {
                 // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
@@ -198,7 +203,7 @@ define([
         /**
          * 检索
          */
-        function search() {
+        function search(curr) {
             // 检查输入数据 库存/金额
             var intVal = $scope.vm.searchInfo.inventory;
             if (!(intVal == null || intVal == undefined || intVal == '')) {
@@ -237,8 +242,12 @@ define([
             }
 
             // 默认设置成第一页
-            $scope.vm.groupPageOption.curr = 1;
-            $scope.vm.productPageOption.curr = 1;
+            if(curr){
+                $scope.vm.groupPageOption.curr = curr;
+                $scope.vm.productPageOption.curr = curr;
+            }
+            //$scope.vm.groupPageOption.curr = 1;
+            //$scope.vm.productPageOption.curr = 1;
 
             $scope.vm.searchInfo.custAttrMap = angular.copy($scope.vm.custAttrList);
             searchAdvanceService2.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {

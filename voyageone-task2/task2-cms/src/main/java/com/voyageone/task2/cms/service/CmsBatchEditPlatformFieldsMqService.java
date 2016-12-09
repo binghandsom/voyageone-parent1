@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.DateTimeUtil;
@@ -53,6 +54,7 @@ public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
             if(cmsBtProductModel != null && cmsBtProductModel.getPlatform(cartId) != null){
                 CmsBtProductModel_Platform_Cart cmsBtProductModel_platform_cart = cmsBtProductModel.getPlatform(cartId);
+                if(cmsBtProductModel_platform_cart.getFields() == null) cmsBtProductModel_platform_cart.setFields(new BaseMongoMap<>());
                 cmsBtProductModel_platform_cart.getFields().setAttribute(fieldsId, fieldsValue);
                 $info(String.format("channelId=%s, cartId=%s, code=%s, fieldsId=%s , fieldsValue=%s", channelId, cartId,code, fieldsId, JacksonUtil.bean2Json(fieldsValue)));
 

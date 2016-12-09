@@ -32,7 +32,7 @@
                 </thead>
                 <tbody ng-if="vm.logs.length">
                 <tr ng-repeat="log in vm.logs">
-                    <td class="text-left">{{log.operateTime}}</td>
+                    <td class="text-left">{{log.operateTime | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left">{{log.operater}}</td>
                     <td class="text-left">{{vm.statuses[log.status]}}</td>
                     <td class="text-left">{{vm.platformStatuses[log.platformStatus]}}</td>
@@ -43,6 +43,9 @@
                 </tbody>
             </table>
             <div if-no-rows="vm.logs.length"></div>
+        </div>
+        <div class="col-sm-12 m-t-lg m-b-lg">
+            <vpagination config="vm.logPageOption"></vpagination>
         </div>
     </div>
     <div class="modal-footer">

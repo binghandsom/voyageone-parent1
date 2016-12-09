@@ -15,20 +15,15 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
-import com.voyageone.service.model.cms.mongo.product.OldCmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 
 /**
- *
  * @author Ethan Shi
  * @version 2.1.0
- *
  */
 @Repository
 public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
@@ -328,6 +323,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
 
         return codes;
     }
+
     public void removeTagByCodes(String channelId, List<String> codes, int tagId) {
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{\"common.fields.code\":{$in:#}}");
@@ -335,5 +331,18 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         updObj.setUpdate("{$pull:{\"tags\":{$regex:\"-" + tagId + "-\"}}}");
         String collectionName = getCollectionName(channelId);
         mongoTemplate.updateMulti(updObj, collectionName);
+    }
+
+    public void updateUsPlatforms(String channelId,
+                                  String code,
+                                  Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms,
+                                  String modifier) {
+        JongoUpdate jongoUpdate = new JongoUpdate();
+        jongoUpdate.setQuery("{\"common.fields.code\": #}, {\"modifier\": #}");
+        jongoUpdate.setQueryParameters(code, modifier);
+        jongoUpdate.setUpdate("{$set: {\"usPlatforms\": #}}");
+        jongoUpdate.setUpdateParameters(usPlatforms);
+        String collectionName = getCollectionName(channelId);
+        mongoTemplate.updateFirst(jongoUpdate, collectionName);
     }
 }

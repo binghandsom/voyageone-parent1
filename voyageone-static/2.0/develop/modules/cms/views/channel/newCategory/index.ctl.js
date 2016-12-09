@@ -5,19 +5,24 @@ define([
 
     cms.controller("newCategoryController", (function () {
 
-        function NewCategoryCtl($routeParams, productTopService, alert, notify) {
-            this.routeParams = angular.fromJson($routeParams.cartInfo);
-            this.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
-            this.productTopService = productTopService;
-            this.searchInfo = {};
-            this.sort = {};
-            this.codeStr = '';
-            this.isSeachAdd = false;
-            this.paging = {
-                curr: 1, total: 0, size: 10, fetch: this.goPage.bind(this)
+        function NewCategoryCtl($routeParams, productTopService, alert, notify, confirm, $filter) {
+            var self = this;
+            self.routeParams = angular.fromJson($routeParams.cartInfo);
+            self.sortList = sortEnum.getSortByCd(this.routeParams.cartId);
+            self.productTopService = productTopService;
+            self.searchInfo = {};
+            self.sort = {};
+            self.codeStr = '';
+            self.isSeachAdd = false;
+            self.paging = {
+                curr: 1, total: 0, size: 10, fetch: function () {
+                    self.search();
+                }
             };
-            this.notify = notify;
-            this.alert = alert;
+            self.notify = notify;
+            self.confirm = confirm;
+            self.$filter = $filter;
+            self.alert = alert;
         }
 
         NewCategoryCtl.prototype.init = function () {
@@ -50,15 +55,33 @@ define([
          * 查询操作  调用查询结果集和获取总数两个接口
          * @param sortInfo
          */
-        NewCategoryCtl.prototype.search = function (sortInfo) {
+        NewCategoryCtl.prototype.search = function () {
             var self = this,
+                data = self.getSearchInfo(),
+                paging = self.paging,
+                sort = self.sort,
                 productTopService = self.productTopService;
 
-            self.goPage(1, self.paging.size, sortInfo);
+            if (sort) {
+                data.sortColumnName = sort.sValue;
+                data.sortType = sort.sortType;
+            }
+
+            self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
+                if(res.data.length == 0 && self.paging.curr > 1){
+                    self.paging.curr = self.paging.curr - 1;
+                    self.search();
+                    return;
+                }
+
+                self.modelList = res.data;
+            });
 
             productTopService.getCount(self.getSearchInfo()).then(function (res) {
                 self.paging.total = res.data;
             });
+
+            this.selAll = false;
         };
 
         /**
@@ -74,27 +97,6 @@ define([
             upEntity.codeList = self.codeStr.split("\n");
 
             return upEntity;
-        };
-
-        /**
-         * 跳转到指定页
-         * @param pageIndex
-         * @param size
-         * @param sortInfo
-         */
-        NewCategoryCtl.prototype.goPage = function (pageIndex, size, sortInfo) {
-            var self = this,
-                data = this.getSearchInfo();
-
-            data.pageIndex = pageIndex;
-            data.pageSize = size;
-            if (sortInfo) {
-                data.sortColumnName = sortInfo.sortColumnName;
-                data.sortType = sortInfo.sortType;
-            }
-            this.productTopService.getPage(data).then(function (res) {
-                self.modelList = res.data;
-            });
         };
 
         /**
@@ -119,18 +121,18 @@ define([
 
             self.sort = _sort;
 
-            self.search({sortColumnName: _sort.sValue, sortType: sortType});
+            self.search();
         };
 
         /**
          * 普通商品区全选操作
          * @param $event
          */
-        NewCategoryCtl.prototype.selectAll = function ($event) {
-            var checkbox = $event.target;
+        NewCategoryCtl.prototype.selectAll = function () {
+            var checked = this.selAll;
 
             for (var i = 0; i < this.modelList.length; i++) {
-                this.modelList[i].isChecked = checkbox.checked;
+                this.modelList[i].isChecked = checked;
             }
         };
 
@@ -159,16 +161,18 @@ define([
         NewCategoryCtl.prototype.addTopProductClick = function () {
             var self = this,
                 routeParams = self.routeParams,
+                confirm = self.confirm,
                 parameter = {};
 
-            if (this.isSeachAdd) {
+            if (self.isSeachAdd) {
                 //全量加入
-                parameter.isSeachAdd = this.isSeachAdd;
-                parameter.searchParameter = this.getSearchInfo();
+                parameter.isSeachAdd = self.isSeachAdd;
+                parameter.searchParameter = self.getSearchInfo();
             } else {
-                var codeList = this.getSelectedCodeList();
+                var codeList = self.getSelectedCodeList();
                 if (codeList.length == 0) {
-                    this.alert("请选择商品");
+                    self.alert("请选择商品");
+                    return;
                 }
                 parameter.codeList = codeList;
             }
@@ -176,10 +180,23 @@ define([
             parameter.cartId = routeParams.cartId;
             parameter.sellerCatId = routeParams.catId;
 
-            self.productTopService.addTopProduct(parameter).then(function () {
+            if (self.isSeachAdd) {
+                confirm("您是否要全量移入置顶区").then(function () {
+                    self.callAddTopProduct(parameter);
+                });
+            } else
+                self.callAddTopProduct(parameter);
+        };
+
+        NewCategoryCtl.prototype.callAddTopProduct = function (para) {
+            var self = this;
+
+            self.productTopService.addTopProduct(para).then(function () {
                 self.search();
                 self.getTopList();
+                self.isSeachAdd = false;
                 self.notify.success('提交成功');
+
             });
         };
 
@@ -222,12 +239,14 @@ define([
             var self = this,
                 routeParams = self.routeParams;
 
-            this.productTopService.saveTopProduct({
+            self.productTopService.saveTopProduct({
                 cartId: routeParams.cartId,
                 sellerCatId: routeParams.catId,
                 codeList: self.getTopCodeList()
             }).then(function () {
                 self.notify.success('保存成功');
+                //刷新普通商品区
+                self.search();
             });
         };
 
@@ -235,7 +254,15 @@ define([
          * 置顶区清空
          */
         NewCategoryCtl.prototype.clearTopProduct = function () {
-            this.topList = [];
+            var self = this,
+                confirm = self.confirm;
+
+            confirm("您是否确定要清空置顶区？").then(function () {
+                self.topList = [];
+                self.saveTopProduct();
+
+            });
+
         };
 
 
@@ -284,6 +311,19 @@ define([
                     source.push(temp[0]);
                     return;
             }
+        };
+
+        NewCategoryCtl.prototype.showPriceSale = function (priceLow, priceHigh) {
+            var $filter = this.$filter;
+
+            if (!priceLow || !priceHigh)
+                return '';
+
+            if (priceLow === priceHigh)
+                return $filter('currency')(priceLow, '');
+            else
+                return $filter('currency')(priceLow, '') + "~"
+                    + $filter('currency')(priceHigh, '');
         };
 
         return NewCategoryCtl;

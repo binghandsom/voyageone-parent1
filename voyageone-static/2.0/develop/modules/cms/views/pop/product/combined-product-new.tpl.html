@@ -5,7 +5,7 @@
         <h5 class="modal-title">&nbsp;<i class="fa fa-plus"></i>&nbsp;<span translate="TXT_COMBINED_PRODUCT_NEW"></span></h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal" name="shelvesTemplateForm" novalidate>
+        <form role="form" class="form-horizontal" name="combinedProductForm" novalidate>
             <div class="row form-group">
                 <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
                 <div class="col-sm-3">
@@ -25,7 +25,7 @@
             <div class="row form-group">
                 <label class="col-sm-3 control-label" ng-class="{vo_reqfield:vm.config.startSupplyChain}"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" name="wuliubaoProductCode" ng-model="vm.product.wuliubaoProductCode" ng-required="vm.config.startSupplyChain"/>
+                    <input type="text" class="form-control" name="wuliubaoProductCode" ng-model="vm.product.wuliubaoCode" ng-required="vm.config.startSupplyChain"/>
                     <div class="text-warnings">
                         <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
                     </div>
@@ -90,7 +90,7 @@
                                 <div class="text-left table_bg_gray">
                                     <div style="float: left">
                                         组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
-                                        组合套装实际售价 ：{{sku.suitPreferentialPrice}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                        组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
                                     </div>
                                     <div style="float: right; padding-right: 37px;">
                                         <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
@@ -105,7 +105,7 @@
                                             <td class="mfb-xxs text-left">
                                                 <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
                                             </td>
-                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn}}</td>
+                                            <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
                                             <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)" required></td>
                                             <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
                                             <td class="mfb-xxt text-center">
@@ -118,8 +118,8 @@
 
                                 </table>
                                 <div class="text-right table_bg_gray">
-                                    组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn}}
-                                    组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice}}
+                                    组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn | currency:''}}
+                                    组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice | currency:''}}
                                 </div>
 
                             </td>
@@ -133,7 +133,7 @@
 
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
-        <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
-        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="shelvesTemplateForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
+        <button class="btn btn-vo" ng-click="addSubmit(0)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+        <button class="btn btn-vo" ng-click="addSubmit(1)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
     </div>
 </div>

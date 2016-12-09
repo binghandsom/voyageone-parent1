@@ -30,6 +30,7 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String GET_CARTS = "getCarts";
+            String GetMenuHeaderInfo="getMenuHeaderInfo";
         }
     }
 

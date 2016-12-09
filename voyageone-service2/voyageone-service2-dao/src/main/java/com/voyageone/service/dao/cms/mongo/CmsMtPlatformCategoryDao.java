@@ -2,13 +2,15 @@ package com.voyageone.service.dao.cms.mongo;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoCartDao;
+import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 @Repository
@@ -54,39 +56,52 @@ public class CmsMtPlatformCategoryDao extends BaseMongoCartDao<CmsMtPlatformCate
         // 根据 path 计算类目深度
         int deep = StringUtils.countMatches(categoryPath, ">");
 
-        // 根据深度计算条件和列筛选
-        // 对常见的 1，2，3 进行部分优化
         String children = "children";
-        String query = "catPath";
-        String projection = null;
-        if (deep == 1) {
-            query = String.format("%s.%s", children, query);
-            projection = children + ".$";
-        } else if (deep == 2) {
-            query = String.format("%s.%s.%s", children, children, query);
-            projection = String.format("%s.%s.$", children, children);
-        } else if (deep == 3) {
-            query = String.format("%s.%s.%s.%s", children, children, children, query);
-            projection = String.format("%s.%s.%s.$", children, children, children);
-        } else if (deep > 3) {
-            Object[] prefixArray = IntStream.range(0, deep).mapToObj(i -> children).toArray();
-            String prefix = StringUtils.join(prefixArray, ".");
-            query = String.format("%s.%s", prefix, query);
-            projection = prefix + ".$";
+        if (deep == 0) {
+            JongoQuery query = new JongoQuery();
+            query.setQuery("{catPath: #}");
+            query.setParameters(categoryPath);
+            List<CmsMtPlatformCategoryTreeModel> models = select(query, cartId);
+            return models.isEmpty() ? null : models.get(0);
+        } else {
+            Object[] prefixArray = IntStream.range(0, deep - 1).mapToObj(i -> children).toArray();
+            String prefix = prefixArray.length > 0 ? "." +StringUtils.join(prefixArray, ".") : "";
+
+            List<JongoAggregate> aggregateList = new ArrayList<>();
+            aggregateList.add(new JongoAggregate("{ $unwind : \"$children\" }"));
+
+            String unwindInfo = String.format("{ $unwind : \"$children%s\"}", prefix);
+            aggregateList.add(new JongoAggregate(unwindInfo));
+
+            String matchInfo = String.format("{$match: {\"children%s.catPath\": \"%s\"}}", prefix, categoryPath);
+            aggregateList.add(new JongoAggregate(matchInfo));
+
+            String projectInfo = String.format("{$project: {\"children%s\": 1}}", prefix);
+            aggregateList.add(new JongoAggregate(projectInfo));
+
+            List<Map<String, Object>> models = aggregateToMap(cartId, aggregateList);
+
+            if (models.isEmpty())
+                return null;
+
+            Map<String, Object> newCategoryTree = (Map<String, Object>)models.get(0).get("children");
+            while (newCategoryTree.get("catPath") == null || !categoryPath.equals(newCategoryTree.get("catPath").toString())) {
+                newCategoryTree = (Map<String, Object>)newCategoryTree.get("children");
+            }
+//            if (categoryPath.equals(newCategoryTree.get("catPath").toString())) {
+//            } else {
+//                return null;
+//            }
+
+            CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = new CmsMtPlatformCategoryTreeModel();
+            cmsMtPlatformCategoryTreeModel.setCatId(newCategoryTree.get("catId").toString());
+            cmsMtPlatformCategoryTreeModel.setCartId(Integer.valueOf(newCategoryTree.get("cartId").toString()));
+            cmsMtPlatformCategoryTreeModel.setChannelId(newCategoryTree.get("channelId").toString());
+            cmsMtPlatformCategoryTreeModel.setCatName(newCategoryTree.get("catName").toString());
+            cmsMtPlatformCategoryTreeModel.setCatPath(newCategoryTree.get("catPath").toString());
+            cmsMtPlatformCategoryTreeModel.setParentCatId(newCategoryTree.get("parentCatId").toString());
+            cmsMtPlatformCategoryTreeModel.setIsParent(Integer.valueOf(newCategoryTree.get("isParent").toString()));
+            return cmsMtPlatformCategoryTreeModel;
         }
-
-        // 执行查询
-        Criteria criteria = new Criteria(query).is(categoryPath).and("channelId").is(channelId);
-        JongoQuery jongoQuery = new JongoQuery(criteria);
-        if (projection != null)
-            jongoQuery.setProjection(String.format("{%s:1}", projection));
-        CmsMtPlatformCategoryTreeModel cmsMtPlatformCategoryTreeModel = selectOneWithQuery(jongoQuery, cartId);
-
-        // 循环查找实际目标
-        while (StringUtils.isEmpty(cmsMtPlatformCategoryTreeModel.getCatPath()) && !cmsMtPlatformCategoryTreeModel.getChildren().isEmpty()) {
-            cmsMtPlatformCategoryTreeModel = cmsMtPlatformCategoryTreeModel.getChildren().get(0);
-        }
-
-        return cmsMtPlatformCategoryTreeModel;
     }
 }

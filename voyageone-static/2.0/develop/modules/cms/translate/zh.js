@@ -10,6 +10,7 @@ define(function () {
         "TXT_FEED_MANAGER": "Feed管理",
         "TXT_FEED_PRODUCT_LIST": "Feed商品一览",
         "TXT_FEED_CATEGORY_LIST": "Feed类目一览",
+        "TXT_FEED_CATEGORY": "Feed分类",
         "TXT_FEED_BRAND_LIST": "Feed品牌一览",
         "TXT_CATEGORY_MANAGER": "商品管理",
         "TXT_PROMOTION_MANAGER": "活动管理",

@@ -23,7 +23,7 @@
             <div class="container-fluid">
                 <div class="row form-horizontal">
                     <div class="col-md-2 form-group">
-                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;<ins>{{ctrl.topList.length}}</ins></label>
+                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;{{ctrl.topList.length}}&nbsp;个</label>
                     </div>
                     <div class="col-md-3">
                         <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
@@ -44,7 +44,7 @@
                 <div class="panel-body top-area">
                     <ul class="list-inline" sv-root sv-part="ctrl.topList">
                         <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}">
-                            <div class="jm-sortable-product-handle" style="height: 160px">
+                            <div class="jm-sortable-product-handle cur-m" style="min-height: 180px">
                                 <div class="row" style="height: 24px">
                                     <div class="col-sm-8">
                                         <strong>code:</strong> <span class="ng-binding">{{product.code}}</span>
@@ -54,10 +54,10 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-4">
-                                        <img class="thumb" image="{{product.image1}}">
+                                    <div class="col-sm-5">
+                                        <img class="thumb fix-img" image="{{product.image1}}">
                                     </div>
-                                    <div class="col-sm-8">
+                                    <div class="col-sm-7">
                                         <div class="row">
                                             <label class="col-md-3"><strong>品牌</strong></label>
                                             <label class="col-md-9"><span title="{{product.brand}}">{{product.brand}}</span></label>
@@ -66,15 +66,21 @@
                                             <label class="col-md-3"><strong>库存</strong></label>
                                             <label class="col-md-9">{{product.quantity}}</label>
                                         </div>
+                                        <div class="row">
+                                            <label class="col-md-5"><strong>创建时间</strong></label>
+                                            <label class="col-md-7">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-12">
                                         <div>
-                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{product.pPriceSaleEd}}</label>
+                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{ctrl.showPriceSale(product.pPriceSaleSt,product.pPriceSaleEd)}}</label>
                                         </div>
                                     </div>
-                                    <ul class="col-sm-6 list-inline text-right arrow-button">
+                                </div>
+                                <div class="row m-t-tx">
+                                    <ul class="col-sm-6 col-md-offset-6 list-inline text-right arrow-button">
                                         <li>
                                             <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first" disabled="disabled"><i class="fa fa-fast-backward"></i></button>
                                         </li>
@@ -165,7 +171,7 @@
                         </div>
                         <div class="col-md-3 col-md-offset-5 text-right">
                                 <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
-                                <div class="btn-group" uib-dropdown style="margin-right: 30px">
+                                <div class="btn-group" uib-dropdown style="margin-right: 80px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                         &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
                                               <span ng-if="!ctrl.sort.sName">排序</span>&nbsp;<span class="caret"></span>
@@ -178,22 +184,25 @@
                                             <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >时间降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.p✓.pPriceSaleEd',1)" >售价升序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',1)" >售价升序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.p✓.pPriceSaleEd',-1)" >售价降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',-1)" >售价降序&nbsp;</button>
                                         </li>
                                         <li>
                                             <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >库存降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSum7.cartId✓',-1)" >7天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum7.cartId✓',-1)" >7天销售降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSum30.cartId✓',-1)" >30天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum30.cartId✓',-1)" >30天销售降序&nbsp;</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('codeSumYear.cartId✓',-1)" >总销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumYear.cartId✓',-1)" >年销售降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumAll.cartId✓',-1)" >总销售降序&nbsp;</button>
                                         </li>
                                     </ul>
                                 </div>
@@ -205,34 +214,42 @@
                         <table class="table table-hover-new table-hover" style="min-width:1200px">
                             <thead>
                                 <tr>
-                                    <th class="mfb-xt text-center"><input type="checkbox" ng-click="ctrl.selectAll($event)" class="v-sub">&nbsp;全选</th>
-                                    <th class="mfb-xxt text-center">图片</th>
-                                    <th class="mfb-xxt text-center">商品页面编号</th>
-                                    <th class="mfb-xxt text-center">款号</th>
-                                    <th class="mfb-xxt text-left">商品名称</th>
-                                    <th class="mfb-xxt text-left">品牌</th>
-                                    <th class="mfb-xxt text-center">Code</th>
-                                    <th class="mfb-xxt text-right">中国最终售价</th>
-                                    <th class="mfb-xxt text-right">库存</th>
-                                    <th class="mfb-xxt text-right">sku数</th>
+                                    <th class="text-center v-middle"><input type="checkbox" ng-model="ctrl.selAll" ng-click="ctrl.selectAll()" class="v-sub">&nbsp;全选</th>
+                                    <th class="text-center v-middle">图片</th>
+                                    <th class="text-left v-middle">款号</th>
+                                    <th class="text-left v-middle">商品名称</th>
+                                    <th class="text-left v-middle">品牌</th>
+                                    <th class="text-left v-middle">Code</th>
+                                    <th class="text-right v-middle">中国最终售价</th>
+                                    <th class="text-center v-middle">库存</th>
+                                    <th class="text-center v-middle">sku数</th>
+                                    <th class="text-center v-middle">7天销量</th>
+                                    <th class="text-center v-middle">30天销量</th>
+                                    <th class="text-center v-middle">年销量</th>
+                                    <th class="text-center v-middle">总销量</th>
+                                    <th class="text-center v-middle">创建时间</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr ng-repeat="item in ctrl.modelList">
-                                    <td class="mfb-xt text-center"><input type="checkbox" ng-true-value="true"
+                                    <td class="mfb-xt text-center v-middle"><input type="checkbox" ng-true-value="true"
                                                                                           ng-false-value="false"
                                                                                           ng-model="item.isChecked" class="v-sub" /> </td>
-                                    <td class="mfb-xxt text-center">
+                                    <td class="mfb-xxt text-center v-middle">
                                         <img class="thumb-sm-search" image="{{item.image1}}"  />
                                     </td>
-                                    <td class="mfb-xxt text-center">{{item.pNumIId}}</td>
-                                    <td class="mfb-xxt text-center">{{item.model}}</td>
-                                    <td class="mfb-xxt text-left">{{item.productName}}</td>
-                                    <td class="mfb-xxt text-left">{{item.brand}}</td>
-                                    <td class="mfb-xxt text-center">{{item.code}}</td>
-                                    <td class="mfb-xxt text-right">{{item.pPriceSaleEd}}</td>
-                                    <td class="mfb-xxt text-right">{{item.quantity}}</td>
-                                    <td class="mfb-xxt text-right">{{item.skuCount}}</td>
+                                    <td class="text-left v-middle">{{item.model}}</td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.productName" direct="left" size="20"></popover-text></td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.brand" direct="left" size="20"></popover-text></td>
+                                    <td class="text-left v-middle">{{item.code}}</td>
+                                    <td class="text-right v-middle">{{ctrl.showPriceSale(item.pPriceSaleSt,item.pPriceSaleEd)}}</td>
+                                    <td class="text-center v-middle">{{item.quantity}}</td>
+                                    <td class="text-center v-middle">{{item.skuCount}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum7}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum30}}</td>
+                                    <td class="text-center v-middle">{{item.salesSumYear}}</td>
+                                    <td class="text-center v-middle">{{item.salesSumAll}}</td>
+                                    <td class="text-center v-middle">{{item.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                                 </tr>
                             </tbody>
                         </table>

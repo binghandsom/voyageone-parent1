@@ -14,7 +14,7 @@
                                     <label class="col-sm-4  control-label"><strong translate="TXT_PLATFORM"></strong></label>
                                     <div class="col-sm-6">
                                         <select class="form-control" ng-model="vm.searchBean.cartId">
-                                            <option value="">All</option>
+                                            <option value="">请选择...</option>
                                             <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
                                         </select>
                                     </div>
@@ -94,26 +94,26 @@
                     <table class="table table-hover-new text-center box-body">
                         <thead>
                             <tr>
-                                <th class="text-center" translate="组合套装sku"></th>
-                                <th class="text-left" translate="组合套装中国最终售价"></th>
-                                <th class="text-left" translate="组合套装优惠售价"></th>
-                                <th class="text-center" translate="创建时间"></th>
-                                <th class="text-center" translate="更新时间"></th>
+                                <th class="text-left" translate="组合套装sku"></th>
+                                <th class="text-right" translate="组合套装中国最终售价"></th>
+                                <th class="text-right" translate="组合套装优惠售价"></th>
+                                <th class="text-left" translate="创建时间"></th>
+                                <th class="text-left" translate="更新时间"></th>
                             </tr>
                         </thead>
-                        <tbody ng-repeat="product in vm.products">
-                        <tr>
+                        <tbody ng-repeat="product in vm.products" style="margin-bottom: 2px">
+                        <tr style="background: rgba(230, 126, 34, 0.19)">
                             <td colspan="5">
                                 <div class="row text-left">
                                     &emsp;
-                                    <span class="label" ng-class="{'label-info':product.status == 1,'label-default':product.status == 0}">{{vm.statuses[product.status]}}</span>&emsp;
+                                    <span class="label" ng-class="{'label-info':product.status == 1,'label-default':product.status == 0}">{{vm.cartsEnums.valueOf(product.cartId).name}}:{{vm.statuses[product.status]}}</span>&emsp;
 
                                     <span class="label" ng-class="{'label-primary':product.platformStatus == 1,
                                                                    'label-danger':product.platformStatus == 0}">
-                                        {{vm.platformStatuses[product.platformStatus]}}
+                                        {{vm.cartsEnums.valueOf(product.cartId).name}}:{{vm.platformStatuses[product.platformStatus]}}
                                     </span>&emsp;
 
-                                    <strong>商品编码：</strong><a href="javascript:void(0)" ng-click="popEditCombinedProduct(product)">{{product.numID}}</a>&emsp;
+                                    <strong>商品编码：</strong><a ng-href="{{getPlatFormUrl(product.cartId , product.numID)}}" target="_blank">{{product.numID}}</a>&emsp;
 
                                     <strong>组合套装商品名称：</strong><span>{{product.productName}}</span>
 
@@ -144,11 +144,11 @@
                             </td>
                         </tr>
                         <tr ng-repeat="sku in product.skus">
-                            <td class="text-center">{{sku.suitSkuCode}}</td>
-                            <td class="text-left">{{sku.suitSellingPriceCn}}</td>
-                            <td class="text-left">{{sku.suitPreferentialPrice}}</td>
-                            <td class="text-center">{{product.created}}</td>
-                            <td class="text-center">{{product.modified}}</td>
+                            <td class="text-left">{{sku.suitSkuCode}}</td>
+                            <td class="text-right">{{sku.suitSellingPriceCn | currency:''}}</td>
+                            <td class="text-right">{{sku.suitPreferentialPrice | currency:''}}</td>
+                            <td class="text-left">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <td class="text-left">{{product.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                         </tr>
                         </tbody>
                     </table>

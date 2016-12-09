@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.cms.producttop;
 
+import java.util.Date;
+
 /**
  * Created by dell on 2016/11/28.
  */
@@ -14,6 +16,53 @@ public class ProductInfo {
     double pPriceSaleEd;//中国最终售价  最大
     int quantity;//库存
     int skuCount;//sku数
+    String created;//创建时间
+    int salesSum7;//7天销量
+    int salesSum30;//30天销量
+    int salesSumYear;//年销量
+    int salesSumAll;//总销量
+
+    public int getSalesSumYear() {
+        return salesSumYear;
+    }
+
+    public void setSalesSumYear(int salesSumYear) {
+        this.salesSumYear = salesSumYear;
+    }
+
+    public int getSalesSumAll() {
+        return salesSumAll;
+    }
+
+    public void setSalesSumAll(int salesSumAll) {
+        this.salesSumAll = salesSumAll;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public int getSalesSum7() {
+        return salesSum7;
+    }
+
+    public void setSalesSum7(int salesSum7) {
+        this.salesSum7 = salesSum7;
+    }
+
+    public int getSalesSum30() {
+        return salesSum30;
+    }
+
+    public void setSalesSum30(int salesSum30) {
+        this.salesSum30 = salesSum30;
+    }
+
+
 
     public String getImage1() {
         return image1;

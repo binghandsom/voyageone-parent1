@@ -139,6 +139,7 @@ public class SuperFeedSneakerHeadBean extends SuperFeedBean{
         Set<String> noMd5Fields = new HashSet<>();
         noMd5Fields.add("md5");
         noMd5Fields.add("updateflag");
+        noMd5Fields.add("created");
 
 
         return  beanToMd5(this,noMd5Fields);

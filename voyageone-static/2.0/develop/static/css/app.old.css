@@ -1621,7 +1621,7 @@ pre {
 }
 
 .navi ul.nav li li ul {
-    display: none;
+   /* display: none;*/
 }
 
 .navi ul.nav li li.active > ul {
@@ -6257,6 +6257,10 @@ a.text-black:hover {
 
 .cur-m {
     cursor: move;
+}
+
+.cur-p {
+    cursor: pointer;
 }
 
 .line {

@@ -17,6 +17,6 @@ public class CmsBtCombinedProductStatus {
 
     static {
         KV.put(SUBMITTED, "已提交");
-        KV.put(TEMPORAL, "暂存");
+        KV.put(TEMPORAL, "未提交");
     }
 }

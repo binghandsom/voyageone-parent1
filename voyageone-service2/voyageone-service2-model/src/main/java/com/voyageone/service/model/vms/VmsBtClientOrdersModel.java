@@ -8,6 +8,8 @@
 package com.voyageone.service.model.vms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
+
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -80,19 +82,19 @@ public class VmsBtClientOrdersModel extends BaseModel {
 
     protected String shippingLabelUrl;
 
-    protected Double totalPrice;
+    protected BigDecimal totalPrice;
 
-    protected Double totalTaxPrice;
+    protected BigDecimal totalTaxPrice;
 
-    protected Double totalShippingPrice;
+    protected BigDecimal totalShippingPrice;
 
-    protected Double totalShippingTaxPrice;
+    protected BigDecimal totalShippingTaxPrice;
 
-    protected Double totalGiftOptionPrice;
+    protected BigDecimal totalGiftOptionPrice;
 
-    protected Double totalGiftOptionTaxPrice;
+    protected BigDecimal totalGiftOptionTaxPrice;
 
-    protected Double totalFees;
+    protected BigDecimal totalFees;
 
     protected String currency;
 
@@ -364,59 +366,59 @@ public class VmsBtClientOrdersModel extends BaseModel {
         this.shippingLabelUrl = shippingLabelUrl == null ? null : shippingLabelUrl.trim();
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getTotalTaxPrice() {
+    public BigDecimal getTotalTaxPrice() {
         return totalTaxPrice;
     }
 
-    public void setTotalTaxPrice(Double totalTaxPrice) {
+    public void setTotalTaxPrice(BigDecimal totalTaxPrice) {
         this.totalTaxPrice = totalTaxPrice;
     }
 
-    public Double getTotalShippingPrice() {
+    public BigDecimal getTotalShippingPrice() {
         return totalShippingPrice;
     }
 
-    public void setTotalShippingPrice(Double totalShippingPrice) {
+    public void setTotalShippingPrice(BigDecimal totalShippingPrice) {
         this.totalShippingPrice = totalShippingPrice;
     }
 
-    public Double getTotalShippingTaxPrice() {
+    public BigDecimal getTotalShippingTaxPrice() {
         return totalShippingTaxPrice;
     }
 
-    public void setTotalShippingTaxPrice(Double totalShippingTaxPrice) {
+    public void setTotalShippingTaxPrice(BigDecimal totalShippingTaxPrice) {
         this.totalShippingTaxPrice = totalShippingTaxPrice;
     }
 
-    public Double getTotalGiftOptionPrice() {
+    public BigDecimal getTotalGiftOptionPrice() {
         return totalGiftOptionPrice;
     }
 
-    public void setTotalGiftOptionPrice(Double totalGiftOptionPrice) {
+    public void setTotalGiftOptionPrice(BigDecimal totalGiftOptionPrice) {
         this.totalGiftOptionPrice = totalGiftOptionPrice;
     }
 
-    public Double getTotalGiftOptionTaxPrice() {
+    public BigDecimal getTotalGiftOptionTaxPrice() {
         return totalGiftOptionTaxPrice;
     }
 
-    public void setTotalGiftOptionTaxPrice(Double totalGiftOptionTaxPrice) {
+    public void setTotalGiftOptionTaxPrice(BigDecimal totalGiftOptionTaxPrice) {
         this.totalGiftOptionTaxPrice = totalGiftOptionTaxPrice;
     }
 
-    public Double getTotalFees() {
+    public BigDecimal getTotalFees() {
         return totalFees;
     }
 
-    public void setTotalFees(Double totalFees) {
+    public void setTotalFees(BigDecimal totalFees) {
         this.totalFees = totalFees;
     }
 
