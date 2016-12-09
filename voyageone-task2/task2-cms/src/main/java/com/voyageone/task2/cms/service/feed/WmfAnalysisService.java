@@ -101,15 +101,14 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 wmfBean.setType(reader.get(i++));
                 wmfBean.setAttributeSet(reader.get(i++));
                 wmfBean.setCategory(reader.get(i++));
+                wmfBean.setCategoryValue(wmfBean.getCategory());
                 if (!StringUtil.isEmpty(wmfBean.getCategory())) {
                     String category = wmfBean.getCategory().split("\\|")[0];
                     wmfBean.setCategory(category);
                 } else {
                     wmfBean.setCategory("Root Catalog > Default Category >");
                 }
-                wmfBean.setCategoryValue(wmfBean.getCategory());
                 wmfBean.setStatus(reader.get(i++));
-                if ("1".equals(wmfBean.getStatus()) && "4".equals(wmfBean.getVisibility())) continue;
                 wmfBean.setVisibility(reader.get(i++));
                 wmfBean.setTaxClassId(reader.get(i++));
                 wmfBean.setImage(reader.get(i++));
@@ -229,8 +228,10 @@ public class WmfAnalysisService extends BaseAnalysisService {
                 } else {
                     wmfBean.setItemISize(sb.toString());
                 }
-                superFeed.add(wmfBean);
-                $info(wmfBean.getSku());
+                if ("1".equals(wmfBean.getStatus()) && "4".equals(wmfBean.getVisibility())){
+                    superFeed.add(wmfBean);
+                    $info(wmfBean.getSku());
+                }
                 cnt++;
                 if (superFeed.size() > 1000) {
                     transactionRunner.runWithTran(() -> insertSuperFeed(superFeed));
