@@ -949,7 +949,7 @@ public class ProductService extends BaseService {
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, comment);
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, platformModel.getCartId(), modifier, comment);
         productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), opeType, comment, modifier);
 
         return platformModel.getModified();
