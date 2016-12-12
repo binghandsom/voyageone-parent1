@@ -161,6 +161,7 @@ define(function () {
         "TXT_ORG_NAMES": "组织名称",
         "TXT_UPPER_ORG": "上级组织",
         "TXT_SORT_PRE": "排序权重",
+        "TXT_ICON": "图标",
         "TXT_ROLE_MANAGEMENT": "角色管理",
         "TXT_ROLE_NAME": "角色名",
         "TXT_NEW_ROLE_COPY": "复制的角色名",
