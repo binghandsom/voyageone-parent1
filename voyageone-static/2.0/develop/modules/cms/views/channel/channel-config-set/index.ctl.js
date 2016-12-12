@@ -8,6 +8,10 @@ define([
 
         }
 
+        ChannelConfigSet.prototype.init = function(){
+
+        };
+
         return ChannelConfigSet;
 
     })());

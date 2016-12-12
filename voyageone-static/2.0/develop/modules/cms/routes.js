@@ -435,7 +435,7 @@ define(function () {
             "controller": "combinedProductController as ctrl"
         },
         "channel-config-set":{
-            "hash": "/channel/channel-config-set",
+            "hash": "/channel/channel_config_set",
             "templateUrl": "views/channel/channel-config-set/index.tpl.html",
             "controllerUrl": "modules/cms/views/channel/channel-config-set/index.ctl",
             "controller": "channelConfigSet as ctrl"
