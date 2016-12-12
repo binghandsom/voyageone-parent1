@@ -1,6 +1,7 @@
 package com.voyageone.web2.admin.views.user;
 
 import com.google.common.base.Preconditions;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.impl.com.user.AdminUserService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -133,7 +135,7 @@ public class AdminUserController extends AdminController {
 
     /**
      * 管理员重置密码
-     * 管理员重置密码以后用户下次登录会要求修改密码
+     * 密码用明文回传给客户端了，这样会有安全隐患
      * @param bean
      * @return
      */
@@ -142,8 +144,13 @@ public class AdminUserController extends AdminController {
         // 验证参数
         Preconditions.checkNotNull(bean);
         String username = getUser().getUserName();
-        adminUserService.restPass(bean, DEFAULT_PASS ,username);
-        return success(true);
+        //生成随机密码
+        String pass= CommonUtil.getRomdonPass(6);
+
+        adminUserService.restPass(bean, pass ,username);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("password", pass);
+        return success(map);
     }
 
 
