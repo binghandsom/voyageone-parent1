@@ -185,10 +185,10 @@ define([
                         idList.push(sel.id);
                     });
                     self.adminUserService.resetPass(idList).then(function (res) {
-                        if (res.data == true) {
-                            self.alert('恭喜您！密码重置成功啦！');
+                        if (res.data.password) {
+                            self.alert('密码重置成功：' +  res.data.password + "。");
                         } else {
-                            self.alert('密码充值失败，请重试');
+                            self.alert('密码重置失败，请重试');
                         }
                     });
                 })
