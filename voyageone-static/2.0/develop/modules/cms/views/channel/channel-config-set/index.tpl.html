@@ -24,7 +24,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label"><strong>config_key</strong></label>
                                     <div class="col-sm-7">
-                                        <input class="form-control" placeholder="模糊搜索">
+                                        <input class="form-control" placeholder="模糊搜索" ng-model="ctrl.searchInfo.config_key">
                                     </div>
                                 </div>
                             </div>
@@ -49,8 +49,8 @@
         <div class="panel-heading">
             <div class="row" style="padding: 4px">
                 <div class="col-md-3 col-md-offset-9 text-right">
-                    <button class="btn btn-info btn-pop" ng-click="ctrl.addTopProductClick()"><i class="fa fa-refresh"></i>&nbsp;刷新</button>&emsp;
-                    <button class="btn btn-success btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>&emsp;
+                    <button class="btn btn-info btn-pop" ng-click="ctrl.refresh()"><i class="fa fa-refresh"></i>&nbsp;刷新</button>&emsp;
+                    <button class="btn btn-success btn-pop" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>&emsp;
                 </div>
             </div>
         </div>
@@ -74,26 +74,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr ng-repeat = "element in ctrl.dataList">
                                <td class="text-center">
                                    <input type="checkbox">
                                </td>
-                               <td class="text-center">1234567890</td>
-                               <td class="text-center">1234567890</td>
+                               <td class="text-center">{{element.config_key}}</td>
+                               <td class="text-center">{{element.config_code}}</td>
                                <td class="text-center">
-                                   <input type="text" class="form-control">
+                                   <input type="text" class="form-control" ng-model="element.config_value1">
                                </td>
                                <td class="text-center">
-                                   <input type="text" class="form-control">
+                                   <input type="text" class="form-control" ng-model="element.config_value2">
                                </td>
                                <td class="text-center">
-                                   <input type="text" class="form-control">
+                                   <input type="text" class="form-control" ng-model="element.config_value3">
                                </td>
-                               <td class="text-center">1234567890</td>
-                               <td class="text-center">1234567890</td>
-                               <td class="text-center">1234567890</td>
-                               <td class="text-center">1234567890</td>
-                               <td class="text-center">1234567890</td>
+                               <td class="text-center">{{element.sample}}</td>
+                               <td class="text-center">{{element.comment}}</td>
+                               <td class="text-center">{{element.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                               <td class="text-center">{{element.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                               <td class="text-center">{{element.modifier}}</td>
                             </tr>
                         </tbody>
                     </table>
