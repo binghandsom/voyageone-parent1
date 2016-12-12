@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.taobao.api.ApiException;
 import com.taobao.api.domain.UpdateSkuPrice;
 import com.taobao.api.response.TmallItemPriceUpdateResponse;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -17,8 +16,6 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jumei.JumeiHtDealService;
@@ -28,11 +25,9 @@ import com.voyageone.components.jumei.bean.HtMallSkuPriceUpdateInfo;
 import com.voyageone.components.jumei.reponse.HtDealUpdateDealPriceBatchResponse;
 import com.voyageone.components.jumei.request.HtDealUpdateDealPriceBatchRequest;
 import com.voyageone.components.tmall.service.TbItemService;
-import com.voyageone.service.bean.cms.jumei.SkuPriceBean;
 import com.voyageone.service.dao.ims.ImsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -862,7 +857,7 @@ public class PriceService extends BaseService {
         }
 
         // 判断上新时销售价用的是建议售价还是最终售价
-        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE_SX_Key, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
         String priceConfigValue = null;
         if (priceConfig != null) {
             // 取得价格对应的configValue名

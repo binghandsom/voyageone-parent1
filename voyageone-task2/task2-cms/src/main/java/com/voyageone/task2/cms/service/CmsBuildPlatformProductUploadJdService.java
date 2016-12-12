@@ -946,10 +946,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
-        Double marketPrice = getItemPrice(skuList, channelId, cartId, CmsConstants.ChannelConfig.PRICE_RETAIL, CmsConstants.ChannelConfig.PRICE_RETAILPrice);
+        Double marketPrice = getItemPrice(skuList, channelId, cartId, CmsConstants.ChannelConfig.PRICE_RETAIL_Key, CmsConstants.ChannelConfig.PRICE_RETAILPrice_code);
         jdProductBean.setMarketPrice(String.valueOf(marketPrice));
         // 京东价,精确到2位小数，单位:元(必须)
-        Double jdPrice = getItemPrice(skuList, channelId, cartId,CmsConstants.ChannelConfig.PRICE_SALE, CmsConstants.ChannelConfig.PRICE_SALEPrice);
+        Double jdPrice = getItemPrice(skuList, channelId, cartId,CmsConstants.ChannelConfig.PRICE_SALE_Key, CmsConstants.ChannelConfig.PRICE_SALEPrice_code);
         sxData.setMaxPrice(jdPrice);
         jdProductBean.setJdPrice(String.valueOf(jdPrice));
 
@@ -1545,7 +1545,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     }
 
                     // sku价格(100.0|150.0|100.0|100.0)
-                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(),CmsConstants.ChannelConfig.PRICE_SALE, CmsConstants.ChannelConfig.PRICE_SALEPrice);//PriceType_jdprice
+                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(),CmsConstants.ChannelConfig.PRICE_SALE_Key, CmsConstants.ChannelConfig.PRICE_SALEPrice_code);//PriceType_jdprice
                     sbSkuPrice.append(String.valueOf(skuPrice));
                     sbSkuPrice.append(Separtor_Vertical);        // "|"
 
@@ -2126,9 +2126,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             return 0.0;
         }
 
-        if (CmsConstants.ChannelConfig.PRICE_SALEPrice.equals(priceCode)) {//PriceType_jdprice
+        if (CmsConstants.ChannelConfig.PRICE_SALEPrice_code.equals(priceCode)) {//PriceType_jdprice
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
-        } else if (CmsConstants.ChannelConfig.PRICE_RETAILPrice.equals(priceCode)) {//PriceType_marketprice
+        } else if (CmsConstants.ChannelConfig.PRICE_RETAILPrice_code.equals(priceCode)) {//PriceType_marketprice
             // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else {
