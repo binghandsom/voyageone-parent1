@@ -7,6 +7,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -42,6 +43,7 @@ import com.voyageone.task2.base.util.TaskControlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -503,8 +505,20 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     // 更新特价宝
                     updateTeJiaBaoPromotion(sxData);
 
+                    // added by morse.lu 2016/12/08 start
+                    if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                        // Sneakerhead
+                        try {
+                            sxProductService.uploadCnInfo(sxData);
+                        } catch (IOException io) {
+                            throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                        }
+                    }
+                    // added by morse.lu 2016/12/08 end
+
                     // 回写workload表   (成功1)
                     sxProductService.updateSxWorkload(cmsBtSxWorkloadModel, CmsConstants.SxWorkloadPublishStatusNum.okNum, getTaskName());
+
                     // delete by morse.lu 2016/06/06 start
                     // 不会为空的吧，即使为空，下面的逻辑不抛错，直接return，真的好吗？
 //                } else {

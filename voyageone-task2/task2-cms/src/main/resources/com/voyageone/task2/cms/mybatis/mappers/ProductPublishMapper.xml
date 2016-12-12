@@ -85,7 +85,7 @@
 			)
 			and b.`status` not in ('Canceled', 'Returned')
 			and (a.order_date_time <= convert_tz(concat(date_format(date_add(CURDATE(), interval -1 day),  '%Y-%m-%d'),' 23:59:59'), '+08:00', '+00:00')
-			and convert_tz(concat(date_format(date_add(CURDATE(), interval -90 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
+			and convert_tz(concat(date_format(date_add(CURDATE(), interval -300 day),  '%Y-%m-%d'),' 00:00:00'), '+08:00', '+00:00') <= a.order_date_time)
 			]]>
 			) sales
 		group by sku, date limit #{oIdx},#{oLimit}
