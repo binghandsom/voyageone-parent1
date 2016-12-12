@@ -90,7 +90,7 @@
                                    <input type="text" class="form-control" ng-model="element.config_value3">
                                </td>
                                <td class="text-center">{{element.sample}}</td>
-                               <td class="text-center">{{element.comment}}</td>
+                               <td class="text-center"><popover-text content="element.comment" direct="left" size="20"></popover-text></td>
                                <td class="text-center">{{element.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                                <td class="text-center">{{element.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                                <td class="text-center">{{element.modifier}}</td>
