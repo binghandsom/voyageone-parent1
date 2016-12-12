@@ -27,6 +27,12 @@
             <artifactId>voyageone-components-sneakerhead</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-components-onestop</artifactId>
+            <version>${voyageone.components.onestop.version}</version>
+        </dependency>
+
 
     </dependencies>
     <build>

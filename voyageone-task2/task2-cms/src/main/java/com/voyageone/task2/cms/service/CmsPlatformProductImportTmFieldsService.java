@@ -4,6 +4,7 @@ import com.taobao.api.domain.Item;
 import com.taobao.api.domain.SellerCat;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -17,10 +18,13 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbSellerCatService;
+import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -57,6 +61,11 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     @Autowired
     private TbSellerCatService tbSellerCatService;
 
+    @Autowired
+    private CmsBtPlatformNumiidDao cmsBtPlatformNumiidDao;
+    @Autowired
+    private CmsBtPlatformNumiidDaoExt cmsBtPlatformNumiidDaoExt;
+
 //    @Autowired
 //    private TbItemService tbItemService;
 
@@ -67,22 +76,70 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
     public void onStartup(Map<String, Object> messageMap) throws Exception {
 
 //        doMain((String) messageMap.get("channelId"));
-        doMain((String) messageMap.get("channelId"), (String) messageMap.get("cartId"), (String) messageMap.get("code"));
+//        doMain((String) messageMap.get("channelId"), (String) messageMap.get("cartId"), (String) messageMap.get("code"));
+        String channelId = null;
+        if (messageMap.containsKey("channelId")) {
+            channelId = String.valueOf(messageMap.get("channelId"));
+        }
+        String cartId = null;
+        if (messageMap.containsKey("cartId")) {
+            cartId = String.valueOf(messageMap.get("cartId"));
+            if (!CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(cartId))) {
+                $error("入参的平台id不是天猫系!");
+                return;
+            }
+        }
+        String numIId = null;
+        if (messageMap.containsKey("numIId")) {
+            numIId = String.valueOf(messageMap.get("numIId"));
+        }
+        String code = null;
+        if (messageMap.containsKey("code")) {
+            code = String.valueOf(messageMap.get("code"));
+        }
+
+        String runType = null; // runType=2 从cms_bt_platform_numiid表里抽出numIId去做
+        if (messageMap.containsKey("runType")) {
+            runType = String.valueOf(messageMap.get("runType"));
+        }
+
+        doMain(channelId, cartId, numIId, code, runType);
     }
 
-    private void doMain(String channelId, String cartId, String code) throws Exception {
+    private void doMain(String channelId, String cartId, String numIId, String code, String runType) throws Exception {
         JongoQuery queryObject = new JongoQuery();
         // modified by morse.lu 2016/11/08 start
 //        queryObject.setQuery("{cartId:23,numIId:{$nin:[\"\",null]}}");
-        String query = "cartId:" + cartId +",numIId:{$nin:[\"\",null]}";
-        if (!StringUtils.isEmpty(code)) {
-            query = query + "," + "productCodes:\"" + code + "\"";
+//        String query = "cartId:" + cartId +",numIId:{$nin:[\"\",null]}";
+        String query = "cartId:" + cartId;
+        List<String> listAllNumiid = null;
+        List<String> listSuccessNumiid = new ArrayList<>();
+        List<String> listErrorNumiid = new ArrayList<>();
+        if ("2".equals(runType)) {
+            // 从cms_bt_platform_numiid表里抽出numIId去做
+            Map<String, Object> seachParam = new HashMap<>();
+            seachParam.put("channelId", channelId);
+            seachParam.put("cartId", cartId);
+            seachParam.put("status", "0");
+            List<CmsBtPlatformNumiidModel> listModel = cmsBtPlatformNumiidDao.selectList(seachParam);
+            if (ListUtils.isNull(listModel)) {
+                $warn("cms_bt_platform_numiid表未找到符合的数据!");
+                return;
+            }
+            listAllNumiid = listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.toList());
+            // 表的数据都是自己临时加的，一次处理多少件自己决定，因此暂时不分批处理了，尽量别一次处理太多，不然sql可能撑不住
+            query = query + "," + "numIId:{$in:[\"" + listModel.stream().map(CmsBtPlatformNumiidModel::getNumIid).collect(Collectors.joining("\",\"")) + "\"]}";
+        } else {
+            if (!StringUtils.isEmpty(numIId)) {
+                query = query + "," + "numIId:\"" + numIId + "\"";
+            } else {
+                query = query + ",numIId:{$nin:[\"\",null]}";
+            }
+            if (!StringUtils.isEmpty(code)) {
+                query = query + "," + "productCodes:\"" + code + "\"";
+            }
         }
-        queryObject.setQuery("{" + query +"}");
-        if (!CartEnums.Cart.isTmSeries(CartEnums.Cart.getValueByID(cartId))) {
-            $error("入参的平台id不是天猫系!");
-            return;
-        }
+        queryObject.setQuery("{" + query + "}");
         // modified by morse.lu 2016/11/08 end
 //        Long cnt = productGroupService.countByQuery(queryObject.getQuery(), channelId);
         List<CmsBtProductGroupModel> cmsBtProductGroupModels = productGroupService.getList(channelId, queryObject);
@@ -97,14 +154,52 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         final List<CmsBtSellerCatModel> finalSellerCat = sellerCat;
         for (int i = 0; i < cmsBtProductGroupModels.size(); i++) {
             CmsBtProductGroupModel item = cmsBtProductGroupModels.get(i);
+            if ("2".equals(runType)) {
+                listAllNumiid.remove(item.getNumIId());
+            }
             try {
 //                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i+1, cnt));
-                $info(String.format("%s-%s天猫属性取得 %d/%d", channelId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
+                $info(String.format("%s-%s-%s天猫属性取得 %d/%d", channelId, cartId, item.getNumIId(), i + 1, cmsBtProductGroupModels.size()));
                 doSetProduct(shopBean, item, channelId, Integer.valueOf(cartId), finalSellerCat);
-                $info(String.format("numIId[%s]取得成功!", item.getNumIId()));
+                listSuccessNumiid.add(item.getNumIId());
+                $info(String.format("channelId:%s, cartId:%s, numIId:%s 取得成功!", channelId, cartId, item.getNumIId()));
             } catch (Exception e) {
-                e.printStackTrace();
+                listErrorNumiid.add(item.getNumIId());
+                if (e instanceof BusinessException) {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!" + e.getMessage(), channelId, cartId, item.getNumIId()));
+                } else {
+                    $error(String.format("channelId:%s, cartId:%s, numIId:%s 取得失败!", channelId, cartId, item.getNumIId()));
+                    e.printStackTrace();
+                }
             }
+
+            if ((i + 1) % 300 == 0) {
+                // 怕中途断掉,300一更新
+                if ("2".equals(runType)) {
+                    updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+                }
+                $info(String.format("天猫属性取得,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
+                listSuccessNumiid.clear();
+                listErrorNumiid.clear();
+            }
+        }
+
+        $info(String.format("天猫属性取得,成功%d个,失败%d个!", listSuccessNumiid.size(), listErrorNumiid.size()));
+        if ("2".equals(runType)) {
+            updateCmsBtPlatformNumiid(channelId, cartId, listSuccessNumiid, listErrorNumiid);
+            if (ListUtils.notNull(listAllNumiid)) {
+                // 存在没有搜到的numIId
+                cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "3", getTaskName(), listSuccessNumiid);
+            }
+        }
+    }
+
+    private void updateCmsBtPlatformNumiid(String channelId, String cartId, List<String> listSuccessNumiid, List<String> listErrorNumiid) {
+        if (listSuccessNumiid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "1", getTaskName(), listSuccessNumiid);
+        }
+        if (listErrorNumiid.size() > 0) {
+            cmsBtPlatformNumiidDaoExt.updateStatusByNumiids(channelId, Integer.valueOf(cartId), "2", getTaskName(), listErrorNumiid);
         }
     }
 
@@ -174,6 +269,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         // added by morse.lu 2016/11/25 start
         // 获取产品id和商品类目id并回填
         Item item = tbProductService.doGetItemInfo(cmsBtProductGroup.getNumIId(), "cid,product_id", shopBean).getItem();
+        if (item == null) {
+            throw new BusinessException(String.format("numIId:%s 天猫商品取得失败!", cmsBtProductGroup.getNumIId()));
+        }
         Long itemProductId = item.getProductId();
         String platformPid = null;
         if (itemProductId != null && itemProductId.intValue() != 0) {
@@ -197,6 +295,7 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
 
     private void upProductPlatform(Map<String, Object> fieldMap, CmsBtProductGroupModel cmsBtProductGroup, String channelId, int cartId, List<Map<String, Object>> sellerCats) {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
+        final boolean[] hasErr = {false};
         cmsBtProductGroup.getProductCodes().forEach(s -> {
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", s);
@@ -222,6 +321,9 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
                         // modified by morse.lu 2016/11/18 start
                         // 全小写比较skuCode
 //                        if (listSkuCode.contains(skuVal.get("sku_outerId"))) {
+                        if (skuVal.get("sku_outerId") == null || "".equals(skuVal.get("sku_outerId").toString())) {
+                            hasErr[0] = true;
+                        } else
                         if (listSkuCode.contains(skuVal.get("sku_outerId").toString().toLowerCase())) {
                             upValSku.add(skuVal);
                             hasPublishSku[1] = true;
@@ -281,6 +383,10 @@ public class CmsPlatformProductImportTmFieldsService extends BaseMQCmsService {
         });
 
         cmsBtProductDao.bulkUpdateWithMap(cmsBtProductGroup.getChannelId(), bulkList, getTaskName(), "$set");
+
+        if (hasErr[0]) {
+            $warn(String.format("channelId:%s, cartId:%s, numIId:%s 存在outer_id为空的sku!", channelId, cartId, cmsBtProductGroup.getNumIId()));
+        }
 
 //        {
 //            // price 回写进common.skus.size和platforms.P23.skus下的priceMsrp或priceSale

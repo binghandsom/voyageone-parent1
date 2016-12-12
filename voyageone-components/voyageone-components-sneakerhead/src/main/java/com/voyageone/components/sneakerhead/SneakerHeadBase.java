@@ -18,6 +18,7 @@ public class SneakerHeadBase extends ComponentBase {
     protected static final String SNEAKER_SALE_URL = "http://%s/api/sales/get_sales";
     protected static final String GET_CATEGORY_URL = "http://%s/api/category/get_all";
     protected static final String GET_US_PLATFORM_STATUS_URL = "http://%s/api/platform_status/get_us";
+    protected static final String GET_CN_PLATFORM_STATUS_URL = "http://%s/api/platform_status/update_cn";
 
     protected static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
@@ -48,5 +49,9 @@ public class SneakerHeadBase extends ComponentBase {
 
     protected String getUsPlatformStatusUrl(String domain) {
         return String.format(GET_US_PLATFORM_STATUS_URL, domain);
+    }
+
+    protected String getCnPlatformStatusUrl(String domain) {
+        return String.format(GET_CN_PLATFORM_STATUS_URL, domain);
     }
 }

@@ -432,10 +432,34 @@ public class CmsBtCombinedProductService extends BaseService {
             throw new BusinessException("组合套装SKU数量和平台真实SKU数量不一致！");
         }
         suitSkuMap.keySet().forEach(suitSkuCode -> {
-            if (platformSuitSkuMap.get(suitSkuCode) == null || suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
+            if (platformSuitSkuMap.get(suitSkuCode) == null) {
+                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")在平台组合商品numId=" + model.getNumID() + "下不存在！");
+            }
+            if (suitSkuMap.get(suitSkuCode).doubleValue() != platformSuitSkuMap.get(suitSkuCode).doubleValue()) {
                 throw new BusinessException("组合套装SKU(" + suitSkuCode + ")优惠售价和平台实际销售价格不一致！");
             }
+            // 新增校验，组合套装SKU不能挂在多个组合套装商品
+            CmsBtCombinedProductModel target = this.getCombinedProductBySuitSkuCode(suitSkuCode);
+            if (target != null && !model.getNumID().equals(target.getNumID())) {
+                throw new BusinessException("组合套装SKU(" + suitSkuCode + ")已属于组合套装商品numId=" + target.getNumID());
+            }
         });
+    }
+
+    /**
+     * 根据组合套装SKU查询组合套装商品
+     * @param suitSkuCode
+     * @return
+     */
+    private CmsBtCombinedProductModel getCombinedProductBySuitSkuCode (String suitSkuCode) {
+        CmsBtCombinedProductModel target = null;
+        if (StringUtils.isNotBlank(suitSkuCode)) {
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.addQuery("{'active':1, 'skus.suitSkuCode':#}");
+            queryObj.addParameters(suitSkuCode);
+            target = cmsBtCombinedProductDao.selectOneWithQuery(queryObj);
+        }
+        return target;
     }
 
     public void onOffShelves(CmsBtCombinedProductModel modelBean, String user){

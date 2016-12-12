@@ -6,6 +6,7 @@ import com.voyageone.components.sneakerhead.bean.CmsBtProductModel_SalesBean;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadCodeModel;
 import com.voyageone.components.sneakerhead.bean.SneakerHeadFeedInfoRequest;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
+import com.voyageone.components.sneakerhead.bean.platformstatus.cnPlatformModel.CodeCnPlatformStatusModel;
 import com.voyageone.components.sneakerhead.bean.platformstatus.usPlatformModel.CodeUsPlatformModel;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.EnableRetry;
@@ -99,5 +100,16 @@ public class SneakerheadApiService extends SneakerHeadBase {
         HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
         ResponseEntity<String> responseEntity = getRestTemplate().exchange(getUsPlatformStatusUrl(domain), HttpMethod.POST, httpEntity, String.class);
         return objectMapper.readValue(responseEntity.getBody(), objectMapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, CodeUsPlatformModel.class));
+    }
+
+    @Retryable
+    public int uploadCnInfo(CodeCnPlatformStatusModel model, String domain) throws IOException {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType(CONTENT_TYPE));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(model);
+        HttpEntity<String> httpEntity = new HttpEntity<>(json, httpHeaders);
+        ResponseEntity<String> responseEntity = getRestTemplate().exchange(getCnPlatformStatusUrl(domain), HttpMethod.POST, httpEntity, String.class);
+        return objectMapper.readValue(responseEntity.getBody(), Integer.class);
     }
 }

@@ -133,6 +133,10 @@
       * cIds
       * cName
       * cNames
+    * mqq[] -> 卖全球(MqqCnPlatformStatusModel)
+      * mqqName
+      * numIId
+      * status
   * P26  ->京东国际
       * jdSkuId       ->京东skuId(京东上新成功之后会从平台上取得京东skuId并回写到jdSkuId)
   * P27  ->聚美
