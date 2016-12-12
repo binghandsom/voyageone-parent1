@@ -1,0 +1,23 @@
+<!--  方便开发并为了保障前端压缩，该html修改后要压缩后拷入platFormStatus.directive-->
+
+<span class="plateform-status" ng-if="!ctrl.statusData.pStatus">
+     <span class="label"  ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',
+                                     \'ready\':ctrl.statusData.status == \'Ready\' ,
+                                     \'waiting-publish\':ctrl.statusData.status == \'Approve\'}"
+           title="{{ctrl.statusData.status}}">
+            <span style="color:black">{{ctrl._cartInfo.name}}</span>
+     </span>
+</span>
+<span class="plateform-status" ng-if="ctrl.statusData.pStatus">
+     <span class="label" ng-class="{\'in-stock\': ctrl.statusData.pStatus == \'InStock\',
+                                    \'on-sale\':ctrl.statusData.pStatus == \'OnSale\',
+                                    \'error\':ctrl.statusData.pStatus == \'Error\'}"
+           title="{{ctrl.statusData.pStatus}}">
+         <span ng-if="ctrl.statusData.numberId">
+             <a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" style="color: #000;text-decoration: none;">
+                 {{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?"-" + ctrl.pReallyStatusDesc:""}}
+             </a>
+         </span>
+         <span ng-if="!ctrl.statusData.numberId">{{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?"-" + ctrl.pReallyStatusDesc:""}}</span>
+     </span>
+</span>

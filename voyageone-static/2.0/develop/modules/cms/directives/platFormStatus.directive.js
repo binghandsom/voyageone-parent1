@@ -1,7 +1,6 @@
 /**
  * @Description: 解析平台状态
  * @example:{  cartId:entity.cartId,
-               cartName:entity.cartName,
                status:entity.status,
                pStatus:entity.pStatus,
                pPublishError:entity.pPublishError,
@@ -13,7 +12,6 @@ define([
     'cms',
     'modules/cms/enums/Carts'
 ], function (cms, carts) {
-    'use strict';
 
     return cms.directive("platformStatus", function() {
         function StatusController($scope, $attrs) {
@@ -26,7 +24,7 @@ define([
                 "WaitingPublish":"待",
                 "InStock":"库",
                 "OnSale":"售"
-            },
+            };
             //平台对应状态
             this.pStatusDes = {
                 "InStock":"未",
@@ -74,17 +72,9 @@ define([
             scope: {data:"=data"},
             controller: StatusController,
             controllerAs: 'ctrl',
-            template: "<span class='plateform-status' ng-if='ctrl.statusData.status != \"Approved\"'>"
-                    + "<span class='label' ng-class='{\"pending\": ctrl.statusData.status == \"Pending\",\"ready\":ctrl.statusData.status == \"Ready\" }' title='{{ctrl.statusData.status}}'>"
-                    + "<span style='color:black'>{{ctrl._cartInfo.name}}</span>"
-                    + "</span>"
-                    + "</span>"
-                    + "<span class='plateform-status' ng-if='ctrl.statusData.status == \"Approved\"'>"
-                    + "<span class='label' ng-class='{\"waiting-publish\": ctrl.statusData.pStatus == \"WaitingPublish\",\"in-stock\": ctrl.statusData.pStatus == \"InStock\",\"on-sale\":ctrl.statusData.pStatus == \"OnSale\",\"error\":ctrl.statusData.pStatus == \"Error\"}'  title='{{ctrl.statusData.pStatus}}'>"
-                    + "<span ng-if='ctrl.statusData.numberId'><a ng-href='{{ctrl.statusData.detailUrl}}' target='_blank' style='color: #000;text-decoration: none;'>{{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</a></span>"
-                    + "<span ng-if='!ctrl.statusData.numberId'>{{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?'-'+ctrl.pReallyStatusDesc:''}}</span>"
-                    + "</span>"
-                    + "</span>",
+            /** 编辑模板的话请到html页面编辑，
+             * 然后压缩拷进来。*/
+            template: '<span class="plateform-status" ng-if="!ctrl.statusData.pStatus"><span class="label"  ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',                                     \'ready\':ctrl.statusData.status == \'Ready\' ,                                     \'waiting-publish\':ctrl.statusData.status == \'Approve\'}"                                     title="{{ctrl.statusData.status}}"><span style="color:black">{{ctrl._cartInfo.name}}</span></span></span><span class="plateform-status" ng-if="ctrl.statusData.pStatus"><span class="label" ng-class="{\'in-stock\': ctrl.statusData.pStatus == \'InStock\',                                    \'on-sale\':ctrl.statusData.pStatus == \'OnSale\',                                    \'error\':ctrl.statusData.pStatus == \'Error\'}"           title="{{ctrl.statusData.pStatus}}"><span ng-if="ctrl.statusData.numberId"><a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" style="color: #000;text-decoration: none;">                 {{ctrl.statusData.cartName}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?"-" + ctrl.pReallyStatusDesc:""}}</a></span><span ng-if="!ctrl.statusData.numberId">{{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc?"-" + ctrl.pReallyStatusDesc:""}}</span></span></span>',
             link: function ($scope) {
                 $scope.ctrl.init();
             }
