@@ -4,6 +4,7 @@ import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,9 @@ import java.util.Map;
 public class CmsBtImagesDaoExt extends ServiceBaseDao {
 
     public List<CmsBtImagesModel> selectImages(CmsBtImagesModel image) {
-        return selectList("select_cms_bt_images", image);
+        List<CmsBtImagesModel> ret = selectList("select_cms_bt_images", image);
+        if(ret == null) ret = new ArrayList<>();
+        return ret;
     }
 
     public List<Map> selectImagesByCode(String channelId, List<String> prodCodeList) {

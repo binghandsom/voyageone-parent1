@@ -12,6 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -56,6 +57,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -636,6 +638,8 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         List<String> sxCodeList = sxData.getProductList().stream().map(p -> p.getCommon().getFields().getCode()).collect(Collectors.toList());
                         doJdForceWareListing(shopProp, jdWareId, groupId, CmsConstants.PlatformActive.ToInStock, sxCodeList, updateWare, "京东上新SKU总库存为0时强制下架处理");
                     }
+                    // 上新成功时状态回写操作
+                    sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, String.valueOf(jdWareId), CmsConstants.PlatformStatus.InStock, "", getTaskName());
                     return;
                 }
 
@@ -742,6 +746,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 上新成功之后回写jdSkuId操作
                 updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
+
+                // added by morse.lu 2016/12/08 start
+                if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                    // Sneakerhead
+                    try {
+                        sxProductService.uploadCnInfo(sxData);
+                    } catch (IOException io) {
+                        throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                    }
+                }
+                // added by morse.lu 2016/12/08 end
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -835,6 +850,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         List<BaseMongoMap<String, Object>> skuList = sxData.getSkuList();
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
 
+        // 京东上新产品共通属性设定
+        JdProductBean jdProductBean = new JdProductBean();
+        // 如果去掉库存为0的sku之后一个sku都没有时，后面新增时报错/更新时下架，所有共通属性也不用设置了，直接返回空的JdProductBean
+        if (ListUtils.isNull(skuList)) return jdProductBean;
+
         // 渠道id
         String channelId = sxData.getChannelId();
         // 平台id
@@ -842,9 +862,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         // 取得京东共通属性值(包括标题，长宽高，重量等)
         Map<String, String> jdCommonInfoMap = getJdCommonInfo(jdCommonSchema, shopProp, expressionParser, blnForceSmartSx);
-
-        // 京东上新产品共通属性设定
-        JdProductBean jdProductBean = new JdProductBean();
 
         // 流水号(非必须)
 //        jdProductBean.setTradeNo(mainProduct.getXXX());                  // 不使用
@@ -2103,7 +2120,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         Double resultPrice = 0.0;
-        // 如果是平台售价(sale_price)，则取个平台相应的售价(platform.P29.sku.priceSale)
+        // 如果skuList为空（可能所有的sku都没有库存），直接返回0.0,否则后面会报"No value present"错误
+        if (ListUtils.isNull(skuList) || skuList.stream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).count() == 0) {
+            return 0.0;
+        }
+
         if (PriceType_jdprice.equals(priceType)) {
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else if (PriceType_marketprice.equals(priceType)) {
