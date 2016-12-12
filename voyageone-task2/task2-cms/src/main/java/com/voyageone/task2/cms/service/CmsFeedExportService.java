@@ -82,9 +82,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
         int rowIndexCode = 2;
         int rowIndexSku = 2;
-        try {
+        try (OutputStream outputStream = new FileOutputStream(outPath + fileName)){
             $info(outPath + fileName);
-            OutputStream outputStream = new FileOutputStream(outPath + fileName);
 //            InputStream inputStream = new FileInputStream(templatePath);
 //            Workbook book = WorkbookFactory.create(inputStream);
             Workbook book = new SXSSFWorkbook(1000);
