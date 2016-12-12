@@ -132,8 +132,8 @@ public class AdminUserController extends AdminController {
 
 
     /**
-     * 重置密码
-     *
+     * 管理员重置密码
+     * 管理员重置密码以后用户下次登录会要求修改密码
      * @param bean
      * @return
      */
@@ -161,7 +161,7 @@ public class AdminUserController extends AdminController {
 
 
     /**
-     * 修改密码
+     * 强制用户修改密码
      * @param requestMap
      * @return
      */
@@ -174,7 +174,7 @@ public class AdminUserController extends AdminController {
     }
 
     /**
-     * 强制用户修改密码
+     * 用户自行修改密码
      * @param requestMap
      * @return
      */

@@ -97,11 +97,13 @@ public class ComUserService {
         }
 
 
-        //如果user的密码不是自己设的，则强制要求修改密码
+        //如果user的密码不是自己设的，则强制要求修改密码-- 有问题,暂时注释掉
 //        if(!userModel.getModifier().equals(account))
 //        {
 //            throw new BusinessException("A006", "need change password.", null);
 //        }
+
+
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication(app);
