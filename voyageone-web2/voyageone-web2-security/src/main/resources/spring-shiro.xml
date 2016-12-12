@@ -127,7 +127,9 @@
 				/admin/user/self/forgetPass = anon
 				/admin/user/self/editPass = anon
 				/admin/user/self/getUserByToken = anon
-				/core/access/user/* = anon
+				/core/access/user/login = anon
+				/core/access/user/vmslogin = anon
+				/core/access/user/logout= anon
 			</value>
 		</property>
 	</bean>
