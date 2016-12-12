@@ -721,7 +721,8 @@ define([
                             var data = {
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
-                                "isSelAll": $scope.vm._selall ? 1 : 0
+                                "isSelAll": $scope.vm._selall ? 1 : 0,
+                                "orgDispTagList":res.orgDispTagList
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));

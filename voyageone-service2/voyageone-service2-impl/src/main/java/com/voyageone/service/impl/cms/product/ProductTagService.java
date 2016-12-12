@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
@@ -83,7 +84,7 @@ public class ProductTagService extends BaseService {
     /**
      * 设置产品free tag，同时添加该tag的所有上级tag
      */
-    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, String modifier) {
+    public void setProdFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, List<String> orgDispTagList, String modifier) {
         if (prodCodeList == null || prodCodeList.isEmpty()) {
             $warn("ProductTagService：setProdFreeTag 缺少参数");
             throw new BusinessException("缺少参数!");
@@ -113,11 +114,17 @@ public class ProductTagService extends BaseService {
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");
         updObj.setQueryParameters(prodCodeList);
-        updObj.setUpdate("{$set:{'freeTags':#}}");
-        updObj.setUpdateParameters(pathList);
+        if(!ListUtils.isNull(orgDispTagList)) {
+            updObj.setUpdate("{$pull:{'freeTags':{$nin:#}}}");
+            updObj.setUpdateParameters(orgDispTagList);
+            WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
+        }
 
+        updObj.setUpdate("{$addToSet:{'freeTags':{'$each':#}}}");
+        updObj.setUpdateParameters(pathList);
         // 批量更新product表
         WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
+
         $debug(String.format("ProductTagService：setProdFreeTag 操作结果-> " + result.toString()));
 
         List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
