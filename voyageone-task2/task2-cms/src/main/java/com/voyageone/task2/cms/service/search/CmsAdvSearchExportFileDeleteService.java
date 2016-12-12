@@ -56,6 +56,7 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
                         boolean deleted = file.delete();
                         if (deleted) {
                             CmsBtExportTaskModel target = new CmsBtExportTaskModel();
+                            target.setStatus(-1); // 导出文件已被系统定期删除
                             target.setId(target.getId());
                             target.setModifier("SYSTEM");
                             cmsBtExportTaskDao.update(target);

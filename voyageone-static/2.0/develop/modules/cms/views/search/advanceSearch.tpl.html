@@ -1178,7 +1178,7 @@
                                             <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
                                                 <td class="text-center mfb-xxt">{{$index + 1}}</td>
                                                 <td class="text-left mfb-xxt">
-                                                    <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem)">{{fileItem}}<br></a>
+                                                    <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem,exportInfo.status)">{{fileItem}}<br></a>
                                                 </td>
                                                 <td class="text-left mfb-xxt">{{exportInfo.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td><!--exportInfo.modified-->
                                                 <td class="text-left mfb-xxt">{{exportInfo.fileName ? exportInfo.modified: '' | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
