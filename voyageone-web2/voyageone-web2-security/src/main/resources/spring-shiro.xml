@@ -130,6 +130,7 @@
 				/core/access/user/login = anon
 				/core/access/user/vmslogin = anon
 				/core/access/user/logout= anon
+				/cms/** = authc,channel
 			</value>
 		</property>
 	</bean>

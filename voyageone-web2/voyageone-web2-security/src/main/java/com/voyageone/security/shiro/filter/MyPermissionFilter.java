@@ -42,13 +42,12 @@ public class MyPermissionFilter extends PermissionsAuthorizationFilter {
 
             //返回json消息
             response.setCharacterEncoding("UTF-8");
-            Map<String, String> result = new HashMap<>();
 
             resultMap.put("code", "A002");
             resultMap.put("message", "user unauthorized!");
 
             PrintWriter out = response.getWriter();
-            out.println(JacksonUtil.bean2Json(result));
+            out.println(JacksonUtil.bean2Json(resultMap));
         }
 
         return false;
