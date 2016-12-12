@@ -255,7 +255,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
-        queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
+//        queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
 
         // 店铺(cart/平台)列表
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
@@ -612,12 +612,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             }
 
             Row row = FileUtils.row(sheet, startRowIndex ++);
-            // 最大行限制
-            if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
+            // 2016-12-12 CMSDOC-252 数据导出改为非模板导出，将最大行数限制去掉
+            /*if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
                 isContinueOutput = false;
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
                 break;
-            }
+            }*/
             int index = 0;
 
             // 内容输出
@@ -817,12 +817,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 continue;
             }
             Row row = FileUtils.row(sheet, startRowIndex ++);
-            // 最大行限制
-            if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
+            // 2016-12-12 CMSDOC-252 数据导出改为非模板导出，将最大行数限制去掉
+            /*if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
                 isContinueOutput = false;
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
                 break;
-            }
+            }*/
             int index = 0;
 
             // 内容输出
@@ -925,13 +925,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 continue;
             }
 
-            // 最大行限制
-            if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
+            // 2016-12-12 CMSDOC-252 数据导出改为非模板导出，将最大行数限制去掉
+            /*if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
                 isContinueOutput = false;
-                Row row = FileUtils.row(sheet, startRowIndex);
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
                 break;
-            }
+            }*/
 
             // 内容输出
             for (CmsBtProductModel_Sku skuItem : skuList) {
