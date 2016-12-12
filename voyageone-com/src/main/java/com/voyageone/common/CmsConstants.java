@@ -117,7 +117,16 @@ public class CmsConstants {
 
         // 价格相关
         String PRICE = "PRICE";
-        String PRICE_SX_PRICE = ".sx_price";//  
+
+        String PRICE_SX="PRICE_SX";
+        String PRICE_SALE="PRICE_SALE";
+        String PRICE_RETAIL="PRICE_RETAIL";
+        String PRICE_TEJIABAO_IS_OPEN="PRICE_TEJIABAO_IS_OPEN";
+       // String PRICE_TEJIABAO_PRICE="PRICE_TEJIABAO_PRICE";
+
+        String PRICE_RETAILPrice = ".retail_price";
+        String PRICE_SALEPrice = ".sale_price";
+        String PRICE_SX_PRICE = ".sx_price";//
         String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
         String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
 
