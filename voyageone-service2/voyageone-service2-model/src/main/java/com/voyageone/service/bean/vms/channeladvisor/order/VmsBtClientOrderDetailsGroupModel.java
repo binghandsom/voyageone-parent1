@@ -1,5 +1,7 @@
 package com.voyageone.service.bean.vms.channeladvisor.order;
 
+import java.math.BigDecimal;
+
 public class VmsBtClientOrderDetailsGroupModel {
 
     protected String clientOrderId;
@@ -7,7 +9,7 @@ public class VmsBtClientOrderDetailsGroupModel {
 
     protected String sellerSku;
 
-    protected Double unitPrice;
+    protected BigDecimal unitPrice;
 
     protected Integer quantity;
 
@@ -35,11 +37,11 @@ public class VmsBtClientOrderDetailsGroupModel {
         this.sellerSku = sellerSku;
     }
 
-    public Double getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 

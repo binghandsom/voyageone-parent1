@@ -23,7 +23,7 @@ public class CAClientService extends BaseService {
     private VmsBtClientOrdersDaoExt vmsBtCAClientDao;
 
     public List<VmsBtClientOrdersModel> getClientOrderList(String channelId, String status, String limit) {
-        return vmsBtCAClientDao.selectClientOrderList(channelId, status, StringUtils.isEmpty(limit) ? 0 : Integer.parseInt(limit));
+        return vmsBtCAClientDao.selectClientOrderList(channelId, status, StringUtils.isEmpty(limit) ? Integer.MAX_VALUE : Integer.parseInt(limit));
     }
 
     public VmsBtClientOrdersModel getClientOrderById(String channelId, String orderID) {

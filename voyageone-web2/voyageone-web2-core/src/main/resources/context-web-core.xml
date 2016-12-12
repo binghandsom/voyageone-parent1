@@ -11,6 +11,11 @@
     <!-- 异常处理 -->
     <bean class="com.voyageone.web2.base.ExceptionHandler">
         <property name="debug" value="true"/>
+        <property name="excludeUris">
+            <list>
+                <value>/rest/</value>
+            </list>
+        </property>
     </bean>
     <!-- 配置内容初始化Bean -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>

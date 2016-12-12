@@ -1,7 +1,9 @@
 package com.voyageone.web2.openapi.channeladvisor.control;
 
+import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.channeladvisor.constants.CAUrlConstants;
+import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
 import com.voyageone.web2.openapi.channeladvisor.service.CAOrderService;
 import com.voyageone.service.bean.vms.channeladvisor.request.OrderCancellationRequest;
 import com.voyageone.service.bean.vms.channeladvisor.request.ShipRequest;
@@ -241,6 +243,17 @@ public class CAOrderController extends OpenApiBaseController {
     @RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.GET)
     public ActionResponse getOrders(HttpServletRequest request) {
         return caOrderService.getOrders(request.getParameter("status"), request.getParameter("limit"));
+    }
+
+    /**
+     * 根据状态或限制条数获取订单
+     *
+     * @param request request
+     * @return response
+     */
+    @RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.POST)
+    public ActionResponse getOrdersPost(HttpServletRequest request) {
+        throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
     }
 
     /**
