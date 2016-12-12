@@ -254,7 +254,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                 RuleExpression useCmsBtImageTemplate = new RuleExpression();
                 useCmsBtImageTemplate.addRuleWord(new TextWord("true"));
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, useCmsBtImageTemplate, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -273,7 +273,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1"));
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null,null,null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 

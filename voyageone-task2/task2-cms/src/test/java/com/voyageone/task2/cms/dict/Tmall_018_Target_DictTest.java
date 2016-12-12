@@ -23,16 +23,16 @@ public class Tmall_018_Target_DictTest {
 
 		doCreateJson("详情页描述", false, doDict_详情页描述());
 //		doCreateJson("无线描述", false, doDict_无线描述());
-        for (int i = 0; i < 15; i++) {
-            int j = i + 1;
-            doCreateJson("无线自定义图片-" + j, false, doDict_无线自定义图片(String.valueOf(i)));   // index(0~9)
-        }
-        for (int i = 1; i <= 5; i++) {
-            doCreateJson("无线商品图片-" + i, false, doDict_无线商品图片(String.valueOf(i)));   // index(1~5)
-        }
-        doCreateJson("无线描述", false, doDict_无线描述2());
-
-        doCreateJson("无线描述-重点商品", false, doDict_无线描述_重点商品());
+//        for (int i = 0; i < 15; i++) {
+//            int j = i + 1;
+//            doCreateJson("无线自定义图片-" + j, false, doDict_无线自定义图片(String.valueOf(i)));   // index(0~9)
+//        }
+//        for (int i = 1; i <= 5; i++) {
+//            doCreateJson("无线商品图片-" + i, false, doDict_无线商品图片(String.valueOf(i)));   // index(1~5)
+//        }
+//        doCreateJson("无线描述", false, doDict_无线描述2());
+//
+//        doCreateJson("无线描述-重点商品", false, doDict_无线描述_重点商品());
 
 	}
 
@@ -185,7 +185,7 @@ public class Tmall_018_Target_DictTest {
 					RuleExpression useOriUrl = new RuleExpression();
 					useOriUrl.addRuleWord(new TextWord("1"));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -239,7 +239,14 @@ public class Tmall_018_Target_DictTest {
 
 						RuleExpression useOriUrl = null;
 
-						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                        RuleExpression imageIndex = new RuleExpression();
+                        imageIndex.addRuleWord(new TextWord("1"));
+                        imageIndex.addRuleWord(new TextWord("2"));
+                        imageIndex.addRuleWord(new TextWord("3"));
+                        imageIndex.addRuleWord(new TextWord("4"));
+                        imageIndex.addRuleWord(new TextWord("5"));
+
+						CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, imageIndex);
 						ruleRoot.addRuleWord(new CustomWord(word));
 					}
 				}
