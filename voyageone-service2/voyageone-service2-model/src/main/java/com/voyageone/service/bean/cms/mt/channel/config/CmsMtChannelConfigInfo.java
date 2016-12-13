@@ -98,12 +98,12 @@ public class CmsMtChannelConfigInfo {
         this.configValue3 = configValue3;
     }
 
-    public String getCreater() {
-        return creater;
+    public Date getCreated() {
+        return created;
     }
 
-    public void setCreater(String creater) {
-        this.creater = creater;
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     public Date getModified() {
@@ -129,7 +129,7 @@ public class CmsMtChannelConfigInfo {
     public String configValue1;
     public String configValue2;
     public String configValue3;
-    public String creater;
+    public Date created;
     public Date modified;
     public String modifier;
     public Boolean isConfigValue1;//是否启用config_value1

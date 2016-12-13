@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.mt.channel.config.CmsMtChannelConfigInfo;
 import com.voyageone.service.bean.cms.mt.channel.config.SaveListInfo;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
@@ -41,7 +42,7 @@ public class CmsMtChannelConfigService extends BaseService {
     @Autowired
     private CommCacheControlService cacheControlService;
     @Autowired
-    private CmsMtChannelConfigKeyDao cmsMtChannelConfigKeyDao;
+    TypeChannelsService typeChannelsService;
 
     public Map<String, Object> init(String channelId, String userName) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -157,19 +158,48 @@ public class CmsMtChannelConfigService extends BaseService {
     @Autowired
     CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
 
-    public List<CmsMtChannelConfigInfo> search(Map<String, Object> map,String channelId) {
+    public List<CmsMtChannelConfigInfo> search(Map<String, Object> map,String channelId,String lang) {
 
         map.put("channelId", channelId);
         List<CmsMtChannelConfigInfo> list = cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
 
+        //获取平台级配置项
         Map<String, Object> mapKey = new HashedMap();
         mapKey.put("channelId", channelId);
-        mapKey.put("isPlatform","1");
+        mapKey.put("isPlatform", "1");
         mapKey.put("configKey", map.get("configKey"));
         List<CmsMtChannelConfigKeyModel> listKey = cmsMtChannelConfigKeyDaoExt.selectList(mapKey);
 
-        return list;
+        //获取平台类型
+        List<TypeChannelBean> listPlatformType = typeChannelsService.getPlatformTypeList(channelId, lang);
 
+        listKey.forEach(f -> {
+            listPlatformType.forEach(platformType -> {
+                String configCode = platformType.getValue() + f.getConfigCode();
+                CmsMtChannelConfigInfo info = get(list, f.getConfigKey(), configCode);
+                if (info == null) {
+                    info = new CmsMtChannelConfigInfo();
+                    info.setConfigKey(f.getConfigKey());
+                    info.setConfigCode(configCode);
+                    info.setConfigValue1(f.getIsConfigValue1());
+                    info.setConfigValue2(f.getIsConfigValue2());
+                    info.setConfigValue3(f.getIsConfigValue3());
+                    info.setComment(f.getComment());
+                    info.setSample(f.getSample());
+                    list.add(info);
+                }
+            });
+        });
+
+        return list;
+    }
+    public CmsMtChannelConfigInfo get(List<CmsMtChannelConfigInfo> list,String configKey,String configCode) {
+        for (CmsMtChannelConfigInfo info : list) {
+            if (configKey.equals(info.getConfigKey())&& configCode.equals(info.getConfigCode())) {
+                return info;
+            }
+        }
+        return null;
     }
 
     //批量保存配置

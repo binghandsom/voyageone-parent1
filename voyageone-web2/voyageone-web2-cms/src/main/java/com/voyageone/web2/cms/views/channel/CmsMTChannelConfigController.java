@@ -27,7 +27,7 @@ public class CmsMTChannelConfigController extends CmsController {
     public AjaxResponse search(@RequestBody Map<String, Object> map) {
         UserSessionBean user = getUser();
 
-        return success(cmsMtChannelConfigService.search(map,user.getSelChannelId()));
+        return success(cmsMtChannelConfigService.search(map,user.getSelChannelId(),this.getLang()));
     }
     @RequestMapping(value = CmsUrlConstants.CHANNEL.MtChannelConfig.saveList)
     public AjaxResponse saveList(@RequestBody SaveListInfo saveInfo) {
