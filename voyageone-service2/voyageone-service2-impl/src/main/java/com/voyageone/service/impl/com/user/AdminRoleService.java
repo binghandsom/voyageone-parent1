@@ -154,22 +154,21 @@ public class AdminRoleService extends BaseService {
 
         //修改授权渠道
         if ("1".equals(allChannel)) {
-            insertIgnoreConfig(roleId, "channel_id", "ALL");
-        } else {
-            updateConfig(channelIds, roleId, "channel_id");
+            channelIds.add("ALL");
         }
+        updateConfig(channelIds, roleId, "channel_id");
+
         //修改授权仓库
-        if ("1".equals(allStore)) {
-            //查找是否有ALL的记录,没有则新增
-            insertIgnoreConfig(roleId, "store_id", "ALL");
-        } else {
-            List<String> strStores = new ArrayList<>();
-            for(Integer i : storeIds)
-            {
-                strStores.add(i.toString());
-            }
-            updateConfig(strStores, roleId, "store_id");
+        List<String> strStores = new ArrayList<>();
+        for(Integer i : storeIds)
+        {
+            strStores.add(i.toString());
         }
+        if ("1".equals(allStore)) {
+            strStores.add("ALL");
+        }
+        updateConfig(strStores, roleId, "store_id");
+
         //修改授权系统
 
         Map map = new HashMap<>();
@@ -250,11 +249,13 @@ public class AdminRoleService extends BaseService {
     }
 
     private void insertConfig(Integer roleId, String configName, String configValue) {
-        ComRoleConfigModel record = new ComRoleConfigModel();
-        record.setRoleId(roleId);
-        record.setCfgName(configName);
-        record.setCfgVal1(configValue);
-        comRoleConfigDao.insert(record);
+        if(configValue != null) {
+            ComRoleConfigModel record = new ComRoleConfigModel();
+            record.setRoleId(roleId);
+            record.setCfgName(configName);
+            record.setCfgVal1(configValue);
+            comRoleConfigDao.insert(record);
+        }
     }
 
     private void updateConfig(List<String> values, Integer roleId, String configName) {
