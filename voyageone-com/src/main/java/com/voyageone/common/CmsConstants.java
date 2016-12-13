@@ -177,6 +177,9 @@ public class CmsConstants {
 
         //feed的code按不同季度拆分
         String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
+
+        // 是否强制尺码转换的检查(1:强制尺码转换 空,0:不强制尺码转换)
+        String SIZE_CONVERSION_FLG = "SIZE_CONVERSION_FLG";
     }
 
     public interface DataAmount {
