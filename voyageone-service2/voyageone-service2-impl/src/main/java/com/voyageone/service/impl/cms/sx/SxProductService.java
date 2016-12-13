@@ -739,7 +739,7 @@ public class SxProductService extends BaseService {
     }
 
     /**
-     * 上新用的商品数据取得
+     * 上新用的商品数据取得(非增量更新)
      * 对象外的code（不会set进productList）：
      *     1：status不是Approved
      *     2：code下没有允许在该平台上上架的sku（skus.carts里不包含本次上新的cartId，以后改成platform.skus.isSale=false，这些sku不会set进skuList）
@@ -750,6 +750,23 @@ public class SxProductService extends BaseService {
      * @return SxData
      */
     public SxData getSxProductDataByGroupId(String channelId, Long groupId) {
+        // 不设置是否是增量更新isIncrementUpdate 默认为false不是增量更新
+        return getSxProductDataByGroupId(channelId, groupId, false);
+    }
+
+    /**
+     * 上新用的商品数据取得
+     * 对象外的code（不会set进productList）：
+     *     1：status不是Approved
+     *     2：code下没有允许在该平台上上架的sku（skus.carts里不包含本次上新的cartId，以后改成platform.skus.isSale=false，这些sku不会set进skuList）
+     *     3：lock = 1
+     *
+     * @param channelId channelId
+     * @param groupId   groupId
+     * @param isIncrementUpdate 是否是增量更新(true:是增量更新 false:不是增量更新)
+     * @return SxData
+     */
+    public SxData getSxProductDataByGroupId(String channelId, Long groupId, boolean isIncrementUpdate) {
 
         SxData sxData = new SxData();
         sxData.setChannelId(channelId);
@@ -1121,47 +1138,50 @@ public class SxProductService extends BaseService {
 //			}
 //		}
 
-        // 从voyageone_cms2.cms_mt_channel_config表中取得该店铺的是否强制尺码转换的检查(默认为不强制尺码转换)
-        boolean sizeConversionFlg = false;
-        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId,
-                CmsConstants.ChannelConfig.SIZE_CONVERSION_FLG);
-        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
-            String strSizeConversionFlg = cmsChannelConfigBean.getConfigValue1().trim();
-            // 如果配置的值为"1",则表示需要强制尺码转换
-            if ("1".equals(strSizeConversionFlg)) {
-                sizeConversionFlg = true;
-            }
-        }
-
-        // 如果当前渠道需要强制尺码转换，那么当前商品中任意一个sku的尺码没有转换成功时都不能上新
-        if (sizeConversionFlg) {
-            // 如果取得尺码转换信息失败时，报错
-            if (MapUtils.isEmpty(sizeMap)) {
-                String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但取得的尺码转换表" +
-                        "信息(sizeMap)为空,不能做尺码转换！[channelId:%s] [brand:%s] [productType:%s] [sizeType:%s] [sizeChartId:%s]",
-                        channelId, sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand(), sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductType(),
-                        sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getSizeType(), sizeChartId);
-                $error(errorMsg);
-                sxData.setErrorMessage(errorMsg);
-                return sxData;
+        // 非增量更新时，检查是否需要强制尺码转换；增量更新时不用检查
+        if (!isIncrementUpdate) {
+            // 从voyageone_cms2.cms_mt_channel_config表中取得该店铺的是否强制尺码转换的检查(默认为不强制尺码转换)
+            boolean sizeConversionFlg = false;
+            CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId,
+                    CmsConstants.ChannelConfig.SIZE_CONVERSION_FLG);
+            if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+                String strSizeConversionFlg = cmsChannelConfigBean.getConfigValue1().trim();
+                // 如果配置的值为"1",则表示需要强制尺码转换
+                if ("1".equals(strSizeConversionFlg)) {
+                    sizeConversionFlg = true;
+                }
             }
 
-            if (ListUtils.notNull(skuList)) {
-                // 取得在尺码转换表中不存在的尺码列表
-                List<String> noSizeConversionList = skuList
-                        .stream()
-                        .filter(s -> !sizeMap.keySet().contains(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name())))
-                        .map(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()))
-                        .collect(Collectors.toList());
-
-                // 如果有在尺码转换表中不存在的size，则报错，中止上新
-                if (ListUtils.notNull(noSizeConversionList)) {
-                    String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但有些size在尺码转换表中不存在！" +
-                            "当前商品中任意一个sku的尺码没有转换成功时都不能上新！[channelId:%s] [没能成功转换的原始尺码:%s]",
-                            channelId, Joiner.on(",").join(noSizeConversionList));
+            // 如果当前渠道需要强制尺码转换，那么当前商品中任意一个sku的尺码没有转换成功时都不能上新
+            if (sizeConversionFlg) {
+                // 如果取得尺码转换信息失败时，报错
+                if (MapUtils.isEmpty(sizeMap)) {
+                    String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但取得的尺码转换表" +
+                                    "信息(sizeMap)为空,不能做尺码转换！[channelId:%s] [brand:%s] [productType:%s] [sizeType:%s] [sizeChartId:%s]",
+                            channelId, sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand(), sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductType(),
+                            sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getSizeType(), sizeChartId);
                     $error(errorMsg);
                     sxData.setErrorMessage(errorMsg);
                     return sxData;
+                }
+
+                if (ListUtils.notNull(skuList)) {
+                    // 取得在尺码转换表中不存在的尺码列表
+                    List<String> noSizeConversionList = skuList
+                            .stream()
+                            .filter(s -> !sizeMap.keySet().contains(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name())))
+                            .map(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()))
+                            .collect(Collectors.toList());
+
+                    // 如果有在尺码转换表中不存在的size，则报错，中止上新
+                    if (ListUtils.notNull(noSizeConversionList)) {
+                        String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但有些size在尺码转换表中不存在！" +
+                                        "当前商品中任意一个sku的尺码没有转换成功时都不能上新！[channelId:%s] [没能成功转换的原始尺码:%s]",
+                                channelId, Joiner.on(",").join(noSizeConversionList));
+                        $error(errorMsg);
+                        sxData.setErrorMessage(errorMsg);
+                        return sxData;
+                    }
                 }
             }
         }
