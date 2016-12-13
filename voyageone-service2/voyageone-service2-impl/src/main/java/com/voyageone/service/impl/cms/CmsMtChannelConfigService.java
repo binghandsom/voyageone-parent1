@@ -191,6 +191,7 @@ public class CmsMtChannelConfigService extends BaseService {
             });
         });
 
+        list.sort((h1, h2) -> h1.getConfigKey().compareTo(h2.getConfigKey()));
         return list;
     }
     public CmsMtChannelConfigInfo get(List<CmsMtChannelConfigInfo> list,String configKey,String configCode) {
