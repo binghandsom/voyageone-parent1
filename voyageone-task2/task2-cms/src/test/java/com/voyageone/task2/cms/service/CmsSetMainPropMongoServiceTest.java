@@ -40,7 +40,7 @@ public class CmsSetMainPropMongoServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         TaskControlBean taskControlBean = new TaskControlBean();
         taskControlBean.setCfg_name("order_channel_id");
-        taskControlBean.setCfg_val1("015");
+        taskControlBean.setCfg_val1("017");
         taskControlList.add(taskControlBean);
 
 

@@ -1736,6 +1736,27 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
             // add desmond 2016/07/05 end
 
+            // Luckyvitamin feed中文名称和中文描述对应
+            if ("017".equalsIgnoreCase(feed.getChannelId())) {
+                if (StringUtil.isEmpty(productCommonField.getOriginalTitleCn())) {
+                    if (feed.getAttribute() != null && feed.getAttribute().get("translationValue1") != null) {
+                        List<String> v = feed.getAttribute().get("translationValue1");
+                        if (!ListUtils.isNull(v)) {
+                            productCommonField.setOriginalTitleCn(v.get(0));
+                        }
+                    }
+
+                }
+                if (StringUtil.isEmpty(productCommonField.getLongDesCn())) {
+                    if (feed.getAttribute() != null && feed.getAttribute().get("translationValue2") != null) {
+                        List<String> v = feed.getAttribute().get("translationValue2");
+                        if (!ListUtils.isNull(v)) {
+                            productCommonField.setLongDesCn(v.get(0));
+                        }
+                    }
+                }
+            }
+
 //            return productField;
             return productCommonField;
         }
