@@ -214,4 +214,5 @@ public class CmsMtChannelConfigService extends BaseService {
     public void saveList_delete(CmsMtChannelConfigInfo info) {
         cmsMtChannelConfigDao.delete(info.getId());
     }
+
 }
