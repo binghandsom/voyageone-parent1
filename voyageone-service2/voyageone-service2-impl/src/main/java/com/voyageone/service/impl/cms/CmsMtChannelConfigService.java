@@ -1,8 +1,10 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.service.bean.cms.mt.channel.config.CmsMtChannelConfigInfo;
+import com.voyageone.service.bean.cms.mt.channel.config.SaveListInfo;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
@@ -33,7 +35,7 @@ public class CmsMtChannelConfigService extends BaseService {
     @Autowired
     private CommCacheControlService cacheControlService;
 
-    public Map<String, Object> init(String channelId, String userName){
+    public Map<String, Object> init(String channelId, String userName) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         if (StringUtils.isNotBlank(userName)) {
             List<ChannelPermissionBean> channels = userDao.selectPermissionChannel(userName);
@@ -47,7 +49,7 @@ public class CmsMtChannelConfigService extends BaseService {
         return resultMap;
     }
 
-    public Map<String, Object> loadByChannel(String channelId){
+    public Map<String, Object> loadByChannel(String channelId) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         if (StringUtils.isNotBlank(channelId)) {
             List<CmsMtChannelConfigModel> configs = cmsMtChannelConfigDaoExt.selectByChannelId(channelId);
@@ -82,7 +84,7 @@ public class CmsMtChannelConfigService extends BaseService {
         this.clearRedisCache();
     }
 
-    public CmsMtChannelConfigModel selectById(Integer id){
+    public CmsMtChannelConfigModel selectById(Integer id) {
         CmsMtChannelConfigModel target = null;
         if (id != null) {
             target = cmsMtChannelConfigDao.select(id);
@@ -119,12 +121,12 @@ public class CmsMtChannelConfigService extends BaseService {
         String message = "";
         if (StringUtils.isBlank(channelConfigId)) {
             message = "请先选择要删除的记录！";
-        }else {
+        } else {
             Integer id = Integer.parseInt(channelConfigId);
             CmsMtChannelConfigModel target = cmsMtChannelConfigDao.select(id);
             if (target == null) {
                 message = "查询不到要删除的记录！";
-            }else {
+            } else {
                 cmsMtChannelConfigDao.delete(id);
                 this.clearRedisCache();
             }
@@ -137,17 +139,26 @@ public class CmsMtChannelConfigService extends BaseService {
     /**
      * 清空Redis缓存
      */
-    private void clearRedisCache(){
+    private void clearRedisCache() {
         Set<String> cacheKeySet = cacheControlService.getCacheKeySet();
         if (CollectionUtils.isNotEmpty(cacheKeySet)) {
-            cacheKeySet.forEach(subCacheKey->cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.valueOf(subCacheKey)));
+            cacheKeySet.forEach(subCacheKey -> cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.valueOf(subCacheKey)));
         }
     }
+
     @Autowired
     CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
 
-    public List<CmsMtChannelConfigInfo> search(Map<String,Object> map) {
+    public List<CmsMtChannelConfigInfo> search(Map<String, Object> map) {
         return cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
+    }
+
+    @VOTransactional
+    public void saveList(SaveListInfo info, String channelId, String userName) {
+
+        List<CmsMtChannelConfigInfo> listUpdate = new ArrayList<>();
+        List<CmsMtChannelConfigInfo> listAdd = new ArrayList<>();
+
     }
 
 }

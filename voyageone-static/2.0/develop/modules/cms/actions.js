@@ -628,7 +628,8 @@ define(function () {
                 "MtChannelConfig":{
                     "cmsMTChannelConfigService": {
                         "root": "/cms/mt/channel/config",
-                        "search": "search"
+                        "search": "search",
+                        "saveList":"saveList"
                     }
                 }
             },

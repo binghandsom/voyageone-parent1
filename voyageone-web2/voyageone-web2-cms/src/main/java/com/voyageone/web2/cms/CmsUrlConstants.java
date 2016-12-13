@@ -846,6 +846,7 @@ public interface CmsUrlConstants {
         interface MtChannelConfig {
             String ROOT = "/cms/mt/channel/config";
             String Search = "search";
+            String saveList="saveList";
         }
     }
 

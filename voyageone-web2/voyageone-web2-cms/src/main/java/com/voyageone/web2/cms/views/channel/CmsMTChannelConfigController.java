@@ -1,13 +1,11 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.mt.channel.config.SaveListInfo;
 import com.voyageone.service.impl.cms.CmsMtChannelConfigService;
-import com.voyageone.service.model.cms.CmsMtChannelConfigModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +28,12 @@ public class CmsMTChannelConfigController extends CmsController {
         UserSessionBean user = getUser();
         map.put("channelId", user.getSelChannelId());
         return success(cmsMtChannelConfigService.search(map));
+    }
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.MtChannelConfig.saveList)
+    public AjaxResponse saveList(@RequestBody SaveListInfo saveInfo) {
+        UserSessionBean user = getUser();
+        cmsMtChannelConfigService.saveList(saveInfo, user.getSelChannelId(), user.getUserName());
+        return success(null);
     }
 
 }
