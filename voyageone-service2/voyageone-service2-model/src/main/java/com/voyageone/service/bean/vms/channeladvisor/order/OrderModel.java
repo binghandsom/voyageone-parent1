@@ -35,8 +35,8 @@ public class OrderModel extends CABaseModel {
     @JsonProperty("RequestedShippingMethod")
     private String requestedShippingMethod;
 
-    @JsonProperty("TotalFees")
-    private BigDecimal totalFees;
+    @JsonProperty("OtherFees")
+    private BigDecimal otherFees;
 
     @JsonProperty("TotalGiftOptionPrice")
     private BigDecimal totalGiftOptionPrice;
@@ -121,12 +121,16 @@ public class OrderModel extends CABaseModel {
         this.requestedShippingMethod = requestedShippingMethod;
     }
 
-    public BigDecimal getTotalFees() {
-        return totalFees;
+    public BigDecimal getOtherFees() {
+        return otherFees;
     }
 
-    public void setTotalFees(BigDecimal rotalFees) {
-        this.totalFees = rotalFees;
+    public void setOtherFees(BigDecimal otherFees) {
+        this.otherFees = otherFees;
+    }
+
+    public Boolean getVatInclusive() {
+        return vatInclusive;
     }
 
     public BigDecimal getTotalGiftOptionPrice() {
