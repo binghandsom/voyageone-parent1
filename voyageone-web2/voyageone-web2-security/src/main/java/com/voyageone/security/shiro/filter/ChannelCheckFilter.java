@@ -56,14 +56,13 @@ public class ChannelCheckFilter extends AccessControlFilter {
 
             //返回json消息
             response.setCharacterEncoding("UTF-8");
-            Map<String, String> result = new HashMap<>();
 
             resultMap.put("code", "SYS_0");
             resultMap.put("message", "invalid channelId");
             resultMap.put("redirectTo", "/");
 
             PrintWriter out = response.getWriter();
-            out.println(JacksonUtil.bean2Json(result));
+            out.println(JacksonUtil.bean2Json(resultMap));
         }
 
         return false;

@@ -2802,6 +2802,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
     var MSG_MISSAUTHENTICATION = "A005";
     var MSG_CHANGEPASS = "A006";
     var MSG_LOGINAGAIN = "A001";
+    var CODE_SEL_CHANNEL = "SYS_0";
 
     /**
      * 对系统自动跳转的响应,执行跳转
@@ -2809,7 +2810,7 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
      * @returns {boolean}
      */
     function autoRedirect(res) {
-        if (res.code != CODE_SYS_REDIRECT) {
+        if (res.code != CODE_SYS_REDIRECT && res.code != CODE_SEL_CHANNEL) {
             return false;
         }
         // 如果跳转数据异常,则默认跳转登陆页

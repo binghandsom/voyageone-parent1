@@ -22,7 +22,7 @@
         </uib-accordion-group>
     </uib-accordion>
 
-    <div class="panel panel-search">
+    <div class="panel panel-search" ng-if="ctrl.shelves.length > 0">
         <div class="panel-body">
             <div class="form-horizontal">
                 <div class="form-group">
@@ -51,11 +51,15 @@
             </div>
             <div class="text-center">
                 <button type="button" class="btn btn-default" ng-click="ctrl.clearFilter()">清除</button>
-                <button type="button" class="btn btn-vo" ng-click="ctrl.filterProduct()" ng-disabled="!ctrl.shelves.length">搜索</button>
+                <button type="button" class="btn btn-vo" ng-click="ctrl.filterProduct()" >搜索</button>
             </div>
         </div>
     </div>
 
+    <div class="text-center text-hs ng-scope" ng-if="ctrl.shelves.length == 0">
+        <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;<span translate="TXT_ALERT" class="ng-scope">温馨提示</span></h4>
+        <span class="ng-scope">无货架信息...</span>
+    </div>
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
         <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen" ng-init="$si=$index"
                              ng-repeat="i in ctrl.shelves">

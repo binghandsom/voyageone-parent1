@@ -1,9 +1,12 @@
 package com.voyageone.service.impl.com.user;
 
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.bean.com.AdminUserBean;
 import com.voyageone.service.bean.com.PaginationResultBean;
+import org.apache.shiro.crypto.RandomNumberGenerator;
+import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,8 +147,10 @@ public class AdminUserServiceTest {
     }
 
     @Test
-    public void testMovePermission2() throws Exception {
-        adminUserService.movePermission("018", 3 , "美国仓库角色");
+    public void ramdomNumber() throws Exception {
+        for(int i=0 ; i < 100 ; i ++) {
+           System.out.println(CommonUtil.getRomdonPass(6));
+        }
     }
 
 

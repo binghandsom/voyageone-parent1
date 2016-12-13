@@ -206,6 +206,7 @@
   * cnAtts
   * customIds
   * customIdsCn
+  * subCategories ->针对sneakerhead的美国多类目 2016.12.09 edward
 //* carts[]   ->平台销售
 //  * cartId
 //  * numIId
@@ -284,3 +285,8 @@
 },
 * tags[]  ->标签
 * freeTags[] ->自定义标签
+* usPlatforms ->美国平台的产品状态 2016.12.09 edward
+    P1:{
+        cartId : 1,
+        status : "InStock"
+    }
