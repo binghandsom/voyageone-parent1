@@ -119,7 +119,7 @@ public class CmsBuildPlatformIncrementUpdateTmService extends BaseCronTaskServic
             // 取得当前产品的groupId
             groupId = cartGroupModel.getGroupId();
             // 上新用的商品数据信息取得
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId, true);
             if (sxData == null) {
                 // 异常的时候去做这段逻辑
                 throw new BusinessException("SxData取得失败!");
