@@ -102,7 +102,7 @@
                         <div class="col-sm-5">
                             <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
                             <div class="col-sm-10 form-inline">
-                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name" ng-change="ctrl.channelMove(name?name:'')">
+                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name">
                                 <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search({'type':'channel','value':name})" ng-disabled="!name"><i class="fa fa-search"></i></button>
                             </div>
                             <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
