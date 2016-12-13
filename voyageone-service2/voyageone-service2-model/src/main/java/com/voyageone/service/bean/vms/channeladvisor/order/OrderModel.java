@@ -26,7 +26,7 @@ public class OrderModel extends CABaseModel {
     private List<OrderItemModel> items;
 
     @JsonProperty("OrderDateUtc")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'", timezone = "UTC")
     private Date orderDateUtc;
 
     @JsonProperty("OrderStatus")
@@ -63,7 +63,7 @@ public class OrderModel extends CABaseModel {
     private OrderAddressModel buyerAddress;
 
     @JsonProperty("DeliverByDateUtc")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'", timezone = "UTC")
     private Date deliverByDateUtc;
 
     @JsonProperty("ShippingAddress")
