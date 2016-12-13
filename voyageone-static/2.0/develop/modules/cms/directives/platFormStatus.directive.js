@@ -3,6 +3,7 @@
  * @example:{  cartId:entity.cartId,
                status:entity.status,
                pStatus:entity.pStatus,
+               isMain:entity.pIsMain,
                pPublishError:entity.pPublishError,
                numberId:entity.pNumIId}
  * @User:    tony-piao
