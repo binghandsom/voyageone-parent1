@@ -54,6 +54,14 @@ public abstract class BaseController extends BaseViewComponent {
             return genResponseEntityFromBytes(downloadFileName, IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
             $error("genResponseEntityFromStream IOException", e);
+        } finally {
+            if(inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }

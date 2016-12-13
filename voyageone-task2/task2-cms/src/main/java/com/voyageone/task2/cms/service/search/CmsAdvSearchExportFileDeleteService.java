@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.search;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.daoext.cms.CmsBtExportTaskDaoExt;
 import com.voyageone.service.impl.CmsProperty;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +40,10 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("taskType", CmsBtExportTaskService.ADV_SEARCH);
+        List<Integer> taskTypes = new ArrayList<Integer>();
+        taskTypes.add(CmsBtExportTaskService.FEED); // 额外新增
+        taskTypes.add(CmsBtExportTaskService.ADV_SEARCH);
+        map.put("taskTypes", taskTypes);
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);
@@ -48,16 +53,24 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
         map.put("created", cal.getTime());
         List<CmsBtExportTaskModel> tasksModels = cmsBtExportTaskDao.queryFileDeleting(map);
         if (CollectionUtils.isNotEmpty(tasksModels)) {
-            String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
+            String advSearchExportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
+            String feedExportPath =  CmsBtExportTaskService.savePath;
             for (CmsBtExportTaskModel task:tasksModels) {
+
                 if (StringUtils.isNotBlank(task.getFileName()) && task.getStatus() == 1) {
-                    File file = new File(exportPath + task.getFileName());
-                    if (file.exists()) {
+                    String filePath = "";
+                    if (task.getStatus() != null && task.getStatus().intValue() == CmsBtExportTaskService.FEED) {
+                        filePath = feedExportPath + task.getFileName();
+                    }else if (task.getStatus() != null && task.getStatus().intValue() == CmsBtExportTaskService.ADV_SEARCH) {
+                        filePath = advSearchExportPath + task.getFileName();
+                    }
+                    File file = new File(filePath);
+                    if (file.isFile() && file.exists()) {
                         boolean deleted = file.delete();
                         if (deleted) {
                             CmsBtExportTaskModel target = new CmsBtExportTaskModel();
                             target.setStatus(-1); // 导出文件已被系统定期删除
-                            target.setId(target.getId());
+                            target.setId(task.getId());
                             target.setModifier("SYSTEM");
                             cmsBtExportTaskDao.update(target);
                         }
