@@ -49,14 +49,15 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
     @Test
     public void testUploadProduct() throws Exception {
 
-        String channelId = "010";
+        String channelId = "024";
         Integer cartId = 30;
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(762584);
         workload.setChannelId(channelId);
         workload.setCartId(cartId);
-        workload.setGroupId(Long.parseLong("110022"));  // code:SCL020400
+//        workload.setGroupId(Long.parseLong("110022"));  // code:SCL020400
+        workload.setGroupId(Long.parseLong("1253259"));  // code:SCL020400
         workload.setPublishStatus(0);
         workload.setModifier("SYSTEM");
 
@@ -69,7 +70,7 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         shopProp.setOrder_channel_id(channelId);
         shopProp.setCart_id(String.valueOf(cartId));
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("23239809");
+        shopProp.setAppKey("");
         shopProp.setAppSecret("");
         shopProp.setSessionKey("");
         // platformid默认为天猫（1），expressionParser.parse里面会上传照片到天猫空间
@@ -99,6 +100,21 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         }
         Map<String, String> conditionMappingMap = new HashMap<>();
         conditionMappingConfigModels.forEach(p -> conditionMappingMap.put(p.getMapKey(), p.getMapValue()));
+
+        // 测试的时候要往uploadProduct()方面里面最前面加上下面这段初期化的代码，不然会报nullpoint错误 start
+//        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
+//        List<String> channelIdList = new ArrayList() {{
+//            add("024");
+//        }};
+//        channelConditionConfig = new HashMap<>();
+//        if (ListUtils.notNull(channelIdList)) {
+//            for (final String orderChannelID : channelIdList) {
+//                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
+//            }
+//        }
+        // 测试的时候要往uploadProduct()方面里面最前面加上下面这段初期化的代码，不然会报nullpoint错误 start
+        // 如果希望新增一个新的测试商品的话，在uploadProduct()的判断新增商品还是更新商品之前，追加sxData.getPlatform().setNumIId("");
+        // 如果连接生产环境，不希望因为上传图片之后因为回写图片信息报错的话，暂时注释掉SxProductService.uploadImage()方法里面530,588行的2个回写动作就可以了
 
         uploadTmTongGouService.uploadProduct(workload, shopProp, tmTonggouFeedAttrList, conditionMappingMap);
     }
