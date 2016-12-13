@@ -153,6 +153,7 @@ public class CmsMtChannelConfigService extends BaseService {
         return cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
     }
 
+    //批量保存配置
     @VOTransactional
     public void saveList(SaveListInfo info, String channelId, String userName) {
         List<CmsMtChannelConfigInfo> listDelete = new ArrayList<>();
@@ -163,7 +164,7 @@ public class CmsMtChannelConfigService extends BaseService {
             if (f.getId() != null && f.getId() > 0) {
                 if (f.getChecked()) {
                     //更新
-                    saveList_update(f);
+                    saveList_update(f,userName);
                 } else {
                     //删除
                     saveList_delete(f);
@@ -196,8 +197,17 @@ public class CmsMtChannelConfigService extends BaseService {
         cmsMtChannelConfigDao.insert(model);
     }
 
-    public void saveList_update(CmsMtChannelConfigInfo info) {
+    public void saveList_update(CmsMtChannelConfigInfo info,String userName) {
         CmsMtChannelConfigModel model = cmsMtChannelConfigDao.select(info.getId());
+
+        model.setModifier(userName);
+
+        model.setConfigValue1(info.getConfigValue1());
+
+        model.setConfigValue2(info.getConfigValue2());
+
+        model.setConfigValue3(info.getConfigValue3());
+
         cmsMtChannelConfigDao.update(model);
     }
 
