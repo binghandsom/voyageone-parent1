@@ -843,6 +843,10 @@ public interface CmsUrlConstants {
             String EDIT_CHANNEL_CONFIG = "editChannelConfig";
             String DEL_CHANNEL_CONFIG = "delChannelConfig";
         }
+        interface MtChannelConfig {
+            String ROOT = "/cms/mt/channel/config";
+            String Search = "search";
+        }
     }
 
     interface ImageCreate {

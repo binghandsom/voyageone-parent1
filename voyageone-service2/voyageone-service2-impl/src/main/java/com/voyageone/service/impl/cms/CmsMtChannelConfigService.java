@@ -2,9 +2,11 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
+import com.voyageone.service.bean.cms.mt.channel.config.CmsMtChannelConfigInfo;
 import com.voyageone.service.bean.com.ChannelPermissionBean;
 import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
+import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExtCamel;
 import com.voyageone.service.daoext.com.UserDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.cache.CommCacheControlService;
@@ -140,6 +142,12 @@ public class CmsMtChannelConfigService extends BaseService {
         if (CollectionUtils.isNotEmpty(cacheKeySet)) {
             cacheKeySet.forEach(subCacheKey->cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.valueOf(subCacheKey)));
         }
+    }
+    @Autowired
+    CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
+
+    public List<CmsMtChannelConfigInfo> search(Map<String,Object> map) {
+        return cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
     }
 
 }

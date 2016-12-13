@@ -87,6 +87,7 @@ public class CmsBtJmPromotionProduct3Service {
     }
 
     public InitResult init(InitParameter parameter, String channelId, String language) {
+        //return null;
         InitResult result = new InitResult();
         CmsBtJmPromotionModel model = daoCmsBtJmPromotion.select(parameter.getJmPromotionRowId());
         if (model == null) throw new BusinessException("该活动不存在");
