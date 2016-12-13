@@ -1,28 +1,27 @@
 define([
-    'cms',
-    './service.dev'
+    'cms'
 ], function (cms) {
 
     cms.controller("channelConfigSet", (function () {
 
-        function ChannelConfigSet(channelConfigService,confirm,notify) {
-            this.channelConfigService = channelConfigService;
+        function ChannelConfigSet(cmsMTChannelConfigService,confirm,notify) {
+            this.cmsMTChannelConfigService = cmsMTChannelConfigService;
             this.confirm = confirm;
             this.notify = notify;
-            this.searchInfo = {config_key:''}
+            this.searchInfo = {configKey:''}
         }
 
         ChannelConfigSet.prototype.init = function () {
             var self = this,
-                channelConfigService = self.channelConfigService;
+                cmsMTChannelConfigService = self.cmsMTChannelConfigService;
 
-            channelConfigService.getChannelConfigs().then(function(res){
+            cmsMTChannelConfigService.search(self.searchInfo).then(function(res){
                 self.dataList = res.data;
             });
         };
 
         ChannelConfigSet.prototype.clear = function(){
-            this.searchInfo.config_key = '';
+            this.searchInfo.configKey = '';
         };
 
         ChannelConfigSet.prototype.refresh = function(){
@@ -33,10 +32,10 @@ define([
             var self = this,
                 notify = self.notify,
                 confirm = self.confirm,
-                channelConfigService = self.channelConfigService;
+                cmsMTChannelConfigService = self.cmsMTChannelConfigService;
 
             confirm("您是否要保存当前配置信息？").then(function(){
-                channelConfigService.save().then(function(){
+                cmsMTChannelConfigService.save().then(function(){
                     notify.success("保存成功！");
                 });
             });
