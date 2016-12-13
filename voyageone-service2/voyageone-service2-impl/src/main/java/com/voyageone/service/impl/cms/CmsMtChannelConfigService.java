@@ -155,10 +155,53 @@ public class CmsMtChannelConfigService extends BaseService {
 
     @VOTransactional
     public void saveList(SaveListInfo info, String channelId, String userName) {
-
+        List<CmsMtChannelConfigInfo> listDelete = new ArrayList<>();
         List<CmsMtChannelConfigInfo> listUpdate = new ArrayList<>();
         List<CmsMtChannelConfigInfo> listAdd = new ArrayList<>();
 
+        info.getList().forEach(f -> {
+            if (f.getId() != null && f.getId() > 0) {
+                if (f.getChecked()) {
+                    //更新
+                    saveList_update(f);
+                } else {
+                    //删除
+                    saveList_delete(f);
+                }
+            } else {
+                if (f.getChecked()) {
+                    //新增
+                    saveList_add(f, channelId, userName);
+                }
+            }
+        });
     }
 
+    public void saveList_add(CmsMtChannelConfigInfo info, String channelId, String userName) {
+
+        CmsMtChannelConfigModel model = new CmsMtChannelConfigModel();
+        model.setChannelId(channelId);
+        model.setCreated(new Date());
+        model.setCreater(userName);
+        model.setComment(info.getComment());
+        model.setConfigCode(info.getConfigCode());
+        model.setConfigKey(info.getConfigKey());
+        model.setConfigType(0);
+        model.setConfigValue1(info.getConfigValue1());
+        model.setConfigValue2(info.getConfigValue2());
+        model.setConfigValue3(info.getConfigValue3());
+        model.setStatus(0);
+        model.setModified(new Date());
+        model.setModifier(userName);
+        cmsMtChannelConfigDao.insert(model);
+    }
+
+    public void saveList_update(CmsMtChannelConfigInfo info) {
+        CmsMtChannelConfigModel model = cmsMtChannelConfigDao.select(info.getId());
+        cmsMtChannelConfigDao.update(model);
+    }
+
+    public void saveList_delete(CmsMtChannelConfigInfo info) {
+        cmsMtChannelConfigDao.delete(info.getId());
+    }
 }
