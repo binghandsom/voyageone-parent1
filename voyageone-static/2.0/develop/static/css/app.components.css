@@ -228,7 +228,19 @@ vo-message {
 }
 
 .plateform-status .error {
-    background: #fd0001;
+    border: 2px solid #fd0001;
+}
+
+.plateform-status .isMain{
+    color: #d85757;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.plateform-status .isCommon{
+    color: #000;
+    text-decoration: none;
+    font-weight: 100;
 }
 
 .c-checkbox,
