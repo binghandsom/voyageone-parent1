@@ -8,9 +8,10 @@
        ,a.`is_config_value1`,a.`is_config_value2`,a.`is_config_value3`,a.`is_platform`,a.`sample`,a.`comment`
        FROM `cms_mt_channel_config_key` AS a
        LEFT JOIN `cms_mt_channel_config` AS b ON a.`config_key`=b.config_key AND b.`channel_id`=#{channelId}
-        <if test="configKey!=null">
-            and a.config_key like CONCAT('%',#{configKey},'%');
-        </if>
-
+        <where>
+            <if test="configKey!=null">
+                 a.config_key like CONCAT('%',#{configKey},'%');
+            </if>
+        </where>
     </select>
 </mapper>

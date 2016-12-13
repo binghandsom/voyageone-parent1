@@ -10,6 +10,7 @@ import com.voyageone.service.dao.cms.CmsMtChannelConfigDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConfigKeyDao;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExt;
 import com.voyageone.service.daoext.cms.CmsMtChannelConfigDaoExtCamel;
+import com.voyageone.service.daoext.cms.CmsMtChannelConfigKeyDaoExt;
 import com.voyageone.service.daoext.com.UserDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.cache.CommCacheControlService;
@@ -33,6 +34,8 @@ public class CmsMtChannelConfigService extends BaseService {
     private UserDao userDao;
     @Autowired
     private CmsMtChannelConfigDaoExt cmsMtChannelConfigDaoExt;
+    @Autowired
+    CmsMtChannelConfigKeyDaoExt cmsMtChannelConfigKeyDaoExt;
     @Autowired
     private CmsMtChannelConfigDao cmsMtChannelConfigDao;
     @Autowired
@@ -155,23 +158,23 @@ public class CmsMtChannelConfigService extends BaseService {
     CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
 
     public List<CmsMtChannelConfigInfo> search(Map<String, Object> map,String channelId) {
+
         map.put("channelId", channelId);
         List<CmsMtChannelConfigInfo> list = cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
 
         Map<String, Object> mapKey = new HashedMap();
         mapKey.put("channelId", channelId);
-        List<CmsMtChannelConfigKeyModel> listKey = cmsMtChannelConfigKeyDao.selectList(mapKey);
-
+        mapKey.put("isPlatform","1");
+        mapKey.put("configKey", map.get("configKey"));
+        List<CmsMtChannelConfigKeyModel> listKey = cmsMtChannelConfigKeyDaoExt.selectList(mapKey);
 
         return list;
+
     }
 
     //批量保存配置
     @VOTransactional
     public void saveList(SaveListInfo info, String channelId, String userName) {
-        List<CmsMtChannelConfigInfo> listDelete = new ArrayList<>();
-        List<CmsMtChannelConfigInfo> listUpdate = new ArrayList<>();
-        List<CmsMtChannelConfigInfo> listAdd = new ArrayList<>();
 
         info.getList().forEach(f -> {
             if (f.getId() != null && f.getId() > 0) {

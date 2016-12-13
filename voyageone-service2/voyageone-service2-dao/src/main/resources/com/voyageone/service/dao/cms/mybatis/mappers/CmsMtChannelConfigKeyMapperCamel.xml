@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtChannelConfigKeyDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtChannelConfigKeyModel" />
+    <sql id="Base_Column_List" >
+        `id`, `config_key`, `config_code`, `is_config_value1`, `is_config_value2`, `is_config_value3`, 
+        `is_platform`, `comment`, `sample`, `created`, `creater`, `modified`, `moddifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_config_key
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigKeyModel" >
+        update cms_mt_channel_config_key
+        <set >
+            <if test="configKey != null" >
+                `config_key` = #{configKey,jdbcType=VARCHAR},
+            </if>
+            <if test="configCode != null" >
+                `config_code` = #{configCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isConfigValue1 != null" >
+                `is_config_value1` = #{isConfigValue1,jdbcType=BIT},
+            </if>
+            <if test="isConfigValue2 != null" >
+                `is_config_value2` = #{isConfigValue2,jdbcType=BIT},
+            </if>
+            <if test="isConfigValue3 != null" >
+                `is_config_value3` = #{isConfigValue3,jdbcType=BIT},
+            </if>
+            <if test="isPlatform != null" >
+                `is_platform` = #{isPlatform,jdbcType=BIT},
+            </if>
+            <if test="comment != null" >
+                `comment` = #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="sample != null" >
+                `sample` = #{sample,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="moddifier != null" >
+                `moddifier` = #{moddifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_channel_config_key
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_config_key
+        <where >
+            <if test="configKey != null" >
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null" >
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="isConfigValue1 != null" >
+                and `is_config_value1` = #{isConfigValue1,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue2 != null" >
+                and `is_config_value2` = #{isConfigValue2,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue3 != null" >
+                and `is_config_value3` = #{isConfigValue3,jdbcType=BIT}
+            </if>
+            <if test="isPlatform != null" >
+                and `is_platform` = #{isPlatform,jdbcType=BIT}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="sample != null" >
+                and `sample` = #{sample,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="moddifier != null" >
+                and `moddifier` = #{moddifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_config_key
+        <where >
+            <if test="configKey != null" >
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null" >
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="isConfigValue1 != null" >
+                and `is_config_value1` = #{isConfigValue1,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue2 != null" >
+                and `is_config_value2` = #{isConfigValue2,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue3 != null" >
+                and `is_config_value3` = #{isConfigValue3,jdbcType=BIT}
+            </if>
+            <if test="isPlatform != null" >
+                and `is_platform` = #{isPlatform,jdbcType=BIT}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="sample != null" >
+                and `sample` = #{sample,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="moddifier != null" >
+                and `moddifier` = #{moddifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_channel_config_key
+        <where >
+            <if test="configKey != null" >
+                and `config_key` = #{configKey,jdbcType=VARCHAR}
+            </if>
+            <if test="configCode != null" >
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="isConfigValue1 != null" >
+                and `is_config_value1` = #{isConfigValue1,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue2 != null" >
+                and `is_config_value2` = #{isConfigValue2,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue3 != null" >
+                and `is_config_value3` = #{isConfigValue3,jdbcType=BIT}
+            </if>
+            <if test="isPlatform != null" >
+                and `is_platform` = #{isPlatform,jdbcType=BIT}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="sample != null" >
+                and `sample` = #{sample,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="moddifier != null" >
+                and `moddifier` = #{moddifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtChannelConfigKeyModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_mt_channel_config_key
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="configKey != null" >
+                `config_key`,
+            </if>
+            <if test="configCode != null" >
+                `config_code`,
+            </if>
+            <if test="isConfigValue1 != null" >
+                `is_config_value1`,
+            </if>
+            <if test="isConfigValue2 != null" >
+                `is_config_value2`,
+            </if>
+            <if test="isConfigValue3 != null" >
+                `is_config_value3`,
+            </if>
+            <if test="isPlatform != null" >
+                `is_platform`,
+            </if>
+            <if test="comment != null" >
+                `comment`,
+            </if>
+            <if test="sample != null" >
+                `sample`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="moddifier != null" >
+                `moddifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="configKey != null" >
+                #{configKey,jdbcType=VARCHAR},
+            </if>
+            <if test="configCode != null" >
+                #{configCode,jdbcType=VARCHAR},
+            </if>
+            <if test="isConfigValue1 != null" >
+                #{isConfigValue1,jdbcType=BIT},
+            </if>
+            <if test="isConfigValue2 != null" >
+                #{isConfigValue2,jdbcType=BIT},
+            </if>
+            <if test="isConfigValue3 != null" >
+                #{isConfigValue3,jdbcType=BIT},
+            </if>
+            <if test="isPlatform != null" >
+                #{isPlatform,jdbcType=BIT},
+            </if>
+            <if test="comment != null" >
+                #{comment,jdbcType=VARCHAR},
+            </if>
+            <if test="sample != null" >
+                #{sample,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="moddifier != null" >
+                #{moddifier,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>
