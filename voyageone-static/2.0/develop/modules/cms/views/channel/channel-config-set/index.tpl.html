@@ -76,18 +76,18 @@
                         <tbody>
                             <tr ng-repeat = "element in ctrl.dataList">
                                <td class="text-center">
-                                   <input type="checkbox">
+                                   <input type="checkbox" ng-model="element.isChecked">
                                </td>
-                               <td class="text-center">{{element.config_key}}</td>
-                               <td class="text-center">{{element.config_code}}</td>
+                               <td class="text-center">{{element.configKey}}</td>
+                               <td class="text-center">{{element.configCode}}</td>
                                <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.config_value1">
-                               </td>
-                               <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.config_value2">
+                                   <input type="text" class="form-control" ng-model="element.configValue1" ng-change="ctrl.changeValueList(element.configValue1)" ng-disabled="!element.isChecked">
                                </td>
                                <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.config_value3">
+                                   <input type="text" class="form-control" ng-model="element.configValue2" ng-change="ctrl.changeValueList(element.configValue2)" ng-disabled="!element.isChecked">
+                               </td>
+                               <td class="text-center">
+                                   <input type="text" class="form-control" ng-model="element.configValue3" ng-change="ctrl.changeValueList(element.configValue3)" ng-disabled="!element.isChecked">
                                </td>
                                <td class="text-center">{{element.sample}}</td>
                                <td class="text-center"><popover-text content="element.comment" direct="left" size="20"></popover-text></td>
@@ -103,7 +103,7 @@
     </div>
 
 </div>
-
+</div>
 
 
 

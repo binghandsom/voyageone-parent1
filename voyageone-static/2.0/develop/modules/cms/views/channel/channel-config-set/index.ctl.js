@@ -12,6 +12,12 @@ define([
         }
 
         ChannelConfigSet.prototype.init = function () {
+            var self = this;
+
+            self.search();
+        };
+
+        ChannelConfigSet.prototype.search = function(){
             var self = this,
                 cmsMTChannelConfigService = self.cmsMTChannelConfigService;
 
@@ -26,6 +32,10 @@ define([
 
         ChannelConfigSet.prototype.refresh = function(){
             this.init();
+        };
+
+        ChannelConfigSet.prototype.changeValueList = function(value){
+            console.log("change value",value);
         };
 
         ChannelConfigSet.prototype.save = function(){
