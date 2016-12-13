@@ -59,9 +59,9 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
 
                 if (StringUtils.isNotBlank(task.getFileName()) && task.getStatus() == 1) {
                     String filePath = "";
-                    if (task.getStatus() != null && task.getStatus().intValue() == CmsBtExportTaskService.FEED) {
+                    if (task.getTaskType() != null && task.getTaskType().intValue() == CmsBtExportTaskService.FEED) {
                         filePath = feedExportPath + task.getFileName();
-                    }else if (task.getStatus() != null && task.getStatus().intValue() == CmsBtExportTaskService.ADV_SEARCH) {
+                    }else if (task.getTaskType() != null && task.getTaskType().intValue() == CmsBtExportTaskService.ADV_SEARCH) {
                         filePath = advSearchExportPath + task.getFileName();
                     }
                     File file = new File(filePath);
@@ -71,6 +71,7 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
                             CmsBtExportTaskModel target = new CmsBtExportTaskModel();
                             target.setStatus(-1); // 导出文件已被系统定期删除
                             target.setId(task.getId());
+                            target.setComment("文件过期，系统删除。");
                             target.setModifier("SYSTEM");
                             cmsBtExportTaskDao.update(target);
                         }
