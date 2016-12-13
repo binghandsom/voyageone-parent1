@@ -150,7 +150,8 @@ public class CmsMtChannelConfigService extends BaseService {
     CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
 
     public List<CmsMtChannelConfigInfo> search(Map<String, Object> map) {
-        return cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
+        List<CmsMtChannelConfigInfo> list = cmsMtChannelConfigDaoExtCamel.selectConfigInfoList(map);
+        return list;
     }
 
     //批量保存配置
