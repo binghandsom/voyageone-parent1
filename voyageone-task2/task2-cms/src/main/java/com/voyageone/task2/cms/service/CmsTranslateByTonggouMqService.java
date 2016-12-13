@@ -163,12 +163,12 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         $info("天猫同购共通标题描述翻译开始!");
 
         // 取得synship.com_mt_third_party_config表中配置的同购APPKEY，翻译专用商品id等信息
-        String configChannelId = "000";
+        String configChannelId_000 = "000";
         String tm_tt_trans = "tm_tt_sx";
-        ThirdPartyConfigBean config = ThirdPartyConfigs.getThirdPartyConfig(configChannelId, tm_tt_trans);
+        ThirdPartyConfigBean config = ThirdPartyConfigs.getThirdPartyConfig(configChannelId_000, tm_tt_trans);
         if (config == null) {
             String warnMsg = String.format("取得synship.com_mt_third_party_config表中配置的同购APPKEY，翻译专用商品id等信息失败! " +
-                    "[channel_id:%s] [prop_name:%s]", configChannelId, tm_tt_trans);
+                    "[channel_id:%s] [prop_name:%s]", configChannelId_000, tm_tt_trans);
             $warn(warnMsg);
             return;
         }
@@ -180,7 +180,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         }
         if (StringUtils.isEmpty(numIIdForTransOnly)) {
             String warnMsg = String.format("在synship.com_mt_third_party_config表中没找到翻译专用商品id信息! " +
-                    "[channel_id:%s] [prop_name:%s]", configChannelId, tm_tt_trans);
+                    "[channel_id:%s] [prop_name:%s]", configChannelId_000, tm_tt_trans);
             $warn(warnMsg);
             return;
         }
@@ -217,7 +217,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 }
             } catch (Exception e) {
                 String errMsg = String.format("解析synship.com_mt_third_party_config表\"000\"渠道的prop_val6中配置的项目json失败! " +
-                        "[channel_id:%s] [prop_val6:%s]", "000", otherItemValueJson);
+                        "[channel_id:%s] [prop_val6:%s]", configChannelId_000, otherItemValueJson);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -226,7 +226,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
         // 天猫官网同购专用ShopBean对象(注意：里面没有设置channelId和cartId哦)
         ShopBean transShop = new ShopBean();
-        transShop.setOrder_channel_id("000");  // 调用同购接口的时候，它又会去synship.com_mt_third_party_config表里面找一个000对应的APPKEY
+        transShop.setOrder_channel_id(configChannelId_000);  // 调用同购接口的时候，它又会去synship.com_mt_third_party_config表里面找一个000对应的APPKEY
         transShop.setApp_url(config.getProp_val1());
         transShop.setAppKey(config.getProp_val2());
         transShop.setAppSecret(config.getProp_val3());
@@ -248,7 +248,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
 
         if (ListUtils.isNull(codeList)) {
             String warnMsg = String.format("没有需要翻译的产品code，直接结束! " +
-                    "[channel_id:%s] [prop_name:%s]", configChannelId, tm_tt_trans);
+                    "[channel_id:%s] [prop_name:%s]", configChannelId_000, tm_tt_trans);
             $warn(warnMsg);
             return;
         }
