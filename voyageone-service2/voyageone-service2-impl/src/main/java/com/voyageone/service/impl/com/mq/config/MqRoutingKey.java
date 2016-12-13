@@ -122,4 +122,9 @@ public class MqRoutingKey {
      * @since 2.9.0
      */
     public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
+    /**
+     * 天猫同购共通标题描述翻译
+     */
+    public static final String CMS_TASK_TranslateByTonggouJob = "voyageone_cms_task_TranslateByTonggouJobService_queue";
+
 }
