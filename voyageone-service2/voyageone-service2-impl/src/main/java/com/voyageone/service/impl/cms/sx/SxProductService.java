@@ -63,6 +63,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1109,6 +1110,51 @@ public class SxProductService extends BaseService {
 //                sizeSxMap.put(sku.getSize(), sku.getSizeSx());
 //			}
 //		}
+
+        // 从voyageone_cms2.cms_mt_channel_config表中取得该店铺的是否强制尺码转换的检查(默认为不强制尺码转换)
+        boolean sizeConversionFlg = false;
+        CmsChannelConfigBean cmsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(channelId,
+                CmsConstants.ChannelConfig.SIZE_CONVERSION_FLG);
+        if (cmsChannelConfigBean != null && !StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())) {
+            String strSizeConversionFlg = cmsChannelConfigBean.getConfigValue1().trim();
+            // 如果配置的值为"1",则表示需要强制尺码转换
+            if ("1".equals(strSizeConversionFlg)) {
+                sizeConversionFlg = true;
+            }
+        }
+
+        // 如果当前渠道需要强制尺码转换，那么当前商品中任意一个sku的尺码没有转换成功时都不能上新
+        if (sizeConversionFlg) {
+            // 如果取得尺码转换信息失败时，报错
+            if (MapUtils.isEmpty(sizeMap)) {
+                String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但取得的尺码转换表" +
+                        "信息(sizeMap)为空,不能做尺码转换！[channelId:%s] [brand:%s] [productType:%s] [sizeType:%s] [sizeChartId:%s]",
+                        channelId, sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand(), sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getProductType(),
+                        sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getSizeType(), sizeChartId);
+                $error(errorMsg);
+                sxData.setErrorMessage(errorMsg);
+                return sxData;
+            }
+
+            if (ListUtils.notNull(skuList)) {
+                // 取得在尺码转换表中不存在的尺码列表
+                List<String> noSizeConversionList = skuList
+                        .stream()
+                        .filter(s -> !sizeMap.keySet().contains(s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name())))
+                        .map(s -> s.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()))
+                        .collect(Collectors.toList());
+
+                // 如果有在尺码转换表中不存在的size，则报错，中止上新
+                if (ListUtils.notNull(noSizeConversionList)) {
+                    String errorMsg = String.format("取得上新数据(SxData)失败! 当前渠道是需要强制尺码转换的，但有些size在尺码转换表中不存在！" +
+                            "当前商品中任意一个sku的尺码没有转换成功时都不能上新！[channelId:%s] [没能成功转换的原始尺码:%s]",
+                            channelId, Joiner.on(",").join(noSizeConversionList));
+                    $error(errorMsg);
+                    sxData.setErrorMessage(errorMsg);
+                    return sxData;
+                }
+            }
+        }
 
         Map<String, String> sizeSxMap = new HashMap<>();
         for (BaseMongoMap<String, Object> sku : skuList) {
