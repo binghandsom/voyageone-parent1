@@ -22,6 +22,6 @@ public class CmsMtChannelConfigServiceTest {
     {
         Map<String,Object> map=new HashedMap();
         map.put("channelId","010");
-       List<CmsMtChannelConfigInfo> list= service.search(map);
+       List<CmsMtChannelConfigInfo> list= service.search(map,"010");
     }
 }
