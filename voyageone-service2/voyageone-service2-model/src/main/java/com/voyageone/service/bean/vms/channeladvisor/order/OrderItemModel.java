@@ -3,6 +3,8 @@ package com.voyageone.service.bean.vms.channeladvisor.order;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.service.bean.vms.channeladvisor.CABaseModel;
 
+import java.math.BigDecimal;
+
 /**
  * @author aooer 2016/9/6.
  * @version 2.0.0
@@ -20,7 +22,7 @@ public class OrderItemModel extends CABaseModel {
     private Integer quantity;
 
     @JsonProperty("UnitPrice")
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
     public String getId() {
         return id;
@@ -38,11 +40,11 @@ public class OrderItemModel extends CABaseModel {
         this.sellerSku = sellerSku;
     }
 
-    public Double getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(Double unitPrice) {
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 

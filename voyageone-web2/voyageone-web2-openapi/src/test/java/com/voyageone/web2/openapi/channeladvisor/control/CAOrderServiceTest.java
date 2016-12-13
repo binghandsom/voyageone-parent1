@@ -182,16 +182,12 @@ public class CAOrderServiceTest {
         System.out.println(result);*/
 
         //下部分物品取消
-        String reqJson = "{\"OrderID\":\"02820160919111117007\",\"Items\":[" +
-                "{\"ID\":\"M333W6\",\"SellerSku\":\"3117390\",\"Quantity\":1,\"Reason\":\"AlternateItemProvided\"}," +
-                "{\"ID\":\"M333W7\",\"SellerSku\":\"3109577\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}," +
-                "{\"ID\":\"M333W8\",\"SellerSku\":\"3456083\",\"Quantity\":1,\"Reason\":\"CustomerExchange\"}," +
-                "{\"ID\":\"M333W9\",\"SellerSku\":\"3108978\",\"Quantity\":1,\"Reason\":\"MerchandiseNotReceived\"}," +
-                "{\"ID\":\"M333W11\",\"SellerSku\":\"3461477\",\"Quantity\":1,\"Reason\":\"MerchandiseNotReceived\"}," +
-                "{\"ID\":\"M333W10\",\"SellerSku\":\"3055246\",\"Quantity\":1,\"Reason\":\"ShippingAddressUndeliverable\"}" +
+        String reqJson = "{\"OrderID\":\"02820160919111119014\",\"Items\":[" +
+                "{\"ID\":\"3\",\"SellerSku\":\"3114141\",\"Quantity\":1,\"Reason\":\"AlternateItemProvided\"}," +
+                "{\"ID\":\"3\",\"SellerSku\":\"3114141\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}" +
                 "]}";
 
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111117007"), reqJson, HEADER);
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119014"), reqJson, HEADER);
         System.out.println(result);
     }
 

@@ -82,8 +82,8 @@ public class CmsFeedExportService extends BaseMQCmsService {
 
         int rowIndexCode = 2;
         int rowIndexSku = 2;
-        try {
-            OutputStream outputStream = new FileOutputStream(outPath + fileName);
+        try (OutputStream outputStream = new FileOutputStream(outPath + fileName)){
+            $info(outPath + fileName);
 //            InputStream inputStream = new FileInputStream(templatePath);
 //            Workbook book = WorkbookFactory.create(inputStream);
             Workbook book = new SXSSFWorkbook(1000);
@@ -104,6 +104,7 @@ public class CmsFeedExportService extends BaseMQCmsService {
             cmsBtExportTaskModel.setFileName(files.stream().collect(Collectors.joining(",")));
             cmsBtExportTaskModel.setComment("");
         }catch (Exception e){
+            $error(e);
             e.printStackTrace();
             cmsBtExportTaskModel.setComment(CommonUtil.getMessages(e));
             cmsBtExportTaskModel.setStatus(2);

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class OrderCancellationRequest {
 
-    @JsonProperty("OrderId")
+    @JsonProperty("OrderID")
     private String orderId;
 
     @JsonProperty("Items")
