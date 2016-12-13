@@ -41,9 +41,9 @@
                                 <div class="row form-group"><!-- 仓库 -->
                                     <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId"
+                                                ng-options="store.storeId as store.storeName for store in ctrl.storeList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList" ng-bind="store.storeName"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -54,9 +54,9 @@
                                 <div class="row form-group"><!-- 渠道 -->
                                     <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId"
+                                                ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList" ng-bind="channel.name"></option>
                                         </select>
                                     </div>
                                 </div>

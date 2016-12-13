@@ -88,7 +88,7 @@ define([
             search: function (item) {
                 var self = this;
                 self.allList = [];
-                _.filter(self.roleAllList, function (data) {
+                _.filter(self.roleAllListCopy, function (data) {
                     if (data.roleName.toUpperCase().indexOf(item.toUpperCase()) > -1) {
                         self.allList.push(data)
                     }

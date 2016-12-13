@@ -42,9 +42,9 @@
                                 <div class="row form-group"><!-- 渠道 -->
                                     <label class="col-sm-3 control-label">{{'TXT_CHANNEL' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.channelId"
+                                            ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{channel.orderChannelId}}" ng-repeat="channel in ctrl.channelList" ng-bind="channel.name"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -55,18 +55,18 @@
                                 <div class="row form-group"><!-- 组织 -->
                                     <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orgId">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.orgId"
+                                            ng-options="org.id as org.orgName for org in ctrl.orgList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{org.id}}" ng-repeat="org in ctrl.orgList" ng-bind="org.orgName"></option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="row form-group"><!-- 仓库 -->
                                     <label class="col-sm-3 control-label">{{'TXT_STORE' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.storeId"
+                                            ng-options="store.storeId as store.storeName for store in ctrl.storeList">
                                             <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{store.storeId}}" ng-repeat="store in ctrl.storeList" ng-bind="store.storeName"></option>
                                         </select>
                                     </div>
                                 </div>
@@ -77,18 +77,18 @@
                                 <div class="row form-group"><!-- 系统 -->
                                     <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application"
+                                            ng-options="app.application as app.application for app in ctrl.appList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="row form-group"><!-- Company -->
                                     <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                                     <div class="col-sm-8">
-                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.company">
+                                        <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.searchInfo.company"
+                                            ng-options="company.id as company.company for company in ctrl.companyList">
                                             <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                                            <option value="{{company.id}}" ng-repeat="company in ctrl.companyList" ng-bind="company.company"></option>
                                         </select>
                                     </div>
                                 </div>

@@ -165,11 +165,10 @@ define([
                 self.channelTempAllList = [];
                 self.storeTempAllList = [];
                 self.channelIds = [];
-
                 switch (item.type) {
                     case'channel':
-                        // 从AllChannelList过滤出已经选择的channel，组成新的可以选择的list
                         self.channelAllList = self.channelAllListCopy;
+                        // 从AllChannelList过滤出已经选择的channel，组成新的可以选择的list
                         _.forEach(self.channelList, function (item) {
                             var index = -1;
                             _.forEach(self.channelAllList, function (allItem, i) {
@@ -381,7 +380,7 @@ define([
                 self.saveInfo.storeIds = [];
                 if (self.saveInfo.allChannel == '0') {
                     _.forEach(self.channelList, function (item) {
-                        self.saveInfo.channelIds.push(item.orderChannelId);
+                        item=='ALL'? self.channelList.splice(self.channelList.indexOf(item),1):self.saveInfo.channelIds.push(item.orderChannelId);
                     });
                 }
                 if (self.saveInfo.allStore == '0') {
@@ -394,7 +393,7 @@ define([
                         self.saveInfo.storeIds = [];
                     } else {
                         _.forEach(self.storeList, function (item) {
-                            self.saveInfo.storeIds.push(item.storeId - 0);
+                            item=='ALL'? self.storeList.splice(self.storeList.indexOf(item),1):self.saveInfo.storeIds.push(item.storeId - 0);
                         });
                     }
                 }
