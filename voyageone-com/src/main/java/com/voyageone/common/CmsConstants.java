@@ -180,6 +180,9 @@ public class CmsConstants {
 
         // 店铺是否启动了供应链管理
         String START_SUPPLY_CHAIN = "START_SUPPLY_CHAIN";
+
+        // 是否强制尺码转换的检查(1:强制尺码转换 空,0:不强制尺码转换)
+        String SIZE_CONVERSION_FLG = "SIZE_CONVERSION_FLG";
     }
 
     public interface DataAmount {

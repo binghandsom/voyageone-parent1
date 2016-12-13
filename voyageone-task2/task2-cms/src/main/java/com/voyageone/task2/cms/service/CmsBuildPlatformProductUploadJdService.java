@@ -2382,7 +2382,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
         String salePropStatus = "4";
 
-        if ("017".equals(orgChannelId)) {
+        if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(orgChannelId)) {
             // 017:LuckyVitamin店一个SKU是一个CODE，所以他们希望全店都只有颜色，不要尺码
             // 2:只有颜色没有尺寸属性
             salePropStatus = "2";
