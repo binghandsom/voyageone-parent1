@@ -28,6 +28,9 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.cms.bean.InventoryForCmsBean;
+import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
+import com.voyageone.task2.cms.dao.InventoryDao;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.*;
@@ -64,11 +67,13 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     private PlatformService platformService;
     @Autowired
     private CmsBtExportTaskService cmsBtExportTaskService;
+    @Autowired
+    private InventoryDao inventoryDao;
 
     // excel cell的内容长度限制
     private final static int CELL_LENGTH_LIMIT = 2000;
     // DB检索页大小
-    private final static int SELECT_PAGE_SIZE = 2000;
+    private final static int SELECT_PAGE_SIZE = 100;
     // Excel 文件最大行数
     private final static int MAX_EXCEL_REC_COUNT = 10000;
 
@@ -83,11 +88,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     /*sku级导出时和平台无关的固定列：英文和中文列头名称*/
     private final static String[] _SKU_STATIC_COLS = {
             "code", "barcode", "clientSKU", "brand", "category", "productNameEn",
-            "originalTitleCn", "model", "code", "color", "clientSize",
+            "originalTitleCn", "model", "code", "inventory", "color", "clientSize",
             "size", "clientPriceMsrp", "clientPriceRetail", "clientPriceCost", "weightCalc"};
     private final static String[] _SKU_STATIC_COLS_ZN = {
             "sku", "条形码", "客户原始SKU", "品牌", "主类目", "产品名称英语",
-            "产品名称中文", "款号", "商品编码", "颜色/口味/香型等", "客户原始Size",
+            "产品名称中文", "款号", "商品编码", "库存", "颜色/口味/香型等", "客户原始Size",
             "转换后Size", "客户建议售价", "客户指导价", "客户成本价", "重量（lb）"};
 
 
@@ -246,11 +251,17 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            searchItemStr += "common.skus;common.fields.model;common.fields.color;";
+            if (!searchItemStr.endsWith(";"))
+                searchItemStr += ";";
+            searchItemStr += "common.skus;common.fields.model;common.fields.color;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
+            if (!searchItemStr.endsWith(";"))
+                searchItemStr += ";";
             searchItemStr += "common.fields.model;";
         } else if (searchValue.getFileType() == 1) {
+            if (!searchItemStr.endsWith(";"))
+                searchItemStr += ";";
             searchItemStr += "common.fields.model;common.fields.color;";
         }
 
@@ -290,7 +301,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 } else if (searchValue.getFileType() == 2) {
                     isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 3) {
-                    isContinueOutput = writeRecordToSkuFile(book, items, cartList, startRowIndex);
+                    isContinueOutput = writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex);
                 }
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -902,17 +913,16 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      *
      * @param book          输出Excel文件对象
      * @param items         待输出DB数据
+     * @param channelId
      * @param cartList
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
-    private boolean writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, List<TypeChannelBean> cartList, int startRowIndex) {
-        boolean isContinueOutput = true;
-        CellStyle unlock = FileUtils.createUnLockStyle(book);
+    private boolean writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
 
-        // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/skuList-template.xlsx
-        Sheet sheet = book.getSheetAt(0);
-        for (CmsBtProductBean item : items) {
+        List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
+        Set<String> codes = new HashSet<String>();
+        for (CmsBtProductBean item:items) {
             if (item.getCommon() == null) {
                 continue;
             }
@@ -924,6 +934,29 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             if (skuList == null || skuList.isEmpty()) {
                 continue;
             }
+            if (org.apache.commons.lang.StringUtils.isNotBlank(fields.getOriginalCode())) {
+                codes.add(fields.getOriginalCode());
+            }
+            products.add(item);
+        }
+        Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<SkuInventoryForCmsBean, Integer>();
+        if (codes.size() > 0) {
+            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(channelId, new ArrayList<String>(codes));
+            if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
+                for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
+                    skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
+                }
+            }
+        }
+
+        boolean isContinueOutput = true;
+        CellStyle unlock = FileUtils.createUnLockStyle(book);
+
+        // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/skuList-template.xlsx
+        Sheet sheet = book.getSheetAt(0);
+        for (CmsBtProductBean item : items) {
+            CmsBtProductModel_Field fields = item.getCommon().getFields();
+            List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
 
             // 2016-12-12 CMSDOC-252 数据导出改为非模板导出，将最大行数限制去掉
             /*if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
@@ -946,6 +979,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(item.getCommonNotNull().getFieldsNotNull().getOriginalTitleCn()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getModel()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getCode()));
+                SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuItem.getSkuCode());
+                FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getColor()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getClientSize()));
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getSize()));
