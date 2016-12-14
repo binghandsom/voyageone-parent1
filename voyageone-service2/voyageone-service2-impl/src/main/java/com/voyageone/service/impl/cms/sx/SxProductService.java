@@ -2783,11 +2783,17 @@ public class SxProductService extends BaseService {
             return;
         }
 
+        SxData sxData = expressionParser.getSxData();
+        String errMsgSchemaChange = String.format("类目[%s]的无线描述的schema变啦!需要重新分析并修改代码!", sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
+        if (field.getType() != FieldTypeEnum.COMPLEX) {
+            throw new BusinessException(errMsgSchemaChange);
+        }
+
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
         // modified by morse.lu 2016/08/16 start
         // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
 //        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
-        SxData sxData = expressionParser.getSxData();
+//        SxData sxData = expressionParser.getSxData();
         String descriptionValue;
         RuleExpression ruleDetails = new RuleExpression();
         MasterWord masterWord = new MasterWord("wirelessDetails");
@@ -2812,13 +2818,86 @@ public class SxProductService extends BaseService {
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, expressionParser.getSxData());
+
+        // added by morse.lu 2012/12 start
+        // 无线端描述的图片热区直接用天猫后台设值好的
+        // 暂时field_id都写死了, 有变化的话报错
+        Map<String, Field> updateItemFields = sxData.getUpdateItemFields();
+        if (updateItemFields != null && updateItemFields.get(field.getId()) != null) {
+            ComplexValue defaultComplexValue = ((ComplexField) updateItemFields.get(field.getId())).getDefaultComplexValue();
+            if (defaultComplexValue != null && defaultComplexValue.getFieldMap() != null && defaultComplexValue.getFieldMap().size() > 0) {
+                String picture_key = "item_picture"; // 商品图片 complex
+                Field pictureField = ((ComplexField) field).getValue().getValueField(picture_key);
+                if (pictureField == null) {
+                    return;
+                } else if (pictureField.getType() != FieldTypeEnum.COMPLEX) {
+                    throw new BusinessException(errMsgSchemaChange);
+                }
+                ComplexValue itemPictureValue = defaultComplexValue.getComplexFieldValue(picture_key);
+                if (itemPictureValue == null || itemPictureValue.getFieldMap() == null || itemPictureValue.getFieldMap().size() == 0) {
+                    return;
+                }
+
+                String image_hot_area_key_main = "image_hot_area_"; // image_hot_area_0 complex
+                String hot_area_key = "hot_area"; // 图片热区 multiComplex
+                String item_picture_image_key = "item_picture_image"; // 图片url
+                // Map<item_picture_image, hot_area>
+                Map<String, List<ComplexValue>> mapHotAreaValue = new HashMap<>();
+                for (int index = 0; index < 20; index++) {
+                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
+                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+                        continue;
+                    }
+
+                    String imageUrl = imageHotAreaValue.getInputFieldValue(item_picture_image_key);
+                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+                    if (ListUtils.notNull(hotAreaValue) && !StringUtils.isEmpty(imageUrl)) {
+                        mapHotAreaValue.put(imageUrl, hotAreaValue);
+                    }
+                }
+
+                for (int index = 0; index < 20; index++) {
+                    // image_hot_area_0
+                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
+                    Field imageHotAreaField = ((ComplexField) pictureField).getValue().getValueField(image_hot_area_key);
+                    if (imageHotAreaField == null) {
+                        continue;
+                    } else if (imageHotAreaField.getType() != FieldTypeEnum.COMPLEX) {
+                        throw new BusinessException(errMsgSchemaChange);
+                    }
+//                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+//                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+//                        continue;
+//                    }
+
+                    // 图片热区
+                    Field hotAreaField = ((ComplexField) imageHotAreaField).getValue().getValueField(hot_area_key);
+                    if (hotAreaField == null) {
+                        continue;
+                    } else if (hotAreaField.getType() != FieldTypeEnum.MULTICOMPLEX) {
+                        throw new BusinessException(errMsgSchemaChange);
+                    }
+
+//                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+                    String imageUrl = ((ComplexField) imageHotAreaField).getValue().getInputFieldValue(item_picture_image_key);
+                    if (!StringUtils.isEmpty(imageUrl)) {
+                        List<ComplexValue> hotAreaValue = mapHotAreaValue.get(imageUrl);
+                        if (ListUtils.notNull(hotAreaValue)) {
+                            ((MultiComplexField) hotAreaField).setComplexValues(hotAreaValue);
+                        }
+                    }
+                }
+            }
+        }
+        // added by morse.lu 2012/12 end
     }
 
     /**
      * 循环无线描述field进行设值
      */
     private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, SxData sxData) throws Exception {
-        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
         if (!mapValue.containsKey(field.getId())) {
             $warn(errorMsg);
             return;
