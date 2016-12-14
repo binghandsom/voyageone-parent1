@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +97,12 @@ public class RedisCache<K, V> implements Cache<K, V> {
 		if(key instanceof String){
 			String preKey = this.keyPrefix + key;
     		return preKey;
-    	}else{
+    	}
+		else if(key instanceof PrincipalCollection)
+		{
+			return  this.keyPrefix + ((PrincipalCollection) key).getPrimaryPrincipal().toString();
+		}
+		else{
 			byte[] prefix = keyPrefix.getBytes();
 			byte[] keybytes  = cache.getKeySerializer().serialize(key);
 			byte[] byte_3 = new byte[prefix.length + keybytes.length];
