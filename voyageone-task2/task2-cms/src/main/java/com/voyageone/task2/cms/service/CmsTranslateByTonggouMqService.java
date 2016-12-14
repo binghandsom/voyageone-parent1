@@ -114,7 +114,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         // 参数: 是否翻译标题(默认为不翻译标题)
         boolean blnNeedTransTitle;
         if (messageMap.containsKey("blnNeedTransTitle")) {
-            blnNeedTransTitle = (Boolean) (messageMap.get("blnNeedTransTitle"));
+            blnNeedTransTitle = Boolean.valueOf(String.valueOf(messageMap.get("blnNeedTransTitle")));
         } else {
             blnNeedTransTitle = false;
         }
@@ -130,7 +130,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         // 参数: 执行方式 false或true（对于标题以外的翻译项目，false的场合，如果未翻译的场合才会进行翻译; true的场合，不管是否已翻译，都会进行翻译；默认为false）
         boolean blnRunType;
         if (messageMap.containsKey("blnRunType")) {
-            blnRunType = (Boolean) (messageMap.get("blnRunType"));
+            blnRunType = Boolean.valueOf(String.valueOf(messageMap.get("blnRunType")));
         } else {
             blnRunType = false;
         }
