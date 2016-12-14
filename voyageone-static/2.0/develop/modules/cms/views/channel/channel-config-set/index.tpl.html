@@ -81,13 +81,13 @@
                                <td class="text-center">{{element.configKey}}</td>
                                <td class="text-center">{{element.configCode}}</td>
                                <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue1" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked">
+                                   <input type="text" class="form-control" ng-model="element.configValue1" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue1">
                                </td>
                                <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue2" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked">
+                                   <input type="text" class="form-control" ng-model="element.configValue2" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue2">
                                </td>
                                <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue3" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked">
+                                   <input type="text" class="form-control" ng-model="element.configValue3" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue3">
                                </td>
                                <td class="text-center">{{element.sample}}</td>
                                <td class="text-center"><popover-text content="element.comment" direct="left" size="20"></popover-text></td>
