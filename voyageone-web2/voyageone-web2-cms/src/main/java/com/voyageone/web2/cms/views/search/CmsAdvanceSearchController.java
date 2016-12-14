@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -19,15 +20,22 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Edward
@@ -82,6 +90,16 @@ public class CmsAdvanceSearchController extends CmsController {
                 $error("转换输入参数时出错", e);
             }
         }
+        String[] codeList = params.getCodeList();
+        if (codeList != null && codeList.length > 0) {
+            HashSet<String> codeSet = new HashSet<String>(Arrays.asList(codeList));
+            if (codeSet.size() > 2000) {
+                throw new BusinessException("款号/Code/SKU去重之后最大不能超过2000");
+            }
+            String[] codes = new String[codeSet.size()];
+            params.setCodeList(codeSet.toArray(codes));
+        }
+
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();

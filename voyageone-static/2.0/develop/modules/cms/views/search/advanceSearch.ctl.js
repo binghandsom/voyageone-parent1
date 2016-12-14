@@ -1116,7 +1116,11 @@ define([
         }
 
         // 下载已创建完成的数据文件
-        $scope.openDownload = function (fileName) {
+        $scope.openDownload = function (fileName,status) {
+            if (status == -1){
+                alert("文件已经过期，请重新下载");
+                return;
+            }
             function _exportFileCallback(res) {
                 var obj = JSON.parse(res);
                 if (obj.code == '4004') {
