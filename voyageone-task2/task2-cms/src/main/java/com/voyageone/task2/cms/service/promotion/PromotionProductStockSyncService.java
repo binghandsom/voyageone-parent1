@@ -64,6 +64,7 @@ public class PromotionProductStockSyncService extends BaseMQCmsService {
              // 对每个店铺进行处理
              String channelId = shopObj.getOrder_channel_id();
              String cartIdStr = shopObj.getCart_id();
+             $info("channelId="+channelId +" cartIdStr" + cartIdStr);
              if (StringUtils.trimToNull(shopObj.getApp_url()) == null) {
                  $warn("PromotionProductStockSyncService 店铺数据不完整！ channelId=%s, cartId=%s", channelId, cartIdStr);
                  continue;
