@@ -25,7 +25,7 @@ define([
                 email: this.sourceData.email,
                 active: this.sourceData.active != null ? this.sourceData.active : '1',
                 description: this.sourceData.description != null ? this.sourceData.description : '',
-                companyId: this.sourceData.companyId != null ? this.sourceData.companyId + '' : ''
+                companyId: this.sourceData.companyId
             };
             this.leftSelectedFlg = false;
             this.rightSelectedFlg = false;
