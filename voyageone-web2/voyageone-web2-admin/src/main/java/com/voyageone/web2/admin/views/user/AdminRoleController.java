@@ -38,7 +38,7 @@ public class AdminRoleController extends AdminController {
      * @return
      */
     @RequestMapping(AdminUrlConstants.User.Role.INIT)
-    public AjaxResponse searchUser() {
+    public AjaxResponse searchRole() {
         PaginationResultBean<AdminRoleBean> result = adminRoleService.searchRole(1, DEFAULT_PAGE_SIZE);
         return success(result);
     }
@@ -49,7 +49,7 @@ public class AdminRoleController extends AdminController {
      * @return
      */
     @RequestMapping(AdminUrlConstants.User.Role.SEARCH_ROLE)
-    public AjaxResponse searchUser(@RequestBody UserFormBean form) {
+    public AjaxResponse searchRole(@RequestBody UserFormBean form) {
         int pageNum = 1;
         int pageSize = DEFAULT_PAGE_SIZE;
 

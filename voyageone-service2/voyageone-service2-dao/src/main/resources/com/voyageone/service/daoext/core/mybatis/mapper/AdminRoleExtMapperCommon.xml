@@ -24,6 +24,13 @@
                 and r.active = #{active}
             </if>
 
+        </where>
+    </sql>
+
+
+    <sql id="selectRoleFilter1">
+        <where>
+
             <if test="channelId != null and channelId != ''" >
                 and (concat(',', rc_channel.cfg_val1, ',')  like concat('%,', #{channelId}, ',%') or concat(',', rc_channel.cfg_val1, ',')  like '%,ALL,%')
             </if>
@@ -42,14 +49,20 @@
 
 	
 	<select id="selectRoleByPage" resultMap="comUserModelMap">
+        SELECT * FROM
+        (
         SELECT r.*, GROUP_CONCAT( DISTINCT application) as application ,
-        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id,  GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
+        GROUP_CONCAT( DISTINCT rc_channel.cfg_val1) as channel_id, GROUP_CONCAT( DISTINCT rc_store.cfg_val1) as store_id
         FROM com_role r
         LEFT JOIN view_role_application ap ON ap.id = r.id
-        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND  ch.active = 1 WHERE rc.cfg_name = 'channel_id') rc_channel ON  rc_channel.role_id =r.id
-        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN  synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND  st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON  rc_store.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.tm_order_channel ch ON ch.order_channel_id = rc.cfg_val1 AND ch.active = 1 WHERE rc.cfg_name = 'channel_id')
+        rc_channel ON rc_channel.role_id =r.id
+        LEFT JOIN (SELECT role_id, cfg_val1 FROM com_role_config rc LEFT JOIN synship.wms_mt_store st ON st.store_id = rc.cfg_val1 AND st.active = 1 WHERE rc.cfg_name = 'store_id') rc_store ON
+        rc_store.role_id =r.id
         <include refid="selectRoleFilter"/>
         GROUP BY r.id
+        ) t
+        <include refid="selectRoleFilter1"/>
 
 
 	</select>
@@ -68,6 +81,7 @@
         <include refid="selectRoleFilter"/>
         GROUP BY r.id
         )t
+        <include refid="selectRoleFilter1"/>
 	</select>
 
 
