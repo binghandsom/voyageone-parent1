@@ -596,8 +596,9 @@ public class CmsBtCombinedProductService extends BaseService {
     public List<CombinedSkuInfoBean> getSuitSkuInfo() {
         /*String query = String.format("{'active':1}");*/
         JongoQuery query = new JongoQuery();
-        query.setQuery("{'active':#}");
+        query.setQuery("{'active':#, 'status':#}");
         query.addParameters(1);
+        query.addParameters(CmsBtCombinedProductStatus.SUBMITTED);
         query.setSort("{'modified':-1, 'created':-1}");
         List<CmsBtCombinedProductModel> productModels = cmsBtCombinedProductDao.select(query);
         List<CombinedSkuInfoBean> suitSkuInfos = new ArrayList<CombinedSkuInfoBean>();
@@ -611,7 +612,7 @@ public class CmsBtCombinedProductService extends BaseService {
                         suitSkuInfo.setSku(skuBean.getSuitSkuCode());
                         suitSkuInfo.setReal_sku(skuItem.getSkuCode());
                         suitSkuInfo.setReal_sku_price(String.valueOf(skuItem.getPreferentialPrice()));
-                        suitSkuInfo.setReal_sku_name(product.getProductName());
+                        suitSkuInfo.setReal_sku_name(skuItem.getProductName());
                         suitSkuInfo.setNum_iid(product.getNumID());
                         suitSkuInfos.add(suitSkuInfo);
                     });
