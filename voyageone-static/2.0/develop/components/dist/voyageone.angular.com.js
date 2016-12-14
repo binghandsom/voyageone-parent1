@@ -3269,7 +3269,6 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
         var miliTimes;
 
         if (!input) {
-            console.warn("没有要转换的日期");
             return '';
         }
 
