@@ -76,7 +76,7 @@
                         <tbody>
                             <tr ng-repeat = "element in ctrl.dataList">
                                <td class="text-center">
-                                   <input type="checkbox" ng-model="element.isChecked">
+                                   <input type="checkbox" ng-model="element.isChecked" ng-change="ctrl.changeValueList(element)">
                                </td>
                                <td class="text-center">{{element.configKey}}</td>
                                <td class="text-center">{{element.configCode}}</td>
