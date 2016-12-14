@@ -25,7 +25,7 @@ define([
                 email: this.sourceData.email,
                 active: this.sourceData.active != null ? this.sourceData.active : '1',
                 description: this.sourceData.description != null ? this.sourceData.description : '',
-                companyId: this.sourceData.companyId != null ? this.sourceData.companyId + '' : ''
+                companyId: this.sourceData.companyId
             };
             this.leftSelectedFlg = false;
             this.rightSelectedFlg = false;
@@ -183,7 +183,11 @@ define([
                     tempRoleName.push(item.roleName);
                     _.extend(self.saveInfo, {'roleId': tempRoleList.join(','), 'roleName': tempRoleName.join(',')});
                 });
-                self.saveInfo.companyId = self.saveInfo.companyId ? self.saveInfo.companyId - 0 : '';
+                self.saveInfo.active = self.saveInfo.active ? self.saveInfo.active - 0 : '';
+                var targetCompany = _.filter(self.companyList,function(item){
+                    return item.id == self.saveInfo.companyId
+                });
+                _.extend(self.saveInfo, {'company':targetCompany[0].company});
                 _.extend(self.sourceData, self.saveInfo);
                 if (self.append == true) {
                     self.adminUserService.addUser(self.saveInfo).then(function (res) {
