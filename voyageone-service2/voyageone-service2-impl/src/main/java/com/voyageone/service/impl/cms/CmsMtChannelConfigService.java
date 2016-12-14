@@ -43,6 +43,8 @@ public class CmsMtChannelConfigService extends BaseService {
     private CommCacheControlService cacheControlService;
     @Autowired
     TypeChannelsService typeChannelsService;
+    @Autowired
+    CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
 
     public Map<String, Object> init(String channelId, String userName) {
         Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -155,9 +157,7 @@ public class CmsMtChannelConfigService extends BaseService {
         }
     }
 
-    @Autowired
-    CmsMtChannelConfigDaoExtCamel cmsMtChannelConfigDaoExtCamel;
-
+   //查询 map 参数 configKey
     public List<CmsMtChannelConfigInfo> search(Map<String, Object> map,String channelId,String lang) {
 
         map.put("channelId", channelId);
@@ -192,7 +192,13 @@ public class CmsMtChannelConfigService extends BaseService {
             });
         });
 
-        list.sort((h1, h2) -> h1.getConfigKey().compareTo(h2.getConfigKey()));
+        list.sort((h1, h2) -> {
+            int result = h1.getConfigKey().compareTo(h2.getConfigKey());
+            if (result == 0 && !com.voyageone.common.util.StringUtils.isEmpty(h1.getConfigCode()))
+                result = h1.getConfigCode().compareTo(h2.getConfigCode());
+
+            return result;
+        });
         return list;
     }
     public CmsMtChannelConfigInfo get(List<CmsMtChannelConfigInfo> list,String configKey,String configCode) {

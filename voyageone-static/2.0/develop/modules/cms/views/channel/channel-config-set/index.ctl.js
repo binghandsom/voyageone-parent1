@@ -58,6 +58,7 @@ define([
                 cmsMTChannelConfigService.saveList({list:selectEles},{
                     headers : {'content-type':'application/json;'}
                 }).then(function(){
+                    self.search();
                     notify.success("保存成功！");
                 });
             });
