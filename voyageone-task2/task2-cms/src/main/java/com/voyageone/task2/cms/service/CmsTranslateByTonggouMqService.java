@@ -120,9 +120,9 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         }
 
         // 参数: 需要翻译的产品common源项目和要回写目标项目对应关系map(源项目名，翻译后要回写的项目名)
-        BaseMongoMap<String, String> transSrcDesMap = null;
+        Map<String, String> transSrcDesMap = null;
         if (messageMap.containsKey("transSrcDesMap")) {
-            transSrcDesMap = (BaseMongoMap<String, String>) messageMap.get("transSrcDesMap");
+            transSrcDesMap = (Map<String, String>) messageMap.get("transSrcDesMap");
         } else {
             // 这里不能报错，因为可能它只想翻译标题，不想翻译其他项目
         }
@@ -159,7 +159,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
      * @param transSrcDesMap 需要翻译的项目和翻译后需要更新的项目对应map
      * @param blnRunType 执行方式 false或true（对于标题以外的翻译项目，false的场合，如果未翻译的场合才会进行翻译; true的场合，不管是否已翻译，都会进行翻译；默认为false）
      */
-    public void doMain(String channelId, List<String> codeList, boolean blnNeedTransTitle, BaseMongoMap<String, String> transSrcDesMap, boolean blnRunType) throws Exception {
+    public void doMain(String channelId, List<String> codeList, boolean blnNeedTransTitle, Map<String, String> transSrcDesMap, boolean blnRunType) throws Exception {
         $info("天猫同购共通标题描述翻译开始!");
 
         // 取得synship.com_mt_third_party_config表中配置的同购APPKEY，翻译专用商品id等信息
@@ -299,7 +299,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
      * @return JongoUpdate 翻译成功之后回写JongoUpdateSql，更新失败时返回null
      */
     public JongoUpdate doTranslateByTonggouSingle(ShopBean transShop, String channelId, String code, boolean blnNeedTransTitle,
-                                                  BaseMongoMap<String, String> transSrcDesMap, boolean blnRunType, String numIIdForTransOnly,
+												  Map<String, String> transSrcDesMap, boolean blnRunType, String numIIdForTransOnly,
                                                   Map<String, Object> otherItemMap, BaseMongoMap<String, String> productInfoMap) throws Exception {
         if (transShop == null || StringUtils.isEmpty(channelId) || StringUtils.isEmpty(code) ||
                 StringUtils.isEmpty(numIIdForTransOnly)) return null;
