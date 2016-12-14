@@ -181,9 +181,9 @@ public class CmsMtChannelConfigService extends BaseService {
                     info = new CmsMtChannelConfigInfo();
                     info.setConfigKey(f.getConfigKey());
                     info.setConfigCode(configCode);
-                    info.setConfigValue1(f.getIsConfigValue1());
-                    info.setConfigValue2(f.getIsConfigValue2());
-                    info.setConfigValue3(f.getIsConfigValue3());
+                    info.setIsConfigValue1(f.getIsConfigValue1());
+                    info.setIsConfigValue2(f.getIsConfigValue2());
+                    info.setIsConfigValue3(f.getIsConfigValue3());
                     info.setComment(f.getComment());
                     info.setSample(f.getSample());
 
@@ -210,7 +210,7 @@ public class CmsMtChannelConfigService extends BaseService {
 
         info.getList().forEach(f -> {
             if (f.getId() != null && f.getId() > 0) {
-                if (f.getChecked()) {
+                if (f.getIsChecked()) {
                     //更新
                     saveList_update(f,userName);
                 } else {
@@ -218,7 +218,7 @@ public class CmsMtChannelConfigService extends BaseService {
                     saveList_delete(f);
                 }
             } else {
-                if (f.getChecked()) {
+                if (f.getIsChecked()) {
                     //新增
                     saveList_add(f, channelId, userName);
                 }
