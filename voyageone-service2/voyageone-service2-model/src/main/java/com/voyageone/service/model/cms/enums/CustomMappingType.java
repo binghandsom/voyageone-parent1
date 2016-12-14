@@ -33,6 +33,8 @@ public enum CustomMappingType {
         ITEM_IMAGES("item_images", "商品图片-"), // 商品图片
         VERTICAL_IMAGE("vertical_image", "竖图-"), // 商品竖图
         ITEM_ATTACH_IMAGES("item_attach_images", "商品资质图片-"), // 商品资质图片(1:吊牌图,2:耐久性标签",3:质检报告,4:合格证)
+        DIAOPAI_PIC("diaopai_pic", "吊牌图-商品图"), // 吊牌图
+        WHITE_BG_IMAGE("white_bg_image", "透明图"), // 透明素材图
         ;
 
         private final String propId;

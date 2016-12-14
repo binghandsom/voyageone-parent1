@@ -67,11 +67,16 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -124,6 +129,8 @@ public class SxProductService extends BaseService {
     private ImsBtProductExceptDao imsBtProductExceptDao;
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
+    @Autowired
+    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
     @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
@@ -640,12 +647,20 @@ public class SxProductService extends BaseService {
 
         $info("read complete, begin to upload image");
 
+        Picture picture = uploadImageToTm(shopBean, baos.toByteArray());
+        if (picture != null) {
+            $info(String.format("Success to upload image[%s -> %s]", url, picture.getPicturePath()));
+        }
+        return picture;
+
+    }
+
+    public Picture uploadImageToTm(ShopBean shopBean, byte[] file) {
         //上传到天猫
         Picture picture;
-        String pictureUrl = null;
         try {
             $info("upload image, wait Tmall response...");
-            PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, baos.toByteArray(), "image_title", "0");
+            PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, file, "image_title", "0");
             $info("response comes");
             if (pictureUploadResponse == null) {
                 String failCause = "上传图片到天猫时，超时, tmall response为空";
@@ -658,15 +673,12 @@ public class SxProductService extends BaseService {
                 throw new BusinessException(failCause);
             }
             picture = pictureUploadResponse.getPicture();
-            if (picture != null)
-                pictureUrl = picture.getPicturePath();
         } catch (ApiException e) {
             String failCause = "上传图片到天猫国际时出错！ msg:" + e.getMessage();
             $error("errCode: " + e.getErrCode());
             $error("errMsg: " + e.getErrMsg());
             throw new BusinessException(failCause);
         }
-        $info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
 
         return picture;
     }
@@ -2841,21 +2853,24 @@ public class SxProductService extends BaseService {
                 String image_hot_area_key_main = "image_hot_area_"; // image_hot_area_0 complex
                 String hot_area_key = "hot_area"; // 图片热区 multiComplex
                 String item_picture_image_key = "item_picture_image"; // 图片url
-                // Map<item_picture_image, hot_area>
-                Map<String, List<ComplexValue>> mapHotAreaValue = new HashMap<>();
-                for (int index = 0; index < 20; index++) {
-                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
-                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
-                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
-                        continue;
-                    }
 
-                    String imageUrl = imageHotAreaValue.getInputFieldValue(item_picture_image_key);
-                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
-                    if (ListUtils.notNull(hotAreaValue) && !StringUtils.isEmpty(imageUrl)) {
-                        mapHotAreaValue.put(imageUrl, hotAreaValue);
-                    }
-                }
+                // 这段先注掉，暂时不按url作为key 塞到对应的 图片热区，而是直接20张按顺序依次塞值
+                // 由运营保证热区一定设置在最前面几张图，不会有空白图(因为有空白图了，我们20张图的顺序到天猫上，会被自动朝前移，把空白图顶掉，我们再从天猫取的时候第一张图对应的可能不再是第一张图)
+//                // Map<item_picture_image, hot_area>
+//                Map<String, List<ComplexValue>> mapHotAreaValue = new HashMap<>();
+//                for (int index = 0; index < 20; index++) {
+//                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
+//                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+//                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+//                        continue;
+//                    }
+//
+//                    String imageUrl = imageHotAreaValue.getInputFieldValue(item_picture_image_key);
+//                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+//                    if (ListUtils.notNull(hotAreaValue) && !StringUtils.isEmpty(imageUrl)) {
+//                        mapHotAreaValue.put(imageUrl, hotAreaValue);
+//                    }
+//                }
 
                 for (int index = 0; index < 20; index++) {
                     // image_hot_area_0
@@ -2866,10 +2881,10 @@ public class SxProductService extends BaseService {
                     } else if (imageHotAreaField.getType() != FieldTypeEnum.COMPLEX) {
                         throw new BusinessException(errMsgSchemaChange);
                     }
-//                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
-//                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
-//                        continue;
-//                    }
+                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+                        continue;
+                    }
 
                     // 图片热区
                     Field hotAreaField = ((ComplexField) imageHotAreaField).getValue().getValueField(hot_area_key);
@@ -2879,14 +2894,14 @@ public class SxProductService extends BaseService {
                         throw new BusinessException(errMsgSchemaChange);
                     }
 
-//                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
-                    String imageUrl = ((ComplexField) imageHotAreaField).getValue().getInputFieldValue(item_picture_image_key);
-                    if (!StringUtils.isEmpty(imageUrl)) {
-                        List<ComplexValue> hotAreaValue = mapHotAreaValue.get(imageUrl);
+                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+//                    String imageUrl = ((ComplexField) imageHotAreaField).getValue().getInputFieldValue(item_picture_image_key);
+//                    if (!StringUtils.isEmpty(imageUrl)) {
+//                        List<ComplexValue> hotAreaValue = mapHotAreaValue.get(imageUrl);
                         if (ListUtils.notNull(hotAreaValue)) {
                             ((MultiComplexField) hotAreaField).setComplexValues(hotAreaValue);
                         }
-                    }
+//                    }
                 }
             }
         }
@@ -3035,9 +3050,31 @@ public class SxProductService extends BaseService {
             for (CustomMappingType.ImageProp imageProp : CustomMappingType.ImageProp.values()) {
                 if (imageProp.getPropId().equals(field.getId())) {
                     hasSetting = true;
-                    // 第一张图
-                    String url = resolveDict(imageProp.getBaseDictName() + "1", expressionParser, shopBean, user, null);
+                    String dictName = imageProp.getBaseDictName();
+                    if ("-".equals(dictName.substring(dictName.length() - 1))) {
+                        // 最后一位是"-"
+                        // 第一张图
+                        dictName = dictName + "1";
+                    }
+                    String url = resolveDict(dictName, expressionParser, shopBean, user, null);
                     ((InputField) field).setValue(url);
+
+                    if (imageProp == CustomMappingType.ImageProp.DIAOPAI_PIC) {
+                        // 吊牌图
+                        if (StringUtils.isEmpty(url) && isXinPin(sxData.getMainProduct(), sxData.getCartId())) {
+                            // 是新品，但是没有吊牌图
+                            throw new BusinessException("是新品,但是吊牌图未设定,或通过设定未取得!");
+                        }
+                    }
+                    if (imageProp == CustomMappingType.ImageProp.WHITE_BG_IMAGE) {
+                        // 透明图
+                        if (!StringUtils.isEmpty(url)) {
+                            // 字典取到了需要转换的透明图的原图
+                            // 转成透明图
+                            ((InputField) field).setValue(uploadTransparentPictureToTm(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopBean, url, user));
+                        }
+                    }
+
                     break;
                 }
             }
@@ -4766,5 +4803,98 @@ public class SxProductService extends BaseService {
             WriteResult rs = platformActiveLogDao.insert(model);
             $debug("SxProductService 记录商品上下架历史时成功! [channelId=%s] [cartId=%s] [groupId=%s], [platformActiveLog保存结果=%s]", channelId, cartId, pCode, rs.toString());
         }
+    }
+
+    /**
+     * 上传透明图片到天猫图片空间
+     *
+     * @param channelId   渠道id
+     * @param cartId      平台id
+     * @param groupId     groupId
+     * @param shopBean    shopBean
+     * @param imageUrl    待上传url的
+     * @param user        更新者
+     */
+    public String uploadTransparentPictureToTm(String channelId, int cartId, String groupId, ShopBean shopBean, String imageUrl, String user) throws Exception {
+        CmsBtPlatformImagesModel imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImage(channelId, cartId, groupId, imageUrl);
+        if (imageUrlModel != null) {
+            return imageUrlModel.getPlatformImgUrl();
+        }
+
+        String platformUrl = null;
+        String pictureId = null;
+        try {
+            Picture picture = uploadImageToTm(shopBean, convertTransparentPicture(imageUrl));
+            if (picture != null) {
+                platformUrl = picture.getPicturePath();
+                pictureId = String.valueOf(picture.getPictureId());
+            }
+        } catch (Exception e) {
+            // 暂不抛错，返回null吧
+        }
+
+        if (!StringUtils.isEmpty(platformUrl)) {
+            CmsBtPlatformImagesModel imageUrlInfo = new CmsBtPlatformImagesModel();
+            imageUrlInfo.setCartId(cartId);
+            imageUrlInfo.setChannelId(channelId);
+            imageUrlInfo.setSearchId(groupId);
+            imageUrlInfo.setImgName(""); // 暂定为空
+            imageUrlInfo.setOriginalImgUrl(imageUrl);
+            imageUrlInfo.setPlatformImgUrl(platformUrl);
+            imageUrlInfo.setPlatformImgId(pictureId);
+            imageUrlInfo.setUpdFlg(UPD_FLG_UPLOADED);
+            imageUrlInfo.setCreater(user);
+            imageUrlInfo.setModifier(user);
+            cmsBtPlatformImagesDao.insert(imageUrlInfo);
+        }
+
+        return platformUrl;
+    }
+
+    /**
+     * 转成透明图
+     */
+    public byte[] convertTransparentPicture(String picUrl) {
+        try {
+            BufferedImage image = ImageIO.read(new URL(picUrl));
+            ImageIcon imageIcon = new ImageIcon(image);
+            BufferedImage bufferedImage = new BufferedImage(
+                    imageIcon.getIconWidth(), imageIcon.getIconHeight(),
+                    BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2D = (Graphics2D) bufferedImage.getGraphics();
+            g2D.drawImage(imageIcon.getImage(), 0, 0,
+                    imageIcon.getImageObserver());
+            int alpha = 0;
+            for (int j1 = bufferedImage.getMinY(); j1 < bufferedImage
+                    .getHeight(); j1++) {
+                for (int j2 = bufferedImage.getMinX(); j2 < bufferedImage
+                        .getWidth(); j2++) {
+                    int rgb = bufferedImage.getRGB(j2, j1);
+                    if (colorInRange(rgb))
+                        alpha = 0;
+                    else
+                        alpha = 255;
+                    rgb = (alpha << 24) | (rgb & 0x00ffffff);
+                    bufferedImage.setRGB(j2, j1, rgb);
+                }
+            }
+            g2D.drawImage(bufferedImage, 0, 0, imageIcon.getImageObserver());
+            // 生成图片为PNG
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
+        }
+    }
+
+    private boolean colorInRange(int color) {
+        int color_range = 245;
+        int red = (color & 0xff0000) >> 16;
+        int green = (color & 0x00ff00) >> 8;
+        int blue = (color & 0x0000ff);
+        if (red >= color_range && green >= color_range && blue >= color_range)
+            return true;
+        return false;
     }
 }
