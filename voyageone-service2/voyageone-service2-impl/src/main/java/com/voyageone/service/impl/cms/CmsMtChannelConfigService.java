@@ -186,6 +186,7 @@ public class CmsMtChannelConfigService extends BaseService {
                     info.setConfigValue3(f.getIsConfigValue3());
                     info.setComment(f.getComment());
                     info.setSample(f.getSample());
+
                     list.add(info);
                 }
             });
