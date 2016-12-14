@@ -10,7 +10,7 @@
        LEFT JOIN `cms_mt_channel_config` AS b ON a.`config_key`=b.config_key AND b.`channel_id`=#{channelId}
         <where>
              !(is_platform=1 AND b.id IS  NULL)
-            <if test="configKey!=null">
+            <if test="configKey!=null and configKey!=''">
                and   a.config_key like CONCAT('%',#{configKey},'%');
             </if>
         </where>
