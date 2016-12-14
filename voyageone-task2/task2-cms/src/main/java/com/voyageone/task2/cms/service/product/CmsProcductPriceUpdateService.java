@@ -49,7 +49,12 @@ public class CmsProcductPriceUpdateService extends BaseMQCmsService {
         }
 
         int cartId = (Integer) messageMap.get("cartId");
-        long prodId = (Integer) messageMap.get("productId");
+        Long prodId = null;
+        if(messageMap.get("productId") instanceof Integer){
+            prodId = Long.valueOf((Integer)messageMap.get("productId"));
+        }else if(messageMap.get("productId") instanceof Long){
+            prodId = (long) messageMap.get("productId");
+        }
         $info( String.format("CmsProcductPriceUpdateService start channelId = %s  cartId = %d  prodId = %d",channelId,cartId,prodId));
         JongoQuery queryObj = new JongoQuery();
         queryObj.setQuery("{'prodId':#,'platforms.P#.skus':{$exists:true}}");
