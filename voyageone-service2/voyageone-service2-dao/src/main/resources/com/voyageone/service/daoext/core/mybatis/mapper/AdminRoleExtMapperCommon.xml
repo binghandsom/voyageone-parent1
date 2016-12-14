@@ -32,11 +32,11 @@
         <where>
 
             <if test="channelId != null and channelId != ''" >
-                and (concat(',', rc_channel.cfg_val1, ',')  like concat('%,', #{channelId}, ',%') or concat(',', rc_channel.cfg_val1, ',')  like '%,ALL,%')
+                and (concat(',', channel_id, ',')  like concat('%,', #{channelId}, ',%') or concat(',',  channel_id, ',')  like '%,ALL,%')
             </if>
 
             <if test="storeId != null and storeId != ''" >
-                and (concat(',', rc_store.cfg_val1, ',')  like concat('%,', #{storeId}, ',%') or concat(',', rc_store.cfg_val1, ',')  like '%,ALL,%')
+                and (concat(',',  store_id, ',')  like concat('%,', #{storeId}, ',%') or concat(',',  store_id, ',')  like '%,ALL,%')
             </if>
 
             <if test="application != null and application != ''" >
