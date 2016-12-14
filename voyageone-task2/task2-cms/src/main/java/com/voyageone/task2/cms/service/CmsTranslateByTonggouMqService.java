@@ -413,8 +413,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         // 生成更新SQL
         if (!MapUtils.isEmpty(transResultMap)) {
             JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':#}");
-            updObj.setQueryParameters(code);
+            updObj.setQuery("{'common.fields.code':'" + code + "'}");
             // 遍历结果map逐个添加回写更新用字段
             StringBuilder sbUpdate = new StringBuilder("{$set:{");
             int index = 0;
@@ -427,10 +426,11 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 index++;
             }
             // 更新翻译状态，翻译者，翻译时间等项目
-            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':#, 'common.fields.translateTime':#, 'common.fields.priorTranslateDate':''}}");
+            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':'" + getTaskName()
+					+ "', 'common.fields.translateTime':'" + DateTimeUtil.getNow()
+					+ "', 'common.fields.priorTranslateDate':''}}");
 
             updObj.setUpdate(sbUpdate.toString());
-            updObj.setUpdateParameters(getTaskName(), DateTimeUtil.getNow());
             return updObj;
         }
 
