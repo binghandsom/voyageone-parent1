@@ -34,18 +34,30 @@ define([
             this.init();
         };
 
-        ChannelConfigSet.prototype.changeValueList = function(value){
-            console.log("change value",value);
+        ChannelConfigSet.prototype.changeValueList = function(element){
+
+            element.selected = true;
         };
 
         ChannelConfigSet.prototype.save = function(){
             var self = this,
                 notify = self.notify,
                 confirm = self.confirm,
+                selectEles = [],
                 cmsMTChannelConfigService = self.cmsMTChannelConfigService;
 
+            selectEles = _.filter(self.dataList,function(item){
+                return item.selected
+            });
+
+            _.each(self.dataList,function(ele){
+                delete ele.selected;
+            });
+
             confirm("您是否要保存当前配置信息？").then(function(){
-                cmsMTChannelConfigService.save().then(function(){
+                cmsMTChannelConfigService.saveList({list:selectEles},{
+                    headers : {'content-type':'application/json;'}
+                }).then(function(){
                     notify.success("保存成功！");
                 });
             });
