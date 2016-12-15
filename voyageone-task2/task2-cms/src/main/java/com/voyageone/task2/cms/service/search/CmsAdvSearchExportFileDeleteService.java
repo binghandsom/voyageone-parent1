@@ -39,6 +39,7 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
+        $info("CmsAdvSearchExportFileDeleteService开始");
         Map<String, Object> map = new HashMap<String, Object>();
         List<Integer> taskTypes = new ArrayList<Integer>();
         taskTypes.add(CmsBtExportTaskService.FEED); // 额外新增
@@ -53,10 +54,11 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
         map.put("created", cal.getTime());
         List<CmsBtExportTaskModel> tasksModels = cmsBtExportTaskDao.queryFileDeleting(map);
         if (CollectionUtils.isNotEmpty(tasksModels)) {
+            $info("需要删除的文件数："+tasksModels.size());
             String advSearchExportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
             String feedExportPath =  CmsBtExportTaskService.savePath;
             for (CmsBtExportTaskModel task:tasksModels) {
-
+                $info(task.getFileName());
                 if (StringUtils.isNotBlank(task.getFileName()) && task.getStatus() == 1) {
                     String filePath = "";
                     if (task.getTaskType() != null && task.getTaskType().intValue() == CmsBtExportTaskService.FEED) {
@@ -64,20 +66,26 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
                     }else if (task.getTaskType() != null && task.getTaskType().intValue() == CmsBtExportTaskService.ADV_SEARCH) {
                         filePath = advSearchExportPath + task.getFileName();
                     }
+                    boolean exists = true;
                     File file = new File(filePath);
                     if (file.isFile() && file.exists()) {
                         boolean deleted = file.delete();
-                        if (deleted) {
-                            CmsBtExportTaskModel target = new CmsBtExportTaskModel();
-                            target.setStatus(-1); // 导出文件已被系统定期删除
-                            target.setId(task.getId());
-                            target.setComment("文件过期，系统删除。");
-                            target.setModifier("SYSTEM");
-                            cmsBtExportTaskDao.update(target);
-                        }
+                        exists = !deleted;
+                    }else {
+                        exists = false;
+                    }
+                    if (!exists) {
+                        CmsBtExportTaskModel target = new CmsBtExportTaskModel();
+                        target.setStatus(-1); // 导出文件已被系统定期删除
+                        target.setId(task.getId());
+                        target.setComment("文件过期");
+                        target.setModifier("SYSTEM");
+                        cmsBtExportTaskDao.update(target);
                     }
                 }
             }
+        }else{
+            $info("没有需要删除的文件");
         }
     }
 
