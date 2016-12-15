@@ -519,12 +519,14 @@ public class CmsFieldEditService extends BaseViewService {
             qryStr.append("]}");
             queryObject.setQuery(qryStr.toString());
             queryObject.setParameters(productCodes);
-            queryObject.setProjection("{'common.fields.code':1,'_id':0}");
+            queryObject.setProjection("{'common.fields.code':1,'common.fields.hsCodeStatus':1,'_id':0}");
 
             List<CmsBtProductModel> prodList = productService.getList(userInfo.getSelChannelId(), queryObject);
             if (prodList != null && prodList.size() > 0) {
                 // 存在未ready状态
                 List<String> codeList = new ArrayList<>(prodList.size());
+                List<String> hsCodeList = new ArrayList<>();
+
                 for (CmsBtProductModel prodObj : prodList) {
                     if (prodObj.getCommon() == null) {
                         continue;
@@ -533,13 +535,19 @@ public class CmsFieldEditService extends BaseViewService {
                     if (field != null && field.getCode() != null) {
                         codeList.add(field.getCode());
                     }
+
+                    if(field != null && "0".equals(field.getHsCodeStatus())){
+                        hsCodeList.add(field.getCode());
+                    }
                 }
                 rsMap.put("ecd", 2);
-                rsMap.put("codeList", codeList);
 
-                if (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
-                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))) {
+                if (hsCodeList.size() > 0 && (newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId()))
+                        || newcartList.contains(Integer.parseInt(CartEnums.Cart.TT.getId())))) {
                     rsMap.put("ts", true);
+                    rsMap.put("codeList", hsCodeList);
+                }else{
+                    rsMap.put("codeList", codeList);
                 }
 
                 return rsMap;
