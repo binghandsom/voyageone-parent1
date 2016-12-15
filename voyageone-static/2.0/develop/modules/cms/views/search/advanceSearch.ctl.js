@@ -829,7 +829,7 @@ define([
          * @param cartId
          */
         function openApproval(openUpdateApprovalFnc, cartId) {
-            _chkProductSel(parseInt(cartId), function(cartId, _selProdList){
+            _chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
 
                 confirm($translate.instant('TXT_BULK_APPROVAL')).then(function () {
                     var productIds = [],
@@ -865,13 +865,19 @@ define([
                         }
                         if (res.data.ecd == 2) {
                             // 存在未ready状态
-                            var errMsg = '';
+                            var errMsg;
+
                             if (res.data.codeList.length > 10) {
                                 errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
                             } else {
                                 errMsg = res.data.codeList.join('， ');
                             }
-                            alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+
+                            if (res.data.ts)
+                                alert("下列商品没有设置税号，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+                            else
+                                alert("下列商品pending状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+
                             return;
                         }
                         if (res.data.ecd == 3) {
