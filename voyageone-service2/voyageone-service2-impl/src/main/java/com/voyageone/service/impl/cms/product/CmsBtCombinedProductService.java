@@ -360,9 +360,19 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param actionType
      */
     public void checkCombinedProducrtModel (CmsBtCombinedProductModel model, String channelId, String actionType) {
+        // 如果是暂存，不进行check，只需输入numId和选择cartId就行了
+        if (model != null && model.getStatus() != null && model.getStatus().intValue() == CmsBtCombinedProductStatus.TEMPORAL) {
+            if (model.getCartId() == null || StringUtils.isBlank(model.getNumID())) {
+                throw new BusinessException("组合套装商品暂存，请至少输入平台和商品编码！");
+            }
+            return;
+        }
         List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
-        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null || CollectionUtils.isEmpty((skus = model.getSkus()))) {
+        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null ) {
             throw new BusinessException("参数错误！");
+        }
+        if (CollectionUtils.isEmpty(skus = model.getSkus())) {
+            throw new BusinessException("组合套装商品SKU为空！");
         }
         int startSupplyChain = 0; // 店铺是否启动了供应链管理
         CmsChannelConfigBean startSupplyChainConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.START_SUPPLY_CHAIN);
