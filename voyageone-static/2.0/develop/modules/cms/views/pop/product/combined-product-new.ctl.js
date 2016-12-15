@@ -21,6 +21,7 @@ define([
                 };
                 $scope.vm.carts = context.carts;
                 $scope.vm.config.startSupplyChain = context.startSupplyChain == 1;
+                $scope.equalFlag = false;
 
                 $scope.getCombinedProductInfo = function () {
                     var cartId = $scope.vm.product.cartId,
@@ -84,6 +85,7 @@ define([
                         });
                     }
                     sku.warn = sku.suitPreferentialPrice != tempSuitPreferentialPrice;
+                    $scope.equalFlag = sku.warn;
                     sku.tempSuitPreferentialPrice = tempSuitPreferentialPrice;
 
                     // 动态统计套装组合SKU【组合套装中国最终售价 合计】
@@ -99,6 +101,12 @@ define([
                 };
 
                 $scope.addSubmit = function (status) {
+                    var cartId = $scope.vm.product.cartId;
+                    var numId = $scope.vm.product.numID;
+                    if (status == 0 && (!cartId || !numId)) { // 暂存
+                        alert("组合套装商品暂存，请至少输入平台和商品编码！");
+                        return;
+                    }
                     combinedProductService.add(_.extend($scope.vm.product, {"status": status})).then(function (resp) {
                         $scope.$close();
                     });
