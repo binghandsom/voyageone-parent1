@@ -275,6 +275,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
                         && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
                         && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1()))
                     throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
+                productPrice.setAutoSyncPriceMsrp(autoSyncPriceMsrp == null ? CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO : autoSyncPriceMsrp.getConfigValue1());
             }
         }
         return null;
