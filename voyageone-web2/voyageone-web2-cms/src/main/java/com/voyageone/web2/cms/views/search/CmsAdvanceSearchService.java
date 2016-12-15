@@ -424,6 +424,11 @@ public class CmsAdvanceSearchService extends BaseViewService {
             $info("CmsAdvanceSearchService：setProdFreeTag 未选择标签,将清空所有自由标签");
         }
 
+        List<String> orgDispTagList = null;
+        if(params.get("orgDispTagList") != null){
+            orgDispTagList = (List<String>) params.get("orgDispTagList");
+        }
+
         Integer isSelAll = (Integer) params.get("isSelAll");
         if (isSelAll == null) {
             isSelAll = 0;
@@ -443,7 +448,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 throw new BusinessException("缺少参数，未选择商品!");
             }
         }
-        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, modifier);
+        productTagService.setProdFreeTag(channelId, tagPathList, prodCodeList, orgDispTagList, modifier);
     }
 
     /**
