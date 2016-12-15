@@ -823,11 +823,14 @@ define([
             }
         }
 
-        // 商品审批
+        /**
+         * 商品审核
+         * @param openUpdateApprovalFnc
+         * @param cartId
+         */
         function openApproval(openUpdateApprovalFnc, cartId) {
-            _chkProductSel(parseInt(cartId), __openApproval);
+            _chkProductSel(parseInt(cartId), function(cartId, _selProdList){
 
-            function __openApproval(cartId, _selProdList) {
                 confirm($translate.instant('TXT_BULK_APPROVAL')).then(function () {
                     var productIds = [],
                         property;
@@ -844,6 +847,8 @@ define([
                         productIds: productIds,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
+
+                    check(property);
 
                     function check(propParams) {
                         return $fieldEditService.setProductFields(propParams).then(callback);
@@ -882,9 +887,9 @@ define([
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }
 
-                    check(property);
                 });
-            }
+            });
+
         }
 
         // 设置最终售价

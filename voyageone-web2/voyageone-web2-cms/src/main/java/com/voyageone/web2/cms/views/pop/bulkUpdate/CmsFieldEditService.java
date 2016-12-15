@@ -11,6 +11,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.*;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -458,28 +459,38 @@ public class CmsFieldEditService extends BaseViewService {
     public Map<String, Object> setProductApproval(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSession) {
         List<String> productCodes = (ArrayList<String>) params.get("productIds");
         Integer isSelAll = (Integer) params.get("isSelAll");
+
         if (isSelAll == null) {
             isSelAll = 0;
         }
 
         Map<String, Object> rsMap = new HashMap<>();
+
         if (isSelAll == 1) {
             // 从高级检索重新取得查询结果（根据session中保存的查询条件）
             productCodes = advanceSearchService.getProductCodeList(userInfo.getSelChannelId(), cmsSession);
         }
+
+        /**
+         * 未选择商品
+         * 结果代码 ecd ：1
+         */
         if (productCodes == null || productCodes.isEmpty()) {
             $warn("没有code条件 params=" + params.toString());
             rsMap.put("ecd", 1);
             return rsMap;
         }
 
+        // #############################################################################################################
+
         Integer cartId = (Integer) params.get("cartId");
         List<Integer> cartList = null;
+
         if (cartId == null || cartId == 0) {
             // 表示全平台更新
             // 店铺(cart/平台)列表
-            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+            List<TypeChannelBean> cartTypesList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList = cartTypesList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
         } else {
             cartList = new ArrayList<>(1);
             cartList.add(cartId);
@@ -493,12 +504,17 @@ public class CmsFieldEditService extends BaseViewService {
                 newcartList.add(cartIdVal);
             }
         }
-        if (newcartList.size() > 0) {
+        if (newcartList.size() > 1
+                || (newcartList.size() == 1
+                && !CartEnums.Cart.TT.getId().equals(String.valueOf(cartId))
+                && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartId)))) {
             JongoQuery queryObject = new JongoQuery();
             StringBuilder qryStr = new StringBuilder();
             qryStr.append("{'common.fields.code':{$in:#},$or:[");
             for (Integer cartIdVal : newcartList) {
-                qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
+                if (!CartEnums.Cart.TT.getId().equals(String.valueOf(cartIdVal))
+                        && !CartEnums.Cart.USTT.getId().equals(String.valueOf(cartIdVal)))
+                    qryStr.append("{'platforms.P" + cartIdVal + ".status':{$nin:['Ready','Approved']}},");
             }
             qryStr.deleteCharAt(qryStr.length() - 1);
             qryStr.append("]}");
@@ -525,6 +541,7 @@ public class CmsFieldEditService extends BaseViewService {
             }
         }
 
+        //###############################################################################################################
         // 检查商品价格 notChkPrice=1时表示忽略价格问题
         Integer notChkPriceFlg = (Integer) params.get("notChkPrice");
         if (notChkPriceFlg == null) {
@@ -599,6 +616,8 @@ public class CmsFieldEditService extends BaseViewService {
             }
         }
 
+        // ############################################################################################################
+
         BulkJongoUpdateList prodBulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, userInfo.getSelChannelId());
         BulkJongoUpdateList grpBulkList = new BulkJongoUpdateList(1000, cmsBtProductGroupDao, userInfo.getSelChannelId());
         List<String> newProdCodeList = new ArrayList<>();
@@ -671,7 +690,7 @@ public class CmsFieldEditService extends BaseViewService {
             $debug(String.format("商品审批(group表) channelId=%s 结果=%s", userInfo.getSelChannelId(), rs.toString()));
         }
 
-        String msg = "";
+        String msg;
         if (cartId == null || cartId == 0) {
             msg = "高级检索 商品审批(全平台)";
         } else {
