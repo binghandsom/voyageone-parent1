@@ -65,7 +65,7 @@ public class CmsBtFeedImportSizeService extends BaseService {
 
     public List<CmsBtFeedImportSizeModel> getList(String channelId, String brandName, String productType, String sizeType) {
         List<String> channelIdList=new ArrayList<>();
-        if(channelId=="928") {
+        if("928".equals(channelId)) {
 
             channelIdList=comMtValueChannelDaoExt.selectList928ChannelId();
         }
