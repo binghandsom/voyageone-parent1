@@ -5,9 +5,9 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
@@ -93,7 +93,7 @@ public class CmsFeedSearchService extends BaseViewService {
         for (int leng = delFlgList.size(), i = leng - 1; i >= 0; i--) {
             feedCatList.remove(delFlgList.get(i).intValue());
         }
-        masterData.put("sortList", CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
+        masterData.put("sortList", Types.getTypeList(CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
         masterData.put("categoryList", feedCatList);
         masterData.put("productType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.PRODUCT_TYPE));
         masterData.put("sizeType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.SIZE_TYPE));
