@@ -94,7 +94,7 @@ public class VmsBtClientOrdersModel extends BaseModel {
 
     protected BigDecimal totalGiftOptionTaxPrice;
 
-    protected BigDecimal totalFees;
+    protected BigDecimal otherFees;
 
     protected String currency;
 
@@ -414,12 +414,12 @@ public class VmsBtClientOrdersModel extends BaseModel {
         this.totalGiftOptionTaxPrice = totalGiftOptionTaxPrice;
     }
 
-    public BigDecimal getTotalFees() {
-        return totalFees;
+    public BigDecimal getOtherFees() {
+        return otherFees;
     }
 
-    public void setTotalFees(BigDecimal totalFees) {
-        this.totalFees = totalFees;
+    public void setOtherFees(BigDecimal otherFees) {
+        this.otherFees = otherFees;
     }
 
     public String getCurrency() {

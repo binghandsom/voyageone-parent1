@@ -1,6 +1,7 @@
 define([
     'cms',
-    './sortEnum'
+    './sortEnum',
+    'modules/cms/directives/platFormStatus.directive'
 ], function (cms, sortEnum) {
 
     cms.controller("newCategoryController", (function () {

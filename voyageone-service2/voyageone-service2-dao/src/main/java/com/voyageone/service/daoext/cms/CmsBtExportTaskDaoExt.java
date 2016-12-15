@@ -30,4 +30,6 @@ public interface CmsBtExportTaskDaoExt {
     int selectCnt(Map<String, Object> map);
 
     int checkTaskByUser(Map<String, Object> map);
+
+    List<CmsBtExportTaskModel> queryFileDeleting(Map<String, Object> map);
 }

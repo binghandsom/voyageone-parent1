@@ -140,7 +140,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             orderModel.setOrderDateUtc(m.getOrderDate());
             orderModel.setOrderStatus(OrderStatusEnum.getInstance(m.getOrderStatus()));
             orderModel.setRequestedShippingMethod(m.getRequestedShippingMethod());
-            orderModel.setTotalFees(m.getTotalFees());
+            orderModel.setOtherFees(m.getOtherFees());
             orderModel.setTotalGiftOptionPrice(m.getTotalGiftOptionPrice());
             orderModel.setTotalGiftOptionTaxPrice(m.getTotalGiftOptionTaxPrice());
             orderModel.setTotalPrice(m.getTotalPrice());
@@ -237,7 +237,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         orderModel.setOrderDateUtc(m.getOrderDate());
         orderModel.setOrderStatus(OrderStatusEnum.getInstance(m.getOrderStatus()));
         orderModel.setRequestedShippingMethod(m.getRequestedShippingMethod());
-        orderModel.setTotalFees(m.getTotalFees());
+        orderModel.setOtherFees(m.getOtherFees());
         orderModel.setTotalGiftOptionPrice(m.getTotalGiftOptionPrice());
         orderModel.setTotalGiftOptionTaxPrice(m.getTotalGiftOptionTaxPrice());
         orderModel.setTotalPrice(m.getTotalPrice());

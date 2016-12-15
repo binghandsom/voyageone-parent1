@@ -22,7 +22,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
     private static final String RETRY_PRE_FIX = "_____retry_";
 
     public RetryLimitHashedCredentialsMatcher(CacheManager cacheManager) {
-        passwordRetryCache = cacheManager.getCache("passwordRetryCache");
+//        passwordRetryCache = cacheManager.getCache("passwordRetryCache");
     }
 
     @Override

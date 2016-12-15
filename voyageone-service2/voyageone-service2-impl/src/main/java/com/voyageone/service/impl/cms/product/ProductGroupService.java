@@ -613,7 +613,7 @@ public class ProductGroupService extends BaseService {
     /**
      * 新建一个新的Group。
      */
-    public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode) {
+    public CmsBtProductGroupModel createNewGroup(String channelId, Integer cartId, String productCode, Boolean isCalculatePriceRange) {
 
         CmsBtProductGroupModel group = new CmsBtProductGroupModel();
 
@@ -654,9 +654,10 @@ public class ProductGroupService extends BaseService {
         group.setCreater(getClass().getName());
         group.setModifier(getClass().getName());
 
-        // 计算group价格区间
-        calculatePriceRange(group);
-
+        if(isCalculatePriceRange){
+            // 计算group价格区间
+            calculatePriceRange(group);
+        }
         return group;
     }
 

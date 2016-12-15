@@ -11,4 +11,21 @@
               where aa.order_channel_id = #{order_channel_id}
               group by aa.order_channel_id,aa.`code`;
        </select>
+
+
+       <resultMap id="SkuInventoryMap" type="com.voyageone.task2.cms.bean.SkuInventoryForCmsBean">
+              <result column="order_channel_id" property="channelId" javaType="String" jdbcType="VARCHAR"></result>
+              <result column="code" property="code" javaType="String" jdbcType="VARCHAR"></result>
+              <result column="sku" property="sku" javaType="String" jdbcType="VARCHAR"></result>
+              <result column="qty_china" property="qty" javaType="Integer" jdbcType="INTEGER"></result>
+       </resultMap>
+       <select id="cms_batchSelectInventory" parameterType="java.util.Map" resultMap="SkuInventoryMap">
+              select order_channel_id, code, sku, qty_china
+              FROM wms_bt_inventory_center_logic
+              WHERE order_channel_id = #{order_channel_id}
+              and code in
+              <foreach item="item" index="index" collection="codes" open="(" separator="," close=")">
+                     #{item}
+              </foreach>
+       </select>
 </mapper>

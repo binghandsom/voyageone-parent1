@@ -197,6 +197,9 @@
         <!-- 从老Cms系统取得销售数据（每天早上4：40点一次） -->
         <task:scheduled ref="CmsSumSneakerHeadSalesHisInfoJob" method="run" cron="0 40 20 * * ?"/>
 
+        <!--定时清除高级检索导出产生的下载文件-->
+        <task:scheduled ref="cmsAdvSearchExportFileDeleteJob" method="run" cron="0 0 2 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

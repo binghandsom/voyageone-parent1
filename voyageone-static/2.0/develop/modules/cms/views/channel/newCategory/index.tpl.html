@@ -216,6 +216,7 @@
                                 <tr>
                                     <th class="text-center v-middle"><input type="checkbox" ng-model="ctrl.selAll" ng-click="ctrl.selectAll()" class="v-sub">&nbsp;全选</th>
                                     <th class="text-center v-middle">图片</th>
+                                    <th class="text-center v-middle">平台状态</th>
                                     <th class="text-left v-middle">款号</th>
                                     <th class="text-left v-middle">商品名称</th>
                                     <th class="text-left v-middle">品牌</th>
@@ -237,6 +238,15 @@
                                                                                           ng-model="item.isChecked" class="v-sub" /> </td>
                                     <td class="mfb-xxt text-center v-middle">
                                         <img class="thumb-sm-search" image="{{item.image1}}"  />
+                                    </td>
+                                    <td class="text-center v-middle">
+                                        <platform-status data="{cartId:ctrl.routeParams.cartId,
+                                                       status:item.status,
+                                                       pStatus:item.pStatus,
+                                                       isMain:item.isMain,
+                                                       pReallyStatus:item.pReallyStatus,
+                                                       pPublishError:item.pPublishError,
+                                                       numberId:item.pNumIId}"></platform-status>
                                     </td>
                                     <td class="text-left v-middle">{{item.model}}</td>
                                     <td class="text-left v-middle cur-p"><popover-text content="item.productName" direct="left" size="20"></popover-text></td>

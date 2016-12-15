@@ -123,8 +123,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="creater != null" >
-                `modifier` = #{creater,jdbcType=VARCHAR},
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
         where `id` = #{id,jdbcType=INTEGER}
@@ -270,6 +270,20 @@
                 and `creater` = #{creater,jdbcType=VARCHAR}
             </if>
         </where>
+    </select>
+    
+    <select id="queryFileDeleting" parameterType="java.util.Map" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" /> FROM cms_bt_export_task
+        WHERE status =1
+        <if test="taskTypes != null and taskTypes.size() > 0">
+            and `task_type` in
+            <foreach item="taskType" index="index" collection="taskTypes" open="(" separator="," close=")">
+                #{taskType}
+            </foreach>
+        </if>
+        <if test="created != null">
+            and `created` <![CDATA[<]]> #{created, jdbcType=TIMESTAMP}
+        </if>
     </select>
 
 </mapper>
