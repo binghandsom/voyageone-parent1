@@ -20,6 +20,7 @@ module.exports = {
         'develop/components/!**!/!*.js'
     ],*/
     notify: false,
+    port:3000,
     middleware: [
         morgan('dev'),jsonPlaceholderProxy
         // ,function (req, res, next) {
