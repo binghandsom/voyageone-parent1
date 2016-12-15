@@ -197,7 +197,7 @@ public class PriceService extends BaseService {
         boolean roundUp = isRoundUp(channelId);
         boolean isAutoApprovePrice = isAutoApprovePrice(channelId) || synSalePriceFlg;
         /*boolean isAutoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId);*/
-        String autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId);
+        String autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId, cartId);
 
         // 去平台 SKU 信息
         // 遍历计算并保存价格
@@ -299,7 +299,7 @@ public class PriceService extends BaseService {
 
         // 计算是否计算 MSRP
         /*boolean isAutoSyncPriceMsrp = isAutoSyncPriceMsrp(channelId);*/
-        String autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId);
+        String autoSyncPriceMsrp = getAutoSyncPriceMsrpOption(channelId, cartId);
 
         // 计算发货方式
 
@@ -607,9 +607,9 @@ public class PriceService extends BaseService {
      */
     private void setProductMsrp(BaseMongoMap<String, Object> skuInPlatform, Double originPriceMsrp, String autoSyncPriceMsrp, Double retailPrice) {
         // 直接联动
-        if ("1".equals(autoSyncPriceMsrp)) {
+        if (CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp)) {
             skuInPlatform.put(priceMsrp.name(), originPriceMsrp);
-        }else if ("2".equals(autoSyncPriceMsrp)) { // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
+        }else if (CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp)) { // 当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动
             double priceMsrp = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()); // 当前中国建议售价
             // double originalPriceMsrp = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.originalPriceMsrp.name()); // 最新中国建议售价
             double priceSale = skuInPlatform.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()); // 最新中国最终售价
@@ -625,7 +625,7 @@ public class PriceService extends BaseService {
             if (originPriceMsrp.doubleValue() > priceSale && originPriceMsrp.doubleValue() < priceRetail) {
                 skuInPlatform.put(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name(), priceRetail);
             }
-        }else { // 默认值0，不联动
+        }else {
             // 如果不强制同步的话, 要看看是否原本是合法价格
             // 如果原本不是合法价格的话, 就同步设置
             resetPriceIfInvalid(skuInPlatform, priceMsrp, originPriceMsrp);
@@ -646,21 +646,24 @@ public class PriceService extends BaseService {
 
 
     /**
-     * CMSDOC-301更新说明：原有选项值0和1，其中0表示[不联动]，1表示[直接联动]
-     * 现新增选项值2,2表示[当前中国建议售价<中国最终售价或当前中国建议售价<中国指导售价时，自动联动]
+     * CMSDOC-301 说明：原有选项值0和1，返回false或true。现新增选项值2，直接返回选项值；同时新增查询条件cartId
      * @param channelId
+     * @param cartId
      * @return
+     * @throws IllegalPriceConfigException
      */
-    private String getAutoSyncPriceMsrpOption(String channelId) throws IllegalPriceConfigException {
-        String autoSyncPriceMsrpOption = "0";
-        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
-        if (autoSyncPriceMsrp != null && !"0".equals(autoSyncPriceMsrp.getConfigValue1())
-                && !"1".equals(autoSyncPriceMsrp.getConfigValue1()) && !"2".equals(autoSyncPriceMsrp.getConfigValue1())) {
+    private String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) throws IllegalPriceConfigException {
+        String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
+        /*CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);*/
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, cartId+"", CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+        if (autoSyncPriceMsrp != null
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
             throw new IllegalPriceConfigException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
         }
-        autoSyncPriceMsrpOption = autoSyncPriceMsrp != null ? autoSyncPriceMsrp.getConfigValue1() : "2";
         return autoSyncPriceMsrpOption;
-
+        // 修改之前代码如下，原方法名：isAutoSyncPriceMsrp
         /*boolean isAutoSyncPriceMsrp = false;
         CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
         if (autoSyncPriceMsrp != null && "1".equals(autoSyncPriceMsrp.getConfigValue1()))

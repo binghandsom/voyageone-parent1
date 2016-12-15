@@ -203,7 +203,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         cmsBtProduct.getPlatforms().values().forEach(f -> {
 
-            ProductPrice productPrice = getProductPrice(f);
+            ProductPrice productPrice = getProductPrice(f, channelId);
             if (productPrice != null) productPriceList.add(productPrice);
 
         });
@@ -226,7 +226,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         return productPriceSalesInfo;
     }
 
-    private ProductPrice getProductPrice( CmsBtProductModel_Platform_Cart f) {
+    private ProductPrice getProductPrice( CmsBtProductModel_Platform_Cart f, String channelId) {
         if (f.getCartId() != 0) {
             ProductPrice productPrice = new ProductPrice();
             productPrice.setStatus(f.getStatus());
@@ -268,7 +268,13 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             if (cart != null) {
                 productPrice.setCartName(cart.name());
 
-                return productPrice;
+                // 设置autoSyncPriceMsrp值
+                CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, f.getCartId().toString(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+                if (autoSyncPriceMsrp != null
+                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
+                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
+                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1()))
+                    throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
             }
         }
         return null;

@@ -29,6 +29,8 @@ public class ProductPrice {
 
     int checked;//0:未选中 1半选中   2选中
 
+    private String autoSyncPriceMsrp; // channelId and cartId 配置的选项值
+
     public int getChecked() {
         return checked;
     }
@@ -143,4 +145,11 @@ public class ProductPrice {
         this.priceSaleEd = priceSaleEd;
     }
 
+    public String getAutoSyncPriceMsrp() {
+        return autoSyncPriceMsrp;
+    }
+
+    public void setAutoSyncPriceMsrp(String autoSyncPriceMsrp) {
+        this.autoSyncPriceMsrp = autoSyncPriceMsrp;
+    }
 }
