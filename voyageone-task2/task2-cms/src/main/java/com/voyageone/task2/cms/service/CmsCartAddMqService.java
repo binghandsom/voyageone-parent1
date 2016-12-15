@@ -26,8 +26,8 @@ import java.util.Map;
  * Created by james on 2016/12/9.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CartAppJob)
-public class CmsCartAppMqService extends BaseMQCmsService {
+@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CartAddJob)
+public class CmsCartAddMqService extends BaseMQCmsService {
 
     private final ProductService productService;
 
@@ -38,7 +38,7 @@ public class CmsCartAppMqService extends BaseMQCmsService {
     private final static int pageSize = 200;
 
     @Autowired
-    public CmsCartAppMqService(ProductService productService, ProductGroupService productGroupService, PriceService priceService) {
+    public CmsCartAddMqService(ProductService productService, ProductGroupService productGroupService, PriceService priceService) {
         this.productService = productService;
         this.productGroupService = productGroupService;
         this.priceService = priceService;

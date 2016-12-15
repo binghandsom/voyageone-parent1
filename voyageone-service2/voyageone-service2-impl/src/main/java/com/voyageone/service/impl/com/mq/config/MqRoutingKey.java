@@ -85,7 +85,7 @@ public class MqRoutingKey {
     /**
      * cart追加 把product表中的platform追加一个cart
      */
-    public static final String CMS_BATCH_CartAppJob = "voyageone_cms_batchjob_CartApp_queue";
+    public static final String CMS_BATCH_CartAddJob = "voyageone_cms_batchjob_CartAdd_queue";
 
     /**
      * 同步产品sku的价格至code的group价格范围
