@@ -1015,7 +1015,7 @@ public class CmsProductMoveService extends BaseViewService {
             if ("new".equals(destGroupType)
                     || shop.getValue().equals(CartEnums.Cart.JM.getId())
                     || shop.getValue().equals(CartEnums.Cart.CN.getId())) {
-                productGroupService.insert(productGroupService.createNewGroup(channelId, Integer.parseInt(shop.getValue()), newFieldModel.getCode()));
+                productGroupService.insert(productGroupService.createNewGroup(channelId, Integer.parseInt(shop.getValue()), newFieldModel.getCode(), true));
             } else {
                 // 取得Group信息
                 CmsBtProductGroupModel groupModel = null;

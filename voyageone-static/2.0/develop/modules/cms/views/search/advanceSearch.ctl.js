@@ -84,6 +84,11 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
+            if($routeParams.type ==10001 )
+            {
+                $scope.vm.searchInfo.fCatPathList=[$routeParams.value1];
+                $scope.vm.feedCats = [{catId:$routeParams.value2,catPath:$routeParams.value1}];
+            }
             if ($routeParams.type == "1") {
                 // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
                 $scope.vm.searchInfo.catPath = decodeURIComponent($routeParams.value);
@@ -716,7 +721,8 @@ define([
                             var data = {
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
-                                "isSelAll": $scope.vm._selall ? 1 : 0
+                                "isSelAll": $scope.vm._selall ? 1 : 0,
+                                "orgDispTagList":res.orgDispTagList
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -1111,7 +1117,11 @@ define([
         }
 
         // 下载已创建完成的数据文件
-        $scope.openDownload = function (fileName) {
+        $scope.openDownload = function (fileName,status) {
+            if (status == -1){
+                alert("文件已经过期，请重新下载");
+                return;
+            }
             function _exportFileCallback(res) {
                 var obj = JSON.parse(res);
                 if (obj.code == '4004') {

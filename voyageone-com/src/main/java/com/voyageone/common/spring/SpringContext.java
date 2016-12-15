@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -97,5 +98,23 @@ public class SpringContext implements ApplicationContextAware {
             return null;
         }
         return applicationContext.getBeansWithAnnotation(cls);
+    }
+
+    /**
+     * 获取对象 Map
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Map<String, T> getBeansMap(Class<T> cls) {
+        Map<String, T> result = new LinkedHashMap<>();
+        if (applicationContext == null) {
+            return result;
+        }
+        String[] names = applicationContext.getBeanNamesForType(cls);
+        if (names != null && names.length > 0) {
+            for (String name : names) {
+                result.put(name, (T) applicationContext.getBean(name));
+            }
+        }
+        return result;
     }
 }

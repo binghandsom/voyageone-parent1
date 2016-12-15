@@ -164,13 +164,14 @@ define([
          * @param parentCatId   父节点catId
          * @param catName
          */
-        CategoryController.prototype.save = function (root, parentNode, parentCatId, catName) {
+        CategoryController.prototype.save = function (root, parentNode, parentCatId, catName, urlKey) {
             var self = this;
 
             this.selected[this.newIndex.value] = catName;
             self.sellerCatService.addCat({
                 "cartId": +this.cartInfo.cart,
                 "catName": catName,
+                "urlKey" : urlKey,
                 "parentCatId": parentCatId
             }).then(function (res) {
                 var newNode = getNodeByName(catName, res.data.catTree);

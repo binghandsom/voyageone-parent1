@@ -3,6 +3,7 @@ package com.voyageone.service.model.cms.mongo.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductMqqBean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
     public final static String FIELDS = "fields";
     public final static String SKUS = "skus";
     public final static String SELLER_CATS = "sellerCats";
+    public final static String MQQ = "mqq";
 
     public CmsBtProductModel_Platform_Cart(){
 
@@ -280,6 +282,14 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setAttribute(SELLER_CATS, sellerCats);
     }
 
+    // mqq
+    public List<ProductMqqBean> getMqq() {
+        return getAttribute(MQQ);
+    }
+    public void setMqq(List<ProductMqqBean> mqq) {
+        setAttribute(MQQ, mqq);
+    }
+
     public String getpReallyStatus() {
         return getStringAttribute("pReallyStatus");
     }
@@ -287,6 +297,8 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
         setStringAttribute("pReallyStatus",pReallyStatus);
     }
 
+    public String getIsNewSku(){ return  getStringAttribute("isNewSku"); }
+    public void setIsNewSku(String isNewSku){setStringAttribute("isNewSku", isNewSku);}
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {
@@ -344,6 +356,53 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String,Object>
                     }
                 }
                 value = sellerCatMaps;
+            }
+        }
+
+        // mqq
+        if (MQQ.equals(key)) {
+            if (value != null) {
+                if (value instanceof ProductMqqBean) {
+                    List<ProductMqqBean> mmq = new ArrayList<>();
+                    mmq.add((ProductMqqBean) value);
+                    value = mmq;
+                } else if (value instanceof Map) {
+                    Map<String, String> map = (Map<String, String>) value;
+                    if (map.containsKey("mqqName")) {
+                        List<ProductMqqBean> mmq = new ArrayList<>();
+                        ProductMqqBean model = new ProductMqqBean();
+                        model.setMqqName(map.get("mqqName"));
+                        model.setNumIId(map.get("numIId"));
+                        try {
+                            CmsConstants.PlatformStatus status = (StringUtils.isEmpty(map.get("status"))) ? null : CmsConstants.PlatformStatus.valueOf(map.get("status"));
+                            model.setStatus(status);
+                        } catch (IllegalArgumentException ignored) {
+                        }
+                        mmq.add(model);
+                        value = mmq;
+                    } else {
+                        value = null;
+                    }
+                } else if (value instanceof List) {
+                    List<Map<String, Object>> maps = (List<Map<String, Object>>) value;
+                    List<ProductMqqBean> listBean = new ArrayList<>();
+                    for (Map<String, Object> map : maps) {
+                        if (map.containsKey("mqqName")) {
+                            ProductMqqBean model = new ProductMqqBean();
+                            model.setMqqName((String) map.get("mqqName"));
+                            model.setNumIId((String) map.get("numIId"));
+                            try {
+                                CmsConstants.PlatformStatus status = (StringUtils.isEmpty((String) map.get("status"))) ? null : CmsConstants.PlatformStatus.valueOf((String) map.get("status"));
+                                model.setStatus(status);
+                            } catch (IllegalArgumentException ignored) {
+                            }
+                            listBean.add(model);
+                        }
+                    }
+                    value = listBean;
+                } else {
+                    value = null;
+                }
             }
         }
 

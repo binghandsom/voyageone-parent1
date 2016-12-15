@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="credentialsMatcher"
+		  class="com.voyageone.security.shiro.credentials.RetryLimitHashedCredentialsMatcher">
+		<!-- hashAlgorithmName必须的，没有默认值。可以有MD5或者SHA-1，如果对密码安全有更高要求可以用SHA-256或者更高。
+		这里使用MD5 storedCredentialsHexEncoded默认是true，此时用的是密码加密用的是Hex编码；false时用Base64编码
+		hashIterations迭代次数，默认值是1。 -->
+		<constructor-arg ref="shiroCacheManager" />
+		<property name="hashAlgorithmName" value="md5" />
+		<property name="hashIterations" value="2" />
+		<property name="storedCredentialsHexEncoded" value="true" />
+	</bean>
+
+	<bean id="shiroCacheManager" class="com.voyageone.security.shiro.cache.RedisCacheManager" >
+		<property name="redisManager" ref="redisTemplate" />
+		<property name="keyPrefix" value="voyageone_cms_" />
+		<property name="altKeyPrefix" value="voyageone_oms_" />
+		<property name="expireTime" value="1800" />
+	</bean>
+
+	<!-- 用ServletContainerSessionManager可以沿用web.xml中配置的超时时间 -->
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager"/>
+	<!-- 集群版,用Redis Cache End-->
+
+	<!--单机版Cache,用EhCache-->
+	<!--shiro缓存管理器 -->
+	<!--<bean id="shiroCacheManager" class="com.voyageone.security.shiro.spring.SpringCacheManagerWrapper" >-->
+		<!--<property name="cacheManager" ref="springCacheManager"/>-->
+	<!--</bean>-->
+
+	<!--<bean id="springCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">-->
+		<!--<property name="cacheManager" ref="ehcacheManager"/>-->
+	<!--</bean>-->
+
+	<!--&lt;!&ndash;ehcache&ndash;&gt;-->
+	<!--<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">-->
+		<!--<property name="configLocation" value="classpath:ehcache.xml"/>-->
+	<!--</bean>-->
+
+	<!--<bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>-->
+
+	<!--&lt;!&ndash; 会话DAO &ndash;&gt;-->
+	<!--<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">-->
+	<!--<property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>-->
+	<!--<property name="sessionIdGenerator" ref="sessionIdGenerator"/>-->
+	<!--</bean>-->
+
+	<!--&lt;!&ndash; 会话验证调度器 &ndash;&gt;-->
+	<!--&lt;!&ndash; 全局的会话信息检测扫描信息间隔30分钟&ndash;&gt;-->
+	<!--<bean id="sessionValidationScheduler" class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler2">-->
+	<!--<property name="sessionValidationInterval" value="1800000"/>-->
+	<!--<property name="sessionManager" ref="sessionManager"/>-->
+	<!--</bean>-->
+
+	<!--&lt;!&ndash; 会话管理器 &ndash;&gt;-->
+	<!--&lt;!&ndash; 全局的会话信息设置成30分钟,sessionValidationSchedulerEnabled参数就是是否开启扫描  &ndash;&gt;-->
+	<!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">-->
+	<!--<property name="globalSessionTimeout" value="1800000"/>-->
+	<!--<property name="deleteInvalidSessions" value="true"/>-->
+	<!--<property name="sessionValidationSchedulerEnabled" value="true"/>-->
+	<!--<property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>-->
+	<!--<property name="sessionDAO" ref="sessionDAO"/>-->
+	<!--</bean>-->
+
+	<!--单机版Cache,用EhCache End -->
+
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+	<!--自定义Realm -->
+	<bean id="myRealm" class="com.voyageone.security.shiro.MyRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher" />
+		<property name="cachingEnabled" value="true" />
+		<!-- 如需要自定义缓存时间放开以下.修改 ehcache.xml-->
+		<property name="authenticationCachingEnabled" value="false"/>
+		<property name="authenticationCacheName" value="authenticationCache"/>
+		<property name="authorizationCachingEnabled" value="true"/>
+		<property name="authorizationCacheName" value="authorizationCache"/>
+	</bean>
+
+
+	<!-- Shiro安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="myRealm" />
+		<property name="sessionManager" ref="sessionManager"/>
+		<!-- 使用下面配置的缓存管理器 -->
+		<property name="cacheManager" ref="shiroCacheManager" />
+	</bean>
+
+	<!--
+	   Shiro主过滤器本身功能十分强大，其强大之处就在于它支持任何基于URL路径表达式的、自定义的过滤器的执行
+	   Web应用中，Shiro可控制的Web请求必须经过Shiro主过滤器的拦截，Shiro对基于Spring的Web应用提供了完美的支持
+	-->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<!-- Shiro的核心安全接口，这个属性是必须的 -->
+		<property name="securityManager" ref="securityManager"></property>
+		<!-- 要求登录时的链接(登录页面地址)，非必须的属性，默认会自动寻找Web工程根目录下的"/login.jsp"页面 -->
+		<property name="loginUrl" value="/AdminLogin.html"></property>
+		<!-- 登录成功后要跳转的连接(本例中此属性用不到，因为登录成功后的处理逻辑在LoginController里硬编码) -->
+		<!-- <property name="successUrl" value="/" ></property> -->
+		<!-- 用户访问未对其授权的资源时，所显示的连接 -->
+		<property name="unauthorizedUrl" value="/AdminLogin.html"></property>
+		<property name="filterChainDefinitionMap" ref="chainDefinitionSectionMetaSource" />
+		<property name="filters">
+			<util:map>
+				<entry key="perms" value-ref="permission"/>
+				<entry key="authc" value-ref="authc"/>
+				<entry key="channel" value-ref="channel"/>
+			</util:map>
+		</property>
+	</bean>
+
+	<bean id="permission" class="com.voyageone.security.shiro.filter.MyPermissionFilter"/>
+	<bean id="authc" class="com.voyageone.security.shiro.filter.MyAuthenticationFilter"/>
+	<bean id="channel" class="com.voyageone.security.shiro.filter.ChannelCheckFilter"/>
+
+	<!--自定义filterChainDefinitionMap -->
+	<bean id="chainDefinitionSectionMetaSource" class="com.voyageone.security.shiro.ChainDefinitionSectionMetaSource">
+		<property name="filterChainDefinitions">
+			<value>
+				/* = anon
+				/rest/** = anon
+				/admin/user/self/forgetPass = anon
+				/admin/user/self/editPass = anon
+				/admin/user/self/getUserByToken = anon
+				/core/access/user/login = anon
+				/core/access/user/vmslogin = anon
+				/core/access/user/logout= anon
+				/cms/** = authc,channel
+			</value>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,115 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_TASK_MANAGEMENT'|translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_TASK_TYPE' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.taskType" ng-options="type.value as type.name for type in ctrl.taskTypeList">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_TASK_NAME' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.taskName"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 control-label">{{'TXT_TASK_COMMENT' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" ng-model="ctrl.searchInfo.taskComment"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 text-center m-b-xs">
+                            <div class="form-horizontal form-inline">
+                                <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;重置</button>
+                                <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="box-body-new">
+            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm m-r-xs">
+                    <button class="btn btn-default" ng-click="ctrl.config('Task')" ng-disabled="ctrl.taskSelList.selList.length > 1"><i class="fa fa-cog"></i>&nbsp;配置</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;添加</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.taskSelList.selList.length <= 0||ctrl.taskSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;修改</button>
+                    <!--<button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.taskSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>-->
+                </div>
+            </div>
+            <table class="table table-hover-new table-hover table_main">
+                <thead>
+                <tr>
+                    <th class="text-left mfb-xt" ng-controller="selectRowsCtrl">
+                        <label class="checkbox-inline c-checkbox" style="height: 15px;">
+                            <input type="checkbox" ng-click="selectAll(ctrl.taskSelList)"
+                                   ng-checked="isAllSelected(ctrl.taskSelList)" >
+                            <span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                        </label>
+                    </th>
+                    <th class="text-left mfb-xt" translate="TXT_TASK_TYPE"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_TASK_NAME"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_TASK_COMMENT"></th>
+                    <th class="text-left mfb-xxt" translate="TXT_TASK_TIME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td if-no-rows="ctrl.taskList.length||ctrl.taskList" colspan="8" style="padding: 0px"></td>
+                    </tr>
+                    <tr ng-repeat="list in ctrl.taskList">
+                        <td class="text-left v-middle">
+                            <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                <input ng-model="ctrl.taskSelList.selFlag[list.taskId]" type="checkbox" ng-controller="selectRowsCtrl"
+                                       ng-click="selectOne(list.taskId, ctrl.taskSelList)">
+                                <span class="fa fa-check"></span>
+                            </label>
+                        </td>
+                        <td class="text-left v-middle">{{list.taskType}}</td>
+                        <td class="text-left v-middle">{{list.taskName}}</td>
+                        <td class="text-left v-middle">{{list.taskComment}}</td>
+                        <td class="text-left v-middle">{{list.taskFreq}}</td>
+                        <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-left v-middle">{{list.modifier}}</td>
+                        <td class="text-center v-middle">
+                            <button class="btn btn-success" ng-if="list.runFlg=='0'"
+                                    ng-click="ctrl.run({'taskName':list.taskName,'type':'Start'})">启动
+                            </button>
+                            <button class="btn btn-danger" ng-if="list.runFlg=='1'"
+                                    ng-click="ctrl.run({'taskName':list.taskName,'type':'Stop'})">停止
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <vpagination config="ctrl.taskPageOption" ng-if="ctrl.taskList.length>0"></vpagination>
+    </div>
+</div>

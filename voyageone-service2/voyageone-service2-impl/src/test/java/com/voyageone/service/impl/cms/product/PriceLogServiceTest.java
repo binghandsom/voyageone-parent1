@@ -30,7 +30,7 @@ public class PriceLogServiceTest {
 
         skuList.add("ESH98014-BJ");
 
-        priceLogService.addLogForSkuListAndCallSyncPriceJob(skuList, "010", null,"Unit Tester", "测试");
+//        priceLogService.addLogForSkuListAndCallSyncPriceJob(skuList, "010", null,"Unit Tester", "测试");
     }
 
     @Test

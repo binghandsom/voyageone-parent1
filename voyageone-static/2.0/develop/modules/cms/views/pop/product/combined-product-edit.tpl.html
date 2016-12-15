@@ -1,0 +1,109 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-plus">&nbsp;<span translate="TXT_COMBINED_PRODUCT_EDIT"></span></i></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="combinedProductForm">
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_PLATFORM"></strong></label>
+                <div class="col-sm-4">
+                    <select class="form-control" ng-model="vm.product.cartId">
+                        <option ng-repeat="(key,value) in vm.carts" value="{{key}}">{{value}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label" ng-class="{vo_reqfield:vm.config.startSupplyChain}"><strong translate="TXT_WULIUBAO_PRODUCT_CODE"></strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" ng-model="vm.product.wuliubaoCode" ng-required="vm.config.startSupplyChain"/>
+                    <div class="text-warnings" style="padding-left:0px">
+                        <i class="icon fa fa-bell-o"></i>&nbsp;启用供应链管理的店铺必填！
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <a href="javascript:void(0)"
+                       ng-click="popExamplePage()"
+                       class="v-top" style="font-size: 17px;"><i class="fa fa-question-circle text-warnings"></i></a>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label vo_reqfield"><strong translate="TXT_COMBINED_NUM_ID"></strong></label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" disabled required ng-model="vm.product.numID" />
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-info btn-pop" ng-click="getCombinedProductInfo()">获取组合套装信息</button>
+                </div>
+            </div>
+            <div class="row form-group">
+                <label class="col-sm-3 control-label"><strong translate="TXT_COMBINED_PRODUCT_NAME"></strong></label>
+                <div class="col-sm-4">
+                    <textarea class="form-control no-resize" cols="3" rows="3" ng-model="vm.product.productName" disabled></textarea>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <table class="table table-hover-new text-center">
+                    <thead>
+                    <tr>
+                        <th class="text-left" translate="单品SKU"></th>
+                        <th class="text-left" translate="单品中国最终售价"></th>
+                        <th class="text-left" translate="单品优惠售价"></th>
+                        <th class="text-left" translate="商品名称"></th>
+                        <th class="text-left" tranate="操作"></th>
+                    </tr>
+                    </thead>
+                    <tbody ng-if="vm.product.skus">
+                    <tr ng-repeat="sku in vm.product.skus">
+                        <td colspan="5">
+                            <div class="text-left table_bg_gray">
+                                <div style="float: left">
+                                    组合套装sku（商家编码） ：{{sku.suitSkuCode}}<br/>
+                                    组合套装实际售价 ：{{sku.suitPreferentialPrice | currency:''}} <i ng-show="sku.warn" style="color: #ff0000;">组合套装优惠售价与实际售价不一致，请修正单品sku的优惠售价！</i>
+                                </div>
+                                <div style="float: right; padding-right: 13px;">
+                                    <button type="submit" class="btn btn-success btn-xxs" ng-click="copySkuItem(sku.skuItems)">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <table class="table table-hover-new text-center">
+                                <tbody>
+                                <tr ng-repeat="skuItem in sku.skuItems">
+
+                                    <td class="text-left">
+                                        <input type="text" required ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)">
+                                    </td>
+                                    <td class="text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
+                                    <td class="text-left"><input type="number" required ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)"></td>
+                                    <td class="text-left">{{skuItem.productName}}</td>
+                                    <td class="text-left">
+                                        <button type="submit" class="btn btn-success btn-xxs" ng-click="deleteSkuItem(sku,$index)">
+                                            <i class="fa fa-minus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+
+                            </table>
+                            <div class="text-right table_bg_gray">
+                                组合套装中国最终售价 合计：{{sku.tempSuitSellingPriceCn | currency:''}}
+                                组合套装优惠售价 合计：{{sku.tempSuitPreferentialPrice | currency:''}}
+                            </div>
+
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="editSubmit(0)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;暂存</button>
+        <button class="btn btn-vo" ng-click="editSubmit(1)" ng-disabled="combinedProductForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;提交</button>
+    </div>
+</div>

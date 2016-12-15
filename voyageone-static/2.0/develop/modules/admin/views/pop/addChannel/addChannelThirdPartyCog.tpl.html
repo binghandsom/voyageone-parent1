@@ -1,0 +1,110 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="form-group"><!-- 渠道名* -->
+                        <label class="col-sm-3 control-label">{{'TXT_CART_CHANNEL_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select search-contains="true" chosen width="'100%'" class="form-control"
+                                    ng-model="ctrl.sourceData.channelId"
+                                    name="channelName" required ng-disabled="ctrl.popType == '编辑'||ctrl.sourceData.isReadOnly==true"
+                                    ng-options="channel.orderChannelId as channel.name for channel in ctrl.channelAllList">
+                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.channelName"></vo-message>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性名* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propName" name="propName" type="text" maxlength="100" required ng-disabled="ctrl.popType == '编辑'"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.propName"></vo-message>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性值1* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}1</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal1" name="propVal1" type="text" maxlength="200" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.propVal1"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group"><!-- 状态 -->
+                        <label class="col-sm-3 control-label">{{'TXT_STATUS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="0" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="1" ng-model="ctrl.sourceData.active" required><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.active"></vo-message>
+                        </div>
+                    </div>
+
+                    <div class="row form-group"><!-- 属性值2* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}2</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal2" name="propVal2" type="text" maxlength="900"/>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性值3* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}3</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal3" name="propVal3" type="text" maxlength="500"/>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性值4* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}4</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal4" name="propVal4" type="text" maxlength="500"/>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性值5* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}5</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal5" name="propVal5" type="text" maxlength="500"/>
+                        </div>
+                    </div>
+                    <div class="row form-group"><!-- 属性值6* -->
+                        <label class="col-sm-3 control-label">{{'TXT_PROPERTY_VALUE' | translate}}6</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" ng-model="ctrl.sourceData.propVal6" name="propVal6" type="text" maxlength="500"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">{{'TXT_COMMENTS' | translate}}</label>
+                        <div class="col-sm-8">
+                            <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.sourceData.comment"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>

@@ -59,7 +59,7 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_CODE_WITH_COLON"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.mastData.productCode" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productCode" readonly>
                                     <div class="text-warnings" style="padding-left:0px">
                                         <i class="icon fa fa-bell-o"></i>&nbsp;如果此商品不是主商品，类目修改和属性修改不会反应到{{cartInfo.name}}平台页面
                                     </div>
@@ -68,13 +68,13 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_PRODUCT_NAME"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.mastData.productName" disabled>
+                                    <input class="form-control" ng-model="vm.mastData.productName" readonly>
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <label class="col-md-2 control-label">{{"TXT_BRAND"|translate}}</label>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="vm.platform.pBrandName" disabled>
+                                    <input class="form-control" ng-model="vm.platform.pBrandName" readonly>
                                 </div>
                             </div>
                         </div>

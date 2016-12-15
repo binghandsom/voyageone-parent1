@@ -7,12 +7,14 @@
  */
 package com.voyageone.service.model.com;
 
-import com.voyageone.base.dao.mysql.BaseModel;
+import com.voyageone.base.dao.mysql.NoIdBaseModel;
 
 /**
  * 
  */
-public class ComMtValueChannelModel extends BaseModel {
+public class ComMtValueChannelModel extends NoIdBaseModel {
+    protected Integer id;
+
     protected Integer typeId;
 
     protected String channelId;
@@ -28,6 +30,16 @@ public class ComMtValueChannelModel extends BaseModel {
     protected String langId;
 
     protected Integer displayOrder;
+    
+    protected Boolean active;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getTypeId() {
         return typeId;
@@ -92,4 +104,13 @@ public class ComMtValueChannelModel extends BaseModel {
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+    
 }

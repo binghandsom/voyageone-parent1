@@ -38,7 +38,8 @@ define([
                        return f.sizeChartId==sizeChartId;
                     })
 
-                }
+                };
+
                 scope.masterCategoryMapping = masterCategoryMapping;
                 scope.openProImageSetting = openProImageSetting;
                 scope.saveProduct = saveProduct;

@@ -56,7 +56,10 @@
         </div>
     </div>
 
-    <div class="text-center" ng-if="ctrl.shelves.length == 0">无货架信息</div>
+    <div class="text-center text-hs ng-scope" ng-if="ctrl.shelves.length == 0">
+        <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;<span translate="TXT_ALERT" class="ng-scope">温馨提示</span></h4>
+        <span class="ng-scope">无货架信息...</span>
+    </div>
     <uib-accordion ng-if="ctrl.shelves.length" close-others="false">
         <uib-accordion-group id="s{{$index}}" is-open="i.$isOpen" ng-init="$si=$index"
                              ng-repeat="i in ctrl.shelves">
