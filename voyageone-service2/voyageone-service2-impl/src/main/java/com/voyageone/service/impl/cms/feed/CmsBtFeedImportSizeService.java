@@ -1,11 +1,9 @@
 package com.voyageone.service.impl.cms.feed;
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import com.voyageone.service.dao.cms.CmsBtFeedImportSizeDao;
 import com.voyageone.service.daoext.cms.CmsBtFeedImportSizeDaoExt;
-import com.voyageone.service.daoext.cms.ComMtValueChannelDaoExt;
+import com.voyageone.service.daoext.com.ComMtValueChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
-import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
