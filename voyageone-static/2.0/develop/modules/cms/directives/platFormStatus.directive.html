@@ -6,19 +6,22 @@
                                      \'waiting-publish\':ctrl.statusData.status == \'Approved\'}"
            title="{{ctrl.statusData.status}}">
             <span ng-class="{\'isMain\': ctrl.statusData.isMain,
-                             \'isCommon\':!ctrl.statusData.isMain}">{{ctrl._cartInfo.name}}</span>
+                             \'isCommon\':!ctrl.statusData.isMain}">
+                {{ctrl._cartInfo.name}}{{ctrl.pStatusDesc}}{{ctrl.statusData.status == \'Approved\'? ctrl.pReallyStatusDesc:""}}
+            </span>
      </span>
 </span>
 <span class="plateform-status" ng-if="ctrl.statusData.pReallyStatus">
-     <span class="label" ng-class="{\'in-stock\': ctrl.statusData.pStatus == \'InStock\',
-                                    \'on-sale\':ctrl.statusData.pStatus == \'OnSale\',
-                                    \'error\':ctrl.statusData.pStatus == \'Error\'}"
+     <span class="label {{ctrl.statusData.approveError ? \'error\' : \'\'}}"
+           ng-class="{\'in-stock\': ctrl.statusData.pReallyStatus == \'InStock\',\'on-sale\':ctrl.statusData.pReallyStatus == \'OnSale\'}"
            title="{{ctrl.statusData.pStatus}}">
          <span ng-if="ctrl.statusData.numberId">
              <a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">
                  {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}
              </a>
          </span>
-         <span ng-if="!ctrl.statusData.numberId" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">{{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}</span>
+         <span ng-if="!ctrl.statusData.numberId" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">
+             {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}
+         </span>
      </span>
 </span>
