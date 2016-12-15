@@ -66,17 +66,24 @@ public class CmsAdvSearchExportFileDeleteService extends BaseCronTaskService {
                     }else if (task.getTaskType() != null && task.getTaskType().intValue() == CmsBtExportTaskService.ADV_SEARCH) {
                         filePath = advSearchExportPath + task.getFileName();
                     }
+                    boolean exists = true;
+                    String comment = "";
                     File file = new File(filePath);
                     if (file.isFile() && file.exists()) {
                         boolean deleted = file.delete();
-                        if (deleted) {
-                            CmsBtExportTaskModel target = new CmsBtExportTaskModel();
-                            target.setStatus(-1); // 导出文件已被系统定期删除
-                            target.setId(task.getId());
-                            target.setComment("文件过期，系统删除。");
-                            target.setModifier("SYSTEM");
-                            cmsBtExportTaskDao.update(target);
-                        }
+                        exists = !deleted;
+                        comment = "文件过期，系统删除！";
+                    }else {
+                        exists = false;
+                        comment = "文件不存在！";
+                    }
+                    if (!exists) {
+                        CmsBtExportTaskModel target = new CmsBtExportTaskModel();
+                        target.setStatus(-1); // 导出文件已被系统定期删除
+                        target.setId(task.getId());
+                        target.setComment(comment);
+                        target.setModifier("SYSTEM");
+                        cmsBtExportTaskDao.update(target);
                     }
                 }
             }
