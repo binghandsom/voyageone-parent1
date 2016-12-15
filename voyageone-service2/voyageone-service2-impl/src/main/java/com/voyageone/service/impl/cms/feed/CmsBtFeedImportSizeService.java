@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.feed;
 import com.sun.xml.internal.xsom.impl.scd.Iterators;
 import com.voyageone.service.dao.cms.CmsBtFeedImportSizeDao;
+import com.voyageone.service.daoext.cms.CmsBtFeedImportSizeDaoExt;
+import com.voyageone.service.daoext.cms.ComMtValueChannelDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtSizeChartModel;
@@ -20,6 +22,11 @@ import java.util.Map;
 public class CmsBtFeedImportSizeService extends BaseService {
     @Autowired
     CmsBtFeedImportSizeDao dao;
+    @Autowired
+    ComMtValueChannelDaoExt comMtValueChannelDaoExt;
+
+    @Autowired
+    CmsBtFeedImportSizeDaoExt  cmsBtFeedImportSizeDaoExt;
 
     public int insert(CmsBtFeedImportSizeModel model) {
         return dao.insert(model);
@@ -57,9 +64,21 @@ public class CmsBtFeedImportSizeService extends BaseService {
         return dao.selectOne(map);
     }
 
+
     public List<CmsBtFeedImportSizeModel> getList(String channelId, String brandName, String productType, String sizeType) {
+        List<String> channelIdList=new ArrayList<>();
+        if(channelId=="928") {
+
+            channelIdList=comMtValueChannelDaoExt.selectList928ChannelId();
+        }
+        else
+        {
+            channelIdList.add(channelId);
+        }
+
+
         Map<String, Object> map = new HashedMap();
-        map.put("channelId", channelId);
+        map.put("channelIdList", channelIdList);
         if (brandName != null) {
             map.put("brandName", brandName);
         }
@@ -69,7 +88,7 @@ public class CmsBtFeedImportSizeService extends BaseService {
         if (sizeType != null) {
             map.put("sizeType", sizeType);
         }
-        return dao.selectList(map);
+        return cmsBtFeedImportSizeDaoExt.selectList(map);
     }
 
     public List<CmsBtFeedImportSizeModel> getList(String channelId, List<String> listBrandName, List<String> listProductType, List<String> listSizeType) {
