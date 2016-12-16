@@ -4821,14 +4821,28 @@ public class SxProductService extends BaseService {
             return imageUrlModel.getPlatformImgUrl();
         }
 
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.TRANSPARENT_IMAGE);
+        if (config == null) {
+            return null;
+        }
+
+        String type = config.getConfigValue1();
+
         String platformUrl = null;
         String pictureId = null;
         try {
-            Picture picture = uploadImageToTm(shopBean, convertTransparentPicture(imageUrl));
+            Picture picture = null;
+            if ("1".equals(type)) {
+                picture = uploadImageToTm(shopBean, convertTransparentPicture1(imageUrl));
+            } else if ("2".equals(type)) {
+                picture = uploadImageToTm(shopBean, convertTransparentPicture2(imageUrl));
+            }
             if (picture != null) {
                 platformUrl = picture.getPicturePath();
                 pictureId = String.valueOf(picture.getPictureId());
             }
+        } catch (BusinessException e) {
+            throw e;
         } catch (Exception e) {
             // 暂不抛错，返回null吧
         }
@@ -4853,48 +4867,109 @@ public class SxProductService extends BaseService {
 
     /**
      * 转成透明图
+     * 用TYPE_USHORT_555_RGB 变小，再用TYPE_4BYTE_ABGR 弄透明
+     * 暂定800*800
      */
-    public byte[] convertTransparentPicture(String picUrl) {
+    public byte[] convertTransparentPicture1(String picUrl) {
         try {
+            // TYPE_USHORT_555_RGB 出来的比较小，底色一弄isBackPixel判断颜色是-1， 然后用TYPE_4BYTE_ABGR，把这些-1的弄成0，就是透明了
             BufferedImage image = ImageIO.read(new URL(picUrl));
-            ImageIcon imageIcon = new ImageIcon(image);
-            BufferedImage bufferedImage = new BufferedImage(
-                    imageIcon.getIconWidth(), imageIcon.getIconHeight(),
-                    BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage bufferedImage = new BufferedImage(800, 800, BufferedImage.TYPE_USHORT_555_RGB);
             Graphics2D g2D = (Graphics2D) bufferedImage.getGraphics();
-            g2D.drawImage(imageIcon.getImage(), 0, 0,
-                    imageIcon.getImageObserver());
-            int alpha = 0;
-            for (int j1 = bufferedImage.getMinY(); j1 < bufferedImage
-                    .getHeight(); j1++) {
-                for (int j2 = bufferedImage.getMinX(); j2 < bufferedImage
-                        .getWidth(); j2++) {
-                    int rgb = bufferedImage.getRGB(j2, j1);
-                    if (colorInRange(rgb))
-                        alpha = 0;
-                    else
-                        alpha = 255;
-                    rgb = (alpha << 24) | (rgb & 0x00ffffff);
-                    bufferedImage.setRGB(j2, j1, rgb);
+            g2D.drawImage(image, 0, 0, null);
+
+            //采用带1 字节alpha的TYPE_4BYTE_ABGR，可以修改像素的布尔透明
+            BufferedImage convertedImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR); // 转成800*800
+            g2D = (Graphics2D) convertedImage.getGraphics();
+            g2D.drawImage(bufferedImage, 0, 0, null);
+            //像素替换，直接把背景颜色的像素替换成0
+
+            int backRGB = convertedImage.getRGB(0, 0);
+            for (int i = convertedImage.getMinY(); i < convertedImage.getHeight(); i++) {
+                for (int j = convertedImage.getMinX(); j < convertedImage.getWidth(); j++) {
+                    int rgb = convertedImage.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        convertedImage.setRGB(i, j, 0);
+                    }
                 }
             }
-            g2D.drawImage(bufferedImage, 0, 0, imageIcon.getImageObserver());
-            // 生成图片为PNG
+            g2D.drawImage(convertedImage, 0, 0, null);
+            // 生成stream
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "png", baos);
+            ImageIO.write(convertedImage, "png", baos);
             return baos.toByteArray();
         } catch (IOException e) {
             throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
         }
     }
 
-    private boolean colorInRange(int color) {
-        int color_range = 245;
-        int red = (color & 0xff0000) >> 16;
-        int green = (color & 0x00ff00) >> 8;
-        int blue = (color & 0x0000ff);
-        if (red >= color_range && green >= color_range && blue >= color_range)
-            return true;
-        return false;
+    /**
+     * 转成透明图
+     * 用TYPE_USHORT_555_RGB 和 TYPE_4BYTE_ABGR 共同确定背景色 来变成透明
+     * 暂定800*800
+     * 原图就是转后过的透明图png比较适用此方法
+     */
+    public byte[] convertTransparentPicture2(String picUrl) {
+        Map<String, String[]> map = new HashMap<>();
+        for (int i = 0; i < 800; i++) {
+            for (int j = 0; j < 800; j++) {
+                map.put(String.valueOf(i) + "-" + String.valueOf(j), new String[]{"0", "0"});
+            }
+        }
+
+        try {
+            BufferedImage image = ImageIO.read(new URL(picUrl));
+            BufferedImage bufferedImage1 = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2D1 = (Graphics2D) bufferedImage1.getGraphics();
+            g2D1.drawImage(image, 0, 0, null);
+            int backRGB = bufferedImage1.getRGB(0, 0);
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    int rgb = bufferedImage1.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                        ar[0] = "1";
+                    }
+                }
+            }
+
+            BufferedImage bufferedImage2 = new BufferedImage(800, 800, BufferedImage.TYPE_USHORT_555_RGB);
+            Graphics2D g2D2 = (Graphics2D) bufferedImage2.getGraphics();
+            g2D2.drawImage(image, 0, 0, null);
+            backRGB = bufferedImage2.getRGB(0, 0);
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    int rgb = bufferedImage2.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                        ar[1] = "1";
+                    }
+                }
+            }
+
+            //采用带1 字节alpha的TYPE_4BYTE_ABGR，可以修改像素的布尔透明
+            BufferedImage convertedImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR); // 转成800*800
+            Graphics2D g2Dc = (Graphics2D) convertedImage.getGraphics();
+            g2Dc.drawImage(bufferedImage2, 0, 0, null);
+            //像素替换，直接把背景颜色的像素替换成0
+
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                    if ("1".equals(ar[0]) && "1".equals(ar[1])) {
+                        convertedImage.setRGB(i, j, 0);
+                    }
+                }
+            }
+            g2Dc.drawImage(convertedImage, 0, 0, null);
+
+            // 生成stream
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(convertedImage, "png", baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
+        }
     }
+
 }
