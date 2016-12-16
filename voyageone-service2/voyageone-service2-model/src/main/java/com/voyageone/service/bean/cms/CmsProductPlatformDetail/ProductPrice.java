@@ -18,6 +18,7 @@ public class ProductPrice {
     //指导价
     double priceRetailSt;
     double priceRetailEd;
+    double priceRetail;
 
     //最终售价
     double priceSaleSt;
@@ -127,6 +128,14 @@ public class ProductPrice {
 
     public void setPriceRetailEd(double priceRetailEd) {
         this.priceRetailEd = priceRetailEd;
+    }
+
+    public double getPriceRetail() {
+        return priceRetail;
+    }
+
+    public void setPriceRetail(double priceRetail) {
+        this.priceRetail = priceRetail;
     }
 
     public double getPriceSaleSt() {

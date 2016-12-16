@@ -267,18 +267,27 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             CartEnums.Cart cart = CartEnums.Cart.getValueByID(f.getCartId().toString());
             if (cart != null) {
                 productPrice.setCartName(cart.name());
-
                 // 设置autoSyncPriceMsrp值
-                CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, f.getCartId().toString(), CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
-                if (autoSyncPriceMsrp != null
-                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
-                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
-                        && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1()))
-                    throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
-                productPrice.setAutoSyncPriceMsrp(autoSyncPriceMsrp == null ? CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO : autoSyncPriceMsrp.getConfigValue1());
+                productPrice.setAutoSyncPriceMsrp(this.getAutoSyncPriceMsrpOption(channelId, Integer.valueOf(f.getCartId().toString())));
+                return productPrice;
             }
         }
         return null;
+    }
+
+
+    public String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) {
+        String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP, cartId + "");
+        if (autoSyncPriceMsrp != null
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
+            throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
+        }
+        if (autoSyncPriceMsrp != null)
+            autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
+        return autoSyncPriceMsrpOption;
     }
 
     /**

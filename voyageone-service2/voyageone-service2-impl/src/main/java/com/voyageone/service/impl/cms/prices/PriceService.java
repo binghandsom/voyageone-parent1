@@ -652,16 +652,18 @@ public class PriceService extends BaseService {
      * @return
      * @throws IllegalPriceConfigException
      */
-    private String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) throws IllegalPriceConfigException {
+    public String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) throws IllegalPriceConfigException {
         String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
         /*CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);*/
-        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, cartId+"", CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP);
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP, cartId + "");
         if (autoSyncPriceMsrp != null
                 && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
                 && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
                 && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
             throw new IllegalPriceConfigException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
         }
+        if (autoSyncPriceMsrp != null)
+            autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
         return autoSyncPriceMsrpOption;
         // 修改之前代码如下，原方法名：isAutoSyncPriceMsrp
         /*boolean isAutoSyncPriceMsrp = false;
