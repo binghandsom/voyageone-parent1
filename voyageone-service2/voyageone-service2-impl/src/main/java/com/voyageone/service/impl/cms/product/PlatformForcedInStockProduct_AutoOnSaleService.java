@@ -64,10 +64,11 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
             productCodes.add(f.getCommon().getFields().getCode());
         });
 
+        //批量上架发MQ
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", channelId);
         logParams.put("cartIdList", cartList);
-        logParams.put("activeStatus", "");
+        logParams.put("activeStatus", "ToOnSale");
         logParams.put("creater", "autoOnSale");
         logParams.put("comment", "被迫下架的产品，自动上架");
 
