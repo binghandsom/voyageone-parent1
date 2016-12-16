@@ -75,7 +75,7 @@ public class CombinedProductController extends CmsController {
     public AjaxResponse getCombinedProductPlatformDetail (@RequestBody Map<String, String> params) {
         String numId = params.get("numID");
         String cartId = params.get("cartId");
-        Object productDetail = cmsBtCombinedProductService.getCombinedProductPlatformDetail(numId, getUser().getSelChannelId(), Integer.valueOf(cartId));
+        Object productDetail = cmsBtCombinedProductService.getCombinedProductPlatformDetail(numId, getUser().getSelChannelId(), Integer.valueOf(cartId), true);
         Map<String, Object> resultMap = new HashMap<String, Object>();
         resultMap.put("product", productDetail);
         return success(resultMap);
@@ -106,9 +106,8 @@ public class CombinedProductController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.PRODUCT.CombinedProduct.GET_COMBINED_PRODUCT_DETAIL)
     public AjaxResponse getCombinedProductDetail(@RequestBody CmsBtCombinedProductBean modelBean) {
-        CmsBtCombinedProductModel model = cmsBtCombinedProductService.getCombinedProduct(modelBean, getUser().getSelChannelId());
         Map<String, Object> resultMap = new HashMap<String, Object>();
-        resultMap.put("product", model);
+        resultMap.put("product", cmsBtCombinedProductService.selectById(modelBean.get_id()));
         return success(resultMap);
     }
 
