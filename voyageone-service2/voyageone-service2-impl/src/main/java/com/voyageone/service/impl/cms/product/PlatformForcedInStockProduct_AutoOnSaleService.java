@@ -81,7 +81,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         logParams.put("cartIdList", cartList);
         logParams.put("activeStatus", CmsConstants.PlatformActive.ToOnSale.name());
         logParams.put("creater", "autoOnSale");
-        logParams.put("comment", "被迫下架的产品，自动上架");
+        logParams.put("comment", "平台被迫下架的产品，自动上架");
 
         logParams.put("codeList", productCodes);
         sender.sendMessage(MqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
