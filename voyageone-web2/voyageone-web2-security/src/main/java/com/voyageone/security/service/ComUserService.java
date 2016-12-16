@@ -67,6 +67,14 @@ public class ComUserService {
     public ComUserModel login(String account, String password, String app) {
          logout();
 
+        try {
+            clearCache(account);
+        }
+        catch (Exception e)
+        {
+            //do nothing
+        }
+
         Subject user = SecurityUtils.getSubject();
 
         UsernamePasswordToken token = new UsernamePasswordToken(account, password);
