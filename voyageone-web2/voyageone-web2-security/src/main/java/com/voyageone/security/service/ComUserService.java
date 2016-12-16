@@ -67,6 +67,8 @@ public class ComUserService {
     public ComUserModel login(String account, String password, String app) {
          logout();
 
+
+        //放在这里稍有不妥，待测试
         try {
             clearCache(account);
         }
