@@ -286,7 +286,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 店铺级标题禁用词 20161216 tom START
             // 先临时这样处理
-            String notAllowList = getConditionPropValue(sxData, "notAllowList", shopProp);
+            String notAllowList = getConditionPropValue(sxData, "notAllowTitleList_30", shopProp);
             if (!StringUtils.isEmpty(notAllowList)) {
                 if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getOriginalTitleCn())) {
                     String[] splitWord = notAllowList.split(",");
