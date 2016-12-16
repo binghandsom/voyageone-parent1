@@ -2221,8 +2221,14 @@ public class SxProductService extends BaseService {
                         // 同时只有一口价全新的宝贝才能设置为新品，否则会返回错误码：isv.invalid-parameter:xinpin。
                         // 不设置该参数值或设置为false效果一致。
                         // 新品判断逻辑(第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品，否则设为非新品)
+                        // 没有吊牌图，则不是新品
                         if (isXinPin(mainSxProduct, cartId)) {
-                            isXinpinField.setValue("true");
+                            String diaopaiUrl = resolveDict(CustomMappingType.ImageProp.DIAOPAI_PIC.getBaseDictName(), expressionParser, shopBean, user, null);
+                            if (StringUtils.isEmpty(diaopaiUrl)) {
+                                isXinpinField.setValue("false");
+                            } else {
+                                isXinpinField.setValue("true");
+                            }
                         } else {
                             isXinpinField.setValue("false");
                         }
@@ -3059,13 +3065,16 @@ public class SxProductService extends BaseService {
                     String url = resolveDict(dictName, expressionParser, shopBean, user, null);
                     ((InputField) field).setValue(url);
 
-                    if (imageProp == CustomMappingType.ImageProp.DIAOPAI_PIC) {
-                        // 吊牌图
-                        if (StringUtils.isEmpty(url) && isXinPin(sxData.getMainProduct(), sxData.getCartId())) {
-                            // 是新品，但是没有吊牌图
-                            throw new BusinessException("是新品,但是吊牌图未设定,或通过设定未取得!");
-                        }
-                    }
+                    // deleted by morse.lu 2016/12/16 start
+                    // 改成没吊牌图就不是新品
+//                    if (imageProp == CustomMappingType.ImageProp.DIAOPAI_PIC) {
+//                        // 吊牌图
+//                        if (StringUtils.isEmpty(url) && isXinPin(sxData.getMainProduct(), sxData.getCartId())) {
+//                            // 是新品，但是没有吊牌图
+//                            throw new BusinessException("是新品,但是吊牌图未设定,或通过设定未取得!");
+//                        }
+//                    }
+                    // deleted by morse.lu 2016/12/16 end
                     if (imageProp == CustomMappingType.ImageProp.WHITE_BG_IMAGE) {
                         // 透明图
                         if (!StringUtils.isEmpty(url)) {
