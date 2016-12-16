@@ -721,7 +721,8 @@ define([
                             var data = {
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
-                                "isSelAll": $scope.vm._selall ? 1 : 0
+                                "isSelAll": $scope.vm._selall ? 1 : 0,
+                                "orgDispTagList":res.orgDispTagList
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -1116,7 +1117,11 @@ define([
         }
 
         // 下载已创建完成的数据文件
-        $scope.openDownload = function (fileName) {
+        $scope.openDownload = function (fileName,status) {
+            if (status == -1){
+                alert("文件已经过期，请重新下载");
+                return;
+            }
             function _exportFileCallback(res) {
                 var obj = JSON.parse(res);
                 if (obj.code == '4004') {

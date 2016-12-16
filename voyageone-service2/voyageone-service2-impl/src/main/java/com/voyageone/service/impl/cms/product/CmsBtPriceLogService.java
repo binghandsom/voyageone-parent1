@@ -117,9 +117,17 @@ public class CmsBtPriceLogService extends BaseService {
      * @param username  变动人 / 检查人
      * @param comment   变动备注 / 检查备注
      */
-    public void addLogForSkuListAndCallSyncPriceJob(List<String> skuList, String channelId, Integer cartId, String username, String comment) {
-        for (String sku : skuList)
+    public void addLogForSkuListAndCallSyncPriceJob(List<String> skuList, String channelId, Long productId, Integer cartId, String username, String comment) {
+        for (String sku : skuList) {
             addLogAndCallSyncPriceJob(sku, channelId, cartId, username, comment);
+        }
+        Map<String,Object> newLog = new HashMap<>();
+        newLog.put("cartId",cartId);
+        newLog.put("productId",productId);
+        newLog.put("channelId",channelId);
+        // 向Mq发送消息同步sku,code,group价格范围
+        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+
     }
 
     /**
@@ -317,8 +325,6 @@ public class CmsBtPriceLogService extends BaseService {
 
         priceLogDao.insert(newLog);
 
-        // 向Mq发送消息同步sku,code,group价格范围
-        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
 
         Double confirmPrice = cartSku.getDoubleAttribute(confPriceRetail.name());
 

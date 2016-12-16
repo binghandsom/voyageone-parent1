@@ -41,5 +41,8 @@
 		select count(0) from com_mt_value_channel cmvc
 		<include refid="selectChannelAttributeFilter"/>
 	</select>
-	
+
+	<select id="selectList928ChannelId" resultType="string">
+		SELECT DISTINCT `channel_id` FROM synship.`com_mt_value_channel` WHERE `type_id`=53 AND `value`=928
+	</select>
 </mapper>

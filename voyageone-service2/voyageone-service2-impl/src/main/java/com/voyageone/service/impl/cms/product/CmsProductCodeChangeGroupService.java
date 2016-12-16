@@ -70,7 +70,7 @@ public class CmsProductCodeChangeGroupService {
      * 移动Code-从一个Group到一个新的Group
      */
     public CmsBtProductGroupModel moveToNewGroup(String channelId, int cartId, String code, CmsBtProductGroupModel sourceGroupModel, String modifier) {
-        CmsBtProductGroupModel destGroupModel = productGroupService.createNewGroup(channelId, cartId, code);
+        CmsBtProductGroupModel destGroupModel = productGroupService.createNewGroup(channelId, cartId, code, true);
         productGroupService.insert(destGroupModel);
 
         // 设定移动Code的Product信息的相关平台下pIsMain=1

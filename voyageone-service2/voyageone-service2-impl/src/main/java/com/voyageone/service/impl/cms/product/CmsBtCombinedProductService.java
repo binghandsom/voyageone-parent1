@@ -360,9 +360,19 @@ public class CmsBtCombinedProductService extends BaseService {
      * @param actionType
      */
     public void checkCombinedProducrtModel (CmsBtCombinedProductModel model, String channelId, String actionType) {
+        // 如果是暂存，不进行check，只需输入numId和选择cartId就行了
+        if (model != null && model.getStatus() != null && model.getStatus().intValue() == CmsBtCombinedProductStatus.TEMPORAL) {
+            if (model.getCartId() == null || StringUtils.isBlank(model.getNumID())) {
+                throw new BusinessException("组合套装商品暂存，请至少输入平台和商品编码！");
+            }
+            return;
+        }
         List<CmsBtCombinedProductModel_Sku> skus = model.getSkus();
-        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null || CollectionUtils.isEmpty((skus = model.getSkus()))) {
+        if (model == null || StringUtils.isBlank(model.getNumID()) || model.getCartId() == null ) {
             throw new BusinessException("参数错误！");
+        }
+        if (CollectionUtils.isEmpty(skus = model.getSkus())) {
+            throw new BusinessException("组合套装商品SKU为空！");
         }
         int startSupplyChain = 0; // 店铺是否启动了供应链管理
         CmsChannelConfigBean startSupplyChainConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.START_SUPPLY_CHAIN);
@@ -596,8 +606,9 @@ public class CmsBtCombinedProductService extends BaseService {
     public List<CombinedSkuInfoBean> getSuitSkuInfo() {
         /*String query = String.format("{'active':1}");*/
         JongoQuery query = new JongoQuery();
-        query.setQuery("{'active':#}");
-        query.setParameters(1);
+        query.setQuery("{'active':#, 'status':#}");
+        query.addParameters(1);
+        query.addParameters(CmsBtCombinedProductStatus.SUBMITTED);
         query.setSort("{'modified':-1, 'created':-1}");
         List<CmsBtCombinedProductModel> productModels = cmsBtCombinedProductDao.select(query);
         List<CombinedSkuInfoBean> suitSkuInfos = new ArrayList<CombinedSkuInfoBean>();
@@ -611,7 +622,7 @@ public class CmsBtCombinedProductService extends BaseService {
                         suitSkuInfo.setSku(skuBean.getSuitSkuCode());
                         suitSkuInfo.setReal_sku(skuItem.getSkuCode());
                         suitSkuInfo.setReal_sku_price(String.valueOf(skuItem.getPreferentialPrice()));
-                        suitSkuInfo.setReal_sku_name(product.getProductName());
+                        suitSkuInfo.setReal_sku_name(skuItem.getProductName());
                         suitSkuInfo.setNum_iid(product.getNumID());
                         suitSkuInfos.add(suitSkuInfo);
                     });

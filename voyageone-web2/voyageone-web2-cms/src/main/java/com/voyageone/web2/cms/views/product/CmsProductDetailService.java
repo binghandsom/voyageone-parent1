@@ -619,6 +619,7 @@ public class CmsProductDetailService extends BaseViewService {
                 platformStatus.put("pNumIId", platformInfo.getpNumIId());
                 platformStatus.put("cartName", CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
                 platformStatus.put("pReallyStatus", platformInfo.getpReallyStatus());
+                platformStatus.put("pIsMain", platformInfo.getpIsMain());
                 platformList.add(platformStatus);
             });
         }
@@ -1536,7 +1537,7 @@ public class CmsProductDetailService extends BaseViewService {
         //更新价格履历
         List<String> skus = new ArrayList<>();
         platform.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, cartId, userName, "sku价格刷新");
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, cartId, userName, "sku价格刷新");
 
 
         //刷新价格
