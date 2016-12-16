@@ -100,6 +100,13 @@ public class FryeAnalysisService extends BaseAnalysisService {
                                     }
                                     fryeBean.setFabric(String.valueOf(sbFabric));
                                 }
+                                if ("Gender".equals(Attribute.getName())) {
+                                    StringBuilder sbGender = new StringBuilder();
+                                    for (Map.Entry<String, String> entry : Attribute.getValues().entrySet()) {
+                                        sbGender.append(entry.getValue());
+                                    }
+                                    fryeBean.setSex(String.valueOf(sbGender));
+                                }
                             });
                         }
                         if (sb.length() > 0) {
@@ -143,7 +150,8 @@ public class FryeAnalysisService extends BaseAnalysisService {
                             fryeBean.setOrigin(countyValue);
                         }
                         fryeBean.setMetadataCategoryname(metaDataBean.getCategoryName());
-                        if(!StringUtil.isEmpty(metaDataBean.getCategoryName())){
+
+                        if(!StringUtil.isEmpty(metaDataBean.getCategoryName())&&StringUtil.isEmpty(fryeBean.getSex())){
                             String[] categoryNameList = metaDataBean.getCategoryName().replace(" ","").trim().split("->");
                             for(String categoryName:categoryNameList){
                                 if("women".equals(categoryName.toLowerCase())||"womens".equals(categoryName.toLowerCase())){
@@ -165,6 +173,8 @@ public class FryeAnalysisService extends BaseAnalysisService {
                                     fryeBean.setSex(categoryName);
                                 }
                             }
+                        }else{
+                            fryeBean.setSex("unisex");
                         }
                         fryeBean.setMetadataDetail(metaDataBean.getDetail());
                         fryeBean.setMetadataUnitcost(metaDataBean.getUnitCost());
@@ -239,22 +249,28 @@ public class FryeAnalysisService extends BaseAnalysisService {
                             if ("Color".equals(option.getName())) {
                                 //Variants_Options_Color
                                 StringBuilder sbValue = new StringBuilder();
+                                StringBuilder sbName = new StringBuilder();
                                 for (Map.Entry<String, String> entry : option.getValues().entrySet()) {
                                     sbValue.append(entry.getValue());
+                                    sbName.append(entry.getValue());
                                 }
                                 if (sbValue.length() > 0) {
                                     fryeBean.setVariantsOptionsColor(sbValue.toString());
+                                    fryeBean.setVariantsOptionsColorValues(String.valueOf(sbName.toString()));
                                 }
                             }
                             //Variants_Options_size
                             if ("Size".equals(option.getName())) {
                                 //Variants_Options_Color
                                 StringBuilder sbValue = new StringBuilder();
+                                StringBuilder sbName = new StringBuilder();
                                 for (Map.Entry<String, String> entry : option.getValues().entrySet()) {
                                     sbValue.append(entry.getValue());
+                                    sbName.append(entry.getValue());
                                 }
                                 if (sbValue.length() > 0) {
                                     fryeBean.setVariantsOptionsSize(String.valueOf(sbValue.toString()));
+                                    fryeBean.setVariantsOptionsSizeValues(String.valueOf(sbName.toString()));
                                 }
                             }
                         }

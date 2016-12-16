@@ -28,19 +28,21 @@
     <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedFryeBean" extends="BaseResultMap" >
         <result column="Attributes" property="attributes" jdbcType="LONGVARCHAR" />
         <result column="Fabric" property="fabric" jdbcType="LONGVARCHAR" />
+        <result column="tax_Code" property="taxCode" jdbcType="LONGVARCHAR" />
         <result column="Variants_Name" property="variantsName" jdbcType="LONGVARCHAR" />
         <result column="Variants_Medias_Meta_ExtraImageThumb" property="variantsMediasMetaExtraimagethumb" jdbcType="LONGVARCHAR" />
         <result column="Variants_Medias_Meta_ExtraImageThumbUrl" property="variantsMediasMetaExtraimagethumburl" jdbcType="LONGVARCHAR" />
         <result column="Variants_Medias_Meta_ExtraImageLargeThumb" property="variantsMediasMetaExtraimagelargethumb" jdbcType="LONGVARCHAR" />
         <result column="Variants_Medias_Meta_ExtraImageLargeThumbUrl" property="variantsMediasMetaExtraimagelargethumburl" jdbcType="LONGVARCHAR" />
         <result column="Variants_Options_Color" property="variantsOptionsColor" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Options_Color_Values" property="variantsOptionsColorValues" jdbcType="LONGVARCHAR" />
         <result column="Variants_Options_size" property="variantsOptionsSize" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Options_size_Values" property="variantsOptionsSizeValues" jdbcType="LONGVARCHAR" />
         <result column="MfgSku" property="mfgsku" jdbcType="LONGVARCHAR" />
         <result column="TaxClassification" property="taxclassification" jdbcType="LONGVARCHAR" />
         <result column="Name" property="name" jdbcType="LONGVARCHAR" />
         <result column="FirstLiveDate" property="firstlivedate" jdbcType="LONGVARCHAR" />
         <result column="MetaTags" property="metatags" jdbcType="LONGVARCHAR" />
-        <result column="Options" property="options" jdbcType="LONGVARCHAR" />
         <result column="MetaData_CategoryExtraText1" property="metadataCategoryextratext1" jdbcType="LONGVARCHAR" />
         <result column="MetaData_CategoryExtraText2" property="metadataCategoryextratext2" jdbcType="LONGVARCHAR" />
         <result column="MetaData_CategoryExtraText3" property="metadataCategoryextratext3" jdbcType="LONGVARCHAR" />
@@ -68,15 +70,16 @@
         "md5", "updateFlag"
     </sql>
     <sql id="Blob_Column_List" >
-        "Attributes", "Fabric", "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
+        "Attributes", "Fabric", "tax_Code", "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
         "Variants_Medias_Meta_ExtraImageThumbUrl", "Variants_Medias_Meta_ExtraImageLargeThumb",
-        "Variants_Medias_Meta_ExtraImageLargeThumbUrl", "Variants_Options_Color", "Variants_Options_size",
-        "MfgSku", "TaxClassification", "Name", "FirstLiveDate", "MetaTags", "Options", "MetaData_CategoryExtraText1",
-        "MetaData_CategoryExtraText2", "MetaData_CategoryExtraText3", "MetaData_ExtraText1",
-        "MetaData_Description2", "MetaData_Description3", "MetaData_Description4", "MetaData_Description2WithFormatting",
-        "MetaData_Description3WithFormatting", "MetaData_Description4WithFormatting", "MetaData_Detail",
-        "MetaData_SizeChartUrl", "MetaData_PreOrderAvailableDate", "MetaData_ProductUrl",
-        "origin", "Variants_Medias_FilePath", "sex"
+        "Variants_Medias_Meta_ExtraImageLargeThumbUrl", "Variants_Options_Color", "Variants_Options_Color_Values",
+        "Variants_Options_size", "Variants_Options_size_Values", "MfgSku", "TaxClassification",
+        "Name", "FirstLiveDate", "MetaTags", "MetaData_CategoryExtraText1", "MetaData_CategoryExtraText2",
+        "MetaData_CategoryExtraText3", "MetaData_ExtraText1", "MetaData_Description2", "MetaData_Description3",
+        "MetaData_Description4", "MetaData_Description2WithFormatting", "MetaData_Description3WithFormatting",
+        "MetaData_Description4WithFormatting", "MetaData_Detail", "MetaData_SizeChartUrl",
+        "MetaData_PreOrderAvailableDate", "MetaData_ProductUrl", "origin", "Variants_Medias_FilePath",
+        "sex"
     </sql>
     <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
         select
@@ -99,20 +102,21 @@
         "MetaData_MaxSalePrice", "MetaData_SameMaxMin", "MetaData_ShippingSurcharge",
         "MetaData_Weight", "MetaData_DisplayOosPopup", "MetaData_ShowWhenOos",
         "MetaData_NonremovableFromCart", "md5", "updateFlag",
-        "Attributes", "Fabric", "Variants_Name",
-        "Variants_Medias_Meta_ExtraImageThumb", "Variants_Medias_Meta_ExtraImageThumbUrl",
-        "Variants_Medias_Meta_ExtraImageLargeThumb", "Variants_Medias_Meta_ExtraImageLargeThumbUrl",
-        "Variants_Options_Color", "Variants_Options_size",
-        "MfgSku", "TaxClassification", "Name",
-        "FirstLiveDate", "MetaTags", "Options",
-        "MetaData_CategoryExtraText1", "MetaData_CategoryExtraText2",
-        "MetaData_CategoryExtraText3", "MetaData_ExtraText1",
-        "MetaData_Description2", "MetaData_Description3",
-        "MetaData_Description4", "MetaData_Description2WithFormatting",
-        "MetaData_Description3WithFormatting", "MetaData_Description4WithFormatting",
-        "MetaData_Detail", "MetaData_SizeChartUrl",
-        "MetaData_PreOrderAvailableDate", "MetaData_ProductUrl",
-        "origin", "Variants_Medias_FilePath",
+        "Attributes", "Fabric", "tax_Code",
+        "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
+        "Variants_Medias_Meta_ExtraImageThumbUrl", "Variants_Medias_Meta_ExtraImageLargeThumb",
+        "Variants_Medias_Meta_ExtraImageLargeThumbUrl", "Variants_Options_Color",
+        "Variants_Options_Color_Values", "Variants_Options_size",
+        "Variants_Options_size_Values", "MfgSku",
+        "TaxClassification", "Name", "FirstLiveDate",
+        "MetaTags", "MetaData_CategoryExtraText1",
+        "MetaData_CategoryExtraText2", "MetaData_CategoryExtraText3",
+        "MetaData_ExtraText1", "MetaData_Description2",
+        "MetaData_Description3", "MetaData_Description4",
+        "MetaData_Description2WithFormatting", "MetaData_Description3WithFormatting",
+        "MetaData_Description4WithFormatting", "MetaData_Detail",
+        "MetaData_SizeChartUrl", "MetaData_PreOrderAvailableDate",
+        "MetaData_ProductUrl", "origin", "Variants_Medias_FilePath",
         "sex")
         values (#{variantsUpc,jdbcType=VARCHAR}, #{productId,jdbcType=BIGINT}, #{isactive,jdbcType=BIT},
         #{istaxable,jdbcType=BIT}, #{categoryid,jdbcType=DOUBLE}, #{metadataCategoryname,jdbcType=VARCHAR},
@@ -122,20 +126,21 @@
         #{metadataMaxsaleprice,jdbcType=DOUBLE}, #{metadataSamemaxmin,jdbcType=BIT}, #{metadataShippingsurcharge,jdbcType=DOUBLE},
         #{metadataWeight,jdbcType=DOUBLE}, #{metadataDisplayoospopup,jdbcType=BIT}, #{metadataShowwhenoos,jdbcType=BIT},
         #{metadataNonremovablefromcart,jdbcType=BIT}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
-        #{attributes,jdbcType=LONGVARCHAR}, #{fabric,jdbcType=LONGVARCHAR}, #{variantsName,jdbcType=LONGVARCHAR},
-        #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
-        #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
-        #{variantsOptionsColor,jdbcType=LONGVARCHAR}, #{variantsOptionsSize,jdbcType=LONGVARCHAR},
-        #{mfgsku,jdbcType=LONGVARCHAR}, #{taxclassification,jdbcType=LONGVARCHAR}, #{name,jdbcType=LONGVARCHAR},
-        #{firstlivedate,jdbcType=LONGVARCHAR}, #{metatags,jdbcType=LONGVARCHAR}, #{options,jdbcType=LONGVARCHAR},
-        #{metadataCategoryextratext1,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
-        #{metadataCategoryextratext3,jdbcType=LONGVARCHAR}, #{metadataExtratext1,jdbcType=LONGVARCHAR},
-        #{metadataDescription2,jdbcType=LONGVARCHAR}, #{metadataDescription3,jdbcType=LONGVARCHAR},
-        #{metadataDescription4,jdbcType=LONGVARCHAR}, #{metadataDescription2withformatting,jdbcType=LONGVARCHAR},
-        #{metadataDescription3withformatting,jdbcType=LONGVARCHAR}, #{metadataDescription4withformatting,jdbcType=LONGVARCHAR},
-        #{metadataDetail,jdbcType=LONGVARCHAR}, #{metadataSizecharturl,jdbcType=LONGVARCHAR},
-        #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR}, #{metadataProducturl,jdbcType=LONGVARCHAR},
-        #{origin,jdbcType=LONGVARCHAR}, #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
+        #{attributes,jdbcType=LONGVARCHAR}, #{fabric,jdbcType=LONGVARCHAR}, #{taxCode,jdbcType=LONGVARCHAR},
+        #{variantsName,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR}, #{variantsOptionsColor,jdbcType=LONGVARCHAR},
+        #{variantsOptionsColorValues,jdbcType=LONGVARCHAR}, #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+        #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR}, #{mfgsku,jdbcType=LONGVARCHAR},
+        #{taxclassification,jdbcType=LONGVARCHAR}, #{name,jdbcType=LONGVARCHAR}, #{firstlivedate,jdbcType=LONGVARCHAR},
+        #{metatags,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
+        #{metadataCategoryextratext2,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
+        #{metadataExtratext1,jdbcType=LONGVARCHAR}, #{metadataDescription2,jdbcType=LONGVARCHAR},
+        #{metadataDescription3,jdbcType=LONGVARCHAR}, #{metadataDescription4,jdbcType=LONGVARCHAR},
+        #{metadataDescription2withformatting,jdbcType=LONGVARCHAR}, #{metadataDescription3withformatting,jdbcType=LONGVARCHAR},
+        #{metadataDescription4withformatting,jdbcType=LONGVARCHAR}, #{metadataDetail,jdbcType=LONGVARCHAR},
+        #{metadataSizecharturl,jdbcType=LONGVARCHAR}, #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR},
+        #{metadataProducturl,jdbcType=LONGVARCHAR}, #{origin,jdbcType=LONGVARCHAR}, #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
         #{sex,jdbcType=LONGVARCHAR})
     </insert>
     <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
@@ -213,6 +218,9 @@
             <if test="fabric != null" >
                 Fabric,
             </if>
+            <if test="taxCode != null" >
+                tax_Code,
+            </if>
             <if test="variantsName != null" >
                 Variants_Name,
             </if>
@@ -231,8 +239,14 @@
             <if test="variantsOptionsColor != null" >
                 Variants_Options_Color,
             </if>
+            <if test="variantsOptionsColorValues != null" >
+                Variants_Options_Color_Values,
+            </if>
             <if test="variantsOptionsSize != null" >
                 Variants_Options_size,
+            </if>
+            <if test="variantsOptionsSizeValues != null" >
+                Variants_Options_size_Values,
             </if>
             <if test="mfgsku != null" >
                 MfgSku,
@@ -248,9 +262,6 @@
             </if>
             <if test="metatags != null" >
                 MetaTags,
-            </if>
-            <if test="options != null" >
-                Options,
             </if>
             <if test="metadataCategoryextratext1 != null" >
                 MetaData_CategoryExtraText1,
@@ -304,7 +315,6 @@
                 sex,
             </if>
         </trim>
-
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="variantsUpc != null" >
                 #{variantsUpc,jdbcType=VARCHAR},
@@ -378,6 +388,9 @@
             <if test="fabric != null" >
                 #{fabric,jdbcType=LONGVARCHAR},
             </if>
+            <if test="taxCode != null" >
+                #{taxCode,jdbcType=LONGVARCHAR},
+            </if>
             <if test="variantsName != null" >
                 #{variantsName,jdbcType=LONGVARCHAR},
             </if>
@@ -396,8 +409,14 @@
             <if test="variantsOptionsColor != null" >
                 #{variantsOptionsColor,jdbcType=LONGVARCHAR},
             </if>
+            <if test="variantsOptionsColorValues != null" >
+                #{variantsOptionsColorValues,jdbcType=LONGVARCHAR},
+            </if>
             <if test="variantsOptionsSize != null" >
                 #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsSizeValues != null" >
+                #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR},
             </if>
             <if test="mfgsku != null" >
                 #{mfgsku,jdbcType=LONGVARCHAR},
@@ -413,9 +432,6 @@
             </if>
             <if test="metatags != null" >
                 #{metatags,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="options != null" >
-                #{options,jdbcType=LONGVARCHAR},
             </if>
             <if test="metadataCategoryextratext1 != null" >
                 #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
@@ -542,6 +558,9 @@
             <if test="fabric != null" >
                 "Fabric" = #{fabric,jdbcType=LONGVARCHAR},
             </if>
+            <if test="taxCode != null" >
+                "tax_Code" = #{taxCode,jdbcType=LONGVARCHAR},
+            </if>
             <if test="variantsName != null" >
                 "Variants_Name" = #{variantsName,jdbcType=LONGVARCHAR},
             </if>
@@ -560,8 +579,14 @@
             <if test="variantsOptionsColor != null" >
                 "Variants_Options_Color" = #{variantsOptionsColor,jdbcType=LONGVARCHAR},
             </if>
+            <if test="variantsOptionsColorValues != null" >
+                "Variants_Options_Color_Values" = #{variantsOptionsColorValues,jdbcType=LONGVARCHAR},
+            </if>
             <if test="variantsOptionsSize != null" >
                 "Variants_Options_size" = #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsSizeValues != null" >
+                "Variants_Options_size_Values" = #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR},
             </if>
             <if test="mfgsku != null" >
                 "MfgSku" = #{mfgsku,jdbcType=LONGVARCHAR},
@@ -577,9 +602,6 @@
             </if>
             <if test="metatags != null" >
                 "MetaTags" = #{metatags,jdbcType=LONGVARCHAR},
-            </if>
-            <if test="options != null" >
-                "Options" = #{options,jdbcType=LONGVARCHAR},
             </if>
             <if test="metadataCategoryextratext1 != null" >
                 "MetaData_CategoryExtraText1" = #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
@@ -660,19 +682,21 @@
         "updateFlag" = #{updateflag,jdbcType=INTEGER},
         "Attributes" = #{attributes,jdbcType=LONGVARCHAR},
         "Fabric" = #{fabric,jdbcType=LONGVARCHAR},
+        "tax_Code" = #{taxCode,jdbcType=LONGVARCHAR},
         "Variants_Name" = #{variantsName,jdbcType=LONGVARCHAR},
         "Variants_Medias_Meta_ExtraImageThumb" = #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
         "Variants_Medias_Meta_ExtraImageThumbUrl" = #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
         "Variants_Medias_Meta_ExtraImageLargeThumb" = #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
         "Variants_Medias_Meta_ExtraImageLargeThumbUrl" = #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
         "Variants_Options_Color" = #{variantsOptionsColor,jdbcType=LONGVARCHAR},
+        "Variants_Options_Color_Values" = #{variantsOptionsColorValues,jdbcType=LONGVARCHAR},
         "Variants_Options_size" = #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+        "Variants_Options_size_Values" = #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR},
         "MfgSku" = #{mfgsku,jdbcType=LONGVARCHAR},
         "TaxClassification" = #{taxclassification,jdbcType=LONGVARCHAR},
         "Name" = #{name,jdbcType=LONGVARCHAR},
         "FirstLiveDate" = #{firstlivedate,jdbcType=LONGVARCHAR},
         "MetaTags" = #{metatags,jdbcType=LONGVARCHAR},
-        "Options" = #{options,jdbcType=LONGVARCHAR},
         "MetaData_CategoryExtraText1" = #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
         "MetaData_CategoryExtraText2" = #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
         "MetaData_CategoryExtraText3" = #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
@@ -717,7 +741,6 @@
         "updateFlag" = #{updateflag,jdbcType=INTEGER}
         where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
     </update>
-
 
 
 
