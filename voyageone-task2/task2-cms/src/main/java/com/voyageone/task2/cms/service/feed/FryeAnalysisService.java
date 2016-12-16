@@ -194,6 +194,9 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         fryeBean.setMetadataShowwhenoos(metaDataBean.isShowWhenOos());
                         fryeBean.setMetadataNonremovablefromcart(metaDataBean.isNonremovableFromCart());
                         fryeBean.setMetadataProducturl(metaDataBean.getProductUrl());
+                        if(!StringUtil.isEmpty(fryeBean.getMetadataProducturl())){
+                            fryeBean.getMetadataProducturl().replace("//frye.dev.onestop.com","http://www.thefryecompany.com ");
+                        }
                         //Variants_UPC
                         fryeBean.setVariantsUpc(variant.getUPC());
                         //Variants_Name
