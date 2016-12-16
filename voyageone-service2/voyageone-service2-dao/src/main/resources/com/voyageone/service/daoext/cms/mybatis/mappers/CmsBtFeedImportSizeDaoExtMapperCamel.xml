@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtFeedImportSizeDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtFeedImportSizeModel" />
+    <sql id="Base_Column_List" >
+        `id`, `channel_id`, `brand_name`, `product_type`, `size_type`, `original_size`, `creater`, 
+        `modifier`, `created`, `modified`
+    </sql>
+
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_bt_feed_import_size
+        <where >
+            <if test="channelIdList!=null and channelIdList.size()!=0">
+                and  channel_id in <foreach item="item" index="i" collection="channelIdList"
+                                                 open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            </if>
+            <if test="brandName != null" >
+                and `brand_name` = #{brandName,jdbcType=VARCHAR}
+            </if>
+            <if test="productType != null" >
+                and `product_type` = #{productType,jdbcType=VARCHAR}
+            </if>
+            <if test="sizeType != null" >
+                and `size_type` = #{sizeType,jdbcType=VARCHAR}
+            </if>
+            <if test="originalSize != null" >
+                and `original_size` = #{originalSize,jdbcType=VARCHAR}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

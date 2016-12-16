@@ -118,10 +118,12 @@ public class ProductTagService extends BaseService {
             updObj.setUpdate("{$pull:{'freeTags':{$nin:#}}}");
             updObj.setUpdateParameters(orgDispTagList);
             WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
+            updObj.setUpdate("{$addToSet:{'freeTags':{'$each':#}}}");
+            updObj.setUpdateParameters(pathList);
+        }else{
+            updObj.setUpdate("{$set:{'freeTags':#}}");
+            updObj.setUpdateParameters(pathList);
         }
-
-        updObj.setUpdate("{$addToSet:{'freeTags':{'$each':#}}}");
-        updObj.setUpdateParameters(pathList);
         // 批量更新product表
         WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
 
