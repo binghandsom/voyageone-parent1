@@ -84,6 +84,7 @@ public class CmsFeedSearchService extends BaseViewService {
             feedCatList.remove(0);
         }
         List<Integer> delFlgList = new ArrayList<Integer>();
+
         for (int i = 0, leng = feedCatList.size(); i < leng; i++) {
             if (feedCatList.get(i).getIsParent() == 1) {
                 // 非子节点
