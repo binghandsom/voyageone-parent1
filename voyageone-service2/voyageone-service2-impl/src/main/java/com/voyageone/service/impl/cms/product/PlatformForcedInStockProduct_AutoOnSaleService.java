@@ -2,8 +2,11 @@ package com.voyageone.service.impl.cms.product;
 
 import com.sun.jdi.IntegerType;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -39,9 +42,17 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
                 if (cartId == 1 || cartId == 0) {
                     continue;
                 }
-                onSale(channelId,cartId);
+                if (isAutoOnSale(channelId, cartId)) {
+                    onSale(channelId, cartId);
+                }
             }
         }
+    }
+    //是否自动上架
+    public boolean isAutoOnSale(String channelId, int cartId) {
+        CmsChannelConfigBean configBean = CmsChannelConfigs.getConfigBean(channelId, "isForcedInStockProduct_AutoOnSale", cartId + "");
+        if (configBean == null) return false;
+        return "1".equals(configBean.getConfigValue1());
     }
     // 指定平台上架
     private void onSale(String channelId, int cartId) {
@@ -68,7 +79,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         Map<String, Object> logParams = new HashMap<>(6);
         logParams.put("channelId", channelId);
         logParams.put("cartIdList", cartList);
-        logParams.put("activeStatus", "ToOnSale");
+        logParams.put("activeStatus", CmsConstants.PlatformActive.ToOnSale.name());
         logParams.put("creater", "autoOnSale");
         logParams.put("comment", "被迫下架的产品，自动上架");
 
