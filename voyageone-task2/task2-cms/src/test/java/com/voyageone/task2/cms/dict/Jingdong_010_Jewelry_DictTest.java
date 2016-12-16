@@ -197,7 +197,7 @@ public class Jingdong_010_Jewelry_DictTest {
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_商品图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, null, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
@@ -212,7 +212,7 @@ public class Jingdong_010_Jewelry_DictTest {
 					RuleExpression imageType = new RuleExpression();
 					imageType.addRuleWord(new TextWord(C_自定义图片));
 
-					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null);
+					CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, null, null);
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
