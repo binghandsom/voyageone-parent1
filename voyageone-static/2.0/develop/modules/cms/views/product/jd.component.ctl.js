@@ -588,7 +588,7 @@ define([
 
                 /*根据autoSyncPriceMsrp值check Sku的Msrp*/
                 function checkPriceMsrp(sku) {
-                    if (autoSyncPriceMsrp == "2") {
+                    if (scope.autoSyncPriceMsrp == "2") {
                         if ((sku.priceMsrp < sku.priceSale || sku.priceMsrp < sku.priceRetail) && !scope.autoSyncPriceMsrpCheck) {
                             scope.autoSyncPriceMsrpCheck = true;
                         }else {
