@@ -10,6 +10,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -32,9 +33,12 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
 
     @Autowired
     MqSender sender;
+
+    @Autowired
+    TypeChannelsService typeChannelsService;
     //上架
     public void onSaleByChannelId(String channelId) {
-        List<TypeChannelBean> listCarts = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "cn");
+        List<TypeChannelBean> listCarts =typeChannelsService.getPlatformTypeList(channelId,"cn");
         for (TypeChannelBean chanelBean : listCarts) {
             if (!StringUtils.isEmpty(chanelBean.getValue())) {
                 int cartId = Integer.parseInt(chanelBean.getValue());
@@ -49,7 +53,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     }
     //是否自动上架
     public boolean isAutoOnSale(String channelId, int cartId) {
-        CmsChannelConfigBean configBean = CmsChannelConfigs.getConfigBean(channelId, "isForcedInStockProduct_AutoOnSale", cartId + "");
+        CmsChannelConfigBean configBean = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE, cartId + "");
         if (configBean == null) return false;
         return "1".equals(configBean.getConfigValue1());
     }

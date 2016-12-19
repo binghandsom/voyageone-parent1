@@ -196,6 +196,9 @@ public class CmsConstants {
 
         // 是否强制尺码转换的检查(1:强制尺码转换 空,0:不强制尺码转换)
         String SIZE_CONVERSION_FLG = "SIZE_CONVERSION_FLG";
+
+        //被迫下架的商品是否自动上架
+        String IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE="IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE";
     }
 
     public interface DataAmount {
