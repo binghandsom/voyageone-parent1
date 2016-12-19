@@ -201,7 +201,7 @@
         <task:scheduled ref="cmsAdvSearchExportFileDeleteJob" method="run" cron="20 1 17 * * ?"/>
 
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
-        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/1 0-23 * * ?" />
+        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
 
     </task:scheduled-tasks>
 
