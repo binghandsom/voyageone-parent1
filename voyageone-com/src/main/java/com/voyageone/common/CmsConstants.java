@@ -115,11 +115,21 @@ public class CmsConstants {
          */
         String PRICE_CALCULATOR_FORMULA = "FORMULA";
 
+
         // 价格相关
-        String PRICE = "PRICE";
-        String PRICE_SX_PRICE = ".sx_price";
-        String PRICE_TEJIABAO_OPEN = ".tejiabao_open";
-        String PRICE_TEJIABAO_PRICE = ".tejiabao_price";
+       // String PRICE = "PRICE";
+
+        String PRICE_SX_Key="PRICE_SX";
+        String PRICE_SALE_Key="PRICE_SALE";
+        String PRICE_RETAIL_Key ="PRICE_RETAIL";
+        String PRICE_TEJIABAO_IS_OPEN_Key="PRICE_TEJIABAO_IS_OPEN";
+        String PRICE_TEJIABAO_Key="PRICE_TEJIABAO";
+
+        String PRICE_RETAILPrice_code = ".retail_price";
+        String PRICE_SALEPrice_code = ".sale_price";
+        String PRICE_SX_PRICE_code = ".sx_price";//
+        String PRICE_TEJIABAO_IS_OPEN_code = ".tejiabao_open";
+        String PRICE_TEJIABAO_PRICE_code = ".tejiabao_price";
 
         // 全链路库存管理相关
         String SCITEM = "SCITEM"; // 后端货品 (val1: 是否使用了全链路库存管理, val2: 商家仓库编码)
