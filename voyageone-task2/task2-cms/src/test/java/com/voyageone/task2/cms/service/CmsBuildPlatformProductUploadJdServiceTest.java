@@ -63,14 +63,15 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
     public void testUploadProduct() throws Exception {
 
         String likingChannelId = "928";
-        int cartId = 29;
+        int cartId = 28;
 
         CmsBtSxWorkloadModel workload = new CmsBtSxWorkloadModel();
         workload.setId(864987);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "29","28","27"
-        workload.setGroupId(Long.parseLong("834879"));
-        workload.setPublishStatus(0);
+        workload.setGroupId(Long.parseLong("1907005"));
+//        workload.setPublishStatus(0);   // 普通上新模式
+        workload.setPublishStatus(3);   // 智能上新模式
 
 //        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
         ShopBean shopProp = new ShopBean();
