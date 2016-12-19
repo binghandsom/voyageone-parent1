@@ -23,13 +23,17 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsImportCategoryTreeServiceTest {
+    @Test
+    public void onStartup() throws Exception {
+
+    }
 
     @Autowired
     private CmsImportCategoryTreeService cmsImportCategoryTreeService;
 
     @Test
     public void testOnStartup() throws Exception {
-        PropertiesHelper.putValue("CmsImportCategoryTreeService_import_file_path", "/Users/jonasvlag/Desktop/temp");
+        PropertiesHelper.putValue("CmsImportCategoryTreeService_import_file_path", "/usr/web/contents/cms/category_import");
         List<TaskControlBean> taskControlList = new ArrayList<>();
         cmsImportCategoryTreeService.onStartup(taskControlList);
     }

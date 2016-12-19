@@ -704,12 +704,12 @@ public class CmsProductDetailService extends BaseViewService {
         if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct, modifier);
 
-            // 更新 feedinfo表中的updFlg 重新出发 feed->mast
-            HashMap<String, Object> paraMap = new HashMap<>(1);
-            paraMap.put("code", oldProduct.getCommon().getFields().getCode());
-            HashMap<String, Object> valueMap = new HashMap<>(1);
-            valueMap.put("updFlg", 0);
-            feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
+//            // 更新 feedinfo表中的updFlg 重新出发 feed->mast
+//            HashMap<String, Object> paraMap = new HashMap<>(1);
+//            paraMap.put("code", oldProduct.getCommon().getFields().getCode());
+//            HashMap<String, Object> valueMap = new HashMap<>(1);
+//            valueMap.put("updFlg", 0);
+//            feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
         //产品编辑页翻译状态从0-》1的场合 翻译时间 和人 设置

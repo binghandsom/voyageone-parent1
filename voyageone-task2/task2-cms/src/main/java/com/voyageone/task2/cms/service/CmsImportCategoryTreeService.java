@@ -139,23 +139,23 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 importCategoryData(categorySheet);
             }
 
-            // 导入天猫国际类目与主类目的匹配关系
-            Sheet tmallCategorySheet = wb.getSheet(TMALL_MAPPING_SHEET_NAME);
-            if (tmallCategorySheet != null) {
-                importPlatformCategoryData(tmallCategorySheet, 23);
-            }
-
-            // 导入京东类目与主类目的匹配关系
-            Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
-            if (jdCategorySheet != null) {
-                importPlatformCategoryData(jdCategorySheet, 26);
-            }
-
-            // 导入聚美类目与主类目的匹配关系
-            Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
-            if (jdCategorySheet != null) {
-                importPlatformCategoryData(jumeiCategorySheet, 27);
-            }
+//            // 导入天猫国际类目与主类目的匹配关系
+//            Sheet tmallCategorySheet = wb.getSheet(TMALL_MAPPING_SHEET_NAME);
+//            if (tmallCategorySheet != null) {
+//                importPlatformCategoryData(tmallCategorySheet, 23);
+//            }
+//
+//            // 导入京东类目与主类目的匹配关系
+//            Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
+//            if (jdCategorySheet != null) {
+//                importPlatformCategoryData(jdCategorySheet, 26);
+//            }
+//
+//            // 导入聚美类目与主类目的匹配关系
+//            Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
+//            if (jdCategorySheet != null) {
+//                importPlatformCategoryData(jumeiCategorySheet, 27);
+//            }
         } catch (InvalidFormatException | IOException e) {
             throw new BusinessException("在导入任务中, 打开 excel 文件是出现错误。", e);
         }
