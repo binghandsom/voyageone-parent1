@@ -569,6 +569,17 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/approveConfirm.ctl",
                 "controller": 'ApproveConfirmController as ctrl'
             },
+            "skuMoveConfirm": {
+                "templateUrl": "views/pop/product/sku_move_confirm.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/sku_move_confirm.ctl",
+                "controller": 'SkuMoveConfirmController as ctrl'
+            },
+            "moveResult": {
+                "templateUrl": "views/pop/product/move_result.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
+                "controller": 'MoveResultController as ctrl',
+                "size": 'sm'
+            },
             "combinedProductNew" : {
                 "templateUrl": "views/pop/product/combined-product-new.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
