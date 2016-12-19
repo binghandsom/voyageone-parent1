@@ -620,6 +620,7 @@ public class CmsProductDetailService extends BaseViewService {
                 platformStatus.put("cartName", CartEnums.Cart.getValueByID(platformInfo.getCartId() + ""));
                 platformStatus.put("pReallyStatus", platformInfo.getpReallyStatus());
                 platformStatus.put("pIsMain", platformInfo.getpIsMain());
+                platformStatus.put("pPlatformMallId", platformInfo.getpPlatformMallId());
                 platformList.add(platformStatus);
             });
         }
