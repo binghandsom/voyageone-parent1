@@ -15,6 +15,11 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
     private String SuggestedUse;
     private String Warnings;
     private String secondaryCategories;
+    private String translationName1;
+    private String translationValue1;
+    private String translationName2;
+    private String translationValue2;
+
 
     public String getManufacturer() {
         return Manufacturer;
@@ -62,6 +67,39 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
 
     public void setSecondaryCategories(String secondaryCategories) {
         this.secondaryCategories = secondaryCategories;
+    }
+
+
+    public String getTranslationName1() {
+        return translationName1;
+    }
+
+    public void setTranslationName1(String translationName1) {
+        this.translationName1 = translationName1 == null ? null : translationName1.trim();
+    }
+
+    public String getTranslationValue1() {
+        return translationValue1;
+    }
+
+    public void setTranslationValue1(String translationValue1) {
+        this.translationValue1 = translationValue1 == null ? null : translationValue1.trim();
+    }
+
+    public String getTranslationName2() {
+        return translationName2;
+    }
+
+    public void setTranslationName2(String translationName2) {
+        this.translationName2 = translationName2 == null ? null : translationName2.trim();
+    }
+
+    public String getTranslationValue2() {
+        return translationValue2;
+    }
+
+    public void setTranslationValue2(String translationValue2) {
+        this.translationValue2 = translationValue2 == null ? null : translationValue2.trim();
     }
 
 }

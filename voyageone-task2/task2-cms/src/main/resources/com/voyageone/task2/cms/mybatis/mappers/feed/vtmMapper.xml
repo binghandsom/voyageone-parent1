@@ -26,6 +26,11 @@
         <result column="product_type" property="productType"/>
         <result column="material" property="material"/>
         <result column="usage_en" property="usageEn"/>
+        <result property="translationName1" column="translationName1"/>
+        <result property="translationValue1" column="translationValue1"/>
+        <result property="translationName2" column="translationName2"/>
+        <result property="translationValue2" column="translationValue2"/>
+
         <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
@@ -92,6 +97,10 @@
         ,${weight_org} as weight_org
         ,${weight_org_unit} as weight_org_unit
         ,${weight_calc} as weightCalc
+        ,translation_Name1 AS translationName1
+        ,translation_Value1 AS translationValue1
+        ,translation_Name2 AS translationName2
+        ,translation_Value2 AS translationValue2
         from
         ${tableName}
         ${keyword}

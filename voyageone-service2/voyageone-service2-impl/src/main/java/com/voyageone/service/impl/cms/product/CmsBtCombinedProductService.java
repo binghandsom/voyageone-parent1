@@ -86,7 +86,15 @@ public class CmsBtCombinedProductService extends BaseService {
     @Autowired
     private CmsBtCombinedProductLogDao cmsBtCombinedProductLogDao;
 
-    public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId) {
+    /**
+     * 获取平台组合套装商品数据
+     * @param numId
+     * @param channelId
+     * @param cartId
+     * @param local true表示和本地mongo进行虚拟SKU取交集，false表示纯取平台数据
+     * @return
+     */
+    public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId, boolean local) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
         /*shopBean.setAppKey("21008948");
         shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
@@ -98,6 +106,7 @@ public class CmsBtCombinedProductService extends BaseService {
             $info("threadNo:" + threadNo + " numiid:" + numId );
             CmsBtCombinedProductModel productBean = new CmsBtCombinedProductModel();
             productBean.setCartId(cartId);
+            productBean.setChannelId(channelId);
             productBean.setNumID(numId);
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
                 try{
@@ -126,10 +135,10 @@ public class CmsBtCombinedProductService extends BaseService {
                                 CmsBtCombinedProductModel_Sku skuBean = new CmsBtCombinedProductModel_Sku();
                                 skuBean.setSuitSkuCode(skuValue.getInputFieldValue("sku_outerId"));
                                 skuBean.setSuitPreferentialPrice(Double.parseDouble(skuValue.getInputFieldValue("sku_price")));
-                                skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item()); // 在页面初始化一个空的SKU ITEM
                                 productBean.getSkus().add(skuBean);
                             });
                         }
+                        this.compareSuitSkuWithLocal(productBean, local);
                         return productBean;
                     }else{
                         $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
@@ -151,9 +160,9 @@ public class CmsBtCombinedProductService extends BaseService {
                             CmsBtCombinedProductModel_Sku skuBean = new CmsBtCombinedProductModel_Sku();
                             skuBean.setSuitSkuCode(item.getOuterId());
                             skuBean.setSuitPreferentialPrice(Double.parseDouble(item.getJdPrice()));
-                            skuBean.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item()); // 在页面初始化一个空的SKU ITEM
                             productBean.getSkus().add(skuBean);
                         };
+                        this.compareSuitSkuWithLocal(productBean, local);
                         return productBean;
                     } else {
                         $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
@@ -169,6 +178,34 @@ public class CmsBtCombinedProductService extends BaseService {
 
         }
         return null;
+    }
+
+    private void compareSuitSkuWithLocal(CmsBtCombinedProductModel product, boolean local) {
+        if (product != null && StringUtils.isNotBlank(product.getNumID()) && StringUtils.isNotBlank(product.getChannelId()) && product.getCartId() != null) {
+            JongoQuery queryObj = new JongoQuery();
+            queryObj.addQuery("{'active':1,'channelId':#,'cartId':#,'numID':#}");
+            queryObj.addParameters(product.getChannelId(), product.getCartId(), product.getNumID());
+            CmsBtCombinedProductModel localProduct = cmsBtCombinedProductDao.selectOneWithQuery(queryObj);
+            if (localProduct != null && CollectionUtils.isNotEmpty(localProduct.getSkus())) {
+                Map<String, CmsBtCombinedProductModel_Sku> localSkus = new HashMap<String, CmsBtCombinedProductModel_Sku>();
+                for (CmsBtCombinedProductModel_Sku sku:localProduct.getSkus()) {
+                    localSkus.put(sku.getSuitSkuCode(), sku);
+                }
+                for (CmsBtCombinedProductModel_Sku sku:product.getSkus()) {
+                    if (localSkus.containsKey(sku.getSuitSkuCode())) {
+                        sku.setSkuItems(localSkus.get(sku.getSuitSkuCode()).getSkuItems());
+                        if (local && CollectionUtils.isEmpty(sku.getSkuItems())) {
+                            sku.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item());
+                        }
+                    }else {
+                        if (local) {
+                            sku.getSkuItems().add(new CmsBtCombinedProductModel_Sku_Item());
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public CmsBtCombinedProductModel_Sku_Item getSkuDetail (String skuCode, String channelId, Integer cartId) {
@@ -317,11 +354,24 @@ public class CmsBtCombinedProductService extends BaseService {
      * @return
      */
     public CmsBtCombinedProductModel getCombinedProduct (CmsBtCombinedProductModel model, String channelId) {
-        if (model == null || StringUtils.isBlank(model.getNumID()) || StringUtils.isBlank(channelId)) {
+        if (model == null || StringUtils.isBlank(model.getNumID()) || StringUtils.isBlank(channelId) || model.getCartId() == null) {
             throw new BusinessException("参数错误！");
         }
-        String query = String.format("{'active':1, 'numID':'%s', 'channelId':'%s'}", model.getNumID(), channelId);
-        return cmsBtCombinedProductDao.selectOneWithQuery(query);
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.addQuery("{'active':1, 'channelId':#,'cartId':#,'numID':#}");
+        queryObj.addParameters(channelId, model.getCartId(), model.getNumID());
+        return cmsBtCombinedProductDao.selectOneWithQuery(queryObj);
+    }
+
+    /**
+     * 根据ID查找组合套装商品
+     * @param _id
+     * @return
+     */
+    public CmsBtCombinedProductModel selectById(String _id) {
+        if (StringUtils.isNotBlank(_id))
+            return cmsBtCombinedProductDao.selectById(_id);
+        return null;
     }
 
     /**
@@ -426,7 +476,7 @@ public class CmsBtCombinedProductService extends BaseService {
             }
         }
 
-        CmsBtCombinedProductModel platformModel = this.getCombinedProductPlatformDetail(model.getNumID(), channelId, model.getCartId());
+        CmsBtCombinedProductModel platformModel = this.getCombinedProductPlatformDetail(model.getNumID(), channelId, model.getCartId(), false);
         if (platformModel == null) {
             throw new BusinessException("组合套装(numID=" + model.getNumID() + ")在平台上不存在！");
         }

@@ -103,6 +103,10 @@
     ,`VoyageOne Price`
     ,`Quantity`
     ,`VoyageOne MSRP`
+    ,`Translation_Name1`
+    ,`Translation_Value1`
+    ,`Translation_Value2`
+    ,`Translation_Name2`
     ,UpdateFlag
     ,md5
     )
@@ -199,6 +203,10 @@
     #{vtmInfo.VoyageOnePrice},
     #{vtmInfo.Quantity},
     #{vtmInfo.VoyageOneMSRP},
+    #{vtmInfo.translationName1},
+    #{vtmInfo.translationValue1},
+    #{vtmInfo.translationName2},
+    #{vtmInfo.translationValue2},
     '0',
     #{vtmInfo.md5}
     )

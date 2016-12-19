@@ -18,4 +18,5 @@ public interface ComMtValueChannelDaoExt {
 
 	List<ComMtValueChannelBean> selectChannelAttributeByPage(Map<String, Object> params);
 
+	List<String> selectList928ChannelId();
 }

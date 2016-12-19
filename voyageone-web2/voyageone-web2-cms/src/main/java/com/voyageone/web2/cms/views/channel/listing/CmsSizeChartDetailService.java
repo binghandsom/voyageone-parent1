@@ -35,6 +35,8 @@ public class CmsSizeChartDetailService extends BaseService {
         int sizeChartId = (int) param.get("sizeChartId");
         //尺码表自增键取得当前的记录
         CmsBtSizeChartModel cmsBtSizeChartModel =sizeChartService.getCmsBtSizeChartModel(sizeChartId,channelId);
+
+        //添加feed导入的尺码
         addFeddImportSize(cmsBtSizeChartModel);
         sizeChartList.add(cmsBtSizeChartModel);
         //尺码关系一览检索
