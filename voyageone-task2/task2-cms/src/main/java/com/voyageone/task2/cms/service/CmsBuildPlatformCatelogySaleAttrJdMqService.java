@@ -30,9 +30,8 @@ import java.util.stream.Collectors;
 /**
  * 取得京东类目销售属性(颜色和尺码)MQ服务
  *
- * 取得指定渠道id和平台id下面所有京东类目schema表中叶子类目对应销售(颜色和尺码)属性,并回写到cms_mt_platform_skus表中
- * 使用的是老版本API类目取得（360buy.warecats.get），因为新版本的API不能区分销售属性到底是颜色还是尺码
- * 颜色或者尺码属性值不存在时，会往平台上补足属性值(颜色补足24中颜色，尺码补足30个尺码(尺码属性值上限54个，30个不够可以再加))
+ * 取得指定渠道id和平台id下指定叶子类目或京东类目tree表中中所有叶子类目的销售(颜色和尺码)属性,并回写到cms_mt_platform_skus表中
+ * 当京东平台上指定类目的颜色或者尺码的属性值不存在时，会往平台上补足属性值(颜色补足24个属性值，尺码补足30个属性值(尺码属性值上限54个，30个不够可以再加))
  *
  * @author desmond on 2016/12/14
  * @version 2.10.0
@@ -101,7 +100,7 @@ public class CmsBuildPlatformCatelogySaleAttrJdMqService extends BaseMQCmsServic
      * 输入参数:
      *     channelId：渠道ID（必须）
      *     cartId：   平台ID (必须，只能是京东的平台：24(JD),26(JG),28(JGJ),29(JGY))
-     *     catIdList: 叶子类目ID列表(非必须，不输入时取得全部叶子类目；输入指定叶子类目列表时,channelId和cartId也要输入)
+     *     catIdList: 叶子类目ID列表(非必须，不输入时取得全部叶子类目)
      *
      * @param messageMap Mq消息Map
      * @throws Exception
