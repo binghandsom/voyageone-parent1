@@ -1,11 +1,11 @@
 /**
  * @Description: 解析平台状态
- * @example:{  cartId:entity.cartId,
-               status:entity.status,
-               pStatus:entity.pStatus,
-               isMain:entity.pIsMain,
-               pPublishError:entity.pPublishError,
-               numberId:entity.pNumIId}
+ *     cartId
+ *     status
+ *     pStatus
+ *     pIsMain
+ *     pPublishError
+ *     pNumIId
  * @User:    tony-piao
  * @Version: 2.1.0, 2016-6-24
  */
@@ -39,7 +39,8 @@ define([
 
         StatusController.prototype.init = function () {
             this.statusData = this.$scope.data;
-            var _numberId = this.statusData.numberId,
+            var _numberId = this.statusData.pNumIId,
+                _pPlatformMallId = this.statusData.pPlatformMallId,
                 _cartId = +this.statusData.cartId,
                 _cartInfo = carts.valueOf(_cartId);
 
@@ -53,7 +54,7 @@ define([
                 if (_cartId != 27) {
                     this.statusData.detailUrl = _cartInfo.pUrl + _numberId;
                 } else {
-                    this.statusData.detailUrl = _cartInfo.pUrl + _numberId + ".html";
+                    this.statusData.detailUrl = _cartInfo.pUrl + _pPlatformMallId + ".html";
                 }
 
             }
@@ -77,7 +78,7 @@ define([
             controllerAs: 'ctrl',
             /** 编辑模板的话请到html页面编辑，
              * 然后压缩拷进来。*/
-            template: '<span class="plateform-status" ng-if="!ctrl.statusData.pReallyStatus"><span class="label"  ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',                                     \'ready\':ctrl.statusData.status == \'Ready\' ,                                     \'waiting-publish\':ctrl.statusData.status == \'Approved\'}"           title="{{ctrl.statusData.status}}"><span ng-class="{\'isMain\': ctrl.statusData.isMain,                             \'isCommon\':!ctrl.statusData.isMain}">                {{ctrl._cartInfo.name}}{{ctrl.pStatusDesc}}{{ctrl.statusData.status == \'Approved\'? ctrl.pReallyStatusDesc:""}}</span></span></span><span class="plateform-status" ng-if="ctrl.statusData.pReallyStatus"><span class="label {{ctrl.statusData.approveError ? \'error\' : \'\'}}"           ng-class="{\'in-stock\': ctrl.statusData.pReallyStatus == \'InStock\',\'on-sale\':ctrl.statusData.pReallyStatus == \'OnSale\'}"           title="{{ctrl.statusData.pStatus}}"><span ng-if="ctrl.statusData.numberId"><a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">                 {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}</a></span><span ng-if="!ctrl.statusData.numberId" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">             {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}</span></span></span>',
+            template: '<span class="plateform-status" ng-if="!ctrl.statusData.pReallyStatus"><span class="label"  ng-class="{\'pending\': ctrl.statusData.status == \'Pending\',                                     \'ready\':ctrl.statusData.status == \'Ready\' ,                                     \'waiting-publish\':ctrl.statusData.status == \'Approved\'}"           title="{{ctrl.statusData.status}}"><span ng-class="{\'isMain\': ctrl.statusData.pIsMain,                             \'isCommon\':!ctrl.statusData.pIsMain}">                {{ctrl._cartInfo.name}}{{ctrl.pStatusDesc}}{{ctrl.statusData.status == \'Approved\'? ctrl.pReallyStatusDesc:""}}</span></span></span><span class="plateform-status" ng-if="ctrl.statusData.pReallyStatus"><span class="label {{ctrl.statusData.approveError ? \'error\' : \'\'}}"           ng-class="{\'in-stock\': ctrl.statusData.pReallyStatus == \'InStock\',\'on-sale\':ctrl.statusData.pReallyStatus == \'OnSale\'}"           title="{{ctrl.statusData.pStatus}}"><span ng-if="ctrl.statusData.pNumIId"><a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" ng-class="{\'isMain\': ctrl.statusData.pIsMain,\'isCommon\':!ctrl.statusData.pIsMain}">                 {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}</a></span><span ng-if="!ctrl.statusData.pNumIId" ng-class="{\'isMain\': ctrl.statusData.pIsMain,\'isCommon\':!ctrl.statusData.pIsMain}">             {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}</span></span></span>',
             link: function ($scope) {
                 $scope.ctrl.init();
             }
