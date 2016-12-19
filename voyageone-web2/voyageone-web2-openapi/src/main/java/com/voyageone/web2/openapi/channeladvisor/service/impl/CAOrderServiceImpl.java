@@ -562,8 +562,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                         break;
                     }
                 }
-                if (matchIndex != -1)
-                    tempItems.remove(matchIndex);
+                /*if (matchIndex != -1)
+                    tempItems.remove(matchIndex);*/
             }
         }
 
@@ -732,8 +732,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                         break;
                     }
                 }
-                if (matchIndex != -1)
-                    tempItems.remove(matchIndex);
+                /*if (matchIndex != -1)
+                    tempItems.remove(matchIndex);*/
             }
         }
 
