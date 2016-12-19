@@ -230,6 +230,7 @@ public class CmsMtChannelConfigService extends BaseService {
                 }
             }
         });
+        this.clearRedisCache();
     }
 
     public void saveList_add(CmsMtChannelConfigInfo info, String channelId, String userName) {
