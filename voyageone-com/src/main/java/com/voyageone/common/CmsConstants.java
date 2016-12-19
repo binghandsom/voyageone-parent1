@@ -61,6 +61,9 @@ public class CmsConstants {
         // 该渠道是否自动同步 MSRP
         String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
 
+        // MSRP统一配置
+        String UNIFY_SKU_PRICE_MSRP = "UNIFY_SKU_PRICE_MSRP";
+
         // 第三方原始价格单位
         String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
 
