@@ -298,10 +298,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // 从cms_mt_channel_config表中取得上新用价格配置项目名(例：31.sx_price对应的价格项目，有可能priceRetail, 有可能是priceMsrp)
             String priceConfigValue = getPriceConfigValue(sxData.getChannelId(), StringUtils.toString(cartId),CmsConstants.ChannelConfig.PRICE_SX_Key,
-                    CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
+                    CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
             if (StringUtils.isEmpty(priceConfigValue)) {
                 String errMsg = String.format("从cms_mt_channel_config表中未能取得该店铺设置的上新用价格配置项目！ [config_key:%s]",
-                        StringUtils.toString(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
+                        StringUtils.toString(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -1286,10 +1286,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
                 , CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_Key
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_code);
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_CODE);
         CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
                 , CmsConstants.ChannelConfig.PRICE_TEJIABAO_Key
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE_code);
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE_CODE);
 
         // 检查一下
         String tejiabaoOpenFlag = null;
