@@ -71,8 +71,8 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
         //如检索的订单件数为0，无需检索订单明细信息。直接空数组返回。
         if (CollectionUtils.isEmpty(ordersModels)) {
-            throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
-            //return success(new ArrayList<OrderModel>());
+            //throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
+            return success(new ArrayList<OrderModel>());
         }
 
 
