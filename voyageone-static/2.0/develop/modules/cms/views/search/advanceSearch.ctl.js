@@ -303,7 +303,8 @@ define([
             var msg = '';
             var selList = getSelProductList();
             $scope.vm.searchInfo._selCodeList = [];
-            if (selList.length > 0) {
+
+            if (selList.length > 0 && !$scope.vm._selall) {
                 msg = '<br>仅导出选中的记录，如需导出全部记录，请回到一览画面取消选择。';
                 _.forEach(selList, function (object) {
                     $scope.vm.searchInfo._selCodeList.push(object.code);
@@ -721,7 +722,7 @@ define([
                                 "tagPathList": freeTags,
                                 "prodIdList": productIds,
                                 "isSelAll": $scope.vm._selall ? 1 : 0,
-                                "orgDispTagList":res.orgDispTagList
+                                "orgDispTagList": res.orgDispTagList
                             };
                             $searchAdvanceService2.addFreeTag(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));

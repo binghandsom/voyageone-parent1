@@ -54,7 +54,7 @@
                         <div class="form-group" ng-repeat="feedProp in productInfo.feedInfo | filter: {feedAttr:'true'}" ng-if="feedProp.feedAttrCn">
                             <label class="col-sm-2 control-label">{{feedProp.feedAttrEn}}</label>
                             <div class="col-sm-3">
-                                <input class="form-control" ng-model="feedProp.feedAttrValueEn" disabled="disabled">
+                                <input class="form-control" ng-model="feedProp.feedAttrValueEn" readonly>
                             </div>
                             <label class="col-sm-2 control-label s-required">{{feedProp.feedAttrCn}}</label>
                             <div class="col-sm-3">
@@ -67,7 +67,7 @@
                             </div>
                             <div class="col-sm-1">
                                 <label class="i-checks-sm m-b-none">
-                                    <input type="checkbox" ng-model="feedProp.customPropActive" ng-disabled="!feedProp.feedAttrValueCn">
+                                    <input type="checkbox" ng-model="feedProp.customPropActive" ng-readonly="!feedProp.feedAttrValueCn">
                                 </label>
                             </div>
                         </div>
@@ -84,7 +84,7 @@
                         <div class="form-group" ng-repeat="feedProp in productInfo.feedInfo | filter: {feedAttr:'true'}" ng-if="!feedProp.feedAttrCn">
                             <label class="col-sm-2 control-label">{{feedProp.feedAttrEn}}</label>
                             <div class="col-sm-3">
-                                <input class="form-control" ng-model="feedProp.feedAttrValueEn" disabled="disabled">
+                                <input class="form-control" ng-model="feedProp.feedAttrValueEn" readonly>
                             </div>
                         </div>
                     </div>
