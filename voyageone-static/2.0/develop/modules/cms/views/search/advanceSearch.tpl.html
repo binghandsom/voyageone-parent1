@@ -885,7 +885,7 @@
                                             </span>
                                             <!-- Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.platforms">
-                                                <span ng-repeat='entity in productInfo.platforms | filter:{cartId: "!0"} '>
+                                                <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
                                                        <platform-status data="{cartId:entity.cartId,
                                                        status:entity.status,
                                                        pStatus:entity.pStatus,
@@ -1062,7 +1062,7 @@
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>
                                             <!-- Todo 商品平台状态 -->
                                             <span class="label m-l-sm" ng-if="groupInfo.platforms">
-                                                <span ng-repeat='entity in groupInfo.platforms | filter:{cartId: "!0"} '>
+                                                <span ng-repeat='entity in groupInfo.platforms' ng-if="entity.cartId > 0">
                                                        <platform-status data="{cartId:entity.cartId,
                                                        status:entity.status,
                                                        pStatus:entity.pStatus,

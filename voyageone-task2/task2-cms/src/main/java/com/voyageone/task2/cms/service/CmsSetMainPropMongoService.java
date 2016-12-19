@@ -3068,7 +3068,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 newModel.setCreater(getTaskName());
                 newModel.setModifier(getTaskName());
-                String URL_FORMAT = "[~@.' '#+$%&*_'':/‘’^\\()]";
+                String URL_FORMAT = "[~@.' ';#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
                         channelId.equals(cmsChannelConfigBean.getChannelId())) {

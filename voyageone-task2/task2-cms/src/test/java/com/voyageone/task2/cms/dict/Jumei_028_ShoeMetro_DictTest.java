@@ -186,7 +186,7 @@ public class Jumei_028_ShoeMetro_DictTest {
             RuleExpression useOriUrl = new RuleExpression();
             useOriUrl.addRuleWord(new TextWord("1"));
 
-            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
             ruleRoot.addRuleWord(new CustomWord(word));
         }
 
@@ -266,7 +266,7 @@ public class Jumei_028_ShoeMetro_DictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
         }
