@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.sun.jdi.IntegerType;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
@@ -32,9 +31,9 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
     CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    private MqSender sender;
+    MqSender sender;
     //上架
-    public void onSale(String channelId) {
+    public void onSaleByChannelId(String channelId) {
         List<TypeChannelBean> listCarts = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "cn");
         for (TypeChannelBean chanelBean : listCarts) {
             if (!StringUtils.isEmpty(chanelBean.getValue())) {
@@ -43,7 +42,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
                     continue;
                 }
                 if (isAutoOnSale(channelId, cartId)) {
-                    onSale(channelId, cartId);
+                    onSaleByChannelId(channelId, cartId);
                 }
             }
         }
@@ -55,7 +54,7 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         return "1".equals(configBean.getConfigValue1());
     }
     // 指定平台上架
-    private void onSale(String channelId, int cartId) {
+    private void onSaleByChannelId(String channelId, int cartId) {
         //被迫下架的产品的code
         String queryformat = "{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}";
         String strQuery = String.format(queryformat, cartId, cartId);
