@@ -79,8 +79,9 @@ public class CAOrderControllerTest {
     public void testCancelOrder() throws Exception {
         //取消订单
         String url = BASE_URL + CAUrlConstants.ORDERS.CANCEL_ORDER;
-        String reqJson = "{\"OrderID\":\"M456W\",\"Items\":[{\"ID\":\"M333W\",\"SellerSku\":\"C900555SRML1\",\"Quantity\":1,\"Reason\":\"BuyerCanceled\"}]}";
-        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "01020160516152000003"), reqJson, HEADER);
+        String reqJson = "{\"OrderID\":\"02820160919111119014\",\"Items\":" +
+                "[{\"ID\":\"M333W\",\"SellerSku\":\"3114141\",\"Quantity\":2,\"Reason\":\"BuyerCanceled\"}]}";
+        String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.POST, url.replace("{id}", "02820160919111119014"), reqJson, HEADER);
         System.out.println(result);
     }
 
