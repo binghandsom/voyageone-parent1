@@ -2,7 +2,7 @@ package com.voyageone.service.impl.com.mq.config;
 
 /**
  * @author aooer 2016/4/18.
- * @version 2.6.0
+ * @version 2.10.0
  * @since 2.0.0
  */
 public class MqRoutingKey {
@@ -124,7 +124,16 @@ public class MqRoutingKey {
     public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
     /**
      * 天猫同购共通标题描述翻译
+     *
+     * @since 2.10.0
      */
     public static final String CMS_TASK_TranslateByTonggouJob = "voyageone_cms_task_TranslateByTonggouJobService_queue";
+    /**
+     * 天猫同购共通标题描述翻译
+     *
+     * @since 2.10.0
+     */
+    public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
 
 }
+

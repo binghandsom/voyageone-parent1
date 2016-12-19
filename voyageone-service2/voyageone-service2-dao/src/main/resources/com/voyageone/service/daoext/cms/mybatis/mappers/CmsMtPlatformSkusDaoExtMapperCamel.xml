@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtPlatformSkusDaoExt">
+
+    <resultMap id="ResultMap" type="com.voyageone.service.model.cms.CmsMtPlatformSkusModel" />
+
+    <!-- 查询cms_mt_platform_skus表中指定渠道id,平台id下所有叶子类目id对应的颜色和尺码的属性值件数(件数存放在idx字段返回) -->
+    <select id="getPlatformSkusSaleAttrCount" resultMap="ResultMap">
+        SELECT
+              channel_id
+             ,cart_id
+             ,platform_category_id
+             ,attr_type
+             ,COUNT(idx) as idx
+        FROM  voyageone_cms2.cms_mt_platform_skus
+        WHERE active = 1
+        <if test="channelId != null">
+          AND channel_id = #{channelId}
+        </if>
+        <if test="cartId != null">
+          AND cart_id = #{cartId}
+        </if>
+        GROUP BY
+              channel_id, cart_id, platform_category_id, attr_type
+        ORDER BY
+              platform_category_id ASC
+    </select>
+
+    <!-- 删除cms_mt_platform_skus表中指定渠道id,平台id和叶子类目id对应的所有颜色和尺码的记录 -->
+    <delete id="deletePlatformSkusSaleAttr" >
+        DELETE FROM voyageone_cms2.cms_mt_platform_skus
+        WHERE channel_id = #{channelId}
+          AND cart_id = #{cartId}
+          AND platform_category_id = #{catId}
+    </delete>
+</mapper>
