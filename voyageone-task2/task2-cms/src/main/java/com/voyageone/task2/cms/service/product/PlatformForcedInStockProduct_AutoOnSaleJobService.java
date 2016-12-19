@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 
 @Service
-public class PlatformForcedInStockProduct_AutoOnSaleJob  extends BaseCronTaskService {
+public class PlatformForcedInStockProduct_AutoOnSaleJobService extends BaseCronTaskService {
 
     @Autowired
     MongoTemplate mongoTemplate;
