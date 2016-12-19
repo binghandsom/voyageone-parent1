@@ -885,13 +885,7 @@
                                             <!-- Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.platforms">
                                                 <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
-                                                       <platform-status data="{cartId:entity.cartId,
-                                                       status:entity.status,
-                                                       pStatus:entity.pStatus,
-                                                       isMain:entity.pIsMain,
-                                                       pReallyStatus:entity.pReallyStatus,
-                                                       pPublishError:entity.pPublishError,
-                                                       numberId:entity.pNumIId}"></platform-status>
+                                                       <platform-status data="entity"></platform-status>
                                                 </span>
                                             </span>
                                             <!-- Todo 美国商品平台状态 -->
@@ -1062,13 +1056,7 @@
                                             <!-- Todo 商品平台状态 -->
                                             <span class="label m-l-sm" ng-if="groupInfo.platforms">
                                                 <span ng-repeat='entity in groupInfo.platforms' ng-if="entity.cartId > 0">
-                                                       <platform-status data="{cartId:entity.cartId,
-                                                       status:entity.status,
-                                                       pStatus:entity.pStatus,
-                                                       isMain:entity.pIsMain,
-                                                       pReallyStatus:entity.pReallyStatus,
-                                                       pPublishError:entity.pPublishError,
-                                                       numberId:entity.pNumIId}"></platform-status>
+                                                       <platform-status data="entity"></platform-status>
                                                 </span>
                                             </span>
                                             <!-- Todo 美国商品平台状态 -->

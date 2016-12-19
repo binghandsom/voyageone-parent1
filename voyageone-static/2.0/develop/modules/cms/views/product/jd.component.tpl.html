@@ -163,7 +163,9 @@
                                 </label>
                                 <div class="col-md-8">
                                     <span class="m-r-sm" ng-if="vm.platform.pNumIId">&nbsp;
-                                        <a ng-href="{{vm.productUrl}}{{vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank" ng-bind="vm.platform.pNumIId"></a>
+                                        <a ng-href="{{vm.productUrl}}{{cartInfo.value==27 ? vm.platform.pPlatformMallId : vm.platform.pNumIId}}{{cartInfo.value==27?'.html':''}}" target="_blank">
+                                            {{cartInfo.value==27 ? vm.platform.pPlatformMallId : vm.platform.pNumIId}}
+                                        </a>
                                     </span>&nbsp;
                                     <span class="m-r-sm" ng-if="vm.platform.pStatus == 'Failed'" title="{{vm.platform.pPublishMessage}}">&nbsp;
                                         {{vm.platform.pPublishMessage | limitTo: 30}}{{vm.platform.pPublishMessage.length > 30 ? '...' : ''}}
