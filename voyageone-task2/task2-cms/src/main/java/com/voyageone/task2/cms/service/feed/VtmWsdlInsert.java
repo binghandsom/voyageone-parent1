@@ -42,11 +42,7 @@ public class VtmWsdlInsert extends BaseCronTaskService {
     protected SuperFeed2Dao superFeedDao;
 
     @Autowired
-    private VtmDao vtmDaotmDao;
-
-    protected String getWhereUpdateFlg() {
-        return INSERT_FLG;
-    }
+    private VtmDao vtmDao;
 
     /**
      * 获取子系统
@@ -84,15 +80,15 @@ public class VtmWsdlInsert extends BaseCronTaskService {
 
         private List<CmsBtFeedInfoModel> getModels(String category) throws Exception {
 
-            Map colums = getColumns();
+            Map<String, Object> column = getColumns();
             Map<String, CmsBtFeedInfoModel> codeMap = new HashMap<>();
 
 
             // 条件则根据类目筛选
-            String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, colums.get("category").toString(),
+            String where = String.format("WHERE %s AND %s = '%s' ", INSERT_FLG, column.get("category").toString(),
                     category.replace("'", "\\\'"));
 
-            List<CmsBtFeedInfoVtmModel> vtmModelBeans = vtmDaotmDao.selectSuperfeedModel(where, colums, table);
+            List<CmsBtFeedInfoVtmModel> vtmModelBeans = vtmDao.selectSuperfeedModel(where, column, table);
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
             for (CmsBtFeedInfoVtmModel vtmModelBean : vtmModelBeans) {
                 Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
@@ -102,10 +98,11 @@ public class VtmWsdlInsert extends BaseCronTaskService {
                     if (StringUtil.isEmpty(attributeName)) {
                         break;
                     }
-
-                    List<String> values = new ArrayList<>();
-                    values.add((String) temp.get(attributeName));
-                    attribute.put(attributeName, values);
+                    if (temp.get(attributeName) != null) {
+                        List<String> values = new ArrayList<>();
+                        values.add((String) temp.get(attributeName));
+                        attribute.put(attributeName, values);
+                    }
                 }
 
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(channel);
@@ -129,15 +126,15 @@ public class VtmWsdlInsert extends BaseCronTaskService {
                 cmsBtFeedInfoModel.setSkus(skus);
                 //设置重量结束
 
-                if(codeMap.containsKey(cmsBtFeedInfoModel.getCode())){
-                    CmsBtFeedInfoModel beforeFeed =  codeMap.get(cmsBtFeedInfoModel.getCode());
+                if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
+                    CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                     beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
                     beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
                     beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                     beforeFeed.setAttribute(BaseAnalysisService.attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
-                }else{
+                } else {
                     modelBeans.add(cmsBtFeedInfoModel);
-                    codeMap.put(cmsBtFeedInfoModel.getCode(),cmsBtFeedInfoModel);
+                    codeMap.put(cmsBtFeedInfoModel.getCode(), cmsBtFeedInfoModel);
                 }
             }
 
@@ -162,8 +159,6 @@ public class VtmWsdlInsert extends BaseCronTaskService {
             map.put("p_made_in_country", (Feeds.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
             map.put("pe_short_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
             map.put("pe_long_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
-//            map.put("p_msrp", (Feed.getVal1(channel, FeedEnums.Name.product_p_msrp)));
-//            map.put("cps_cn_price_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb)));
             map.put("i_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_sku)));
             map.put("i_itemcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
             map.put("i_size", (Feeds.getVal1(channel, FeedEnums.Name.item_i_size)));
@@ -186,6 +181,11 @@ public class VtmWsdlInsert extends BaseCronTaskService {
             map.put("weight_org", (Feeds.getVal1(channel, FeedEnums.Name.weight_org)));
             map.put("weight_org_unit", (Feeds.getVal1(channel, FeedEnums.Name.weight_org_unit)));
             map.put("weight_calc", (Feeds.getVal1(channel, FeedEnums.Name.weight_calc)));
+
+            map.put("translationName1", (Feeds.getVal1(channel, FeedEnums.Name.translationName1)));
+            map.put("translationValue1", (Feeds.getVal1(channel, FeedEnums.Name.translationValue1)));
+            map.put("translationName2", (Feeds.getVal1(channel, FeedEnums.Name.translationName2)));
+            map.put("translationValue2", (Feeds.getVal1(channel, FeedEnums.Name.translationValue2)));
 
             return map;
         }
@@ -220,40 +220,37 @@ public class VtmWsdlInsert extends BaseCronTaskService {
          * @throws Exception
          */
         protected void postNewProduct() throws Exception {
-
-//            vtmDaotmDao.updateFull();
-
             $info("准备 <构造> 类目树");
-            List<String> categoriePaths = getCategories();
+            List<String> categoryPaths = getCategories();
 
-            List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
+            List<CmsBtFeedInfoModel> productSuccessList = new ArrayList<>();
             // 准备接收失败内容
             List<CmsBtFeedInfoModel> productFailAllList = new ArrayList<>();
             List<CmsBtFeedInfoModel> productAll = new ArrayList<>();
 
-            for (String categorPath : categoriePaths) {
+            for (String categoryPath : categoryPaths) {
 
                 // 每棵树的信息取得
-                $info("每棵树的信息取得开始" + categorPath);
+                $info("每棵树的信息取得开始" + categoryPath);
                 List<CmsBtFeedInfoModel> product;
-                try{
-                    product = getCategoryInfo(categorPath);
-                }catch (Exception e){
+                try {
+                    product = getCategoryInfo(categoryPath);
+                } catch (Exception e) {
                     e.printStackTrace();
                     throw e;
                 }
                 $info("每棵树的信息取得结束");
 
                 product.forEach(cmsBtFeedInfoModel -> {
-                    List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(":"));
-                    cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
+                    List<String> categories = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(":"));
+                    cmsBtFeedInfoModel.setCategory(categories.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
                 });
                 productAll.addAll(product);
-                if(productAll.size() > 500){
-                    executeMongoDB(productAll, productSucceeList, productFailAllList);
+                if (productAll.size() > 500) {
+                    executeMongoDB(productAll, productSuccessList, productFailAllList);
                 }
             }
-            executeMongoDB(productAll, productSucceeList, productFailAllList);
+            executeMongoDB(productAll, productSuccessList, productFailAllList);
 
             $info("总共~ 失败的 Product: %s", productFailAllList.size());
 
@@ -262,11 +259,11 @@ public class VtmWsdlInsert extends BaseCronTaskService {
         /**
          * MongoDB插入更新
          *
-         * @param productAll 全部更新对象
-         * @param productSucceeList 接收成功更新对象
+         * @param productAll         全部更新对象
+         * @param productSucceeList  接收成功更新对象
          * @param productFailAllList 全部更新失败对象
          */
-        private  void executeMongoDB(List<CmsBtFeedInfoModel> productAll, List<CmsBtFeedInfoModel> productSucceeList, List<CmsBtFeedInfoModel> productFailAllList) {
+        private void executeMongoDB(List<CmsBtFeedInfoModel> productAll, List<CmsBtFeedInfoModel> productSucceeList, List<CmsBtFeedInfoModel> productFailAllList) {
             try {
                 $info("插入mongodb开始");
                 Map response = feedToCmsService.updateProduct(channel.getId(), productAll, getTaskName());
@@ -291,9 +288,9 @@ public class VtmWsdlInsert extends BaseCronTaskService {
         @Transactional
         private void updateFull(List<String> itemIds) {
             if (itemIds.size() > 0) {
-                vtmDaotmDao.delFull(itemIds);
-                vtmDaotmDao.insertFull(itemIds);
-                vtmDaotmDao.updateFeetStatus(itemIds);
+                vtmDao.delFull(itemIds);
+                vtmDao.insertFull(itemIds);
+                vtmDao.updateFeetStatus(itemIds);
             }
         }
     }

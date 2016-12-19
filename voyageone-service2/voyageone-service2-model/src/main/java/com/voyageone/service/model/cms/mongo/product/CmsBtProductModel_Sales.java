@@ -73,7 +73,14 @@ public class CmsBtProductModel_Sales extends BaseMongoMap<String, Object> {
     public Integer getCodeSumAll(Integer cart) {
         Map<String, Object> codeSum = getAttribute(CODE_SUM_ALL);
         if (codeSum != null) {
-            return codeSum.get(CARTID + cart) != null ? (Integer) codeSum.get(CARTID + cart) : 0;
+            if (codeSum.get(CARTID + cart) != null) {
+                if(codeSum.get(CARTID + cart) instanceof Double){
+                    return ((Double) codeSum.get(CARTID + cart)).intValue();
+                }
+                return (Integer) codeSum.get(CARTID + cart);
+            } else {
+                return 0;
+            }
         }
         return 0;
     }
