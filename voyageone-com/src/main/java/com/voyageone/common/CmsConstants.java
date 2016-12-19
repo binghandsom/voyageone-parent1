@@ -60,6 +60,9 @@ public class CmsConstants {
 
         // 该渠道是否自动同步 MSRP
         String AUTO_SYNC_PRICE_MSRP = "AUTO_SYNC_PRICE_MSRP";
+        String AUTO_SYNC_PRICE_MSRP_NO = "0"; // 不联动
+        String AUTO_SYNC_PRICE_MSRP_DIRECT = "1"; // 直接联动
+        String AUTO_SYNC_PRICE_MSRP_AUTO = "2"; // 自动联动
 
         // MSRP统一配置
         String UNIFY_SKU_PRICE_MSRP = "UNIFY_SKU_PRICE_MSRP";
