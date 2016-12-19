@@ -1413,6 +1413,14 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
+        /**移动SKU确认*/
+        $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
+            return openModal(popActions.product.skuMoveConfirm, context);
+        };
+        /**移动SKU的结果确认*/
+        $scope.openMoveResult = function openMoveResult(context) {
+            return openModal(popActions.product.moveResult, context);
+        }
 
         /**组合商品*/
         $scope.popNewCombinedProduct = function (context) {
