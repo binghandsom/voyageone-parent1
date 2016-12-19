@@ -61,7 +61,7 @@ define([
             this._cartInfo = _cartInfo;
 
             if (this.statusData.pReallyStatus) {
-                this.pStatusDesc = statusDes[this.statusData.pReallyStatus];
+                this.pStatusDesc = statusDes[this.statusData.pStatus];
                 this.pReallyStatusDesc = pStatusDes[this.statusData.pReallyStatus];
             } else {
                 this.pStatusDesc = outstatusDes[this.statusData.status];
