@@ -230,6 +230,7 @@ public class CmsMtChannelConfigService extends BaseService {
                 }
             }
         });
+        cacheControlService.deleteCache(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs);
     }
 
     public void saveList_add(CmsMtChannelConfigInfo info, String channelId, String userName) {

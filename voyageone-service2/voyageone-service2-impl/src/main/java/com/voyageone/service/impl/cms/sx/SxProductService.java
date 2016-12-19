@@ -3254,7 +3254,7 @@ public class SxProductService extends BaseService {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
                 , CmsConstants.ChannelConfig.PRICE_SX_Key
-                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
 
         // 检查一下
         String sxPricePropName;
