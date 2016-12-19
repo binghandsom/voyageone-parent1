@@ -297,11 +297,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             }
 
             // 从cms_mt_channel_config表中取得上新用价格配置项目名(例：31.sx_price对应的价格项目，有可能priceRetail, 有可能是priceMsrp)
-            String priceConfigValue = getPriceConfigValue(sxData.getChannelId(), StringUtils.toString(cartId),
-                    CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+            String priceConfigValue = getPriceConfigValue(sxData.getChannelId(), StringUtils.toString(cartId),CmsConstants.ChannelConfig.PRICE_SX_Key,
+                    CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
             if (StringUtils.isEmpty(priceConfigValue)) {
                 String errMsg = String.format("从cms_mt_channel_config表中未能取得该店铺设置的上新用价格配置项目！ [config_key:%s]",
-                        StringUtils.toString(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+                        StringUtils.toString(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
@@ -1007,10 +1007,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      * @param priceType String 价格类型 (".sx_price",".tejiabao_open",".tejiabao_price")
      * @return double SKU价格
      */
-    public String getPriceConfigValue(String channelId, String cartId, String priceType) {
+    public String getPriceConfigValue(String channelId, String cartId,String priceKey ,String priceCode) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp
-        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE,
-                cartId + priceType);
+        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channelId,priceKey,
+                cartId + priceCode);
 
         String priceConfigValue = "";
         if (priceConfig != null) {
@@ -1285,11 +1285,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 特价宝的调用
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+                , CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_Key
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_code);
         CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
+                , CmsConstants.ChannelConfig.PRICE_TEJIABAO_Key
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE_code);
 
         // 检查一下
         String tejiabaoOpenFlag = null;

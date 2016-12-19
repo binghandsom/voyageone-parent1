@@ -624,6 +624,13 @@ define(function () {
                         "detailSave": "sizeChartDetailSave",
                         "detailSizeMapSave": "sizeChartDetailSizeMapSave"
                     }
+                },
+                "MtChannelConfig":{
+                    "cmsMTChannelConfigService": {
+                        "root": "/cms/mt/channel/config",
+                        "search": "search",
+                        "saveList":"saveList"
+                    }
                 }
             },
             "channelConfig": {

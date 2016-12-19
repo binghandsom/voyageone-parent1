@@ -7,7 +7,7 @@ define([
     './advance.search.append.ctl'
 ], function (_) {
 
-    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions,popups,$q,shelvesService) {
+    function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService) {
 
         $scope.vm = {
             searchInfo: {
@@ -84,10 +84,9 @@ define([
          */
         function initialize() {
             // 如果来至category 或者 header的检索,将初始化检索条件
-            if($routeParams.type ==10001 )
-            {
-                $scope.vm.searchInfo.fCatPathList=[$routeParams.value1];
-                $scope.vm.feedCats = [{catId:$routeParams.value2,catPath:$routeParams.value1}];
+            if ($routeParams.type == 10001) {
+                $scope.vm.searchInfo.fCatPathList = [$routeParams.value1];
+                $scope.vm.feedCats = [{catId: $routeParams.value2, catPath: $routeParams.value1}];
             }
             if ($routeParams.type == "1") {
                 // 从菜单栏而来，检索主数据（TODO--注*现已不使用）
@@ -192,7 +191,7 @@ define([
             $scope.vm._promotionTags = null;
             $scope.vm._freeTags = null;
 
-            if(child.columnArrow){
+            if (child.columnArrow) {
                 _.forEach(child.columnArrow, function (value, key) {
                     child.columnArrow[key] = null;
                 });
@@ -242,7 +241,7 @@ define([
             }
 
             // 默认设置成第一页
-            if(curr){
+            if (curr) {
                 $scope.vm.groupPageOption.curr = curr;
                 $scope.vm.productPageOption.curr = curr;
             }
@@ -281,7 +280,7 @@ define([
                 }
                 $scope.vm.currTab = "product";
 
-                if($scope.vm.currTab == 'product')
+                if ($scope.vm.currTab == 'product')
                     $scope.vm.currTab2 = true;
                 else
                     $scope.$feedActive = false;
@@ -347,7 +346,7 @@ define([
                 getGroupList();
             }
 
-            if($scope.vm.currTab == 'product')
+            if ($scope.vm.currTab == 'product')
                 $scope.vm.currTab2 = true;
             else
                 $scope.$feedActive = false;
@@ -802,35 +801,10 @@ define([
 
         // 智能上新
         function openIntelligentPublish(cartId) {
-        	_chkProductSel(parseInt(cartId), __openIntelligentPublish);
+            _chkProductSel(parseInt(cartId), __openIntelligentPublish);
 
-        	function __openIntelligentPublish(cartId, _selProdList) {
-        		confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
-        		.then(function() {
-        			var productIds = [];
-        			if (_selProdList && _selProdList.length) {
-                        _.forEach(_selProdList, function (object) {
-                            productIds.push(object.code);
-                        });
-                    }
-        			$fieldEditService.intelligentPublish({
-        				cartId: cartId,
-        				productIds: productIds,
-        				isSelectAll: $scope.vm._selall ? 1 : 0
-        			}).then(function() {
-            			alert('已完成商品的智能上新！');
-                        $scope.search();
-        			});
-        		});
-        	}
-        }
-
-        // 商品审批
-        function openApproval(openUpdateApprovalFnc, cartId) {
-            _chkProductSel(parseInt(cartId), __openApproval);
-
-            function __openApproval(cartId, _selProdList) {
-                confirm($translate.instant('TXT_BULK_APPROVAL'))
+            function __openIntelligentPublish(cartId, _selProdList) {
+                confirm('以下3种属性未完成的商品将被无视，点击【确定】启动智能上新。<br>（1）税号个人&nbsp;（2）平台类目&nbsp;（3）平台品牌')
                     .then(function () {
                         var productIds = [];
                         if (_selProdList && _selProdList.length) {
@@ -838,49 +812,91 @@ define([
                                 productIds.push(object.code);
                             });
                         }
-                        var property = {'cartId': cartId, '_option': 'approval', 'productIds': productIds};
-                        property.isSelAll = $scope.vm._selall ? 1 : 0;
-
-                        function check(propParams) {
-                            return $fieldEditService.setProductFields(propParams).then(callback);
-                        }
-
-                        function callback(res) {
-                            if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
-                                alert("提交请求时出现错误");
-                                return;
-                            }
-                            if (res.data.ecd == 1) {
-                                alert("未选择商品，请选择后再操作。");
-                                return;
-                            }
-                            if (res.data.ecd == 2) {
-                                // 存在未ready状态
-                                var errMsg = '';
-                                if (res.data.codeList.length > 10) {
-                                    errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
-                                } else {
-                                    errMsg = res.data.codeList.join('， ');
-                                }
-                                alert("下列商品不是ready状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
-                                return;
-                            }
-                            if (res.data.ecd == 3) {
-                                // 商品价格有问题
-                                return openUpdateApprovalFnc({
-                                    'resData': res.data,
-                                    'propertyInfo': property
-                                }).then(function (data) {
-                                    return check(data);
-                                });
-                            }
+                        $fieldEditService.intelligentPublish({
+                            cartId: cartId,
+                            productIds: productIds,
+                            isSelectAll: $scope.vm._selall ? 1 : 0
+                        }).then(function () {
+                            alert('已完成商品的智能上新！');
                             $scope.search();
-                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        }
-
-                        check(property);
+                        });
                     });
             }
+        }
+
+        /**
+         * 商品审核
+         * @param openUpdateApprovalFnc
+         * @param cartId
+         */
+        function openApproval(openUpdateApprovalFnc, cartId) {
+            _chkProductSel(parseInt(cartId), function (cartId, _selProdList) {
+
+                confirm($translate.instant('TXT_BULK_APPROVAL')).then(function () {
+                    var productIds = [],
+                        property;
+
+                    if (_selProdList && _selProdList.length) {
+                        _.forEach(_selProdList, function (object) {
+                            productIds.push(object.code);
+                        });
+                    }
+
+                    property = {
+                        cartId: cartId,
+                        _option: 'approval',
+                        productIds: productIds,
+                        isSelAll: $scope.vm._selall ? 1 : 0
+                    };
+
+                    check(property);
+
+                    function check(propParams) {
+                        return $fieldEditService.setProductFields(propParams).then(callback);
+                    }
+
+                    function callback(res) {
+                        if (res.data == null || res.data.ecd == null || res.data.ecd == undefined) {
+                            alert("提交请求时出现错误");
+                            return;
+                        }
+                        if (res.data.ecd == 1) {
+                            alert("未选择商品，请选择后再操作。");
+                            return;
+                        }
+                        if (res.data.ecd == 2) {
+                            // 存在未ready状态
+                            var errMsg;
+
+                            if (res.data.codeList.length > 10) {
+                                errMsg = res.data.codeList.slice(0, 9).join('， ') + ' ．．．．．．';
+                            } else {
+                                errMsg = res.data.codeList.join('， ');
+                            }
+
+                            if (res.data.ts)
+                                alert("下列商品没有设置税号，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+                            else
+                                alert("下列商品pending状态，无法审批，请修改。以下是商品CODE列表:<br><br>" + errMsg);
+
+                            return;
+                        }
+                        if (res.data.ecd == 3) {
+                            // 商品价格有问题
+                            return openUpdateApprovalFnc({
+                                'resData': res.data,
+                                'propertyInfo': property
+                            }).then(function (data) {
+                                return check(data);
+                            });
+                        }
+                        $scope.search();
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    }
+
+                });
+            });
+
         }
 
         // 设置最终售价
@@ -1117,8 +1133,8 @@ define([
         }
 
         // 下载已创建完成的数据文件
-        $scope.openDownload = function (fileName,status) {
-            if (status == -1){
+        $scope.openDownload = function (fileName, status) {
+            if (status == -1) {
                 alert("文件已经过期，请重新下载");
                 return;
             }
@@ -1180,11 +1196,11 @@ define([
          * @param popupNewCategory popup实例
          */
         function jdCategoryMapping(cartId) {
-            _chkProductSel(null, _openAddPromotion, {"cartId":cartId,"selList":[]});
+            _chkProductSel(null, _openAddPromotion, {"cartId": cartId, "selList": []});
 
             function _openAddPromotion(cartId, selList, context) {
 
-                if(selList && selList.length > 0){
+                if (selList && selList.length > 0) {
                     selList.forEach(function (item) {
                         context.selList.push(item.code);
                     })
@@ -1206,8 +1222,14 @@ define([
                         });
                     }).then(function (data) {
 
-                    confirm("将要批量更新商品类目，是否确认？").then(function(){
-                        $fieldEditService.bulkSetCategory({'isSelAll': $scope.vm._selall ? 1 : 0, "productIds":context.selList, "cartId":+context.cartId,"pCatPath":data.selected.catPath,"pCatId":data.selected.catId}).then(function (){
+                    confirm("将要批量更新商品类目，是否确认？").then(function () {
+                        $fieldEditService.bulkSetCategory({
+                            'isSelAll': $scope.vm._selall ? 1 : 0,
+                            "productIds": context.selList,
+                            "cartId": +context.cartId,
+                            "pCatPath": data.selected.catPath,
+                            "pCatId": data.selected.catId
+                        }).then(function () {
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             search();
                         });
@@ -1219,11 +1241,11 @@ define([
         }
 
         function editPlatformAttribute(cartId) {
-            _chkProductSel(null, _openAddPromotion, {"cartId":cartId,"selList":[]});
+            _chkProductSel(null, _openAddPromotion, {"cartId": cartId, "selList": []});
 
             function _openAddPromotion(cartId, selList, context) {
 
-                if(selList && selList.length > 0){
+                if (selList && selList.length > 0) {
                     selList.forEach(function (item) {
                         context.selList.push(item.code);
                     })
@@ -1236,6 +1258,7 @@ define([
 
             }
         }
+
         // 重新计算价格（指导价）
         $scope.refreshRetailPrice = function (cartObj) {
             var cartIdVal = 0;
@@ -1303,6 +1326,6 @@ define([
 
     }
 
-    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions','popups','$q','shelvesService'];
+    searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService2', '$searchAdvanceService2', '$fieldEditService', '$productDetailService', 'systemCategoryService', '$addChannelCategoryService', 'confirm', '$translate', 'notify', 'alert', 'sellerCatService', 'platformMappingService', 'attributeService', '$sessionStorage', 'cActions', 'popups', '$q', 'shelvesService'];
     return searchIndex;
 });
