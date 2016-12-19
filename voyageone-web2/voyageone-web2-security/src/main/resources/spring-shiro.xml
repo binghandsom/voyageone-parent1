@@ -128,7 +128,7 @@
 				/admin/user/self/editPass = anon
 				/admin/user/self/getUserByToken = anon
 				/core/access/user/login = anon
-				/core/access/user/vmslogin = anon
+				/core/access/user/vendorLogin = anon
 				/core/access/user/logout= anon
 				/cms/** = authc,channel
 			</value>
