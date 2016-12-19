@@ -28,8 +28,8 @@ public class CAOrderControllerTest {
          * clientSecret(SellerToken):   Y2hhbm5lbGFkdmlzb3I=
          * channelId:                   028
          */
-        HEADER.put("SellerID", "channeladvisor");
-        HEADER.put("SellerToken", "Y2hhbm5lbGFkdmlzb3I=");
+        HEADER.put("SellerID", "049beea8-bdd1-48f0-a930-e56e42f85458");
+        HEADER.put("SellerToken", "caf8e5ed-16c4-40d8-92ce-1ce86e03cac5");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class CAOrderControllerTest {
         String url = BASE_URL + "orders";
         String result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url, null, HEADER);
         System.out.println(result);
-        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.concat("?status=ReleasedForShipment&limit=1"), null, HEADER);
+        result = HttpExcuteUtils.execute(HttpExcuteUtils.HttpMethod.GET, url.concat("?status=Pending"), null, HEADER);
         System.out.println(result);
     }
 
