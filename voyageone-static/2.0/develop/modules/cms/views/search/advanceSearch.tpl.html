@@ -728,7 +728,8 @@
                     <div class="form-inline m-b-xs pull-right" style="margin-right:30px" ng-controller="popupCtrl">
                         <label class="checkbox-inline c-checkbox" style="margin-top:12px">
                             <input type="checkbox" value="1" ng-model="vm._selall">
-                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;</label>
+                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;检索结果全量&nbsp;
+                        </label>
                         <div class="btn-group" style="margin-left:10px" uib-dropdown ng-repeat="cartBean in vm.masterData.cartList">
                             <button type="button" class="btn btn-pop btn-default" uib-dropdown-toggle>
                                 <i class="fa fa-arrow-circle-right"></i>&nbsp;{{cartBean.name}}&nbsp;平台级变更&nbsp;<span class="caret"></span>
@@ -884,7 +885,7 @@
                                             </span>
                                             <!-- Todo 商品平台状态-->
                                             <span class="label m-l-sm" ng-if="productInfo.platforms">
-                                                <span ng-repeat='entity in productInfo.platforms | filter:{cartId: "!0"} '>
+                                                <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
                                                        <platform-status data="{cartId:entity.cartId,
                                                        status:entity.status,
                                                        pStatus:entity.pStatus,
@@ -1061,7 +1062,7 @@
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>
                                             <!-- Todo 商品平台状态 -->
                                             <span class="label m-l-sm" ng-if="groupInfo.platforms">
-                                                <span ng-repeat='entity in groupInfo.platforms | filter:{cartId: "!0"} '>
+                                                <span ng-repeat='entity in groupInfo.platforms' ng-if="entity.cartId > 0">
                                                        <platform-status data="{cartId:entity.cartId,
                                                        status:entity.status,
                                                        pStatus:entity.pStatus,

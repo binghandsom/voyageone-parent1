@@ -1,4 +1,5 @@
 -- http://localhost:9091/modules/admin/app.html#/admin/resManage
+-- 配置权限界面 http://localhost:9091/AdminLogin.html
 -- DELETE FROM com_resource  WHERE application='cms' and id>8000;
 -- CREATE TABLE IF NOT EXISTS `com_resource` (
 --   `id` INT(11) NOT NULL,

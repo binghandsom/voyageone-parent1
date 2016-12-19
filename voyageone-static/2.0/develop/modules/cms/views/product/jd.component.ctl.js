@@ -54,6 +54,10 @@ define([
                 scope.doResetTmProduct = doResetTmProduct;
                 scope.publishProduct = publishProduct;
                 scope.isPublishSucceed = false;
+                scope.autoSyncPriceMsrpCheck = false;
+
+                scope.autoSyncPriceMsrp = "";
+                scope.checkPriceMsrp = checkPriceMsrp;
 
                 /**
                  * 获取京东页面初始化数据
@@ -106,6 +110,8 @@ define([
                                 pageAnchor('sku',0);
                             },1500)
                         }
+
+                        scope.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
 
                     }, function (resp) {
                         scope.vm.noMaterMsg = resp.message.indexOf("Server Exception") >= 0 ? null : resp.message;
@@ -577,6 +583,18 @@ define([
                             alert(res.message);
                         });
                     });
+
+                }
+
+                /*根据autoSyncPriceMsrp值check Sku的Msrp*/
+                function checkPriceMsrp(sku) {
+                    if (scope.autoSyncPriceMsrp == "2") {
+                        if ((sku.priceMsrp < sku.priceSale || sku.priceMsrp < sku.priceRetail) && !scope.autoSyncPriceMsrpCheck) {
+                            scope.autoSyncPriceMsrpCheck = true;
+                        }else {
+                            scope.autoSyncPriceMsrpCheck = false;
+                        }
+                    }
 
                 }
 
