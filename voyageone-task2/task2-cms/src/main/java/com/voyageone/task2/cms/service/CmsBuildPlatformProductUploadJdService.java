@@ -758,9 +758,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 }
 
                 if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
-                    sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreErrMsg(shopProp.getShop_name(), sxType)));
+                    sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
                 } else {
-                    sxData.setErrorMessage(getPreErrMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
+                    sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
                 }
 
                 // 更新商品出错时，也要设置运费模板和关联板式
@@ -806,9 +806,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
-                sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreErrMsg(shopProp.getShop_name(), sxType)));
+                sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
             } else {
-                sxData.setErrorMessage(getPreErrMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
+                sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
             }
 
             // 上新出错时状态回写操作
@@ -819,10 +819,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 正常结束
         if (!updateWare) {
             $info(String.format("%s京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    getPreErrMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         } else {
             $info(String.format("%s京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    getPreErrMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         }
 
     }
@@ -2672,13 +2672,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     }
 
     /**
-     * 获得错误log头部信息
+     * 获得log头部信息
      *
      * @param shopName 店铺名称
      * @param sxType   上新类型
-     * @return String  错误log头部信息
+     * @return String  log头部信息
      */
-    private String getPreErrMsg(String shopName, String sxType) {
+    private String getPreMsg(String shopName, String sxType) {
         return shopName + "[" + sxType + "] ";
     }
 
