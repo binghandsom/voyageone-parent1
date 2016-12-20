@@ -818,11 +818,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         // 正常结束
         if (!updateWare) {
-            $info(String.format("京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreErrMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         } else {
-            $info(String.format("京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreErrMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         }
 
     }
