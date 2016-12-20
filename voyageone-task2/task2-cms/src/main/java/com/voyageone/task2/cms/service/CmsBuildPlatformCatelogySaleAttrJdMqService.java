@@ -229,8 +229,8 @@ public class CmsBuildPlatformCatelogySaleAttrJdMqService extends BaseMQCmsServic
             }
 
             // 如果京东平台上该类目只有颜色且cms_mt_platform_skus表也只有颜色，或者，平台上只有尺码且skus表中也只有尺码时，跳过
-            if ((salePropAttrMap.keySet().contains(AttrType_Color) && !salePropAttrMap.keySet().contains(AttrType_Size) && Only_Color.equals(skusSaleAttrStatus))
-                    || (!salePropAttrMap.keySet().contains(AttrType_Color) && salePropAttrMap.keySet().contains(AttrType_Size) && Only_Size.equals(skusSaleAttrStatus))) {
+            if ((salePropAttrMap.containsKey(AttrType_Color) && !salePropAttrMap.containsKey(AttrType_Size) && Only_Color.equals(skusSaleAttrStatus))
+                    || (!salePropAttrMap.containsKey(AttrType_Color) && salePropAttrMap.containsKey(AttrType_Size) && Only_Size.equals(skusSaleAttrStatus))) {
                 continue;
             }
 
