@@ -12,7 +12,7 @@
                         <div class="row form-group"><!-- 菜单名称 -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_NAME' | translate}}</label>
                             <div class="col-sm-8">
-                                <input type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.resName"
+                                <input type="text" maxlength="20" class="form-control" ng-model="ctrl.saveInfo.resName"
                                        name="orgName" required/>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                         <div class="row form-group"><!-- 菜单Key -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_KEY' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.resKey"  name="menuKey" required ng-disabled="ctrl.popType == '修改菜单资源'"/></textarea>
+                                <textarea type="text" maxlength="100" class="form-control" ng-model="ctrl.saveInfo.resKey"  name="menuKey" required ng-disabled="ctrl.popType == '修改菜单资源'"/></textarea>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -86,7 +86,7 @@
                         <div class="row form-group"><!-- 菜单URL -->
                             <label class="col-sm-3 control-label">{{'TXT_MENU_URL' | translate}}</label>
                             <div class="col-sm-8">
-                                <textarea type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.resUrl"/>
+                                <textarea type="text" maxlength="100" class="form-control" ng-model="ctrl.saveInfo.resUrl"/>
                             </div>
                         </div>
                         <div class="row form-group"><!-- 资源类型 -->

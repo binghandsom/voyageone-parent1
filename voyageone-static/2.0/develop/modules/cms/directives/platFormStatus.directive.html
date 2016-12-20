@@ -5,8 +5,8 @@
                                      \'ready\':ctrl.statusData.status == \'Ready\' ,
                                      \'waiting-publish\':ctrl.statusData.status == \'Approved\'}"
            title="{{ctrl.statusData.status}}">
-            <span ng-class="{\'isMain\': ctrl.statusData.isMain,
-                             \'isCommon\':!ctrl.statusData.isMain}">
+            <span ng-class="{\'isMain\': ctrl.statusData.pIsMain,
+                             \'isCommon\':!ctrl.statusData.pIsMain}">
                 {{ctrl._cartInfo.name}}{{ctrl.pStatusDesc}}{{ctrl.statusData.status == \'Approved\'? ctrl.pReallyStatusDesc:""}}
             </span>
      </span>
@@ -15,12 +15,12 @@
      <span class="label {{ctrl.statusData.approveError ? \'error\' : \'\'}}"
            ng-class="{\'in-stock\': ctrl.statusData.pReallyStatus == \'InStock\',\'on-sale\':ctrl.statusData.pReallyStatus == \'OnSale\'}"
            title="{{ctrl.statusData.pStatus}}">
-         <span ng-if="ctrl.statusData.numberId">
-             <a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">
+         <span ng-if="ctrl.statusData.pNumIId">
+             <a ng-href="{{ctrl.statusData.detailUrl}}" target="_blank" ng-class="{\'isMain\': ctrl.statusData.pIsMain,\'isCommon\':!ctrl.statusData.pIsMain}">
                  {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}
              </a>
          </span>
-         <span ng-if="!ctrl.statusData.numberId" ng-class="{\'isMain\': ctrl.statusData.isMain,\'isCommon\':!ctrl.statusData.isMain}">
+         <span ng-if="!ctrl.statusData.pNumIId" ng-class="{\'isMain\': ctrl.statusData.pIsMain,\'isCommon\':!ctrl.statusData.pIsMain}">
              {{ctrl._cartInfo.name}}:{{ctrl.pStatusDesc}}{{ctrl.pReallyStatusDesc ? ctrl.pReallyStatusDesc:""}}
          </span>
      </span>

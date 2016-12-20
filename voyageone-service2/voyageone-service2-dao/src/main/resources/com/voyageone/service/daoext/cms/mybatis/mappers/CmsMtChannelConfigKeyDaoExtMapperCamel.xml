@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsMtChannelConfigKeyDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtChannelConfigKeyModel" />
+    <sql id="Base_Column_List" >
+        `id`, `config_key`, `config_code`, `is_config_value1`, `is_config_value2`, `is_config_value3`,
+        `is_platform`, `comment`, `sample`, `created`, `creater`, `modified`, `moddifier`
+    </sql>
+    <select id="selectList" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from cms_mt_channel_config_key
+        <where >
+            <if test="configKey != null" >
+                and config_key like CONCAT('%',#{configKey},'%')
+            </if>
+            <if test="configCode != null" >
+                and `config_code` = #{configCode,jdbcType=VARCHAR}
+            </if>
+            <if test="isConfigValue1 != null" >
+                and `is_config_value1` = #{isConfigValue1,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue2 != null" >
+                and `is_config_value2` = #{isConfigValue2,jdbcType=BIT}
+            </if>
+            <if test="isConfigValue3 != null" >
+                and `is_config_value3` = #{isConfigValue3,jdbcType=BIT}
+            </if>
+            <if test="isPlatform != null" >
+                and `is_platform` = #{isPlatform}
+            </if>
+            <!--<if test="comment != null" >-->
+                <!--and `comment` = #{comment,jdbcType=VARCHAR}-->
+            <!--</if>-->
+            <!--<if test="sample != null" >-->
+                <!--and `sample` = #{sample,jdbcType=VARCHAR}-->
+            <!--</if>-->
+            <!--<if test="created != null" >-->
+                <!--and `created` = #{created,jdbcType=TIMESTAMP}-->
+            <!--</if>-->
+            <!--<if test="creater != null" >-->
+                <!--and `creater` = #{creater,jdbcType=VARCHAR}-->
+            <!--</if>-->
+            <!--<if test="modified != null" >-->
+                <!--and `modified` = #{modified,jdbcType=TIMESTAMP}-->
+            <!--</if>-->
+            <!--<if test="moddifier != null" >-->
+                <!--and `moddifier` = #{moddifier,jdbcType=VARCHAR}-->
+            <!--</if>-->
+        </where>
+    </select>
+</mapper>

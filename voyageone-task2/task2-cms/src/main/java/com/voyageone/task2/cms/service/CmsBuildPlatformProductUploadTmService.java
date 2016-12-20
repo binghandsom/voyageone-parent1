@@ -35,7 +35,6 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingDeprecatedModel
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -592,11 +591,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
         // 特价宝的调用
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_OPEN);
+                , CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_KEY
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_IS_OPEN_CODE);
         CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(sxData.getChannelId()
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE);
+                , CmsConstants.ChannelConfig.PRICE_TEJIABAO_KEY
+                , String.valueOf(sxData.getCartId()) + CmsConstants.ChannelConfig.PRICE_TEJIABAO_PRICE_CODE);
 
         // 检查一下
         String tejiabaoOpenFlag = null;
