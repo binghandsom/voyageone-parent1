@@ -848,6 +848,11 @@ public interface CmsUrlConstants {
             String Search = "search";
             String saveList="saveList";
         }
+        interface FEED_CONFIG {
+            String ROOT = "/cms/channel/feedConfig";
+            String SEARCH = "search";
+            String SAVE="save";
+        }
     }
 
     interface ImageCreate {

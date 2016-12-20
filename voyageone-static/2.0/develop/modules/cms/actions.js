@@ -631,6 +631,13 @@ define(function () {
                         "search": "search",
                         "saveList":"saveList"
                     }
+                },
+                "FeedConfig":{
+                    "cmsFeedConfigService": {
+                        "root": "/cms/channel/feedConfig",
+                        "search": "search",
+                        "saveList":"saveList"
+                    }
                 }
             },
             "channelConfig": {
