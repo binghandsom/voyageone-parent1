@@ -1079,3 +1079,31 @@ schema .ng-invalid.focus-error {
     margin: 0px auto;
     border-radius: 5px;
 }
+
+/**Master配置一览*/
+#channelConfigSet sticky .sidebar {
+    right: 40px;
+    width: 87px;
+    color: white;
+    border: 1px solid #ADCAE2;
+    background: #fff;
+}
+
+#channelConfigSet sticky .sidebar h3 {
+    background: #ADCAE2;
+    text-align: center;
+    font-size: 15px;
+    margin: 0;
+    height: 30px;
+    line-height: 30px;
+    cursor: move;
+}
+
+#channelConfigSet sticky .sidebar .nav > li > a {
+    display: block;
+    padding: 6px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #adcae2;
+    text-align: center;
+}

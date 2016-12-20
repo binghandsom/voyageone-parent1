@@ -489,7 +489,7 @@ public class Tmall_012_Bcbg_DictTest extends BaseDictTest{
                     RuleExpression ruleExpressionFontSize = new RuleExpression();
                     ruleExpressionFontSize.addRuleWord(new TextWord("23"));
                     RuleExpression ruleExpressionOneLineBit = new RuleExpression();
-                    ruleExpressionOneLineBit.addRuleWord(new TextWord("63"));
+                    ruleExpressionOneLineBit.addRuleWord(new TextWord("58"));
                     CustomWordValueGetDescImage img = new CustomWordValueGetDescImage(ruleExpressionField, null, null, null, null, ruleExpressionFontSize, ruleExpressionOneLineBit);
                     do处理无线端20张图片(4, ruleRoot, new CustomWord(img));
                 }
