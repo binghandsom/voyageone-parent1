@@ -125,17 +125,17 @@ public class CmsConstants {
         // 价格相关
        // String PRICE = "PRICE";
 
-        String PRICE_SX_Key="PRICE_SX";
-        String PRICE_SALE_Key="PRICE_SALE";
-        String PRICE_RETAIL_Key ="PRICE_RETAIL";
-        String PRICE_TEJIABAO_IS_OPEN_Key="PRICE_TEJIABAO_IS_OPEN";
-        String PRICE_TEJIABAO_Key="PRICE_TEJIABAO";
+        String PRICE_SX_KEY="PRICE_SX";
+        String PRICE_SALE_KEY="PRICE_SALE";
+        String PRICE_RETAIL_KEY ="PRICE_RETAIL";
+        String PRICE_TEJIABAO_IS_OPEN_KEY="PRICE_TEJIABAO_IS_OPEN";
+        String PRICE_TEJIABAO_KEY="PRICE_TEJIABAO";
 
-        String PRICE_RETAILPrice_code = ".retail_price";
-        String PRICE_SALEPrice_code = ".sale_price";
-        String PRICE_SX_PRICE_code = ".sx_price";//
-        String PRICE_TEJIABAO_IS_OPEN_code = ".tejiabao_open";
-        String PRICE_TEJIABAO_PRICE_code = ".tejiabao_price";
+        String PRICE_RETAIL_PRICE_CODE = ".retail_price";
+        String PRICE_SALE_PRICE_CODE = ".sale_price";
+        String PRICE_SX_PRICE_CODE = ".sx_price";//
+        String PRICE_TEJIABAO_IS_OPEN_CODE = ".tejiabao_open";
+        String PRICE_TEJIABAO_PRICE_CODE = ".tejiabao_price";
 
         // 全链路库存管理相关
         String SCITEM = "SCITEM"; // 后端货品 (val1: 是否使用了全链路库存管理, val2: 商家仓库编码)
@@ -202,6 +202,9 @@ public class CmsConstants {
 
         // 是否强制尺码转换的检查(1:强制尺码转换 空,0:不强制尺码转换)
         String SIZE_CONVERSION_FLG = "SIZE_CONVERSION_FLG";
+
+        //被迫下架的商品是否自动上架
+        String IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE="IS_FORCED_IN_STOCK_PRODUCT_AUTO_ON_SALE";
     }
 
     public interface DataAmount {

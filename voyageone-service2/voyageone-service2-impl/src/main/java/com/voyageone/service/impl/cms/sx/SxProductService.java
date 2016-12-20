@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.google.common.collect.Lists;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
@@ -77,7 +77,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -3253,8 +3252,8 @@ public class SxProductService extends BaseService {
     private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                , CmsConstants.ChannelConfig.PRICE_SX_Key
-                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
+                , CmsConstants.ChannelConfig.PRICE_SX_KEY
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
 
         // 检查一下
         String sxPricePropName;

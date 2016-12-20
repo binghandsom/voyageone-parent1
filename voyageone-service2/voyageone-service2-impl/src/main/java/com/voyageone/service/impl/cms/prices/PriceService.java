@@ -957,7 +957,7 @@ public class PriceService extends BaseService {
         }
 
         // 判断上新时销售价用的是建议售价还是最终售价
-        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE_SX_Key, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE_code);
+        CmsChannelConfigBean priceConfig = CmsChannelConfigs.getConfigBean(channleId, CmsConstants.ChannelConfig.PRICE_SX_KEY, cartId + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
         String priceConfigValue = null;
         if (priceConfig != null) {
             // 取得价格对应的configValue名

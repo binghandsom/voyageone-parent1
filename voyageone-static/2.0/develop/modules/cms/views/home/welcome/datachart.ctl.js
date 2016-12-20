@@ -42,3 +42,4 @@ define([
 
     return dController;
 });
+//http://localhost:3000/cms/home/menu/sumHome?channelId=010汇总页面
