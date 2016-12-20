@@ -356,6 +356,14 @@
                                                 </div>
                                             </div>
                                         </div><!--End：销量排序-->
+                                        <div class="form-group" ng-if="vm._cart_display">
+                                            <label class="col-sm-3 control-label">已上新但有新SKU商品</label>
+                                            <div class="col-sm-8">
+                                                <label class="checkbox-inline c-checkbox">
+                                                    <input type="checkbox" value="1" style="margin: 0" ng-model="vm.searchInfo.isNewSku"><span class="fa fa-check"></span>
+                                                </label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-4" ng-controller="popupCtrl">
@@ -707,6 +715,11 @@
                             </ul>
                         </div>
                     </div>
+                    <div class="form-inline pull-right" >
+                        <button uib-popover-template = "'platformColor.html'" popover-title="平台背景色" type="button" popover-placement="left" class="btn btn-primary-s btn-pop">
+                            说明&nbsp;<i class="fa fa-exclamation"></i>
+                        </button>&nbsp;
+                    </div>
                 </h4>
             </div>
             <div class="container-fluid m-t-xs m-b-xs">
@@ -740,19 +753,6 @@
                                 <li ng-if="cartBean.cartType!=3">
                                     <a href="javascript:void(0)" ng-click="_openPutOnOff(openPutOnOff,cartBean.value)">{{'TXT_PUT_ON/PUT_OFF'|translate}}</a>
                                 </li>
-                                <!--<li class="dropdown-submenu" ng-if="vm.masterData.promotionMap[cartBean.value].length > 0 &&cartBean.cartType!=3">-->
-                                    <!--<a href>加入促销活动</a>-->
-                                    <!--<ul class="dropdown-menu dropdown-menu-ul">-->
-                                        <!--<li ng-repeat="promotion in vm.masterData.promotionMap[cartBean.value]">-->
-                                            <!--<a href ng-click="$parent.openAddPromotion(promotion,cartBean,openAddToPromotion)" ng-if="cartBean.value!=27" title="{{promotion.promotionName}}">-->
-                                                <!--{{promotion.promotionName | limitTo: 10}}{{promotion.promotionName.length > 10 ? '...' : ''}}-->
-                                            <!--</a>-->
-                                            <!--<a href ng-click="$parent.openJMActivity(promotion,cartBean,openAddJMActivity)" ng-if="cartBean.value==27" title="{{promotion.name}}">-->
-                                                <!--{{promotion.name | limitTo: 10}}{{promotion.name.length > 10 ? '...' : ''}}-->
-                                            <!--</a>-->
-                                        <!--</li>-->
-                                    <!--</ul>-->
-                                <!--</li>-->
                                 <li class="dropdown-submenu" ng-if="vm.masterData.shelvesMap[cartBean.value].length > 0 &&cartBean.cartType!=3">
                                     <a href>加入橱窗</a>
                                     <ul class="dropdown-menu dropdown-menu-ul">
@@ -770,7 +770,7 @@
                                     <a href="javascript:void(0)" ng-click="$parent.openApproval(openUpdateApproval,cartBean.value)">{{'TXT_PRODUCTS_APPROVAL'|translate}}</a>
                                 </li>
                                 <li ng-if="vm.masterData.channelConfig.publishEnabledChannels.indexOf(cartBean.value) != -1">
-                                	<a href="javasciprt:void(0)" ng-click="$parent.openIntelligentPublish(cartBean.value)">智能上新</a>
+                                	<a href="javascript:void(0)" ng-click="$parent.openIntelligentPublish(cartBean.value)">智能上新</a>
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>
@@ -882,13 +882,25 @@
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.numIId}}" target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
                                                 <a ng-href="{{vm.productUrl}}{{productInfo.groupBean.platformMallId}}.html" target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
                                             </span>
-                                            <!-- 商品平台状态-->
-                                            <span class="label m-l-sm" ng-if="productInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in productInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
-                                                    <span ng-if="cartsObj._purl">
-                                                        <a ng-href="{{cartsObj._purl}}" ng-class="{'mainPrd':cartsObj._isMain}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pTxt}}</a>
-                                                    </span>
-                                                    <span ng-if="!cartsObj._purl" ng-class="{'mainPrd':cartsObj._isMain}">{{cartsObj._pTxt}}</span>
+                                            <!-- Todo 商品平台状态-->
+                                            <span class="label m-l-sm" ng-if="productInfo.platforms">
+                                                <span ng-repeat='entity in productInfo.platforms | filter:{cartId: "!0"} '>
+                                                       <platform-status data="{cartId:entity.cartId,
+                                                       status:entity.status,
+                                                       pStatus:entity.pStatus,
+                                                       isMain:entity.pIsMain,
+                                                       pReallyStatus:entity.pReallyStatus,
+                                                       pPublishError:entity.pPublishError,
+                                                       numberId:entity.pNumIId}"></platform-status>
+                                                </span>
+                                            </span>
+                                            <!-- Todo 美国商品平台状态 -->
+                                            <span ng-if="productInfo.usPlatforms">
+                                                <span class="m-t-xs"  ng-repeat="usPlatform in productInfo.usPlatforms">
+                                                    <platform-status data="{cartId:usPlatform.cartId,
+                                                       status:'Approved',
+                                                       pStatus:usPlatform.status}">
+                                                    </platform-status>&nbsp;&nbsp;
                                                 </span>
                                             </span>
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
@@ -1047,12 +1059,25 @@
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
                                                     popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                                 {{'TXT_PROMOTION_DETAIL'|translate}}</button>
-                                            <span class="label m-l-sm" ng-if="groupInfo.carts">
-                                                <span class="label m-t-xs m-r-sm" style="padding-left:10px;color: #000;font-size:12px" ng-repeat="cartsObj in groupInfo.carts" ng-style="{{cartsObj.cssVal}}" title="{{cartsObj.publishError? 'Error':cartsObj.statusTxt}}">
-                                                    <span ng-if="cartsObj._purl">
-                                                        <a ng-href="{{cartsObj._purl}}" ng-class="{'mainPrd':cartsObj._isMain}" title="{{cartsObj.statusTxt}}" target="_blank">{{cartsObj._pTxt}}</a>
-                                                    </span>
-                                                    <span ng-if="!cartsObj._purl" ng-class="{'mainPrd':cartsObj._isMain}">{{cartsObj._pTxt}}</span>
+                                            <!-- Todo 商品平台状态 -->
+                                            <span class="label m-l-sm" ng-if="groupInfo.platforms">
+                                                <span ng-repeat='entity in groupInfo.platforms | filter:{cartId: "!0"} '>
+                                                       <platform-status data="{cartId:entity.cartId,
+                                                       status:entity.status,
+                                                       pStatus:entity.pStatus,
+                                                       isMain:entity.pIsMain,
+                                                       pReallyStatus:entity.pReallyStatus,
+                                                       pPublishError:entity.pPublishError,
+                                                       numberId:entity.pNumIId}"></platform-status>
+                                                </span>
+                                            </span>
+                                            <!-- Todo 美国商品平台状态 -->
+                                            <span ng-if="groupInfo.usPlatforms">
+                                                <span class="m-t-xs"  ng-repeat="usPlatform in groupInfo.usPlatforms">
+                                                    <platform-status data="{cartId:usPlatform.cartId,
+                                                       status:'Approved',
+                                                       pStatus:usPlatform.status}">
+                                                    </platform-status>&nbsp;&nbsp;
                                                 </span>
                                             </span>
                                             <span class="label m-r-sm m-l"
@@ -1151,7 +1176,7 @@
                                             <tr ng-if="vm.exportList.length > 0" ng-repeat="exportInfo in vm.exportList">
                                                 <td class="text-center mfb-xxt">{{$index + 1}}</td>
                                                 <td class="text-left mfb-xxt">
-                                                    <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem)">{{fileItem}}<br></a>
+                                                    <a ng-repeat ="fileItem in exportInfo.fileName"  href="javascript:void(0)" ng-click="openDownload(fileItem,exportInfo.status)">{{fileItem}}<br></a>
                                                 </td>
                                                 <td class="text-left mfb-xxt">{{exportInfo.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td><!--exportInfo.modified-->
                                                 <td class="text-left mfb-xxt">{{exportInfo.fileName ? exportInfo.modified: '' | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
@@ -1186,6 +1211,7 @@
         </div>
     </div>
 </script>
+
 <script type="text/ng-template" id="advanceSkuTemplate.html">
     <div class="row">
         <table style="width: 100%;border: none;">
@@ -1200,6 +1226,61 @@
                     <td class="mfb-xxxs text-center">{{entity.size}}</td>
                     <td class="mfb-xxxs text-center">{{entity.inventory}}</td>
                 </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="platformColor.html">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <colgroup>
+                <col class="col-xs-1">
+                <col class="col-xs-7">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>状态</th>
+                <th>描述</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td style="background: #bebebe;">
+                    Pending
+                </td>
+                <td><strong>无实际平台状态</strong></td>
+            </tr>
+            <tr>
+                <td style="background: #fdfd01;">
+                    Ready
+                </td>
+                <td><strong>无实际平台状态</strong></td>
+            </tr>
+            <tr>
+                <td style="background: #5ddc3d;">
+                    Approve
+                </td>
+                <td><strong>无实际平台状态</strong></td>
+            </tr>
+            <tr>
+                <td style="background: #fdbf01;">
+                    Approve
+                </td>
+                <td><strong>未上架</strong></td>
+            </tr>
+            <tr>
+                <td style="background: #00afef;">
+                    Approve
+                </td>
+                <td><strong>已上架</strong></td>
+            </tr>
+            <tr>
+                <td style="color: red">
+                    红色加粗边框
+                </td>
+                <td><strong>上新失败</strong></td>
+            </tr>
             </tbody>
         </table>
     </div>

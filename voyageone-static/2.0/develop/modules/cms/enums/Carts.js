@@ -29,6 +29,26 @@ define(['underscore'], function (_) {
          */
         FEED:new Cart('FEED' , 1 , 'Feed数据',''),
         /**
+         * Feed
+         */
+        FEED:new Cart('SN' , 1 , 'Sneakerhead',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('WS' , 3 , 'Sneakerhead WS',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('AM' , 5 , 'Amazon',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('RX' , 7 , 'Sneaker RX',''),
+        /**
+         * Feed
+         */
+        FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile',''),
+        /**
          * 天猫
          */
         TM: new Cart('TM', 20, '天猫', ''),
@@ -114,7 +134,17 @@ define(['underscore'], function (_) {
         /**
          * Mini Mall
          */
-        MM: new Cart('US', 99, 'US Joi', ''),
+        MM: new Cart('MM', 99, 'US Joi', ''),
+
+        SN: new Cart('SN', 1, 'Sneakerhead', ''),
+
+        SNWS: new Cart('SNWS', 3, 'Sneakerhead WS', ''),
+
+        AMZN: new Cart('AMZN', 5, 'Amazon', ''),
+
+        SRX: new Cart('SRX', 7, 'Sneaker RX', ''),
+
+        SNM: new Cart('SNM', 9, 'Sneakerhead Mobile', ''),
 
         /**
          * 获取枚举, desc 不支持

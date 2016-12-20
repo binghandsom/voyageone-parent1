@@ -602,6 +602,11 @@ public class ChannelConfigEnums {
         Woodland("031"),
 
         /**
+         * Frye
+         */
+        Frye("032"),
+
+        /**
          * TestChannel088
          */
         TestChannel088("088"),
@@ -708,6 +713,7 @@ public class ChannelConfigEnums {
                 case "029": return Modotex;
                 case "030": return Wella;
                 case "031": return Woodland;
+                case "032": return Frye;
                 case "088": return TestChannel088;
                 case "089": return TestChannel089;
                 case "090": return TestChannel090;

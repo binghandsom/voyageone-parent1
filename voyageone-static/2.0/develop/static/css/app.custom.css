@@ -42,3 +42,7 @@ ul[uib-datepicker-popup-wrap] button {
 .notifyjs-bootstrap-base {
     font-size: 24px;
 }
+.changeableHeight{
+    max-height: 580px;
+    width:100%;
+}

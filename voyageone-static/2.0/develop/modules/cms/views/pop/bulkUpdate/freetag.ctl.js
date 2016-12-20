@@ -207,6 +207,7 @@ define([
                 var map = flatTrees(self.source);
                 var selectdTagList = [];
                 var selCounts = 0;
+                var orgDispTagList = [];
 
                 /**因为半角中的id为全路径，要分割到最后一个，也就是数字为最大的*/
                 var orgDispArr = _.map(self.orgDispMap, function (value, key) {
@@ -255,18 +256,23 @@ define([
                         return;
                     }
 
-                    // 检查是否还有半选的情况
-                    dispFlg = false;
-
+                    // // 检查是否还有半选的情况
+                    // dispFlg = false;
+                    //
+                    // for (var key in self.orgDispMap) {
+                    //     if (self.orgDispMap[key] == true) {
+                    //         dispFlg = true;
+                    //         break;
+                    //     }
+                    // }
+                    // if (dispFlg) {
+                    //     self.alert("存在冲突标签，请确认标签勾选状态！");
+                    //     return;
+                    // }
                     for (var key in self.orgDispMap) {
                         if (self.orgDispMap[key] == true) {
-                            dispFlg = true;
-                            break;
+                            orgDispTagList.push(key);
                         }
-                    }
-                    if (dispFlg) {
-                        self.alert("存在冲突标签，请确认标签勾选状态！");
-                        return;
                     }
                 }
 
@@ -281,7 +287,7 @@ define([
                     selectdTagList.push(self.list);
                 });
 
-                self.context = {"selectdTagList": selectdTagList, 'orgFlg': self.orgFlg};
+                self.context = {"selectdTagList": selectdTagList, 'orgFlg': self.orgFlg, 'orgDispTagList':orgDispTagList};
                 self.$uibModalInstance.close(self.context);
             },
 

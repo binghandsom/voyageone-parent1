@@ -5,10 +5,12 @@ define([
     'modules/cms/routes',
     'modules/cms/actions',
     'modules/cms/translate/en',
-    'modules/cms/translate/zh'
+    'modules/cms/translate/zh',
+    'modules/cms/controller/popup.ctl'
 ], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
+        'com.voyageone.popups',
         'ngRoute',
         'ngAnimate',
         'ngCookies',
@@ -28,7 +30,7 @@ define([
     ]).constant('cActions', actions)
         .constant('cRoutes', routes)
         .constant('cLanguageType', {
-                en: {
+            en: {
                 name: "en",
                 value: enTranslate
             },
@@ -175,29 +177,43 @@ define([
          */
         function getMenuHeaderInfo() {
             var defer = $q.defer();
-            ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-                .then(function (response) {
-                    var data = response.data;
+            $menuService.getMenuHeaderInfo().then(function (response) {
+                        var data = response.data;
+                        userlanguage = data.userInfo.language;
+                        // 设置画面用户显示的语言
+                        _.forEach(data.languageList, function (language) {
 
-                    // 获取用户语言
-                    //var userlanguage = translateService.getBrowserLanguage();
-                    //if (!_.isEmpty(cookieService.language()))
-                    //    userlanguage = cookieService.language();
-                    //else if (!_.isEmpty(data.userInfo.language))
-                    userlanguage = data.userInfo.language;
-
-                    // 设置画面用户显示的语言
-                    _.forEach(data.languageList, function (language) {
-
-                        if (_.isEqual(userlanguage, language.name)) {
-                            data.userInfo.language = language.add_name1;
-                            translateService.setLanguage(language.add_name2);
-                        }
-                    });
-
-                    //data.userInfo.application = cookieService.application();  服务端已经返回
-                    defer.resolve(data);
-                });
+                            if (_.isEqual(userlanguage, language.name)) {
+                                data.userInfo.language = language.add_name1;
+                                translateService.setLanguage(language.add_name2);
+                            }
+                        });
+                        //data.userInfo.application = cookieService.application();  服务端已经返回
+                        defer.resolve(data);
+            });
+            // ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
+            //     .then(function (response) {
+            //         var data = response.data;
+            //
+            //         // 获取用户语言
+            //         //var userlanguage = translateService.getBrowserLanguage();
+            //         //if (!_.isEmpty(cookieService.language()))
+            //         //    userlanguage = cookieService.language();
+            //         //else if (!_.isEmpty(data.userInfo.language))
+            //         userlanguage = data.userInfo.language;
+            //
+            //         // 设置画面用户显示的语言
+            //         _.forEach(data.languageList, function (language) {
+            //
+            //             if (_.isEqual(userlanguage, language.name)) {
+            //                 data.userInfo.language = language.add_name1;
+            //                 translateService.setLanguage(language.add_name2);
+            //             }
+            //         });
+            //
+            //         //data.userInfo.application = cookieService.application();  服务端已经返回
+            //         defer.resolve(data);
+            //     });
             return defer.promise;
         }
 
@@ -287,8 +303,8 @@ define([
         }
 
         /**cms配置信息，基于session缓存*/
-        function getCmsConfig(){
-            return $menuService.getCmsConfig().then(function(res){
+        function getCmsConfig() {
+            return $menuService.getCmsConfig().then(function (res) {
                 return res.data;
             });
         }
@@ -315,11 +331,14 @@ define([
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
                 $rootScope.menuTree = data.menuTree;
+                $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
             });
         }
-
+        $rootScope.isParentMenu=function(item) {
+            return item.children&& item.children.length > 0;
+        }
         /**
          * go to channel selected page.
          */
@@ -330,7 +349,7 @@ define([
         }
 
         function loadSearchAutoCompletes(query) {
-            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp)  {
+            return $searchAdvanceService2.searchAutoComplete(query).then(function (resp) {
                 return resp.data;
             });
         }
@@ -342,6 +361,7 @@ define([
         function selectMenu(menu) {
             menuService.setMenu(menu.menuTitle).then(function (application) {
                 $window.location = cCommonRoutes.application.modules + application + cCommonRoutes.application.url;
+                vm.userInfo.application = menu.menuTitle;
             });
         }
 
@@ -415,6 +435,7 @@ define([
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
+        $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
 
         function initialize() {
             menuService.getPlatformType().then(function (data) {
@@ -432,6 +453,7 @@ define([
          * @param cType
          */
         function selectPlatformType(cType) {
+            $scope.menuInfo.categoryTreeList=[];
             menuService.setPlatformType(cType).then(function (data) {
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
@@ -439,22 +461,34 @@ define([
             });
         }
 
+        function goAdvanceSearchByFeedCat(catPath,catId) {
+            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/"+ catId);
+        }
         /**
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
          * @param type: 1 || 3 = 到高级检索，2 = feed检索
          */
         function goSearchPage(catPath, catId) {
-            var catPath = encodeURIComponent(catPath);
+            var encodeCatPath = encodeURIComponent(catPath);
+
             switch ($rootScope.platformType.cTypeId) {
                 case "MT": // 已不使用
-                    $location.path(cRoutes.search_advance_param.url + "1/" + catPath + "/" + catId);
+                    $location.path(cRoutes.search_advance_param.url + "1/" + encodeCatPath + "/" + catId);
                     break;
                 case "TH":
-                    $location.path(cRoutes.feed_product_list_param.url + "1/" + catPath);
+                    $location.path(cRoutes.feed_product_list_param.url + "1/" + encodeCatPath);
+                    break;
+                case "CN":
+                case "LCN":
+                    $location.path(cRoutes.channel_new_category.url + angular.toJson({
+                            catPath: catPath,
+                            catId: catId,
+                            cartId: $rootScope.platformType.cartId
+                        }));
                     break;
                 default:
-                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + catPath);
+                    $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + encodeCatPath);
                     break;
             }
         }

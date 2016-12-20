@@ -2,7 +2,8 @@
  * 拓展高级检索JS端controller
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ], function (cms) {
 
     cms.controller('adSearchAppendCtl', (function () {

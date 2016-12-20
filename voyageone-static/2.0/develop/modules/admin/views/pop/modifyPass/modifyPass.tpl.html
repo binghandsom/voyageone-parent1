@@ -1,0 +1,47 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;修改密码</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="modifyPassForm" novalidate>
+            <div class="col-sm-12">
+                <div class="form-horizontal">
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">账号</label>
+                        <div class="col-sm-8">
+                            <label class="control-label text-black">&nbsp;&nbsp;{{ctrl.userAccount}}</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">密码</label>
+                        <div class="col-sm-8">
+                            <input style="border: 1px solid #ccc;padding: 0 0 0 10px;" type="password" class="form-control" ng-model="ctrl.newPass" autocomplete="off" name="newPass" required/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="modifyPassForm.newPass"></vo-message>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <label class="col-sm-3 control-label">再次输入密码</label>
+                        <div class="col-sm-8">
+                            <input style="border: 1px solid #ccc;padding: 0 0 0 10px;" type="password" class="form-control" ng-model="ctrl.newPassAgain" name="newPassAgain" required/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="modifyPassForm.newPassAgain"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.submit()" ng-disabled="modifyPassForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> 提交</button>
+    </div>
+</div><!-- .vo_modal -->

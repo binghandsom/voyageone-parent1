@@ -29,6 +29,7 @@
             <artifactId>voyageone-service2-model</artifactId>
             <version>${voyageone.service2.model.version}</version>
         </dependency>
+
     </dependencies>
     <build>
         <finalName>voyageone-service2-dao</finalName>

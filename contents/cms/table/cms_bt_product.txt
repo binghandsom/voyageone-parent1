@@ -112,6 +112,7 @@
     * pPriceSaleEd  ->(double)
     * mainProductCode ->20160629,追加用于高级检索使用(jason.jiang)
     * modified -> 最终更新时间
+    * isNewSku ->("1", "0")
     * fields
       * 平台特有fields属性
     * skus[]
@@ -132,6 +133,10 @@
       * cIds
       * cName
       * cNames
+    * mqq[] -> 卖全球(MqqCnPlatformStatusModel)
+      * mqqName
+      * numIId
+      * status
   * P26  ->京东国际
       * jdSkuId       ->京东skuId(京东上新成功之后会从平台上取得京东skuId并回写到jdSkuId)
   * P27  ->聚美
@@ -201,6 +206,7 @@
   * cnAtts
   * customIds
   * customIdsCn
+  * subCategories ->针对sneakerhead的美国多类目 2016.12.09 edward
 //* carts[]   ->平台销售
 //  * cartId
 //  * numIId
@@ -279,3 +285,8 @@
 },
 * tags[]  ->标签
 * freeTags[] ->自定义标签
+* usPlatforms ->美国平台的产品状态 2016.12.09 edward
+    P1:{
+        cartId : 1,
+        status : "InStock"
+    }

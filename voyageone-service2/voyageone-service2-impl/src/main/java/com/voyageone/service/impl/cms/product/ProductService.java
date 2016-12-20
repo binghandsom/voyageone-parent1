@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.product;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
@@ -923,9 +924,9 @@ public class ProductService extends BaseService {
         });
 
         // 设定类目状态
-        if(!StringUtil.isEmpty(platformModel.getpCatId()) && !StringUtil.isEmpty(platformModel.getpCatPath())){
+        if (!StringUtil.isEmpty(platformModel.getpCatId()) && !StringUtil.isEmpty(platformModel.getpCatPath())) {
             platformModel.setpCatStatus("1");
-        }else{
+        } else {
             platformModel.setpCatStatus("0");
         }
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -948,7 +949,7 @@ public class ProductService extends BaseService {
 
         List<String> skus = new ArrayList<>();
         platformModel.getSkus().forEach(sku -> skus.add(sku.getStringAttribute("skuCode")));
-        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, platformModel.getCartId(), modifier, comment);
+        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus, channelId, prodId, platformModel.getCartId(), modifier, comment);
         productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), opeType, comment, modifier);
 
         return platformModel.getModified();
@@ -1030,6 +1031,7 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         insertProductHistory(channelId, prodId);
     }
+
     public void updateProductAppSwitch(String channelId, Long prodId, int appSwitch, String modifier) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -1045,7 +1047,8 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         insertProductHistory(channelId, prodId);
     }
-//    	"translateStatus" : "1",
+
+    //    	"translateStatus" : "1",
 //                "translator" : "",      0就都清空
 //	"translateTime" : "",   0就都清空
     public void updateProductTranslateStatus(String channelId, Long prodId, int translateStatus, String modifier) {
@@ -1069,6 +1072,56 @@ public class ProductService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
         insertProductHistory(channelId, prodId);
     }
+
+    /**
+     * 用于更新 feed.subCategories
+     *
+     * @param channelId channelId
+     * @param requests  key 为 code, value 为 subCategory的列表
+     */
+    public void updateProductFeedSubCategory(String channelId,
+                                             Map<String, Collection<String>> requests,
+                                             String modifier) {
+        List<BulkUpdateModel> bulkList = requests.entrySet().stream()
+                .map(entry -> {
+                    String code = entry.getKey();
+                    Collection<String> subCategoryPaths = entry.getValue();
+                    HashMap<String, Object> queryMap = new HashMap<>();
+                    queryMap.put("channelId", channelId);
+                    queryMap.put("common.fields.code", code);
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("feed.subCategories", entry.getValue());
+                    BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+                    bulkUpdateModel.setUpdateMap(updateMap);
+                    bulkUpdateModel.setQueryMap(queryMap);
+                    return bulkUpdateModel;
+                })
+                .collect(Collectors.toList());
+
+        List<List<BulkUpdateModel>> partedBulkList = Lists.partition(bulkList, 100);
+        partedBulkList.parallelStream().forEach(subBulkList -> {
+            Date start = new Date();
+            cmsBtProductDao.bulkUpdateWithMap(channelId, subBulkList, modifier, "$set");
+            $debug("更新了 " + subBulkList.size() + " 个 product 的subCategories 共耗时 " +
+                    (new Date().getTime() - start.getTime()) + " 毫秒");
+        });
+    }
+
+    /**
+     * 更新 usPlatforms
+     *
+     * @param channelId   channelId
+     * @param code        code
+     * @param usPlatforms 美国平台信息
+     * @param modifier    更正人
+     */
+    public void updateUsPlatforms(String channelId,
+                                  String code,
+                                  Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms,
+                                  String modifier) {
+        cmsBtProductDao.updateUsPlatforms(channelId, code, usPlatforms, modifier);
+    }
+
     public int updateProductFeedToMaster(String channelId, CmsBtProductModel cmsProduct, String modifier, String comment) {
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", cmsProduct.getProdId());
@@ -1478,47 +1531,47 @@ public class ProductService extends BaseService {
     /**
      * 查询商品的库存信息（合并SKU与库存信息）
      */
-	public WmsCodeStoreInvBean getStockInfoBySku(String channelId, long productId) {
-		// 查询商品信息
-		CmsBtProductModel productInfo = getProductById(channelId, productId);
-		if (productInfo == null) {
-			throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
-		}
-		// 查询商品的库存信息
-		String code = productInfo.getCommon().getFields().getCode();
-		WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(productInfo.getOrgChannelId(), code);
+    public WmsCodeStoreInvBean getStockInfoBySku(String channelId, long productId) {
+        // 查询商品信息
+        CmsBtProductModel productInfo = getProductById(channelId, productId);
+        if (productInfo == null) {
+            throw new BusinessException("找不到商品信息, channelId=" + channelId + ", productId=" + productId);
+        }
+        // 查询商品的库存信息
+        String code = productInfo.getCommon().getFields().getCode();
+        WmsCodeStoreInvBean stockDetail = inventoryCenterLogicService.getCodeStockDetails(productInfo.getOrgChannelId(), code);
 
-		// 取得SKU的平台尺寸信息
-		List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
-		Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
-				productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
-		if (MapUtils.isNotEmpty(sizeMap)) {
-			skus.forEach(sku -> {
-				sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
-			});
-		}
+        // 取得SKU的平台尺寸信息
+        List<CmsBtProductModel_Sku> skus = productInfo.getCommon().getSkus();
+        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
+                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+        if (MapUtils.isNotEmpty(sizeMap)) {
+            skus.forEach(sku -> {
+                sku.setAttribute("platformSize", sizeMap.get(sku.getSize()));
+            });
+        }
 
-		// 更新商品库存中的SKU尺寸信息
-		if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
-			stockDetail.getStocks().forEach(stock -> {
-				CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
-					@Override
-					public boolean evaluate(Object object) {
-						CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
-						return sku.getSkuCode().equals(stock.getBase().getSku());
-					}
-				});
-				stock.getBase().setOrigSize(sku.getSize());
-				stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
-			});
-		}
+        // 更新商品库存中的SKU尺寸信息
+        if (CollectionUtils.isNotEmpty(stockDetail.getStocks())) {
+            stockDetail.getStocks().forEach(stock -> {
+                CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) CollectionUtils.find(skus, new Predicate() {
+                    @Override
+                    public boolean evaluate(Object object) {
+                        CmsBtProductModel_Sku sku = (CmsBtProductModel_Sku) object;
+                        return sku.getSkuCode().equals(stock.getBase().getSku());
+                    }
+                });
+                stock.getBase().setOrigSize(sku.getSize());
+                stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
+            });
+        }
 
-		return stockDetail;
-	}
+        return stockDetail;
+    }
 
     //更新mongo product  tag
     public void updateCmsBtProductTags(String channelId, CmsBtProductModel productModel, int refTagId, List<TagTreeNode> tagList, String modifier) {
-        if(tagList == null || tagList.size() == 0) return;
+        if (tagList == null || tagList.size() == 0) return;
         //更新商品Tags  sunpt
         if (productModel != null) {
             List<String> tags = productModel.getTags();

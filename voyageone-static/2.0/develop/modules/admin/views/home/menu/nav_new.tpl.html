@@ -1,0 +1,271 @@
+<ul class="nav" >
+    <!-- 用户/权限管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-user icon text-vo"></i>
+            <span class="" translate="TXT_USER_ADMIN"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_USER_ADMIN"></span>
+                </a>
+            </li>
+            <!-- 用户管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/admin/userManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_USER_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 角色管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/admin/roleManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_ROLE_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 组织管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/admin/orgManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_ORG_MANAGE"></span>
+                </a>
+            </li>
+            <!-- 资源管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/admin/resManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_MENU_MANAGEMENT"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- 渠道管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_CART_MANAGEMENT"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_CART_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 渠道信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/channel/channelInfoManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CART_INFO_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 渠道类型属性管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/channel/channelTypeAttrManage">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CHANNEL_TYPE_ATTR_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 第三方配置信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/channel/channelThirdPartyCog">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CHANNEL_THIRD_PARTY_CONFIG"></span>
+                </a>
+            </li>
+            <!-- 短信配置管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/channel/channelSmsConfig">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CHANNEL_SMS_CONFIG"></span>
+                </a>
+            </li>
+            <!-- 快递配置管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/channel/channelCarrierConfig">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CHANNEL_CARRIER_MANAGEMENT"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- cart管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_CART_MANAGE"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_CART_MANAGE"></span>
+                </a>
+            </li>
+            <!-- cart信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/cart/cartManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CART_INFO_MANAGE"></span>
+                </a>
+            </li>
+            <!-- 渠道Cart管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/cart/channelShopManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CART_CHANNEL_SHOP"></span>
+                </a>
+            </li>
+            <!-- Cart物流管理管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/cart/trackingInfoManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CART_TRACKING_INFO"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- 仓库管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto" href="#/store/storeManagement">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_STORE_MANAGE"></span>
+        </a>
+    </li>
+    <!-- 任务管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto" href="#/task/taskManagement">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_TASK_MANAGEMENT"></span>
+        </a>
+    </li>
+    <!-- 系统配置管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_SYSTEM_CONFIG"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_SYSTEM_CONFIG"></span>
+                </a>
+            </li>
+            <!-- 类型信息管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/system/typeInfoManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_TYPE_INFO_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 类型属性管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/system/typeAttributeManagement">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_TYPE_ATTRIBUTE_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 属性统一配置管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/system/unifiedConfig">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_PROPERTY_UNIFIED_CONFIG"></span>
+                </a>
+            </li>
+            <!-- Code属性管理 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/system/codeAttr">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_CODE_ATTRIBUTE"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- 开新店管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_NEW_SHOP_MANAGEMENT"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_NEW_SHOP_MANAGEMENT"></span>
+                </a>
+            </li>
+            <!-- 向导式开新店 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/newShop/guide">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_NEWSHOP_GUIDE_TYPE"></span>
+                </a>
+            </li>
+            <!-- 开新店脚本历史 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/newShop/history">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_NEWSHOP_HISTORY"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- 日志管理 -->
+    <li  ng-if="!$root.isTranslator">
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-cogs icon text-vo"></i>
+            <span class="" translate="TXT_LOG_SEARCH"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a>
+                    <span translate="TXT_LOG_SEARCH"></span>
+                </a>
+            </li>
+            <!-- 登录日志 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/log/loginLog">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_LOGIN_LOG"></span>
+                </a>
+            </li>
+            <!-- 操作日志 -->
+            <li class="m-l-sm" ui-sref-active="active">
+                <a href="#/log/actionLog">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span TRANSLATE="TXT_ACT_LOG"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+</ul>
+<!--end-->

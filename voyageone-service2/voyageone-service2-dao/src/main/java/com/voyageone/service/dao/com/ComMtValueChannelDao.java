@@ -7,9 +7,9 @@
  */
 package com.voyageone.service.dao.com;
 
-import com.voyageone.service.model.com.ComMtValueChannelModel;
 import java.util.List;
-import java.util.Map;
+
+import com.voyageone.service.model.com.ComMtValueChannelModel;
 import org.springframework.stereotype.Repository;
 
 @Repository

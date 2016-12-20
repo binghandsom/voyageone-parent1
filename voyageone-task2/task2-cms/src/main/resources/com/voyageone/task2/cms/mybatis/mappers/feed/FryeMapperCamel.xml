@@ -1,0 +1,851 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.task2.cms.dao.feed.FryeFeedDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        <id column="Variants_Upc" property="variantsUpc" jdbcType="VARCHAR" />
+        <result column="Product_Id" property="productId" jdbcType="BIGINT" />
+        <result column="IsActive" property="isactive" jdbcType="BIT" />
+        <result column="IsTaxable" property="istaxable" jdbcType="BIT" />
+        <result column="CategoryId" property="categoryid" jdbcType="DOUBLE" />
+        <result column="MetaData_CategoryName" property="metadataCategoryname" jdbcType="VARCHAR" />
+        <result column="MetaData_UnitCost" property="metadataUnitcost" jdbcType="DOUBLE" />
+        <result column="MetaData_PreviousCost" property="metadataPreviouscost" jdbcType="DOUBLE" />
+        <result column="MetaData_MaxCost" property="metadataMaxcost" jdbcType="DOUBLE" />
+        <result column="MetaData_MinCost" property="metadataMincost" jdbcType="DOUBLE" />
+        <result column="MetaData_MinRegularPrice" property="metadataMinregularprice" jdbcType="DOUBLE" />
+        <result column="MetaData_MaxRegularPrice" property="metadataMaxregularprice" jdbcType="DOUBLE" />
+        <result column="MetaData_MinSalePrice" property="metadataMinsaleprice" jdbcType="DOUBLE" />
+        <result column="MetaData_MaxSalePrice" property="metadataMaxsaleprice" jdbcType="DOUBLE" />
+        <result column="MetaData_SameMaxMin" property="metadataSamemaxmin" jdbcType="BIT" />
+        <result column="MetaData_ShippingSurcharge" property="metadataShippingsurcharge" jdbcType="DOUBLE" />
+        <result column="MetaData_Weight" property="metadataWeight" jdbcType="DOUBLE" />
+        <result column="MetaData_DisplayOosPopup" property="metadataDisplayoospopup" jdbcType="BIT" />
+        <result column="MetaData_ShowWhenOos" property="metadataShowwhenoos" jdbcType="BIT" />
+        <result column="MetaData_NonremovableFromCart" property="metadataNonremovablefromcart" jdbcType="BIT" />
+        <result column="md5" property="md5" jdbcType="VARCHAR" />
+        <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedFryeBean" extends="BaseResultMap" >
+        <result column="Attributes" property="attributes" jdbcType="LONGVARCHAR" />
+        <result column="Fabric" property="fabric" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Name" property="variantsName" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Medias_Meta_ExtraImageThumb" property="variantsMediasMetaExtraimagethumb" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Medias_Meta_ExtraImageThumbUrl" property="variantsMediasMetaExtraimagethumburl" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Medias_Meta_ExtraImageLargeThumb" property="variantsMediasMetaExtraimagelargethumb" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Medias_Meta_ExtraImageLargeThumbUrl" property="variantsMediasMetaExtraimagelargethumburl" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Options_Color" property="variantsOptionsColor" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Options_size" property="variantsOptionsSize" jdbcType="LONGVARCHAR" />
+        <result column="MfgSku" property="mfgsku" jdbcType="LONGVARCHAR" />
+        <result column="TaxClassification" property="taxclassification" jdbcType="LONGVARCHAR" />
+        <result column="Name" property="name" jdbcType="LONGVARCHAR" />
+        <result column="FirstLiveDate" property="firstlivedate" jdbcType="LONGVARCHAR" />
+        <result column="MetaTags" property="metatags" jdbcType="LONGVARCHAR" />
+        <result column="Options" property="options" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_CategoryExtraText1" property="metadataCategoryextratext1" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_CategoryExtraText2" property="metadataCategoryextratext2" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_CategoryExtraText3" property="metadataCategoryextratext3" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_ExtraText1" property="metadataExtratext1" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description2" property="metadataDescription2" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description3" property="metadataDescription3" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description4" property="metadataDescription4" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description2WithFormatting" property="metadataDescription2withformatting" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description3WithFormatting" property="metadataDescription3withformatting" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Description4WithFormatting" property="metadataDescription4withformatting" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_Detail" property="metadataDetail" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_SizeChartUrl" property="metadataSizecharturl" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_PreOrderAvailableDate" property="metadataPreorderavailabledate" jdbcType="LONGVARCHAR" />
+        <result column="MetaData_ProductUrl" property="metadataProducturl" jdbcType="LONGVARCHAR" />
+        <result column="origin" property="origin" jdbcType="LONGVARCHAR" />
+        <result column="Variants_Medias_FilePath" property="variantsMediasFilepath" jdbcType="LONGVARCHAR" />
+        <result column="sex" property="sex" jdbcType="LONGVARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        "Variants_Upc", "Product_Id", "IsActive", "IsTaxable", "CategoryId", "MetaData_CategoryName",
+        "MetaData_UnitCost", "MetaData_PreviousCost", "MetaData_MaxCost", "MetaData_MinCost",
+        "MetaData_MinRegularPrice", "MetaData_MaxRegularPrice", "MetaData_MinSalePrice",
+        "MetaData_MaxSalePrice", "MetaData_SameMaxMin", "MetaData_ShippingSurcharge", "MetaData_Weight",
+        "MetaData_DisplayOosPopup", "MetaData_ShowWhenOos", "MetaData_NonremovableFromCart",
+        "md5", "updateFlag"
+    </sql>
+    <sql id="Blob_Column_List" >
+        "Attributes", "Fabric", "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
+        "Variants_Medias_Meta_ExtraImageThumbUrl", "Variants_Medias_Meta_ExtraImageLargeThumb",
+        "Variants_Medias_Meta_ExtraImageLargeThumbUrl", "Variants_Options_Color", "Variants_Options_size",
+        "MfgSku", "TaxClassification", "Name", "FirstLiveDate", "MetaTags", "Options", "MetaData_CategoryExtraText1",
+        "MetaData_CategoryExtraText2", "MetaData_CategoryExtraText3", "MetaData_ExtraText1",
+        "MetaData_Description2", "MetaData_Description3", "MetaData_Description4", "MetaData_Description2WithFormatting",
+        "MetaData_Description3WithFormatting", "MetaData_Description4WithFormatting", "MetaData_Detail",
+        "MetaData_SizeChartUrl", "MetaData_PreOrderAvailableDate", "MetaData_ProductUrl",
+        "origin", "Variants_Medias_FilePath", "sex"
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+        select
+        <include refid="Base_Column_List" />
+        ,
+        <include refid="Blob_Column_List" />
+        from cms_zz_feed_frye_product_temp
+        where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+        delete from cms_zz_feed_frye_product_temp
+        where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
+    </delete>
+    <insert id="insert" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        insert into cms_zz_feed_frye_product_temp ("Variants_Upc", "Product_Id", "IsActive",
+        "IsTaxable", "CategoryId", "MetaData_CategoryName",
+        "MetaData_UnitCost", "MetaData_PreviousCost", "MetaData_MaxCost",
+        "MetaData_MinCost", "MetaData_MinRegularPrice",
+        "MetaData_MaxRegularPrice", "MetaData_MinSalePrice",
+        "MetaData_MaxSalePrice", "MetaData_SameMaxMin", "MetaData_ShippingSurcharge",
+        "MetaData_Weight", "MetaData_DisplayOosPopup", "MetaData_ShowWhenOos",
+        "MetaData_NonremovableFromCart", "md5", "updateFlag",
+        "Attributes", "Fabric", "Variants_Name",
+        "Variants_Medias_Meta_ExtraImageThumb", "Variants_Medias_Meta_ExtraImageThumbUrl",
+        "Variants_Medias_Meta_ExtraImageLargeThumb", "Variants_Medias_Meta_ExtraImageLargeThumbUrl",
+        "Variants_Options_Color", "Variants_Options_size",
+        "MfgSku", "TaxClassification", "Name",
+        "FirstLiveDate", "MetaTags", "Options",
+        "MetaData_CategoryExtraText1", "MetaData_CategoryExtraText2",
+        "MetaData_CategoryExtraText3", "MetaData_ExtraText1",
+        "MetaData_Description2", "MetaData_Description3",
+        "MetaData_Description4", "MetaData_Description2WithFormatting",
+        "MetaData_Description3WithFormatting", "MetaData_Description4WithFormatting",
+        "MetaData_Detail", "MetaData_SizeChartUrl",
+        "MetaData_PreOrderAvailableDate", "MetaData_ProductUrl",
+        "origin", "Variants_Medias_FilePath",
+        "sex")
+        values (#{variantsUpc,jdbcType=VARCHAR}, #{productId,jdbcType=BIGINT}, #{isactive,jdbcType=BIT},
+        #{istaxable,jdbcType=BIT}, #{categoryid,jdbcType=DOUBLE}, #{metadataCategoryname,jdbcType=VARCHAR},
+        #{metadataUnitcost,jdbcType=DOUBLE}, #{metadataPreviouscost,jdbcType=DOUBLE}, #{metadataMaxcost,jdbcType=DOUBLE},
+        #{metadataMincost,jdbcType=DOUBLE}, #{metadataMinregularprice,jdbcType=DOUBLE},
+        #{metadataMaxregularprice,jdbcType=DOUBLE}, #{metadataMinsaleprice,jdbcType=DOUBLE},
+        #{metadataMaxsaleprice,jdbcType=DOUBLE}, #{metadataSamemaxmin,jdbcType=BIT}, #{metadataShippingsurcharge,jdbcType=DOUBLE},
+        #{metadataWeight,jdbcType=DOUBLE}, #{metadataDisplayoospopup,jdbcType=BIT}, #{metadataShowwhenoos,jdbcType=BIT},
+        #{metadataNonremovablefromcart,jdbcType=BIT}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
+        #{attributes,jdbcType=LONGVARCHAR}, #{fabric,jdbcType=LONGVARCHAR}, #{variantsName,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
+        #{variantsOptionsColor,jdbcType=LONGVARCHAR}, #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+        #{mfgsku,jdbcType=LONGVARCHAR}, #{taxclassification,jdbcType=LONGVARCHAR}, #{name,jdbcType=LONGVARCHAR},
+        #{firstlivedate,jdbcType=LONGVARCHAR}, #{metatags,jdbcType=LONGVARCHAR}, #{options,jdbcType=LONGVARCHAR},
+        #{metadataCategoryextratext1,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
+        #{metadataCategoryextratext3,jdbcType=LONGVARCHAR}, #{metadataExtratext1,jdbcType=LONGVARCHAR},
+        #{metadataDescription2,jdbcType=LONGVARCHAR}, #{metadataDescription3,jdbcType=LONGVARCHAR},
+        #{metadataDescription4,jdbcType=LONGVARCHAR}, #{metadataDescription2withformatting,jdbcType=LONGVARCHAR},
+        #{metadataDescription3withformatting,jdbcType=LONGVARCHAR}, #{metadataDescription4withformatting,jdbcType=LONGVARCHAR},
+        #{metadataDetail,jdbcType=LONGVARCHAR}, #{metadataSizecharturl,jdbcType=LONGVARCHAR},
+        #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR}, #{metadataProducturl,jdbcType=LONGVARCHAR},
+        #{origin,jdbcType=LONGVARCHAR}, #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
+        #{sex,jdbcType=LONGVARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        insert into cms_zz_feed_frye_product_temp
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="variantsUpc != null" >
+                Variants_Upc,
+            </if>
+            <if test="productId != null" >
+                Product_Id,
+            </if>
+            <if test="isactive != null" >
+                IsActive,
+            </if>
+            <if test="istaxable != null" >
+                IsTaxable,
+            </if>
+            <if test="categoryid != null" >
+                CategoryId,
+            </if>
+            <if test="metadataCategoryname != null" >
+                MetaData_CategoryName,
+            </if>
+            <if test="metadataUnitcost != null" >
+                MetaData_UnitCost,
+            </if>
+            <if test="metadataPreviouscost != null" >
+                MetaData_PreviousCost,
+            </if>
+            <if test="metadataMaxcost != null" >
+                MetaData_MaxCost,
+            </if>
+            <if test="metadataMincost != null" >
+                MetaData_MinCost,
+            </if>
+            <if test="metadataMinregularprice != null" >
+                MetaData_MinRegularPrice,
+            </if>
+            <if test="metadataMaxregularprice != null" >
+                MetaData_MaxRegularPrice,
+            </if>
+            <if test="metadataMinsaleprice != null" >
+                MetaData_MinSalePrice,
+            </if>
+            <if test="metadataMaxsaleprice != null" >
+                MetaData_MaxSalePrice,
+            </if>
+            <if test="metadataSamemaxmin != null" >
+                MetaData_SameMaxMin,
+            </if>
+            <if test="metadataShippingsurcharge != null" >
+                MetaData_ShippingSurcharge,
+            </if>
+            <if test="metadataWeight != null" >
+                MetaData_Weight,
+            </if>
+            <if test="metadataDisplayoospopup != null" >
+                MetaData_DisplayOosPopup,
+            </if>
+            <if test="metadataShowwhenoos != null" >
+                MetaData_ShowWhenOos,
+            </if>
+            <if test="metadataNonremovablefromcart != null" >
+                MetaData_NonremovableFromCart,
+            </if>
+            <if test="md5 != null" >
+                md5,
+            </if>
+            <if test="updateflag != null" >
+                updateFlag,
+            </if>
+            <if test="attributes != null" >
+                Attributes,
+            </if>
+            <if test="fabric != null" >
+                Fabric,
+            </if>
+            <if test="variantsName != null" >
+                Variants_Name,
+            </if>
+            <if test="variantsMediasMetaExtraimagethumb != null" >
+                Variants_Medias_Meta_ExtraImageThumb,
+            </if>
+            <if test="variantsMediasMetaExtraimagethumburl != null" >
+                Variants_Medias_Meta_ExtraImageThumbUrl,
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumb != null" >
+                Variants_Medias_Meta_ExtraImageLargeThumb,
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumburl != null" >
+                Variants_Medias_Meta_ExtraImageLargeThumbUrl,
+            </if>
+            <if test="variantsOptionsColor != null" >
+                Variants_Options_Color,
+            </if>
+            <if test="variantsOptionsSize != null" >
+                Variants_Options_size,
+            </if>
+            <if test="mfgsku != null" >
+                MfgSku,
+            </if>
+            <if test="taxclassification != null" >
+                TaxClassification,
+            </if>
+            <if test="name != null" >
+                Name,
+            </if>
+            <if test="firstlivedate != null" >
+                FirstLiveDate,
+            </if>
+            <if test="metatags != null" >
+                MetaTags,
+            </if>
+            <if test="options != null" >
+                Options,
+            </if>
+            <if test="metadataCategoryextratext1 != null" >
+                MetaData_CategoryExtraText1,
+            </if>
+            <if test="metadataCategoryextratext2 != null" >
+                MetaData_CategoryExtraText2,
+            </if>
+            <if test="metadataCategoryextratext3 != null" >
+                MetaData_CategoryExtraText3,
+            </if>
+            <if test="metadataExtratext1 != null" >
+                MetaData_ExtraText1,
+            </if>
+            <if test="metadataDescription2 != null" >
+                MetaData_Description2,
+            </if>
+            <if test="metadataDescription3 != null" >
+                MetaData_Description3,
+            </if>
+            <if test="metadataDescription4 != null" >
+                MetaData_Description4,
+            </if>
+            <if test="metadataDescription2withformatting != null" >
+                MetaData_Description2WithFormatting,
+            </if>
+            <if test="metadataDescription3withformatting != null" >
+                MetaData_Description3WithFormatting,
+            </if>
+            <if test="metadataDescription4withformatting != null" >
+                MetaData_Description4WithFormatting,
+            </if>
+            <if test="metadataDetail != null" >
+                MetaData_Detail,
+            </if>
+            <if test="metadataSizecharturl != null" >
+                MetaData_SizeChartUrl,
+            </if>
+            <if test="metadataPreorderavailabledate != null" >
+                MetaData_PreOrderAvailableDate,
+            </if>
+            <if test="metadataProducturl != null" >
+                MetaData_ProductUrl,
+            </if>
+            <if test="origin != null" >
+                origin,
+            </if>
+            <if test="variantsMediasFilepath != null" >
+                Variants_Medias_FilePath,
+            </if>
+            <if test="sex != null" >
+                sex,
+            </if>
+        </trim>
+
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="variantsUpc != null" >
+                #{variantsUpc,jdbcType=VARCHAR},
+            </if>
+            <if test="productId != null" >
+                #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="isactive != null" >
+                #{isactive,jdbcType=BIT},
+            </if>
+            <if test="istaxable != null" >
+                #{istaxable,jdbcType=BIT},
+            </if>
+            <if test="categoryid != null" >
+                #{categoryid,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataCategoryname != null" >
+                #{metadataCategoryname,jdbcType=VARCHAR},
+            </if>
+            <if test="metadataUnitcost != null" >
+                #{metadataUnitcost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataPreviouscost != null" >
+                #{metadataPreviouscost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxcost != null" >
+                #{metadataMaxcost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMincost != null" >
+                #{metadataMincost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMinregularprice != null" >
+                #{metadataMinregularprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxregularprice != null" >
+                #{metadataMaxregularprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMinsaleprice != null" >
+                #{metadataMinsaleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxsaleprice != null" >
+                #{metadataMaxsaleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataSamemaxmin != null" >
+                #{metadataSamemaxmin,jdbcType=BIT},
+            </if>
+            <if test="metadataShippingsurcharge != null" >
+                #{metadataShippingsurcharge,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataWeight != null" >
+                #{metadataWeight,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataDisplayoospopup != null" >
+                #{metadataDisplayoospopup,jdbcType=BIT},
+            </if>
+            <if test="metadataShowwhenoos != null" >
+                #{metadataShowwhenoos,jdbcType=BIT},
+            </if>
+            <if test="metadataNonremovablefromcart != null" >
+                #{metadataNonremovablefromcart,jdbcType=BIT},
+            </if>
+            <if test="md5 != null" >
+                #{md5,jdbcType=VARCHAR},
+            </if>
+            <if test="updateflag != null" >
+                #{updateflag,jdbcType=INTEGER},
+            </if>
+            <if test="attributes != null" >
+                #{attributes,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="fabric != null" >
+                #{fabric,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsName != null" >
+                #{variantsName,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagethumb != null" >
+                #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagethumburl != null" >
+                #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumb != null" >
+                #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumburl != null" >
+                #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsColor != null" >
+                #{variantsOptionsColor,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsSize != null" >
+                #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="mfgsku != null" >
+                #{mfgsku,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="taxclassification != null" >
+                #{taxclassification,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="name != null" >
+                #{name,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="firstlivedate != null" >
+                #{firstlivedate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metatags != null" >
+                #{metatags,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="options != null" >
+                #{options,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext1 != null" >
+                #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext2 != null" >
+                #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext3 != null" >
+                #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataExtratext1 != null" >
+                #{metadataExtratext1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription2 != null" >
+                #{metadataDescription2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription3 != null" >
+                #{metadataDescription3,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription4 != null" >
+                #{metadataDescription4,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription2withformatting != null" >
+                #{metadataDescription2withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription3withformatting != null" >
+                #{metadataDescription3withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription4withformatting != null" >
+                #{metadataDescription4withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDetail != null" >
+                #{metadataDetail,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataSizecharturl != null" >
+                #{metadataSizecharturl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataPreorderavailabledate != null" >
+                #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataProducturl != null" >
+                #{metadataProducturl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="origin != null" >
+                #{origin,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasFilepath != null" >
+                #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sex != null" >
+                #{sex,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        update cms_zz_feed_frye_product_temp
+        <set >
+            <if test="productId != null" >
+                "Product_Id" = #{productId,jdbcType=BIGINT},
+            </if>
+            <if test="isactive != null" >
+                "IsActive" = #{isactive,jdbcType=BIT},
+            </if>
+            <if test="istaxable != null" >
+                "IsTaxable" = #{istaxable,jdbcType=BIT},
+            </if>
+            <if test="categoryid != null" >
+                "CategoryId" = #{categoryid,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataCategoryname != null" >
+                "MetaData_CategoryName" = #{metadataCategoryname,jdbcType=VARCHAR},
+            </if>
+            <if test="metadataUnitcost != null" >
+                "MetaData_UnitCost" = #{metadataUnitcost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataPreviouscost != null" >
+                "MetaData_PreviousCost" = #{metadataPreviouscost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxcost != null" >
+                "MetaData_MaxCost" = #{metadataMaxcost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMincost != null" >
+                "MetaData_MinCost" = #{metadataMincost,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMinregularprice != null" >
+                "MetaData_MinRegularPrice" = #{metadataMinregularprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxregularprice != null" >
+                "MetaData_MaxRegularPrice" = #{metadataMaxregularprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMinsaleprice != null" >
+                "MetaData_MinSalePrice" = #{metadataMinsaleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataMaxsaleprice != null" >
+                "MetaData_MaxSalePrice" = #{metadataMaxsaleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataSamemaxmin != null" >
+                "MetaData_SameMaxMin" = #{metadataSamemaxmin,jdbcType=BIT},
+            </if>
+            <if test="metadataShippingsurcharge != null" >
+                "MetaData_ShippingSurcharge" = #{metadataShippingsurcharge,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataWeight != null" >
+                "MetaData_Weight" = #{metadataWeight,jdbcType=DOUBLE},
+            </if>
+            <if test="metadataDisplayoospopup != null" >
+                "MetaData_DisplayOosPopup" = #{metadataDisplayoospopup,jdbcType=BIT},
+            </if>
+            <if test="metadataShowwhenoos != null" >
+                "MetaData_ShowWhenOos" = #{metadataShowwhenoos,jdbcType=BIT},
+            </if>
+            <if test="metadataNonremovablefromcart != null" >
+                "MetaData_NonremovableFromCart" = #{metadataNonremovablefromcart,jdbcType=BIT},
+            </if>
+            <if test="md5 != null" >
+                "md5" = #{md5,jdbcType=VARCHAR},
+            </if>
+            <if test="updateflag != null" >
+                "updateFlag" = #{updateflag,jdbcType=INTEGER},
+            </if>
+            <if test="attributes != null" >
+                "Attributes" = #{attributes,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="fabric != null" >
+                "Fabric" = #{fabric,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsName != null" >
+                "Variants_Name" = #{variantsName,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagethumb != null" >
+                "Variants_Medias_Meta_ExtraImageThumb" = #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagethumburl != null" >
+                "Variants_Medias_Meta_ExtraImageThumbUrl" = #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumb != null" >
+                "Variants_Medias_Meta_ExtraImageLargeThumb" = #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasMetaExtraimagelargethumburl != null" >
+                "Variants_Medias_Meta_ExtraImageLargeThumbUrl" = #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsColor != null" >
+                "Variants_Options_Color" = #{variantsOptionsColor,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsOptionsSize != null" >
+                "Variants_Options_size" = #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="mfgsku != null" >
+                "MfgSku" = #{mfgsku,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="taxclassification != null" >
+                "TaxClassification" = #{taxclassification,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="name != null" >
+                "Name" = #{name,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="firstlivedate != null" >
+                "FirstLiveDate" = #{firstlivedate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metatags != null" >
+                "MetaTags" = #{metatags,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="options != null" >
+                "Options" = #{options,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext1 != null" >
+                "MetaData_CategoryExtraText1" = #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext2 != null" >
+                "MetaData_CategoryExtraText2" = #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataCategoryextratext3 != null" >
+                "MetaData_CategoryExtraText3" = #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataExtratext1 != null" >
+                "MetaData_ExtraText1" = #{metadataExtratext1,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription2 != null" >
+                "MetaData_Description2" = #{metadataDescription2,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription3 != null" >
+                "MetaData_Description3" = #{metadataDescription3,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription4 != null" >
+                "MetaData_Description4" = #{metadataDescription4,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription2withformatting != null" >
+                "MetaData_Description2WithFormatting" = #{metadataDescription2withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription3withformatting != null" >
+                "MetaData_Description3WithFormatting" = #{metadataDescription3withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDescription4withformatting != null" >
+                "MetaData_Description4WithFormatting" = #{metadataDescription4withformatting,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataDetail != null" >
+                "MetaData_Detail" = #{metadataDetail,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataSizecharturl != null" >
+                "MetaData_SizeChartUrl" = #{metadataSizecharturl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataPreorderavailabledate != null" >
+                "MetaData_PreOrderAvailableDate" = #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="metadataProducturl != null" >
+                "MetaData_ProductUrl" = #{metadataProducturl,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="origin != null" >
+                "origin" = #{origin,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="variantsMediasFilepath != null" >
+                "Variants_Medias_FilePath" = #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="sex != null" >
+                "sex" = #{sex,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        update cms_zz_feed_frye_product_temp
+        set "Product_Id" = #{productId,jdbcType=BIGINT},
+        "IsActive" = #{isactive,jdbcType=BIT},
+        "IsTaxable" = #{istaxable,jdbcType=BIT},
+        "CategoryId" = #{categoryid,jdbcType=DOUBLE},
+        "MetaData_CategoryName" = #{metadataCategoryname,jdbcType=VARCHAR},
+        "MetaData_UnitCost" = #{metadataUnitcost,jdbcType=DOUBLE},
+        "MetaData_PreviousCost" = #{metadataPreviouscost,jdbcType=DOUBLE},
+        "MetaData_MaxCost" = #{metadataMaxcost,jdbcType=DOUBLE},
+        "MetaData_MinCost" = #{metadataMincost,jdbcType=DOUBLE},
+        "MetaData_MinRegularPrice" = #{metadataMinregularprice,jdbcType=DOUBLE},
+        "MetaData_MaxRegularPrice" = #{metadataMaxregularprice,jdbcType=DOUBLE},
+        "MetaData_MinSalePrice" = #{metadataMinsaleprice,jdbcType=DOUBLE},
+        "MetaData_MaxSalePrice" = #{metadataMaxsaleprice,jdbcType=DOUBLE},
+        "MetaData_SameMaxMin" = #{metadataSamemaxmin,jdbcType=BIT},
+        "MetaData_ShippingSurcharge" = #{metadataShippingsurcharge,jdbcType=DOUBLE},
+        "MetaData_Weight" = #{metadataWeight,jdbcType=DOUBLE},
+        "MetaData_DisplayOosPopup" = #{metadataDisplayoospopup,jdbcType=BIT},
+        "MetaData_ShowWhenOos" = #{metadataShowwhenoos,jdbcType=BIT},
+        "MetaData_NonremovableFromCart" = #{metadataNonremovablefromcart,jdbcType=BIT},
+        "md5" = #{md5,jdbcType=VARCHAR},
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+        "Attributes" = #{attributes,jdbcType=LONGVARCHAR},
+        "Fabric" = #{fabric,jdbcType=LONGVARCHAR},
+        "Variants_Name" = #{variantsName,jdbcType=LONGVARCHAR},
+        "Variants_Medias_Meta_ExtraImageThumb" = #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
+        "Variants_Medias_Meta_ExtraImageThumbUrl" = #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
+        "Variants_Medias_Meta_ExtraImageLargeThumb" = #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
+        "Variants_Medias_Meta_ExtraImageLargeThumbUrl" = #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
+        "Variants_Options_Color" = #{variantsOptionsColor,jdbcType=LONGVARCHAR},
+        "Variants_Options_size" = #{variantsOptionsSize,jdbcType=LONGVARCHAR},
+        "MfgSku" = #{mfgsku,jdbcType=LONGVARCHAR},
+        "TaxClassification" = #{taxclassification,jdbcType=LONGVARCHAR},
+        "Name" = #{name,jdbcType=LONGVARCHAR},
+        "FirstLiveDate" = #{firstlivedate,jdbcType=LONGVARCHAR},
+        "MetaTags" = #{metatags,jdbcType=LONGVARCHAR},
+        "Options" = #{options,jdbcType=LONGVARCHAR},
+        "MetaData_CategoryExtraText1" = #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
+        "MetaData_CategoryExtraText2" = #{metadataCategoryextratext2,jdbcType=LONGVARCHAR},
+        "MetaData_CategoryExtraText3" = #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
+        "MetaData_ExtraText1" = #{metadataExtratext1,jdbcType=LONGVARCHAR},
+        "MetaData_Description2" = #{metadataDescription2,jdbcType=LONGVARCHAR},
+        "MetaData_Description3" = #{metadataDescription3,jdbcType=LONGVARCHAR},
+        "MetaData_Description4" = #{metadataDescription4,jdbcType=LONGVARCHAR},
+        "MetaData_Description2WithFormatting" = #{metadataDescription2withformatting,jdbcType=LONGVARCHAR},
+        "MetaData_Description3WithFormatting" = #{metadataDescription3withformatting,jdbcType=LONGVARCHAR},
+        "MetaData_Description4WithFormatting" = #{metadataDescription4withformatting,jdbcType=LONGVARCHAR},
+        "MetaData_Detail" = #{metadataDetail,jdbcType=LONGVARCHAR},
+        "MetaData_SizeChartUrl" = #{metadataSizecharturl,jdbcType=LONGVARCHAR},
+        "MetaData_PreOrderAvailableDate" = #{metadataPreorderavailabledate,jdbcType=LONGVARCHAR},
+        "MetaData_ProductUrl" = #{metadataProducturl,jdbcType=LONGVARCHAR},
+        "origin" = #{origin,jdbcType=LONGVARCHAR},
+        "Variants_Medias_FilePath" = #{variantsMediasFilepath,jdbcType=LONGVARCHAR},
+        "sex" = #{sex,jdbcType=LONGVARCHAR}
+        where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.voyageone.task2.cms.bean.SuperFeedFryeBean" >
+        update cms_zz_feed_frye_product_temp
+        set "Product_Id" = #{productId,jdbcType=BIGINT},
+        "IsActive" = #{isactive,jdbcType=BIT},
+        "IsTaxable" = #{istaxable,jdbcType=BIT},
+        "CategoryId" = #{categoryid,jdbcType=DOUBLE},
+        "MetaData_CategoryName" = #{metadataCategoryname,jdbcType=VARCHAR},
+        "MetaData_UnitCost" = #{metadataUnitcost,jdbcType=DOUBLE},
+        "MetaData_PreviousCost" = #{metadataPreviouscost,jdbcType=DOUBLE},
+        "MetaData_MaxCost" = #{metadataMaxcost,jdbcType=DOUBLE},
+        "MetaData_MinCost" = #{metadataMincost,jdbcType=DOUBLE},
+        "MetaData_MinRegularPrice" = #{metadataMinregularprice,jdbcType=DOUBLE},
+        "MetaData_MaxRegularPrice" = #{metadataMaxregularprice,jdbcType=DOUBLE},
+        "MetaData_MinSalePrice" = #{metadataMinsaleprice,jdbcType=DOUBLE},
+        "MetaData_MaxSalePrice" = #{metadataMaxsaleprice,jdbcType=DOUBLE},
+        "MetaData_SameMaxMin" = #{metadataSamemaxmin,jdbcType=BIT},
+        "MetaData_ShippingSurcharge" = #{metadataShippingsurcharge,jdbcType=DOUBLE},
+        "MetaData_Weight" = #{metadataWeight,jdbcType=DOUBLE},
+        "MetaData_DisplayOosPopup" = #{metadataDisplayoospopup,jdbcType=BIT},
+        "MetaData_ShowWhenOos" = #{metadataShowwhenoos,jdbcType=BIT},
+        "MetaData_NonremovableFromCart" = #{metadataNonremovablefromcart,jdbcType=BIT},
+        "md5" = #{md5,jdbcType=VARCHAR},
+        "updateFlag" = #{updateflag,jdbcType=INTEGER}
+        where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
+    </update>
+
+
+
+
+
+    <delete id="delete">
+        delete from voyageone_cms2.cms_zz_feed_frye_product_temp
+    </delete>
+
+    <resultMap id="resultMap_feed" type="com.voyageone.task2.cms.model.CmsBtFeedInfoFryeModel" autoMapping="true">
+        <result column="category" property="category" />
+        <result column="channel_id" property="channelId" />
+        <result column="m_brand" property="brand" />
+        <result column="m_model" property="model" />
+        <result column="p_name" property="name" />
+        <result column="pe_short_description" property="shortDescription" />
+        <result column="pe_long_description" property="longDescription" />
+        <result column="m_size_type" property="sizeType" />
+        <result column="m_weight" property="weight" />
+        <result column="p_code" property="code" />
+        <result column="p_color" property="color" />
+        <result column="p_made_in_country" property="origin" />
+        <result column="client_product_url" property="clientProductURL"/>
+        <result column="product_type" property="productType"/>
+        <result column="material" property="material"/>
+        <result column="usage_en" property="usageEn"/>
+        <result column="clientProductURL" property="clientProductURL"/>
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
+            <result column="i_sku" property="sku" />
+            <result column="i_size" property="size" />
+            <result column="i_barcode" property="barcode" />
+            <result column="i_client_sku" property="clientSku" />
+            <result column="price_msrp" property="priceMsrp" />
+            <result column="price_current" property="priceCurrent" />
+            <result column="price_net" property="priceNet" />
+            <result column="price_client_retail" property="priceClientRetail" />
+            <result column="price_client_msrp" property="priceClientMsrp" />
+            <result column="quantity" property="qty" />
+            <result column="weight_org" property="weightOrg" />
+            <result column="weight_org_unit" property="weightOrgUnit" />
+        </collection>
+        <collection property="image" javaType="ArrayList" ofType="String" >
+            <result column="image" property="image" />
+        </collection>
+    </resultMap>
+    <select id="selectSuperFeedModel" resultMap="resultMap_feed" parameterType="HashMap">
+        select
+        ${category} as category
+        ,#{channel_id} as channel_id
+        ,${m_brand} as m_brand
+        ,${m_model} as m_model
+        ,${m_size_type} as m_size_type
+        ,${m_weight} as m_weight
+        ,${p_code} as p_code
+        ,${p_name} as p_name
+        ,${p_color} as p_color
+        ,${p_made_in_country} as p_made_in_country
+        ,${pe_short_description} as pe_short_description
+        ,${pe_long_description} as pe_long_description
+        ,${price_client_msrp} as price_client_msrp
+        ,${price_client_retail}  as price_client_retail
+        ,${price_net}  as price_net
+        ,${price_current}  as price_current
+        ,${price_msrp}  as price_msrp
+        ,${i_sku} as i_sku
+        ,${i_size} as i_size
+        ,${i_barcode} as i_barcode
+        ,${i_client_sku} as i_client_sku
+        ,1 as i_active
+        ,${image} as image
+        ,${client_product_url} as client_product_url
+        ,${product_type} as product_type
+        ,${quantity} as quantity
+        ,${material} as material
+        ,${usage_en} as usageEn
+        ,${weight_org} as weight_org
+        ,${weight_org_unit} as weight_org_unit
+        ,${weight_calc} as weightCalc
+        <if test="attr != null">
+            ,${attr}
+        </if>
+        from
+        ${tableName}
+        ${keyword}
+    </select>
+    <update id="updateFlagBySku"  parameterType="java.util.List">
+        UPDATE voyageone_cms2.cms_zz_feed_frye_product_temp set UpdateFlag = 3 where UpdateFlag = 1 and `Variants_Upc` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </update>
+
+    <insert id="insertFullBySku"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms2.cms_zz_feed_frye_product_full SELECT * from
+        voyageone_cms2.cms_zz_feed_frye_product_temp where `Variants_Upc` in
+        (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </insert>
+
+    <delete id="delFullBySku" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms2.cms_zz_feed_frye_product_full
+        where `Variants_Upc` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </delete>
+
+    <select id="selectSuperFeedModelDate" resultType="java.util.Date">
+        select created
+        from voyageone_cms2.cms_zz_feed_frye_product_full
+        order by created desc
+        limit 1
+    </select>
+
+    <insert id="fullCopyTemp" >
+        INSERT INTO voyageone_cms2.cms_zz_feed_frye_product_temp
+        SELECT * FROM voyageone_cms2.cms_zz_feed_frye_product_full;
+    </insert>
+    <update id="updateMd5">
+        UPDATE voyageone_cms2.cms_zz_feed_frye_product_full SET md5 = '1'
+    </update>
+    <update id="updateUpdateFlag">
+        UPDATE voyageone_cms2.cms_zz_feed_frye_product_temp SET updateFlag = 1
+    </update>
+</mapper>

@@ -105,6 +105,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     // 自定义条件组合类型
     private String custGroupType;
 
+    private Boolean isNewSku;
+
     public List<String> getCidValue() {
         return cidValue;
     }
@@ -589,5 +591,12 @@ public class CmsSearchInfoBean2 implements Serializable {
 	public void setCustGroupType(String custGroupType) {
 		this.custGroupType = custGroupType;
 	}
-	
+
+    public Boolean getIsNewSku() {
+        return isNewSku;
+    }
+
+    public void setIsNewSku(Boolean isNewSku) {
+        this.isNewSku = isNewSku;
+    }
 }

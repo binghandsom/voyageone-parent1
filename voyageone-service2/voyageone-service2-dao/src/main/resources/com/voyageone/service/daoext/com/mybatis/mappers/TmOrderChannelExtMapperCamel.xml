@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.TmOrderChannelDaoExt">
+
+    <resultMap id="channelModelMap" type="com.voyageone.service.model.com.TmOrderChannelModel" />
+    
+    <resultMap id="channelConfigBeanMap" type="com.voyageone.service.bean.com.TmOrderChannelConfigBean" />
+    
+    <sql id="selectChannelFilter">
+    	<where>
+            <if test="orderChannelId != null and orderChannelId != ''" >
+            	and order_channel_id = #{orderChannelId}
+            </if>
+            <if test="companyId != null" >
+                and company_id = #{companyId}
+            </if>
+            <if test="channelName != null and channelName != ''">
+            	and (
+            		name like concat('%', #{channelName}, '%') or full_name like concat('%', #{channelName}, '%')
+            	)
+            </if>
+            <if test="isUsjoi != null and isUsjoi != ''" >
+                and is_usjoi = #{isUsjoi}
+            </if>
+            <if test="active != null" >
+                and active = #{active}
+            </if>
+        </where>
+    </sql>
+	
+	<sql id="selectChanneConfigFilter">
+		<where>
+            <if test="orderChannelId != null and orderChannelId != ''" >
+                and tocc.order_channel_id = #{orderChannelId}
+            </if>
+            <if test="cfgName != null and cfgName != ''" >
+                and tocc.cfg_name = #{cfgName}
+            </if>
+            <if test="cfgVal != null and cfgVal != ''" >
+                and (tocc.cfg_val1 = #{cfgVal} or tocc.cfg_val2 = #{cfgVal})
+            </if>
+            <if test="comment != null and comment != ''" >
+                and tocc.comment = #{comment}
+            </if>
+        </where>
+	</sql>
+
+	<select id="selectAllCompany" resultType="com.voyageone.service.model.util.MapModel">
+		select id, company, description, default_view, active, created, creater, modified, modifier from ct_company
+		order by company
+	</select>
+	
+	<select id="selectChannelByPage" resultMap="channelModelMap">
+		select order_channel_id, company_id, name, full_name, img_url, send_name, send_address, send_tel, send_zip,
+			screct_key, session_key, is_usjoi, cart_ids, active, created, creater, modified, modifier
+		from tm_order_channel
+		<include refid="selectChannelFilter"/>
+		order by modified desc
+	</select>
+	
+	<select id="selectChannelCount" resultType="integer">
+		 select count(0) from tm_order_channel
+		 <include refid="selectChannelFilter"/>
+	</select>
+	
+	<select id="selectChanneConfigByPage" resultMap="channelConfigBeanMap">
+		select toc.name as channel_name, tocc.order_channel_id, tocc.cfg_name, tocc.cfg_val1, tocc.cfg_val2, tocc.`comment`
+		from tm_order_channel_config tocc left join tm_order_channel toc
+			on toc.order_channel_id = tocc.order_channel_id
+		<include refid="selectChanneConfigFilter"></include>
+	</select>
+	
+	<select id="selectChannelConfigCount" resultType="integer">
+		select count(0)
+		from tm_order_channel_config tocc
+		<include refid="selectChanneConfigFilter"></include>
+	</select>
+
+</mapper>

@@ -30,6 +30,12 @@ public final class CommonUtil {
 
     public static final String MAC = "MAC";
 
+    private static final char[] STR = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+            'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w',
+            'x', 'y', 'z', 'A','B','C','D','E','F','G','H','I','J','K',
+            'L','M','N','O','P','Q','R','S','T', 'U','V','W','X','Y','Z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+
     /**
      * 生成token
      *
@@ -323,4 +329,21 @@ public final class CommonUtil {
         }
         return ipList;
     }
+
+
+    /**
+     * 随机生成密码
+     *
+     */
+    public static String getRomdonPass(int length)
+    {
+        int  maxNum = STR.length;
+        StringBuffer pwd = new StringBuffer("");
+        Random r = new Random();
+        for(int i = 0; i < length; i++){
+            pwd.append( STR[r.nextInt(maxNum)]);
+        }
+        return pwd.toString();
+    }
+
 }

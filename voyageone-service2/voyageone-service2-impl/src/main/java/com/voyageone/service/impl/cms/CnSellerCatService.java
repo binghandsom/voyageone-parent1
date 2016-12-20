@@ -10,6 +10,9 @@ import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by dell on 2016/9/23.
  */
@@ -44,9 +47,62 @@ public class CnSellerCatService {
 
         return catId;
     }
+
+    /**
+     * 重载：新增时设置index为当前层级的最后一位，附带urlKey
+     * @param channelId
+     * @param parentCId
+     * @param catName
+     * @param urlKey
+     * @param shopBean
+     * @param index
+     * @return
+     */
+    public Map<String, String> addSellerCat(String channelId, String parentCId, String catName, String urlKey, ShopBean shopBean, int index) {
+        String catId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
+        String catFullId = "";
+        if (!StringUtils.isEmpty(parentCId)) {
+            CmsBtSellerCatModel parentCurrentNode = cmsBtSellerCatDao.selectByCatId(channelId, parentCId);
+            if (parentCurrentNode != null) {
+                catFullId = parentCurrentNode.getFullCatId();
+            }
+        }
+        if (StringUtils.isEmpty(catFullId)) {
+            catFullId = catId;
+        } else {
+            catFullId = catFullId + "-" + catId;
+        }
+        CnCategoryBean cnCategoryBean = cnCategoryService.createCnCategoryBean(catFullId, "-", catName, catName, urlKey);
+        cnCategoryBean.setDisplayOrder(index);
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean, false, shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+        Map<String, String> resultMap = new HashMap<String, String>();
+        resultMap.put("catId", catId);
+        resultMap.put("urlKey", cnCategoryBean.getUrlKey());
+        return resultMap;
+    }
+
     public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean)
     {
         CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
+        if (!ret) {
+            throw new BusinessException("创建类目失败， 请再尝试一下。");
+        }
+    }
+
+    /**
+     * 重载上面的方法，独立官网修改单个类目的名称后，调用单个独立官网的类目更新接口时，需要传入该类目的index给类目
+     * @param currentNode
+     * @param shopBean
+     * @param index
+     */
+    public void  updateSellerCat(CmsBtSellerCatModel currentNode, ShopBean shopBean, int index)
+    {
+        CnCategoryBean cnCategoryBean= cnCategoryService.createCnCategoryBean(currentNode.getFullCatId(), "-", currentNode.getCatName(), currentNode.getCatName(), currentNode.getUrlKey());
+        cnCategoryBean.setDisplayOrder(index);
         boolean ret = cnCategoryService.uploadCnCategory(cnCategoryBean,false,shopBean);
         if (!ret) {
             throw new BusinessException("创建类目失败， 请再尝试一下。");

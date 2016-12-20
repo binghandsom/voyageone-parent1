@@ -12,6 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -56,6 +57,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -747,6 +749,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 上新成功之后回写jdSkuId操作
                 updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
+
+                // added by morse.lu 2016/12/08 start
+                if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                    // Sneakerhead
+                    try {
+                        sxProductService.uploadCnInfo(sxData);
+                    } catch (IOException io) {
+                        throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                    }
+                }
+                // added by morse.lu 2016/12/08 end
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -2384,7 +2397,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
         String salePropStatus = "4";
 
-        if ("017".equals(orgChannelId)) {
+        if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(orgChannelId)) {
             // 017:LuckyVitamin店一个SKU是一个CODE，所以他们希望全店都只有颜色，不要尺码
             // 2:只有颜色没有尺寸属性
             salePropStatus = "2";
