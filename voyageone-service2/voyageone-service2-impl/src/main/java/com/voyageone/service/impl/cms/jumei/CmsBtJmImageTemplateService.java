@@ -93,7 +93,7 @@ public class CmsBtJmImageTemplateService {
         CmsBtJmImageTemplateModel cmsBtJmImageTemplateModel = getJMImageTemplateByType(imageType);
         //根据模板传出参数来选择模板
         //【品牌Logo】属性 & 【入口图专场导向文案】属性为空时
-        if (!StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
+        if (StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
                 !cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
                 StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
             // 模板一
