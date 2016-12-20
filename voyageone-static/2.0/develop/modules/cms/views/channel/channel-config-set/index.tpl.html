@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
+<div class="wrapper-md" ng-init="ctrl.init()" id="channelConfigSet">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -8,12 +8,17 @@
                 <div class="container-fluid m-t-sm m-b-md">
                     <div class="row">
 
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <div class="form-horizontal">
                                 <div class="form-group" >
-                                    <label class="col-sm-4 control-label"><strong>当前店铺</strong></label>
-                                    <div class="col-sm-7">
-                                        <input type="text" class="form-control" ng-model="$root.platformType.cTypeId" readonly>
+                                    <label class="col-sm-4 control-label"><strong>是否使用</strong></label>
+                                    <div class="col-sm-7">&emsp;
+                                        <label class="m-t-tx">
+                                            <input type="radio" class="v-top" name="isChecked" value="1" ng-model="ctrl.searchInfo.isChecked">&nbsp;&nbsp;是
+                                        </label>&emsp;
+                                        <label class="m-t-tx">
+                                            <input type="radio" class="v-top" name="isChecked" value="0"  ng-model="ctrl.searchInfo.isChecked">&nbsp;&nbsp;否
+                                        </label>
                                     </div>
                                 </div>
 
@@ -45,64 +50,79 @@
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="row" style="padding: 4px">
-                <div class="col-md-3 col-md-offset-9 text-right">
-                    <button class="btn btn-info btn-pop" ng-click="ctrl.refresh()"><i class="fa fa-refresh"></i>&nbsp;刷新</button>&emsp;
-                    <button class="btn btn-success btn-pop" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>&emsp;
+        </div>
+
+        <div style="position: relative">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="box">
+                        <div class="table-responsive box-body">
+                            <table class="table table-hover-new text-center" style="min-width: 1310px;">
+                                <thead>
+                                <tr>
+                                    <th class="text-center"> <span>是否使用</span> </th>
+                                    <th class="text-center">config_key</th>
+                                    <th class="text-center">config_code</th>
+                                    <th class="text-center">config_value1</th>
+                                    <th class="text-center">config_value2</th>
+                                    <th class="text-center">config_value3</th>
+                                    <th class="text-center">sample</th>
+                                    <th class="text-center">comment</th>
+                                    <th class="text-center">created</th>
+                                    <th class="text-center">modified</th>
+                                    <th class="text-center">modifier</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat = "element in ctrl.dataList">
+                                    <td class="text-center">
+                                        <input type="checkbox" ng-model="element.isChecked" ng-change="ctrl.changeValueList(element)">
+                                    </td>
+                                    <td class="text-center">{{element.configKey}}</td>
+                                    <td class="text-center">{{element.configCode}}</td>
+                                    <td class="text-center">
+                                        <input type="text" class="form-control" ng-model="element.configValue1" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue1">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="text" class="form-control" ng-model="element.configValue2" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue2">
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="text" class="form-control" ng-model="element.configValue3" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue3">
+                                    </td>
+                                    <td class="text-center">{{element.sample}}</td>
+                                    <td class="text-center"><popover-text content="element.comment" direct="left" size="20"></popover-text></td>
+                                    <td class="text-center">{{element.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td class="text-center">{{element.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td class="text-center">{{element.modifier}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="panel-body">
-            <div class="box">
-                <div class="box-body">
-                    <table class="table table-hover-new text-center">
-                        <thead>
-                            <tr>
-                                <th class="text-center"> <span>是否使用</span> </th>
-                                <th class="text-center">config_key</th>
-                                <th class="text-center">config_code</th>
-                                <th class="text-center">config_value1</th>
-                                <th class="text-center">config_value2</th>
-                                <th class="text-center">config_value3</th>
-                                <th class="text-center">sample</th>
-                                <th class="text-center">comment</th>
-                                <th class="text-center">created</th>
-                                <th class="text-center">modified</th>
-                                <th class="text-center">modifier</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat = "element in ctrl.dataList">
-                               <td class="text-center">
-                                   <input type="checkbox" ng-model="element.isChecked" ng-change="ctrl.changeValueList(element)">
-                               </td>
-                               <td class="text-center">{{element.configKey}}</td>
-                               <td class="text-center">{{element.configCode}}</td>
-                               <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue1" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue1">
-                               </td>
-                               <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue2" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue2">
-                               </td>
-                               <td class="text-center">
-                                   <input type="text" class="form-control" ng-model="element.configValue3" ng-change="ctrl.changeValueList(element)" ng-disabled="!element.isChecked || !element.isConfigValue3">
-                               </td>
-                               <td class="text-center">{{element.sample}}</td>
-                               <td class="text-center"><popover-text content="element.comment" direct="left" size="20"></popover-text></td>
-                               <td class="text-center">{{element.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
-                               <td class="text-center">{{element.modified | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
-                               <td class="text-center">{{element.modifier}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+
+            <sticky top-fix="150px" style="position: absolute; top: 100px; right: 10px;" drag>
+
+                <nav class="sidebar">
+                    <h3>导航栏</h3>
+                    <ul class="nav bs-docs-sidenav">
+                        <li class="">
+                            <a href="javascript:void(0)" ng-click="ctrl.refresh()">刷新</a>
+                        </li>
+                        <li class="">
+                            <a href="javascript:void(0)" ng-click="ctrl.save()">保存</a>
+                        </li>
+                    </ul>
+                </nav>
+
+            </sticky>
+
+
+
 
 </div>
+
 </div>
 
 
