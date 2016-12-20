@@ -266,7 +266,7 @@ define([
                                 self.channelAllList.push(self.data);
                                 self.channelList.splice(self.channelList.indexOf(self.data), 1);
                                 self.selectedChannelId = '';
-                                self.filterStoreAllList({ 'value': self.data.orderChannelId });
+                                self.channelList.length ==0 ? self.filterStoreAllList({ 'type': 'showAllStore'}):self.filterStoreAllList({ 'value': self.data.orderChannelId });
                                 break;
                             }
                         } else {
