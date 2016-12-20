@@ -989,9 +989,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, getTaskName(), null);
             }
         } catch (Exception ex) {
-            String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
-                    channelId, cartId, groupId, platformCategoryId);
-            $error(errMsg, ex);
+            String errMsg = String.format("京东取得详情页描述信息失败！[errMsg:%s]", ex.getMessage());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
         }
         jdProductBean.setNotes(strNotes);
 
