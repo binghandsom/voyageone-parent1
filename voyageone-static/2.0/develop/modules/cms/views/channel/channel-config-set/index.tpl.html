@@ -14,6 +14,9 @@
                                     <label class="col-sm-4 control-label"><strong>是否使用</strong></label>
                                     <div class="col-sm-7">&emsp;
                                         <label class="m-t-tx">
+                                            <input type="radio" class="v-top" name="isChecked"  ng-model="ctrl.searchInfo.isChecked">&nbsp;&nbsp;All
+                                        </label>&emsp;
+                                        <label class="m-t-tx">
                                             <input type="radio" class="v-top" name="isChecked" value="1" ng-model="ctrl.searchInfo.isChecked">&nbsp;&nbsp;是
                                         </label>&emsp;
                                         <label class="m-t-tx">
@@ -75,7 +78,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat = "element in ctrl.dataList">
-                                    <td class="text-center">
+                                    <td class="text-center" style="width: 77px;">
                                         <input type="checkbox" ng-model="element.isChecked" ng-change="ctrl.changeValueList(element)">
                                     </td>
                                     <td class="text-center">{{element.configKey}}</td>
@@ -106,14 +109,13 @@
 
                 <nav class="sidebar">
                     <h3>导航栏</h3>
-                    <ul class="nav bs-docs-sidenav">
-                        <li class="">
-                            <a href="javascript:void(0)" ng-click="ctrl.refresh()">刷新</a>
-                        </li>
-                        <li class="">
-                            <a href="javascript:void(0)" ng-click="ctrl.save()">保存</a>
-                        </li>
-                    </ul>
+                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.refresh()">
+                        <i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新
+                    </button>
+                    <br>
+                    <button type="button" class="btn btn-nav btn-nav-pop"  ng-click="ctrl.save()">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
+                    </button>
                 </nav>
 
             </sticky>
