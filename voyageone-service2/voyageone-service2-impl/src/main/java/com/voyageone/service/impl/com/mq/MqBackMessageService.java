@@ -30,7 +30,7 @@ public class MqBackMessageService extends BaseService {
      * @param routingKey rk
      * @param messageMap mm
      */
-    public void addBackMessage(String routingKey, Map<String, Object> messageMap) {
+    public void addBackMessage(String routingKey, Object messageMap) {
         comMtMqMessageBackDao.insertBackMessage(routingKey, messageMap);
     }
 
