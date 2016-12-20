@@ -79,7 +79,7 @@ define([
                             var msrpInfo = _.find(resp.data, function (d) {
                                 return d.cartId == f.cartId
                             });
-                            if (msrpInfo) {
+                            if (msrpInfo && f.autoSyncPriceMsrp != "1") {
                                 f.priceMsrp = msrpInfo.msrp;
                             }
                         });
