@@ -54,10 +54,8 @@ define([
                 scope.doResetTmProduct = doResetTmProduct;
                 scope.publishProduct = publishProduct;
                 scope.isPublishSucceed = false;
-                scope.autoSyncPriceMsrpCheck = false;
 
                 scope.autoSyncPriceMsrp = "";
-                scope.checkPriceMsrp = checkPriceMsrp;
 
                 /**
                  * 获取京东页面初始化数据
@@ -304,6 +302,16 @@ define([
                  * @param mark:记录是否为ready状态,temporary:暂存
                  */
                 function saveProduct(mark) {
+                    if(!checkPriceMsrp()) {
+                        confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
+                            saveProductAction(mark)
+                        });
+                    }else {
+                        saveProductAction(mark);
+                    }
+                }
+
+                function saveProductAction(mark) {
 
                     if (mark == "ready") {
                         if (!validSchema()) {
@@ -572,6 +580,28 @@ define([
 
                 /**sku价格刷新*/
                 function refreshPrice() {
+                    if(!checkPriceMsrp()) {
+                        confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
+                            updateSkuPrice()
+                        });
+                    }else {
+                        updateSkuPrice();
+                    }
+                }
+
+                // 如果autoSyncPriceMsrp='2',Approved或刷新价格时做相应check
+                function checkPriceMsrp() {
+                    var priceMsrpCheck = true;
+                    if (scope.autoSyncPriceMsrp == "2") {
+                        var priceMsrpCheckObj = _.find(scope.vm.platform.skus, function (sku) {
+                            return (sku.priceMsrp < sku.priceSale) || (sku.priceMsrp < sku.priceRetail);
+                        });
+                        priceMsrpCheck = typeof priceMsrpCheckObj == "undefined";
+                    }
+                    return priceMsrpCheck;
+                }
+                // 刷新价格实际操作
+                function updateSkuPrice() {
                     confirm("您是否确认要刷新sku价格").then(function () {
                         productDetailService.updateSkuPrice({
                             cartId: scope.cartInfo.value,
@@ -583,19 +613,6 @@ define([
                             alert(res.message);
                         });
                     });
-
-                }
-
-                /*根据autoSyncPriceMsrp值check Sku的Msrp*/
-                function checkPriceMsrp(sku) {
-                    if (scope.autoSyncPriceMsrp == "2") {
-                        if ((sku.priceMsrp < sku.priceSale || sku.priceMsrp < sku.priceRetail) && !scope.autoSyncPriceMsrpCheck) {
-                            scope.autoSyncPriceMsrpCheck = true;
-                        }else {
-                            scope.autoSyncPriceMsrpCheck = false;
-                        }
-                    }
-
                 }
 
             }
