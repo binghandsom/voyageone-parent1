@@ -70,8 +70,8 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "29","28","27"
         workload.setGroupId(Long.parseLong("1907005"));
-//        workload.setPublishStatus(0);   // 普通上新模式
-        workload.setPublishStatus(3);   // 智能上新模式
+        workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.initNum);   // 普通上新模式
+//        workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.smartSx);   // 智能上新模式
 
 //        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
         ShopBean shopProp = new ShopBean();
@@ -81,8 +81,8 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         shopProp.setSessionKey(""); // 京东国际匠心界全球购专营店(SessionKey)
         shopProp.setOrder_channel_id(likingChannelId);
         shopProp.setCart_id(StringUtils.toString(cartId));
-//        shopProp.setShop_name("京东国际匠心界全球购专营店");
-        shopProp.setShop_name("京东国际国际悦境店");
+        shopProp.setShop_name("京东国际匠心界全球购专营店");
+//        shopProp.setShop_name("京东国际悦境店");
         shopProp.setPlatform_id("2");
 
         // 保存渠道级别(channel)的共通配置项目(从cms_mt_channel_config表中取得的)
