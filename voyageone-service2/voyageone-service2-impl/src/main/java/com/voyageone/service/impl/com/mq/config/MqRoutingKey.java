@@ -134,7 +134,7 @@ public class MqRoutingKey {
      */
     public static final String CMS_TASK_TranslateByTonggouJob = "voyageone_cms_task_TranslateByTonggouJobService_queue";
     /**
-     * 天猫同购共通标题描述翻译
+     * 京东类目销售属性取得
      *
      * @since 2.10.0
      */
