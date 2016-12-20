@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.service;
 import com.google.common.base.Joiner;
 import com.jd.open.api.sdk.domain.category.AttValue;
 import com.jd.open.api.sdk.response.category.CategoryAttributeSearchResponse;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -54,7 +53,7 @@ public class CmsBuildPlatformCatelogySaleAttrJdMqService extends BaseMQCmsServic
     private final static String AttrType_Size = "s";
 
     // 24个颜色列表(跟京东平台上的顺序一致)
-    private final static BaseMongoMap<String, String> colorAttrValueMap = new BaseMongoMap() {{
+    private final static LinkedHashMap<String, String> colorAttrValueMap = new LinkedHashMap() {{
         put("红色", "#FF0000");
         put("深红色", "#990000");
         put("橙色", "#FF9900");
