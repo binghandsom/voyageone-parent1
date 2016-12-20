@@ -136,7 +136,7 @@
                                     <input type="number" class="form-control text-right"  ng-model="item.priceSale" placeholder="中国最终售价" scale="15,2"  />
                                 </td>
                                 <td class="mfb-xxt text-center">
-                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0) ||(item.autoSyncPriceMsrp=='2' && (item.priceMsrp<item.priceSale || item.priceMsrp<item.priceRetailEd))"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
+                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="saveCartSkuPriceClick(item)">价格保存</button>
                                 </td>
                                 <td class="mfb-xxt  text-right">{{vm.model.quantity}}</td>
                                 <td class="mfb-xxt text-right">{{item.saleQty}}</td>
