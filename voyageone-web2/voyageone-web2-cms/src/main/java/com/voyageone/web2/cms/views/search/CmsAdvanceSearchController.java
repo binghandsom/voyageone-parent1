@@ -113,7 +113,7 @@ public class CmsAdvanceSearchController extends CmsController {
         cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
         cmsSession.putAttribute("_adv_search_groupListTotal", null);
 
-        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
@@ -194,7 +194,7 @@ public class CmsAdvanceSearchController extends CmsController {
         long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
 
         // 获取product列表
-        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
+        List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
         List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
         searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);

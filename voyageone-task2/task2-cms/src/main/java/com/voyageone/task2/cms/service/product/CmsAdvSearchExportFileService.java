@@ -223,7 +223,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             }
         } else {
             if (codeList == null || codeList.isEmpty()) {
-                prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId);
+                prodCodeList = advSearchQueryService.getProductCodeList(searchValue, channelId, false);
             } else {
                 $debug("仅导出选中的记录");
                 prodCodeList = codeList;
