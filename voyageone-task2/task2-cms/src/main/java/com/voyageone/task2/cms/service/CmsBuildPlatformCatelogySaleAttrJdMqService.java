@@ -53,7 +53,7 @@ public class CmsBuildPlatformCatelogySaleAttrJdMqService extends BaseMQCmsServic
     private final static String AttrType_Size = "s";
 
     // 24个颜色列表(跟京东平台上的顺序一致)
-    private final static LinkedHashMap<String, String> colorAttrValueMap = new LinkedHashMap() {{
+    private final static Map<String, String> colorAttrValueMap = new LinkedHashMap() {{
         put("红色", "#FF0000");
         put("深红色", "#990000");
         put("橙色", "#FF9900");
