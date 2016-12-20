@@ -273,7 +273,8 @@ public class CmsConstants {
         int initNum = 0;        // 上新对象
         int okNum = 1;          // 上新成功
         int errorNum = 2;       // 上新失败
-        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+//        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+        int smartSx = 3;        // 智能上新
         int review = 4;         // 达尔文产品审核中
         int waitCnUpload = 5;  // 独立域名等待xml上传
     }
