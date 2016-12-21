@@ -8,7 +8,9 @@ import com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig;
 import com.voyageone.service.impl.com.mq.message.IMQMessageBody;
 import com.voyageone.service.impl.com.mq.message.VOQueue;
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -30,7 +32,7 @@ public class MqSenderService extends BaseService {
     private MqBackMessageService mqBackMessageService;
 
     public  void  sendMessage(IMQMessageBody message) {
-        VOQueue voQueue = message.getClass().getAnnotation(VOQueue.class);
+        final VOQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOQueue.class);
         sendMessage(voQueue.queues()[0], message);
     }
 
