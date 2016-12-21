@@ -3946,9 +3946,12 @@ public class SxProductService extends BaseService {
                     case MULTICHECK:
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         List<Value> lstValue = new ArrayList<>();
-                        Value v = new Value();
-                        v.setValue(o.toString());
-                        lstValue.add(v);
+                        ArrayList<String> defaultValueList = (ArrayList<String>) o;
+                        for (String defaultValue : defaultValueList){
+                            Value v = new Value();
+                            v.setValue(defaultValue);
+                            lstValue.add(v);
+                        }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
                         break;
