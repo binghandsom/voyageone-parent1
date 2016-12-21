@@ -2,6 +2,8 @@ package com.voyageone.task2.cms.service;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.category.match.MtCategoryKeysModel;
+import com.voyageone.category.match.MtCategoryKeysService;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -33,9 +35,13 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
     final
     ProductService productService;
 
+    final
+    MtCategoryKeysService mtCategoryKeysService;
+
     @Autowired
-    public CmsBatchSetMainCategoryMqService(ProductService productService) {
+    public CmsBatchSetMainCategoryMqService(ProductService productService, MtCategoryKeysService mtCategoryKeysService) {
         this.productService = productService;
+        this.mtCategoryKeysService = mtCategoryKeysService;
     }
 
     @Override
@@ -56,6 +62,8 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
             return;
         }
 
+        MtCategoryKeysModel mtCategoryKeysModel =mtCategoryKeysService.getCategoryKeysModel(mCatPath.replace(">","/"));
+
         List<Integer> cartList = null;
         if (cartIdObj == null || cartIdObj == 0) {
             // 表示全平台更新
@@ -70,8 +78,13 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");
         updObj.setQueryParameters(prodCodes);
-        updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
-        updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow());
+        if(mtCategoryKeysModel != null){
+            updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'common.fields.productType':#,'common.fields.sizeType':#}}");
+            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow(),mtCategoryKeysModel.getProductTypeEn(),mtCategoryKeysModel.getSizeTypeEn());
+        }else{
+            updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
+            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow());
+        }
         WriteResult rs = productService.updateMulti(updObj, channelId);
         $info("切换类目 product更新结果 " + rs.toString());
 

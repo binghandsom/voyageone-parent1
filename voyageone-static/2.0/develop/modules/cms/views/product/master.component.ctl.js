@@ -128,6 +128,13 @@ define([
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
 
+                            productDetailService.getMainCategoryInfo(scope.vm.productComm.catPath).then(function (data) {
+                                var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
+                                productType.value.value = data.data.productTypeEn;
+                                var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
+                                sizeType.value.value = data.data.sizeTypeCn;
+                            })
+
                         });
                     });
                 }
