@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="ctrl.init()">
+<div class="wrapper-md" ng-init="ctrl.init() " id="channelConfigSet">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -27,91 +27,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th class="text-center">category</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model="element.category"></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model="element.categoryComments"></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">code</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model="element.code"></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model="element.codeComments"></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">name</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">model</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">codeDiff</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">color</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">origin</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">size type</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">product type</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">image</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">brand</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">weight</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">short_description</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">long_description</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">material</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">usageEn</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">clientProductURL</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
+                                    <tr ng-repeat="element in ctrl.dataList">
+
+                                        <th ng-if="element.feedConfigLev=='1'" class="text-center">{{element.feedConfig}}</th>
+                                        <th  ng-if="element.feedConfigLev=='1'" class="text-center"><input type="text" class="form-control" ng-model="element.cfgName"></th>
+                                        <th  ng-if="element.feedConfigLev=='1'"class="text-center"><input type="text" class="form-control" ng-model="element.comment"></th>
+                                    </tr>
                                 </tbody>
                             </table>
                             <table class="table table-hover-new text-center">
@@ -123,84 +44,22 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th class="text-center">price_current</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">price_current</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">price_msrp</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">price_client_cost</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">price_client_retail</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">price_client_msrp</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">sku</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">size</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">barcode</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">clientSku</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">qty</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">weightOrg</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">weightOrgUnit</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                </tr>
-                                <tr>
-                                    <th class="text-center">weightCa</th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
-                                    <th class="text-center"><input type="text" class="form-control" ng-model=""></th>
+                                <tr ng-repeat="element in ctrl.dataList">
+
+                                    <th ng-if="element.feedConfigLev=='2'" class="text-center">{{element.feedConfig}}</th>
+                                    <th  ng-if="element.feedConfigLev=='2'" class="text-center"><input type="text" class="form-control" ng-model="element.cfgName"></th>
+                                    <th  ng-if="element.feedConfigLev=='2'"class="text-center"><input type="text" class="form-control" ng-model="element.comment"></th>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
 
-            <sticky top-fix="150px" style="position: absolute; top: 100px; right: 10px;" drag>
+
+            <sticky top-fix="90px" style="position: absolute; top: 100px; right: 10px;" drag>
 
                 <nav class="sidebar">
                     <h3>导航栏</h3>
@@ -208,7 +67,7 @@
                         <i class="fa fa-refresh"></i>&nbsp;&nbsp;刷新
                     </button>
                     <br>
-                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save()">
+                    <button type="button" class="btn btn-nav btn-nav-pop" ng-click="ctrl.save(ctrl.dataList)">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
                     </button>
                 </nav>

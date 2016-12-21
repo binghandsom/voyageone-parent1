@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="cms_mt_feed_config_selectByChannelId" resultType="com.voyageone.service.bean.cms.CmsMtFeedConfigBean" parameterType="String">
+        SELECT
+            b.order_channel_id orderChannelId,
+            a.feedConfig feedConfig,
+            b.cfg_val1 cfgVal1,
+            b.cfg_name cfgName,
+            b.cfg_val2 cfgVal2,
+            a.feedConfigLev feedConfigLev,
+            b.`comment` comment
+        FROM
+            voyageone_cms2.cms_mt_feed_config_mapping a
+        LEFT JOIN voyageone_cms2.cms_mt_feed_config b ON a.feedConfig_CfgName = b.cfg_name
+        WHERE
+            b.order_channel_id = #{channelId, jdbcType=VARCHAR}
+        ORDER BY
+            a.feedConfigOrder,
+            a.feedConfigLev DESC
+    </select>
+
+    <delete id="cms_mt_feed_config_deleteByChannelId">
+        DELETE FROM voyageone_cms2.cms_mt_feed_config
+        WHERE order_channel_id = #{channelId}
+    </delete>
+</mapper>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtFeedConfigDao" >
+  <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtFeedConfigModel" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_channel_id" property="orderChannelId" jdbcType="VARCHAR" />
+    <result column="cfg_name" property="cfgName" jdbcType="VARCHAR" />
+    <result column="cfg_val2" property="cfgVal2" jdbcType="VARCHAR" />
+    <result column="cfg_val3" property="cfgVal3" jdbcType="VARCHAR" />
+    <result column="is_attribute" property="isAttribute" jdbcType="INTEGER" />
+    <result column="attribute_type" property="attributeType" jdbcType="INTEGER" />
+    <result column="comment" property="comment" jdbcType="VARCHAR" />
+    <result column="display_sort" property="displaySort" jdbcType="INTEGER" />
+    <result column="created" property="created" jdbcType="TIMESTAMP" />
+    <result column="creater" property="creater" jdbcType="VARCHAR" />
+    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.voyageone.service.model.cms.CmsMtFeedConfigModel" extends="BaseResultMap" >
+    <result column="cfg_val1" property="cfgVal1" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    "id", "order_channel_id", "cfg_name", "cfg_val2", "cfg_val3", "is_attribute", "attribute_type", 
+    "comment", "display_sort", "created", "creater", "modified", "modifier", "status"
+  </sql>
+  <sql id="Blob_Column_List" >
+    "cfg_val1"
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from cms_mt_feed_config
+    where "id" = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from cms_mt_feed_config
+    where "id" = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtFeedConfigModel" useGeneratedKeys="true" keyProperty="id" >
+    insert into cms_mt_feed_config ("order_channel_id", "cfg_name", "cfg_val2", 
+      "cfg_val3", "is_attribute", "attribute_type", 
+      "comment", "display_sort", "created", 
+      "creater", "modified", "modifier", 
+      "status", "cfg_val1")
+    values (#{orderChannelId,jdbcType=VARCHAR}, #{cfgName,jdbcType=VARCHAR}, #{cfgVal2,jdbcType=VARCHAR}, 
+      #{cfgVal3,jdbcType=VARCHAR}, #{isAttribute,jdbcType=INTEGER}, #{attributeType,jdbcType=INTEGER}, 
+      #{comment,jdbcType=VARCHAR}, #{displaySort,jdbcType=INTEGER}, #{created,jdbcType=TIMESTAMP}, 
+      #{creater,jdbcType=VARCHAR}, #{modified,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{cfgVal1,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.voyageone.service.model.cms.CmsMtFeedConfigModel" useGeneratedKeys="true" keyProperty="id" >
+    insert into cms_mt_feed_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+
+      <if test="orderChannelId != null" >
+        order_channel_id,
+      </if>
+      <if test="cfgName != null" >
+        cfg_name,
+      </if>
+      <if test="cfgVal2 != null" >
+        cfg_val2,
+      </if>
+      <if test="cfgVal3 != null" >
+        cfg_val3,
+      </if>
+      <if test="isAttribute != null" >
+        is_attribute,
+      </if>
+      <if test="attributeType != null" >
+        attribute_type,
+      </if>
+      <if test="comment != null" >
+        comment,
+      </if>
+      <if test="displaySort != null" >
+        display_sort,
+      </if>
+      <if test="created != null" >
+        created,
+      </if>
+      <if test="creater != null" >
+        creater,
+      </if>
+      <if test="modified != null" >
+        modified,
+      </if>
+      <if test="modifier != null" >
+        modifier,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="cfgVal1 != null" >
+        cfg_val1,
+      </if>
+
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderChannelId != null" >
+        #{orderChannelId,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgName != null" >
+        #{cfgName,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal2 != null" >
+        #{cfgVal2,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal3 != null" >
+        #{cfgVal3,jdbcType=VARCHAR},
+      </if>
+      <if test="isAttribute != null" >
+        #{isAttribute,jdbcType=INTEGER},
+      </if>
+      <if test="attributeType != null" >
+        #{attributeType,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="displaySort != null" >
+        #{displaySort,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="cfgVal1 != null" >
+        #{cfgVal1,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.voyageone.service.model.cms.CmsMtFeedConfigModel" >
+    update cms_mt_feed_config
+    <set >
+      <if test="orderChannelId != null" >
+        "order_channel_id" = #{orderChannelId,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgName != null" >
+        "cfg_name" = #{cfgName,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal2 != null" >
+        "cfg_val2" = #{cfgVal2,jdbcType=VARCHAR},
+      </if>
+      <if test="cfgVal3 != null" >
+        "cfg_val3" = #{cfgVal3,jdbcType=VARCHAR},
+      </if>
+      <if test="isAttribute != null" >
+        "is_attribute" = #{isAttribute,jdbcType=INTEGER},
+      </if>
+      <if test="attributeType != null" >
+        "attribute_type" = #{attributeType,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        "comment" = #{comment,jdbcType=VARCHAR},
+      </if>
+      <if test="displaySort != null" >
+        "display_sort" = #{displaySort,jdbcType=INTEGER},
+      </if>
+      <if test="created != null" >
+        "created" = #{created,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null" >
+        "creater" = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="modified != null" >
+        "modified" = #{modified,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null" >
+        "modifier" = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        "status" = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="cfgVal1 != null" >
+        "cfg_val1" = #{cfgVal1,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where "id" = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.voyageone.service.model.cms.CmsMtFeedConfigModel" >
+    update cms_mt_feed_config
+    set "order_channel_id" = #{orderChannelId,jdbcType=VARCHAR},
+      "cfg_name" = #{cfgName,jdbcType=VARCHAR},
+      "cfg_val2" = #{cfgVal2,jdbcType=VARCHAR},
+      "cfg_val3" = #{cfgVal3,jdbcType=VARCHAR},
+      "is_attribute" = #{isAttribute,jdbcType=INTEGER},
+      "attribute_type" = #{attributeType,jdbcType=INTEGER},
+      "comment" = #{comment,jdbcType=VARCHAR},
+      "display_sort" = #{displaySort,jdbcType=INTEGER},
+      "created" = #{created,jdbcType=TIMESTAMP},
+      "creater" = #{creater,jdbcType=VARCHAR},
+      "modified" = #{modified,jdbcType=TIMESTAMP},
+      "modifier" = #{modifier,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=INTEGER},
+      "cfg_val1" = #{cfgVal1,jdbcType=LONGVARCHAR}
+    where "id" = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.voyageone.service.model.cms.CmsMtFeedConfigModel" >
+    update cms_mt_feed_config
+    set "order_channel_id" = #{orderChannelId,jdbcType=VARCHAR},
+      "cfg_name" = #{cfgName,jdbcType=VARCHAR},
+      "cfg_val2" = #{cfgVal2,jdbcType=VARCHAR},
+      "cfg_val3" = #{cfgVal3,jdbcType=VARCHAR},
+      "is_attribute" = #{isAttribute,jdbcType=INTEGER},
+      "attribute_type" = #{attributeType,jdbcType=INTEGER},
+      "comment" = #{comment,jdbcType=VARCHAR},
+      "display_sort" = #{displaySort,jdbcType=INTEGER},
+      "created" = #{created,jdbcType=TIMESTAMP},
+      "creater" = #{creater,jdbcType=VARCHAR},
+      "modified" = #{modified,jdbcType=TIMESTAMP},
+      "modifier" = #{modifier,jdbcType=VARCHAR},
+      "status" = #{status,jdbcType=INTEGER}
+    where "id" = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
