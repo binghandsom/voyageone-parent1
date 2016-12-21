@@ -954,7 +954,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
         // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/skuList-template.xlsx
         Sheet sheet = book.getSheetAt(0);
-        for (CmsBtProductBean item : items) {
+        for (CmsBtProductBean item : products) {
             CmsBtProductModel_Field fields = item.getCommon().getFields();
             List<CmsBtProductModel_Sku> skuList = item.getCommon().getSkus();
 
