@@ -311,7 +311,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     /*isContinueOutput暂时无用*/
                     offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 } else if (searchValue.getFileType() == 4) {
-                    isContinueOutput = writeShoemetroJMSkuFile(book, items, startRowIndex);
+                    /*isContinueOutput暂时无用*/
+                    offset += writeShoemetroJMSkuFile(book, items, startRowIndex + offset);
                 }
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -1130,7 +1131,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param items
      * @param startRowIndex
      */
-    private boolean writeShoemetroJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex) {
+    private int writeShoemetroJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex) {
+        int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
         for (CmsBtProductBean item:items) {
@@ -1154,8 +1156,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         }
         Map<SkuInventoryForCmsBean, Integer> skuInventoryMap = new HashMap<SkuInventoryForCmsBean, Integer>();
         if (!codes.isEmpty()) {
-            //List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<String>(codes));
-            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = null;
+            List<SkuInventoryForCmsBean> inventoryForCmsBeanList = inventoryDao.batchSelectInventory(ChannelConfigEnums.Channel.ShoeMetro.getId(), new ArrayList<String>(codes));
             if (CollectionUtils.isNotEmpty(inventoryForCmsBeanList)) {
                 for (SkuInventoryForCmsBean skuInventory:inventoryForCmsBeanList) {
                     skuInventoryMap.put(skuInventory, skuInventory.getQty() == null ? Integer.valueOf(0) : skuInventory.getQty());
@@ -1199,9 +1200,11 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 FileUtils.cell(row, index++, unlock).setCellValue(jmUrlPrefix + cart.getpNumIId() + ".html");
                 SkuInventoryForCmsBean temp = new SkuInventoryForCmsBean(item.getOrgChannelId(), item.getCommon().getFields().getOriginalCode(), skuCode);
                 FileUtils.cell(row, index++, unlock).setCellValue(skuInventoryMap.get(temp) == null ? "0" : String.valueOf(skuInventoryMap.get(temp)));
+                total++;
             }
         }
-        return true;
+        System.out.println("********************--->"+total);
+        return total - products.size();
     }
 
     /**
