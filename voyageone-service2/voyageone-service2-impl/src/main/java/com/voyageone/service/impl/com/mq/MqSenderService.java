@@ -5,10 +5,9 @@ import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig;
-import com.voyageone.service.impl.com.mq.message.IMQMessageBody;
-import com.voyageone.service.impl.com.mq.message.VOQueue;
+import com.voyageone.common.mq.config.IMQMessageBody;
+import com.voyageone.common.mq.config.VOQueue;
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
@@ -33,40 +32,40 @@ public class MqSenderService extends BaseService {
 
     public  void  sendMessage(IMQMessageBody message) {
         final VOQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOQueue.class);
-        sendMessage(voQueue.queues()[0], message);
+        sendMessage(null,voQueue.queues()[0], message,true,isLocal(),true,0);
     }
 
-    /**
-     * 发送消息
-     *
-     * @param routingKey 消息KEY
-     * @param message 消息内容
-     */
-    public void sendMessage(String routingKey, Object message) {
-        sendMessage(routingKey, message, true, 0);
-    }
-
-    public void sendMessage(String routingKey, Object message, long delaySecond) {
-        sendMessage(routingKey, message, true, delaySecond);
-    }
-
-    /**
-     * 发送消息
-     *
-     * @param routingKey    消息KEY
-     * @param message    消息内容
-     * @param isBackMessage 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
-     * @param delaySecond    延迟发送时间 秒
-     */
-    public void sendMessage(String routingKey, Object message, boolean isBackMessage, long delaySecond) {
-        sendMessage(null, routingKey, message, isBackMessage, isLocal(), true, delaySecond);
-    }
-
-
-    public void sendMessage(String exchange, String routingKey, Object messageMap,
-                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue) {
-        sendMessage(exchange, routingKey, messageMap, isBackMessage, isLoad, isDeclareQueue, 0);
-    }
+//    /**
+//     * 发送消息
+//     *
+//     * @param routingKey 消息KEY
+//     * @param message 消息内容
+//     */
+//    public void sendMessage(String routingKey, Object message) {
+//        sendMessage(routingKey, message, true, 0);
+//    }
+//
+//    public void sendMessage(String routingKey, Object message, long delaySecond) {
+//        sendMessage(routingKey, message, true, delaySecond);
+//    }
+//
+//    /**
+//     * 发送消息
+//     *
+//     * @param routingKey    消息KEY
+//     * @param message    消息内容
+//     * @param isBackMessage 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
+//     * @param delaySecond    延迟发送时间 秒
+//     */
+//    public void sendMessage(String routingKey, Object message, boolean isBackMessage, long delaySecond) {
+//        sendMessage(null, routingKey, message, isBackMessage, isLocal(), true, delaySecond);
+//    }
+//
+//
+//    public void sendMessage(String exchange, String routingKey, Object messageMap,
+//                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue) {
+//        sendMessage(exchange, routingKey, messageMap, isBackMessage, isLoad, isDeclareQueue, 0);
+//    }
 
     /**
      * 发送消息

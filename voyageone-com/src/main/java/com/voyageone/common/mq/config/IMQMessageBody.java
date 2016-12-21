@@ -1,4 +1,6 @@
-package com.voyageone.service.impl.com.mq.message;
+package com.voyageone.common.mq.config;
+
+import com.voyageone.common.mq.exception.MQMessageRuleException;
 
 /**
  * Created by dell on 2016/12/20.

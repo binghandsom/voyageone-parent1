@@ -1,9 +1,7 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.mq.config.VOMQRunnable;
-import com.voyageone.common.mq.config.VOMQStart;
-import com.voyageone.common.mq.config.VOMQStop;
+import com.voyageone.common.mq.config.*;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
@@ -32,8 +30,10 @@ import java.util.Map;
  * <p>
  * Created by jonas on 15/6/6.
  */
-public abstract class BaseMQService extends BaseTaskService {
+public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService  implements IVOMQMessageBodyClass<TMQMessageBody> {
 
+
+    public abstract  Class<TMQMessageBody> getTMQMessageBodyClass();
     /**
      * taskControlList job配置
      */
@@ -99,8 +99,8 @@ public abstract class BaseMQService extends BaseTaskService {
         String messageStr = "";
         try {
             messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
-            Map<String, Object> messageMap = JacksonUtil.jsonToMap(messageStr);
-            onStartup(messageMap);
+            TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr,getTMQMessageBodyClass());
+            onStartup(messageBody);
         } catch (BusinessException be) {
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
@@ -119,9 +119,9 @@ public abstract class BaseMQService extends BaseTaskService {
     /**
      * MqJobService需要实现此方法
      *
-     * @param messageMap Mq消息Map
+     * @param messageBody Mq消息Map
      */
-    protected abstract void onStartup(Map<String, Object> messageMap) throws Exception;
+    protected abstract void onStartup(TMQMessageBody messageBody) throws Exception;
 
     /**
      * 是否超过重试次数的判断

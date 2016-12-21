@@ -16,7 +16,10 @@
 
 package com.voyageone.service.impl.com.mq.config;
 
+import com.voyageone.common.mq.config.IMQMessageBody;
+import com.voyageone.common.mq.config.IVOMQMessageBodyClass;
 import com.voyageone.common.mq.config.MQConfigUtils;
+import com.voyageone.common.mq.config.VOQueue;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
@@ -276,7 +279,8 @@ public class AnnotationProcessorByIP
         /**
          * add ip to quenes key aooer start
          */
-        String[] queues = resolveQueues(rabbitListener);
+        String[] queues = resolveQueues(rabbitListener,bean);
+
         if (local) {
             for (int i = 0; i < queues.length; i++) {
                 queues[i] = MQConfigUtils.getAddStrQueneName(queues[i]);
@@ -344,6 +348,36 @@ public class AnnotationProcessorByIP
             return "org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#" + counter.getAndIncrement();
         }
     }
+    // new add begin
+    private String[] resolveQueues(RabbitListener rabbitListener,Object bean) {
+        String[] queues = getQueues(rabbitListener,bean);
+        QueueBinding[] bindings = rabbitListener.bindings();
+        if (queues.length > 0 && bindings.length > 0) {
+            throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
+        }
+        List<String> result = new ArrayList<String>();
+        if (queues.length > 0) {
+            for (String queue : queues) {
+                Object resolvedValue = resolveExpression(queue);
+                resolveAsString(resolvedValue, result);
+            }
+        } else {
+            return registerBeansForDeclaration(rabbitListener);
+        }
+        return result.toArray(new String[result.size()]);
+    }
+    private String [] getQueues(RabbitListener rabbitListener,Object bean) {
+        String[] queues = rabbitListener.queues();
+        if (queues.length > 0) return queues;
+        if (bean instanceof IVOMQMessageBodyClass) {
+
+            Class<? extends IMQMessageBody> messageBodyClass = ((IVOMQMessageBodyClass) bean).getTMQMessageBodyClass();
+            final VOQueue voQueue = AnnotationUtils.findAnnotation(messageBodyClass, VOQueue.class);
+            return voQueue.queues();
+        }
+        return new String[0];
+    }
+    // new add end
 
     private String[] resolveQueues(RabbitListener rabbitListener) {
         String[] queues = rabbitListener.queues();

@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 
+import com.sun.javafx.tk.Toolkit;
+import com.voyageone.common.spring.SpringStartFinish;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +19,8 @@ public class JmBtPromotionExportJobServiceTest {
     JmBtPromotionExportJobService service;
     @Test
     public void testOnStartup() throws Exception {
-        //service.onStartup();
+        //service.onStartup()
+        service.startMQ();
+        Thread.sleep(999999999999999999L);
     }
 }

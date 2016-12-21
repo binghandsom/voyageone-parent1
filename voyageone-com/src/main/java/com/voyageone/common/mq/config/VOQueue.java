@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.com.mq.message;
+package com.voyageone.common.mq.config;
 
 import java.lang.annotation.*;
 
