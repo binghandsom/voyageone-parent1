@@ -29,6 +29,7 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
+import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 
@@ -38,6 +39,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -253,9 +255,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
             searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
         }
-        if (!searchItemStr.endsWith(";")) {
+        if (!searchItemStr.endsWith(";"))
             searchItemStr += ";";
-        }
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
             searchItemStr += "common.skus;common.fields.model;common.fields.color;common.fields.originalCode;";
@@ -290,6 +291,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 writeShoemetroJMSkuHead(book);
             }
 
+            int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
             for (int i = 0; i < pageCount; i++) {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
@@ -306,7 +308,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 } else if (searchValue.getFileType() == 2) {
                     isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 3) {
-                    isContinueOutput = writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex);
+                    /*isContinueOutput暂时无用*/
+                    offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 } else if (searchValue.getFileType() == 4) {
                     isContinueOutput = writeShoemetroJMSkuFile(book, items, startRowIndex);
                 }
@@ -695,9 +698,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 } else {
                 	// 补齐聚头的MallURL和MallID的空白列
                 	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                		// JmMallURL 
+                		// JmMallURL
                         FileUtils.cell(row, index++, unlock).setCellValue("");
-                		// JmMallID 
+                		// JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                 	}
                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -908,9 +911,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     } else {
                     	// 补齐聚头的MallURL和MallID的空白列
                     	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                    		// JmMallURL 
+                    		// JmMallURL
                             FileUtils.cell(row, index++, unlock).setCellValue("");
-                    		// JmMallID 
+                    		// JmMallID
                             FileUtils.cell(row, index++, unlock).setCellValue("");
                     	}
                         FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -939,10 +942,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param channelId
      * @param cartList
      * @param startRowIndex 开始
-     * @return boolean 是否终止输出
+     * @return 行数偏移量
      */
-    private boolean writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
-
+    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+        int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
         for (CmsBtProductBean item:items) {
@@ -1075,9 +1078,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                             } else {
                             	// 补齐聚头的MallURL, MallID和SkuNo的空白列
                             	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                            		// JmMallURL 
+                            		// JmMallURL
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
-                            		// JmMallID 
+                            		// JmMallID
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
                             		// JmSkuNo
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
@@ -1115,10 +1118,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     }
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
+                total++;
             }
         }
-
-        return isContinueOutput;
+        return total - products.size();
     }
 
     /**
