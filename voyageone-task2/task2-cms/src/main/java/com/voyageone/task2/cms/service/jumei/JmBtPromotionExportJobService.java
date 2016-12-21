@@ -52,14 +52,9 @@ public  class JmBtPromotionExportJobService extends TBaseMQCmsService<JmExportMQ
     @Autowired
     private CmsBtJmPromotionExportTask3Service service;
 
-    //消息体  类
-    @Override
-    public Class<JmExportMQMessageBody> getTMQMessageBodyClass() {
-        return JmExportMQMessageBody.class;
-    }
 
     @Override
-    protected void onStartup(JmExportMQMessageBody messageBody) throws Exception {
+    public void onStartup(JmExportMQMessageBody messageBody) throws Exception {
         $debug("JmBtPromotionExportJobService收到消息：" + JacksonUtil.bean2Json(messageBody));
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         $info("JmBtPromotionExportJobService", "begin");

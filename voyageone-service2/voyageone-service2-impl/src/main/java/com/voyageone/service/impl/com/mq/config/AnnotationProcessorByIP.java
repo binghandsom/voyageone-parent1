@@ -17,9 +17,10 @@
 package com.voyageone.service.impl.com.mq.config;
 
 import com.voyageone.common.mq.config.IMQMessageBody;
-import com.voyageone.common.mq.config.IVOMQMessageBodyClass;
+import com.voyageone.common.mq.config.IVOMQOnStartup;
 import com.voyageone.common.mq.config.MQConfigUtils;
 import com.voyageone.common.mq.config.VOQueue;
+import com.voyageone.common.util.GenericSuperclassUtils;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Binding.DestinationType;
 import org.springframework.amqp.core.Queue;
@@ -369,11 +370,12 @@ public class AnnotationProcessorByIP
     private String [] getQueues(RabbitListener rabbitListener,Object bean) {
         String[] queues = rabbitListener.queues();
         if (queues.length > 0) return queues;
-        if (bean instanceof IVOMQMessageBodyClass) {
-
-            Class<? extends IMQMessageBody> messageBodyClass = ((IVOMQMessageBodyClass) bean).getTMQMessageBodyClass();
+        if (bean instanceof IVOMQOnStartup) {
+            Class<? extends IMQMessageBody> messageBodyClass = GenericSuperclassUtils.getGenericActualTypeClass(bean);
             final VOQueue voQueue = AnnotationUtils.findAnnotation(messageBodyClass, VOQueue.class);
-            return voQueue.queues();
+            if (voQueue != null) {
+                return voQueue.queues();
+            }
         }
         return new String[0];
     }

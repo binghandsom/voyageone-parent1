@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.config.*;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
+import com.voyageone.common.util.GenericSuperclassUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MQControlHelper;
 import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
@@ -30,10 +31,9 @@ import java.util.Map;
  * <p>
  * Created by jonas on 15/6/6.
  */
-public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService  implements IVOMQMessageBodyClass<TMQMessageBody> {
+public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService  implements IVOMQOnStartup<TMQMessageBody> {
 
 
-    public abstract  Class<TMQMessageBody> getTMQMessageBodyClass();
     /**
      * taskControlList job配置
      */
@@ -99,7 +99,8 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         String messageStr = "";
         try {
             messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
-            TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr,getTMQMessageBodyClass());
+            Class<TMQMessageBody>  messageBodyClass= GenericSuperclassUtils.getGenericActualTypeClass(this);//获取泛型的真实类型class
+            TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr,messageBodyClass);
             onStartup(messageBody);
         } catch (BusinessException be) {
             $error("出现业务异常，任务退出", be);
@@ -121,7 +122,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
      *
      * @param messageBody Mq消息Map
      */
-    protected abstract void onStartup(TMQMessageBody messageBody) throws Exception;
+    public abstract void onStartup(TMQMessageBody messageBody) throws Exception;
 
     /**
      * 是否超过重试次数的判断
