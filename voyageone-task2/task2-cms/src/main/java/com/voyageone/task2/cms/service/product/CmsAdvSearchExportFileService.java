@@ -315,9 +315,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     offset += writeShoemetroJMSkuFile(book, items, startRowIndex + offset);
                 }
                 // 超过最大行的场合
-                if (!isContinueOutput) {
+                /*if (!isContinueOutput) {
                     break;
-                }
+                }*/
             }
             $info("文档写入完成");
 
@@ -1203,7 +1203,6 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        System.out.println("********************--->"+total);
         return total - products.size();
     }
 
