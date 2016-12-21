@@ -56,9 +56,12 @@
             </div>
             <div class="col-sm-12">
                 <div class="row form-group">
-                    <div class="col-sm-3" ng-if="ctrl.popType != '修改用户'"><!-- 密码 -->
+                    <!--<div class="col-sm-3" ng-if="ctrl.popType != '修改用户'">&lt;!&ndash; 密码 &ndash;&gt;-->
+                        <!--<label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>-->
+                        <!--<label class="col-sm-8 control-label text-left">默认密码1234567890</label>-->
+                    <!--</div>-->
+                    <div class="col-sm-3"><!-- 密码 -->
                         <label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>
-                        <label class="col-sm-8 control-label text-left">默认密码1234567890</label>
                     </div>
                     <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 组织 -->
                         <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>

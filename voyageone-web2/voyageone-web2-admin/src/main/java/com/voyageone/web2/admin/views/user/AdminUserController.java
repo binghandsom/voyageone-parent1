@@ -26,7 +26,7 @@ import java.util.Map;
 @RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
 public class AdminUserController extends AdminController {
 
-    private static final String DEFAULT_PASS = "1234567890";
+//    private static final String DEFAULT_PASS = "1234567890";
 
 
     @Autowired
@@ -90,7 +90,10 @@ public class AdminUserController extends AdminController {
         Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
-        bean.setPassword(DEFAULT_PASS);
+
+        //生成随机密码
+        String pass= CommonUtil.getRomdonPass(6);
+        bean.setPassword(pass);
         adminUserService.addUser(bean, username);
         return success(true);
     }
