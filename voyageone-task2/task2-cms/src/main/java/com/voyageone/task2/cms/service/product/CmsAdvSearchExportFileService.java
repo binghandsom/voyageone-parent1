@@ -301,9 +301,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 }
                 // 超过最大行的场合
-                if (!isContinueOutput) {
-                    break;
-                }
+//                if (!isContinueOutput) {
+//                    break;
+//                }
             }
             $info("文档写入完成");
 
