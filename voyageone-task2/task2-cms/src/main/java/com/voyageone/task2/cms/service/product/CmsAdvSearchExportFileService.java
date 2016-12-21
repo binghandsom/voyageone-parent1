@@ -249,19 +249,15 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         if (cmsSessionBean.get("_adv_search_props_searchItems") != null) {
             searchItemStr += (String) cmsSessionBean.get("_adv_search_props_searchItems");
         }
+        if (!searchItemStr.endsWith(";"))
+            searchItemStr += ";";
         if (searchValue.getFileType() == 3) {
             // 要输出sku级信息
-            if (!searchItemStr.endsWith(";"))
-                searchItemStr += ";";
             searchItemStr += "common.skus;common.fields.model;common.fields.color;common.fields.originalCode;";
         } else if (searchValue.getFileType() == 2) {
             // 要输出group级信息
-            if (!searchItemStr.endsWith(";"))
-                searchItemStr += ";";
             searchItemStr += "common.fields.model;";
         } else if (searchValue.getFileType() == 1) {
-            if (!searchItemStr.endsWith(";"))
-                searchItemStr += ";";
             searchItemStr += "common.fields.model;common.fields.color;";
         }
 
@@ -285,6 +281,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 writeSkuHead(book, cartList);
             }
 
+            int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
             for (int i = 0; i < pageCount; i++) {
                 queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
@@ -301,7 +298,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 } else if (searchValue.getFileType() == 2) {
                     isContinueOutput = writeRecordToGroupFile(book, items, channelId, cartList, startRowIndex);
                 } else if (searchValue.getFileType() == 3) {
-                    isContinueOutput = writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex);
+                    /*isContinueOutput暂时无用*/
+                    offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 }
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -916,10 +914,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param channelId
      * @param cartList
      * @param startRowIndex 开始
-     * @return boolean 是否终止输出
+     * @return 行数偏移量
      */
-    private boolean writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
-
+    private int writeRecordToSkuFile(Workbook book, List<CmsBtProductBean> items, String channelId, List<TypeChannelBean> cartList, int startRowIndex) {
+        int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
         for (CmsBtProductBean item:items) {
@@ -1092,10 +1090,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     }
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(getLockStatusTxt(item.getLock()));
+                total++;
             }
         }
-
-        return isContinueOutput;
+        return total - products.size();
     }
 
     /**
