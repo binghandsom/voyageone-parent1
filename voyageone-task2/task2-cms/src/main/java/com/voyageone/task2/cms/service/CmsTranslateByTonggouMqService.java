@@ -353,7 +353,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 // 更新翻译专用商品，翻译想要翻译的项目英文内容
                 result = updateTransWare(numIIdForTransOnly, strTransTitleEn, strTransEn, otherItemMap, productInfoMap, transShop);
                 // 为了不让天猫报错，休息一下
-                Thread.sleep(200);
+                Thread.sleep(300);
                 if (StringUtils.isEmpty(result)) {
                     // 如果没有返回值为空，则继续翻译下一个待翻译项目
                     continue;
@@ -420,9 +420,9 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
             int index = 0;
             for (Map.Entry<String, String> entry : transResultMap.entrySet()) {
                 if (index == 0) {
-                    sbUpdate.append("'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\\'") + "'");
+                    sbUpdate.append("'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'") + "\"");
                 } else {
-                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\\'") + "'");
+                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'") + "\"");
                 }
                 index++;
             }
