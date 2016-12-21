@@ -958,6 +958,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //            strWeight = String.valueOf(objfieldItemValue);
 //        }
         jdProductBean.setWeight(jdCommonInfoMap.get("productWeightKg"));
+        if (StringUtils.isEmpty(jdProductBean.getWeight())) {
+            InputField f = (InputField) productSchemaFields.get("productWeightKg");
+            jdProductBean.setWeight(f.getDefaultValue());
+        }
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
