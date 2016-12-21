@@ -24,8 +24,6 @@ public class CmsBtExportTaskService extends BaseService {
     public static final int FEED = 0;
     // 高级检索
     public static final int ADV_SEARCH = 1;
-    // ShowMetro聚美上新商品SKU导出
-    public static final int ADV_SHOWMETRO = 2;
 
     public static final String templatePath = "/usr/web/contents/cms/file_template/feed-template.xlsx";
     // feed检索文件下载路径-- TODO 这两个路径应该写到配置文件里 “\voyageone-task2\task2-cms\src\main\resources\config\cms_keyvalue.properties”
