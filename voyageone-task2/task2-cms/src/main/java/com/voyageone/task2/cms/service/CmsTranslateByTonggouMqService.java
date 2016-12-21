@@ -420,9 +420,9 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
             int index = 0;
             for (Map.Entry<String, String> entry : transResultMap.entrySet()) {
                 if (index == 0) {
-                    sbUpdate.append("'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\'") + "'");
+                    sbUpdate.append("'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\\'") + "'");
                 } else {
-                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\'") + "'");
+                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\\'") + "'");
                 }
                 index++;
             }
