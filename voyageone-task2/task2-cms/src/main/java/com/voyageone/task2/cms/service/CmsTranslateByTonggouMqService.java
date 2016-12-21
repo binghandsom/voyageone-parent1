@@ -425,10 +425,11 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 }
                 index++;
             }
-            // 更新翻译状态，翻译者，翻译时间等项目
-            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':'" + getTaskName()
-					+ "', 'common.fields.translateTime':'" + DateTimeUtil.getNow()
-					+ "', 'common.fields.priorTranslateDate':''}}");
+//            // 更新翻译状态，翻译者，翻译时间等项目
+//            sbUpdate.append(", 'common.fields.translateStatus':'1', 'common.fields.translator':'" + getTaskName()
+//					+ "', 'common.fields.translateTime':'" + DateTimeUtil.getNow()
+//					+ "', 'common.fields.priorTranslateDate':''");
+            sbUpdate.append("}}");
 
             updObj.setUpdate(sbUpdate.toString());
             return updObj;
