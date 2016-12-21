@@ -67,9 +67,7 @@ public class FryeAnalysisService extends BaseAnalysisService {
         int cnt = 0;
         Date getFeedDate = new Date(0);
         //取得产品productId
-//        List<Long> productIdList = oneStopClient.catalogProductId(getFeedDate);
-        List<Long> productIdList = new ArrayList<>();
-        productIdList.add((long) 17195);
+        List<Long> productIdList = oneStopClient.catalogProductId(getFeedDate);
         if (productIdList.size() > 0) {
             for (Long productId : productIdList) {
                 //根据产品productId取得对应的产品信息
