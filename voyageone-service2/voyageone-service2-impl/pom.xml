@@ -73,12 +73,6 @@
             <artifactId>voyageone-components-sneakerhead</artifactId>
             <version>${voyageone.components.sneakerhead.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.voyageone.tools.feed</groupId>
-            <artifactId>category-matcher-java</artifactId>
-        </dependency>
-
         <!-- liquifire START REMOVE LiquidFire liang 2016/06/29 -->
         <!--<dependency>-->
             <!--<groupId>com.voyageone</groupId>-->

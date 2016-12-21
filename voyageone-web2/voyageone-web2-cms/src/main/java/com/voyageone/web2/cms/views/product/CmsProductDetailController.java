@@ -54,7 +54,7 @@ public class CmsProductDetailController extends CmsController {
     @Autowired
     CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
-//    @Autowired
+    @Autowired
     MtCategoryKeysService mtCategoryKeysService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)

@@ -74,6 +74,17 @@ public class CategoryTreeAllService extends BaseService {
         bean.setParentCatId(model.getParentCatId());
         bean.setSingleSku(model.getSingleSku());
         bean.setSkuSplit(SkuSplit.valueOf(model.getSkuSplit()));
+        bean.setCatNameEn(model.getCatNameEn());
+        bean.setCatPathEn(model.getCatPathEn());
+        bean.setProductTypeEn(model.getProductTypeEn());
+        bean.setProductTypeCn(model.getProductTypeCn());
+        bean.setSizeTypeEn(model.getSizeTypeEn());
+        bean.setSizeTypeCn(model.getSizeTypeCn());
+        bean.setHscode8(model.getHscode8());
+        bean.setHscode10(model.getHscode10());
+        bean.setHscodeName8(model.getHscodeName8());
+        bean.setHscodeName10(model.getHscodeName10());
+
 
 //        // 取得这个主类目对应的平台类目信息，Map<platformId，CmsMtCategoryTreeAllModel_Platform>
 //        List<CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformList = model.getPlatformCategory();

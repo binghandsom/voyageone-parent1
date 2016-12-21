@@ -7,6 +7,7 @@ import com.voyageone.category.match.MtCategoryKeysService;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- *
  * Created by james on 2016/12/19.
  */
 @Service
@@ -54,6 +54,8 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
         String userName = (String) requestMap.get("userName");
         String channelId = (String) requestMap.get("channelId");
         Integer cartIdObj = (Integer) requestMap.get("cartId");
+        String productType = (String) requestMap.get("productType");
+        String sizeType = (String) requestMap.get("sizeType");
 
         Map<String, Object> resultMap = new HashMap<>();
         if (mCatId == null || mCatPath == null || ListUtils.isNull(prodCodes)) {
@@ -61,8 +63,6 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
             resultMap.put("isChangeCategory", false);
             return;
         }
-
-        MtCategoryKeysModel mtCategoryKeysModel =mtCategoryKeysService.getCategoryKeysModel(mCatPath.replace(">","/"));
 
         List<Integer> cartList = null;
         if (cartIdObj == null || cartIdObj == 0) {
@@ -74,13 +74,19 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
             cartList = new ArrayList<>(1);
             cartList.add(cartIdObj);
         }
-        $info(String.format("channel=%s mCatPath=%s prodCodes size=$d",channelId, mCatPath, prodCodes.size()));
+        $info(String.format("channel=%s mCatPath=%s prodCodes size=$d", channelId, mCatPath, prodCodes.size()));
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'common.fields.code':{$in:#}}");
         updObj.setQueryParameters(prodCodes);
-        if(mtCategoryKeysModel != null){
+        if (!StringUtil.isEmpty(productType) && !StringUtil.isEmpty(sizeType)) {
             updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'common.fields.productType':#,'common.fields.sizeType':#}}");
-            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow(),mtCategoryKeysModel.getProductTypeEn(),mtCategoryKeysModel.getSizeTypeEn());
+            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow(), productType, sizeType);
+        }else  if (!StringUtil.isEmpty(productType)) {
+            updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'common.fields.productType':#}}");
+            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow(),productType);
+        }else  if (!StringUtil.isEmpty(sizeType)) {
+            updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'common.fields.sizeType':#}}");
+            updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow(),sizeType);
         }else{
             updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
             updObj.setUpdateParameters(mCatId, mCatPath, userName, DateTimeUtil.getNow());

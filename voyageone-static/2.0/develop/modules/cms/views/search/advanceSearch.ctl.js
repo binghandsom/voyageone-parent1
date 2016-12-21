@@ -499,6 +499,8 @@ define([
                         catId: selectedCat.catId,
                         catPath: selectedCat.catPath,
                         pCatList: pCatList,
+                        productType:selectedCat.productTypeEn,
+                        sizeType:selectedCat.sizeTypeEn,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
