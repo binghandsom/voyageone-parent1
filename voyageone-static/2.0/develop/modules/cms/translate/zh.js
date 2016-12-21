@@ -10,6 +10,7 @@ define(function () {
         "TXT_FEED_MANAGER": "Feed管理",
         "TXT_FEED_PRODUCT_LIST": "Feed商品一览",
         "TXT_FEED_CATEGORY_LIST": "Feed类目一览",
+        "TXT_FEED_CATEGORY": "Feed分类",
         "TXT_FEED_BRAND_LIST": "Feed品牌一览",
         "TXT_CATEGORY_MANAGER": "商品管理",
         "TXT_PROMOTION_MANAGER": "活动管理",
@@ -903,6 +904,16 @@ define(function () {
 
         /**菜单栏新增*/
         "TXT_CURRENT_CHANNEL_SETTING" : "当前店铺设置",
-        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "货架模板一览"
+        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "货架模板一览",
+
+        /**组合商品*/
+        "TXT_COMBINED_PRODUCT_NAME" : "组合套装商品名称",
+        "TXT_COMBINED_PRODUCT_CODE" : "商品编码",
+        "TXT_COMBINED_PRODUCT_STATUS" : "组合套装商品状态",
+        "TXT_COMBINED_PRODUCT_PLATFORMS_STATUS" : "组合套装平台状态",
+        "TXT_WULIUBAO_PRODUCT_CODE" : "物流宝后台商品编码",
+        "TXT_COMBINED_PRODUCT_NEW" : "新建组合套装",
+        "TXT_COMBINED_NUM_ID" : "商品编码（numID）",
+        "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装"
     };
 });

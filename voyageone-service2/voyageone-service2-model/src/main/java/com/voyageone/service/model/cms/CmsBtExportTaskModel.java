@@ -23,7 +23,7 @@ public class CmsBtExportTaskModel extends BaseModel {
     protected String parameter;
 
     /**
-     * 0:等待 1:完成 2:失败
+     * 0:等待 1:完成 2:失败 -1：下载文件已被定期删除
      */
     protected Integer status;
 

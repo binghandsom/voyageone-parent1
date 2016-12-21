@@ -131,6 +131,9 @@ public class CmsConstants {
         // 新品店铺内分类
         String SELLER_CAT = "SELLER_CAT";
 
+        // 透明图
+        String TRANSPARENT_IMAGE = "TRANSPARENT_IMAGE";
+
         // 子店到LIKING主店的产品品牌方商品图(images1)以外的图片复制方式(0:不复制原图以外的图片 1:以UNION方式复制图片
         // 2:以总店的数据为准。只要总店有数据，那么总店为准。如果总店没有，子店有，那么子店的数据复制到总店)
         String LIKING_IMAGE_COPY_FLG = "LIKING_IMAGE_COPY_FLG";
@@ -177,6 +180,12 @@ public class CmsConstants {
 
         //feed的code按不同季度拆分
         String SPLIT_QUARTER_BY_CODE = "SPLIT_QUARTER_BY_CODE";
+
+        // 店铺是否启动了供应链管理
+        String START_SUPPLY_CHAIN = "START_SUPPLY_CHAIN";
+
+        // 是否强制尺码转换的检查(1:强制尺码转换 空,0:不强制尺码转换)
+        String SIZE_CONVERSION_FLG = "SIZE_CONVERSION_FLG";
     }
 
     public interface DataAmount {
@@ -264,7 +273,8 @@ public class CmsConstants {
         int initNum = 0;        // 上新对象
         int okNum = 1;          // 上新成功
         int errorNum = 2;       // 上新失败
-        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+//        int uploadingNum = 3;   // 上新中(上新完成后回写状态的时候用)
+        int smartSx = 3;        // 智能上新
         int review = 4;         // 达尔文产品审核中
         int waitCnUpload = 5;  // 独立域名等待xml上传
     }

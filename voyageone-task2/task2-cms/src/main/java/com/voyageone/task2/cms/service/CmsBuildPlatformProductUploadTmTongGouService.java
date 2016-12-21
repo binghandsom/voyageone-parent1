@@ -12,6 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -56,6 +57,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -282,6 +284,23 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 throw new BusinessException(errMsg);
             }
 
+            // 店铺级标题禁用词 20161216 tom START
+            // 先临时这样处理
+            String notAllowList = getConditionPropValue(sxData, "notAllowTitleList_30", shopProp);
+            if (!StringUtils.isEmpty(notAllowList)) {
+                if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getOriginalTitleCn())) {
+                    String[] splitWord = notAllowList.split(",");
+                    for (String notAllow : splitWord) {
+                        if (mainProduct.getCommon().getFields().getOriginalTitleCn().contains(notAllow)) {
+                            String errMsg = "标题中含有禁用词：【" + notAllow + "】， 禁止上新。";
+                            $error(errMsg);
+                            throw new BusinessException(errMsg);
+                        }
+                    }
+                }
+            }
+            // 店铺级标题禁用词 20161216 tom END
+
             // 构造该产品所有SKUCODE的字符串列表
             List<String> strSkuCodeList = new ArrayList<>();
             skuList.forEach(sku -> strSkuCodeList.add(sku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name())));
@@ -440,6 +459,17 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 sxProductService.doUploadFinalProc(shopProp, true, sxData, cmsBtSxWorkloadModel, numIId,
                         platformStatus, "", getTaskName());
             }
+
+            // added by morse.lu 2016/12/08 start
+            if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                // Sneakerhead
+                try {
+                    sxProductService.uploadCnInfo(sxData);
+                } catch (IOException io) {
+                    throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                }
+            }
+            // added by morse.lu 2016/12/08 end
 
             // 正常结束
             $info(String.format("天猫官网同购商品上新成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [NumIId:%s]",

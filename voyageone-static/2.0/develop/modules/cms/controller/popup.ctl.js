@@ -9,7 +9,13 @@ define([
     'modules/cms/enums/MappingTypes'
 ], function (cms, _, MappingTypes) {
 
-    cms.constant('popActions', {
+    angular.module('com.voyageone.popups',[]).constant('popActions', {
+        "modifyPass": {
+            "templateUrl": "views/pop/modifyPass/modifyPass.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/modifyPass/modifyPass.ctl",
+            "controller": 'ModifyPassController as ctrl',
+            "size": 'md'
+        },
         "authority": {
             "new": {
                 "templateUrl": "views/pop/authority/new.tpl.html",
@@ -573,6 +579,24 @@ define([
                 "controllerUrl": "modules/cms/views/pop/product/move_result.ctl",
                 "controller": 'MoveResultController as ctrl',
                 "size": 'sm'
+            },
+            "combinedProductNew" : {
+                "templateUrl": "views/pop/product/combined-product-new.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-new.ctl",
+                "controller": 'CombinedProductNewController as ctrl',
+                "size": 'lg'
+            },
+            "combinedProductEdit" : {
+                "templateUrl": "views/pop/product/combined-product-edit.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-edit.ctl",
+                "controller": 'CombinedProductEditController as ctrl',
+                "size": 'lg'
+            },
+            "combinedProductLogs" : {
+                "templateUrl": "views/pop/product/combined-product-logs.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/product/combined-product-logs.ctl",
+                "controller": 'CombinedProductLogsController as ctrl',
+                "size": 'lg'
             }
         },
         "shelves" : {
@@ -1400,7 +1424,6 @@ define([
         $scope.popNewShelves = function popNewShelves(context) {
             return openModal(popActions.shelves.newShelves, context)
         };
-
         /**移动SKU确认*/
         $scope.openSKUMoveConfirm = function openSKUMoveConfirm(context) {
             return openModal(popActions.product.skuMoveConfirm, context);
@@ -1408,6 +1431,17 @@ define([
         /**移动SKU的结果确认*/
         $scope.openMoveResult = function openMoveResult(context) {
             return openModal(popActions.product.moveResult, context);
+        }
+
+        /**组合商品*/
+        $scope.popNewCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductNew, context)
+        };
+        $scope.popEditCombinedProduct = function (context) {
+            return openModal(popActions.product.combinedProductEdit, context)
+        };
+        $scope.popCombinedProductLogs = function (context) {
+            return openModal(popActions.product.combinedProductLogs, context)
         }
 
     }).factory('popups', function ($controller, $rootScope) {

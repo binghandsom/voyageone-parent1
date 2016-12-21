@@ -47,6 +47,6 @@ public enum OrderStatusEnum {
      * @return 枚举
      */
     public static OrderStatusEnum getInstance(String value) {
-        return StringUtils.isDigit(value) ? getInstance(Integer.parseInt(value)) : null;
+        return StringUtils.isDigit(value) ? Arrays.asList(OrderStatusEnum.values()).stream().filter(e -> e.code == Integer.parseInt(value)).findFirst().get() : OrderStatusEnum.valueOf(value);
     }
 }

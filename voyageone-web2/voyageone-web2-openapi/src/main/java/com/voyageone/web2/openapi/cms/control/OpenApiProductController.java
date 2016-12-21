@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.cms.control;
 
+import com.voyageone.service.impl.cms.product.CmsBtCombinedProductService;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.cms.service.OpenApiProductService;
 import com.voyageone.web2.sdk.api.request.*;
@@ -30,6 +31,8 @@ public class OpenApiProductController extends OpenApiBaseController {
 
     @Autowired
     private OpenApiProductService productService;
+    @Autowired
+    private CmsBtCombinedProductService cmsBtCombinedProductService;
 
     @RequestMapping("getWmsProductsInfo")
     public ProductForWmsGetResponse getWmsProductsInfo(@RequestBody ProductForWmsGetRequest request) {
@@ -68,5 +71,16 @@ public class OpenApiProductController extends OpenApiBaseController {
     public ProductForOmsGetResponse getOmsProductsInfo(@RequestBody ProductForOmsGetRequest request) {
         request.setFields(searchItems);
         return productService.getOmsProductsInfo(request);
+    }
+
+    /**
+     * 获取组合套装商品信息，给OMS调用
+     * @return
+     */
+    @RequestMapping("getSuitSkuInfo")
+    public SuitSkuInfoForOmsResponse getSuitSkuInfo(@RequestBody SuitSkuInfoForOmsRequest request) {
+        SuitSkuInfoForOmsResponse response = new SuitSkuInfoForOmsResponse();
+        response.setResultInfo(cmsBtCombinedProductService.getSuitSkuInfo());
+        return response;
     }
 }

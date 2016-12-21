@@ -1,17 +1,5 @@
 package com.voyageone.service.impl.cms.product.search;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -22,6 +10,13 @@ import com.voyageone.service.daoext.cms.WmsBtInventoryCenterLogicDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -42,15 +37,17 @@ public class CmsAdvSearchQueryService extends BaseService {
             "common.skus.skuCode;common.skus.size;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;";
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms";
 
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
      */
-    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId) {
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort) {
         JongoQuery queryObject = getSearchQuery(searchValue);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
-        queryObject.setSort(getSortValue(searchValue));
+        if(isSort) {
+            queryObject.setSort(getSortValue(searchValue));
+        }
         if (searchValue.getProductPageNum() > 0) {
             queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
             queryObject.setLimit(searchValue.getProductPageSize());
@@ -299,6 +296,11 @@ public class CmsAdvSearchQueryService extends BaseService {
             	}
                 queryObject.addParameters(cartId, StringUtils.split(searchValue.getNumIIds()));
             }
+
+            if(searchValue.getIsNewSku() != null && searchValue.getIsNewSku()){
+                queryObject.addQuery("{'platforms.P#.isNewSku': '1'}");
+                queryObject.addParameters(cartId);
+            }
         }
 
         // 获取其他检索条件
@@ -323,6 +325,10 @@ public class CmsAdvSearchQueryService extends BaseService {
                 } else {
                     fCatPathStr.append(",{\"feed.catPath\":{\"$regex\":#}}");
                 }
+                parameters.add("^" + fCatPath);
+            }
+            for (String fCatPath : searchValue.getfCatPathList()) {
+                fCatPathStr.append(",{\"feed.subCategories\":{\"$regex\":#}}");
                 parameters.add("^" + fCatPath);
             }
             fCatPathStr.append("]}");
@@ -470,7 +476,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             List<String> orSearch = new ArrayList<>();
             // 英文查询内容
             String fuzzyStr = searchValue.getFuzzyStr();
-            queryObject.addQuery("{$or:[{'common.fields.productNameEn':{$regex:#}},{'common.fields.longDesEn':{$regex:#}},{'common.fields.shortDesEn':{$regex:#}},{'common.fields.originalTitleCn':{$regex:#}},{'common.fields.shortDesCn':{$regex:#}},{'common.fields.longDesCn':{$regex:#}}]}");
+            queryObject.addQuery("{$or:[{'common.fields.productNameEn':{$regex:#, $options:\"i\"}},{'common.fields.longDesEn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesEn':{$regex:#, $options:\"i\"}},{'common.fields.originalTitleCn':{$regex:#, $options:\"i\"}},{'common.fields.shortDesCn':{$regex:#, $options:\"i\"}},{'common.fields.longDesCn':{$regex:#, $options:\"i\"}}]}");
             queryObject.addParameters(fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr, fuzzyStr);
         }
 
@@ -601,6 +607,9 @@ public class CmsAdvSearchQueryService extends BaseService {
             }else if (searchValue.getSortOneName().startsWith("sales")) {
                 // 按指定sales数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if (searchValue.getSortOneName().startsWith("platforms.P")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortOneName(), Integer.valueOf(searchValue.getSortOneType())));
             }
@@ -614,6 +623,12 @@ public class CmsAdvSearchQueryService extends BaseService {
             } else if (searchValue.getSortTwoName().startsWith("bi.sum")) {
                 // 按指定bi数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
+            }else if (searchValue.getSortTwoName().startsWith("sales")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if (searchValue.getSortTwoName().startsWith("platforms.P")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortTwoName(), Integer.valueOf(searchValue.getSortTwoType())));
             }
@@ -627,6 +642,12 @@ public class CmsAdvSearchQueryService extends BaseService {
             } else if (searchValue.getSortThreeName().startsWith("bi.sum")) {
                 // 按指定bi数据排序
                 result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
+            }else if (searchValue.getSortThreeName().startsWith("sales")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
+            }else if (searchValue.getSortThreeName().startsWith("platforms.P")) {
+                // 按指定sales数据排序
+                result.append(MongoUtils.splicingValue(searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortOneType())));
             } else {
                 result.append(MongoUtils.splicingValue("common.fields." + searchValue.getSortThreeName(), Integer.valueOf(searchValue.getSortThreeType())));
             }

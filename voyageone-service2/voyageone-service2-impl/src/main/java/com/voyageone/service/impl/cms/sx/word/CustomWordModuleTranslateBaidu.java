@@ -1,18 +1,19 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.ims.rule_expression.*;
+import com.voyageone.ims.rule_expression.CustomModuleUserParamTranslateBaidu;
+import com.voyageone.ims.rule_expression.CustomWord;
+import com.voyageone.ims.rule_expression.CustomWordValueTranslateBaidu;
+import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.service.bean.cms.product.SxData;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 百度翻译
@@ -118,17 +119,4 @@ public class CustomWordModuleTranslateBaidu extends CustomWordModule {
         return sb.toString();
     }
 
-    private List<String> parseRuleExpression(RuleExpression ruleExpression, ExpressionParser expressionParser, ShopBean shopBean, String user, String[] extParameter) throws Exception {
-        if (ruleExpression == null || ListUtils.isNull(ruleExpression.getRuleWordList())) {
-            return null;
-        }
-
-        List<String> ret = new ArrayList<>();
-        for (RuleWord ruleWord : ruleExpression.getRuleWordList()) {
-            String plainValue = expressionParser.parseWord(ruleWord, shopBean, user, extParameter);
-            ret.add(plainValue);
-        }
-
-        return ret;
-    }
 }

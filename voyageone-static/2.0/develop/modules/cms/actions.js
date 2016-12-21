@@ -50,7 +50,8 @@ define(function () {
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
                     "setPlatformType": "setPlatformType",
                     "getHomeSumData": "getHomeSumData",
-                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL])
+                    "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
+                    getMenuHeaderInfo:"getMenuHeaderInfo"
                 }
             },
             "search": {
@@ -143,6 +144,28 @@ define(function () {
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
                     "getPutOnOffLogList": "getPutOnOffLogList"
+                },
+                "combinedProductService" : {
+                    "root": "/cms/combined/product",
+                    "init" : "init",
+                    "search" : "search",
+                    "getCombinedProductPlatformDetail" : "getCombinedProductPlatformDetail",
+                    "add" : "add",
+                    "getSkuDetail" : "getSkuDetail",
+                    "delete" : "delete",
+                    "getCombinedProductDetail" : "getCombinedProductDetail",
+                    "edit" : "edit",
+                    "onOffShelves" : "onOffShelves",
+                    "getOperateLogs" : "getOperateLogs"
+                },
+                productTopService: {
+                    "root": "/cms/producttop",
+                    "init": "init",
+                    "getPage": "getPage",
+                    "getCount": "getCount",
+                    "getTopList": "getTopList",
+                    "addTopProduct": "addTopProduct",
+                    "saveTopProduct": "saveTopProduct"
                 }
             },
             "mapping": {

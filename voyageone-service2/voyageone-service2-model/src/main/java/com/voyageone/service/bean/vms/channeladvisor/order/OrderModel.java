@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.service.bean.vms.channeladvisor.CABaseModel;
 import com.voyageone.service.bean.vms.channeladvisor.enums.OrderStatusEnum;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class OrderModel extends CABaseModel {
     private List<OrderItemModel> items;
 
     @JsonProperty("OrderDateUtc")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'", timezone = "UTC")
     private Date orderDateUtc;
 
     @JsonProperty("OrderStatus")
@@ -33,26 +35,26 @@ public class OrderModel extends CABaseModel {
     @JsonProperty("RequestedShippingMethod")
     private String requestedShippingMethod;
 
-    @JsonProperty("TotalFees")
-    private Double totalFees;
+    @JsonProperty("OtherFees")
+    private BigDecimal otherFees;
 
     @JsonProperty("TotalGiftOptionPrice")
-    private Double totalGiftOptionPrice;
+    private BigDecimal totalGiftOptionPrice;
 
     @JsonProperty("TotalGiftOptionTaxPrice")
-    private Double totalGiftOptionTaxPrice;
+    private BigDecimal totalGiftOptionTaxPrice;
 
     @JsonProperty("TotalPrice")
-    private Double totalPrice;
+    private BigDecimal totalPrice;
 
     @JsonProperty("TotalTaxPrice")
-    private Double totalTaxPrice;
+    private BigDecimal totalTaxPrice;
 
     @JsonProperty("TotalShippingPrice")
-    private Double totalShippingPrice;
+    private BigDecimal totalShippingPrice;
 
     @JsonProperty("TotalShippingTaxPrice")
-    private Double totalShippingTaxPrice;
+    private BigDecimal totalShippingTaxPrice;
 
     @JsonProperty("VatInclusive")
     private Boolean vatInclusive;
@@ -61,7 +63,7 @@ public class OrderModel extends CABaseModel {
     private OrderAddressModel buyerAddress;
 
     @JsonProperty("DeliverByDateUtc")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss:SSSXXX", timezone = "UTC")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSS'Z'", timezone = "UTC")
     private Date deliverByDateUtc;
 
     @JsonProperty("ShippingAddress")
@@ -119,59 +121,63 @@ public class OrderModel extends CABaseModel {
         this.requestedShippingMethod = requestedShippingMethod;
     }
 
-    public Double getTotalFees() {
-        return totalFees;
+    public BigDecimal getOtherFees() {
+        return otherFees;
     }
 
-    public void setTotalFees(Double rotalFees) {
-        this.totalFees = rotalFees;
+    public void setOtherFees(BigDecimal otherFees) {
+        this.otherFees = otherFees;
     }
 
-    public Double getTotalGiftOptionPrice() {
+    public Boolean getVatInclusive() {
+        return vatInclusive;
+    }
+
+    public BigDecimal getTotalGiftOptionPrice() {
         return totalGiftOptionPrice;
     }
 
-    public void setTotalGiftOptionPrice(Double totalGiftOptionPrice) {
+    public void setTotalGiftOptionPrice(BigDecimal totalGiftOptionPrice) {
         this.totalGiftOptionPrice = totalGiftOptionPrice;
     }
 
-    public Double getTotalGiftOptionTaxPrice() {
+    public BigDecimal getTotalGiftOptionTaxPrice() {
         return totalGiftOptionTaxPrice;
     }
 
-    public void setTotalGiftOptionTaxPrice(Double totalGiftOptionTaxPrice) {
+    public void setTotalGiftOptionTaxPrice(BigDecimal totalGiftOptionTaxPrice) {
         this.totalGiftOptionTaxPrice = totalGiftOptionTaxPrice;
     }
 
-    public Double getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(Double totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
     }
 
-    public Double getTotalTaxPrice() {
+    public BigDecimal getTotalTaxPrice() {
         return totalTaxPrice;
     }
 
-    public void setTotalTaxPrice(Double totalTaxPrice) {
+    public void setTotalTaxPrice(BigDecimal totalTaxPrice) {
         this.totalTaxPrice = totalTaxPrice;
     }
 
-    public Double getTotalShippingPrice() {
+    public BigDecimal getTotalShippingPrice() {
         return totalShippingPrice;
     }
 
-    public void setTotalShippingPrice(Double totalShippingPrice) {
+    public void setTotalShippingPrice(BigDecimal totalShippingPrice) {
         this.totalShippingPrice = totalShippingPrice;
     }
 
-    public Double getTotalShippingTaxPrice() {
+    public BigDecimal getTotalShippingTaxPrice() {
         return totalShippingTaxPrice;
     }
 
-    public void setTotalShippingTaxPrice(Double totalShippingTaxPrice) {
+    public void setTotalShippingTaxPrice(BigDecimal totalShippingTaxPrice) {
         this.totalShippingTaxPrice = totalShippingTaxPrice;
     }
 

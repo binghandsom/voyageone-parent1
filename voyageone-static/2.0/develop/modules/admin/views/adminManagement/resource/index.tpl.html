@@ -1,0 +1,98 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="fa fa-navicon"></i>&nbsp;{{'TXT_MENU_MANAGEMENT'|translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="row form-group"><!-- 系统 -->
+                                    <label class="col-sm-3 control-label">{{'TXT_SYSTEM' | translate}}</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.application">
+                                            <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            <option value="{{app.application}}" ng-repeat="app in ctrl.appList">&nbsp;{{app.application}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" ng-if="ctrl.searchInfo.application">
+                            <div class="form-horizontal">
+                                <div class="row form-group">
+                                    <button class="btn btn-vo" ng-click="ctrl.search(1)"><i class="fa fa-search"></i>&nbsp;搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box" ng-if="ctrl.searchInfo.application">
+        <div class="box-body-new">
+            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm m-r-xs">
+                    <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
+                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="selectedList.length <= 0"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
+                </div>
+            </div>
+            <div class="" ng-controller="treeTable">
+                <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                    <thead>
+                    <tr>
+                        <th class="cell-input" style="padding: 5px;">
+                            <input ng-checked="(ctrl.resList | selected).length == ctrl.resList.length" ng-click="toggleAllCheckboxes($event,ctrl.resList, ctrl.selectedList)" type="checkbox" />
+                        </th>
+                        <th class="text-left mfb-xxt" translate="TXT_MENU_NAME"></th>
+                        <th class="text-left mfb-xxt" translate="TXT_MENU_KEY"></th>
+                        <th class="text-left mfb-xxt" translate="TXT_URL"></th>
+                        <th class="text-center mfb-xt3" translate="TXT_SYSTEM"></th>
+                        <th class="text-center mfb-xt3" translate="TXT_TYPE"></th>
+                        <th class="text-center mfb-xt3" translate="TXT_STATUS"></th>
+                        <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
+                        <th class="text-center mfb-xt3" translate="TXT_UPDATER"></th>
+                        <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
+                    </tr>
+                    </thead>
+                    <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.resList"></tbody>
+                </table>
+
+                <script id="table_tree.html" type="text/ng-template">
+                    <tr ng-class="{parent: item.children}" ng-init="initCheckbox(item, ctrl.selectedList, ctrl.flatResList, {isOpen:false})">
+                        <td class="cell-input" style="padding: 4px;height: 48px;">
+                            <input ng-change="toggleCheckbox(item, ctrl.selectedList)" ng-model="item.selected" type="checkbox" />
+                        </td>
+                        <td class="cell-name text-left mfb-xxt" ng-click="item.opened = !item.opened" ng-style="{'padding-left':item.children.length==0? '18px':'0'}" style="word-break: break-all">
+                            <div ng-class="{'indent': item.children.length>0}" style="padding-left: {{15*level}}px;">
+                                {{item.resName}}
+                            </div>
+                        </td>
+                        <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resKey}}</td>
+                        <td class="text-left mfb-xxt" style="word-break: break-all">{{item.resUrl}}</td>
+                        <td class="text-center mfb-xt3" style="word-break: break-all">{{item.application}}</td>
+                        <td class="text-center mfb-xt3" style="word-break: break-all">{{ctrl.getResType(item.resType)}}</td>
+                        <td class="text-center mfb-xt3" ng-bind="item.active!=null?item.active==1?'启用':'禁用':''"></td>
+                        <td class="text-center mfb-xt">{{item.description}}</td>
+                        <td class="text-center mfb-xt3">{{item.modifier}}</td>
+                        <td class="text-center mfb-xt">{{item.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                    </tr>
+                    <tr class="children" ng-if="item.children&&item.children.length>0">
+                        <td colspan="10">
+                            <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
+                                <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </script>
+
+            </div>
+        </div>
+        <vpagination config="ctrl.pageOption" ng-if="ctrl.resList.length>0"></vpagination>
+    </div>
+</div>

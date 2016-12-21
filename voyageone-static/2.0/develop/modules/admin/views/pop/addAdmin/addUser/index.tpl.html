@@ -1,0 +1,147 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-edit"></i>&nbsp;{{ctrl.popType}}</h5>
+    </div>
+    <div class="modal-body wrapper vbox">
+        <form role="form" class="form-horizontal" name="addForm" novalidate>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 账号 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ACCOUNT' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.userAccount"
+                            name="account" required ng-disabled="ctrl.popType == '修改用户'"/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.account"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 用户名 -->
+                        <label class="col-sm-3 control-label">{{'TXT_USER_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="text" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.userName"
+                            name="userName" required/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.userName"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-horizontal">
+                    <div class="row form-group"><!-- 邮箱 -->
+                        <label class="col-sm-3 control-label">{{'TXT_EMAIL' | translate}}</label>
+                        <div class="col-sm-8">
+                            <input type="email" maxlength="50" class="form-control" ng-model="ctrl.saveInfo.email"
+                            name="email" required/>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col-sm-8 col-sm-offset-3">
+                            <vo-message target="addForm.email"></vo-message>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="row form-group">
+                    <div class="col-sm-3" ng-if="ctrl.popType != '修改用户'"><!-- 密码 -->
+                        <label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>
+                        <label class="col-sm-8 control-label text-left">默认密码1234567890</label>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 组织 -->
+                        <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 公司 -->
+                        <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
+                        <div class="col-sm-8">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.companyId" ng-options="company.id as company.company for company in ctrl.companyList">
+                                <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 状态 -->
+                        <label class="control-label" ng-class="ctrl.popType == '修改用户'?'col-sm-3':'col-sm-2'">{{'TXT_STATUS' | translate}}</label>
+                        <div ng-class="ctrl.popType == '修改用户'?'col-sm-8':'col-sm-10'">
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="0" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> {{'BTN_INACTIVE'|translate}}
+                            </label>
+                            <label class="checkbox-inline c-radio">
+                                <input type="radio" name="active" value="2" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> 锁定
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="col-sm-1 control-label">{{'TXT_ROLE' | translate}}：</label>
+                    <div class="col-sm-10">
+                        <div class="col-sm-5">
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span class="text-warnings">{{'TXT_REQUIRED'|translate}}</span>
+                            <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="role in ctrl.roleList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'left',value:role})">{{role.roleName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="col-sm-5 text-center control-label vo_a_ce" >{{'TXT_ACTION'|translate}}</label>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.move('allInclude')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-double-left"></i></button> </div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-left"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-right"></i></button></div>
+                            <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-double-right"></i></button></div>
+                        </div>
+                        <div class="col-sm-5">
+                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                            <div class="col-sm-10 form-inline">
+                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name" ng-change="ctrl.move(name?name:'')">
+                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(name)" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                            </div>
+                            <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
+                                <div class="col-sm-12">
+                                    <ul class="list-unstyled">
+                                        <li class="btn-block" ng-repeat="role in ctrl.roleAllList" ng-style="{'background-color': ctrl.selectedRoleId==role.roleId? '#dcf3f9': 'white'}">
+                                            <a href="javascript:void(0)" ng-click="ctrl.selected({direction:'right',value:role})">{{role.roleName}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group"><!-- 说明 -->
+                    <label class="col-sm-1 control-label">{{'TXT_INSTRUCTION' | translate}}</label>
+                    <div class="col-sm-10">
+                        <textarea rows="3" class="form-control" maxlength="100" ng-model="ctrl.saveInfo.description"></textarea>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+    </div>
+</div>

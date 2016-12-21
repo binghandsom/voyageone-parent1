@@ -102,17 +102,19 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
      * @param channelId
      * @param cartId
      * @param cName 店铺自定义分类名
+     * @param urlKey 2016-12-08 新增
      * @param parentCId 父cId
      * @param cId 店铺自定义分类Id
      * @param creator 创建人
      */
-    public void add(String channelId, int cartId, String cName, String parentCId , String cId, String creator) {
+    public void add(String channelId, int cartId, String cName, String urlKey, String parentCId , String cId, String creator) {
 
         //如果是根节点
         if(parentCId.equals("0"))
         {
             CmsBtSellerCatModel newNode = new CmsBtSellerCatModel();
             newNode.setCatName(cName);
+            newNode.setUrlKey(urlKey);
             newNode.setChannelId(channelId);
             newNode.setCartId(cartId);
             newNode.setCatId(cId);
@@ -138,6 +140,7 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
                 CmsBtSellerCatModel parent = resultList.get(0);
                 CmsBtSellerCatModel newNode = new CmsBtSellerCatModel();
                 newNode.setCatName(cName);
+                newNode.setUrlKey(urlKey);
                 newNode.setChannelId(channelId);
                 newNode.setCartId(cartId);
                 newNode.setCatId(cId);

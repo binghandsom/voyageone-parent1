@@ -111,7 +111,7 @@
         <task:scheduled ref="CmsTargetAnalySisJob" method="run" cron="15 0/5 * * * ?"/>
 
         <!-- 维他命 feed 导入 cms2 -->
-        <task:scheduled ref="CmsVtmJob" method="run" cron="10 5 16 * * ?"/>
+        <task:scheduled ref="CmsVtmJob" method="run" cron="10 25 9 * * ?"/>
 
         <!-- Gilt feed 导入 cms2 -->
         <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
@@ -119,8 +119,8 @@
         <!-- DFO 导入 cms2 -->
         <task:scheduled ref="CmsDfoAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
 
-        <!-- sneakerhead 导入 cms2 -->
-        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
+        <!-- SneakerHead feed 导入 cms2 -->
+        <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 1 * * ?"/>
 
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
@@ -190,8 +190,24 @@
         <!-- target的feed所有sku的判断,是live还是notLive处理（每天早上3点一次） -->
         <task:scheduled ref="CmsTargetStautsJob" method="run" cron="0 20 0/1 * * ?"/>
 
+        <!-- CmsUsCategorySyncJob: 获取 sneakerhead 在美国 cms 的类目结构和 product 的挂靠关系 vantis -->
+        <task:scheduled ref="cmsUsCategorySyncJob" method="run" cron="0 45 1 * * ?"/>
+
+
         <!-- 从老Cms系统取得销售数据（每天早上4：40点一次） -->
         <task:scheduled ref="CmsSumSneakerHeadSalesHisInfoJob" method="run" cron="0 40 20 * * ?"/>
+
+        <!--定时清除高级检索导出产生的下载文件-->
+        <task:scheduled ref="cmsAdvSearchExportFileDeleteJob" method="run" cron="20 1 17 * * ?"/>
+
+        <!-- 独立域名上新xml准备（每分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareTmpJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnTmpJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- 独立域名类目-产品关系（每5分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductSellercatCnTmpJob" method="run" cron="0 0/5 0-23 * * ?"/>
 
     </task:scheduled-tasks>
 

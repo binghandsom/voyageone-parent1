@@ -1,26 +1,30 @@
 package com.voyageone.components.jd.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import com.jd.open.api.sdk.domain.category.AttValue;
 import com.jd.open.api.sdk.domain.category.Category;
 import com.jd.open.api.sdk.request.category.CategoryAttributeSearchRequest;
 import com.jd.open.api.sdk.request.category.CategoryAttributeValueSearchRequest;
 import com.jd.open.api.sdk.request.category.CategorySearchRequest;
+import com.jd.open.api.sdk.request.list.CategoryReadFindByIdRequest;
 import com.jd.open.api.sdk.request.list.PopVenderCenerVenderBrandQueryRequest;
+import com.jd.open.api.sdk.request.ware.WareAddVenderSellSkuRequest;
 import com.jd.open.api.sdk.response.category.CategoryAttributeSearchResponse;
 import com.jd.open.api.sdk.response.category.CategoryAttributeValueSearchResponse;
 import com.jd.open.api.sdk.response.category.CategorySearchResponse;
+import com.jd.open.api.sdk.response.list.CategoryReadFindByIdResponse;
 import com.jd.open.api.sdk.response.list.PopVenderCenerVenderBrandQueryResponse;
 import com.jd.open.api.sdk.response.list.VenderBrandPubInfo;
+import com.jd.open.api.sdk.response.ware.WareAddVenderSellSkuResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.JdBase;
 import com.voyageone.components.jd.JdConstants;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 京东类目类 api 调用服务
@@ -73,6 +77,20 @@ public class JdCategoryService extends JdBase {
      * @return List<CategoryAttributeSearchResponse.Attribute> 京东类目属性列表
      */
     public List<CategoryAttributeSearchResponse.Attribute> getCategoryAttrInfo(ShopBean shop, String catId) {
+        return getCategoryAttrInfo(shop, catId, "false");
+    }
+
+
+    /**
+     * 取得京东类目属性信息列表
+     *
+     * @param shop ShopBean            店铺信息
+     * @param catId String             类目id
+     * @param isSaleProp String       是否只查询销售属性（这个地方只能填true的话，只返回颜色和尺码）
+     *
+     * @return List<CategoryAttributeSearchResponse.Attribute> 京东类目属性列表
+     */
+    public List<CategoryAttributeSearchResponse.Attribute> getCategoryAttrInfo(ShopBean shop, String catId, String isSaleProp) {
         List<CategoryAttributeSearchResponse.Attribute> jdCategoryAttrList = new ArrayList<>();
 
         CategoryAttributeSearchRequest request = new CategoryAttributeSearchRequest();
@@ -85,7 +103,7 @@ public class JdCategoryService extends JdBase {
         // 是否关键属性（这个地方只能填false）
         request.setKeyProp("false");
         // 是否销售属性（这个地方只能填true的话，只返回颜色和尺码）
-        request.setSaleProp("false");
+        request.setSaleProp(isSaleProp);
 
         try {
             // 调用京东商家类目属性信息API(360buy.ware.get.attribute)
@@ -155,27 +173,120 @@ public class JdCategoryService extends JdBase {
      * @return List<VenderBrandPubInfo> 品牌信息列表
      */
     public List<VenderBrandPubInfo> getCategoryBrandInfo(ShopBean shop, String brandName) {
-    	List<VenderBrandPubInfo> jdVenderBrandPubInfo = Collections.emptyList();
-    	// API请求
-    	PopVenderCenerVenderBrandQueryRequest request = new PopVenderCenerVenderBrandQueryRequest();
-    	// 设置品牌名称（可模糊查询）
-    	request.setName(brandName);
-    	
-    	try {
-    		// 调用京东商家品牌信息API
-    		PopVenderCenerVenderBrandQueryResponse response = reqApi(shop, request);
-    		// 京东返回正常的场合
-    		if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())
-    				&& response.getBrandList() != null) {
-    			// 品牌信息存在
-    			jdVenderBrandPubInfo = response.getBrandList();
-    		}
-    	} catch (Exception e) {
-			logger.error("调用京东API获取品牌信息失败 [channel_id={}, cart_id={}, brand_name={}]", new Object[]{shop.getOrder_channel_id(), shop.getCart_id(), brandName});
-			throw new BusinessException(shop.getShop_name() + "取得京东商家品牌信息失败 " + e.getMessage());
-		}
-    	
-    	return jdVenderBrandPubInfo;
+        List<VenderBrandPubInfo> jdVenderBrandPubInfo = Collections.emptyList();
+        // API请求
+        PopVenderCenerVenderBrandQueryRequest request = new PopVenderCenerVenderBrandQueryRequest();
+        // 设置品牌名称（可模糊查询）
+        request.setName(brandName);
+        
+        try {
+            // 调用京东商家品牌信息API
+            PopVenderCenerVenderBrandQueryResponse response = reqApi(shop, request);
+            // 京东返回正常的场合
+            if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())
+                    && response.getBrandList() != null) {
+                // 品牌信息存在
+                jdVenderBrandPubInfo = response.getBrandList();
+            }
+        } catch (Exception e) {
+            logger.error("调用京东API获取品牌信息失败 [channel_id={}, cart_id={}, brand_name={}]", new Object[]{shop.getOrder_channel_id(), shop.getCart_id(), brandName});
+            throw new BusinessException(shop.getShop_name() + "取得京东商家品牌信息失败 " + e.getMessage());
+        }
+        
+        return jdVenderBrandPubInfo;
     }
-    
+
+    /**
+     * 添加商家商品销售属性
+     *
+     * @param shop       店铺信息
+     * @param catId      类目id
+     * @param idx        属性值index
+     * @param attrId     属性id
+     * @param attrValue  属性值
+     * @param features   属性值特征(如果属性是颜色，必须传入例如:class:#FFFFFF; 尺码的时候不用填)
+     * @param status     属性值状态(-1：删除, 0：停用，1：显示，2：隐藏)  默认为1(显示)
+     * @return List<AttValue>      京东类目属性值列表
+     */
+    public boolean addWareVenderSellSku(ShopBean shop, String catId, int idx, String attrId, String attrValue,
+                                               String features, String status) {
+
+        WareAddVenderSellSkuRequest request = new WareAddVenderSellSkuRequest();
+
+        // 类目id
+        request.setCategory_id(catId);
+        // 排序编号,最多3位，不能为负数
+        request.setIndex_id(StringUtils.toString(idx));
+        // 属性id
+        request.setAttribute_id(attrId);
+        // 属性值
+        request.setAttribute_value(attrValue);
+        // 属性值特征(如果属性是颜色，必须传入例如:class:#FFFFFF; 尺码的时候不用填)
+        if (!StringUtils.isEmpty(features))  request.setFeatures(features);
+        // 属性值状态(-1：删除, 0：停用，1：显示，2：隐藏)  默认为1(显示)
+        request.setStatus(StringUtils.isEmpty(status) ? "1" : status);
+
+        try {
+            // 调用京东添加商家商品销售属性API(360buy.wares.vendersellsku.add)
+            WareAddVenderSellSkuResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return true;
+                }
+            }
+        } catch (Exception ex) {
+            String errMsg = String.format("调用京东API添加商家商品销售属性值失败! [channelId:%s] [cartId:%s] [catId:%s], " +
+                    "[attrId:%s] [attrValue:%s] [features:%s] [status:%s] [errMsg:%s]", shop.getOrder_channel_id(), shop.getCart_id(),
+                    catId, attrId, attrValue, features, status, ex.getMessage());
+            logger.error(errMsg);
+
+            throw new BusinessException(shop.getShop_name() + errMsg);
+        }
+
+        return false;
+    }
+
+    /**
+     * 获取单个类目信息
+     *
+     * @param shop ShopBean  店铺信息
+     * @param catId Long  京东类目Id
+     * @return CategoryReadService.Category  类目信息
+     */
+    public com.jd.open.api.sdk.domain.list.CategoryReadService.Category getCategoryById(ShopBean shop, Long catId, StringBuilder failCause) throws BusinessException {
+        CategoryReadFindByIdRequest request = new CategoryReadFindByIdRequest();
+
+        // 类目id
+        request.setCid(catId);
+        // 需要返回的字段列表
+        request.setField("fid,id,lev,name,order,features");
+
+        try {
+            // 调用京东获取单个类目信息API(jingdong.category.read.findById)
+            CategoryReadFindByIdResponse response = reqApi(shop, request);
+
+            if (response != null) {
+                // 京东返回正常的场合
+                if (JdConstants.C_JD_RETURN_SUCCESS_OK.equals(response.getCode())) {
+                    return response.getCategory();
+                } else {
+                    // 京东返回失败的场合
+                    throw new BusinessException(response.getZhDesc());
+                }
+            } else {
+                // response = null（https://api.jd.com/routerjson）不能访问的可能原因是服务器禁掉了https端口
+                // 或app_url,app_key等不正确
+                throw new BusinessException("京东根据类目ID获取单个类目信息返回应答为空(response = null)");
+            }
+        } catch (Exception ex) {
+            String errMsg = String.format("调用京东API获取单个类目信息失败! [catId:%s] [errMsg:%s]", StringUtils.toString(catId), ex.getMessage());
+            logger.error(errMsg);
+            failCause.append(errMsg);
+        }
+
+        return null;
+    }
+
 }

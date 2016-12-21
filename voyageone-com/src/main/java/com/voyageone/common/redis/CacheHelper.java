@@ -50,6 +50,7 @@ public class CacheHelper {
         RedisTemplate template = getCacheTemplate();
         if (template instanceof VoCacheTemplate) {
             return ((VoCacheTemplate)template).opsForHash(isLocal);
+
         }
         return getCacheTemplate().opsForHash();
     }

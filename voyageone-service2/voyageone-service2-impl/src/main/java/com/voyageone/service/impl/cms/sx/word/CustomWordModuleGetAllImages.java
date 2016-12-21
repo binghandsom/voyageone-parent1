@@ -1,10 +1,9 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.HttpUtils;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
@@ -17,7 +16,10 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
@@ -55,6 +57,12 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         RuleExpression useCmsBtImageTemplateExpression = customModuleUserParamGetAllImages.getUseCmsBtImageTemplate();
         String useCmsBtImageTemplate = expressionParser.parse(useCmsBtImageTemplateExpression, shopBean, user, extParameter);
         // added by morse.lu 2016/07/18 end
+        // added by morse.lu 2016/12/05 start
+        RuleExpression codeIndexExpression = customModuleUserParamGetAllImages.getCodeIndex();
+        List<String> codeIndexList = parseRuleExpression(codeIndexExpression, expressionParser, shopBean, user, extParameter);
+        RuleExpression imageIndexExpression = customModuleUserParamGetAllImages.getImageIndex();
+        List<String> imageIndexList = parseRuleExpression(imageIndexExpression, expressionParser, shopBean, user, extParameter);
+        // added by morse.lu 2016/12/05 end
 
         //system param
         List<CmsBtProductModel> sxProducts = sxData.getProductList();
@@ -62,26 +70,59 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
         String parseResult = "";
         Set<String> imageSet = new HashSet<>();
 
+        // added by morse.lu 2016/12/05 start
+        int iCodeIndex = 0;
+        // added by morse.lu 2016/12/05 end
         for (CmsBtProductModel sxProduct : sxProducts) {
+            // added by morse.lu 2016/12/05 start
+            if (ListUtils.notNull(codeIndexList)) {
+                if (sxProduct.getCommon().getFields().getCode().equals(sxData.getMainProduct().getCommon().getFields().getCode())) {
+                    // 主商品跳过
+                    continue;
+                }
+                if (!codeIndexList.contains(String.valueOf(iCodeIndex))) {
+                    iCodeIndex++;
+                    continue;
+                } else {
+                    iCodeIndex++;
+                }
+            }
+            // added by morse.lu 2016/12/05 end
             // modified by morse.lu 2016/06/02 start
 //            List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProduct.getFields().getImages(imageType);
             // 如果是PRODUCT，先看看image6有没有值，只要image6有一条，那么都从image6里取,否则还是去取image1
             List<CmsBtProductModel_Field_Image> cmsBtProductModelFieldImages = sxProductService.getProductImages(sxProduct, imageType);
             // modified by morse.lu 2016/06/02 end
 
+            // added by morse.lu 2016/12/05 start
+            int iImageIndex = 0;
+            // added by morse.lu 2016/12/05 end
             // added by morse.lu 2016/06/13 start
-            int index = 0;
+//            int index = 0;
             // added by morse.lu 2016/06/13 end
             for (CmsBtProductModel_Field_Image cmsBtProductModelFieldImage : cmsBtProductModelFieldImages) {
-                // added by morse.lu 2016/06/13 start
-                // target店，第一张图不要，从第二张开始到第六张
-                index++;
-                if (sxData.getChannelId().equals(ChannelConfigEnums.Channel.TARGET.getId())
-                        && CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType
-                        && (index < 2 || index > 6)) {
-                    continue;
+                // added by morse.lu 2016/12/05 start
+                if (ListUtils.notNull(imageIndexList)) {
+                    if (!imageIndexList.contains(String.valueOf(iImageIndex))) {
+                        iImageIndex++;
+                        continue;
+                    } else {
+                        iImageIndex++;
+                    }
                 }
-                // added by morse.lu 2016/06/13 end
+                // added by morse.lu 2016/12/05 end
+                // deleted by morse.lu 2016/12/05 start
+                // 加到字典里去
+//                // added by morse.lu 2016/06/13 start
+//                // target店，第一张图不要，从第二张开始到第六张
+//                index++;
+//                if (sxData.getChannelId().equals(ChannelConfigEnums.Channel.TARGET.getId())
+//                        && CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE == imageType
+//                        && (index < 2 || index > 6)) {
+//                    continue;
+//                }
+//                // added by morse.lu 2016/06/13 end
+                // deleted by morse.lu 2016/12/05 end
                 // 20160512 tom 有可能为空 add START
                 if (StringUtils.isEmpty(cmsBtProductModelFieldImage.getName())) {
                     continue;

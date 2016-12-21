@@ -3,14 +3,16 @@ package com.voyageone.service.impl.cms.sx.word;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
-import com.voyageone.common.util.HttpUtils;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.ims.rule_expression.CustomWord;
+import com.voyageone.ims.rule_expression.RuleExpression;
+import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by morse.lu on 16-4-26.(copy from task2 and then modified)
@@ -86,4 +88,17 @@ public abstract class CustomWordModule extends VOAbsLoggable {
         return completeImageOriUrl;
     }
     // Add by desmond 2016/07/15 end
+
+    protected List<String> parseRuleExpression(RuleExpression ruleExpression, ExpressionParser expressionParser, ShopBean shopBean, String user, String[] extParameter) throws Exception {
+        List<String> ret = new ArrayList<>();
+
+        if (ruleExpression != null && ListUtils.notNull(ruleExpression.getRuleWordList())) {
+            for (RuleWord ruleWord : ruleExpression.getRuleWordList()) {
+                String plainValue = expressionParser.parseWord(ruleWord, shopBean, user, extParameter);
+                ret.add(plainValue);
+            }
+        }
+
+        return ret;
+    }
 }

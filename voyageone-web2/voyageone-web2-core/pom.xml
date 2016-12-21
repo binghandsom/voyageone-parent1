@@ -33,6 +33,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-security</artifactId>
+			<version>${voyageone.web2.security.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
@@ -48,6 +54,7 @@
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-all</artifactId>
 		</dependency>
+
 	</dependencies>
 	<build>
 		<finalName>voyageone-core</finalName>

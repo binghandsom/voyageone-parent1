@@ -149,6 +149,10 @@ public class FeedEnums {
         is_usjoi,
         weight_org,
         weight_org_unit,
-        weight_calc
+        weight_calc,
+        translationName1,
+        translationValue1,
+        translationName2,
+        translationValue2
     }
 }

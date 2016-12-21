@@ -1743,6 +1743,27 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
             }
             // add desmond 2016/07/05 end
 
+            // Luckyvitamin feed中文名称和中文描述对应
+            if ("017".equalsIgnoreCase(feed.getChannelId())) {
+                if (StringUtil.isEmpty(productCommonField.getOriginalTitleCn())) {
+                    if (feed.getAttribute() != null && feed.getAttribute().get("translationValue1") != null) {
+                        List<String> v = feed.getAttribute().get("translationValue1");
+                        if (!ListUtils.isNull(v)) {
+                            productCommonField.setOriginalTitleCn(v.get(0));
+                        }
+                    }
+
+                }
+                if (StringUtil.isEmpty(productCommonField.getLongDesCn())) {
+                    if (feed.getAttribute() != null && feed.getAttribute().get("translationValue2") != null) {
+                        List<String> v = feed.getAttribute().get("translationValue2");
+                        if (!ListUtils.isNull(v)) {
+                            productCommonField.setLongDesCn(v.get(0));
+                        }
+                    }
+                }
+            }
+
 //            return productField;
             return productCommonField;
         }
@@ -2570,6 +2591,10 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                             entry.getValue().setSkus(new ArrayList<BaseMongoMap<String, Object>>());
                         }
                         entry.getValue().getSkus().add(skuInfo);
+                        // 已经approved的商品如果用新的sku的场合 platforms.Pxx.isNewSku = "1" james CMSDOC-340
+                        if(entry.getValue().getCartId() != 928 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(entry.getValue().getStatus())){
+                            entry.getValue().setIsNewSku("1");
+                        }
                     }
                 }
             }
@@ -3043,7 +3068,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
 
                 newModel.setCreater(getTaskName());
                 newModel.setModifier(getTaskName());
-                String URL_FORMAT = "[~@.' '#+$%&*_'':/‘’^\\()]";
+                String URL_FORMAT = "[~@.' ';#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
                         channelId.equals(cmsChannelConfigBean.getChannelId())) {

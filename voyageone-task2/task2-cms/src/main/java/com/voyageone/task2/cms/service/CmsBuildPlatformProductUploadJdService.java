@@ -12,6 +12,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -56,6 +57,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -266,6 +268,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         SxData sxData = null;
         // 新增或更新商品标志
         boolean updateWare = false;
+        // 是否是智能上新(status:3(智能上新))
+        boolean blnForceSmartSx = false;
+        String sxType = "普通上新";
+        if (CmsConstants.SxWorkloadPublishStatusNum.smartSx == cmsBtSxWorkloadModel.getPublishStatus()) {
+            blnForceSmartSx = true;
+            sxType = "智能上新";
+        }
 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
@@ -489,10 +498,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             // 编辑京东共通属性
-            boolean blnForceSmartSx = false;
-            if (3 == cmsBtSxWorkloadModel.getPublishStatus()) {
-                blnForceSmartSx = true;
-            }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
                     jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
             // 更新时设置商品id
@@ -589,7 +594,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 } catch (Exception ex) {
                     String errMsg = String.format("新增商品之后调用京东商品更新API批量设置SKU信息失败! [WareId:%s]", jdWareId);
                     $error(errMsg);
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getMessage());
+                    sxData.setErrorMessage(ex.getMessage());
                 }
 
                 // 设置SKU信息是否成功判断
@@ -600,7 +605,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(shopProp.getShop_name() + " " + errMsg);
+                        sxData.setErrorMessage(errMsg);
                     }
                 }
 
@@ -616,7 +621,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     } catch (Exception ex) {
                         String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getMessage());
+                        sxData.setErrorMessage(ex.getMessage());
                         throw ex;
                     }
 
@@ -701,7 +706,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         $error(errMsg);
                         // 如果上新数据中的errorMessage为空
                         if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                            sxData.setErrorMessage(shopProp.getShop_name() + " " + errMsg);
+                            sxData.setErrorMessage(errMsg);
                         }
                     }
                 }
@@ -744,6 +749,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
                 // 上新成功之后回写jdSkuId操作
                 updateSkuIds(shopProp, StringUtils.toString(jdWareId), updateWare);
+
+                // added by morse.lu 2016/12/08 start
+                if (ChannelConfigEnums.Channel.SN.equals(channelId)) {
+                    // Sneakerhead
+                    try {
+                        sxProductService.uploadCnInfo(sxData);
+                    } catch (IOException io) {
+                        throw new BusinessException("上新成功!但在推送给美国数据库时发生异常!"+ io.getMessage());
+                    }
+                }
+                // added by morse.lu 2016/12/08 end
             } else {
                 // 新增或更新商品失败
                 String errMsg = String.format("京东单个商品新增或更新信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
@@ -751,7 +767,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 $error(errMsg);
                 // 如果上新数据中的errorMessage为空
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " 京东单个商品新增或更新信息失败！请向管理员确认 [WareId:" + jdWareId + "]" );
+                    sxData.setErrorMessage(errMsg);
+                }
+
+                if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
+                    sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
+                } else {
+                    sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
                 }
 
                 // 更新商品出错时，也要设置运费模板和关联板式
@@ -778,7 +800,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请跟管理员联系 [上新数据为null]");
+                sxData.setErrorMessage("取得上新用的商品数据信息异常,请跟管理员联系! [上新数据为null]");
             }
             if (ex instanceof BusinessException) {
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
@@ -789,11 +811,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现不可预知的错误，请跟管理员联系. " + ex.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("出现不可预知的错误，请跟管理员联系! " + ex.getStackTrace()[0].toString());
                     ex.printStackTrace();
                 } else {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
+                    sxData.setErrorMessage(ex.getMessage());
                 }
+            }
+
+            if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
+                sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
+            } else {
+                sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
             }
 
             // 上新出错时状态回写操作
@@ -803,11 +831,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         // 正常结束
         if (!updateWare) {
-            $info(String.format("京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         } else {
-            $info(String.format("京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         }
 
     }
@@ -961,9 +989,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, getTaskName(), null);
             }
         } catch (Exception ex) {
-            String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
-                    channelId, cartId, groupId, platformCategoryId);
-            $error(errMsg, ex);
+            String errMsg = String.format("京东取得详情页描述信息失败！[errMsg:%s]", ex.getMessage());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
         }
         jdProductBean.setNotes(strNotes);
 
@@ -2369,7 +2397,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 当前平台主类目对应的销售属性状况(默认为4:没有颜色没有尺寸属性)
         String salePropStatus = "4";
 
-        if ("017".equals(orgChannelId)) {
+        if (ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId().equals(orgChannelId)) {
             // 017:LuckyVitamin店一个SKU是一个CODE，所以他们希望全店都只有颜色，不要尺码
             // 2:只有颜色没有尺寸属性
             salePropStatus = "2";
@@ -2654,6 +2682,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         return lastSkuId;
+    }
+
+    /**
+     * 获得log头部信息
+     *
+     * @param shopName 店铺名称
+     * @param sxType   上新类型
+     * @return String  log头部信息
+     */
+    private String getPreMsg(String shopName, String sxType) {
+        return shopName + "[" + sxType + "] ";
     }
 
 }

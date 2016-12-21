@@ -30,6 +30,7 @@ public interface CmsUrlConstants {
             String GET_MAIN_CATEGORIES = "getMainCategories";
 
             String GET_CARTS = "getCarts";
+            String GetMenuHeaderInfo="getMenuHeaderInfo";
         }
     }
 
@@ -663,9 +664,30 @@ public interface CmsUrlConstants {
             String ROOT = "/cms/product/statushistory";
             String GetPage = "getPage";
         }
+
+        interface CombinedProduct {
+            String ROOT = "cms/combined/product";
+            String INIT = "init";
+            String SEARCH = "search";
+            String GET_COMBINED_PRODUCT_PLATFORM_DETAIL = "getCombinedProductPlatformDetail";
+            String GET_SKU_DETAIL = "getSkuDetail";
+            String ADD = "add";
+            String DELETE = "delete";
+            String GET_COMBINED_PRODUCT_DETAIL = "getCombinedProductDetail";
+            String EDIT = "edit";
+            String ON_OFF_SHELVES = "onOffShelves";
+            String GET_OPERATE_LOGS = "getOperateLogs";
+        }
     }
-
-
+    interface ProductTop {
+        String ROOT = "/cms/producttop";
+        String Init="init";
+        String GetPage = "getPage";
+        String GetCount = "getCount";
+        String GetTopList="getTopList";
+        String AddTopProduct="addTopProduct";
+        String SaveTopProduct="saveTopProduct";
+    }
     // 商品编辑
     interface GROUP {
 

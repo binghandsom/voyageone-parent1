@@ -12,6 +12,7 @@ import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 /**
  * Response Utils
@@ -64,8 +65,11 @@ public class ResponseUtils {
             code = caException.getErrCode();
             message = caException.getErrMsg();
         } else if (exception instanceof HttpMessageNotReadableException) {
-            code = String.valueOf(ErrorIDEnum.InvalidRequest.getCode());
+            code = String.valueOf(ErrorIDEnum.InvalidRequiredParameter.getCode());
             message = exception.getMessage();
+        } else if (exception instanceof HttpRequestMethodNotSupportedException) {
+            code = String.valueOf(ErrorIDEnum.InvalidRequest.getCode());
+            message = ErrorIDEnum.InvalidRequest.getDefaultMessage();
         } else {
             code = String.valueOf(ErrorIDEnum.SystemUnavailable.getCode());
             message = ErrorIDEnum.SystemUnavailable.getDefaultMessage();

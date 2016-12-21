@@ -161,6 +161,10 @@ public class CmsSizeChartService extends BaseViewService {
             //插入
             model = sizeChartService.insert(channelId, userName, sizeChartName, brandNameList, productTypeList, sizeTypeList);
         }
+
+        /**
+         * 相应平台尺码对照图检测保存
+         * */
         for (Map<String, Object> mapImageGroup : listImageGroup) {//[{cartId:0,imageGroupName:"22",imageGroupId:1}]
             long imageGroupId = ConvertUtil.toLong(mapImageGroup.get("imageGroupId"));
             String imageGroupName = ConvertUtil.toString(mapImageGroup.get("imageGroupName"));

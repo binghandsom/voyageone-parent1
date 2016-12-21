@@ -2,7 +2,7 @@ package com.voyageone.service.impl.com.mq.config;
 
 /**
  * @author aooer 2016/4/18.
- * @version 2.6.0
+ * @version 2.10.0
  * @since 2.0.0
  */
 public class MqRoutingKey {
@@ -83,6 +83,11 @@ public class MqRoutingKey {
     public static final String CMS_BATCH_ShelvesImageUploadJob = "voyageone_cms_batchjob_ShelvesImageUpload_queue";
 
     /**
+     * cart追加 把product表中的platform追加一个cart
+     */
+    public static final String CMS_BATCH_CartAddJob = "voyageone_cms_batchjob_CartAdd_queue";
+
+    /**
      * 同步产品sku的价格至code的group价格范围
      */
     public static final String CMS_TASK_ProdcutPriceUpdateJob = "voyageone_cms_task_ProdcutPriceUpdateJob_queue";
@@ -122,4 +127,18 @@ public class MqRoutingKey {
      * @since 2.9.0
      */
     public static final String CMS_TASK_REFRESH_PRODUCTS = "voyageone_cms_task_CmsRefreshProductsJobService_queue";
+    /**
+     * 天猫同购共通标题描述翻译
+     *
+     * @since 2.10.0
+     */
+    public static final String CMS_TASK_TranslateByTonggouJob = "voyageone_cms_task_TranslateByTonggouJobService_queue";
+    /**
+     * 京东类目销售属性取得
+     *
+     * @since 2.10.0
+     */
+    public static final String CMS_TASK_CatelogySaleAttrJdJob = "voyageone_cms_task_CatelogySaleAttrJdJobService_queue";
+
 }
+

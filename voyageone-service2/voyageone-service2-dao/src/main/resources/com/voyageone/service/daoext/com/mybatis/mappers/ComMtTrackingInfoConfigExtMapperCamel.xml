@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.com.ComMtTrackingInfoConfigDaoExt">
+
+	<resultMap id="cartTrackingBeanMap" type="com.voyageone.service.bean.com.ComMtTrackingInfoConfigBean" />
+	
+	<sql id="selectCartTrackingFilter">
+		<where>
+            <if test="orderChannelId != null and orderChannelId != ''" >
+                and cmtic.order_channel_id = #{orderChannelId}
+            </if>
+            <if test="cartId != null" >
+                and cmtic.cart_id = #{cartId}
+            </if>
+			<if test="trackingStatus != null and trackingStatus != ''">
+				and cmtic.tracking_status like concat('', #{trackingStatus}, '')
+			</if>
+            <if test="location != null and location != ''" >
+                and cmtic.location like concat('', #{location}, '')
+            </if>
+            <if test="active != null">
+            	and cmtic.active = #{active}
+            </if>
+        </where>
+	</sql>
+    
+    <select id="selectCartTrackingByPage" resultMap="cartTrackingBeanMap">
+    	select toc.name as channel_name, cc.name as cart_name, cmtic.seq, cmtic.order_channel_id, cmtic.cart_id,
+			cmtic.tracking_status, cmtic.tracking_info, cmtic.location, cmtic.display_flg, cmtic.display_status,
+			cmtic.tracking_area, cmtic.tracking_spread_flg, cmtic.`comment`, cmtic.active,
+			cmtic.created, cmtic.creater, cmtic.modified, cmtic.modifier
+		from com_mt_tracking_info_config cmtic left join ct_cart cc on cc.cart_id = cmtic.cart_id
+			left join tm_order_channel toc on toc.order_channel_id = cmtic.order_channel_id
+    	<include refid="selectCartTrackingFilter"/>
+    	order by modified desc
+    </select>
+    
+    <select id="selectCartTrackingCount" resultType="integer">
+    	select count(0) from com_mt_tracking_info_config cmtic
+    	<include refid="selectCartTrackingFilter"/>
+    </select>
+
+</mapper>
