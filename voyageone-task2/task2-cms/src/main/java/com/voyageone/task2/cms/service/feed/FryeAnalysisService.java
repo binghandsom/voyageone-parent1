@@ -105,7 +105,7 @@ public class FryeAnalysisService extends BaseAnalysisService {
                                     for (Map.Entry<String, String> entry : Attribute.getValues().entrySet()) {
                                         sbGender.append(entry.getValue());
                                     }
-                                    fryeBean.setSex(String.valueOf(sbGender));
+                                    fryeBean.setTaxCode(String.valueOf(sbGender));
                                 }
                             });
                         }
@@ -135,9 +135,21 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         fryeBean.setMetadataDescription2(metaDataBean.getDescription2());
                         fryeBean.setMetadataDescription3(metaDataBean.getDescription3());
                         fryeBean.setMetadataDescription4(metaDataBean.getDescription4());
-                        fryeBean.setMetadataDescription2withformatting(metaDataBean.getDescription2WithFormatting());
-                        fryeBean.setMetadataDescription3withformatting(metaDataBean.getDescription3WithFormatting());
-                        fryeBean.setMetadataDescription4withformatting(metaDataBean.getDescription4WithFormatting());
+                        if(!StringUtil.isEmpty(metaDataBean.getDescription2WithFormatting())){
+                            fryeBean.setMetadataDescription2withformatting(metaDataBean.getDescription2WithFormatting());
+                        }else {
+                            fryeBean.setMetadataDescription2withformatting("");
+                        }
+                        if(!StringUtil.isEmpty(metaDataBean.getDescription3WithFormatting())){
+                            fryeBean.setMetadataDescription3withformatting(metaDataBean.getDescription3WithFormatting());
+                        }else{
+                            fryeBean.setMetadataDescription3withformatting("");
+                        }
+                        if(!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())){
+                            fryeBean.setMetadataDescription4withformatting(metaDataBean.getDescription4WithFormatting());
+                        }else{
+                            fryeBean.setMetadataDescription4withformatting("");
+                        }
                         if(!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())){
                             String origin = metaDataBean.getDescription4WithFormatting().replaceAll("<ul>","").replaceAll("</ul>",",").replaceAll("<li>","").replaceAll("</li>",",");
                             String[] originList = origin.split(",");
@@ -177,6 +189,10 @@ public class FryeAnalysisService extends BaseAnalysisService {
                             fryeBean.setSex("unisex");
                         }
                         fryeBean.setMetadataDetail(metaDataBean.getDetail());
+                        //如果【Fabric】为空，取MetaData.Detail
+                        if(StringUtil.isEmpty(fryeBean.getFabric())){
+                            fryeBean.setFabric(metaDataBean.getDetail());
+                        }
                         fryeBean.setMetadataUnitcost(metaDataBean.getUnitCost());
                         fryeBean.setMetadataPreviouscost(metaDataBean.getPreviousCost());
                         fryeBean.setMetadataMaxcost(metaDataBean.getMaxCost());
