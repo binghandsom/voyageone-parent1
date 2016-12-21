@@ -14,7 +14,6 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.*;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -28,22 +27,22 @@ import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
-import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -302,9 +301,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 }
                 // 超过最大行的场合
-                if (!isContinueOutput) {
-                    break;
-                }
+//                if (!isContinueOutput) {
+//                    break;
+//                }
             }
             $info("文档写入完成");
 
@@ -647,10 +646,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
                 if (ptfObj == null) {
                     // 没有设值时也要输出,不然就会错位
-                	int columnLength = _DynCol.length;
-                	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                		columnLength = _DynColJM.length;
-                	}
+                    int columnLength = _DynCol.length;
+                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                        columnLength = _DynColJM.length;
+                    }
                     for (int i = 0; i < columnLength; i ++) {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     }
@@ -658,7 +657,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
                 if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                     if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                    	// JmMallURL
+                        // JmMallURL
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
                         // JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
@@ -668,13 +667,13 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                         FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
                     }
                 } else {
-                	// 补齐聚头的MallURL和MallID的空白列
-                	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                		// JmMallURL 
+                    // 补齐聚头的MallURL和MallID的空白列
+                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                        // JmMallURL
                         FileUtils.cell(row, index++, unlock).setCellValue("");
-                		// JmMallID 
+                        // JmMallID
                         FileUtils.cell(row, index++, unlock).setCellValue("");
-                	}
+                    }
                     FileUtils.cell(row, index++, unlock).setCellValue("");
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));
@@ -845,10 +844,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
             for (TypeChannelBean cartObj : cartList) {
                 CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
-    			int columnLength = _DynColGroup.length;
-            	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-            		columnLength = _DynColJMGroup.length;
-            	}
+                int columnLength = _DynColGroup.length;
+                if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                    columnLength = _DynColJMGroup.length;
+                }
                 if (ptfObj == null) {
                     // 没有设值时也要输出,不然就会错位
                     for (int i = 0; i < columnLength; i ++) {
@@ -871,7 +870,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 } else {
                     if (org.apache.commons.lang3.StringUtils.isNotEmpty(grpModel.getNumIId())) {
                         if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                        	// JmMallURL
+                            // JmMallURL
                             FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
                             // JmMallID
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
@@ -881,13 +880,13 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                             FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + grpModel.getNumIId());
                         }
                     } else {
-                    	// 补齐聚头的MallURL和MallID的空白列
-                    	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                    		// JmMallURL 
+                        // 补齐聚头的MallURL和MallID的空白列
+                        if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                            // JmMallURL
                             FileUtils.cell(row, index++, unlock).setCellValue("");
-                    		// JmMallID 
+                            // JmMallID
                             FileUtils.cell(row, index++, unlock).setCellValue("");
-                    	}
+                        }
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     }
                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(grpModel.getNumIId()));
@@ -999,17 +998,17 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
                 // 重量
                 if (skuItem.getWeight() == null) {
-                	FileUtils.cell(row, index++, unlock).setCellValue("");
+                    FileUtils.cell(row, index++, unlock).setCellValue("");
                 } else {
-                	FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getWeight());
+                    FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getWeight());
                 }
 
                 for (TypeChannelBean cartObj : cartList) {
                     CmsBtProductModel_Platform_Cart ptfObj = item.getPlatform(Integer.parseInt(cartObj.getValue()));
-        			int columnLength = _DynCol.length;
-                	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                		columnLength = _DynColJMSKU.length;
-                	}else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
+                    int columnLength = _DynCol.length;
+                    if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                        columnLength = _DynColJMSKU.length;
+                    }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
                         columnLength = _DynColCNJDSKU.length;
                     }
                     if (ptfObj == null) {
@@ -1031,7 +1030,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                         if (skuItem.getSkuCode().equals(prop.getStringAttribute("skuCode"))) {
                             if (org.apache.commons.lang3.StringUtils.isNotEmpty(ptfObj.getpNumIId())) {
                                 if (cartObj.getValue().equals(CartEnums.Cart.JM.getId())) {
-                                	// JmMallURL
+                                    // JmMallURL
                                     FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpPlatformMallId() + ".html");
                                     // JmMallID
                                     FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpPlatformMallId()));
@@ -1048,15 +1047,15 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                                     FileUtils.cell(row, index++, unlock).setCellValue(platformService.getPlatformProductUrl(cartObj.getValue()) + ptfObj.getpNumIId());
                                 }
                             } else {
-                            	// 补齐聚头的MallURL, MallID和SkuNo的空白列
-                            	if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
-                            		// JmMallURL 
+                                // 补齐聚头的MallURL, MallID和SkuNo的空白列
+                                if (CartEnums.Cart.JM.getId().equals(cartObj.getValue())) {
+                                    // JmMallURL
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
-                            		// JmMallID 
+                                    // JmMallID
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
-                            		// JmSkuNo
+                                    // JmSkuNo
                                     FileUtils.cell(row, index++, unlock).setCellValue("");
-                            	}
+                                }
                                 FileUtils.cell(row, index++, unlock).setCellValue("");
                             }
                             FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(ptfObj.getpNumIId()));

@@ -687,7 +687,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 类目设置状态(common.fields.categoryStatus)
-                            if (StringUtil.isEmpty(prCommonFields.getCategoryStatus())
+                            if ((StringUtil.isEmpty(prCommonFields.getCategoryStatus()) || "0".equals(prCommonFields.getCategoryStatus()))
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus())) {
                                 prCommonFields.setCategoryStatus(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus());
                             }
@@ -705,7 +705,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 商品翻译状态(common.fields.translateStatus)
-                            if (StringUtil.isEmpty(prCommonFields.getTranslateStatus())
+                            if ((StringUtil.isEmpty(prCommonFields.getTranslateStatus()) || "0".equals(prCommonFields.getTranslateStatus()))
                                     && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getTranslateStatus())) {
                                 prCommonFields.setTranslateStatus(productModel.getCommonNotNull().getFieldsNotNull().getTranslateStatus());
                             }
