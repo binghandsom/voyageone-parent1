@@ -61,6 +61,10 @@ define([
                         alert($translate.instant('没有设置上下架操作，请选择后重试'));
                         return;
                     }
+                    if (res.data.ecd == 3) {
+                        alert($translate.instant('上架操作，选择的商品库存都不大于0'));
+                        return;
+                    }
                     $modalInstance.close();
                     notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 });
