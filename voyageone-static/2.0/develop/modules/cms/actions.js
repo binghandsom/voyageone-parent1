@@ -139,7 +139,8 @@ define(function () {
                     getSkuStockInfo: 'getSkuStockInfo',
                     restoreImg: "restoreImg",
                     doAppSwitch: "doAppSwitch",
-                    doTranslateStatus: "doTranslateStatus"
+                    doTranslateStatus: "doTranslateStatus",
+                    getProductIdByCode:"getProductIdByCode"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",

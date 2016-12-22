@@ -256,7 +256,8 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         BaseMongoMap<String, String> productInfoMap = getProductCommonInfo();
 
         // 循环取得的产品code列表，把要翻译的中文信息批量更新到mongoDB产品表中
-        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+//        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
+        BulkJongoUpdateList bulkList = new BulkJongoUpdateList(10, cmsBtProductDao, channelId);
         BulkWriteResult rs;
         for (String code : codeList) {
             // 单个code
@@ -353,7 +354,7 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
                 // 更新翻译专用商品，翻译想要翻译的项目英文内容
                 result = updateTransWare(numIIdForTransOnly, strTransTitleEn, strTransEn, otherItemMap, productInfoMap, transShop);
                 // 为了不让天猫报错，休息一下
-                Thread.sleep(10);
+                Thread.sleep(1000);
                 if (StringUtils.isEmpty(result)) {
                     // 如果没有返回值为空，则继续翻译下一个待翻译项目
                     continue;
@@ -420,9 +421,9 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
             int index = 0;
             for (Map.Entry<String, String> entry : transResultMap.entrySet()) {
                 if (index == 0) {
-                    sbUpdate.append("'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\'") + "'");
+                    sbUpdate.append("'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'").replace("\"", "\\\"") + "\"");
                 } else {
-                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':'" + entry.getValue().replace("'", "\'") + "'");
+                    sbUpdate.append(", 'common.fields." + entry.getKey() + "':\"" + entry.getValue().replace("'", "\\'").replace("\"", "\\\"") + "\"");
                 }
                 index++;
             }

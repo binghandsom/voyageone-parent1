@@ -100,7 +100,7 @@ public class CmsBtJmImageTemplateService {
             index = 0;
         }
         //【品牌Logo】属性为空 &【入口图专场导向文案】不为空时 模板二
-        if (StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
+        if (!StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getEnterGuide()) &&
                 !cmsBtJmPromotionSaveBean.getExtModel().getIsCheckedBrandLogo() &&
                 StringUtil.isEmpty(cmsBtJmPromotionSaveBean.getExtModel().getBrandLogo())) {
             // 模板二
