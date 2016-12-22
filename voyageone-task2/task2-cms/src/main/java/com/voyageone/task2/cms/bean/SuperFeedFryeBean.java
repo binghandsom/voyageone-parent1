@@ -51,6 +51,10 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     private Integer updateflag;
 
+    private Double saleprice;
+
+    private Double price;
+
     private String attributes;
 
     private String fabric;
@@ -569,5 +573,21 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setSex(String sex) {
         this.sex = sex == null ? null : sex.trim();
+    }
+
+    public Double getSaleprice() {
+        return saleprice;
+    }
+
+    public void setSaleprice(Double saleprice) {
+        this.saleprice = saleprice;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }
