@@ -49,9 +49,19 @@ define([
                 self.sourceData.active = self.sourceData.active == '0' ? true : false;
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
-                    self.typeAttrService.addTypeAttribute(self.sourceData);
+                    self.typeAttrService.addTypeAttribute(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
+                    });
                 } else {
-                    self.typeAttrService.updateTypeAttribute(self.sourceData);
+                    self.typeAttrService.updateTypeAttribute(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
+                    });
                 }
                 self.sourceData.active = self.sourceData.active ? '0' : '1';
                 _.extend(result, {'res': 'success', 'sourceData': self.context});
