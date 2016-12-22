@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.com.user;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -121,9 +122,10 @@ public class AdminRoleService extends BaseService {
         if (pageNum != null && pageSize != null) {
             needPage = true;
             paginationResultBean.setCount(adminRoleDaoExt.selectRoleCount(params));
-            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).addSort("modified", Order.Direction.DESC).toMap();
+        } else {
+            params = MySqlPageHelper.build(params).addSort("modified", Order.Direction.DESC).toMap();
         }
-
         List<AdminRoleBean> list = adminRoleDaoExt.selectRoleByPage(params);
         if (!needPage) {
             paginationResultBean.setCount(list.size());

@@ -125,6 +125,8 @@ public class AdminRoleController extends AdminController {
         List<Integer> storeIds = (List<Integer>) requestMap.getOrDefault("storeIds", new ArrayList<>());
         String allChannel = requestMap.getOrDefault("allChannel", "0").toString();
         String allStore = requestMap.getOrDefault("allStore", "0").toString();
+
+
         adminRoleService.updateRole(model, applications, channelIds, storeIds, allChannel, allStore);
         return success(true);
     }
