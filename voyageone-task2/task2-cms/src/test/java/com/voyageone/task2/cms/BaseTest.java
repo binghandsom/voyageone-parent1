@@ -1,6 +1,9 @@
 package com.voyageone.task2.cms;
 
 import com.voyageone.common.logger.VOAbsLoggable;
+import com.voyageone.common.mq.config.MQConfigInit;
+import com.voyageone.task2.base.BaseMQAnnoService;
+import com.voyageone.task2.base.TBaseMQAnnoService;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -13,4 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class BaseTest extends VOAbsLoggable {
+
+
 }

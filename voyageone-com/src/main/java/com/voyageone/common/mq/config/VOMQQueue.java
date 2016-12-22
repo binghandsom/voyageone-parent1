@@ -7,6 +7,6 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface VOQueue {
+public @interface VOMQQueue {
     String[] queues();//default {}
 }

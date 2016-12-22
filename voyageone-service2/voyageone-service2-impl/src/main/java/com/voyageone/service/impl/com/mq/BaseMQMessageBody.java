@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.com.mq.message;
+package com.voyageone.service.impl.com.mq;
 
 import com.voyageone.common.mq.config.IMQMessageBody;
 import com.voyageone.common.mq.exception.MQMessageRuleException;

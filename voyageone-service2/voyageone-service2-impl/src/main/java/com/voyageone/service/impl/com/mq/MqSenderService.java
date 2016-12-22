@@ -7,7 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig;
 import com.voyageone.common.mq.config.IMQMessageBody;
-import com.voyageone.common.mq.config.VOQueue;
+import com.voyageone.common.mq.config.VOMQQueue;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -32,7 +32,7 @@ public class MqSenderService extends BaseService {
     private MqBackMessageService mqBackMessageService;
 
     public  void  sendMessage(IMQMessageBody message) {
-        final VOQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOQueue.class);
+        final VOMQQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOMQQueue.class);
         if (voQueue == null)
             throw new BusinessException(message.getClass().getName() + "未加VOQueue注解");
 
