@@ -358,4 +358,11 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GetProductIdByCode)
+    public AjaxResponse getProductIdByCode(@RequestBody String code) {
+        Long productId = productService.getProductIdByCode(code, this.getUser().getSelChannelId());
+        if (productId != null)
+            return success(productId.toString());
+        return success(null);
+    }
 }

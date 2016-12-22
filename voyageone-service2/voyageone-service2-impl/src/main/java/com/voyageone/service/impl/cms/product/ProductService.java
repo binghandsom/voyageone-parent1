@@ -50,6 +50,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -827,7 +828,7 @@ public class ProductService extends BaseService {
                             break;
                         case JM:
                             numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getPlatformMallId())
-                            ? String.format(Constants.productForOtherSystemInfo.JUMEI_NUM_IID, grpObj.getPlatformMallId()) : "";
+                                    ? String.format(Constants.productForOtherSystemInfo.JUMEI_NUM_IID, grpObj.getPlatformMallId()) : "";
                             break;
                     }
                 }
@@ -1610,5 +1611,15 @@ public class ProductService extends BaseService {
             //3.更新
             updateTags(channelId, productModel.getProdId(), tags, modifier);
         }
+    }
+
+    public Long getProductIdByCode(String code, String channelId) {
+        Criteria criteria = new Criteria("common.fields.code").is(code);
+        JongoQuery queryObj = new JongoQuery();
+        queryObj.setQuery(criteria);
+        queryObj.setProjectionExt("");
+        CmsBtProductModel prodObj = this.getProductByCondition(channelId, queryObj);
+        prodObj.getCommon().getFields().getCode();
+        return prodObj.getProdId();
     }
 }
