@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.platform.uj;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
@@ -45,6 +46,9 @@ public class UploadToUSJoiServiceTest {
 
     @Autowired
     CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+
+    @Autowired
+    private Searcher searcher;
 
     @Test
     public void testUpload() throws Exception {
@@ -224,5 +228,39 @@ public class UploadToUSJoiServiceTest {
         productCodes.add("NY-26153");
 
         uploadToUSJoiService.doSetSkuCnt(usjoiChannelId, productCodes);
+    }
+
+    @Test
+    public void testMtCategoryApi() throws Exception {
+        // 测试主类目匹配接口有没有问题
+        String feedCategoryPath = "Accessories-Womens-Slgs-Passport holder";
+
+        StopWordCleaner cleaner = new StopWordCleaner();
+        Tokenizer tokenizer = new Tokenizer(new ArrayList(){{add("-");}});
+        FeedQuery query = new FeedQuery(feedCategoryPath, cleaner, tokenizer);
+        query.setSizeType("feedSizeType1");
+        query.setProductName("productNameEn");
+        query.setProductType("feedProductType");
+
+        List<SearchResult> result = searcher.search(query, 1);
+        System.out.println("ok");
+    }
+
+    @Test
+    public void testDoSetMainCategory() throws Exception {
+        // 测试设置匹配主类目方法
+
+        String likingChannelid = "928";
+        String code = "P1086157-GREEN";
+        String feedCategoryPath = "Accessories-Womens-Slgs-Passport holder";
+
+        // 取得mongoDB中对象product表里面所有已上过京东平台的
+        CmsBtProductModel prodObj = productService.getProductByCode(likingChannelid, code);
+        if (prodObj == null) {
+            System.out.println(String.format("在product表中没有查到该产品code(%s)!", code));
+        }
+
+        uploadToUSJoiService.doSetMainCategory(prodObj.getCommon(), feedCategoryPath);
+        System.out.println("ok");
     }
 }
