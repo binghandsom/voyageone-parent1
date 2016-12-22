@@ -9,6 +9,8 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtPlatformCategoryExtendInfoModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -48,6 +50,9 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
     private CmsMtPlatformCategoryDao platformCategoryDao;
     @Autowired
     private CmsMtPlatformCategorySchemaDao cmsMtPlatformCategorySchemaDao;
+
+    @Autowired
+    private MqSender sender;
 
     @Override
     public SubSystem getSubSystem() {
@@ -99,6 +104,13 @@ public class GetAllPlatformsInfoService extends BaseCronTaskService {
                     // 京东tree取得
                     doJdPlatformCategoryTree(shopBean);
                     // modified by morse.lu 2016/09/14 end
+
+                    // 获取京东的销售属性
+                    Map<String,Object> messageMap = new HashMap<>();
+                    messageMap.put("channelId", channelId);
+                    messageMap.put("cartId", cartId);
+                    // 向Mq发送消息
+                    sender.sendMessage(MqRoutingKey.CMS_TASK_CatelogySaleAttrJdJob, messageMap);
                 }
             }
         }

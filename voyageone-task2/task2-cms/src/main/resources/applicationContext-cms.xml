@@ -200,6 +200,15 @@
         <!--定时清除高级检索导出产生的下载文件-->
         <task:scheduled ref="cmsAdvSearchExportFileDeleteJob" method="run" cron="20 1 17 * * ?"/>
 
+        <!-- 独立域名上新xml准备（每分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnPrepareTmpJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 独立域名上新（每3分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductUploadCnTmpJob" method="run" cron="0 0/3 0-23 * * ?"/>
+
+        <!-- 独立域名类目-产品关系（每5分钟一次） -->
+        <task:scheduled ref="CmsBuildPlatformProductSellercatCnTmpJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
         <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
         <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
 

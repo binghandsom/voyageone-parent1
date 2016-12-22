@@ -3447,8 +3447,8 @@ public class SxProductService extends BaseService {
                 throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
-                        ",imageType= " + imageType +
-                        ",viewType= "+ viewType +
+                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                        ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                         ",BrandName= " + paramBrandName +
                         ",ProductType= " + paramProductType +
                         ",SizeType=" + paramSizeType);
@@ -3459,8 +3459,8 @@ public class SxProductService extends BaseService {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
                             ",cartId= " + cartId +
-                            ",imageType= " + imageType +
-                            ",viewType= "+ viewType +
+                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                            ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                             ",BrandName= " + paramBrandName +
                             ",ProductType= " + paramProductType +
                             ",SizeType=" + paramSizeType);
@@ -3946,9 +3946,12 @@ public class SxProductService extends BaseService {
                     case MULTICHECK:
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         List<Value> lstValue = new ArrayList<>();
-                        Value v = new Value();
-                        v.setValue(o.toString());
-                        lstValue.add(v);
+                        ArrayList<String> defaultValueList = (ArrayList<String>) o;
+                        for (String defaultValue : defaultValueList){
+                            Value v = new Value();
+                            v.setValue(defaultValue);
+                            lstValue.add(v);
+                        }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
                         break;

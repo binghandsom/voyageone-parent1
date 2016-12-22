@@ -12,8 +12,9 @@
 //* skus      ->暂时保留（用于TG上新）
 * lock    ->锁住该产品，不能进行任何操作(暂时功能不开放),1:lock, 0:unLock
 * common    ->共通属性
-  * catId    ->新的主类目Id
-  * catPath  ->新的主类目完整路径
+  * catId     ->新的主类目Id
+  * catPath   ->新的主类目完整路径(中文)
+  * catPathEn ->新的主类目完整路径(英文)  (CMSDOC-365)
   * comment   ->添加产品注释(暂时功能不开放)
   * fields
     * model                        <-款号
@@ -32,8 +33,12 @@
     * materialCn                   <-材质中文
     * color                        <-颜色/口味/香型等
     * origin                       <-产地
-    * productType                  <-产品分类
-    * sizeType                     <-适用人群
+    * productType                  <-产品分类(英文)
+    * productTypeCn                <-产品分类(中文)           (CMCDOC-365)
+    * origProductType              <-feed原始产品分类(英文)    (CMCDOC-365)
+    * sizeType                     <-适用人群(英文)
+    * sizeTypeCn                   <-适用人群(中文)           (CMCDOC-365)
+    * origSizeType                 <-feed原始适用人群(英文)    (CMCDOC-365)
     * hsCodeCrop                   <-税号集货
     * hsCodePrivate                <-税号个人
     * quantity  ->(Int)            <-库存
