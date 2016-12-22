@@ -86,12 +86,20 @@ define([
                     self.popups.openChannelCarrier('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.carrierList, function (Info) {
                         if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                            self.popups.openChannelCarrier(Info);
+                            self.popups.openChannelCarrier(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

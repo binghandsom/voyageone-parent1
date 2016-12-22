@@ -87,12 +87,20 @@ define([
                     self.popups.openChannelSms('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.channelList, function (Info) {
                         if (Info.seq == self.channelSmsSelList.selList[0].id) {
-                            self.popups.openChannelSms(Info);
+                            self.popups.openChannelSms(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

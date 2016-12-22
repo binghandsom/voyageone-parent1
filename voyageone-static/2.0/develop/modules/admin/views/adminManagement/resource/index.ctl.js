@@ -90,7 +90,13 @@ define([
                             var data = _.filter(self.flatResList, function (Info) {
                                 return Info.id == selectedList[0].id
                             });
-                            return self.popups.openRes(data[0]);
+                            return self.popups.openRes(data[0]).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     }
                 }

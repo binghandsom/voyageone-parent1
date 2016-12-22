@@ -98,6 +98,8 @@ define([
                     self.popups.openOrg('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
@@ -106,6 +108,8 @@ define([
                             self.popups.openOrg(Info).then(function (res) {
                                 if (res.res == 'success') {
                                     self.search(1);
+                                }else{
+                                    return false;
                                 }
                             });
                         }

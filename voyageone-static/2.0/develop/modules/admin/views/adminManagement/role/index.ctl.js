@@ -133,6 +133,8 @@ define([
                     self.popups.openRole('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
@@ -141,10 +143,22 @@ define([
                     });
                     if (type == 'copy') {
                         _.extend(Info[0], {isCopyRole: true});
-                        self.popups.openRole(Info[0]);
+                        self.popups.openRole(Info[0]).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }else{
+                                return false;
+                            }
+                        });
                     } else if (type == 'edit') {
                         Info[0].isCopyRole == true ? Info[0].isCopyRole = false : Info[0].isCopyRole = false;
-                        self.popups.openRole(Info[0]);
+                        self.popups.openRole(Info[0]).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }else{
+                                return false;
+                            }
+                        });
                     }
                 }
             },

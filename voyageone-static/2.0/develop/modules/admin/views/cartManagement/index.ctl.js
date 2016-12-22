@@ -84,12 +84,20 @@ define([
                     self.popups.openCartAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.cartId == self.cartSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info);
+                            self.popups.openCartAdd(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

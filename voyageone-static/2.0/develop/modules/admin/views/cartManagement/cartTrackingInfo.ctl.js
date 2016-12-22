@@ -94,12 +94,20 @@ define([
                     self.popups.openCartTrackingInfo('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else {
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.seq == self.cartTrackingSelList.selList[0].id) {
-                            self.popups.openCartTrackingInfo(Info);
+                            self.popups.openCartTrackingInfo(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else {
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

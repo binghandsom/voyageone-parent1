@@ -84,12 +84,20 @@ define([
                     self.popups.openChannelThird('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
-                            self.popups.openChannelThird(channelInfo);
+                            self.popups.openChannelThird(channelInfo).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }
