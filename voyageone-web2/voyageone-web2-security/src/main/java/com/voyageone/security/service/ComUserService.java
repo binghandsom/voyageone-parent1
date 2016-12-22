@@ -118,7 +118,7 @@ public class ComUserService {
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication(app);
         model.setCreater(account);
-        String clientIP = request.getHeader("x-forwarded-for");
+        String clientIP = request.getHeader("x-real-ip");
         if (StringUtils.isEmpty(clientIP)) {
             clientIP = request.getRemoteAddr();
         }
