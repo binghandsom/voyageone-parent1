@@ -99,8 +99,11 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         String messageStr = "";
         try {
             messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
-            Class<TMQMessageBody>  messageBodyClass= GenericSuperclassUtils.getGenericActualTypeClass(this);//获取泛型的真实类型class
+            //获取泛型的真实类型class
+            Class<TMQMessageBody>  messageBodyClass= GenericSuperclassUtils.getGenericActualTypeClass(this);
+
             TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr,messageBodyClass);
+
             onStartup(messageBody);
         } catch (BusinessException be) {
             $error("出现业务异常，任务退出", be);
