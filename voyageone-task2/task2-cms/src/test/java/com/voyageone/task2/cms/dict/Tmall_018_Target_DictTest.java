@@ -894,7 +894,7 @@ public class Tmall_018_Target_DictTest {
 
             // No.3~17  自定义
             for (int i = 3; i < 17; i++) {
-                int j = i - 1;
+                int j = i - 2;
                 String imageStr = ",\"image_hot_area_" + i + "\":{\"item_picture_image\":\"";
                 TextWord imageWord = new TextWord(imageStr);
                 ruleRoot.addRuleWord(imageWord);
