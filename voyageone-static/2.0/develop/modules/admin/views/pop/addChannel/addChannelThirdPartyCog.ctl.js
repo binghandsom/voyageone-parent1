@@ -54,11 +54,19 @@ define([
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.thirdPartyConfigService.addThirdPartyConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.thirdPartyConfigService.updateThirdPartyConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
