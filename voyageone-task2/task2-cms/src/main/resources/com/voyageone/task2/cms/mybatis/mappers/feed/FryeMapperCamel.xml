@@ -24,6 +24,8 @@
         <result column="MetaData_NonremovableFromCart" property="metadataNonremovablefromcart" jdbcType="BIT" />
         <result column="md5" property="md5" jdbcType="VARCHAR" />
         <result column="updateFlag" property="updateflag" jdbcType="INTEGER" />
+        <result column="SalePrice" property="saleprice" jdbcType="DOUBLE" />
+        <result column="Price" property="price" jdbcType="DOUBLE" />
     </resultMap>
     <resultMap id="ResultMapWithBLOBs" type="com.voyageone.task2.cms.bean.SuperFeedFryeBean" extends="BaseResultMap" >
         <result column="Attributes" property="attributes" jdbcType="LONGVARCHAR" />
@@ -67,7 +69,7 @@
         "MetaData_MinRegularPrice", "MetaData_MaxRegularPrice", "MetaData_MinSalePrice",
         "MetaData_MaxSalePrice", "MetaData_SameMaxMin", "MetaData_ShippingSurcharge", "MetaData_Weight",
         "MetaData_DisplayOosPopup", "MetaData_ShowWhenOos", "MetaData_NonremovableFromCart",
-        "md5", "updateFlag"
+        "md5", "updateFlag", "SalePrice", "Price"
     </sql>
     <sql id="Blob_Column_List" >
         "Attributes", "Fabric", "tax_Code", "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
@@ -102,14 +104,14 @@
         "MetaData_MaxSalePrice", "MetaData_SameMaxMin", "MetaData_ShippingSurcharge",
         "MetaData_Weight", "MetaData_DisplayOosPopup", "MetaData_ShowWhenOos",
         "MetaData_NonremovableFromCart", "md5", "updateFlag",
-        "Attributes", "Fabric", "tax_Code",
-        "Variants_Name", "Variants_Medias_Meta_ExtraImageThumb",
-        "Variants_Medias_Meta_ExtraImageThumbUrl", "Variants_Medias_Meta_ExtraImageLargeThumb",
-        "Variants_Medias_Meta_ExtraImageLargeThumbUrl", "Variants_Options_Color",
-        "Variants_Options_Color_Values", "Variants_Options_size",
-        "Variants_Options_size_Values", "MfgSku",
-        "TaxClassification", "Name", "FirstLiveDate",
-        "MetaTags", "MetaData_CategoryExtraText1",
+        "SalePrice", "Price", "Attributes",
+        "Fabric", "tax_Code", "Variants_Name",
+        "Variants_Medias_Meta_ExtraImageThumb", "Variants_Medias_Meta_ExtraImageThumbUrl",
+        "Variants_Medias_Meta_ExtraImageLargeThumb", "Variants_Medias_Meta_ExtraImageLargeThumbUrl",
+        "Variants_Options_Color", "Variants_Options_Color_Values",
+        "Variants_Options_size", "Variants_Options_size_Values",
+        "MfgSku", "TaxClassification", "Name",
+        "FirstLiveDate", "MetaTags", "MetaData_CategoryExtraText1",
         "MetaData_CategoryExtraText2", "MetaData_CategoryExtraText3",
         "MetaData_ExtraText1", "MetaData_Description2",
         "MetaData_Description3", "MetaData_Description4",
@@ -126,14 +128,14 @@
         #{metadataMaxsaleprice,jdbcType=DOUBLE}, #{metadataSamemaxmin,jdbcType=BIT}, #{metadataShippingsurcharge,jdbcType=DOUBLE},
         #{metadataWeight,jdbcType=DOUBLE}, #{metadataDisplayoospopup,jdbcType=BIT}, #{metadataShowwhenoos,jdbcType=BIT},
         #{metadataNonremovablefromcart,jdbcType=BIT}, #{md5,jdbcType=VARCHAR}, #{updateflag,jdbcType=INTEGER},
-        #{attributes,jdbcType=LONGVARCHAR}, #{fabric,jdbcType=LONGVARCHAR}, #{taxCode,jdbcType=LONGVARCHAR},
-        #{variantsName,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR},
-        #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR},
-        #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR}, #{variantsOptionsColor,jdbcType=LONGVARCHAR},
-        #{variantsOptionsColorValues,jdbcType=LONGVARCHAR}, #{variantsOptionsSize,jdbcType=LONGVARCHAR},
-        #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR}, #{mfgsku,jdbcType=LONGVARCHAR},
-        #{taxclassification,jdbcType=LONGVARCHAR}, #{name,jdbcType=LONGVARCHAR}, #{firstlivedate,jdbcType=LONGVARCHAR},
-        #{metatags,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
+        #{saleprice,jdbcType=DOUBLE}, #{price,jdbcType=DOUBLE}, #{attributes,jdbcType=LONGVARCHAR},
+        #{fabric,jdbcType=LONGVARCHAR}, #{taxCode,jdbcType=LONGVARCHAR}, #{variantsName,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagethumburl,jdbcType=LONGVARCHAR},
+        #{variantsMediasMetaExtraimagelargethumb,jdbcType=LONGVARCHAR}, #{variantsMediasMetaExtraimagelargethumburl,jdbcType=LONGVARCHAR},
+        #{variantsOptionsColor,jdbcType=LONGVARCHAR}, #{variantsOptionsColorValues,jdbcType=LONGVARCHAR},
+        #{variantsOptionsSize,jdbcType=LONGVARCHAR}, #{variantsOptionsSizeValues,jdbcType=LONGVARCHAR},
+        #{mfgsku,jdbcType=LONGVARCHAR}, #{taxclassification,jdbcType=LONGVARCHAR}, #{name,jdbcType=LONGVARCHAR},
+        #{firstlivedate,jdbcType=LONGVARCHAR}, #{metatags,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext1,jdbcType=LONGVARCHAR},
         #{metadataCategoryextratext2,jdbcType=LONGVARCHAR}, #{metadataCategoryextratext3,jdbcType=LONGVARCHAR},
         #{metadataExtratext1,jdbcType=LONGVARCHAR}, #{metadataDescription2,jdbcType=LONGVARCHAR},
         #{metadataDescription3,jdbcType=LONGVARCHAR}, #{metadataDescription4,jdbcType=LONGVARCHAR},
@@ -211,6 +213,12 @@
             </if>
             <if test="updateflag != null" >
                 updateFlag,
+            </if>
+            <if test="saleprice != null" >
+                SalePrice,
+            </if>
+            <if test="price != null" >
+                Price,
             </if>
             <if test="attributes != null" >
                 Attributes,
@@ -382,6 +390,12 @@
             <if test="updateflag != null" >
                 #{updateflag,jdbcType=INTEGER},
             </if>
+            <if test="saleprice != null" >
+                #{saleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="price != null" >
+                #{price,jdbcType=DOUBLE},
+            </if>
             <if test="attributes != null" >
                 #{attributes,jdbcType=LONGVARCHAR},
             </if>
@@ -552,6 +566,12 @@
             <if test="updateflag != null" >
                 "updateFlag" = #{updateflag,jdbcType=INTEGER},
             </if>
+            <if test="saleprice != null" >
+                "SalePrice" = #{saleprice,jdbcType=DOUBLE},
+            </if>
+            <if test="price != null" >
+                "Price" = #{price,jdbcType=DOUBLE},
+            </if>
             <if test="attributes != null" >
                 "Attributes" = #{attributes,jdbcType=LONGVARCHAR},
             </if>
@@ -680,6 +700,8 @@
         "MetaData_NonremovableFromCart" = #{metadataNonremovablefromcart,jdbcType=BIT},
         "md5" = #{md5,jdbcType=VARCHAR},
         "updateFlag" = #{updateflag,jdbcType=INTEGER},
+        "SalePrice" = #{saleprice,jdbcType=DOUBLE},
+        "Price" = #{price,jdbcType=DOUBLE},
         "Attributes" = #{attributes,jdbcType=LONGVARCHAR},
         "Fabric" = #{fabric,jdbcType=LONGVARCHAR},
         "tax_Code" = #{taxCode,jdbcType=LONGVARCHAR},
@@ -738,10 +760,11 @@
         "MetaData_ShowWhenOos" = #{metadataShowwhenoos,jdbcType=BIT},
         "MetaData_NonremovableFromCart" = #{metadataNonremovablefromcart,jdbcType=BIT},
         "md5" = #{md5,jdbcType=VARCHAR},
-        "updateFlag" = #{updateflag,jdbcType=INTEGER}
+        "updateFlag" = #{updateflag,jdbcType=INTEGER},
+        "SalePrice" = #{saleprice,jdbcType=DOUBLE},
+        "Price" = #{price,jdbcType=DOUBLE}
         where "Variants_Upc" = #{variantsUpc,jdbcType=VARCHAR}
     </update>
-
 
 
 
