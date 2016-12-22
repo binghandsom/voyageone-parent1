@@ -111,7 +111,7 @@
                     <label class="col-sm-1 control-label">{{'TXT_ROLE' | translate}}：</label>
                     <div class="col-sm-10">
                         <div class="col-sm-5">
-                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span class="text-warnings">{{'TXT_REQUIRED'|translate}}</span>
+                            <label class="col-sm-5 text-left control-label vo_a_ce" >{{'TXT_CHOOSED' | translate}}</label><span ng-if="ctrl.roleList.length==0" style="font-weight: bold;color: #E04825;">{{'TXT_REQUIRED'|translate}}</span>
                             <div class="column_overflow col-sm-12 m-t-sm" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">
@@ -163,6 +163,6 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ctrl.save()" ng-disabled="addForm.$valid==false||ctrl.roleList.length==0"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div>
