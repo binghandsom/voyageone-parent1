@@ -371,7 +371,9 @@ public class AnnotationProcessorByIP
         String[] queues = rabbitListener.queues();
         if (queues.length > 0) return queues;
         if (bean instanceof IVOMQOnStartup) {
+            //获取消息体类class
             Class<? extends IMQMessageBody> messageBodyClass = GenericSuperclassUtils.getGenericActualTypeClass(bean);
+            //获取队列的注解
             final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBodyClass, VOMQQueue.class);
             if (voQueue != null) {
                 return voQueue.queues();
