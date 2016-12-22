@@ -254,7 +254,7 @@ public class UploadToUSJoiServiceTest {
         String code = "P1086157-GREEN";
         String feedCategoryPath = "Accessories-Womens-Slgs-Passport holder";
 
-        // 取得mongoDB中对象product表里面所有已上过京东平台的
+        // 取得mongoDB中对象产品
         CmsBtProductModel prodObj = productService.getProductByCode(likingChannelid, code);
         if (prodObj == null) {
             System.out.println(String.format("在product表中没有查到该产品code(%s)!", code));
