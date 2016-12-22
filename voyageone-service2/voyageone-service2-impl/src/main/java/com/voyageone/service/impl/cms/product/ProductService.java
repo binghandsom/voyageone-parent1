@@ -811,8 +811,23 @@ public class ProductService extends BaseService {
                 if (cartEnum != null) {
                     switch (cartEnum) {
                         case TG:
+                        case TM:
+                        case TB:
+                        case TT:
+                        case USTT:
                             numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getNumIId())
                                     ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + grpObj.getNumIId() : "";
+                            break;
+                        case JD:
+                        case JG:
+                        case JGJ:
+                        case JGY:
+                            numIid = !StringUtils.isEmpty(skuInfo.getStringAttribute("jdSkuId"))
+                                    ? String.format(Constants.productForOtherSystemInfo.JINDONG_NUM_IID, grpObj.getNumIId()) : "";
+                            break;
+                        case JM:
+                            numIid = grpObj != null && !StringUtils.isEmpty(grpObj.getPlatformMallId())
+                            ? String.format(Constants.productForOtherSystemInfo.JUMEI_NUM_IID, grpObj.getPlatformMallId()) : "";
                             break;
                     }
                 }
