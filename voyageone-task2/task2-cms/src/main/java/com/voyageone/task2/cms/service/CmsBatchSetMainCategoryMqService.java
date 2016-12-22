@@ -2,8 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.category.match.MtCategoryKeysModel;
-import com.voyageone.category.match.MtCategoryKeysService;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
@@ -35,13 +33,10 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
     final
     ProductService productService;
 
-    final
-    MtCategoryKeysService mtCategoryKeysService;
 
     @Autowired
-    public CmsBatchSetMainCategoryMqService(ProductService productService, MtCategoryKeysService mtCategoryKeysService) {
+    public CmsBatchSetMainCategoryMqService(ProductService productService) {
         this.productService = productService;
-        this.mtCategoryKeysService = mtCategoryKeysService;
     }
 
     @Override

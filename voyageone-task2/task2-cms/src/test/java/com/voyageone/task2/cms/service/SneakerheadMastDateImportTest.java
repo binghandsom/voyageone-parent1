@@ -36,8 +36,8 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:context-cms-test.xml")
 public class SneakerheadMastDateImportTest {
 
-    public final static String cms_mt_sizechartrelation = "H:\\sneaker\\尺码表-相关表\\cms_mt_sizechartrelation.xlsx";
-    public final static String cms_mt_sizechart = "H:\\sneaker\\尺码图-相关表\\cms_mt_sizechart.xlsx";
+    public final static String cms_mt_sizechartrelation = "H:\\sneaker\\尺码表整理12.21.-1.xlsx";
+    public final static String cms_mt_sizechart = "H:\\sneaker\\尺码图整理12.21-1.xlsx";
     public final static String sellerCat = "H:\\sneaker\\店铺内分类\\sellerCat.xlsx";
 
     @Autowired
@@ -78,7 +78,7 @@ public class SneakerheadMastDateImportTest {
     private List<CmsBtImageGroupModel> resolveImageGroupModelModel(InputStream xls) throws Exception {
         Map<String, CmsBtImageGroupModel> models = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
-        Sheet sheet1 = wb.getSheetAt(0);
+        Sheet sheet1 = wb.getSheetAt(2);
         int rowNum = 0;
         for (Row row : sheet1) {
             try {
@@ -92,18 +92,20 @@ public class SneakerheadMastDateImportTest {
                     break;
                 }
                 String channelId = ExcelUtils.getString(row, 0);
-                String cartId = ExcelUtils.getString(row, 1,"#");
-                String imageGroupName = ExcelUtils.getString(row, 2);
-                String imageType = ExcelUtils.getString(row, 3,"#");
-                String viewType = ExcelUtils.getString(row, 4);
-                String brandName = ExcelUtils.getString(row, 5);
-                String sizeType = ExcelUtils.getString(row, 7);
-                String productType = ExcelUtils.getString(row, 6);
-                String originUrl = ExcelUtils.getString(row, 8);
+                String cartId = ExcelUtils.getString(row, 5,"#");
+                String imageGroupName = ExcelUtils.getString(row, 3);
+                String imageType = ExcelUtils.getString(row, 2,"#");
+                String viewType = ExcelUtils.getString(row, 1,"#");
+                String brandName = ExcelUtils.getString(row, 6);
+                String sizeType = ExcelUtils.getString(row, 10);
+                String productType = ExcelUtils.getString(row, 8);
+                String originUrl = ExcelUtils.getString(row, 11);
+                String platformUrl =  ExcelUtils.getString(row, 12);
                 CmsBtImageGroupModel_Image cmsBtImageGroupModel_Image = new CmsBtImageGroupModel_Image();
                 cmsBtImageGroupModel_Image.setOriginUrl(originUrl);
+                cmsBtImageGroupModel_Image.setPlatformUrl(platformUrl);
                 cmsBtImageGroupModel_Image.setErrorMsg(null);
-                cmsBtImageGroupModel_Image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
+                cmsBtImageGroupModel_Image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
                 CmsBtImageGroupModel cmsBtImageGroupModel = models.get(imageGroupName);
                 if (cmsBtImageGroupModel == null) {
                     cmsBtImageGroupModel = new CmsBtImageGroupModel();
@@ -111,12 +113,12 @@ public class SneakerheadMastDateImportTest {
                     cmsBtImageGroupModel.setChannelId(channelId);
                     cmsBtImageGroupModel.setCartId(Integer.parseInt(cartId));
                     cmsBtImageGroupModel.setImageGroupName(imageGroupName);
-                    cmsBtImageGroupModel.setBrandName(Arrays.asList(brandName));
-                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType));
-                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType));
+                    cmsBtImageGroupModel.setBrandName(Arrays.asList(brandName.split(",")));
+                    cmsBtImageGroupModel.setSizeType(Arrays.asList(sizeType.split(",")));
+                    cmsBtImageGroupModel.setProductType(Arrays.asList(productType.split(",")));
                     cmsBtImageGroupModel.setImageType(Integer.parseInt(imageType));
                     //1:PC端 2:APP端
-                    cmsBtImageGroupModel.setViewType("PC".equalsIgnoreCase(viewType)?1:2);
+                    cmsBtImageGroupModel.setViewType(Integer.parseInt(viewType));
                     cmsBtImageGroupModel.setImage(new ArrayList<>());
                     models.put(imageGroupName, cmsBtImageGroupModel);
                 }

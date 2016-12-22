@@ -2,8 +2,6 @@ package com.voyageone.web2.cms.views.product;
 
 import com.google.common.base.Preconditions;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.category.match.MtCategoryKeysModel;
-import com.voyageone.category.match.MtCategoryKeysService;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -53,9 +51,6 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     CmsProductPlatformDetailService cmsProductPlatformDetailService;
-
-    @Autowired
-    MtCategoryKeysService mtCategoryKeysService;
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params) {
@@ -159,11 +154,7 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
-    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_MAIN_CATEGORY_INFO)
-    public AjaxResponse getMainCategoryInfo(@RequestBody String catPath) {
-        return success(mtCategoryKeysService.getCategoryKeysModel(catPath));
-//        return success(new MtCategoryKeysModel());
-    }
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
     public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
 
