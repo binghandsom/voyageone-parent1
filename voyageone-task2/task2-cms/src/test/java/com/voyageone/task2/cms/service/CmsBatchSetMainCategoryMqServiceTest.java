@@ -17,12 +17,16 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class CmsBatchSetMainCategoryMqServiceTest {
+    @Test
+    public void onStartup1() throws Exception {
+
+    }
 
     @Autowired
     CmsBatchSetMainCategoryMqService cmsBatchSetMainCategoryMqService;
     @Test
     public void onStartup() throws Exception {
-        String json = "{\"prodIds\":[\"SJ9020SZW\",\"01411YAA\"],\"catId\":\"34a6e076d631eee902547f8b2e8f5405\",\"catPath\":\"珠宝饰品>Bracelets & Anklets>Anklets\",\"pCatList\":[],\"isSelAll\":0,\"userName\":\"james\",\"channelId\":\"010\"}";
+        String json = "{\"prodIds\":[\"01411YAA\"],\"catId\":\"849b471c5cb15340eba958625579fbdc\",\"catPath\":\"服饰>少男少女及儿童服饰>女童装（0～24个月）>服饰套装\",\"catPathEn\":\"Clothing>Kids' & Baby>Baby Girls (0-24 Months)>Clothing Sets\",\"pCatList\":[],\"productType\":\"Baby Costume\",\"sizeType\":\"Baby Girls\",\"productTypeCn\":\"婴儿服饰\",\"sizeTypeCn\":\"女童\",\"isSelAll\":0,\"userName\":\"james\",\"channelId\":\"010\"}";
         Map<String, Object> param = JacksonUtil.jsonToMap(json);
         cmsBatchSetMainCategoryMqService.onStartup(param);
 
