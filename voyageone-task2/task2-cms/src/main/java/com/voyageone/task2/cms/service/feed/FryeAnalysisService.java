@@ -155,16 +155,60 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         } else {
                             fryeBean.setMetadataDescription4withformatting("");
                         }
-                        if (!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())) {
-                            String origin = metaDataBean.getDescription4WithFormatting().replaceAll("<ul>", "").replaceAll("</ul>", ",").replaceAll("<li>", "").replaceAll("</li>", ",");
-                            String[] originList = origin.split(",");
-                            String countyValue = "";
-                            for (String county : originList) {
-                                if (county.contains("Made in the")) {
-                                    countyValue = county.replace("Made in the ", "");
+                        if (!StringUtil.isEmpty(metaDataBean.getDescription2WithFormatting())) {
+                            String countryOriginalString = metaDataBean.getDescription2WithFormatting();
+                            countryOriginalString = countryOriginalString.replace("&nbsp;", "</br>")
+                                    .replace("<br />", "</br>")
+                                    .replace("<br/>", "</br>")
+                                    .replace("</ br>", "</br>")
+                                    .replaceAll("\n", "")
+                                    .replaceAll("\r", "");
+                            Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                            Matcher matcher = pattern.matcher(countryOriginalString);
+                            if (matcher.find()) {
+                                String result = matcher.replaceFirst("$1");
+                                fryeBean.setOrigin(result);
+
+                            }
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            if (!StringUtil.isEmpty(metaDataBean.getDescription3WithFormatting())) {
+                                String countryOriginalString = metaDataBean.getDescription3WithFormatting();
+                                countryOriginalString = countryOriginalString.replace("&nbsp", "</br>")
+                                        .replace("<br />", "</br>")
+                                        .replace("<br/>", "</br>")
+                                        .replace("</ br>", "</br>")
+                                        .replaceAll("\n", "")
+                                        .replaceAll("\r", "");
+                                Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                                Matcher matcher = pattern.matcher(countryOriginalString);
+                                if (matcher.find()) {
+                                    String result = matcher.replaceFirst("$1");
+                                    fryeBean.setOrigin(result);
+
                                 }
                             }
-                            fryeBean.setOrigin(countyValue);
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            if (!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())) {
+                                String countryOriginalString = metaDataBean.getDescription4WithFormatting();
+                                countryOriginalString = countryOriginalString.replace("&nbsp", "</br>")
+                                        .replace("<br />", "</br>")
+                                        .replace("<br/>", "</br>")
+                                        .replace("</ br>", "</br>")
+                                        .replaceAll("\n", "")
+                                        .replaceAll("\r", "");
+                                Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                                Matcher matcher = pattern.matcher(countryOriginalString);
+                                if (matcher.find()) {
+                                    String result = matcher.replaceFirst("$1");
+                                    fryeBean.setOrigin(result);
+
+                                }
+                            }
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            fryeBean.setOrigin("unknown");
                         }
                         fryeBean.setMetadataCategoryname(metaDataBean.getCategoryName());
 
@@ -244,7 +288,9 @@ public class FryeAnalysisService extends BaseAnalysisService {
                                 sbExtraImageLargeThumbUrl.append(metaBean.getExtraImageLargeThumbUrl()).append(",");
                             }
                             if (!StringUtil.isEmpty(medias.getFilePath())) {
-                                sbFilePath.append(medias.getFilePath()).append(",");
+                                if(!medias.getFilePath().contains("colors")){
+                                    sbFilePath.append(medias.getFilePath()).append(",");
+                                }
                             }
                         }
                         //Variants_Medias_Meta_ExtraImageThumb
@@ -389,12 +435,15 @@ public class FryeAnalysisService extends BaseAnalysisService {
             }
             cmsBtFeedInfoModel.setSkus(skus);
             //设置重量结束
-
+            List<String> imageList = new ArrayList<>();
+            for (String image : cmsBtFeedInfoModel.getImage()) {
+                String im = image.substring(image.indexOf("."), image.length());
+                imageList.add("//s001" + im);
+            }
+            cmsBtFeedInfoModel.setImage(imageList);
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
-                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
-                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);
