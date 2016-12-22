@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.jm;
 
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.mq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
@@ -34,8 +35,8 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
 
     @Autowired
     private CmsBtJmPromotionExportTask3Service service3;
-    @Autowired
-    private MqSender sender;
+//    @Autowired
+//    private MqSender sender;
 
     @Autowired
     private CmsJmPromotionExportService cmsJmPromotionExportService;
@@ -61,12 +62,10 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         com.voyageone.common.util.FileUtils.downloadFile(response, fileName, filePath);
     }
 
-    @Autowired
-    MqSenderService mqSenderService;
 
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.ADDEXPORT)
     @ResponseBody
-    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) {
+    public AjaxResponse addExport(@RequestBody CmsBtJmPromotionExportTaskModel model) throws MQMessageRuleException {
         CallResult result = new CallResult();
         model.setCreater(getUser().getUserName());
         model.setCreated(new java.util.Date());
@@ -77,7 +76,7 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
 
         JmExportMQMessageBody jmExportMQMessageBody=new JmExportMQMessageBody();
         jmExportMQMessageBody.setJmBtPromotionExportTaskId(model.getId());
-        mqSenderService.sendMessage(jmExportMQMessageBody);
+        service3.sendMessage(jmExportMQMessageBody);
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.EXPORT_JM_PROMOTION_INFO)

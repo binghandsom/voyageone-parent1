@@ -2,6 +2,7 @@ package com.voyageone.service.impl.com.mq;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.mq.config.MQConfigUtils;
+import com.voyageone.common.mq.exception.MQMessageRuleException;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
@@ -31,10 +32,12 @@ public class MqSenderService extends BaseService {
     @Autowired
     private MqBackMessageService mqBackMessageService;
 
-    public  void  sendMessage(IMQMessageBody message) {
+    public  void  sendMessage(IMQMessageBody message) throws MQMessageRuleException {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOMQQueue.class);
         if (voQueue == null)
             throw new BusinessException(message.getClass().getName() + "未加VOQueue注解");
+
+        message.check();
 
         sendMessage(null, voQueue.queues()[0], message, true, isLocal(), true, 0);
     }
