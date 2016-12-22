@@ -614,6 +614,8 @@ public class OneStopProduct {
         private boolean IsActive;
         private String Name;
         private String MfgSku;
+        private Double Price;
+        private Double SalePrice;
         private Double ProductId;
         private boolean IsDefault;
         private List<MediasBean> Medias;
@@ -665,6 +667,38 @@ public class OneStopProduct {
 
         public void setIsDefault(boolean IsDefault) {
             this.IsDefault = IsDefault;
+        }
+
+        public boolean isActive() {
+            return IsActive;
+        }
+
+        public void setActive(boolean active) {
+            IsActive = active;
+        }
+
+        public Double getPrice() {
+            return Price;
+        }
+
+        public void setPrice(Double price) {
+            Price = price;
+        }
+
+        public Double getSalePrice() {
+            return SalePrice;
+        }
+
+        public void setSalePrice(Double salePrice) {
+            SalePrice = salePrice;
+        }
+
+        public boolean isDefault() {
+            return IsDefault;
+        }
+
+        public void setDefault(boolean aDefault) {
+            IsDefault = aDefault;
         }
 
         public List<MediasBean> getMedias() {
