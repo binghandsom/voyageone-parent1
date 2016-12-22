@@ -134,22 +134,18 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.setpPriceSaleEd(parameter.getPriceSale());
         }
 
-        if("Approved".equals(platform.getStatus())) {
-            if(StringUtils.isEmpty(platform.getpNumIId()))
-            {
-                //已经approve但是无NumIID，则插入上新work表,
-                List<String> cartIdList = new ArrayList<>();
-                cartIdList.add(Integer.toString(parameter.getCartId()));
-                //则插入上新work表
-                sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
-            }
-            else
-            {
-                //有NumIID，则价格变更API
-                priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
-
-            }
+        // 只要上新成功都可以调用价格更新API
+        if (!StringUtils.isEmpty(platform.getpNumIId())) {
+            //有NumIID，则价格变更API
+            priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
+        } else if("Approved".equals(platform.getStatus())) {
+            //已经approve但是无NumIID，则插入上新work表,
+            List<String> cartIdList = new ArrayList<>();
+            cartIdList.add(Integer.toString(parameter.getCartId()));
+            //则插入上新work表
+            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
         }
+
         platform.getSkus().forEach(f -> {
             if(parameter.getPriceMsrp()>0) {
                 f.setAttribute("priceMsrp", parameter.getPriceMsrp());
