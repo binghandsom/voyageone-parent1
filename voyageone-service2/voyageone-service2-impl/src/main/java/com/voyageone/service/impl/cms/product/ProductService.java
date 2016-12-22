@@ -822,7 +822,7 @@ public class ProductService extends BaseService {
                         case JG:
                         case JGJ:
                         case JGY:
-                            numIid = !StringUtils.isEmpty(skuInfo.getStringAttribute("jsSkuId"))
+                            numIid = !StringUtils.isEmpty(skuInfo.getStringAttribute("jdSkuId"))
                                     ? String.format(Constants.productForOtherSystemInfo.JINDONG_NUM_IID, grpObj.getNumIId()) : "";
                             break;
                         case JM:
