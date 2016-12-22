@@ -52,7 +52,7 @@ public class SneakerheadMastDateImportTest {
         try (InputStream inputStream = new FileInputStream(cms_mt_sizechartrelation)) {
             List<CmsBtSizeChartModel> cmsBtSizeChartModels = resolveSizeChartModel(inputStream);
             cmsBtSizeChartModels.forEach(cmsBtSizeChartModel -> {
-                CmsBtSizeChartModel temp = sizeChartService.insert("001", "SneakerheadMastDateImportTest", cmsBtSizeChartModel.getSizeChartName(), cmsBtSizeChartModel.getBrandName(),cmsBtSizeChartModel.getProductType(),cmsBtSizeChartModel.getSizeType());
+                CmsBtSizeChartModel temp = sizeChartService.insert("928", "SneakerheadMastDateImportTest", cmsBtSizeChartModel.getSizeChartName(), cmsBtSizeChartModel.getBrandName(),cmsBtSizeChartModel.getProductType(),cmsBtSizeChartModel.getSizeType());
                 sizeChartService.sizeChartDetailSizeMapSave(temp.getChannelId(),"SneakerheadMastDateImportTest",temp.getSizeChartId(),cmsBtSizeChartModel.getSizeMap());
             });
         } catch (Exception e) {
@@ -97,8 +97,8 @@ public class SneakerheadMastDateImportTest {
                 String imageType = ExcelUtils.getString(row, 2,"#");
                 String viewType = ExcelUtils.getString(row, 1,"#");
                 String brandName = ExcelUtils.getString(row, 6);
-                String sizeType = ExcelUtils.getString(row, 10);
-                String productType = ExcelUtils.getString(row, 8);
+                String sizeType = ExcelUtils.getString(row, 9);
+                String productType = ExcelUtils.getString(row, 7);
                 String originUrl = ExcelUtils.getString(row, 11);
                 String platformUrl =  ExcelUtils.getString(row, 12);
                 CmsBtImageGroupModel_Image cmsBtImageGroupModel_Image = new CmsBtImageGroupModel_Image();
@@ -135,7 +135,7 @@ public class SneakerheadMastDateImportTest {
     private List<CmsBtSizeChartModel> resolveSizeChartModel(InputStream xls) throws Exception {
         Map<String, CmsBtSizeChartModel> models = new HashMap<>();
         Workbook wb = new XSSFWorkbook(xls);
-        Sheet sheet1 = wb.getSheetAt(0);
+        Sheet sheet1 = wb.getSheetAt(1);
         int rowNum = 0;
         for (Row row : sheet1) {
             try {
@@ -151,24 +151,24 @@ public class SneakerheadMastDateImportTest {
                 String sizeChartName = ExcelUtils.getString(row, 2);
                 String brandName = ExcelUtils.getString(row, 3).toLowerCase();
                 String sizeType = ExcelUtils.getString(row, 4);
-                String productType = ExcelUtils.getString(row, 5);
-                String originalSize = ExcelUtils.getString(row, 6);
-                String adjustSize = ExcelUtils.getString(row, 7);
-                String usual = ExcelUtils.getString(row, 9);
+                String productType = ExcelUtils.getString(row, 6);
+                String originalSize = ExcelUtils.getString(row, 8);
+                String adjustSize = ExcelUtils.getString(row, 9);
+//                String usual = ExcelUtils.getString(row, 9);
                 CmsBtSizeChartModelSizeMap cmsBtSizeChartModelSizeMap = new CmsBtSizeChartModelSizeMap();
                 cmsBtSizeChartModelSizeMap.setAdjustSize(adjustSize);
                 cmsBtSizeChartModelSizeMap.setOriginalSize(originalSize);
-                cmsBtSizeChartModelSizeMap.setUsual(usual);
-                CmsBtSizeChartModel cmsBtSizeChartModel = models.get(sizeChartName);
+//                cmsBtSizeChartModelSizeMap.setUsual(usual);
+                CmsBtSizeChartModel cmsBtSizeChartModel = models.get(sizeChartName+brandName);
                 if (cmsBtSizeChartModel == null) {
                     cmsBtSizeChartModel = new CmsBtSizeChartModel();
                     cmsBtSizeChartModel.setActive(1);
                     cmsBtSizeChartModel.setSizeChartName(sizeChartName);
-                    cmsBtSizeChartModel.setBrandName(Arrays.asList(brandName));
-                    cmsBtSizeChartModel.setSizeType(Arrays.asList(sizeType));
-                    cmsBtSizeChartModel.setProductType(Arrays.asList(productType));
+                    cmsBtSizeChartModel.setBrandName(Arrays.asList(brandName.split(",")));
+                    cmsBtSizeChartModel.setSizeType(Arrays.asList(sizeType.split(",")));
+                    cmsBtSizeChartModel.setProductType(Arrays.asList(productType.split(",")));
                     cmsBtSizeChartModel.setSizeMap(new ArrayList<>());
-                    models.put(sizeChartName, cmsBtSizeChartModel);
+                    models.put(sizeChartName+brandName, cmsBtSizeChartModel);
                 }
                 cmsBtSizeChartModel.getSizeMap().add(cmsBtSizeChartModelSizeMap);
             } catch (Exception e) {
