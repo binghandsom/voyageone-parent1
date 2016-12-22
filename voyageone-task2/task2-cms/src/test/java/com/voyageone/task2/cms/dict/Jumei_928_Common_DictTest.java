@@ -24,8 +24,8 @@ import java.util.List;
  * @version 2.1.0
  * @since 2.1.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context-cms-test.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:context-cms-test.xml")
 public class Jumei_928_Common_DictTest {
     @Autowired
     private SxProductService sxProductService;
