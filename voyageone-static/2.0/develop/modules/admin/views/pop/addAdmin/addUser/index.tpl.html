@@ -60,28 +60,41 @@
                         <!--<label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>-->
                         <!--<label class="col-sm-8 control-label text-left">默认密码1234567890</label>-->
                     <!--</div>-->
-                    <!--<div class="col-sm-3">&lt;!&ndash; 密码 &ndash;&gt;-->
-                        <!--<label class="col-sm-3 control-label">{{'TXT_PASSWORD' | translate}}</label>-->
-                    <!--</div>-->
-                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 组织 -->
+                    <!--<div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'">&lt;!&ndash; 组织 &ndash;&gt;-->
+                    <div class="col-sm-4"><!-- 组织 -->
                         <label class="col-sm-3 control-label">{{'TXT_ORGANIZE' | translate}}</label>
                         <div class="col-sm-8">
-                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList">
+                            <select class="form-control" ng-model="ctrl.saveInfo.orgId" ng-options="org.id as org.orgName for org in ctrl.orgList" required name="orgId">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
+                        <div class="row form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <vo-message target="addForm.orgId"></vo-message>
+                            </div>
+                        </div>
                     </div>
-                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 公司 -->
+                    <!--<div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'">&lt;!&ndash; 公司 &ndash;&gt;-->
+                    <div class="col-sm-4"><!-- 公司 -->
                         <label class="col-sm-3 control-label">{{'TXT_CART_COMPANY_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.companyId" ng-options="company.id as company.company for company in ctrl.companyList">
+                            <select search-contains="true" chosen width="'100%'" class="form-control" ng-model="ctrl.saveInfo.companyId"
+                                    ng-options="company.id as company.company for company in ctrl.companyList" required name="companyId">
                                 <option value="">&nbsp;{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                             </select>
                         </div>
+                        <div class="row form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <vo-message target="addForm.companyId"></vo-message>
+                            </div>
+                        </div>
                     </div>
-                    <div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'"><!-- 状态 -->
-                        <label class="control-label" ng-class="ctrl.popType == '修改用户'?'col-sm-3':'col-sm-2'">{{'TXT_STATUS' | translate}}</label>
-                        <div ng-class="ctrl.popType == '修改用户'?'col-sm-8':'col-sm-10'">
+                    <!--<div ng-class="ctrl.popType == '修改用户'?'col-sm-4':'col-sm-3'">&lt;!&ndash; 状态 &ndash;&gt;-->
+                    <div class="col-sm-4"><!-- 状态 -->
+                        <!--<label class="control-label" ng-class="ctrl.popType == '修改用户'?'col-sm-3':'col-sm-2'">{{'TXT_STATUS' | translate}}</label>-->
+                        <label class="control-label col-sm-3" >{{'TXT_STATUS' | translate}}</label>
+                        <!--<div ng-class="ctrl.popType == '修改用户'?'col-sm-8':'col-sm-10'">-->
+                        <div class="col-sm-8">
                             <label class="checkbox-inline c-radio">
                                 <input type="radio" name="active" value="1" ng-model="ctrl.saveInfo.active"><span class="fa fa-check"></span> {{'BTN_ACTIVE'|translate}}
                             </label>
