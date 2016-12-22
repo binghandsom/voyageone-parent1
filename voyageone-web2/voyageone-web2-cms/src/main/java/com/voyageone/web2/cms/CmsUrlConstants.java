@@ -651,6 +651,7 @@ public interface CmsUrlConstants {
             String RESTORE_IMG = "restoreImg";
 
 			String GET_SKU_STOCK_INFO = "getSkuStockInfo";
+			String GetProductIdByCode="getProductIdByCode";
         }
 
         interface HISTORY {
