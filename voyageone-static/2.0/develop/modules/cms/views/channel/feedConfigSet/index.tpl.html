@@ -19,26 +19,34 @@
                                     <th class="text-center">CMS字段</th>
                                     <th class="text-center">Feed字段 *</th>
                                     <th class="text-center">备注</th>
+                                    <th class="text-center">备注</th>
                                 </tr>
                                 <tr>
-                                    <th colspan="3" style="background: #fff;color: #000;" class="text-center">
+                                    <th colspan="4" style="background: #fff;color: #000;" class="text-center">
                                         CODE级别feed必要共通属性匹配情况
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                    <tr ng-repeat="element in ctrl.dataList">
+                                <tr ng-repeat="element in ctrl.dataList">
 
-                                        <th ng-if="element.feedConfigLev=='1'" class="text-center">{{element.feedConfig}}</th>
-                                        <th  ng-if="element.feedConfigLev=='1'" class="text-center"><input type="text" class="form-control" ng-model="element.cfgName"></th>
-                                        <th  ng-if="element.feedConfigLev=='1'"class="text-center"><input type="text" class="form-control" ng-model="element.comment"></th>
-                                    </tr>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control" ng-model="element.cfgVal1"></textarea></th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control" ng-model="element.cfgVal2"></textarea></th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea type="text"
+                                                                                                         class="form-control"
+                                                                                                         ng-model="element.comment"></textarea>
+                                    </th>
+                                </tr>
                                 </tbody>
                             </table>
                             <table class="table table-hover-new text-center">
                                 <thead>
                                 <tr>
-                                    <th colspan="3" style="background: #fff;color: #000;" class="text-center">
+                                    <th colspan="4" style="background: #fff;color: #000;" class="text-center">
                                         SKU级别feed必要共通属性匹配情况
                                     </th>
                                 </tr>
@@ -46,9 +54,14 @@
                                 <tbody>
                                 <tr ng-repeat="element in ctrl.dataList">
 
-                                    <th ng-if="element.feedConfigLev=='2'" class="text-center">{{element.feedConfig}}</th>
-                                    <th  ng-if="element.feedConfigLev=='2'" class="text-center"><input type="text" class="form-control" ng-model="element.cfgName"></th>
-                                    <th  ng-if="element.feedConfigLev=='2'"class="text-center"><input type="text" class="form-control" ng-model="element.comment"></th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
+                                    </th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control" ng-model="element.cfgVal1"></textarea></th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control" ng-model="element.cfgVal2"></textarea></th>
+                                    <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
+                                            class="form-control" ng-model="element.comment"></textarea></th>
                                 </tr>
                                 </tbody>
                             </table>

@@ -6,12 +6,24 @@ package com.voyageone.service.bean.cms;
 public class CmsMtFeedConfigBean {
 
     private String orderChannelId;
-    private String feedConfig;
-    private String cfgVal1;
+
     private String cfgName;
+
+    private String cfgVal1;
+
     private String cfgVal2;
+
+    private String cfgVal3;
+
     private String comment;
-    private String feedConfigLev;
+
+    private String cmsCfgName;
+
+    private Integer cmsCfgNameLev;
+
+    private Integer cmsCfgNameOrder;
+
+    private String cmsCfgNameIsEdit;
 
     public String getOrderChannelId() {
         return orderChannelId;
@@ -45,12 +57,12 @@ public class CmsMtFeedConfigBean {
         this.cfgVal2 = cfgVal2;
     }
 
-    public String getFeedConfig() {
-        return feedConfig;
+    public String getCfgVal3() {
+        return cfgVal3;
     }
 
-    public void setFeedConfig(String feedConfig) {
-        this.feedConfig = feedConfig;
+    public void setCfgVal3(String cfgVal3) {
+        this.cfgVal3 = cfgVal3;
     }
 
     public String getComment() {
@@ -61,11 +73,35 @@ public class CmsMtFeedConfigBean {
         this.comment = comment;
     }
 
-    public String getFeedConfigLev() {
-        return feedConfigLev;
+    public String getCmsCfgName() {
+        return cmsCfgName;
     }
 
-    public void setFeedConfigLev(String feedConfigLev) {
-        this.feedConfigLev = feedConfigLev;
+    public void setCmsCfgName(String cmsCfgName) {
+        this.cmsCfgName = cmsCfgName;
+    }
+
+    public Integer getCmsCfgNameLev() {
+        return cmsCfgNameLev;
+    }
+
+    public void setCmsCfgNameLev(Integer cmsCfgNameLev) {
+        this.cmsCfgNameLev = cmsCfgNameLev;
+    }
+
+    public Integer getCmsCfgNameOrder() {
+        return cmsCfgNameOrder;
+    }
+
+    public void setCmsCfgNameOrder(Integer cmsCfgNameOrder) {
+        this.cmsCfgNameOrder = cmsCfgNameOrder;
+    }
+
+    public String getCmsCfgNameIsEdit() {
+        return cmsCfgNameIsEdit;
+    }
+
+    public void setCmsCfgNameIsEdit(String cmsCfgNameIsEdit) {
+        this.cmsCfgNameIsEdit = cmsCfgNameIsEdit;
     }
 }

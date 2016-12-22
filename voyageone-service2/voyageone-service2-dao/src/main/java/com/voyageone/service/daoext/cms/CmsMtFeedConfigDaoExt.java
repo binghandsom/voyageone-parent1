@@ -13,6 +13,11 @@ import java.util.List;
  */
 @Repository
 public class CmsMtFeedConfigDaoExt extends ServiceBaseDao {
+
+    public List<CmsMtFeedConfigBean> selectFeedConFigKey() {
+        return selectList("cms_mt_feed_config_key");
+    }
+
     public List<CmsMtFeedConfigBean> selectFeedConFigByChannelId(String channelId) {
         return selectList("cms_mt_feed_config_selectByChannelId", channelId);
     }

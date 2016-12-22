@@ -30,8 +30,20 @@ public class CmsFeedConfigService extends BaseService {
      */
     public Map<String, Object> search(String channelId) {
         Map<String, Object> resultMap = new HashMap();
-        List<CmsMtFeedConfigBean> configs = cmsMtFeedConfigDaoExt.selectFeedConFigByChannelId(channelId);
-        resultMap.put("configs", configs);
+        //cms_mt_feed_config_key取得主数据
+        List<CmsMtFeedConfigBean> cmsMtFeedConfigKeyList =cmsMtFeedConfigDaoExt.selectFeedConFigKey();
+        //cfgName,channelID
+        List<CmsMtFeedConfigBean> cmsMtFeedConfigList = cmsMtFeedConfigDaoExt.selectFeedConFigByChannelId(channelId);
+        for(CmsMtFeedConfigBean cmsMtFeedConfigBean:cmsMtFeedConfigKeyList){
+            cmsMtFeedConfigList.stream().filter(bean -> cmsMtFeedConfigBean.getCfgName().equals(bean.getCfgName())).forEach(bean -> {
+                cmsMtFeedConfigBean.setOrderChannelId(bean.getOrderChannelId());
+                cmsMtFeedConfigBean.setCfgVal1(bean.getCfgVal1());
+                cmsMtFeedConfigBean.setCfgVal2(bean.getCfgVal2());
+                cmsMtFeedConfigBean.setCfgVal3(bean.getCfgVal3());
+                cmsMtFeedConfigBean.setComment(bean.getComment());
+            });
+        }
+        resultMap.put("configs", cmsMtFeedConfigKeyList);
         return resultMap;
     }
 
