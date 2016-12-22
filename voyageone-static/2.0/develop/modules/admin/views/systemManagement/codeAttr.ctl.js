@@ -85,12 +85,20 @@ define([
                     self.popups.openTypeCode('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else {
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.systemList, function (Info) {
                         if (Info.mainKey == self.codeSelList.selList[0].id) {
-                            self.popups.openTypeCode(Info);
+                            self.popups.openTypeCode(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else {
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

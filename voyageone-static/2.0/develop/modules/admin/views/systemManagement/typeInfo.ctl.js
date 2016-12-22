@@ -80,12 +80,20 @@ define([
                     self.popups.openTypeAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.systemList, function (Info) {
                         if (Info.id == self.sysTypeInfoSelList.selList[0].id) {
-                            self.popups.openTypeAdd(Info);
+                            self.popups.openTypeAdd(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

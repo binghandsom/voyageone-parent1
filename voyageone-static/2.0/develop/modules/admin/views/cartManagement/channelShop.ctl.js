@@ -109,12 +109,20 @@ define([
                     self.popups.openCartChannelShop('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.cartList, function (Info) {
                         if (Info.mainKey == self.cartShopSelList.selList[0].id) {
-                            self.popups.openCartChannelShop(Info);
+                            self.popups.openCartChannelShop(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

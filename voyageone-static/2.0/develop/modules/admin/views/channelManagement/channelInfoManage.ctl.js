@@ -105,12 +105,20 @@ define([
                     self.popups.openAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo);
+                            self.popups.openAdd(channelInfo).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

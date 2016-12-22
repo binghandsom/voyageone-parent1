@@ -88,17 +88,17 @@ define([
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.adminUserService.searchUser({
-                        'pageNum': self.searchInfo.pageInfo.curr,
-                        'pageSize': self.searchInfo.pageInfo.size,
-                        'userAccount': self.searchInfo.userAccount,
-                        'roleId': self.searchInfo.roleId,
-                        'active': self.searchInfo.active,
-                        'channelId': self.searchInfo.channelId,
-                        'orgId': self.searchInfo.orgId,
-                        'application': self.searchInfo.application,
-                        'companyId': self.searchInfo.company,
-                        'storeId': self.searchInfo.storeId
-                    })
+                    'pageNum': self.searchInfo.pageInfo.curr,
+                    'pageSize': self.searchInfo.pageInfo.size,
+                    'userAccount': self.searchInfo.userAccount,
+                    'roleId': self.searchInfo.roleId,
+                    'active': self.searchInfo.active,
+                    'channelId': self.searchInfo.channelId,
+                    'orgId': self.searchInfo.orgId,
+                    'application': self.searchInfo.application,
+                    'companyId': self.searchInfo.company,
+                    'storeId': self.searchInfo.storeId
+                })
                     .then(function (res) {
                         self.adminList = res.data.result;
                         self.pageOption.total = res.data.count;
@@ -142,12 +142,20 @@ define([
                     self.popups.openAddUser('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.adminList, function (Info) {
                         if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openAddUser(Info);
+                            self.popups.openAddUser(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1)
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }
@@ -186,7 +194,7 @@ define([
                     });
                     self.adminUserService.resetPass(idList).then(function (res) {
                         if (res.data.password) {
-                            self.alert('密码重置成功：' +  res.data.password + "。");
+                            self.alert('密码重置成功：' + res.data.password + "。");
                         } else {
                             self.alert('密码重置失败，请重试');
                         }

@@ -37,7 +37,7 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -105,6 +105,8 @@ define([
                     self.popups.openStoreAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
@@ -114,7 +116,13 @@ define([
                             var copyData = Info.inventoryHold.split(",");
                             Info.inventoryHold = copyData[0];
                             Info.remainNum = copyData[1];
-                            self.popups.openStoreAdd(Info);
+                            self.popups.openStoreAdd(Info).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

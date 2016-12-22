@@ -94,12 +94,20 @@ define([
                     self.popups.openAddChannelType('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
                     _.forEach(self.channelList, function (channelInfo) {
                         if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
-                            self.popups.openAddChannelType(channelInfo);
+                            self.popups.openAddChannelType(channelInfo).then(function (res) {
+                                if (res.res == 'success') {
+                                    self.search(1);
+                                }else{
+                                    return false;
+                                }
+                            });
                         }
                     })
                 }

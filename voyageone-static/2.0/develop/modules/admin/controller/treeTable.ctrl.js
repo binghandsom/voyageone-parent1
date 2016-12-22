@@ -3,9 +3,8 @@
  */
 define([
     'admin',
-    'underscore',
-    'modules/admin/enums/MappingTypes'
-], function (admin, _, MappingTypes) {
+    'underscore'
+], function (admin, _) {
     admin.controller('treeTable', ['$scope', '$filter',
         function ($scope, $filter) {
             $scope.toggleAllCheckboxes = function ($event, list, selectedList) {

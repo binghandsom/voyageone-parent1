@@ -208,7 +208,7 @@ define([
                         });
                         _.extend(item, {'channelName': self.list[0].name, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') self.search(1);
                         });
                         break;
                     case 'Store':
@@ -221,7 +221,7 @@ define([
                         });
                         _.extend(item, {'shortName': self.list[0].storeName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') self.search(1);
                         });
                         break;
                     case 'Task':
@@ -234,7 +234,7 @@ define([
                         });
                         _.extend(item, {'taskName': self.list[0].taskName, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') self.search(1);
                         });
                         break;
                     case 'Shop':
@@ -267,7 +267,7 @@ define([
                         });
                         _.extend(item, {'port': self.list[0].port, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
-                            if (res.res == 'success') self.search();
+                            if (res.res == 'success') self.search(1);
                         });
                         break;
                 }
@@ -277,7 +277,13 @@ define([
                 _.forEach(self.cfgList, function (cfgInfo) {
                     if (cfgInfo.mainKey == self.configSelList.selList[0].id) {
                         _.extend(cfgInfo, {'configType': self.searchInfo.configType});
-                        self.popups.openCreateEdit(cfgInfo);
+                        self.popups.openCreateEdit(cfgInfo).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            } else {
+                                return false;
+                            }
+                        });
                     }
                 });
             },
@@ -292,25 +298,25 @@ define([
                     switch (self.searchInfo.configType) {
                         case 'Channel':
                             self.channelService.deleteChannelConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.data.message);
                                 self.search(1);
                             });
                             break;
                         case 'Store':
                             self.storeService.deleteStoreConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.data.message);
                                 self.search(1);
                             });
                             break;
                         case 'Task':
                             self.taskService.deleteTaskConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.data.message);
                                 self.search(1);
                             });
                             break;
                         case 'Shop':
                             self.cartShopService.deleteCartShopConfig(delList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.data.message);
                                 self.search(1);
                             });
                             break;
@@ -320,7 +326,7 @@ define([
                                 seqList.push(item.seq);
                             });
                             self.portConfigService.deletePortConfig(seqList).then(function (res) {
-                                if (res.data == false)self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.data.message);
                                 self.search(1);
                             });
                             break;
