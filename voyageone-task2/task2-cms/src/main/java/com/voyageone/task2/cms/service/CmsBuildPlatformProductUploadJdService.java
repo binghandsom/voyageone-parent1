@@ -1118,6 +1118,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             String errMsg = String.format("取得京东共通Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), jdCommonSchema.getCatId());
             $error(errMsg, ex);
+            throw new BusinessException("取得京东平台类目共通属性值失败！" + ex.getMessage());
         }
 
         // 如果list为空说明没有设置商品共通属性，不用设置
@@ -1197,6 +1198,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             String errMsg = String.format("取得京东平台Schema所有Field对应的属性值失败！[ChannelId:%s] [CartId:%s] [PlatformCategoryId:%s]",
                     shopBean.getOrder_channel_id(), shopBean.getCart_id(), platformSchemaData.getCatId());
             $error(errMsg, ex);
+            throw new BusinessException("取得京东平台商品类目Schema属性值失败！" + ex.getMessage());
         }
 
         // 商品属性列表,多组之间用|分隔，格式:aid:vid 或 aid:vid|aid1:vid1 或 aid1:vid1（需要从类目服务接口获取）

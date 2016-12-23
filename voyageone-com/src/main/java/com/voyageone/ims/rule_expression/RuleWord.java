@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = FeedOrgWord.class, name = "FEED_ORG"),
         @JsonSubTypes.Type(value = SkuWord.class, name = "SKU"),
         @JsonSubTypes.Type(value = CommonWord.class, name = "COMMON"),
+        @JsonSubTypes.Type(value = SubCodeWord.class, name = "SUBCODE"),
         //TODO add other field
 })
 public abstract class RuleWord {

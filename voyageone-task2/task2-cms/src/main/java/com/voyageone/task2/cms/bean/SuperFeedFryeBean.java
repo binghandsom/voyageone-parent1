@@ -51,9 +51,15 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     private Integer updateflag;
 
+    private Double saleprice;
+
+    private Double price;
+
     private String attributes;
 
     private String fabric;
+
+    private String taxCode;
 
     private String variantsName;
 
@@ -67,7 +73,11 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     private String variantsOptionsColor;
 
+    private String variantsOptionsColorValues;
+
     private String variantsOptionsSize;
+
+    private String variantsOptionsSizeValues;
 
     private String mfgsku;
 
@@ -78,8 +88,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     private String firstlivedate;
 
     private String metatags;
-
-    private String options;
 
     private String metadataCategoryextratext1;
 
@@ -294,6 +302,7 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     public void setUpdateflag(Integer updateflag) {
         this.updateflag = updateflag;
     }
+
     public String getAttributes() {
         return attributes;
     }
@@ -308,6 +317,14 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setFabric(String fabric) {
         this.fabric = fabric == null ? null : fabric.trim();
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode == null ? null : taxCode.trim();
     }
 
     public String getVariantsName() {
@@ -358,12 +375,28 @@ public class SuperFeedFryeBean extends SuperFeedBean {
         this.variantsOptionsColor = variantsOptionsColor == null ? null : variantsOptionsColor.trim();
     }
 
+    public String getVariantsOptionsColorValues() {
+        return variantsOptionsColorValues;
+    }
+
+    public void setVariantsOptionsColorValues(String variantsOptionsColorValues) {
+        this.variantsOptionsColorValues = variantsOptionsColorValues == null ? null : variantsOptionsColorValues.trim();
+    }
+
     public String getVariantsOptionsSize() {
         return variantsOptionsSize;
     }
 
     public void setVariantsOptionsSize(String variantsOptionsSize) {
         this.variantsOptionsSize = variantsOptionsSize == null ? null : variantsOptionsSize.trim();
+    }
+
+    public String getVariantsOptionsSizeValues() {
+        return variantsOptionsSizeValues;
+    }
+
+    public void setVariantsOptionsSizeValues(String variantsOptionsSizeValues) {
+        this.variantsOptionsSizeValues = variantsOptionsSizeValues == null ? null : variantsOptionsSizeValues.trim();
     }
 
     public String getMfgsku() {
@@ -404,14 +437,6 @@ public class SuperFeedFryeBean extends SuperFeedBean {
 
     public void setMetatags(String metatags) {
         this.metatags = metatags == null ? null : metatags.trim();
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public void setOptions(String options) {
-        this.options = options == null ? null : options.trim();
     }
 
     public String getMetadataCategoryextratext1() {
@@ -531,7 +556,7 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     }
 
     public void setOrigin(String origin) {
-        this.origin = origin;
+        this.origin = origin == null ? null : origin.trim();
     }
 
     public String getVariantsMediasFilepath() {
@@ -539,7 +564,7 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     }
 
     public void setVariantsMediasFilepath(String variantsMediasFilepath) {
-        this.variantsMediasFilepath = variantsMediasFilepath;
+        this.variantsMediasFilepath = variantsMediasFilepath == null ? null : variantsMediasFilepath.trim();
     }
 
     public String getSex() {
@@ -547,6 +572,22 @@ public class SuperFeedFryeBean extends SuperFeedBean {
     }
 
     public void setSex(String sex) {
-        this.sex = sex;
+        this.sex = sex == null ? null : sex.trim();
+    }
+
+    public Double getSaleprice() {
+        return saleprice;
+    }
+
+    public void setSaleprice(Double saleprice) {
+        this.saleprice = saleprice;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

@@ -752,7 +752,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 for (Map<String, Object> prop : salesProps) {
                     key = (String) prop.get("value");
                     key = key.substring(6);
-                    Integer salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+                    Integer salesVal = null;
+                    if (salesData.getSubNode(key.split("\\.")) instanceof Double)
+                        salesVal = Integer.valueOf(salesData.getSubNode(key.split("\\.")).toString());
+                    else
+                        salesVal = (Integer) salesData.getSubNode(key.split("\\."));
+
                     if (salesVal == null) {
                         FileUtils.cell(row, index++, unlock).setCellValue("");
                     } else {
