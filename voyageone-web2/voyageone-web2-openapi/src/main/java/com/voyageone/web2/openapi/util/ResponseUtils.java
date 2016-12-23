@@ -69,7 +69,8 @@ public class ResponseUtils {
             message = exception.getMessage();
         } else if (exception instanceof HttpRequestMethodNotSupportedException) {
             code = String.valueOf(ErrorIDEnum.InvalidRequest.getCode());
-            message = ErrorIDEnum.InvalidRequest.getDefaultMessage();
+            //message = ErrorIDEnum.InvalidRequest.getDefaultMessage();
+            message="The Endpoint URL does not exist. Please check the URL.";
         } else {
             code = String.valueOf(ErrorIDEnum.SystemUnavailable.getCode());
             message = ErrorIDEnum.SystemUnavailable.getDefaultMessage();
