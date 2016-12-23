@@ -36,9 +36,9 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 	@Test
 	public void startupTest() {
-		doCreateJson("天猫同购描述", false, doDict_详情页描述(null));
+		doCreateJson("天猫同购描述", false, doDict_详情页描述(null, null));
 		// 手表
-		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s"));
+		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s", false));
 
 	}
 
@@ -100,7 +100,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	 * 4. 共通图片 - 购物流程(购物流程+购物须知+7天退货服务须知)
 	 * 5. 共通图片 - 店铺介绍图
 	 */
-	private RuleExpression doDict_详情页描述(String 参数图url) {
+	private RuleExpression doDict_详情页描述(String 参数图url, Boolean containsTitle) {
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
 
@@ -142,7 +142,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 		}
 
 		if (!StringUtils.isEmpty(参数图url)) {
-			do参数图(ruleRoot, 参数图url);
+			do参数图(ruleRoot, 参数图url, containsTitle);
 		}
 
 		{
@@ -230,8 +230,9 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	/**
 	 * OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
 	 * @param ruleRoot
+	 * @param containsTitle 参数是否包含title
 	 */
-	private void do参数图(RuleExpression ruleRoot, String 参数图url) {
+	private void do参数图(RuleExpression ruleRoot, String 参数图url, Boolean containsTitle) {
 		{
 			// 商品参数图
 			{
@@ -269,11 +270,20 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 				{
 					// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
-					for (int index = 0; index < 8; index++) {
+					String sp = "%s";
+					int paramCnt = 0;
+					int offset = 0;
+					while ((offset = 参数图url.indexOf(sp, offset)) != -1) {
+						offset = offset + sp.length();
+						paramCnt++;
+					}
+					for (int index = 0; index < paramCnt - 1; index++) {
 						{
-							RuleExpression ruleExpression = new RuleExpression();
-							ruleExpression.addRuleWord(new FeedCnWord(true, index));
-							imageParams.add(ruleExpression);
+							if (containsTitle != null && containsTitle) {
+								RuleExpression ruleExpression = new RuleExpression();
+								ruleExpression.addRuleWord(new FeedCnWord(true, index));
+								imageParams.add(ruleExpression);
+							}
 						}
 						{
 							RuleExpression ruleExpression = new RuleExpression();
