@@ -85,14 +85,14 @@ public class ComUserService {
             user.login(token);
         } catch (LockedAccountException lae) {
             token.clear();
-            throw new BusinessException("A003", "user locked!", lae);
+            throw new BusinessException("A003", "user locked!");
         } catch (ExcessiveAttemptsException e) {
             token.clear();
-            throw new BusinessException("A004", "too many fails, user will be locked for 10 minutes.", e);
+            throw new BusinessException("A004", "too many fails, user will be locked for 10 minutes.");
 
         } catch (AuthenticationException e) {
             token.clear();
-            throw new BusinessException("A005", "authentication failed.", e);
+            throw new BusinessException("A005", "authentication failed.");
         }
 
         ComUserModel userModel = new ComUserModel();
@@ -118,7 +118,7 @@ public class ComUserService {
         ComLoginLogModel model = new ComLoginLogModel();
         model.setApplication(app);
         model.setCreater(account);
-        String clientIP = request.getHeader("x-forwarded-for");
+        String clientIP = request.getHeader("x-real-ip");
         if (StringUtils.isEmpty(clientIP)) {
             clientIP = request.getRemoteAddr();
         }
