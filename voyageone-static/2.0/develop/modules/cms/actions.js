@@ -123,6 +123,7 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     "resetTmProduct": "resetTmProduct",
+                    getMainCategoryInfo:"getMainCategoryInfo",
                     priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
                     updateSkuPrice: "updateSkuPrice",
