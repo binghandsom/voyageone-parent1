@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.onestop.bean.OneStopProduct;
 import com.voyageone.components.onestop.service.OneStopClient;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -417,6 +418,10 @@ public class FryeAnalysisService extends BaseAnalysisService {
             }
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
+            if(!ListUtils.isNull(cmsBtFeedInfoModel.getImage())) {
+                cmsBtFeedInfoModel.setImage(cmsBtFeedInfoModel.getImage().stream().map(url -> "http:" + url).collect(Collectors.toList()));
+                cmsBtFeedInfoModel.getSkus().forEach(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.setImage(cmsBtFeedInfoModel.getImage()));
+            }
             cmsBtFeedInfoModel.setAttribute(attribute);
             //设置重量开始
             List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
