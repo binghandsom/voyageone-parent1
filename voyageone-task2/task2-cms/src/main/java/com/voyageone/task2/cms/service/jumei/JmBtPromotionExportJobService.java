@@ -10,39 +10,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * JmBtPromotion ExportJob Service
- *
- * @author peitao 2016/4/8.
- * @version 2.0.0
- * @since 2.0.0
- */
-//
-//@Service
-//@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask)
-//public class JmBtPromotionExportJobService extends BaseMQCmsService {
-////    @Autowired
-////    private CmsBtJmPromotionExportTaskService service;
-//    @Autowired
-//    private CmsBtJmPromotionExportTask3Service service;
-//    @Override
-//    public void onStartup(Map<String, Object> messageMap) throws Exception {
-//        $debug("JmBtPromotionExportJobService收到消息：" + JacksonUtil.bean2Json(messageMap));
-//        TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
-//        $info("JmBtPromotionExportJobService", "begin");
-//        if (taskControlBean == null) {
-//            $error("JmBtPromotionExportJobService", "请配置cms.jm.export.path");
-//            return;
-//        }
-//        String exportPath = taskControlBean.getCfg_val1();
-//        FileUtils.mkdirPath(exportPath);
-//        int id = (int) Double.parseDouble(messageMap.get("id").toString());
-//        service.export(id, exportPath);
-//        $info("JmBtPromotionExportJobService", "end");
-//    }
-//}
-
-
 
 @Service
 @RabbitListener()
@@ -59,12 +26,12 @@ public  class JmBtPromotionExportJobService extends TBaseMQCmsService<JmExportMQ
         $info("JmBtPromotionExportJobService", "begin");
         if (taskControlBean == null) {
             $error("JmBtPromotionExportJobService", "请配置cms.jm.export.path");
-        return;
+            return;
         }
         String exportPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(exportPath);
         int id = messageBody.getJmBtPromotionExportTaskId();
         service.export(id, exportPath);
         $info("JmBtPromotionExportJobService", "end");
-        }
-        }
+    }
+}
