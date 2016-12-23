@@ -1,9 +1,9 @@
 package com.voyageone.task2.mq;
 
-import com.voyageone.common.mq.config.MQConfigInit;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.utils.MQConfigInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
@@ -14,7 +14,6 @@ import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
@@ -26,7 +25,6 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-//@Service
 public class VOMQServiceControlListener implements MessageListener, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

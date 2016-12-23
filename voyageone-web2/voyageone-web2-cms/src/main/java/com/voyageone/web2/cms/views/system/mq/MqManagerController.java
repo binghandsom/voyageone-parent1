@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.system.mq;
 
-import com.voyageone.common.mq.config.MQConfigUtils;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.AnnotationProcessorByIP;
+import com.voyageone.components.rabbitmq.config.AnnotationProcessorByIP;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * MqManagerController

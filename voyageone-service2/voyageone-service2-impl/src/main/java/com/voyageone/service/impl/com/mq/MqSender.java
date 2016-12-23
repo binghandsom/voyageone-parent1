@@ -1,10 +1,11 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.common.mq.config.MQConfigUtils;
+import com.voyageone.components.rabbitmq.utils.MQConfigUtils;
 import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.rabbitmq.service.MqBackupMessageService;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig;
+import com.voyageone.components.rabbitmq.config.VoRabbitMqLocalConfig;
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

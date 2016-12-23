@@ -1,7 +1,7 @@
 package com.voyageone.common.configs;
 
-import com.voyageone.common.mq.config.MQConfigInit;
-import com.voyageone.task2.base.BaseMQAnnoService;
+
+import com.voyageone.components.rabbitmq.utils.MQConfigInit;
 
 /**
  * Created by dell on 2016/12/22.

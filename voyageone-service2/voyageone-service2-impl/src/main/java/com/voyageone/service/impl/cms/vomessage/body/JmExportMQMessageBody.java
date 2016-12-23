@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.vomessage.body;
 
-import com.voyageone.common.mq.config.VOMQQueue;
-import com.voyageone.common.mq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
-import com.voyageone.service.impl.com.mq.BaseMQMessageBody;
+import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 
 /**
  * Created by dell on 2016/12/20.

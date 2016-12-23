@@ -1,17 +1,19 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.mq.config.*;
-import com.voyageone.common.mq.exception.MQException;
-import com.voyageone.common.mq.exception.MQIgnoreException;
+import com.voyageone.components.rabbitmq.annotation.VOMQRunnable;
+import com.voyageone.components.rabbitmq.annotation.VOMQStart;
+import com.voyageone.components.rabbitmq.annotation.VOMQStop;
+import com.voyageone.components.rabbitmq.exception.MQException;
+import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.common.util.GenericSuperclassUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.com.mq.MQControlHelper;
-import com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy;
+import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
+import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
+import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.MDC;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -31,7 +33,7 @@ import java.util.Map;
  * <p>
  * Created by jonas on 15/6/6.
  */
-public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService  implements IVOMQOnStartup<TMQMessageBody> {
+public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService implements IVOMQOnStartup<TMQMessageBody> {
 
 
     /**
@@ -43,7 +45,8 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
      * 默认公开的启动入口
      */
     @Override
-    public void startup() {}
+    public void startup() {
+    }
 
     /**
      * RabbitHandler
@@ -100,9 +103,9 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         try {
             messageStr = new String(message.getBody(), StandardCharsets.UTF_8);
             //获取泛型的真实类型class
-            Class<TMQMessageBody>  messageBodyClass= GenericSuperclassUtils.getGenericActualTypeClass(this);
+            Class<TMQMessageBody> messageBodyClass = GenericSuperclassUtils.getGenericActualTypeClass(this);
 
-            TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr,messageBodyClass);
+            TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr, messageBodyClass);
 
             onStartup(messageBody);
         } catch (BusinessException be) {

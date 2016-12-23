@@ -2,8 +2,8 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.com.mq.MqBackupMessageService;
-import com.voyageone.service.impl.com.mq.MqSenderService;
+import com.voyageone.components.rabbitmq.service.MqBackupMessageService;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;

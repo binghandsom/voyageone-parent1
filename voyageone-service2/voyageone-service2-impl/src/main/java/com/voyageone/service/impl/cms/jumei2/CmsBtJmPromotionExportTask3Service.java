@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
-import com.voyageone.common.mq.exception.MQMessageRuleException;
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
@@ -14,7 +14,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
 import com.voyageone.service.impl.cms.vomessage.body.JmExportMQMessageBody;
-import com.voyageone.service.impl.com.mq.MqSenderService;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
