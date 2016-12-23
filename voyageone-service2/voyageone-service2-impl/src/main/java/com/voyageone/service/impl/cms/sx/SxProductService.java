@@ -1,9 +1,9 @@
 package com.voyageone.service.impl.cms.sx;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
-import com.google.common.collect.Lists;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
@@ -76,11 +76,15 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -135,6 +139,8 @@ public class SxProductService extends BaseService {
     private ImsBtProductExceptDao imsBtProductExceptDao;
     @Autowired
     private CmsBtImageGroupDao cmsBtImageGroupDao;
+    @Autowired
+    private CmsBtPlatformImagesDao cmsBtPlatformImagesDao;
     @Autowired
     private CmsBtPlatformImagesDaoExt cmsBtPlatformImagesDaoExt;
     @Autowired
@@ -651,12 +657,20 @@ public class SxProductService extends BaseService {
 
         $info("read complete, begin to upload image");
 
+        Picture picture = uploadImageToTm(shopBean, baos.toByteArray());
+        if (picture != null) {
+            $info(String.format("Success to upload image[%s -> %s]", url, picture.getPicturePath()));
+        }
+        return picture;
+
+    }
+
+    public Picture uploadImageToTm(ShopBean shopBean, byte[] file) {
         //上传到天猫
         Picture picture;
-        String pictureUrl = null;
         try {
             $info("upload image, wait Tmall response...");
-            PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, baos.toByteArray(), "image_title", "0");
+            PictureUploadResponse pictureUploadResponse = tbPictureService.uploadPicture(shopBean, file, "image_title", "0");
             $info("response comes");
             if (pictureUploadResponse == null) {
                 String failCause = "上传图片到天猫时，超时, tmall response为空";
@@ -669,15 +683,12 @@ public class SxProductService extends BaseService {
                 throw new BusinessException(failCause);
             }
             picture = pictureUploadResponse.getPicture();
-            if (picture != null)
-                pictureUrl = picture.getPicturePath();
         } catch (ApiException e) {
             String failCause = "上传图片到天猫国际时出错！ msg:" + e.getMessage();
             $error("errCode: " + e.getErrCode());
             $error("errMsg: " + e.getErrMsg());
             throw new BusinessException(failCause);
         }
-        $info(String.format("Success to upload image[%s -> %s]", url, pictureUrl));
 
         return picture;
     }
@@ -2285,8 +2296,14 @@ public class SxProductService extends BaseService {
                         // 同时只有一口价全新的宝贝才能设置为新品，否则会返回错误码：isv.invalid-parameter:xinpin。
                         // 不设置该参数值或设置为false效果一致。
                         // 新品判断逻辑(第一次上新的时候，设为新品;更新的时候，如果当前时间距离首次上新时间<=60天时，设为新品，否则设为非新品)
+                        // 没有吊牌图，则不是新品
                         if (isXinPin(mainSxProduct, cartId)) {
-                            isXinpinField.setValue("true");
+                            String diaopaiUrl = resolveDict(CustomMappingType.ImageProp.DIAOPAI_PIC.getBaseDictName(), expressionParser, shopBean, user, null);
+                            if (StringUtils.isEmpty(diaopaiUrl)) {
+                                isXinpinField.setValue("false");
+                            } else {
+                                isXinpinField.setValue("true");
+                            }
                         } else {
                             isXinpinField.setValue("false");
                         }
@@ -2859,11 +2876,17 @@ public class SxProductService extends BaseService {
             return;
         }
 
+        SxData sxData = expressionParser.getSxData();
+        String errMsgSchemaChange = String.format("类目[%s]的无线描述的schema变啦!需要重新分析并修改代码!", sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
+        if (field.getType() != FieldTypeEnum.COMPLEX) {
+            throw new BusinessException(errMsgSchemaChange);
+        }
+
         // 无线描述 (以后可能会根据不同商品信息，取不同的[无线描述])
         // modified by morse.lu 2016/08/16 start
         // 画面上有指定的用指定的，没有就还是用原来的"详情页描述"
 //        String descriptionValue = resolveDict("无线描述", expressionParser, shopBean, user, null);
-        SxData sxData = expressionParser.getSxData();
+//        SxData sxData = expressionParser.getSxData();
         String descriptionValue;
         RuleExpression ruleDetails = new RuleExpression();
         MasterWord masterWord = new MasterWord("wirelessDetails");
@@ -2888,13 +2911,89 @@ public class SxProductService extends BaseService {
 
         // 开始设值
         setWirelessDescriptionFieldValueWithLoop(field, mapValue, expressionParser.getSxData());
+
+        // added by morse.lu 2012/12 start
+        // 无线端描述的图片热区直接用天猫后台设值好的
+        // 暂时field_id都写死了, 有变化的话报错
+        Map<String, Field> updateItemFields = sxData.getUpdateItemFields();
+        if (updateItemFields != null && updateItemFields.get(field.getId()) != null) {
+            ComplexValue defaultComplexValue = ((ComplexField) updateItemFields.get(field.getId())).getDefaultComplexValue();
+            if (defaultComplexValue != null && defaultComplexValue.getFieldMap() != null && defaultComplexValue.getFieldMap().size() > 0) {
+                String picture_key = "item_picture"; // 商品图片 complex
+                Field pictureField = ((ComplexField) field).getValue().getValueField(picture_key);
+                if (pictureField == null) {
+                    return;
+                } else if (pictureField.getType() != FieldTypeEnum.COMPLEX) {
+                    throw new BusinessException(errMsgSchemaChange);
+                }
+                ComplexValue itemPictureValue = defaultComplexValue.getComplexFieldValue(picture_key);
+                if (itemPictureValue == null || itemPictureValue.getFieldMap() == null || itemPictureValue.getFieldMap().size() == 0) {
+                    return;
+                }
+
+                String image_hot_area_key_main = "image_hot_area_"; // image_hot_area_0 complex
+                String hot_area_key = "hot_area"; // 图片热区 multiComplex
+                String item_picture_image_key = "item_picture_image"; // 图片url
+
+                // 这段先注掉，暂时不按url作为key 塞到对应的 图片热区，而是直接20张按顺序依次塞值
+                // 由运营保证热区一定设置在最前面几张图，不会有空白图(因为有空白图了，我们20张图的顺序到天猫上，会被自动朝前移，把空白图顶掉，我们再从天猫取的时候第一张图对应的可能不再是第一张图)
+//                // Map<item_picture_image, hot_area>
+//                Map<String, List<ComplexValue>> mapHotAreaValue = new HashMap<>();
+//                for (int index = 0; index < 20; index++) {
+//                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
+//                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+//                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+//                        continue;
+//                    }
+//
+//                    String imageUrl = imageHotAreaValue.getInputFieldValue(item_picture_image_key);
+//                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+//                    if (ListUtils.notNull(hotAreaValue) && !StringUtils.isEmpty(imageUrl)) {
+//                        mapHotAreaValue.put(imageUrl, hotAreaValue);
+//                    }
+//                }
+
+                for (int index = 0; index < 20; index++) {
+                    // image_hot_area_0
+                    String image_hot_area_key = image_hot_area_key_main + String.valueOf(index);
+                    Field imageHotAreaField = ((ComplexField) pictureField).getValue().getValueField(image_hot_area_key);
+                    if (imageHotAreaField == null) {
+                        continue;
+                    } else if (imageHotAreaField.getType() != FieldTypeEnum.COMPLEX) {
+                        throw new BusinessException(errMsgSchemaChange);
+                    }
+                    ComplexValue imageHotAreaValue = itemPictureValue.getComplexFieldValue(image_hot_area_key);
+                    if (imageHotAreaValue == null || imageHotAreaValue.getFieldMap() == null || imageHotAreaValue.getFieldMap().size() == 0) {
+                        continue;
+                    }
+
+                    // 图片热区
+                    Field hotAreaField = ((ComplexField) imageHotAreaField).getValue().getValueField(hot_area_key);
+                    if (hotAreaField == null) {
+                        continue;
+                    } else if (hotAreaField.getType() != FieldTypeEnum.MULTICOMPLEX) {
+                        throw new BusinessException(errMsgSchemaChange);
+                    }
+
+                    List<ComplexValue> hotAreaValue = imageHotAreaValue.getMultiComplexFieldValues(hot_area_key);
+//                    String imageUrl = ((ComplexField) imageHotAreaField).getValue().getInputFieldValue(item_picture_image_key);
+//                    if (!StringUtils.isEmpty(imageUrl)) {
+//                        List<ComplexValue> hotAreaValue = mapHotAreaValue.get(imageUrl);
+                        if (ListUtils.notNull(hotAreaValue)) {
+                            ((MultiComplexField) hotAreaField).setComplexValues(hotAreaValue);
+                        }
+//                    }
+                }
+            }
+        }
+        // added by morse.lu 2012/12 end
     }
 
     /**
      * 循环无线描述field进行设值
      */
     private void setWirelessDescriptionFieldValueWithLoop(Field field, Map<String, Object> mapValue, SxData sxData) throws Exception {
-        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getCommon().getCatPath());
+        String errorMsg = String.format("类目[%s]的无线描述field_id或结构或类型发生变化啦!", sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath());
         if (!mapValue.containsKey(field.getId())) {
             $warn(errorMsg);
             return;
@@ -3032,9 +3131,34 @@ public class SxProductService extends BaseService {
             for (CustomMappingType.ImageProp imageProp : CustomMappingType.ImageProp.values()) {
                 if (imageProp.getPropId().equals(field.getId())) {
                     hasSetting = true;
-                    // 第一张图
-                    String url = resolveDict(imageProp.getBaseDictName() + "1", expressionParser, shopBean, user, null);
+                    String dictName = imageProp.getBaseDictName();
+                    if ("-".equals(dictName.substring(dictName.length() - 1))) {
+                        // 最后一位是"-"
+                        // 第一张图
+                        dictName = dictName + "1";
+                    }
+                    String url = resolveDict(dictName, expressionParser, shopBean, user, null);
                     ((InputField) field).setValue(url);
+
+                    // deleted by morse.lu 2016/12/16 start
+                    // 改成没吊牌图就不是新品
+//                    if (imageProp == CustomMappingType.ImageProp.DIAOPAI_PIC) {
+//                        // 吊牌图
+//                        if (StringUtils.isEmpty(url) && isXinPin(sxData.getMainProduct(), sxData.getCartId())) {
+//                            // 是新品，但是没有吊牌图
+//                            throw new BusinessException("是新品,但是吊牌图未设定,或通过设定未取得!");
+//                        }
+//                    }
+                    // deleted by morse.lu 2016/12/16 end
+                    if (imageProp == CustomMappingType.ImageProp.WHITE_BG_IMAGE) {
+                        // 透明图
+                        if (!StringUtils.isEmpty(url)) {
+                            // 字典取到了需要转换的透明图的原图
+                            // 转成透明图
+                            ((InputField) field).setValue(uploadTransparentPictureToTm(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopBean, url, user));
+                        }
+                    }
+
                     break;
                 }
             }
@@ -3128,8 +3252,8 @@ public class SxProductService extends BaseService {
     private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+                , CmsConstants.ChannelConfig.PRICE_SX_KEY
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
 
         // 检查一下
         String sxPricePropName;
@@ -3323,8 +3447,8 @@ public class SxProductService extends BaseService {
                 throw new BusinessException("共通图片表找到两条以上符合的记录,请修正设定!" +
                         "channelId= " + channelId +
                         ",cartId= " + cartId +
-                        ",imageType= " + imageType +
-                        ",viewType= "+ viewType +
+                        ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                        ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                         ",BrandName= " + paramBrandName +
                         ",ProductType= " + paramProductType +
                         ",SizeType=" + paramSizeType);
@@ -3335,8 +3459,8 @@ public class SxProductService extends BaseService {
                     throw new BusinessException("共通图片表找到的图片类型对应的图片数为0,请确保至少上传1张图片！" +
                             "channelId= " + channelId +
                             ",cartId= " + cartId +
-                            ",imageType= " + imageType +
-                            ",viewType= "+ viewType +
+                            ",imageType= " + imageType + "(1:商品图 2:尺码 3：品牌故事 4：物流 5:店铺图)" +
+                            ",viewType= "+ viewType + "(1:PC端 2：APP端)" +
                             ",BrandName= " + paramBrandName +
                             ",ProductType= " + paramProductType +
                             ",SizeType=" + paramSizeType);
@@ -3822,9 +3946,12 @@ public class SxProductService extends BaseService {
                     case MULTICHECK:
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         List<Value> lstValue = new ArrayList<>();
-                        Value v = new Value();
-                        v.setValue(o.toString());
-                        lstValue.add(v);
+                        ArrayList<String> defaultValueList = (ArrayList<String>) o;
+                        for (String defaultValue : defaultValueList){
+                            Value v = new Value();
+                            v.setValue(defaultValue);
+                            lstValue.add(v);
+                        }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
                         break;
@@ -4810,4 +4937,172 @@ public class SxProductService extends BaseService {
             $debug("SxProductService 记录商品上下架历史时成功! [channelId=%s] [cartId=%s] [groupId=%s], [platformActiveLog保存结果=%s]", channelId, cartId, pCode, rs.toString());
         }
     }
+
+    /**
+     * 上传透明图片到天猫图片空间
+     *
+     * @param channelId   渠道id
+     * @param cartId      平台id
+     * @param groupId     groupId
+     * @param shopBean    shopBean
+     * @param imageUrl    待上传url的
+     * @param user        更新者
+     */
+    public String uploadTransparentPictureToTm(String channelId, int cartId, String groupId, ShopBean shopBean, String imageUrl, String user) throws Exception {
+        CmsBtPlatformImagesModel imageUrlModel = cmsBtPlatformImagesDaoExt.selectPlatformImage(channelId, cartId, groupId, imageUrl);
+        if (imageUrlModel != null) {
+            return imageUrlModel.getPlatformImgUrl();
+        }
+
+        CmsChannelConfigBean config = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.TRANSPARENT_IMAGE);
+        if (config == null) {
+            return null;
+        }
+
+        String type = config.getConfigValue1();
+
+        String platformUrl = null;
+        String pictureId = null;
+        try {
+            Picture picture = null;
+            if ("1".equals(type)) {
+                picture = uploadImageToTm(shopBean, convertTransparentPicture1(imageUrl));
+            } else if ("2".equals(type)) {
+                picture = uploadImageToTm(shopBean, convertTransparentPicture2(imageUrl));
+            }
+            if (picture != null) {
+                platformUrl = picture.getPicturePath();
+                pictureId = String.valueOf(picture.getPictureId());
+            }
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            // 暂不抛错，返回null吧
+        }
+
+        if (!StringUtils.isEmpty(platformUrl)) {
+            CmsBtPlatformImagesModel imageUrlInfo = new CmsBtPlatformImagesModel();
+            imageUrlInfo.setCartId(cartId);
+            imageUrlInfo.setChannelId(channelId);
+            imageUrlInfo.setSearchId(groupId);
+            imageUrlInfo.setImgName(""); // 暂定为空
+            imageUrlInfo.setOriginalImgUrl(imageUrl);
+            imageUrlInfo.setPlatformImgUrl(platformUrl);
+            imageUrlInfo.setPlatformImgId(pictureId);
+            imageUrlInfo.setUpdFlg(UPD_FLG_UPLOADED);
+            imageUrlInfo.setCreater(user);
+            imageUrlInfo.setModifier(user);
+            cmsBtPlatformImagesDao.insert(imageUrlInfo);
+        }
+
+        return platformUrl;
+    }
+
+    /**
+     * 转成透明图
+     * 用TYPE_USHORT_555_RGB 变小，再用TYPE_4BYTE_ABGR 弄透明
+     * 暂定800*800
+     */
+    public byte[] convertTransparentPicture1(String picUrl) {
+        try {
+            // TYPE_USHORT_555_RGB 出来的比较小，底色一弄isBackPixel判断颜色是-1， 然后用TYPE_4BYTE_ABGR，把这些-1的弄成0，就是透明了
+            BufferedImage image = ImageIO.read(new URL(picUrl));
+            BufferedImage bufferedImage = new BufferedImage(800, 800, BufferedImage.TYPE_USHORT_555_RGB);
+            Graphics2D g2D = (Graphics2D) bufferedImage.getGraphics();
+            g2D.drawImage(image, 0, 0, null);
+
+            //采用带1 字节alpha的TYPE_4BYTE_ABGR，可以修改像素的布尔透明
+            BufferedImage convertedImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR); // 转成800*800
+            g2D = (Graphics2D) convertedImage.getGraphics();
+            g2D.drawImage(bufferedImage, 0, 0, null);
+            //像素替换，直接把背景颜色的像素替换成0
+
+            int backRGB = convertedImage.getRGB(0, 0);
+            for (int i = convertedImage.getMinY(); i < convertedImage.getHeight(); i++) {
+                for (int j = convertedImage.getMinX(); j < convertedImage.getWidth(); j++) {
+                    int rgb = convertedImage.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        convertedImage.setRGB(i, j, 0);
+                    }
+                }
+            }
+            g2D.drawImage(convertedImage, 0, 0, null);
+            // 生成stream
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(convertedImage, "png", baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
+        }
+    }
+
+    /**
+     * 转成透明图
+     * 用TYPE_USHORT_555_RGB 和 TYPE_4BYTE_ABGR 共同确定背景色 来变成透明
+     * 暂定800*800
+     * 原图就是转后过的透明图png比较适用此方法
+     */
+    public byte[] convertTransparentPicture2(String picUrl) {
+        Map<String, String[]> map = new HashMap<>();
+        for (int i = 0; i < 800; i++) {
+            for (int j = 0; j < 800; j++) {
+                map.put(String.valueOf(i) + "-" + String.valueOf(j), new String[]{"0", "0"});
+            }
+        }
+
+        try {
+            BufferedImage image = ImageIO.read(new URL(picUrl));
+            BufferedImage bufferedImage1 = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D g2D1 = (Graphics2D) bufferedImage1.getGraphics();
+            g2D1.drawImage(image, 0, 0, null);
+            int backRGB = bufferedImage1.getRGB(0, 0);
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    int rgb = bufferedImage1.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                        ar[0] = "1";
+                    }
+                }
+            }
+
+            BufferedImage bufferedImage2 = new BufferedImage(800, 800, BufferedImage.TYPE_USHORT_555_RGB);
+            Graphics2D g2D2 = (Graphics2D) bufferedImage2.getGraphics();
+            g2D2.drawImage(image, 0, 0, null);
+            backRGB = bufferedImage2.getRGB(0, 0);
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    int rgb = bufferedImage2.getRGB(i, j);
+                    if (backRGB == rgb) {
+                        String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                        ar[1] = "1";
+                    }
+                }
+            }
+
+            //采用带1 字节alpha的TYPE_4BYTE_ABGR，可以修改像素的布尔透明
+            BufferedImage convertedImage = new BufferedImage(800, 800, BufferedImage.TYPE_4BYTE_ABGR); // 转成800*800
+            Graphics2D g2Dc = (Graphics2D) convertedImage.getGraphics();
+            g2Dc.drawImage(bufferedImage2, 0, 0, null);
+            //像素替换，直接把背景颜色的像素替换成0
+
+            for (int i = 0; i < 800; i++) {
+                for (int j = 0; j < 800; j++) {
+                    String[] ar = map.get(String.valueOf(i) + "-" + String.valueOf(j));
+                    if ("1".equals(ar[0]) && "1".equals(ar[1])) {
+                        convertedImage.setRGB(i, j, 0);
+                    }
+                }
+            }
+            g2Dc.drawImage(convertedImage, 0, 0, null);
+
+            // 生成stream
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(convertedImage, "png", baos);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new BusinessException(String.format("转透明图失败!图片url是:%s", picUrl));
+        }
+    }
+
 }

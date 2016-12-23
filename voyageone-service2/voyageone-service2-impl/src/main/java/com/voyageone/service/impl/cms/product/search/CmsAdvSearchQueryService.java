@@ -42,10 +42,12 @@ public class CmsAdvSearchQueryService extends BaseService {
     /**
      * 获取当前查询的product列表（查询条件从画面而来）<br>
      */
-    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId) {
+    public List<String> getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Boolean isSort) {
         JongoQuery queryObject = getSearchQuery(searchValue);
         queryObject.setProjection("{'common.fields.code':1,'_id':0}");
-        queryObject.setSort(getSortValue(searchValue));
+        if(isSort) {
+            queryObject.setSort(getSortValue(searchValue));
+        }
         if (searchValue.getProductPageNum() > 0) {
             queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
             queryObject.setLimit(searchValue.getProductPageSize());

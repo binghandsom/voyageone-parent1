@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <!-- online env -->
+    <import resource="file:/usr/web/spring-config/common-config.xml" />
+    <import resource="file:/usr/web/spring-config/data-cache-config.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-cms2-config-new.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-vms-config.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />
+    <import resource="file:/usr/web/spring-config/sdk-client-config.xml" />
+    <import resource="file:/usr/web/spring-config/mq-config.xml" />
+    <import resource="file:/usr/web/spring-config/redis-config.xml" />
+    <import resource="file:/usr/web/spring-config/solr-config.xml"/>
+    <import resource="file:/usr/web/spring-config/datasource-security-config.xml"/>
+    <import resource="file:/usr/web/spring-config/datasource-admin-common-config.xml"/>
+</beans>

@@ -148,6 +148,7 @@ public class UserController extends BaseController {
         session.setAttribute("comUserModel", userModel);
         session.setAttribute("userId", userModel.getId());
 
+
         // 返回用户信息
         return success(true);
     }
@@ -167,6 +168,17 @@ public class UserController extends BaseController {
         getSession().setAttribute("channelId", params.get("channelId").toString());
         getSession().setAttribute("applicationId", params.get("applicationId").toString());
         getSession().setAttribute("application", params.get("application").toString());
+
+        //清除用户授权缓存
+        try {
+            comUserService.clearCachedAuthorizationInfo();
+        }
+        catch (Exception e)
+        {
+            //do nothing
+        }
+
+
         // 只要不报异常就是ok
         return success(true);
     }

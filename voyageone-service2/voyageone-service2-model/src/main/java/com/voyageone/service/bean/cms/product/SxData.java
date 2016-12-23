@@ -1,6 +1,7 @@
 package com.voyageone.service.bean.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.service.model.cms.CmsTmpSxCnCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -35,6 +36,9 @@ public class SxData {
     private String errorCode;     // 出错时回写到businessLog表的errorCode
     private String errorMessage;  // 出错时回写到businessLog表的errorMessage
 	private boolean updateProductFlg; // 是否更新产品，默认false
+
+	private Map<String, Field> updateItemFields; // Map<field_id, Field> 商品当前在平台上的信息，这样可以把有些不想改的属性设值回去
+
 	private Map<String, SxDarwinSkuProps> mapDarwinSkuProps; // Map<sku, SxDarwinSkuProps>
 
 	public class SxDarwinSkuProps {
@@ -225,6 +229,14 @@ public class SxData {
 
 	public void setUpdateProductFlg(boolean updateProductFlg) {
 		this.updateProductFlg = updateProductFlg;
+	}
+
+	public Map<String, Field> getUpdateItemFields() {
+		return updateItemFields;
+	}
+
+	public void setUpdateItemFields(Map<String, Field> updateItemFields) {
+		this.updateItemFields = updateItemFields;
 	}
 
 	public Map<String, SxDarwinSkuProps> getMapDarwinSkuProps() {

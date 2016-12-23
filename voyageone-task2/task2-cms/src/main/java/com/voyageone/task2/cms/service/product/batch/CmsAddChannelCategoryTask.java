@@ -4,6 +4,7 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -47,6 +48,7 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
 
     public void onStartup(Map<String, Object> messageMap) {
         List<String> codeList = (List) messageMap.get("productIds");
+        List<String> approvedCodeList = new ArrayList<>();
         if (codeList == null || codeList.isEmpty()) {
             $warn("没有code条件 params=" + messageMap.toString());
             return;
@@ -160,6 +162,9 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
             if (rs != null) {
                 $debug(String.format("批量设置店铺内分类 channelId=%s 执行结果=%s", channelId, rs.toString()));
             }
+            if(prodObj.getPlatform(cartId) != null && CmsConstants.ProductStatus.Approved.toString().equalsIgnoreCase(prodObj.getPlatform(cartId).getStatus())){
+                approvedCodeList.add(prodObj.getCommon().getFields().getCode());
+            }
         }
         BulkWriteResult rs = bulkList.execute();
         if (rs != null) {
@@ -194,7 +199,7 @@ public class CmsAddChannelCategoryTask extends VOAbsLoggable {
         } else {
             //取得approved的code插入
             $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-            sxProductService.insertSxWorkLoad(channelId, codeList, cartId, userName);
+            sxProductService.insertSxWorkLoad(channelId, approvedCodeList, cartId, userName);
         }
 
         // 记录商品修改历史

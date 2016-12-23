@@ -1,9 +1,14 @@
 var morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
-var proxyUrl = "http://localhost:8080",
-    proxyMiddleware = proxy(proxyUrl);
+var proxyUrl = "http://localhost:8080";
+    //proxyMiddleware = proxy(proxyUrl);
 
+var jsonPlaceholderProxy = proxy(['/cms','/core'], {
+    target: proxyUrl,
+    changeOrigin: true,             // for vhosted sites, changes host header to match to target's host
+    logLevel: 'debug'
+});
 module.exports = {
     server: {
         baseDir: "develop",
@@ -15,12 +20,13 @@ module.exports = {
         'develop/components/!**!/!*.js'
     ],*/
     notify: false,
+    port: 3000,
     middleware: [
-        morgan('dev'),
-        function (req, res, next) {
-            if (req.method !== 'POST')
-                return next();
-            return proxyMiddleware(req, res, next);
-        }
+        morgan('dev'),jsonPlaceholderProxy
+        // ,function (req, res, next) {
+        //     if (req.method !== 'POST')
+        //         return next();
+        //     return proxyMiddleware(req, res, next);
+        // },
     ]
 };
