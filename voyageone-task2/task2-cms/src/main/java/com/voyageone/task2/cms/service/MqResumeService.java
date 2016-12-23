@@ -2,8 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.com.mq.MqBackMessageService;
-import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.MqBackupMessageService;
 import com.voyageone.service.impl.com.mq.MqSenderService;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -28,7 +27,7 @@ public class MqResumeService extends BaseCronTaskService {
     private MqSenderService senderService;
 
     @Autowired
-    private MqBackMessageService mqBackMessageService;
+    private MqBackupMessageService mqBackMessageService;
 
     @Override
     public SubSystem getSubSystem() {

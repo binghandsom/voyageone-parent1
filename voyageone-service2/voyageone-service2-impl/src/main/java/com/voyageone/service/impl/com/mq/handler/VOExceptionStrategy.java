@@ -3,9 +3,8 @@ package com.voyageone.service.impl.com.mq.handler;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.com.mq.IMqBackupMessage;
 import com.voyageone.service.impl.com.mq.MQControlHelper;
-import com.voyageone.service.impl.com.mq.MqBackMessageService;
-import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -35,7 +34,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MqBackMessageService mqBackMessageService;
+    private IMqBackupMessage mqBackMessageService;
 
 
     /**

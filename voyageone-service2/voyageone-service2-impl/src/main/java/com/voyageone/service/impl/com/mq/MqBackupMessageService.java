@@ -14,7 +14,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-public class MqBackMessageService extends BaseService {
+public class MqBackupMessageService extends BaseService implements IMqBackupMessage {
 
     @Autowired
     private ComMtMqMessageBackDao comMtMqMessageBackDao;

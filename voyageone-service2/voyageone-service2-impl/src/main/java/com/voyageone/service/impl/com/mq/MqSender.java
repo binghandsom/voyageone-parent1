@@ -25,7 +25,7 @@ public class MqSender extends BaseService {
     private static final String CONSUMER_RETRY_KEY = "$consumer_retry_times$";
 
     @Autowired
-    private MqBackMessageService mqBackMessageService;
+    private MqBackupMessageService mqBackMessageService;
 
     /**
      * 发送消息

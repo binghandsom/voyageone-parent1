@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class MqSenderService extends BaseService {
 
     @Autowired
-    private MqBackMessageService mqBackMessageService;
+    private IMqBackupMessage  mqBackMessageService;
 
     public void sendMessage(IMQMessageBody message) throws MQMessageRuleException {
         sendMessage(message, isLocal());
