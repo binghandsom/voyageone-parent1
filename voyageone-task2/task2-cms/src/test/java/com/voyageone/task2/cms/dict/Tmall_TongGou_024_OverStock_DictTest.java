@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.dict;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -35,7 +36,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 	@Test
 	public void startupTest() {
-//		doCreateJson("天猫同购描述", false, doDict_详情页描述());
+		doCreateJson("天猫同购描述", false, doDict_详情页描述(null));
 		// 手表
 		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s"));
 
@@ -129,18 +130,20 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
 			ruleRoot.addRuleWord(word);
 		}
-//		{
-//			// 中文长描述
-//			MasterWord word = new MasterWord("longDesCn");
-//			ruleRoot.addRuleWord(word);
-//		}
-//		{
-//			// 回车一个
-//			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
-//			ruleRoot.addRuleWord(word);
-//		}
+		{
+			// 中文长描述
+			MasterWord word = new MasterWord("longDesCn");
+			ruleRoot.addRuleWord(word);
+		}
+		{
+			// 回车一个
+			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
+			ruleRoot.addRuleWord(word);
+		}
 
-		do参数图(ruleRoot, 参数图url);
+		if (!StringUtils.isEmpty(参数图url)) {
+			do参数图(ruleRoot, 参数图url);
+		}
 
 		{
 			// 尺码图
