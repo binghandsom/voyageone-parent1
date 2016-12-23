@@ -124,6 +124,7 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-sm-5 text-center control-label vo_a_ce" >{{'TXT_ACTION'|translate}}</label>
+                            <div ng-show="1<0"><button ng-click="ctrl.search(name)"></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.move('allInclude')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-double-left"></i></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('include')" ng-disabled="ctrl.roleAllList.length<1"><i class="fa fa-angle-left"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('exclude')" ng-disabled="ctrl.roleList.length<1"><i class="fa fa-angle-right"></i></button></div>
