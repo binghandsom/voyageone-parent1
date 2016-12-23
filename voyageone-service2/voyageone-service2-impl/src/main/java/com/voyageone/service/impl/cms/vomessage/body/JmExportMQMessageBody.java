@@ -9,8 +9,12 @@ import com.voyageone.service.impl.com.mq.BaseMQMessageBody;
  * Created by dell on 2016/12/20.
  * 聚美导出消息类
  */
-@VOMQQueue(queues= MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask)
+@VOMQQueue(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask)
 public class JmExportMQMessageBody extends BaseMQMessageBody {
+
+    //表 Jm_Bt_Promotion_ExportTask
+    private int jmBtPromotionExportTaskId;
+
     public int getJmBtPromotionExportTaskId() {
         return jmBtPromotionExportTaskId;
     }
@@ -18,12 +22,10 @@ public class JmExportMQMessageBody extends BaseMQMessageBody {
     public void setJmBtPromotionExportTaskId(int jmBtPromotionExportTaskId) {
         this.jmBtPromotionExportTaskId = jmBtPromotionExportTaskId;
     }
-    //表 Jm_Bt_Promotion_ExportTask
-     int jmBtPromotionExportTaskId;
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (getJmBtPromotionExportTaskId() == 0) {
+        if (jmBtPromotionExportTaskId == 0) {
             throw new MQMessageRuleException("jmBtPromotionExportTaskId不能等于0");
         }
     }

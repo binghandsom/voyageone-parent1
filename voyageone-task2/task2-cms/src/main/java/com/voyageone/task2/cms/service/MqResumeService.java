@@ -4,6 +4,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MqBackMessageService;
 import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.MqSenderService;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class MqResumeService extends BaseCronTaskService {
 
     @Autowired
-    private MqSender sender;
+    private MqSenderService senderService;
 
     @Autowired
     private MqBackMessageService mqBackMessageService;
@@ -49,8 +50,9 @@ public class MqResumeService extends BaseCronTaskService {
             }
             for (Map<String, Object> row : rowList) {
                 String messageMapStr = (String) row.get("messageMap");
+
                 // send mq to mqserver
-                sender.sendMessage((String) row.get("routingKey"), JacksonUtil.jsonToMap(messageMapStr));
+                senderService.sendMessage((String) row.get("routingKey"), JacksonUtil.jsonToMap(messageMapStr));
                 // update db data flag
                 mqBackMessageService.updateBackMessageFlag((int) row.get("id"));
             }

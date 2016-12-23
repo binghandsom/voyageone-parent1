@@ -19,13 +19,14 @@ import org.springframework.stereotype.Component;
 @Lazy(value = false)
 public class SpringStartFinish implements ApplicationListener<ContextRefreshedEvent> {
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     VOTestContext voTestContext;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if(voTestContext!=null&&!voTestContext.isInitMQRabbitListenerConfig()) return;
+        if (voTestContext != null && !voTestContext.isInitMQRabbitListenerConfig()) return;
         //root application context 没有parent，他就是老大.
-        if(event.getApplicationContext().getParent() == null){
+        if (event.getApplicationContext().getParent() == null) {
             // MQ Service 初始化
             MQConfigInit.init();
         }

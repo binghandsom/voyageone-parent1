@@ -27,66 +27,46 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class MqSenderService extends BaseService {
 
-    private static final String CONSUMER_RETRY_KEY = "$consumer_retry_times$";
-
     @Autowired
     private MqBackMessageService mqBackMessageService;
 
-    public  void  sendMessage(IMQMessageBody message) throws MQMessageRuleException {
+    public void sendMessage(IMQMessageBody message) throws MQMessageRuleException {
+        sendMessage(message, isLocal());
+    }
+
+    public void sendMessage(IMQMessageBody message, boolean isLoad) throws MQMessageRuleException {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(message.getClass(), VOMQQueue.class);
         if (voQueue == null)
             throw new BusinessException(message.getClass().getName() + "未加VOQueue注解");
 
         message.check();
 
-        sendMessage(null, voQueue.queues()[0], message, true, isLocal(), true, 0);
+        sendMessage(voQueue.exchange(), voQueue.value(), message, voQueue.isBackMessage(), isLoad, voQueue.isDeclareQueue(), voQueue.delaySecond());
     }
-
-//    /**
-//     * 发送消息
-//     *
-//     * @param routingKey 消息KEY
-//     * @param message 消息内容
-//     */
-//    public void sendMessage(String routingKey, Object message) {
-//        sendMessage(routingKey, message, true, 0);
-//    }
-//
-//    public void sendMessage(String routingKey, Object message, long delaySecond) {
-//        sendMessage(routingKey, message, true, delaySecond);
-//    }
-//
-//    /**
-//     * 发送消息
-//     *
-//     * @param routingKey    消息KEY
-//     * @param message    消息内容
-//     * @param isBackMessage 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
-//     * @param delaySecond    延迟发送时间 秒
-//     */
-//    public void sendMessage(String routingKey, Object message, boolean isBackMessage, long delaySecond) {
-//        sendMessage(null, routingKey, message, isBackMessage, isLocal(), true, delaySecond);
-//    }
-//
-//
-//    public void sendMessage(String exchange, String routingKey, Object messageMap,
-//                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue) {
-//        sendMessage(exchange, routingKey, messageMap, isBackMessage, isLoad, isDeclareQueue, 0);
-//    }
 
     /**
      * 发送消息
      *
-     * @param exchange       交换机名
-     * @param routingKey     消息KEY
-     * @param message     消息内容
-     * @param isBackMessage  出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
-     * @param isLoad         是否为开发环境
-     * @param isDeclareQueue 是否检测消息定义存在
-     * @param delaySecond    延迟发送时间 秒
+     * @param routingKey 消息KEY
+     * @param messageMap 消息内容
+     */
+    public void sendMessage(String routingKey, Map<String, Object> messageMap) {
+        sendMessage(null, routingKey, messageMap, true, isLocal(), true, 0);
+    }
+
+    /**
+     * 发送消息
+     *
+     * @param exchange        交换机名
+     * @param routingKey      消息KEY
+     * @param message         消息内容
+     * @param isBackupMessage 出错时是否把消息保存在数据库中，以后会自动发送到消息中 [true: try catch; false:throw exception]
+     * @param isLoad          是否为开发环境
+     * @param isDeclareQueue  是否检测消息定义存在
+     * @param delaySecond     延迟发送时间 秒
      */
     public void sendMessage(String exchange, String routingKey, Object message,
-                            boolean isBackMessage, boolean isLoad, boolean isDeclareQueue, long delaySecond) {
+                            boolean isBackupMessage, boolean isLoad, boolean isDeclareQueue, long delaySecond) {
         try {
             // isload add ipaddress to routingKey
             if (isLoad && !routingKey.endsWith(MQConfigUtils.EXISTS_IP)) {
@@ -102,28 +82,17 @@ public class MqSenderService extends BaseService {
                 amqpAdmin.declareQueue(new Queue(routingKey, true, false, isLoad));
             }
 
-//            if (messageMap == null) {
-//                messageMap = new HashMap<>();
-//            }
+            if (message == null) {
+                message = new HashMap<>();
+            }
 
-//            int retryTimes = 0;
-//            if (messageMap.containsKey(CONSUMER_RETRY_KEY)) {
-//                retryTimes = (int) messageMap.get(CONSUMER_RETRY_KEY);
-//                messageMap.remove(CONSUMER_RETRY_KEY); //从body移动COMSUMER_RETRY_KEY到header
-//            }
-
-           // final int finalRetryTimes = retryTimes;
-            Message m = new Message(JacksonUtil.bean2Json(message).getBytes(StandardCharsets.UTF_8), new MessageProperties() {{
-                //setHeader(CONSUMER_RETRY_KEY, finalRetryTimes);
-
-            }});
-
+            Message m = new Message(JacksonUtil.bean2Json(message).getBytes(StandardCharsets.UTF_8), new MessageProperties());
 
             AmqpTemplate amqpTemplate = SpringContext.getBean(AmqpTemplate.class);
             if (amqpTemplate == null) {
                 throw new RuntimeException("AmqpTemplate not found");
             }
-            if (exchange == null) {
+            if (exchange == null || exchange.trim().length() == 0) {
                 if (delaySecond > 0L) {
                     sendDelayQueue(amqpAdmin, amqpTemplate, "", routingKey, delaySecond, m);
                 } else {
@@ -139,7 +108,7 @@ public class MqSenderService extends BaseService {
 
         } catch (RuntimeException e) {
             $error(e.getMessage(), e);
-            if (isBackMessage) {
+            if (isBackupMessage) {
                 try {
                     mqBackMessageService.addBackMessage(routingKey, message);
                 } catch (Exception ignored) {
@@ -156,6 +125,7 @@ public class MqSenderService extends BaseService {
     }
 
     //声明临时延迟队列
+    @SuppressWarnings("Duplicates")
     private void sendDelayQueue(AmqpAdmin amqpAdmin, AmqpTemplate amqpTemplate, String exchange, String redirectRoutingKey, long delaySecond, Message message) {
         Map<String, Object> queueMap = new HashMap<>();
         queueMap.put("x-expires", 60000);

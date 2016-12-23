@@ -350,13 +350,13 @@ public class AnnotationProcessorByIP
         }
     }
     // new add begin
-    private String[] resolveQueues(RabbitListener rabbitListener,Object bean) {
+    private String[] resolveQueues(RabbitListener rabbitListener, Object bean) {
         String[] queues = getQueues(rabbitListener,bean);
         QueueBinding[] bindings = rabbitListener.bindings();
         if (queues.length > 0 && bindings.length > 0) {
             throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
         }
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         if (queues.length > 0) {
             for (String queue : queues) {
                 Object resolvedValue = resolveExpression(queue);
@@ -376,30 +376,30 @@ public class AnnotationProcessorByIP
             //获取队列的注解
             final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBodyClass, VOMQQueue.class);
             if (voQueue != null) {
-                return voQueue.queues();
+                return new String[]{voQueue.value()};
             }
         }
         return new String[0];
     }
     // new add end
 
-    private String[] resolveQueues(RabbitListener rabbitListener) {
-        String[] queues = rabbitListener.queues();
-        QueueBinding[] bindings = rabbitListener.bindings();
-        if (queues.length > 0 && bindings.length > 0) {
-            throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
-        }
-        List<String> result = new ArrayList<String>();
-        if (queues.length > 0) {
-            for (String queue : queues) {
-                Object resolvedValue = resolveExpression(queue);
-                resolveAsString(resolvedValue, result);
-            }
-        } else {
-            return registerBeansForDeclaration(rabbitListener);
-        }
-        return result.toArray(new String[result.size()]);
-    }
+//    private String[] resolveQueues(RabbitListener rabbitListener) {
+//        String[] queues = rabbitListener.queues();
+//        QueueBinding[] bindings = rabbitListener.bindings();
+//        if (queues.length > 0 && bindings.length > 0) {
+//            throw new BeanInitializationException("@RabbitListener can have 'queues' or 'bindings' but not both");
+//        }
+//        List<String> result = new ArrayList<String>();
+//        if (queues.length > 0) {
+//            for (String queue : queues) {
+//                Object resolvedValue = resolveExpression(queue);
+//                resolveAsString(resolvedValue, result);
+//            }
+//        } else {
+//            return registerBeansForDeclaration(rabbitListener);
+//        }
+//        return result.toArray(new String[result.size()]);
+//    }
 
     @SuppressWarnings("unchecked")
     private void resolveAsString(Object resolvedValue, List<String> result) {

@@ -45,7 +45,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-@RabbitListener() //queues = MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask
+@RabbitListener()
 public  class JmBtPromotionExportJobService extends TBaseMQCmsService<JmExportMQMessageBody> {
 
     @Autowired
