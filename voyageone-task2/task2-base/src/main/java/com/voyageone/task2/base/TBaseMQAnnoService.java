@@ -112,7 +112,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
             $error("MQIgnoreException，任务退出", me);
             throw new MQIgnoreException(me);
         } catch (Exception ex) {
-            if (isOutRetryTimes(message)) {
+            if (MQControlHelper.isOutRetryTimes(message)) {
                 logIssue(ex, ex.getMessage() + messageStr);
             }
             $error("出现异常，任务退出", ex);
@@ -126,18 +126,6 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
      * @param messageBody Mq消息Map
      */
     public abstract void onStartup(TMQMessageBody messageBody) throws Exception;
-
-    /**
-     * 是否超过重试次数的判断
-     */
-    private boolean isOutRetryTimes(Message message) {
-        MessageProperties messageProperties = message.getMessageProperties();
-        Map<String, Object> headers = messageProperties.getHeaders();
-        // RETRY>3 return
-        return !MapUtils.isEmpty(headers) && //headers非空
-                !StringUtils.isEmpty(headers.get(VOExceptionStrategy.CONSUMER_RETRY_KEY)) && //CONSUMER_RETRY_KEY非空
-                (int) headers.get(VOExceptionStrategy.CONSUMER_RETRY_KEY) >= VOExceptionStrategy.MAX_RETRY_TIMES;
-    }
 
     /**
      * 判断TASK是否可以执行

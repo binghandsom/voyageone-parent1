@@ -3,6 +3,7 @@ package com.voyageone.service.impl.com.mq.handler;
 import com.voyageone.common.mq.exception.MQException;
 import com.voyageone.common.mq.exception.MQIgnoreException;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.com.mq.MQControlHelper;
 import com.voyageone.service.impl.com.mq.MqBackMessageService;
 import org.apache.commons.collections.MapUtils;
 import org.slf4j.Logger;
@@ -76,9 +77,7 @@ public class VOExceptionStrategy implements FatalExceptionStrategy {
             /* 插入数据库 */
             Map<String, Object> msgMap = JacksonUtil.jsonToMap(new String(message.getBody(), "UTF-8"));
             // RETRY>3 return
-            if (!MapUtils.isEmpty(msgMap) && //headers非空
-                    !StringUtils.isEmpty(msgMap.get(CONSUMER_RETRY_KEY)) && //CONSUMER_RETRY_KEY非空
-                    (Integer.parseInt(msgMap.get(CONSUMER_RETRY_KEY).toString()) >= MAX_RETRY_TIMES)) { //CONSUMER_RETRY_KEY > 3
+            if (MQControlHelper.isOutRetryTimes(msgMap)) { //CONSUMER_RETRY_KEY > 3
                 return; //不做任何处理
             }
 
