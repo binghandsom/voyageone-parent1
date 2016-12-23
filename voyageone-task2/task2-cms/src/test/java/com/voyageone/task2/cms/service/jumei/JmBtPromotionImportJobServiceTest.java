@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class JmBtPromotionImportJobServiceTest extends BaseTest {
+public class JmBtPromotionImportJobServiceTest {
 
     @Autowired
     CmsBtJmPromotionImportTask3Service service;
@@ -30,7 +30,7 @@ public class JmBtPromotionImportJobServiceTest extends BaseTest {
 
     @Test
     public void testJuMeiProductUpdateJobServiceStart() throws InterruptedException {
-        MQConfigInitTestUtil.startMQ(service);
+        MQConfigInitTestUtil.startMQ(serviceJob);
 
     }
 }

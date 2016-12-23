@@ -64,9 +64,6 @@ public  class JmBtPromotionExportJobService extends TBaseMQCmsService<JmExportMQ
         String exportPath = taskControlBean.getCfg_val1();
         FileUtils.mkdirPath(exportPath);
         int id = messageBody.getJmBtPromotionExportTaskId();
-
-        String a=null;
-        a.trim();
         service.export(id, exportPath);
         $info("JmBtPromotionExportJobService", "end");
         }

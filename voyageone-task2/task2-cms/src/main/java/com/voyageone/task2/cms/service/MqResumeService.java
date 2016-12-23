@@ -41,7 +41,7 @@ public class MqResumeService extends BaseCronTaskService {
     }
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+    public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         while(true) {
             // get data from db
             List<Map<String, Object>> rowList = mqBackMessageService.getBackMessageTop100();
