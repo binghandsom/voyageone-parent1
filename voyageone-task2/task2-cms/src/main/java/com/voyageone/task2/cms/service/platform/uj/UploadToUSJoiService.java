@@ -509,6 +509,25 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                         // 插入或者更新cms_bt_product_group_c928中的productGroup信息
                         doSetGroup(pr, usJoiChannelId, usjoiTypeChannelBeanList);
                         // 更新common的一部分属性
+                        // 如果主店产品没有设置主类目，子店设置了，就把子店设置的主类目COPY到主店产品中
+                        // 主类目id
+                        if (StringUtil.isEmpty(pr.getCommonNotNull().getCatId())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getCatId())) {
+                            pr.getCommonNotNull().setCatId(productModel.getCommonNotNull().getCatId());
+                        }
+
+                        // 主类目Path(中文)
+                        if (StringUtil.isEmpty(pr.getCommonNotNull().getCatPath())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getCatPath())) {
+                            pr.getCommonNotNull().setCatPath(productModel.getCommonNotNull().getCatPath());
+                        }
+
+                        // 主类目Path(英文)
+                        if (StringUtil.isEmpty(pr.getCommonNotNull().getCatPathEn())
+                                && !StringUtil.isEmpty(productModel.getCommonNotNull().getCatPathEn())) {
+                            pr.getCommonNotNull().setCatPathEn(productModel.getCommonNotNull().getCatPathEn());
+                        }
+
                         // productModel是子店的产品model,pr是主店查出来的产品model
                         CmsBtProductModel_Field prCommonFields = pr.getCommon().getFields();
                         if (prCommonFields != null && productModel.getCommon().getFields() != null) {
@@ -541,35 +560,35 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
                             // add by desmond 2016/10/27 end
 
-//                            // 主店的税号没设置，子店的税号设置了的话，将主店商品更新成子店的税号code
+                            // 主店的税号没设置，子店的税号设置了的话，将主店商品更新成子店的税号code
 //                            // 税号集货
 //                            if (StringUtil.isEmpty(prCommonFields.getHsCodeCrop())
 //                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCrop())) {
 //                                prCommonFields.setHsCodeCrop(productModel.getCommon().getFields().getHsCodeCrop());
 //                            }
-//
-//                            // 税号跨境申报（10位）
-//                            if (StringUtil.isEmpty(prCommonFields.getHsCodeCross())
-//                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCross())) {
-//                                prCommonFields.setHsCodeCross(productModel.getCommon().getFields().getHsCodeCross());
-//                            }
-//
-//                            // 税号个人
-//                            if (StringUtil.isEmpty(prCommonFields.getHsCodePrivate())
-//                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodePrivate())) {
-//                                prCommonFields.setHsCodePrivate(productModel.getCommon().getFields().getHsCodePrivate());
-//                            }
-//
-//                            // 更新税号设置状态
-//                            String oldHsCodeStatus = prCommonFields.getHsCodeStatus();
-//                            prCommonFields.setHsCodeStatus(StringUtil.isEmpty(prCommonFields.getHsCodePrivate()) ? "0" : "1");
-//                            if(!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
-//                                // 如果状态有变更且变成1时，记录更新时间
-//                                if(prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")){
-//                                    prCommonFields.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
-//                                    prCommonFields.setHsCodeSetter(getTaskName());
-//                                }
-//                            }
+
+                            // 税号跨境申报（10位）
+                            if (StringUtil.isEmpty(prCommonFields.getHsCodeCross())
+                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodeCross())) {
+                                prCommonFields.setHsCodeCross(productModel.getCommon().getFields().getHsCodeCross());
+                            }
+
+                            // 税号个人
+                            if (StringUtil.isEmpty(prCommonFields.getHsCodePrivate())
+                                    && !StringUtil.isEmpty(productModel.getCommon().getFields().getHsCodePrivate())) {
+                                prCommonFields.setHsCodePrivate(productModel.getCommon().getFields().getHsCodePrivate());
+                            }
+
+                            // 更新税号设置状态
+                            String oldHsCodeStatus = prCommonFields.getHsCodeStatus();
+                            prCommonFields.setHsCodeStatus(StringUtil.isEmpty(prCommonFields.getHsCodePrivate()) ? "0" : "1");
+                            if(!prCommonFields.getHsCodeStatus().equalsIgnoreCase(oldHsCodeStatus)){
+                                // 如果状态有变更且变成1时，记录更新时间
+                                if(prCommonFields.getHsCodeStatus().equalsIgnoreCase("1")){
+                                    prCommonFields.setHsCodeSetTime(DateTimeUtil.getNowTimeStamp());
+                                    prCommonFields.setHsCodeSetter(getTaskName());
+                                }
+                            }
 
                             // 克(common.fields.weightG)
                             if (productModel.getCommon().getFields().getWeightG() != 0)
@@ -669,17 +688,17 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setOrigin(productModel.getCommonNotNull().getFieldsNotNull().getOrigin());
                             }
 
-//                            // 产品分类(common.fields.productType)
-//                            if (StringUtil.isEmpty(prCommonFields.getProductType())
-//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getProductType())) {
-//                                prCommonFields.setProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
-//                            }
-//
-//                            // 适用人群(common.fields.sizeType)
-//                            if (StringUtil.isEmpty(prCommonFields.getSizeType())
-//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeType())) {
-//                                prCommonFields.setSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
-//                            }
+                            // 产品分类(common.fields.productType)
+                            if (StringUtil.isEmpty(prCommonFields.getProductType())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getProductType())) {
+                                prCommonFields.setProductType(productModel.getCommonNotNull().getFieldsNotNull().getProductType());
+                            }
+
+                            // 适用人群(common.fields.sizeType)
+                            if (StringUtil.isEmpty(prCommonFields.getSizeType())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeType())) {
+                                prCommonFields.setSizeType(productModel.getCommonNotNull().getFieldsNotNull().getSizeType());
+                            }
 
                             // 库存(common.fields.quantity)
                             if ((prCommonFields.getQuantity() == null || prCommonFields.getQuantity() == 0)
@@ -693,23 +712,23 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                                 prCommonFields.setClientProductUrl(productModel.getCommonNotNull().getFieldsNotNull().getClientProductUrl());
                             }
 
-//                            // 类目设置状态(common.fields.categoryStatus)
-//                            if ((StringUtil.isEmpty(prCommonFields.getCategoryStatus()) || "0".equals(prCommonFields.getCategoryStatus()))
-//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus())) {
-//                                prCommonFields.setCategoryStatus(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus());
-//                            }
-//
-//                            // 类目设置者(common.fields.categorySetter)
-//                            if (StringUtil.isEmpty(prCommonFields.getCategorySetter())
-//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter())) {
-//                                prCommonFields.setCategorySetter(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter());
-//                            }
-//
-//                            // 类目设置时间(common.fields.categorySetTime)
-//                            if (StringUtil.isEmpty(prCommonFields.getCategorySetTime())
-//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime())) {
-//                                prCommonFields.setCategorySetTime(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime());
-//                            }
+                            // 类目设置状态(common.fields.categoryStatus)
+                            if ((StringUtil.isEmpty(prCommonFields.getCategoryStatus()) || "0".equals(prCommonFields.getCategoryStatus()))
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus())) {
+                                prCommonFields.setCategoryStatus(productModel.getCommonNotNull().getFieldsNotNull().getCategoryStatus());
+                            }
+
+                            // 类目设置者(common.fields.categorySetter)
+                            if (StringUtil.isEmpty(prCommonFields.getCategorySetter())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter())) {
+                                prCommonFields.setCategorySetter(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetter());
+                            }
+
+                            // 类目设置时间(common.fields.categorySetTime)
+                            if (StringUtil.isEmpty(prCommonFields.getCategorySetTime())
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime())) {
+                                prCommonFields.setCategorySetTime(productModel.getCommonNotNull().getFieldsNotNull().getCategorySetTime());
+                            }
 
                             // 商品翻译状态(common.fields.translateStatus)
                             if ((StringUtil.isEmpty(prCommonFields.getTranslateStatus()) || "0".equals(prCommonFields.getTranslateStatus()))
