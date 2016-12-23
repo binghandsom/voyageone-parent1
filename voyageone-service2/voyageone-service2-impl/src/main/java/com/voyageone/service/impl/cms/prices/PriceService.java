@@ -904,6 +904,7 @@ public class PriceService extends BaseService {
             return roundDouble(price, roundUp);
         }
     }
+
     public void updateSkuPrice(String channleId, int cartId, CmsBtProductModel productModel) throws Exception {
         updateSkuPrice(channleId, cartId, productModel,false);
     }
