@@ -18,4 +18,5 @@ public enum WordType{
     // added by morse.lu 2016/06/27 start
     COMMON,
     // added by morse.lu 2016/06/27 end
+    SUBCODE,
 }

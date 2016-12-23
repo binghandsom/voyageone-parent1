@@ -37,6 +37,7 @@ public class ExpressionParser extends VOAbsLoggable {
     // added by morse.lu 2016/06/27 start
     private CommonWordParser commonWordParser;
     // added by morse.lu 2016/06/27 end
+    private SubCodeWordParser subCodeWordParser;
 
     public ExpressionParser(SxProductService sxProductService, SxData sxData) {
         this.sxProductService = sxProductService;
@@ -60,6 +61,7 @@ public class ExpressionParser extends VOAbsLoggable {
         // added by morse.lu 2016/06/27 start
         this.commonWordParser = new CommonWordParser(sxData.getMainProduct());
         // added by morse.lu 2016/06/27 end
+        this.subCodeWordParser = new SubCodeWordParser(sxData);
     }
 
     public String parse(RuleExpression ruleExpression, ShopBean shopBean, String user, String[] extParameter) throws Exception {
@@ -165,7 +167,11 @@ public class ExpressionParser extends VOAbsLoggable {
             case COMMON:
                 // 从product表的common下去取
                 plainValue = commonWordParser.parse(ruleWord);
+                break;
                 // added by morse.lu 2016/06/27 end
+            case SUBCODE:
+                plainValue = subCodeWordParser.parse(ruleWord);
+                break;
         }
 
         return plainValue;
