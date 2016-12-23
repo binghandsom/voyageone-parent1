@@ -101,33 +101,33 @@ define([
                         parameter.priceSale = item.priceSale;//中国最终售价
                     }
 
-                    var isSave = false;
-                    if (item.autoSyncPriceMsrp == "2" && item.priceMsrp < item.priceSale) {
+                    if (item.autoSyncPriceMsrp == "2" && (item.priceMsrp < item.priceSale || item.priceMsrp < item.priceSaleEd)) {
                         confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
-                            isSave = true;
+                            saveCartSkuPrice(parameter);
                         });
                     } else {
-                        isSave = true;
+                        saveCartSkuPrice(parameter);
                     }
 
-                    if (isSave) {
-                        $productDetailService.saveCartSkuPrice(parameter).then(function () {
+                }
 
-                            if (parameter.priceMsrp > 0) {
-                                item.priceMsrpSt=parameter.priceMsrp;
-                                item.priceMsrpEd=parameter.priceMsrp;
-                            }
+                function saveCartSkuPrice(parameter) {
+                    $productDetailService.saveCartSkuPrice(parameter).then(function () {
 
-                            if (parameter.priceSale > 0) {
-                                item.priceSaleSt=parameter.priceSale;
-                                item.priceSaleEd=parameter.priceSale;
-                            }
-                            item.priceMsrp=undefined;
-                            item.priceSale=undefined;
-                            notify.success("保存成功")
+                        if (parameter.priceMsrp > 0) {
+                            item.priceMsrpSt=parameter.priceMsrp;
+                            item.priceMsrpEd=parameter.priceMsrp;
+                        }
 
-                        });
-                    }
+                        if (parameter.priceSale > 0) {
+                            item.priceSaleSt=parameter.priceSale;
+                            item.priceSaleEd=parameter.priceSale;
+                        }
+                        item.priceMsrp=undefined;
+                        item.priceSale=undefined;
+                        notify.success("保存成功")
+
+                    });
                 }
             }
         };
