@@ -776,6 +776,9 @@
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>
                                 </li>
+                                <li ng-if="cartBean.value==27 && vm.channelId =='028'">
+                                    <a href="javascript:void(0)" ng-click="exportFile(4)">聚美上新商品导出</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
