@@ -35,8 +35,9 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 	@Test
 	public void startupTest() {
-
-		doCreateJson("天猫同购描述", false, doDict_详情页描述());
+//		doCreateJson("天猫同购描述", false, doDict_详情页描述());
+		// 手表
+		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s"));
 
 	}
 
@@ -98,7 +99,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	 * 4. 共通图片 - 购物流程(购物流程+购物须知+7天退货服务须知)
 	 * 5. 共通图片 - 店铺介绍图
 	 */
-	private RuleExpression doDict_详情页描述() {
+	private RuleExpression doDict_详情页描述(String 参数图url) {
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
 
@@ -128,16 +129,18 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
 			ruleRoot.addRuleWord(word);
 		}
-		{
-			// 中文长描述
-			MasterWord word = new MasterWord("longDesCn");
-			ruleRoot.addRuleWord(word);
-		}
-		{
-			// 回车一个
-			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
-			ruleRoot.addRuleWord(word);
-		}
+//		{
+//			// 中文长描述
+//			MasterWord word = new MasterWord("longDesCn");
+//			ruleRoot.addRuleWord(word);
+//		}
+//		{
+//			// 回车一个
+//			TextWord word = new TextWord(C_TEXT_BR + C_TEXT_BR);
+//			ruleRoot.addRuleWord(word);
+//		}
+
+		do参数图(ruleRoot, 参数图url);
 
 		{
 			// 尺码图
@@ -225,7 +228,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	 * OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
 	 * @param ruleRoot
 	 */
-	private void do参数图(RuleExpression ruleRoot) {
+	private void do参数图(RuleExpression ruleRoot, String 参数图url) {
 		{
 			// 商品参数图
 			{
@@ -237,7 +240,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 			{
 				// imageTemplate
 				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
+				String htmlTemplate = 参数图url;
 				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
 				// 参数imageParams
