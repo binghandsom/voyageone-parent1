@@ -108,6 +108,11 @@
 
     <div class="box">
         <div class="box-body-new">
+            <div class="col-sm-8 pull-left text-left" ng-controller="popupCtrl">
+                <div class="form-group">
+                    <button class="btn btn-default" ng-click="ctrl.addRoles()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-arrow-circle-right"></i>&nbsp;批量添加角色</button>
+                </div>
+            </div>
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>

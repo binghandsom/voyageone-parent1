@@ -331,12 +331,66 @@ public class AdminUserService extends BaseService {
         comUserService.clearCachedAuthenticationInfo(user.getUserAccount());
     }
 
+    /**
+     * 通过token查询用户
+     *
+     * @param token
+     * @return
+     */
     public Map getUserByToken(String token) {
         ComUserTokenModel model = getComUserTokenModel(token);
 
         Map<String, Object> result = new HashMap<>();
         result.put("userAccount", model.getUserAccount());
         return result;
+    }
+
+
+    /**
+     * 为用户批量添加角色
+     *
+     * @param userIds
+     * @param roleIds
+     */
+    @VOTransactional
+    public void addRoles(List<Integer> userIds, List<Integer> roleIds, String username)
+    {
+
+        for(Integer userId : userIds)
+        {
+            boolean changed = false;
+            for(Integer roleId : roleIds)
+            {
+                ComUserRoleModel rModel = new ComUserRoleModel();
+                rModel.setRoleId(roleId);
+                rModel.setUserId(userId);
+                rModel.setModifier(username);
+                rModel.setModified(new Date());
+                if(comUserRoleDao.selectCount(rModel) >0)
+                {
+                    ComUserRoleModel  oldModel = comUserRoleDao.selectOne(rModel);
+                    oldModel.setModifier(username);
+                    oldModel.setModified(new Date());
+                    comUserRoleDao.update(oldModel);
+                    changed = true;
+                }
+                else
+                {
+                    comUserRoleDao.insert(rModel);
+                    changed = true;
+                }
+
+            }
+
+            if(changed)
+            {
+                ComUserModel user = comUserDao.select(userId);
+                user.setModifier(username);
+                user.setModified(new Date());
+                comUserDao.update(user);
+            }
+        }
+
     }
 
     private ComUserTokenModel getComUserTokenModel(String token) {

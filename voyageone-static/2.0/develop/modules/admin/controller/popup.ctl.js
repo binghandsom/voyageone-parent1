@@ -33,6 +33,13 @@ define([
             "controller": 'AddUserController as ctrl',
             "size": 'lg'
         },
+        "addRoles": {
+            "templateUrl": "views/pop/addAdmin/addUser/addRoles.tpl.html",
+            "controllerUrl": "modules/admin/views/pop/addAdmin/addUser/addRoles.ctl",
+            "controller": 'AddRolesController as ctrl',
+            "size": 'lg'
+        },
+
         "userAuthority": {
             "templateUrl": "views/pop/authorityManagement/index.tpl.html",
             "controllerUrl": "modules/admin/views/pop/authorityManagement/index.ctl",
@@ -193,6 +200,11 @@ define([
          */
         $scope.openAddUser = function openAddUser(context) {
             return openModal(popActions.addAdminUser, context);
+        };
+
+
+        $scope.openAddRoles = function openAddRoles(context) {
+            return openModal(popActions.addRoles, context);
         };
         /**
          * 打开用户/权限页面--用户管理页面的查看权限页面

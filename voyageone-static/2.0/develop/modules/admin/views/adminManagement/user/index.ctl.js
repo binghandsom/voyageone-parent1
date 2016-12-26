@@ -160,6 +160,22 @@ define([
                     })
                 }
             },
+            addRoles: function () {
+                var self = this;
+                var ids = [];
+                _.forEach(self.adminUserSelList.selList, function (sel) {
+                    ids.push(sel.id);
+                });
+
+
+                self.popups.openAddRoles(ids).then(function (res) {
+                    if (res.res == 'success') {
+                        self.search(1);
+                    }else{
+                        return false;
+                    }
+                });
+            },
             vieAuthority: function () {
                 var self = this;
                 var popInfo = [];
