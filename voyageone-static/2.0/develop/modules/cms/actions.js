@@ -139,7 +139,8 @@ define(function () {
                     getSkuStockInfo: 'getSkuStockInfo',
                     restoreImg: "restoreImg",
                     doAppSwitch: "doAppSwitch",
-                    doTranslateStatus: "doTranslateStatus"
+                    doTranslateStatus: "doTranslateStatus",
+                    getProductIdByCode:"getProductIdByCode"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -623,6 +624,13 @@ define(function () {
                         "init": "sizeChartDetailSearch",
                         "detailSave": "sizeChartDetailSave",
                         "detailSizeMapSave": "sizeChartDetailSizeMapSave"
+                    }
+                },
+                "MtChannelConfig":{
+                    "cmsMTChannelConfigService": {
+                        "root": "/cms/mt/channel/config",
+                        "search": "search",
+                        "saveList":"saveList"
                     }
                 }
             },

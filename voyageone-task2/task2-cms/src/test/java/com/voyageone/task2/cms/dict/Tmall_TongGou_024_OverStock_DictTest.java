@@ -179,7 +179,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 				RuleExpression useOriUrl = null;
 
-				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 		}

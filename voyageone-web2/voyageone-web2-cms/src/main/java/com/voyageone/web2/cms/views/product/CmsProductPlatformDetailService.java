@@ -134,22 +134,18 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.setpPriceSaleEd(parameter.getPriceSale());
         }
 
-        if("Approved".equals(platform.getStatus())) {
-            if(StringUtils.isEmpty(platform.getpNumIId()))
-            {
-                //已经approve但是无NumIID，则插入上新work表,
-                List<String> cartIdList = new ArrayList<>();
-                cartIdList.add(Integer.toString(parameter.getCartId()));
-                //则插入上新work表
-                sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
-            }
-            else
-            {
-                //有NumIID，则价格变更API
-                priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
-
-            }
+        // 只要上新成功都可以调用价格更新API
+        if (!StringUtils.isEmpty(platform.getpNumIId())) {
+            //有NumIID，则价格变更API
+            priceService.updateSkuPrice(channelId,parameter.getCartId(), cmsBtProduct,true);
+        } else if("Approved".equals(platform.getStatus())) {
+            //已经approve但是无NumIID，则插入上新work表,
+            List<String> cartIdList = new ArrayList<>();
+            cartIdList.add(Integer.toString(parameter.getCartId()));
+            //则插入上新work表
+            sxProductService.insertSxWorkLoad(cmsBtProduct, cartIdList, userName);
         }
+
         platform.getSkus().forEach(f -> {
             if(parameter.getPriceMsrp()>0) {
                 f.setAttribute("priceMsrp", parameter.getPriceMsrp());
@@ -203,7 +199,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
 
         cmsBtProduct.getPlatforms().values().forEach(f -> {
 
-            ProductPrice productPrice = getProductPrice(f);
+            ProductPrice productPrice = getProductPrice(f, channelId);
             if (productPrice != null) productPriceList.add(productPrice);
 
         });
@@ -226,7 +222,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         return productPriceSalesInfo;
     }
 
-    private ProductPrice getProductPrice( CmsBtProductModel_Platform_Cart f) {
+    private ProductPrice getProductPrice( CmsBtProductModel_Platform_Cart f, String channelId) {
         if (f.getCartId() != 0) {
             ProductPrice productPrice = new ProductPrice();
             productPrice.setStatus(f.getStatus());
@@ -267,11 +263,27 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             CartEnums.Cart cart = CartEnums.Cart.getValueByID(f.getCartId().toString());
             if (cart != null) {
                 productPrice.setCartName(cart.name());
-
+                // 设置autoSyncPriceMsrp值
+                productPrice.setAutoSyncPriceMsrp(this.getAutoSyncPriceMsrpOption(channelId, Integer.valueOf(f.getCartId().toString())));
                 return productPrice;
             }
         }
         return null;
+    }
+
+
+    public String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) {
+        String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP, cartId + "");
+        if (autoSyncPriceMsrp != null
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
+            throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
+        }
+        if (autoSyncPriceMsrp != null)
+            autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
+        return autoSyncPriceMsrpOption;
     }
 
     /**

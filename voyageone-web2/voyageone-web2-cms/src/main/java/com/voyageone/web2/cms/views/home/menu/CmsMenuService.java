@@ -6,6 +6,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.service.bean.com.AdminResourceBean;
 import com.voyageone.service.daoext.com.UserRolePropertyDao;
 import com.voyageone.service.impl.cms.SellerCatService;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.com.user.AdminResService;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.common.Constants;
@@ -40,13 +41,15 @@ public class CmsMenuService extends BaseViewService {
     @Autowired
     private SellerCatService sellerCatService;
 
+    @Autowired
+    TypeChannelsService typeChannelsService;
     /**
      * 获取该channel的category类型.
      * @param channelId
      * @return
      */
     public List<TypeChannelBean> getPlatformTypeList (String channelId, String language) {
-        return TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
+        return typeChannelsService.getPlatformTypeList(channelId, language);
     }
 
     /**

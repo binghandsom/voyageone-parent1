@@ -71,35 +71,35 @@ public class Jingdong_928_Jiangxinjie_DictTest {
         // 生成内容
         {
 
-//            {
-//                // 店铺介绍图
-//                RuleExpression htmlTemplate = new RuleExpression();
-//                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-//
-//                RuleExpression imageType = new RuleExpression();
-//                imageType.addRuleWord(new TextWord("5"));
-//
-//                RuleExpression viewType = new RuleExpression();
-//                viewType.addRuleWord(new TextWord("1"));
-//
-//                RuleExpression useOriUrl = null;
-//
-//                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
-//                ruleRoot.addRuleWord(new CustomWord(word));
-//            }
             {
-                // 店铺介绍图 (临时写死两张图)
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2770/279/3106099073/166614/6b027351/5783655dN31d8f51f.jpg\">";
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2839/256/3185848904/115544/e2eaca8e/5783655dN7befefb7.jpg\">";
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
+                // 店铺介绍图
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
             }
+//            {
+//                // 店铺介绍图 (临时写死两张图)
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2770/279/3106099073/166614/6b027351/5783655dN31d8f51f.jpg\">";
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2839/256/3185848904/115544/e2eaca8e/5783655dN7befefb7.jpg\">";
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//            }
 
             {
                 // 品牌故事图
@@ -132,7 +132,7 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
@@ -156,7 +156,7 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                     RuleExpression imageType = new RuleExpression();
                     imageType.addRuleWord(new TextWord(C_商品图片));
 
-                    CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null);
+                    CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, null, null, null, null, null);
                     ruleRoot.addRuleWord(new CustomWord(word));
                 }
             }
@@ -186,46 +186,46 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                 }
             }
 
-//            {
-//                // 购物流程图
-//                RuleExpression htmlTemplate = new RuleExpression();
-//                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-//
-//                RuleExpression imageType = new RuleExpression();
-//                imageType.addRuleWord(new TextWord("4"));
-//
-//                RuleExpression viewType = new RuleExpression();
-//                viewType.addRuleWord(new TextWord("1"));
-//
-//                RuleExpression useOriUrl = null;
-//
-//                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl);
-//                ruleRoot.addRuleWord(new CustomWord(word));
-//            }
-
             {
-                // 购物流程图 (临时写死四张图)
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2797/201/3143502543/55794/84ba32a3/57836561N0a46dd4c.jpg\">";  // 购物流程
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2746/359/3200059128/86041/d0a17c52/57836561Neb557734.jpg\">";  // 温馨提示
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2947/115/1468462332/115720/455a7c74/57836562N875ad314.jpg\">";  // 售后须知
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
-                {
-                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2752/246/3115358048/201357/1cc619ee/57836562Ne0618ed2.jpg\">";  // 售后与质保范围
-                    TextWord word = new TextWord(html);
-                    ruleRoot.addRuleWord(word);
-                }
+                // 购物流程图
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("4"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+                ruleRoot.addRuleWord(new CustomWord(word));
             }
+
+//            {
+//                // 购物流程图 (临时写死四张图)
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2797/201/3143502543/55794/84ba32a3/57836561N0a46dd4c.jpg\">";  // 购物流程
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2746/359/3200059128/86041/d0a17c52/57836561Neb557734.jpg\">";  // 温馨提示
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2947/115/1468462332/115720/455a7c74/57836562N875ad314.jpg\">";  // 售后须知
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//                {
+//                    String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2752/246/3115358048/201357/1cc619ee/57836562Ne0618ed2.jpg\">";  // 售后与质保范围
+//                    TextWord word = new TextWord(html);
+//                    ruleRoot.addRuleWord(word);
+//                }
+//            }
 
         }
 

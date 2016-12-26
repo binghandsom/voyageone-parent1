@@ -4,7 +4,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms, carts) {
 
-    function SProductListDirectiveController($scope, popups, cmsBtJmPromotionImportTaskService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, spDataService, $routeParams, alert, $translate, confirm, notify, platformMappingService)
+    function SProductListDirectiveController($scope, popups, $productDetailService, cmsBtJmPromotionExportTaskService, jmPromotionDetailService, spDataService, $routeParams, alert, $translate, confirm, notify, platformMappingService)
     {
         $scope.datePicker = [];
         $scope.vm = {
@@ -508,11 +508,22 @@ define([
             }
             popups.openJMTagModify({search: $scope.search,tagList:$scope.vm.tagList,jmPromotionId:$scope.vm.promotionId ,isBegin: $scope.vm.isBegin,listPromotionProduct: listPromotionProduct})
         }
-        $scope.openProductDetailWin = function (model) {
+        $scope.openJmProductDetailWin = function (model) {
 
             popups.openJmProductDetail({promotionProduct: model}).then(function () {
                 $scope.search();
             });
+        }
+        $scope.openProductDetailWin = function (model) {
+
+            $productDetailService.getProductIdByCode(model.productCode).then(function (res) {
+                    //window.location.href = "#/product/detail/"+res.data;
+                window.open(window.location.href = "#/product/detail/"+res.data,"_blank");
+            });
+
+            // popups.openJmProductDetail({promotionProduct: model}).then(function () {
+            //     $scope.search();
+            // });
         }
         $scope.openJmPromotionProductImportWin = function () {
             popups.openJmPromotionProductImport($scope.parentModel, $scope.selectImport);
@@ -636,7 +647,7 @@ define([
     cms.directive('spProductList', [function spProductListDirectiveFactory() {
         return {
             scope: {},
-            controller: ['$scope', 'popups', 'cmsBtJmPromotionImportTaskService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'spDataService', '$routeParams', 'alert', '$translate', 'confirm', 'notify', 'platformMappingService', SProductListDirectiveController],
+            controller: ['$scope', 'popups', '$productDetailService', 'cmsBtJmPromotionExportTaskService', 'jmPromotionDetailService', 'spDataService', '$routeParams', 'alert', '$translate', 'confirm', 'notify', 'platformMappingService', SProductListDirectiveController],
             templateUrl: '/modules/cms/views/jmpromotion/sp.product-list.directive.html'
         }
     }]);

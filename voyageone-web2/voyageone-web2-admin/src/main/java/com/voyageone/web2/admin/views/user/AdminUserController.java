@@ -8,6 +8,7 @@ import com.voyageone.service.impl.com.user.AdminUserService;
 import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
+import com.voyageone.web2.admin.bean.user.UserAddRolesBean;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,5 +240,22 @@ public class AdminUserController extends AdminController {
     public AjaxResponse getAllApp()  {
         return success(adminUserService.getAllApp());
     }
+
+
+    /**
+     * 批量添加角色
+     *
+     * @param bean
+     * @return
+     */
+
+    @RequestMapping(AdminUrlConstants.User.Self.ADD_ROLES)
+    public AjaxResponse addRoles(@RequestBody UserAddRolesBean bean)  {
+        String username = getUser().getUserName();
+        adminUserService.addRoles(bean.getUserIds(), bean.getRoleIds(), username);
+        return success(true);
+    }
+
+
 
 }

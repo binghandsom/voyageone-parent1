@@ -82,9 +82,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     // 京东平台的操作类型(在库)
     private final static String OptioinType_offsale = "offsale";
     // 价格类型(市场价格)
-    private final static String PriceType_marketprice = "retail_price";
+    //private final static String PriceType_marketprice = "retail_price";
     // 价格类型(京东价格)
-    private final static String PriceType_jdprice = "sale_price";
+    //private final static String PriceType_jdprice = "sale_price";
     // 商品属性列表
     private final static String Attrivutes = "attributes";
     // 用户自行输入的类目属性ID串
@@ -268,6 +268,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         SxData sxData = null;
         // 新增或更新商品标志
         boolean updateWare = false;
+        // 是否是智能上新(status:3(智能上新))
+        boolean blnForceSmartSx = false;
+        String sxType = "普通上新";
+        if (CmsConstants.SxWorkloadPublishStatusNum.smartSx == cmsBtSxWorkloadModel.getPublishStatus()) {
+            blnForceSmartSx = true;
+            sxType = "智能上新";
+        }
 
         try {
             // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
@@ -491,10 +498,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             }
 
             // 编辑京东共通属性
-            boolean blnForceSmartSx = false;
-            if (3 == cmsBtSxWorkloadModel.getPublishStatus()) {
-                blnForceSmartSx = true;
-            }
             JdProductBean jdProductBean = setJdProductCommonInfo(sxData, platformCategoryId, groupId, shopProp,
                     jdCommonSchema, cmsMtPlatformCategorySchema, skuLogicQtyMap, blnForceSmartSx);
             // 更新时设置商品id
@@ -591,7 +594,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 } catch (Exception ex) {
                     String errMsg = String.format("新增商品之后调用京东商品更新API批量设置SKU信息失败! [WareId:%s]", jdWareId);
                     $error(errMsg);
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getMessage());
+                    sxData.setErrorMessage(ex.getMessage());
                 }
 
                 // 设置SKU信息是否成功判断
@@ -602,7 +605,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     if (!retStatus) {
                         String errMsg = String.format("新增商品的产品5张图片上传均失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(shopProp.getShop_name() + " " + errMsg);
+                        sxData.setErrorMessage(errMsg);
                     }
                 }
 
@@ -618,7 +621,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     } catch (Exception ex) {
                         String errMsg = String.format("新增商品后设置SKU信息失败之后，删除该新增商品失败! [WareId:%s]", jdWareId);
                         $error(errMsg);
-                        sxData.setErrorMessage(shopProp.getShop_name() + " " + ex.getMessage());
+                        sxData.setErrorMessage(ex.getMessage());
                         throw ex;
                     }
 
@@ -703,7 +706,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                         $error(errMsg);
                         // 如果上新数据中的errorMessage为空
                         if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                            sxData.setErrorMessage(shopProp.getShop_name() + " " + errMsg);
+                            sxData.setErrorMessage(errMsg);
                         }
                     }
                 }
@@ -764,7 +767,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 $error(errMsg);
                 // 如果上新数据中的errorMessage为空
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " 京东单个商品新增或更新信息失败！请向管理员确认 [WareId:" + jdWareId + "]" );
+                    sxData.setErrorMessage(errMsg);
+                }
+
+                if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
+                    sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
+                } else {
+                    sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
                 }
 
                 // 更新商品出错时，也要设置运费模板和关联板式
@@ -791,7 +800,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage(shopProp.getShop_name() + " 取得上新用的商品数据信息异常！请跟管理员联系 [上新数据为null]");
+                sxData.setErrorMessage("取得上新用的商品数据信息异常,请跟管理员联系! [上新数据为null]");
             }
             if (ex instanceof BusinessException) {
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
@@ -802,11 +811,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             if (StringUtils.isEmpty(sxData.getErrorMessage())) {
                 // nullpoint错误的处理
                 if(StringUtils.isNullOrBlank2(ex.getMessage())) {
-                    sxData.setErrorMessage(shopProp.getShop_name() + "上新时出现不可预知的错误，请跟管理员联系. " + ex.getStackTrace()[0].toString());
+                    sxData.setErrorMessage("出现不可预知的错误，请跟管理员联系! " + ex.getStackTrace()[0].toString());
                     ex.printStackTrace();
                 } else {
-                    sxData.setErrorMessage(shopProp.getShop_name() + " " +ex.getMessage());
+                    sxData.setErrorMessage(ex.getMessage());
                 }
+            }
+
+            if (sxData.getErrorMessage().contains(shopProp.getShop_name())) {
+                sxData.setErrorMessage(sxData.getErrorMessage().replace(shopProp.getShop_name(), getPreMsg(shopProp.getShop_name(), sxType)));
+            } else {
+                sxData.setErrorMessage(getPreMsg(shopProp.getShop_name(), sxType) + sxData.getErrorMessage());
             }
 
             // 上新出错时状态回写操作
@@ -816,11 +831,11 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 
         // 正常结束
         if (!updateWare) {
-            $info(String.format("京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品新增信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         } else {
-            $info(String.format("京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
-                    channelId, cartId, groupId, jdWareId));
+            $info(String.format("%s京东单个商品更新信息成功！[ChannelId:%s] [CartId:%s] [GroupId:%s] [WareId:%s]",
+                    getPreMsg(shopProp.getShop_name(), sxType), channelId, cartId, groupId, jdWareId));
         }
 
     }
@@ -943,13 +958,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
 //            strWeight = String.valueOf(objfieldItemValue);
 //        }
         jdProductBean.setWeight(jdCommonInfoMap.get("productWeightKg"));
+        if (StringUtils.isEmpty(jdProductBean.getWeight())) {
+            InputField f = (InputField) productSchemaFields.get("productWeightKg");
+            jdProductBean.setWeight(f.getDefaultValue());
+        }
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
-        Double marketPrice = getItemPrice(skuList, channelId, cartId, PriceType_marketprice);
+        Double marketPrice = getItemPrice(skuList, channelId, cartId, CmsConstants.ChannelConfig.PRICE_RETAIL_KEY, CmsConstants.ChannelConfig.PRICE_RETAIL_PRICE_CODE);
         jdProductBean.setMarketPrice(String.valueOf(marketPrice));
         // 京东价,精确到2位小数，单位:元(必须)
-        Double jdPrice = getItemPrice(skuList, channelId, cartId, PriceType_jdprice);
+        Double jdPrice = getItemPrice(skuList, channelId, cartId,CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);
         sxData.setMaxPrice(jdPrice);
         jdProductBean.setJdPrice(String.valueOf(jdPrice));
 
@@ -974,9 +993,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 strNotes = sxProductService.resolveDict("京东详情页描述", expressionParser, shopProp, getTaskName(), null);
             }
         } catch (Exception ex) {
-            String errMsg = String.format("京东取得详情页描述信息失败！[ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
-                    channelId, cartId, groupId, platformCategoryId);
-            $error(errMsg, ex);
+            String errMsg = String.format("京东取得详情页描述信息失败！[errMsg:%s]", ex.getMessage());
+            $error(errMsg);
+            throw new BusinessException(errMsg);
         }
         jdProductBean.setNotes(strNotes);
 
@@ -1545,7 +1564,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     }
 
                     // sku价格(100.0|150.0|100.0|100.0)
-                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(), PriceType_jdprice);
+                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(),CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);//PriceType_jdprice
                     sbSkuPrice.append(String.valueOf(skuPrice));
                     sbSkuPrice.append(Separtor_Vertical);        // "|"
 
@@ -2099,13 +2118,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param skuList List<BaseMongoMap<String, Object>> 所有sku对象列表
      * @param channelId String 渠道id
      * @param cartId String 平台id
-     * @param priceType String 价格类型
+     * @param priceKey
+     * @param priceCode String 价格类型
      * @return double 所有产品全部SKU的最高价格
      */
-    private Double getItemPrice(List<BaseMongoMap<String, Object>> skuList, String channelId, String cartId, String priceType) {
+    private Double getItemPrice(List<BaseMongoMap<String, Object>> skuList, String channelId, String cartId,String priceKey, String priceCode) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // priceType:"retail_price"(市场价)  "sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId  + priceCode);
 
         // 检查一下
         String sxPricePropName;
@@ -2125,13 +2145,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             return 0.0;
         }
 
-        if (PriceType_jdprice.equals(priceType)) {
+        if (CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE.equals(priceCode)) {//PriceType_jdprice
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
-        } else if (PriceType_marketprice.equals(priceType)) {
+        } else if (CmsConstants.ChannelConfig.PRICE_RETAIL_PRICE_CODE.equals(priceCode)) {//PriceType_marketprice
             // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else {
-            $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceType);
+            $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceCode);
         }
 
         return resultPrice;
@@ -2143,13 +2163,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param cmsBtProductModelSku BaseMongoMap<String, Object> SKU对象
      * @param channelId String 渠道id
      * @param cartId String 平台id
-     * @param priceType String 价格类型 ("sale_price"(京东价))
+     * @param priceCode String 价格类型 ("sale_price"(京东价))
      * @return double SKU价格
      */
-    private double getSkuPrice(BaseMongoMap<String, Object> cmsBtProductModelSku, String channelId, String cartId, String priceType) {
+    private double getSkuPrice(BaseMongoMap<String, Object> cmsBtProductModelSku, String channelId, String cartId,String priceKey,String priceCode) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // SKU价格类型应该用"sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId+priceCode);
 
         // 检查一下
         String sxPricePropName;
@@ -2667,6 +2687,17 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         }
 
         return lastSkuId;
+    }
+
+    /**
+     * 获得log头部信息
+     *
+     * @param shopName 店铺名称
+     * @param sxType   上新类型
+     * @return String  log头部信息
+     */
+    private String getPreMsg(String shopName, String sxType) {
+        return shopName + "[" + sxType + "] ";
     }
 
 }

@@ -651,6 +651,7 @@ public interface CmsUrlConstants {
             String RESTORE_IMG = "restoreImg";
 
 			String GET_SKU_STOCK_INFO = "getSkuStockInfo";
+			String GetProductIdByCode="getProductIdByCode";
         }
 
         interface HISTORY {
@@ -842,6 +843,11 @@ public interface CmsUrlConstants {
             String LOAD_CHANNEL_CONFIG_DETAIL = "loadChannelConfigDetail";
             String EDIT_CHANNEL_CONFIG = "editChannelConfig";
             String DEL_CHANNEL_CONFIG = "delChannelConfig";
+        }
+        interface MtChannelConfig {
+            String ROOT = "/cms/mt/channel/config";
+            String Search = "search";
+            String saveList="saveList";
         }
     }
 

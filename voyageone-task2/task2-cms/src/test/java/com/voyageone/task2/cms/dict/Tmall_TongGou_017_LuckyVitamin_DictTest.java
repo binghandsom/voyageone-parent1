@@ -265,7 +265,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
                 RuleExpression useOriUrl = new RuleExpression();
                 useOriUrl.addRuleWord(new TextWord("1")); // 使用原图
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
             {
@@ -347,7 +347,7 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 
                 RuleExpression useOriUrl = null;
 
-                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null);
+                CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
                 ruleRoot.addRuleWord(new CustomWord(word));
             }
 
