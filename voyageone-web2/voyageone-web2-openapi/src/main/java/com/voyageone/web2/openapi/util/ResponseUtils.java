@@ -71,7 +71,7 @@ public class ResponseUtils {
             code = String.valueOf(ErrorIDEnum.InvalidRequiredParameter.getCode());
             if (exception.getCause() instanceof InvalidFormatException) {
                 if (Date.class.equals(((InvalidFormatException)exception.getCause()).getTargetType())) {
-                    message = "DateFormat of shippedDateUtc not accept.";
+                    message = "DateFormat of ShippedDateUtc not accept.";
                 }
             }
             if (message == null) {
