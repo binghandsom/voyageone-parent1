@@ -99,9 +99,9 @@ define([
                     })
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -110,17 +110,13 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.orderChannelId == self.channelSelList.selList[0].id) {
-                            self.popups.openAdd(channelInfo).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openAdd(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {

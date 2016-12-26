@@ -92,9 +92,9 @@ define([
                     active: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openOrg('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -103,17 +103,13 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.orgDataList, function (Info) {
-                        if (Info.id == self.adminOrgSelList.selList[0].id) {
-                            self.popups.openOrg(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openOrg(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {

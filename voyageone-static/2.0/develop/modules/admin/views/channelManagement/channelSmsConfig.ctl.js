@@ -81,9 +81,9 @@ define([
                     smsCode: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openChannelSms('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -92,17 +92,13 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (Info) {
-                        if (Info.seq == self.channelSmsSelList.selList[0].id) {
-                            self.popups.openChannelSms(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openChannelSms(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {

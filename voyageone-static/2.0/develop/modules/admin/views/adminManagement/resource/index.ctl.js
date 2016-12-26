@@ -58,47 +58,22 @@ define([
                     active: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                var selectedList = [];
-                // 过滤选择框选中的数据
-                _.filter(self.selectedList, function (item) {
-                    return item.selected;
-                }).forEach(function (item) {
-                    if (selectedList.length < 1) {
-                        selectedList.push(item);
-                    } else {
-                        if (selectedList.indexOf(item) < 0) {
-                            selectedList.push(item);
+                if (item == 'add') {
+                    self.popups.openRes('add').then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
                         }
-                    }
-                });
-                editCallback(selectedList);
-                function editCallback() {
-                    if (type == 'add') {
-                        self.popups.openRes('add').then(function (res) {
-                            if (res.res == 'success') {
-                                self.search(1);
-                            }
-                        });
-                    } else {
-                        if (selectedList.length < 1) {
-                            self.alert('请选择一条数据！');
-                        } else if (selectedList.length > 1) {
-                            self.alert('只能选择一条数据哦！');
-                        } else {
-                            var data = _.filter(self.flatResList, function (Info) {
-                                return Info.id == selectedList[0].id
-                            });
-                            return self.popups.openRes(data[0]).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    });
+                } else {
+                    self.popups.openRes(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    }
+                    });
                 }
             },
             delete: function () {

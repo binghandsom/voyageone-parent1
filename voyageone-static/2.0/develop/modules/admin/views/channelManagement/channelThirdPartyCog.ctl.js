@@ -78,9 +78,9 @@ define([
                     propVal: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openChannelThird('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -89,17 +89,13 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
-                            self.popups.openChannelThird(channelInfo).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openChannelThird(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {

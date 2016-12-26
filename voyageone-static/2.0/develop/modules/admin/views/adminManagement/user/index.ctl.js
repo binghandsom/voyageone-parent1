@@ -136,9 +136,9 @@ define([
                     storeId: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openAddUser('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -147,40 +147,26 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.adminList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openAddUser(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1)
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openAddUser(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1)
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            vieAuthority: function () {
-                var self = this;
-                var popInfo = [];
-                _.forEach(self.adminList, function (Info) {
-                    _.forEach(self.adminUserSelList.selList, function (item) {
-                        if (Info.id == item.id) {
-                            popInfo.push(Info);
-                        }
-                    })
-                });
+            vieAuthority: function (item) {
+                var self = this, popInfo = [];
+                popInfo.push(item);
                 self.popups.openUserAuthority(popInfo);
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
+                delList.push(item);
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
-                        _.forEach(self.adminUserSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
                         self.adminUserService.deleteUser(delList).then(function (res) {
-                            self.search();
+                            if(res.data==true) self.search(1);
                         })
                     }
                 );

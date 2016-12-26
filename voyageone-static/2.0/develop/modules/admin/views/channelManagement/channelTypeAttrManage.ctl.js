@@ -88,9 +88,9 @@ define([
                     value: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openAddChannelType('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -99,17 +99,13 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.id == self.channelTypeSelList.selList[0].id) {
-                            self.popups.openAddChannelType(channelInfo).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else{
-                                    return false;
-                                }
-                            });
+                    self.popups.openAddChannelType(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {
