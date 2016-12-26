@@ -26,6 +26,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -113,12 +114,24 @@ public class CmsBtCombinedProductService extends BaseService {
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
                 try {
                     TmallItemCombineGetResponse resp = tbProductService.getTmallTtemCombine(numId, shopBean);
+                    if (resp != null && resp.isSuccess()) {
+                        List<String> results = resp.getResults();
+                        if(CollectionUtils.isEmpty(results = resp.getResults())) {
+                            $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
+                            throw new BusinessException("获取天猫商品数据出错了！");
+                        }
+                        System.out.println("*****************");
+                        System.out.println(results.get(0));
+                        System.out.println("*****************");
+//                        TmallItemCombine tmallItemCombine = JacksonUtil.json2Bean(results.get(0), TmallItemCombine.class);
+                        System.out.println(results.get(0).startsWith("\"\""));
+                        TmallItemCombine tmallItemCombine1 = JsonUtil.jsonToBean(results.get(0).toString(), TmallItemCombine.class);
+                        System.out.println(tmallItemCombine1.toString());
 
-                    List<String> results = resp.getResults();
-                    results.forEach(result->{
-                        System.out.println(result);
-                    });
-                    System.out.println(JacksonUtil.bean2Json(resp.getBody()));
+                    } else {
+                        $info("threadNo:" + threadNo + " numiid:" + numId +" 取得异常");
+                        throw new BusinessException("获取天猫商品数据出错了！");
+                    }
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -728,7 +741,180 @@ public class CmsBtCombinedProductService extends BaseService {
     }
 
 
-    class TmallItemCombineGetResponseResult {
+    /**
+     * 天猫组合商品信息
+     */
+    class TmallItemCombine {
+        private String categoryId;
+        private String itemId;
+        private Double price;
+        private Integer quantity;
+        private String title;
+        private List<TmallItemCombineSku> skuList = new ArrayList<>();
+        private List<TmallItemCombinedSubItem> subItemList = new ArrayList<>();
 
+        public String getCategoryId() {
+            return categoryId;
+        }
+
+        public void setCategoryId(String categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public String getItemId() {
+            return itemId;
+        }
+
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
+        }
+
+        public Double getPrice() {
+            return price;
+        }
+
+        public void setPrice(Double price) {
+            this.price = price;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public List<TmallItemCombineSku> getSkuList() {
+            return skuList;
+        }
+
+        public void setSkuList(List<TmallItemCombineSku> skuList) {
+            this.skuList = skuList;
+        }
+
+        public List<TmallItemCombinedSubItem> getSubItemList() {
+            return subItemList;
+        }
+
+        public void setSubItemList(List<TmallItemCombinedSubItem> subItemList) {
+            this.subItemList = subItemList;
+        }
+    }
+
+    class TmallItemCombineSku {
+        private String skuId;
+        private String skuTitle;
+        private String price;
+        private List<TmallItemCombineSubSku> subSkuList = new ArrayList<>();
+
+        public String getSkuId() {
+            return skuId;
+        }
+
+        public void setSkuId(String skuId) {
+            this.skuId = skuId;
+        }
+
+        public String getSkuTitle() {
+            return skuTitle;
+        }
+
+        public void setSkuTitle(String skuTitle) {
+            this.skuTitle = skuTitle;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public List<TmallItemCombineSubSku> getSubSkuList() {
+            return subSkuList;
+        }
+
+        public void setSubSkuList(List<TmallItemCombineSubSku> subSkuList) {
+            this.subSkuList = subSkuList;
+        }
+    }
+
+    class TmallItemCombineSubSku {
+        private String subItemId;
+        private String outerId;
+        private String price;
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+
+        public String getSubItemId() {
+            return subItemId;
+        }
+
+        public void setSubItemId(String subItemId) {
+            this.subItemId = subItemId;
+        }
+
+        public String getOuterId() {
+            return outerId;
+        }
+
+        public void setOuterId(String outerId) {
+            this.outerId = outerId;
+        }
+    }
+
+    class TmallItemCombinedSubItem {
+        private String title;
+        private String subItemId;
+        private String outerId;
+        private String ratio;
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getSubItemId() {
+            return subItemId;
+        }
+
+        public void setSubItemId(String subItemId) {
+            this.subItemId = subItemId;
+        }
+
+        public String getOuterId() {
+            return outerId;
+        }
+
+        public void setOuterId(String outerId) {
+            this.outerId = outerId;
+        }
+
+        public String getRatio() {
+            return ratio;
+        }
+
+        public void setRatio(String ratio) {
+            this.ratio = ratio;
+        }
     }
 }
