@@ -154,12 +154,14 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     @VOMQStart
     public boolean startMQ() {
         try {
+            // flush taskControlList
+            taskControlList = getControls();
+            if (taskControlList == null) {
+                taskControlList = new ArrayList<>();
+            }
             MQControlHelper.start(getClass().getName());
             // set concurrentConsumers
-            String threadCount = null;
-            if (taskControlList != null) {
-                threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
-            }
+            String threadCount = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.mq_thread_count);
             int nThreads = StringUtils.isEmpty(threadCount) ? 1 : Integer.parseInt(threadCount);
             MQControlHelper.setConcurrentConsumers(getClass().getName(), nThreads);
             return true;

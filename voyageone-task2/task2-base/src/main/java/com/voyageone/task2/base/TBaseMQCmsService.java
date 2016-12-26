@@ -45,8 +45,7 @@ public abstract class TBaseMQCmsService<TMQMessageBody  extends IMQMessageBody> 
         //特殊异常 抛出处理
         catch (Exception ex) {
             log(messageBody, ex, beginDate);
-            $error("出现异常，任务退出", ex);
-
+           throw  ex;
         }
     }
 
