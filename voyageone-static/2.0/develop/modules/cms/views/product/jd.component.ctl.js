@@ -420,7 +420,8 @@ define([
                         confirm(resp.message + ",是否强制保存").then(function () {
                             productDetailService.updateProductPlatform({
                                 prodId: scope.productInfo.productId,
-                                platform: scope.vm.platform
+                                platform: scope.vm.platform,
+                                isUpdate: mark !== 'intel' ? true : false
                             }).then(function (resp) {
                                 scope.vm.platform.modified = resp.data.modified;
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));

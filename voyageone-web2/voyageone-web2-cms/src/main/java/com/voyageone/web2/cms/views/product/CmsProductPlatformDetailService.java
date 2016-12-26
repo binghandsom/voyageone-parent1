@@ -477,7 +477,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         return platformCart;
     }
 
-    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
+    public String updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier, Boolean blnSmartSx) {
 
         if (platform.get("schemaFields") != null) {
             List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
@@ -487,7 +487,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
-        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, false);
+        return productService.updateProductPlatform(channelId, prodId, platformModel, modifier, true, blnSmartSx);
 
     }
 

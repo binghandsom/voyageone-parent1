@@ -108,7 +108,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName()));
+        Boolean blnSmartSx = params.get("isUpdate") != null ? !Boolean.valueOf(String.valueOf(params.get("isUpdate"))) : false;
+
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(),blnSmartSx));
 
         return success(result);
     }
