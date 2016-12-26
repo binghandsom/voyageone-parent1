@@ -7,8 +7,8 @@ import com.voyageone.ims.rule_expression.*;
  */
 public class BaseDictTest {
     protected String C_TEXT_BR = "<br />";
-    protected String C_TEMPLATE_IMG = "<img src=%s>";
-    protected String C_TEMPLATE_IMG_790 = "<img width=790px src=%s>";
+    protected String C_TEMPLATE_IMG = "<img src=\"%s\">";
+    protected String C_TEMPLATE_IMG_790 = "<img width=790px src=\"%s\">";
 
     protected String C_商品图片 = "PRODUCT_IMAGE";
     protected String C_包装图片 = "PACKAGE_IMAGE";

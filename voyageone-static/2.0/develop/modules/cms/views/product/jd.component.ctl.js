@@ -103,10 +103,10 @@ define([
                         if (platform.schemaFields && platform.schemaFields.product)
                             initBrand(platform.schemaFields.product, platform.pBrandId);
 
-                        if(scope.productInfo.skuBlock){
-                            setTimeout(function(){
-                                pageAnchor('sku',0);
-                            },1500)
+                        if (scope.productInfo.skuBlock) {
+                            setTimeout(function () {
+                                pageAnchor('sku', 0);
+                            }, 1500)
                         }
 
                         scope.autoSyncPriceMsrp = resp.data.autoSyncPriceMsrp;
@@ -415,37 +415,41 @@ define([
                 function callSave(mark) {
 
                     /**判断价格*/
-                    var promise = productDetailService.updateProductPlatformChk({
+                    return productDetailService.updateProductPlatformChk({
                         prodId: scope.productInfo.productId,
                         platform: scope.vm.platform,
                         isUpdate: mark !== 'intel' ? true : false
-                    });
-
-                    promise.then(function (resp) {
+                    }).then(function (resp) {
                         scope.vm.platform.modified = resp.data.modified;
-                        if(mark !== 'intel')
+                        if (mark !== 'intel')
                             notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+
+                        return true;
+
                     }, function (resp) {
                         if (resp.code != "4000091" && resp.code != "4000092") {
                             scope.vm.status = scope.vm.preStatus;
-                            return;
+                            return false;
                         }
 
-                        confirm(resp.message + ",是否强制保存").then(function () {
-                            productDetailService.updateProductPlatform({
+                        return confirm(resp.message + ",是否强制保存").then(function () {
+                            return productDetailService.updateProductPlatform({
                                 prodId: scope.productInfo.productId,
                                 platform: scope.vm.platform
                             }).then(function (resp) {
                                 scope.vm.platform.modified = resp.data.modified;
                                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                return true;
+                            }, function () {
+                                return false;
                             });
                         }, function () {
                             if (mark != 'temporary')
                                 scope.vm.status = scope.vm.preStatus;
+                            return false;
                         });
                     });
 
-                    return promise;
                 }
 
                 function validSchema() {
@@ -496,18 +500,24 @@ define([
                     });
                 }
 
-                // 商品智能上新
+                /**商品智能上新*/
                 function publishProduct() {
+                    //记录原先状态
+                    scope.vm.preStatus = angular.copy(scope.vm.status);
 
-                    callSave('intel').then(function () {
-                        $fieldEditService.intelligentPublish({
-                            cartId: scope.vm.platform.cartId,
-                            productIds: [scope.vm.mastData.productCode],
-                            isSelectAll: 0
-                        }).then(function () {
-                            scope.isPublishSucceed = true;
-                            alert('已完成商品的智能上新！');
-                        });
+                    callSave('intel').then(function (res) {
+
+                        if (res) {
+                            $fieldEditService.intelligentPublish({
+                                cartId: scope.vm.platform.cartId,
+                                productIds: [scope.vm.mastData.productCode],
+                                isSelectAll: 0
+                            }).then(function () {
+                                scope.isPublishSucceed = true;
+                                alert('已完成商品的智能上新！');
+                            });
+                        }
+
                     });
 
                 }
