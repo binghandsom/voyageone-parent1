@@ -25,5 +25,6 @@ public interface CAUrlConstants {
         String SHIP_ORDER = "orders/{id}/ship";
         String CANCEL_ORDER = "orders/{id}/cancel";
         String REFUND_ORDER = "orders/{id}/refund";
+        String ERROR_PATH_ORDER = "orders/{id}/*";
     }
 }

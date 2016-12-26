@@ -1,5 +1,6 @@
 package com.voyageone.web2.openapi.util;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.service.bean.vms.channeladvisor.ErrorModel;
@@ -13,6 +14,8 @@ import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+
+import java.util.Date;
 
 /**
  * Response Utils
@@ -58,7 +61,7 @@ public class ResponseUtils {
      */
     public static ActionResponse buildCAError(Exception exception) {
         String code;
-        String message;
+        String message = null;
 
         if (exception instanceof CAApiException) {
             CAApiException caException = (CAApiException)exception;
@@ -66,11 +69,18 @@ public class ResponseUtils {
             message = caException.getErrMsg();
         } else if (exception instanceof HttpMessageNotReadableException) {
             code = String.valueOf(ErrorIDEnum.InvalidRequiredParameter.getCode());
-            message = exception.getMessage();
+            if (exception.getCause() instanceof InvalidFormatException) {
+                if (Date.class.equals(((InvalidFormatException)exception.getCause()).getTargetType())) {
+                    message = "DateFormat of ShippedDateUtc not accept.";
+                }
+            }
+            if (message == null) {
+                message = exception.getMessage();
+            }
         } else if (exception instanceof HttpRequestMethodNotSupportedException) {
             code = String.valueOf(ErrorIDEnum.InvalidRequest.getCode());
             //message = ErrorIDEnum.InvalidRequest.getDefaultMessage();
-            message="The Endpoint URL does not exist. Please check the URL.";
+            message="The endpoint URL does not exist. Please check the URL.";
         } else {
             code = String.valueOf(ErrorIDEnum.SystemUnavailable.getCode());
             message = ErrorIDEnum.SystemUnavailable.getDefaultMessage();
