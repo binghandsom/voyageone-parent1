@@ -295,11 +295,16 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
                 ruleRoot.addRuleWord(word);
             }
 
+//            {
+//                // 英文长描述(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
+//                String column = "longDesEn";
+//                CommonWord commonWord = new CommonWord(column);
+//                ruleRoot.addRuleWord(commonWord);
+//            }
             {
-                // 英文长描述(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
-                String column = "longDesEn";
-                CommonWord commonWord = new CommonWord(column);
-                ruleRoot.addRuleWord(commonWord);
+                // 中文长描述
+                MasterWord word = new MasterWord("longDesCn");
+                ruleRoot.addRuleWord(word);
             }
 
 			{
@@ -309,13 +314,20 @@ public class Tmall_TongGou_017_LuckyVitamin_DictTest extends BaseDictTest {
 				ruleRoot.addRuleWord(word);
 			}
 
-			{
-				// 英文使用说明(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
-				// 备注： LuckyVitamin的使用说明是在材质上的
-				String column = "materialEn";
-				CommonWord commonWord = new CommonWord(column);
-				ruleRoot.addRuleWord(commonWord);
-			}
+//			{
+//				// 英文使用说明(把这段英文传到天猫平台后，平台会自动翻译并设置格式)
+//				// 备注： LuckyVitamin的使用说明是在材质上的
+//				String column = "materialEn";
+//				CommonWord commonWord = new CommonWord(column);
+//				ruleRoot.addRuleWord(commonWord);
+//			}
+            {
+                // 中文使用说明
+                // 备注： LuckyVitamin的使用说明是在材质上的
+                String column = "materialCn";
+                CommonWord commonWord = new CommonWord(column);
+                ruleRoot.addRuleWord(commonWord);
+            }
 
             {
                 // 描述后加一个换行

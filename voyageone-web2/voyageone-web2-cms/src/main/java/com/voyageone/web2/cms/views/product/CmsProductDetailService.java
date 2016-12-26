@@ -37,6 +37,8 @@ import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.*;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.com.mq.MqSender;
+import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.service.impl.wms.InventoryCenterLogicService;
 import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
@@ -106,6 +108,8 @@ public class CmsProductDetailService extends BaseViewService {
     private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private InventoryCenterLogicService inventoryCenterLogicService;
+    @Autowired
+    private MqSender sender;
 
     /**
      * 获取类目以及类目属性信息.
@@ -481,7 +485,7 @@ public class CmsProductDetailService extends BaseViewService {
         // 获取参数
         String mCatId = StringUtils.trimToNull((String) requestMap.get("catId"));
         String mCatPath = StringUtils.trimToNull((String) requestMap.get("catPath"));
-        List<Map> pCatList = (List) requestMap.get("pCatList");
+//        List<Map> pCatList = (List) requestMap.get("pCatList");
 
         Map<String, Object> resultMap = new HashMap<>();
         if (mCatId == null || mCatPath == null) {
@@ -507,53 +511,58 @@ public class CmsProductDetailService extends BaseViewService {
             return resultMap;
         }
 
-        Integer cartIdObj = (Integer) requestMap.get("cartId");
-        List<Integer> cartList = null;
-        if (cartIdObj == null || cartIdObj == 0) {
-            // 表示全平台更新
-            // 店铺(cart/平台)列表
-            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
-            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
-        } else {
-            cartList = new ArrayList<>(1);
-            cartList.add(cartIdObj);
-        }
+        requestMap.put("prodIds",prodCodes);
+        requestMap.put("userName",userInfo.getUserName());
+        requestMap.put("channelId",userInfo.getSelChannelId());
+        sender.sendMessage( MqRoutingKey.CMS_BATCH_CmsBatchSetMainCategoryJob, requestMap);
 
-        for (Integer cartId : cartList) {
-            JongoUpdate updObj = new JongoUpdate();
-            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
-            updObj.setQueryParameters(prodCodes, cartId, cartId);
-
-            boolean isInCatFlg = false;
-            String pCatId = null;
-            String pCatPath = null;
-            for (Map pCatObj : pCatList) {
-                if (cartId.toString().equals(pCatObj.get("cartId"))) {
-                    isInCatFlg = true;
-                    pCatId = StringUtils.trimToNull((String) pCatObj.get("catId"));
-                    pCatPath = StringUtils.trimToNull((String) pCatObj.get("catPath"));
-                    break;
-                }
-            }
-            if (isInCatFlg && (pCatId == null || pCatPath == null)) {
-                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s, platformCategory=%s", cartId, mCatPath, mCatId, pCatList.toString()));
-            } else if (!isInCatFlg) {
-                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
-            }
-            if (pCatId == null || pCatPath == null) {
-                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
-                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow());
-            } else {
-                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'platforms.P#.pCatId':#,'platforms.P#.pCatPath':#,'platforms.P#.pCatStatus':'1'}}");
-                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow(), cartId, pCatId, cartId, pCatPath, cartId);
-            }
-            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
-            $debug("切换类目 product更新结果 " + rs.toString());
-        }
-
-        String feeUpdStr = "{'code':{$in:['" + StringUtils.join(prodCodes, "','") + "']}}";
-        WriteResult wrs = feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(), feeUpdStr, 1, userInfo.getUserName());
-        $debug("切换类目 feed更新结果 " + wrs.toString());
+//        Integer cartIdObj = (Integer) requestMap.get("cartId");
+//        List<Integer> cartList = null;
+//        if (cartIdObj == null || cartIdObj == 0) {
+//            // 表示全平台更新
+//            // 店铺(cart/平台)列表
+//            List<TypeChannelBean> cartTypeList = TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+//            cartList = cartTypeList.stream().map((cartType) -> NumberUtils.toInt(cartType.getValue())).collect(Collectors.toList());
+//        } else {
+//            cartList = new ArrayList<>(1);
+//            cartList.add(cartIdObj);
+//        }
+//
+//        for (Integer cartId : cartList) {
+//            JongoUpdate updObj = new JongoUpdate();
+//            updObj.setQuery("{'common.fields.code':{$in:#},'platforms.P#':{$exists:true},'platforms.P#.pAttributeStatus':{$in:[null,'','0']}}");
+//            updObj.setQueryParameters(prodCodes, cartId, cartId);
+//
+//            boolean isInCatFlg = false;
+//            String pCatId = null;
+//            String pCatPath = null;
+//            for (Map pCatObj : pCatList) {
+//                if (cartId.toString().equals(pCatObj.get("cartId"))) {
+//                    isInCatFlg = true;
+//                    pCatId = StringUtils.trimToNull((String) pCatObj.get("catId"));
+//                    pCatPath = StringUtils.trimToNull((String) pCatObj.get("catPath"));
+//                    break;
+//                }
+//            }
+//            if (isInCatFlg && (pCatId == null || pCatPath == null)) {
+//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s, platformCategory=%s", cartId, mCatPath, mCatId, pCatList.toString()));
+//            } else if (!isInCatFlg) {
+//                $debug(String.format("changeProductCategory 该平台未匹配此主类目 cartid=%d, 主类目path=%s, 主类目id=%s,", cartId, mCatPath, mCatId));
+//            }
+//            if (pCatId == null || pCatPath == null) {
+//                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#}}");
+//                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow());
+//            } else {
+//                updObj.setUpdate("{$set:{'common.catId':#,'common.catPath':#,'common.fields.categoryStatus':'1','common.fields.categorySetter':#,'common.fields.categorySetTime':#,'platforms.P#.pCatId':#,'platforms.P#.pCatPath':#,'platforms.P#.pCatStatus':'1'}}");
+//                updObj.setUpdateParameters(mCatId, mCatPath, userInfo.getUserName(), DateTimeUtil.getNow(), cartId, pCatId, cartId, pCatPath, cartId);
+//            }
+//            WriteResult rs = productService.updateMulti(updObj, userInfo.getSelChannelId());
+//            $debug("切换类目 product更新结果 " + rs.toString());
+//        }
+//
+//        String feeUpdStr = "{'code':{$in:['" + StringUtils.join(prodCodes, "','") + "']}}";
+//        WriteResult wrs = feedInfoService.updateAllUpdFlg(userInfo.getSelChannelId(), feeUpdStr, 1, userInfo.getUserName());
+//        $debug("切换类目 feed更新结果 " + wrs.toString());
 
         // 获取更新结果
         resultMap.put("isChangeCategory", true);
@@ -705,12 +714,12 @@ public class CmsProductDetailService extends BaseViewService {
         if (!oldProduct.getCommon().getCatId().equalsIgnoreCase(commonModel.getCatId())) {
             changeMastCategory(commonModel, oldProduct, modifier);
 
-            // 更新 feedinfo表中的updFlg 重新出发 feed->mast
-            HashMap<String, Object> paraMap = new HashMap<>(1);
-            paraMap.put("code", oldProduct.getCommon().getFields().getCode());
-            HashMap<String, Object> valueMap = new HashMap<>(1);
-            valueMap.put("updFlg", 0);
-            feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
+//            // 更新 feedinfo表中的updFlg 重新出发 feed->mast
+//            HashMap<String, Object> paraMap = new HashMap<>(1);
+//            paraMap.put("code", oldProduct.getCommon().getFields().getCode());
+//            HashMap<String, Object> valueMap = new HashMap<>(1);
+//            valueMap.put("updFlg", 0);
+//            feedInfoService.updateFeedInfo(channelId, paraMap, valueMap);
 
         }
         //产品编辑页翻译状态从0-》1的场合 翻译时间 和人 设置

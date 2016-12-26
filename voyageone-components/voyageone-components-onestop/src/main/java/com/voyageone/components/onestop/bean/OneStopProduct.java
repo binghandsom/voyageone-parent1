@@ -23,7 +23,7 @@ public class OneStopProduct {
      * Name : SHERI SKINNY IN COATED DENIM TALL
      * FirstLiveString : 2012-07-05T18:12:21-07:00
      * MetaTags : null
-     * MetaData : {"CategoryName":"Denim > Skinny All","CategoryExtraText1":"Skinny+All","CategoryExtraText2":"Women/Denim","CategoryExtraText3":"women","ExtraText1":"Fall 2012","Detail":"Denim never looked so cool. doubleroducing a new NYDJ favorite, the Sheri Skinny in a new, sleek finish, Coated Denim. A touch of edginess with all the benefits that you love from NYDJ. These super-stylish statement jeans feature classic five-pocket styling, zip-fly, button closure and our signature NYDJ slimming fit with a longer inseam at 33\".    ","Description2":"\r Inseam: tall 33\"   \r 96% Cotton, 4% Spandex   \r Made in the USA Unfortunately, this item is currently on backorder. Click \"Can't Find Your Size\" below to add your email to our waitlist and we will notify you once the item returns to stock.\r ","Description4":"Black","Description2WithFormatting":"<ul>\r\n<li>Inseam: tall 33\"   <\/li>\r\n<li>96% Cotton, 4% Spandex   <\/li>\r\n<li>Made in the USA Unfortunately, this item is currently on backorder. Click \"Can't Find Your Size\" below to add your email to our waitlist and we will notify you once the item returns to stock.<\/li>\r\n<\/ul>","Description4WithFormatting":"Black","UnitCost":0,"PreviousCost":0,"MaxCost":130,"MinCost":130,"MinRegularPrice":130,"MaxRegularPrice":130,"MinSalePrice":0,"MaxSalePrice":0,"SameMaxMin":true,"ShippingSurcharge":0,"SizeChartUrl":"/sizechart.htm","Weight":0,"PreOrderAvailableString":"0001-01-01T00:00:00-08:00","DisplayOosPopup":true,"ShowWhenOos":false,"NonremovableFromCart":false,"ProductUrl":"//acme.qa.onestop.com/sheri-skinny-in-coated-denim-tall/d/161454"}
+     * MetaData : {"CategoryName":"Denim > Skinny All","CategoryExtraText1":"Skinny+All","CategoryExtraText2":"Women/Denim","CategoryExtraText3":"women","ExtraText1":"Fall 2012","Detail":"Denim never looked so cool. Doubleroducing a new NYDJ favorite, the Sheri Skinny in a new, sleek finish, Coated Denim. A touch of edginess with all the benefits that you love from NYDJ. These super-stylish statement jeans feature classic five-pocket styling, zip-fly, button closure and our signature NYDJ slimming fit with a longer inseam at 33\".    ","Description2":"\r Inseam: tall 33\"   \r 96% Cotton, 4% Spandex   \r Made in the USA Unfortunately, this item is currently on backorder. Click \"Can't Find Your Size\" below to add your email to our waitlist and we will notify you once the item returns to stock.\r ","Description4":"Black","Description2WithFormatting":"<ul>\r\n<li>Inseam: tall 33\"   <\/li>\r\n<li>96% Cotton, 4% Spandex   <\/li>\r\n<li>Made in the USA Unfortunately, this item is currently on backorder. Click \"Can't Find Your Size\" below to add your email to our waitlist and we will notify you once the item returns to stock.<\/li>\r\n<\/ul>","Description4WithFormatting":"Black","UnitCost":0,"PreviousCost":0,"MaxCost":130,"MinCost":130,"MinRegularPrice":130,"MaxRegularPrice":130,"MinSalePrice":0,"MaxSalePrice":0,"SameMaxMin":true,"ShippingSurcharge":0,"SizeChartUrl":"/sizechart.htm","Weight":0,"PreOrderAvailableString":"0001-01-01T00:00:00-08:00","DisplayOosPopup":true,"ShowWhenOos":false,"NonremovableFromCart":false,"ProductUrl":"//acme.qa.onestop.com/sheri-skinny-in-coated-denim-tall/d/161454"}
      * Options : [{"Values":{"161278":"Black"},"Id":null,"Name":"Color","CreateString":"2012-07-05T18:12:21.153-07:00","ModifyString":null,"IsActive":true,"Ordinal":0,"Meta":{"MfgSku":"40965DTCC"},"IsVisible":true,"IsFilterable":true},{"Values":{"183685":"0","183688":"2","183691":"4","183694":"6","183697":"8","183700":"10","183703":"12","183706":"14","183709":"16","184915":"18"},"Id":null,"Name":"Size","CreateString":null,"ModifyString":null,"IsActive":true,"Ordinal":1,"Meta":{},"IsVisible":true,"IsFilterable":true}]
      * CategoryId : 160104
      */
@@ -35,9 +35,9 @@ public class OneStopProduct {
     private String TaxClassification;
     private String Name;
     private String FirstLiveString;
-    private Object MetaTags;
+    private List<MetaTagsBean> MetaTags;
     private MetaDataBean MetaData;
-    private double CategoryId;
+    private Double CategoryId;
     private List<AttributesBean> Attributes;
     private List<VariantsBean> Variants;
     private List<OptionsBean> Options;
@@ -99,11 +99,11 @@ public class OneStopProduct {
         this.FirstLiveString = FirstLiveString;
     }
 
-    public Object getMetaTags() {
+    public List<MetaTagsBean> getMetaTags() {
         return MetaTags;
     }
 
-    public void setMetaTags(Object MetaTags) {
+    public void setMetaTags(List<MetaTagsBean> MetaTags) {
         this.MetaTags = MetaTags;
     }
 
@@ -115,11 +115,11 @@ public class OneStopProduct {
         this.MetaData = MetaData;
     }
 
-    public double getCategoryId() {
+    public Double getCategoryId() {
         return CategoryId;
     }
 
-    public void setCategoryId(double CategoryId) {
+    public void setCategoryId(Double CategoryId) {
         this.CategoryId = CategoryId;
     }
 
@@ -147,6 +147,7 @@ public class OneStopProduct {
         this.Options = Options;
     }
 
+
     public static class MetaDataBean {
         /**
          * CategoryName : Denim > Skinny All
@@ -154,7 +155,7 @@ public class OneStopProduct {
          * CategoryExtraText2 : Women/Denim
          * CategoryExtraText3 : women
          * ExtraText1 : Fall 2012
-         * Detail : Denim never looked so cool. doubleroducing a new NYDJ favorite, the Sheri Skinny in a new, sleek finish, Coated Denim. A touch of edginess with all the benefits that you love from NYDJ. These super-stylish statement jeans feature classic five-pocket styling, zip-fly, button closure and our signature NYDJ slimming fit with a longer inseam at 33".
+         * Detail : Denim never looked so cool. Doubleroducing a new NYDJ favorite, the Sheri Skinny in a new, sleek finish, Coated Denim. A touch of edginess with all the benefits that you love from NYDJ. These super-stylish statement jeans feature classic five-pocket styling, zip-fly, button closure and our signature NYDJ slimming fit with a longer inseam at 33".
          * Description2 :  Inseam: tall 33"    96% Cotton, 4% Spandex    Made in the USA Unfortunately, this item is currently on backorder. Click "Can't Find Your Size" below to add your email to our waitlist and we will notify you once the item returns to stock.
          * Description4 : Black
          * Description2WithFormatting : <ul>
@@ -194,18 +195,18 @@ public class OneStopProduct {
         private String Description2WithFormatting;
         private String Description3WithFormatting;
         private String Description4WithFormatting;
-        private double UnitCost;
-        private double PreviousCost;
-        private double MaxCost;
-        private double MinCost;
-        private double MinRegularPrice;
-        private double MaxRegularPrice;
-        private double MinSalePrice;
-        private double MaxSalePrice;
+        private Double UnitCost;
+        private Double PreviousCost;
+        private Double MaxCost;
+        private Double MinCost;
+        private Double MinRegularPrice;
+        private Double MaxRegularPrice;
+        private Double MinSalePrice;
+        private Double MaxSalePrice;
         private boolean SameMaxMin;
-        private double ShippingSurcharge;
+        private Double ShippingSurcharge;
         private String SizeChartUrl;
-        private double Weight;
+        private Double Weight;
         private String PreOrderAvailableString;
         private boolean DisplayOosPopup;
         private boolean ShowWhenOos;
@@ -308,67 +309,67 @@ public class OneStopProduct {
             this.Description4WithFormatting = Description4WithFormatting;
         }
 
-        public double getUnitCost() {
+        public Double getUnitCost() {
             return UnitCost;
         }
 
-        public void setUnitCost(double UnitCost) {
+        public void setUnitCost(Double UnitCost) {
             this.UnitCost = UnitCost;
         }
 
-        public double getPreviousCost() {
+        public Double getPreviousCost() {
             return PreviousCost;
         }
 
-        public void setPreviousCost(double PreviousCost) {
+        public void setPreviousCost(Double PreviousCost) {
             this.PreviousCost = PreviousCost;
         }
 
-        public double getMaxCost() {
+        public Double getMaxCost() {
             return MaxCost;
         }
 
-        public void setMaxCost(double MaxCost) {
+        public void setMaxCost(Double MaxCost) {
             this.MaxCost = MaxCost;
         }
 
-        public double getMinCost() {
+        public Double getMinCost() {
             return MinCost;
         }
 
-        public void setMinCost(double MinCost) {
+        public void setMinCost(Double MinCost) {
             this.MinCost = MinCost;
         }
 
-        public double getMinRegularPrice() {
+        public Double getMinRegularPrice() {
             return MinRegularPrice;
         }
 
-        public void setMinRegularPrice(double MinRegularPrice) {
+        public void setMinRegularPrice(Double MinRegularPrice) {
             this.MinRegularPrice = MinRegularPrice;
         }
 
-        public double getMaxRegularPrice() {
+        public Double getMaxRegularPrice() {
             return MaxRegularPrice;
         }
 
-        public void setMaxRegularPrice(double MaxRegularPrice) {
+        public void setMaxRegularPrice(Double MaxRegularPrice) {
             this.MaxRegularPrice = MaxRegularPrice;
         }
 
-        public double getMinSalePrice() {
+        public Double getMinSalePrice() {
             return MinSalePrice;
         }
 
-        public void setMinSalePrice(double MinSalePrice) {
+        public void setMinSalePrice(Double MinSalePrice) {
             this.MinSalePrice = MinSalePrice;
         }
 
-        public double getMaxSalePrice() {
+        public Double getMaxSalePrice() {
             return MaxSalePrice;
         }
 
-        public void setMaxSalePrice(double MaxSalePrice) {
+        public void setMaxSalePrice(Double MaxSalePrice) {
             this.MaxSalePrice = MaxSalePrice;
         }
 
@@ -380,11 +381,11 @@ public class OneStopProduct {
             this.SameMaxMin = SameMaxMin;
         }
 
-        public double getShippingSurcharge() {
+        public Double getShippingSurcharge() {
             return ShippingSurcharge;
         }
 
-        public void setShippingSurcharge(double ShippingSurcharge) {
+        public void setShippingSurcharge(Double ShippingSurcharge) {
             this.ShippingSurcharge = ShippingSurcharge;
         }
 
@@ -396,11 +397,11 @@ public class OneStopProduct {
             this.SizeChartUrl = SizeChartUrl;
         }
 
-        public double getWeight() {
+        public Double getWeight() {
             return Weight;
         }
 
-        public void setWeight(double Weight) {
+        public void setWeight(Double Weight) {
             this.Weight = Weight;
         }
 
@@ -465,7 +466,7 @@ public class OneStopProduct {
         private String CreateString;
         private String ModifyString;
         private boolean IsActive;
-        private double Ordinal;
+        private Double Ordinal;
         private MetaBean Meta;
         private boolean IsVisible;
         private boolean IsFilterable;
@@ -518,11 +519,11 @@ public class OneStopProduct {
             this.IsActive = IsActive;
         }
 
-        public double getOrdinal() {
+        public Double getOrdinal() {
             return Ordinal;
         }
 
-        public void setOrdinal(double Ordinal) {
+        public void setOrdinal(Double Ordinal) {
             this.Ordinal = Ordinal;
         }
 
@@ -558,16 +559,16 @@ public class OneStopProduct {
              * AData3 : 001
              */
 
-            private double AttributeType;
+            private Double AttributeType;
             private String AData1;
             private String AData2;
             private String AData3;
 
-            public double getAttributeType() {
+            public Double getAttributeType() {
                 return AttributeType;
             }
 
-            public void setAttributeType(double AttributeType) {
+            public void setAttributeType(Double AttributeType) {
                 this.AttributeType = AttributeType;
             }
 
@@ -613,7 +614,9 @@ public class OneStopProduct {
         private boolean IsActive;
         private String Name;
         private String MfgSku;
-        private double ProductId;
+        private Double Price;
+        private Double SalePrice;
+        private Double ProductId;
         private boolean IsDefault;
         private List<MediasBean> Medias;
         private List<OptionsBean> Options;
@@ -650,11 +653,11 @@ public class OneStopProduct {
             this.MfgSku = MfgSku;
         }
 
-        public double getProductId() {
+        public Double getProductId() {
             return ProductId;
         }
 
-        public void setProductId(double ProductId) {
+        public void setProductId(Double ProductId) {
             this.ProductId = ProductId;
         }
 
@@ -664,6 +667,38 @@ public class OneStopProduct {
 
         public void setIsDefault(boolean IsDefault) {
             this.IsDefault = IsDefault;
+        }
+
+        public boolean isActive() {
+            return IsActive;
+        }
+
+        public void setActive(boolean active) {
+            IsActive = active;
+        }
+
+        public Double getPrice() {
+            return Price;
+        }
+
+        public void setPrice(Double price) {
+            Price = price;
+        }
+
+        public Double getSalePrice() {
+            return SalePrice;
+        }
+
+        public void setSalePrice(Double salePrice) {
+            SalePrice = salePrice;
+        }
+
+        public boolean isDefault() {
+            return IsDefault;
+        }
+
+        public void setDefault(boolean aDefault) {
+            IsDefault = aDefault;
         }
 
         public List<MediasBean> getMedias() {
@@ -694,20 +729,20 @@ public class OneStopProduct {
              * IsDefault : true
              */
 
-            private double MediaId;
+            private Double MediaId;
             private String Name;
             private String FileName;
             private String FilePath;
-            private double Type;
+            private Double Type;
             private MediaMetaBean Meta;
-            private double Ordinal;
+            private Double Ordinal;
             private boolean IsDefault;
 
-            public double getMediaId() {
+            public Double getMediaId() {
                 return MediaId;
             }
 
-            public void setMediaId(double MediaId) {
+            public void setMediaId(Double MediaId) {
                 this.MediaId = MediaId;
             }
 
@@ -735,11 +770,11 @@ public class OneStopProduct {
                 this.FilePath = FilePath;
             }
 
-            public double getType() {
+            public Double getType() {
                 return Type;
             }
 
-            public void setType(double Type) {
+            public void setType(Double Type) {
                 this.Type = Type;
             }
 
@@ -751,11 +786,11 @@ public class OneStopProduct {
                 this.Meta = Meta;
             }
 
-            public double getOrdinal() {
+            public Double getOrdinal() {
                 return Ordinal;
             }
 
-            public void setOrdinal(double Ordinal) {
+            public void setOrdinal(Double Ordinal) {
                 this.Ordinal = Ordinal;
             }
 
@@ -778,27 +813,27 @@ public class OneStopProduct {
                  * ExtraImageLargeThumbUrl : //s005.osstatic.net/s/acme/store/productimages/thumbs/161454/1454_black_l_thumb.jpg
                  */
 
-                private double ParentColorId;
-                private double ColorId;
+                private Double ParentColorId;
+                private Double ColorId;
                 private boolean PreviewImageFlag;
                 private String ExtraImageThumb;
                 private String ExtraImageThumbUrl;
                 private String ExtraImageLargeThumb;
                 private String ExtraImageLargeThumbUrl;
 
-                public double getParentColorId() {
+                public Double getParentColorId() {
                     return ParentColorId;
                 }
 
-                public void setParentColorId(double ParentColorId) {
+                public void setParentColorId(Double ParentColorId) {
                     this.ParentColorId = ParentColorId;
                 }
 
-                public double getColorId() {
+                public Double getColorId() {
                     return ColorId;
                 }
 
-                public void setColorId(double ColorId) {
+                public void setColorId(Double ColorId) {
                     this.ColorId = ColorId;
                 }
 
@@ -866,7 +901,7 @@ public class OneStopProduct {
         private String CreateString;
         private String ModifyString;
         private boolean IsActive;
-        private double Ordinal;
+        private Double Ordinal;
         private OptionMetaBean Meta;
         private boolean IsVisible;
         private boolean IsFilterable;
@@ -919,11 +954,11 @@ public class OneStopProduct {
             this.IsActive = IsActive;
         }
 
-        public double getOrdinal() {
+        public Double getOrdinal() {
             return Ordinal;
         }
 
-        public void setOrdinal(double Ordinal) {
+        public void setOrdinal(Double Ordinal) {
             this.Ordinal = Ordinal;
         }
 
@@ -969,4 +1004,31 @@ public class OneStopProduct {
         }
     }
 
+    public  static class MetaTagsBean {
+        private Map<String,String> Attributes;
+
+        private String HtmlTag;
+
+        private int TagId;
+
+        public void setAttributes(Map<String,String> Attributes){
+            this.Attributes = Attributes;
+        }
+        public Map<String,String> getAttributes(){
+            return this.Attributes;
+        }
+        public void setHtmlTag(String HtmlTag){
+            this.HtmlTag = HtmlTag;
+        }
+        public String getHtmlTag(){
+            return this.HtmlTag;
+        }
+        public void setTagId(int TagId){
+            this.TagId = TagId;
+        }
+        public int getTagId(){
+            return this.TagId;
+        }
+
+    }
 }
