@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.vomq;
 
+import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
 import com.voyageone.service.impl.BaseService;
@@ -15,6 +16,8 @@ public class CmsMQJobLogService  extends BaseService implements IMQJobLog {
 
     public void log(IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate) {
 
+        String stackTrace = ExceptionUtil.getStackTrace(ex);
+        //votodo 待实现
     }
 
 }
