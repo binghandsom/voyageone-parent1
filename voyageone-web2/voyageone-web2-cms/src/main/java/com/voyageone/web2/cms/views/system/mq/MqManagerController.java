@@ -5,7 +5,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.components.rabbitmq.config.AnnotationProcessorByIP;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

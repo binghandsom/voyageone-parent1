@@ -8,7 +8,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.dao.vms.VmsBtClientInventoryDao;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;

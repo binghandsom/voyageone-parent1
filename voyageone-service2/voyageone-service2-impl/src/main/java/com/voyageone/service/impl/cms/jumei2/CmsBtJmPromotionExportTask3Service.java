@@ -13,7 +13,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
-import com.voyageone.service.impl.cms.vomessage.body.JmExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmExportMQMessageBody;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import org.apache.poi.ss.usermodel.IndexedColors;

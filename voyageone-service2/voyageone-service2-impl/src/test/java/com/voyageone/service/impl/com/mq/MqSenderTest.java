@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.com.mq;
 
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;

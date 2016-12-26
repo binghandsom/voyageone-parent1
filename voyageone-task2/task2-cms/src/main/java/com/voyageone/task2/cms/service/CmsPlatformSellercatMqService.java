@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;

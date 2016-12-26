@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.jumei;
 import com.voyageone.service.impl.cms.jumei2.JuMeiProductPlatform3Service;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;

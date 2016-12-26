@@ -107,7 +107,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
             TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr, messageBodyClass);
 
-            onStartup(messageBody);
+            startup(messageBody);
         } catch (BusinessException be) {
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
@@ -122,7 +122,9 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
             throw new MQException(ex, message);
         }
     }
-
+    public  void  startup(TMQMessageBody messageBody) throws Exception {
+        onStartup(messageBody);
+    }
     /**
      * MqJobService需要实现此方法
      *

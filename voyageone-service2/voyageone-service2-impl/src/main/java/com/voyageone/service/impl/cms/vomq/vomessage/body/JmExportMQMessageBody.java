@@ -1,18 +1,20 @@
-package com.voyageone.service.impl.cms.vomessage.body;
+package com.voyageone.service.impl.cms.vomq.vomessage.body;
 
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomessage.EnumCmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 
 /**
- * Created by dell on 2016/12/20.
- * 聚美导出消息类
+ * JmExportMQMessageBody   聚美导出Job 消息体类
+ *
+ * @author peitao 2016/12/26.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_EXPORT)
 public class JmExportMQMessageBody extends BaseMQMessageBody {
-
+//后缀MQMessageBody
     // 是cms_bt_jm_promotion_export_task的id
     private int jmBtPromotionExportTaskId;
 

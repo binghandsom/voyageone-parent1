@@ -1,4 +1,4 @@
-package com.voyageone.service.impl.cms.vomessage;
+package com.voyageone.service.impl.cms.vomq;
 
 /**
  * @author aooer 2016/4/18.

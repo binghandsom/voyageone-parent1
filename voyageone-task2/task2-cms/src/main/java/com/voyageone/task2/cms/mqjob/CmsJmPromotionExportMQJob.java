@@ -2,21 +2,18 @@ package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.excel.ExcelException;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
-import com.voyageone.service.impl.cms.vomessage.body.JmExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmExportMQMessageBody;
 import com.voyageone.task2.base.TBaseMQCmsService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
 /**
  * JmBtPromotion ImportJob Service  聚美导出文件生成
  *
- * @author peitao 2016/4/8.
+ * @author peitao 2016/12/26.
  * @version 2.0.0
  * @since 2.0.0
  */
@@ -27,11 +24,7 @@ public  class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmExportMQMess
     @Autowired
     private CmsBtJmPromotionExportTask3Service service;
 
-/*
-  1.基类异常处理
-  2. cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
-  3.
-  * */
+
     @Override
     public void onStartup(JmExportMQMessageBody messageBody) throws Exception {
         $info("JmBtPromotionExportJobService", "begin");

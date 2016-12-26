@@ -9,7 +9,7 @@ import com.voyageone.components.jd.JdConstants;
 import com.voyageone.components.jd.bean.JdCategroyBean;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
