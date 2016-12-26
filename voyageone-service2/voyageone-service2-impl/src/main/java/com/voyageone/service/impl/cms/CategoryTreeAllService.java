@@ -43,11 +43,13 @@ public class CategoryTreeAllService extends BaseService {
         List<CmsMtCategoryTreeAllBean> result = new ArrayList<>();
         // 根据channelId取得channel与Category的对应关系
         List<CmsMtChannelCategoryConfigModel> mappings = channelCategoryService.getByChannelId(channelId);
+        $debug("mappings size = " + mappings.size());
         //Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = null;
 
         // 根据channel与Category的对应关系(多个catId),取得CategoryTree
         for (CmsMtChannelCategoryConfigModel mapping : mappings) {
             String catId = mapping.getCategoryId();
+            $debug("catId = " + catId);
             CmsMtCategoryTreeAllModel model = cmsMtCategoryTreeAllDao.selectByCatId(catId);
             CmsMtCategoryTreeAllBean bean = null;
             if (model != null) {
