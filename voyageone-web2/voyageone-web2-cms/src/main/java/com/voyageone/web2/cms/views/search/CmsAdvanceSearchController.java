@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -20,22 +19,13 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Edward
@@ -230,7 +220,7 @@ public class CmsAdvanceSearchController extends CmsController {
         } else if (fileType == 3) {
             fileName = "skuList_";
         } else if (fileType == 4) {
-            fileName = "shoemetroJMSkuList_";
+            fileName = "publishJMSkuList_";
         }
         if (fileName == null) {
             resultBean.put("ecd", "4002");

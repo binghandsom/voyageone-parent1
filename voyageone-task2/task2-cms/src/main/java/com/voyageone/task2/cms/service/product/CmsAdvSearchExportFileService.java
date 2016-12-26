@@ -190,7 +190,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 3) {
             fileName = "skuList_";
         } else if (searchValue.getFileType() == 4) {
-            fileName = "shoemetroJMSkuList_";
+            fileName = "publishJMSkuList_";
         }
 
         String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
@@ -311,7 +311,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     offset += writeRecordToSkuFile(book, items, channelId, cartList, startRowIndex + offset);
                 } else if (searchValue.getFileType() == 4) {
                     /*isContinueOutput暂时无用*/
-                    offset += writeShoemetroJMSkuFile(book, items, startRowIndex + offset);
+                    offset += writePublishJMSkuFile(book, items, startRowIndex + offset);
                 }
                 // 超过最大行的场合
                 /*if (!isContinueOutput) {
@@ -546,7 +546,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param book
      */
     private void writeShoemetroJMSkuHead(Workbook book) {
-        book.createSheet("shoemetro");
+        book.createSheet("jmSkuList");
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0); // 第一行，英文标题
         CellStyle style = book.createCellStyle();
@@ -1131,12 +1131,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     }
 
     /**
-     * 导出shoemetro聚美上新SKU级数据
+     * 导出聚美上新SKU级数据
      * @param book
      * @param items
      * @param startRowIndex
      */
-    private int writeShoemetroJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex) {
+    private int writePublishJMSkuFile(Workbook book, List<CmsBtProductBean> items, int startRowIndex) {
         int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
         Set<String> codes = new HashSet<String>();
