@@ -1,12 +1,10 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.task2.base.BaseCronTaskService;
-import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +42,7 @@ public class CmsSynJmPromotionDealPriceService extends BaseCronTaskService {
             jmPromotionIds.forEach(jmPromotionId ->{
                 Map<String,Object> param = new HashedMap();
                 param.put("jmPromotionId",jmPromotionId);
-                sender.sendMessage(MqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
+                sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmSynPromotionDealPrice, param);
             });
         }
     }

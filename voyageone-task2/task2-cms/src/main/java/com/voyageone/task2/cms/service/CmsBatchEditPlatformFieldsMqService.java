@@ -3,14 +3,13 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -25,7 +24,7 @@ import java.util.*;
  * Created by james on 2016/11/4.
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob)
 public class CmsBatchEditPlatformFieldsMqService extends BaseMQCmsService {
 
     @Autowired

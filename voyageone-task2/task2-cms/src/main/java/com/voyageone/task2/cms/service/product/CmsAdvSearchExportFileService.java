@@ -24,11 +24,10 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
-import com.voyageone.task2.cms.bean.InventoryForCmsBean;
 import com.voyageone.task2.cms.bean.SkuInventoryForCmsBean;
 import com.voyageone.task2.cms.dao.InventoryDao;
 
@@ -38,7 +37,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +50,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 2016/08/18
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
 public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
     @Autowired

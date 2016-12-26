@@ -7,7 +7,7 @@ import com.voyageone.service.dao.cms.CmsBtPlatformNumiidDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformNumiidDaoExt;
 import com.voyageone.service.impl.cms.product.CmsProductCodeChangeGroupService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPlatformNumiidModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * @version 2.6.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CmsProductGroupMergeJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CmsProductGroupMergeJob)
 public class CmsProductGroupMergeService extends BaseMQCmsService {
 
     @Autowired

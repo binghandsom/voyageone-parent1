@@ -8,7 +8,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskItemModel;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @since 2.9.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_REFRESH_PRODUCTS)
 public class CmsRefreshProductsJobService extends BaseMQCmsService {
 
     private final PlatformMappingService platformMappingService;

@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.task2.cms.mqjob.CmsJmPromotionExportMQJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class JmBtPromotionExportJobServiceTest {
     @Autowired
-    JmBtPromotionExportJobService service;
+    CmsJmPromotionExportMQJob service;
     @Test
     public void testOnStartup() throws Exception {
         MQConfigInitTestUtil.startMQ(service);

@@ -2,9 +2,7 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
@@ -12,7 +10,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +85,6 @@ public class PlatformForcedInStockProduct_AutoOnSaleService extends BaseService 
         logParams.put("comment", "平台被迫下架的产品，自动上架");
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(MqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
     }
 }

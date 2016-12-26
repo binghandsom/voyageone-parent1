@@ -2,7 +2,7 @@ package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class CmsBuildPlatformCategorySchemaTmMqServiceTest {
        List<List<Integer>> pageList= CommonUtil.splitList(list,20);
         Map<String,Object> message=new HashMap<>();
         message.put("test","111");
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformCategorySchemaTmJob, message);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaTmJob, message);
     }
 
 }

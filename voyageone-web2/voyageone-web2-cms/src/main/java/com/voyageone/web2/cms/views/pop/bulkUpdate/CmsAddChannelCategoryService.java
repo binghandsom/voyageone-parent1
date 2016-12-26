@@ -9,7 +9,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
@@ -209,7 +209,7 @@ public class CmsAddChannelCategoryService extends BaseViewService {
 
         // 开始批处理
         params.put("_taskName", "saveChannelCategory");
-        sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
 
        $info(JacksonUtil.bean2Json(params));
 

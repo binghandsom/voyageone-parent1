@@ -29,7 +29,7 @@ import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -482,7 +482,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             sessionBean.put("_adv_search_selSalesType", cmsSessionBean.getAttribute("_adv_search_selSalesType"));
             sessionBean.put("_adv_search_selBiDataList", cmsSessionBean.getAttribute("_adv_search_selBiDataList"));
             searchValue.put("_sessionBean", sessionBean);
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob, searchValue);
             return true;
 
         } else {

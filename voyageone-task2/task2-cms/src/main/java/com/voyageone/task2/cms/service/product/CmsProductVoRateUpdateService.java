@@ -14,7 +14,7 @@ import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -38,7 +38,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob)
 public class CmsProductVoRateUpdateService extends BaseMQCmsService {
 
     @Autowired

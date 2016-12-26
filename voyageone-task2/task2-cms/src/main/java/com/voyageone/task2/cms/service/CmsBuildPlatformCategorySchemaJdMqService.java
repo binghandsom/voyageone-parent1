@@ -18,7 +18,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaJdJob)
 public class CmsBuildPlatformCategorySchemaJdMqService extends BaseMQCmsService {
 
     @Autowired

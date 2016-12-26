@@ -10,7 +10,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtPriceLogDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -87,7 +87,7 @@ public class CmsBtPriceLogService extends BaseService {
                     paramMap.put(key, cmsBtPriceLogModel);
                 }
             }
-            paramMap.forEach((s, cmsBtPriceLogModel) -> sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(cmsBtPriceLogModel))));
+            paramMap.forEach((s, cmsBtPriceLogModel) -> sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2JsonNotNull(cmsBtPriceLogModel))));
         }
 
 //        for (CmsBtPriceLogModel newLog : paramList)
@@ -126,7 +126,7 @@ public class CmsBtPriceLogService extends BaseService {
         newLog.put("productId",productId);
         newLog.put("channelId",channelId);
         // 向Mq发送消息同步sku,code,group价格范围
-        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
 
     }
 
@@ -224,7 +224,7 @@ public class CmsBtPriceLogService extends BaseService {
                         newLog.setChannelId(channelId);
 
                         // 向Mq发送消息同步sku,code,group价格范围
-                        sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
+                        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutPriceUpdateJob,
                                 JacksonUtil.jsonToMap(JacksonUtil.bean2Json(newLog)));
                     }
                 });

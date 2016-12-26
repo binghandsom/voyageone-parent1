@@ -8,7 +8,7 @@ import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtBrandBlockModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -30,7 +30,7 @@ import static com.voyageone.common.CmsConstants.PlatformActive.ToInStock;
  * @since 2.6.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB)
 public class CmsBrandBlockJobService extends BaseMQCmsService {
 
     private final FeedInfoService feedInfoService;
@@ -272,7 +272,7 @@ public class CmsBrandBlockJobService extends BaseMQCmsService {
 
         OffShelfHelper(String channelId) {
             mqParams.put("channelId", channelId);
-            mqParams.put("creater", MqRoutingKey.CMS_TASK_BRANDBLOCKJOB);
+            mqParams.put("creater", CmsMqRoutingKey.CMS_TASK_BRANDBLOCKJOB);
             mqParams.put("activeStatus", ToInStock.name());
             mqParams.put("cartIdList", cartIdList);
             mqParams.put("comment", "Feed 品牌黑名单下架");

@@ -183,6 +183,10 @@ public class CmsBtJmPromotionExportTask3Service {
         dao.insert(model);
     }
 
+    /*
+     1.基类异常处理
+     2.
+    * */
     public void sendMessage(JmExportMQMessageBody jmExportMQMessageBody) throws MQMessageRuleException {
         mqSenderService.sendMessage(jmExportMQMessageBody);
     }

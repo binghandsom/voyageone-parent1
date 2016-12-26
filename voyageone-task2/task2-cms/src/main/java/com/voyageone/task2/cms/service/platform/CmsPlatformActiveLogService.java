@@ -26,7 +26,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtPlatformActiveLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -51,7 +51,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_PlatformActiveLogJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob)
 public class CmsPlatformActiveLogService extends BaseMQCmsService {
 
     private final CmsBtPlatformActiveLogDao platformActiveLogDao;

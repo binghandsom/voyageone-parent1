@@ -2,7 +2,7 @@ package com.voyageone.web2.openapi.bi.control;
 
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.web2.openapi.OpenApiBaseController;
 import com.voyageone.web2.openapi.bi.constants.BiUrlConstants;
 import com.voyageone.web2.openapi.bi.service.DataServiceTB;
@@ -74,7 +74,7 @@ public class BiSaveDataController extends OpenApiBaseController {
         messageMap.put("cartId", Integer.parseInt(cartId));
 
         // send mq
-        mqSender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob, messageMap);
+        mqSender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob, messageMap);
 
         return simpleResponse("OK");
     }

@@ -7,7 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionImportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -89,7 +89,7 @@ public class CmsBtJmPromotionImportTaskController extends CmsController {
         for (CmsBtJmPromotionImportTaskModel taskModel : listModel) {
             Map<String, Object> message = new HashMap<String, Object>();
             message.put("id", taskModel.getId());
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_JmBtPromotionImportTask, message);
         }
         Map<String, Object> reponse = new HashMap<>();// = cmsPromotionDetailService.uploadPromotion(input, promotionId, getUser().getUserName());
         reponse.put("result", true);

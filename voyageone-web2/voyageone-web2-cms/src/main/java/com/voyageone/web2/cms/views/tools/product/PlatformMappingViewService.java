@@ -17,7 +17,7 @@ import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.cms.tools.PlatformMappingService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.impl.com.mq.config.MqParameterKeys;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtRefreshProductTaskModel;
 import com.voyageone.service.model.cms.CmsMtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtPlatformMappingModel;
@@ -295,7 +295,7 @@ class PlatformMappingViewService extends BaseViewService {
 
         Map<String, Object> map = new HashMap<>();
         map.put(MqParameterKeys.key1, cmsBtRefreshProductTaskModel.getId());
-        mqSender.sendMessage(MqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
+        mqSender.sendMessage(CmsMqRoutingKey.CMS_TASK_REFRESH_PRODUCTS, map);
 
         return true;
     }

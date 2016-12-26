@@ -1,18 +1,19 @@
-package com.voyageone.service.impl.com.mq.config;
+package com.voyageone.service.impl.cms.vomessage;
 
 /**
  * @author aooer 2016/4/18.
  * @version 2.6.0
  * @since 2.0.0
  */
-public class MqRoutingKey {
+public class CmsMqRoutingKey {
 
     /**
      * jumei mq task
      */
     public static final String CMS_BATCH_JmBtPromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
 
-    public static final String CMS_BATCH_JmBtPromotionExportTask = "voyageone_cms_batchjob_JmBtPromotionExportTask_queue";
+    // xxxxxxx
+    public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
     public static final String CMS_BATCH_JmPromotionRecovery = "voyageone_cms_batchjob_JmPromotionRecovery_queue";
 

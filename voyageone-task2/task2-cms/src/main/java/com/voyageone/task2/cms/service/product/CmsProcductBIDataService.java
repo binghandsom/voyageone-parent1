@@ -12,7 +12,7 @@ import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.bi.BiVtSalesProductExt;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob)
 public class CmsProcductBIDataService extends BaseMQCmsService {
 
     @Autowired
@@ -110,7 +110,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
         // 清空现有值
         JongoUpdate updObj = new JongoUpdate();
         updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
-        updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+        updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
         // 批量更新
         WriteResult rs = cmsBtProductDao.updateMulti(updObj, channelId);
         if (rs != null) {
@@ -144,7 +144,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                 updObj.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
                 updObj.setQueryParameters(cartId, numIid, cartId);
                 updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
-                updObj.setUpdateParameters(opeType, cartId, orderObj.get("pv"), opeType, cartId, orderObj.get("uv"), opeType, cartId, orderObj.get("cartNums"), opeType, cartId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+                updObj.setUpdateParameters(opeType, cartId, orderObj.get("pv"), opeType, cartId, orderObj.get("uv"), opeType, cartId, orderObj.get("cartNums"), opeType, cartId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
                 // 批量更新
                 wrs = bulkUpdList.addBulkJongo(updObj);
                 if (wrs != null) {
@@ -167,7 +167,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
                     updObj2.setQuery("{'platforms.P#.pNumIId':#,'platforms.P#.status':'Approved'}");
                     updObj2.setQueryParameters(channelId, numIid, channelId);
                     updObj2.setUpdate("{$set:{'bi.sum#.pv.cartId#':#,'bi.sum#.uv.cartId#':#, 'bi.sum#.gwc.cartId#':#,'bi.sum#.scs.cartId#':#, 'modified':#,'modifier':#}}");
-                    updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+                    updObj2.setUpdateParameters(opeType, channelId, orderObj.get("pv"), opeType, channelId, orderObj.get("uv"), opeType, channelId, orderObj.get("cartNums"), opeType, channelId, orderObj.get("collNums"), DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
 
                     wrs = orgUpdList.addBulkJongo(updObj2);
                     if (wrs != null) {
@@ -244,7 +244,7 @@ public class CmsProcductBIDataService extends BaseMQCmsService {
             // 清空现有值
             JongoUpdate updObj = new JongoUpdate();
             updObj.setUpdate("{$set:{'bi.sum#.pv.cartId#':null,'bi.sum#.uv.cartId#':null, 'bi.sum#.gwc.cartId#':null,'bi.sum#.scs.cartId#':null, 'modified':#,'modifier':#}}");
-            updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), MqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
+            updObj.setUpdateParameters(opeType, cartId, opeType, cartId, opeType, cartId, opeType, cartId, DateTimeUtil.getNowTimeStamp(), CmsMqRoutingKey.CMS_TASK_AdvSearch_GetBIDataJob);
             // 批量更新
             WriteResult rs = cmsBtProductDao.updateMulti(updObj, orgChannelId);
             if (rs != null) {

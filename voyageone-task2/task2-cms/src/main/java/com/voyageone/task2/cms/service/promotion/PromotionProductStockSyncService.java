@@ -12,7 +12,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtPromotionCodesDaoExtCamel;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtJmPromotionProductModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodesModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_JmPromotionProductStockSyncServiceJob)
 public class PromotionProductStockSyncService extends BaseMQCmsService {
 
     @Autowired

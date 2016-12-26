@@ -14,7 +14,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.sx.ConditionPropValueService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtChannelConditionConfigModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 2.6.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformTitleTranslateJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformTitleTranslateJob)
 public class CmsPlatformTitleTranslateMqService extends BaseMQCmsService {
 
     @Autowired

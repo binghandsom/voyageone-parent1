@@ -15,7 +15,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductLogDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -245,7 +245,7 @@ public class CAFeedProductService extends BaseService {
             Map<String, Object> message = new HashMap<>();
             message.put("channelId", "996");
             message.put("sellerSKUs", sellerSKUs);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_CA_Feed_Analysis, message);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Feed_Analysis, message);
         }
     }
 }

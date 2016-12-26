@@ -5,7 +5,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.components.rabbitmq.config.AnnotationProcessorByIP;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -43,9 +43,9 @@ public class MqManagerController extends CmsController {
     @RequestMapping(CmsUrlConstants.SYSTEM.MQ.INIT)
     public AjaxResponse init(HttpServletRequest request) throws Exception {
         List<String> result = new ArrayList<>();
-        Field[] fields = MqRoutingKey.class.getDeclaredFields();
+        Field[] fields = CmsMqRoutingKey.class.getDeclaredFields();
         for (Field field : fields) {
-            result.add((String) field.get(MqRoutingKey.class));
+            result.add((String) field.get(CmsMqRoutingKey.class));
         }
         return success(result);
     }

@@ -18,7 +18,7 @@ import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomessage.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
@@ -265,7 +265,7 @@ public class CmsFeedSearchService extends BaseViewService {
     public CmsBtExportTaskModel export(String channelId, CmsBtExportTaskModel cmsBtExportTaskModel, String userName) {
         if (cmsBtExportTaskService.checkExportTaskByUser(channelId, CmsBtExportTaskService.FEED, userName) == 0) {
             cmsBtExportTaskService.add(cmsBtExportTaskModel);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_FeedExportJob, JacksonUtil.jsonToMap(JacksonUtil.bean2Json(cmsBtExportTaskModel)));
             return cmsBtExportTaskModel;
         } else {
             throw new BusinessException("你已经有一个任务还没有执行完毕。请稍后再导出");
