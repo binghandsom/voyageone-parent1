@@ -508,6 +508,8 @@ define([
                         sizeType:selectedCat.sizeTypeEn,
                         productTypeCn:selectedCat.productTypeCn,
                         sizeTypeCn:selectedCat.sizeTypeCn,
+                        hscodeName8:selectedCat.hscodeName8,
+                        hscodeName10:selectedCat.hscodeName10,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
