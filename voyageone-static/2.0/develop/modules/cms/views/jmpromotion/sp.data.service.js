@@ -9,7 +9,6 @@ define(['cms'], function (cms) {
         self.jmPromotionDetailService = jmPromotionDetailService;
         self.JmPromotionImagesService = JmPromotionImagesService;
         self.dateFilter = $filter('date');
-        self.searchInfo={"selCodeList":[],"searchInfo":{}};
     }
 
     SpDataService.prototype = {
@@ -217,7 +216,9 @@ define(['cms'], function (cms) {
                 jmPromotionObj.bayWindowStatus = (isSubmit ? 1 : 2);
                 return resp.data;
             });
-        },
+        }
+
+
     };
 
     cms.service('spDataService', SpDataService);

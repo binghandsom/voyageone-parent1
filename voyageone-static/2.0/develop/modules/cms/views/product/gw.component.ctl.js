@@ -142,6 +142,7 @@ define([
                                 }
                             });
                         }).then(function (context) {
+
                         if (scope.vm.platform != null) {
                             if (context.selected.catPath == scope.vm.platform.pCatPath)
                                 return;

@@ -17,7 +17,7 @@ define(['cms',
         this.cmsBtJmPromotionExportTaskService = cmsBtJmPromotionExportTaskService;
     }
 
-    SpDetailPageController.prototype.skipUrl = function (res,ctrl) {
+    SpDetailPageController.prototype.skipUrl = function (res, ctrl) {
         var self = ctrl,
             confirm = self.confirm;
         confirm("是否要跳转的新建的返场活动。").then(function () {
@@ -33,10 +33,17 @@ define(['cms',
             spDataService.jmPromotionObj = promotion;
         });
     };
+
     SpDetailPageController.prototype.addExport = function () {
-        var self = this;
-        var model = {templateType: 0, cmsBtJmPromotionId: this.promotion.id,
-            parameter:JSON.stringify(self.spDataService.searchInfo)};
+        var self = this,
+            spDataService = self.spDataService,
+            model = {
+                templateType: 0, cmsBtJmPromotionId: this.promotion.id,
+                parameter: JSON.stringify(self.spDataService.searchInfo)
+            };
+
+        console.log(spDataService.getExportInfo());
+
         this.cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
             // $scope.searchExport();
         }, function (res) {
@@ -49,7 +56,7 @@ define(['cms',
             confirm = self.confirm,
             spDataService = self.spDataService;
 
-        confirm("请确认活动图片效果后，再行导出。").then(function(){
+        confirm("请确认活动图片效果后，再行导出。").then(function () {
             $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadSpecialImageZip,
                 {
                     "jmPromotionId": spDataService.jmPromotionId,
@@ -66,7 +73,7 @@ define(['cms',
             confirm = self.confirm,
             spDataService = self.spDataService;
 
-        confirm("请确认活动图片效果后，再行导出。").then(function(){
+        confirm("请确认活动图片效果后，再行导出。").then(function () {
             $.download.post(cActions.cms.jmpromotion.JmPromotionImagesService.root + "/" + cActions.cms.jmpromotion.JmPromotionImagesService.downloadWaresImageZip, {
                 "jmPromotionId": spDataService.jmPromotionId,
                 "promotionName": self.promotion.name
