@@ -9,6 +9,7 @@ import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.response.ItemUpdateDelistingResponse;
 import com.taobao.api.response.ItemUpdateListingResponse;
+import com.taobao.api.response.TmallItemCombineGetResponse;
 import com.taobao.api.response.TmallItemUpdateSchemaGetResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
@@ -27,6 +28,7 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.components.jumei.reponse.HtMallStatusUpdateBatchResponse;
@@ -96,11 +98,11 @@ public class CmsBtCombinedProductService extends BaseService {
      */
     public CmsBtCombinedProductModel getCombinedProductPlatformDetail(String numId, String channelId, Integer cartId, boolean local) {
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        /*shopBean.setAppKey("21008948");
+        shopBean.setAppKey("21008948");
         shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
         shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
         shopBean.setSessionKey("620230429acceg4103a72932e22e4d53856b145a192140b2854639042");
-        shopBean.setShop_name("Target海外旗舰店");*/
+        shopBean.setShop_name("Target海外旗舰店");
         if (shopBean != null) {
             long threadNo = Thread.currentThread().getId();
             $info("threadNo:" + threadNo + " numiid:" + numId );
@@ -109,6 +111,19 @@ public class CmsBtCombinedProductService extends BaseService {
             productBean.setChannelId(channelId);
             productBean.setNumID(numId);
             if (shopBean.getPlatform_id().equalsIgnoreCase(PlatformType.TMALL.getPlatformId().toString())) {
+                try {
+                    TmallItemCombineGetResponse resp = tbProductService.getTmallTtemCombine(numId, shopBean);
+
+                    List<String> results = resp.getResults();
+                    results.forEach(result->{
+                        System.out.println(result);
+                    });
+                    System.out.println(JacksonUtil.bean2Json(resp.getBody()));
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
                 try{
                     TmallItemUpdateSchemaGetResponse itemUpdateSchemaGetResponse = tbProductService.doGetWareInfoItem(numId, shopBean);
                     if (null != itemUpdateSchemaGetResponse && itemUpdateSchemaGetResponse.isSuccess()) {
@@ -710,5 +725,10 @@ public class CmsBtCombinedProductService extends BaseService {
             resultMap.put("total", 0);
         }
         return resultMap;
+    }
+
+
+    class TmallItemCombineGetResponseResult {
+
     }
 }
