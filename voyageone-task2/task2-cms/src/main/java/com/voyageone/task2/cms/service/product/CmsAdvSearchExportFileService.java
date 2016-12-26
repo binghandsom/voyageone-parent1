@@ -190,7 +190,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 3) {
             fileName = "skuList_";
         } else if (searchValue.getFileType() == 4) {
-            fileName = "shoemetroJMSkuList_";
+            fileName = "publishJMSkuList_";
         }
 
         String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
@@ -546,7 +546,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param book
      */
     private void writeShoemetroJMSkuHead(Workbook book) {
-        book.createSheet("shoemetro");
+        book.createSheet("jmSkuList");
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0); // 第一行，英文标题
         CellStyle style = book.createCellStyle();
