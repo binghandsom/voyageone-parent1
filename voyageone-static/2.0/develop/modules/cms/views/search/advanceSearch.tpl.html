@@ -694,7 +694,7 @@
                                 <i class="fa fa-exchange"></i>&nbsp;{{'TXT_COMMON_EXCHANGE' | translate}}&nbsp;<span class="caret"></span>
                             </button>
                             <ul uib-dropdown-menu>
-                                <li>
+                                <li ng-if="vm.masterData.isminimall == 1">
                                     <a href="javascript:void(0)" ng-click="$parent.openCategoryMapping(popupCategoryNew)"> {{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</a>
                                 </li>
                                 <li>
@@ -775,6 +775,9 @@
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)" ng-click="refreshRetailPrice(cartBean)">重新计算价格</a>
+                                </li>
+                                <li ng-if="cartBean.value==27">
+                                    <a href="javascript:void(0)" ng-click="exportFile(4)">聚美上新商品导出</a>
                                 </li>
                             </ul>
                         </div>

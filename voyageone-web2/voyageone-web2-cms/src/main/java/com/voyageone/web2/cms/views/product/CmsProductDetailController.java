@@ -154,6 +154,7 @@ public class CmsProductDetailController extends CmsController {
 
     }
 
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_COMMON_PRODUCTINFO)
     public AjaxResponse doUpdateMastProductInfo(@RequestBody Map requestMap) {
 

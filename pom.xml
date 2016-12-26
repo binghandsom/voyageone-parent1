@@ -109,6 +109,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.voyageone.tools.feed</groupId>
+                <artifactId>category-matcher-java</artifactId>
+                <version>1.4.2-RELEASE</version>
+                <!--<version>LATEST</version>-->
+            </dependency>
             <!-- spring -->
             <dependency>
                 <groupId>org.springframework</groupId>

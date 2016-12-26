@@ -598,6 +598,8 @@ public interface CmsUrlConstants {
 
             String GET_COMMON_PRODUCT_SKU_INFO = "getCommonProductSkuInfo";
 
+            String GET_MAIN_CATEGORY_INFO = "getMainCategoryInfo";
+
             String UPDATE_COMMON_PRODUCTINFO = "updateCommonProductInfo";
 
             String UPDATE_LOCK = "updateLock";

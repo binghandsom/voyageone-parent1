@@ -57,13 +57,13 @@ public class OneStopClient {
     private Thread _refreashTokenThread = new Thread(() -> { //自动刷新token的守护线程
         try {
             while (true) {
-                TimeUnit.SECONDS.sleep(60 * 50);
+                TimeUnit.SECONDS.sleep( 60 * 50);
                 getToken();
             }
         } catch (Exception e) {
             logger.error("demo thread refresh token error", e);
         }
-    }, "OneStopClient_RefreashTokenThread");
+    },"OneStopClient_RefreashTokenThread");
 
     public OneStopClient(OneStopConfig oauth2Req) {
         this.config = oauth2Req;
@@ -76,7 +76,7 @@ public class OneStopClient {
      * 请调用此方法释放资源.
      */
     public void shutdown() {
-        logger.info(OneStopClient.class.getSimpleName() + " will shutdown !");
+        logger.info(OneStopClient.class.getSimpleName()+" will shutdown !");
         _httpclient.shutdown();
     }
 
@@ -110,12 +110,12 @@ public class OneStopClient {
         String authServerUrl = ThirdPartyConfigs.getVal1(channelId, "authServerUrl");
         String scope = ThirdPartyConfigs.getVal1(channelId, "scope");
         String baseURI = ThirdPartyConfigs.getVal1(channelId, "baseURI");
-        checkArgument(StringUtils.isNotEmpty(clientId), "clientId must not empty");
-        checkArgument(StringUtils.isNotEmpty(clientSecret), "clientSecret must not empty");
-        checkArgument(StringUtils.isNotEmpty(authServerUrl), "authServerUrl must not empty");
-        checkArgument(StringUtils.isNotEmpty(scope), "scope must not empty");
-        checkArgument(StringUtils.isNotEmpty(scope), "scope must not empty");
-        checkArgument(StringUtils.isNotEmpty(baseURI), "baseURI must not empty");
+        checkArgument(StringUtils.isNotEmpty(clientId),"clientId must not empty");
+        checkArgument(StringUtils.isNotEmpty(clientSecret),"clientSecret must not empty");
+        checkArgument(StringUtils.isNotEmpty(authServerUrl),"authServerUrl must not empty");
+        checkArgument(StringUtils.isNotEmpty(scope),"scope must not empty");
+        checkArgument(StringUtils.isNotEmpty(scope),"scope must not empty");
+        checkArgument(StringUtils.isNotEmpty(baseURI),"baseURI must not empty");
         try {
             OAuthClientRequest req = OAuthClientRequest
                     .tokenLocation(authServerUrl)
@@ -124,13 +124,12 @@ public class OneStopClient {
                     .setScope(scope)
                     .setGrantType(GrantType.CLIENT_CREDENTIALS)
                     .buildBodyMessage();
-            return new OneStopConfig(baseURI, req);
+            return new OneStopConfig(baseURI,req);
         } catch (OAuthSystemException e) {
             throw new OneStopApiException("Can not build oauth2 request", e);
         }
 //        OneStopConfig config = new OneStopConfig();
     }
-
     /**
      * 从服务端获取token
      *
@@ -140,8 +139,8 @@ public class OneStopClient {
         try {
             OAuthJSONAccessTokenResponse tokenResp = _httpclient.accessToken(config.getOauth2Config());
             this._accessTokenResp.set(tokenResp);
-            logger.info("onestop get access token :" + tokenResp.getAccessToken() + " expired after:" +
-                    tokenResp.getExpiresIn() + " s");
+            logger.info("onestop get access token :"+tokenResp.getAccessToken()+" expired after:"+
+                    tokenResp.getExpiresIn()+" s");
         } catch (Exception e) {
             throw new OneStopApiException("get onestop api access_token error", e);
         }
@@ -154,7 +153,7 @@ public class OneStopClient {
      * @param uri
      * @return
      */
-    public OAuthClientJSONResponse get(String uri) {
+    protected OAuthClientJSONResponse get(String uri) {
         OAuthClientJSONResponse resource = resource(uri, OAuth.HttpMethod.GET, "");
         if (resource.getResponseCode() == HttpStatus.SC_FORBIDDEN) {
             logger.info("access_token is invalid, refresh token and retry");
@@ -170,11 +169,10 @@ public class OneStopClient {
 
     /**
      * post方法返回201表示成功,其他的都当做失败
-     *
      * @param uri
      * @return
      */
-    public OAuthClientJSONResponse post(String uri, String body) {
+    protected OAuthClientJSONResponse post(String uri,String body) {
         OAuthClientJSONResponse resource = resource(uri, OAuth.HttpMethod.POST, body);
         if (resource.getResponseCode() == HttpStatus.SC_FORBIDDEN) {
             logger.info("access_token is invalid, refresh token and retry");
@@ -195,11 +193,10 @@ public class OneStopClient {
 
     /**
      * put方法返回201和202表示成功.均失败.
-     *
      * @param uri
      * @return
      */
-    public OAuthClientJSONResponse put(String uri, String body) {
+    protected OAuthClientJSONResponse put(String uri,String body) {
 
         OAuthClientJSONResponse resource = resource(uri, OAuth.HttpMethod.PUT, body);
         if (resource.getResponseCode() == HttpStatus.SC_FORBIDDEN) {
@@ -212,9 +209,10 @@ public class OneStopClient {
             throw new OneStopApiException("unauthorized access error");
         } else if (resource.getResponseCode() == HttpStatus.SC_CREATED || resource.getResponseCode() == HttpStatus.SC_ACCEPTED) {
             return resource;
-        } else if (resource.getResponseCode() == HttpStatus.SC_BAD_REQUEST) {
+        }else if (resource.getResponseCode() == HttpStatus.SC_BAD_REQUEST) {
             throw new OneStopBizException(resource.getBody());
-        } else {
+        }
+        else {
             //todo: add more robust error handling (for example return validation errors from response body, etc.)
             throw new OneStopApiException("put http status_code is not in (201,202):" + resource.getResponseCode());
         }
@@ -223,20 +221,19 @@ public class OneStopClient {
     /**
      * 底层核心方法,检查必要参数,post和put方法设置参数头,bodyMsg可以为"",如果通信正常返回OAuthClientJSONResponse对象,
      * 带有状态吗和其他必要信息,get,post,和put方法依据此对象进行合理判断,其他通信不正常的情况下抛出异常
-     *
      * @param uri
      * @param requestMethod
      * @param bodyMsg
      * @return
      */
-    public OAuthClientJSONResponse resource(String uri, String requestMethod, String bodyMsg) {
+    private OAuthClientJSONResponse resource(String uri, String requestMethod, String bodyMsg) {
         checkArgument(StringUtils.isNotBlank(uri), "uri can not empty");
         checkArgument(StringUtils.isNotBlank(requestMethod), "requestMethod can not empty");
         OAuthClientRequest req = null;
         try {
             String realUrl = (!config.getBaseUrl().endsWith("/") ? config.getBaseUrl() + "/" : config.getBaseUrl())
                     + (uri.startsWith("/") ? uri.substring(1) : uri);
-            req = new OAuthBearerClientRequest(realUrl)
+            req = new OAuthBearerClientRequest( realUrl)
                     .setAccessToken(this._accessTokenResp.get().getAccessToken())
                     .buildHeaderMessage();
             if (HttpMethod.POST.equals(requestMethod) || HttpMethod.PUT.equals(requestMethod)) {
@@ -254,10 +251,10 @@ public class OneStopClient {
             if (OAuth.HttpMethod.GET.equals(requestMethod) && e.getCause() instanceof FileNotFoundException) {
                 //404
                 throw new OneStopResouceNotFoundException(e.getMessage(), e);
-            } else {
+            }else{
                 throw new OneStopApiException(String.format("query onestop api uri(%s)  error", uri), e);
             }
-        } catch (Exception e) {
+        }catch (Exception e) {
             throw new OneStopApiException(String.format("query onestop api uri(%s)  error", uri), e);
         }
     }
@@ -268,9 +265,9 @@ public class OneStopClient {
 
     /**
      * 这就是封装示例
-     *
-     * @param productId Gets an Order object by order Id
      * @Modular Catalog
+     * @param productId
+     *  Gets an Order object by order Id
      */
     public OneStopProduct catalog(Long productId) {
         checkArgument(productId != null, "productId must not null");
@@ -285,20 +282,21 @@ public class OneStopClient {
     }
 
     /**
-     * @param lastModDate Get a list of product Ids by last modified date
      * @Modular Catalog
-     */
+     * @param lastModDate
+     *  Get a list of product Ids by last modified date
+     * */
     public List<Long> catalogProductId(Date lastModDate) {
-        checkArgument(lastModDate != null, "lastModDate must not null");
+        checkArgument(lastModDate!=null,"lastModDate must not null");
 
         String lastModDateStr = new DateTime(lastModDate).toString("yyyy-MM-dd HH:mm:ss");
-        try {
+        try{
             String url = new URIBuilder(URL_CATALOG_PRODUCTID).addParameter("lastModDate", lastModDateStr)
                     .build().toString();
             OAuthClientJSONResponse response = get(url);
             return response.getBodyAs(new TypeToken<List<Long>>() {
             }.getType());
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
             return Collections.EMPTY_LIST;//返回集合对象的方法不要返回null
         } catch (URISyntaxException e) {
@@ -308,6 +306,51 @@ public class OneStopClient {
 
 
     /**
+     * @Modular Facility
+     * @param facilityId
+     * Gets a list of inventory by status and location a link
+     */
+    //URL定义
+    public static final String URL_FacilityId = "/api/Facility/%s/Inventory";
+
+    public List<OneStopInventory> FacilityId(Integer facilityId){
+        try{
+
+            checkArgument(facilityId != null, "facilityId must not null");
+            OAuthClientJSONResponse response =get(String.format(URL_FacilityId, facilityId));
+            Type listType = new TypeToken<ArrayList<OneStopInventory>>(){}.getType();
+            return response.getBodyAs(listType);
+        }catch (OneStopResouceNotFoundException e) {
+            logger.error(e.getMessage());
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    /**
+     * @Modular Facility
+     * @param  upc facilityIdUpc
+     * Gets a list of inventory by UPC, status and location
+     */
+    //URL定义
+    public static final String URL_FacilityIdUpc = "/api/Facility/";
+
+    public List<OneStopInventory> FacilityIdUpc(Integer facilityId,String upc){
+        try{
+
+            checkArgument(upc != null, "upc must not null");
+            checkArgument(facilityId != null, "facilityId must not null");
+
+            URIBuilder url = new URIBuilder().setPath(URL_FacilityIdUpc+facilityId+"/Inventory/"+upc);
+            OAuthClientJSONResponse response = get(url.toString());
+            return  response.getBodyAs(new TypeToken<List<OneStopInventory>>() {
+            }.getType());
+        }catch (OneStopResouceNotFoundException e) {
+            logger.error(e.getMessage());
+            return Collections.EMPTY_LIST;
+        }
+    }
+
+    /**
      * @Modular Inventory
      * @param upc
      * Gets a list of inventory by UPC and status
@@ -315,16 +358,15 @@ public class OneStopClient {
     //URL定义
     public static final String URL_INVENTOY = "/api/Inventory/%s";
 
-    public List<OneStopInventory> inventory(String upc) {
-        try {
+    public List<OneStopInventory> inventory(String upc){
+        try{
             checkArgument(upc != null, "upc must not null");
-            OAuthClientJSONResponse response = get(String.format(URL_INVENTOY, upc));
-            Type listType = new TypeToken<ArrayList<OneStopInventory>>() {
-            }.getType();
+            OAuthClientJSONResponse response =get(String.format(URL_INVENTOY, upc));
+            Type listType = new TypeToken<ArrayList<OneStopInventory>>(){}.getType();
             return response.getBodyAs(listType);
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
-            return null;
+            return Collections.EMPTY_LIST;
         }
     }
 
@@ -336,13 +378,13 @@ public class OneStopClient {
     //URL定义
     public static final String URL_ORDER = "/api/order/%s";
 
-    public OneStopOrder order(Integer id) {
-        try {
+    public OneStopOrder order(Integer id){
+        try{
 
             checkArgument(id != null, "id must not null");
-            OAuthClientJSONResponse response = get(String.format(URL_ORDER, id));
+            OAuthClientJSONResponse response =get(String.format(URL_ORDER, id));
             return response.getBodyAs(OneStopOrder.class);
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
             return null;
         }
@@ -357,15 +399,14 @@ public class OneStopClient {
     //URL定义
     public static final String URL_ORDER_IDLIST = "/api/order/%s";
 
-    public List<OneStopOrder> orderlist(String idList) { //例如："765308,765208,765108,765008"
-        try {
+    public List<OneStopOrder> orderlist(String idList){ //例如："765308,765208,765108,765008"
+        try{
 
             checkArgument(idList != null, "idList must not null");
-            OAuthClientJSONResponse response = get(String.format(URL_ORDER_IDLIST, idList));
-            Type listType = new TypeToken<ArrayList<OneStopOrder>>() {
-            }.getType();
+            OAuthClientJSONResponse response =get(String.format(URL_ORDER_IDLIST,idList));
+            Type listType = new TypeToken<ArrayList<OneStopOrder>>(){}.getType();
             return response.getBodyAs(listType);
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
             return Collections.EMPTY_LIST;//返回集合对象的方法不要返回null
         }
@@ -379,7 +420,7 @@ public class OneStopClient {
     //URL定义
     public static final String URL_ORDER_POST = "/api/order";
 
-    public OneStopOrderPostResp orderPost(OneStopOrder order) {
+    public   OneStopOrderPostResp orderPost(OneStopOrder order){
         try {
             checkArgument(order != null, "order must not null");
             OAuthClientJSONResponse response = post(URL_ORDER_POST, JsonUtil.bean2Json(order));
@@ -407,7 +448,7 @@ public class OneStopClient {
 
     public List<Long> orderId(String orderStatus, Date startDateTime, Date endDateTime, String source) {
 
-        try {
+        try{
             checkArgument(orderStatus != null, "orderStatus must not null");
             checkArgument(startDateTime != null, "startDateTime must not null");
             checkArgument(endDateTime != null, "endDateTime must not null");
@@ -415,17 +456,17 @@ public class OneStopClient {
             String startDateTimeStr = new DateTime(startDateTime).toString("yyyy-MM-dd HH:mm:ss");
             String endDateTimeStr = new DateTime(endDateTime).toString("yyyy-MM-dd HH:mm:ss");
 
-            URIBuilder url = new URIBuilder().setPath(URL_ORDERID + orderStatus).addParameter("startDateTime", startDateTimeStr)
-                    .addParameter("endDateTime", endDateTimeStr);
-            if (source != null && !source.isEmpty())
-                url.addParameter("source", source);
+            URIBuilder url = new URIBuilder().setPath(URL_ORDERID+orderStatus).addParameter("startDateTime", startDateTimeStr)
+                    .addParameter("endDateTime",endDateTimeStr);
+            if(source != null && !source.isEmpty())
+                url.addParameter("source",source);
             OAuthClientJSONResponse response = get(url.build().toString());
-            return response.getBodyAs(new TypeToken<List<Long>>() {
+            return  response.getBodyAs(new TypeToken<List<Long>>() {
             }.getType());
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
             return Collections.EMPTY_LIST;//返回集合对象的方法不要返回null
-        } catch (URISyntaxException e) {
+        }catch (URISyntaxException e) {
             throw new OneStopApiException("url error");
         }
 
@@ -438,16 +479,14 @@ public class OneStopClient {
      */
     //URL定义
     public static final String URL_ORDER_ITEMS = "/api/Order/%s/items";
-
-    public List<OneStopOrderItem> orderItems(Integer id) {
-        try {
+    public List<OneStopOrderItem> orderItems(Integer id){
+        try{
 
             checkArgument(id != null, "id must not null");
-            OAuthClientJSONResponse response = get(String.format(URL_ORDER_ITEMS, id));
-            Type listType = new TypeToken<ArrayList<OneStopOrderItem>>() {
-            }.getType();
+            OAuthClientJSONResponse response =get(String.format(URL_ORDER_ITEMS, id));
+            Type listType = new TypeToken<ArrayList<OneStopOrderItem>>(){}.getType();
             return response.getBodyAs(listType);
-        } catch (OneStopResouceNotFoundException e) {
+        }catch (OneStopResouceNotFoundException e) {
             logger.error(e.getMessage());
             return Collections.EMPTY_LIST;
         }

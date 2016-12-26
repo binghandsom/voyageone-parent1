@@ -416,22 +416,6 @@ public class CmsFieldEditService extends BaseViewService {
             return rsMap;
         }
 
-        // CMSDOC-390新增，上架操作增加库存大于0的检索条件
-        if ("1".equals(prop_id)) {
-            JongoQuery queryObj = new JongoQuery();
-            queryObj.addQuery("{'common.fields.quantity':{$gt:0},'common.fields.code':{$in:#}}");
-            queryObj.setParameters(productCodes);
-            queryObj.setProjection("{'common.fields.code':1,'_id':0}");
-            List<CmsBtProductModel> products = cmsBtProductDao.select(queryObj, userInfo.getSelChannelId());
-            if (products == null || products.size() < 1) {
-                $warn("批量上架 所选商品库存都不大于0");
-                rsMap.put("ecd", 3);
-                return rsMap;
-            }else {
-                productCodes = products.stream().map(prodObj -> prodObj.getCommonNotNull().getFieldsNotNull().getCode()).filter(prodCode -> (prodCode != null && !prodCode.isEmpty())).collect(Collectors.toList());
-            }
-        }
-
         // 更新产品的信息
         JongoUpdate updObj = new JongoUpdate();
         updObj.setQuery("{'productCodes':{$in:#},'channelId':#,'cartId':{$in:#}}");

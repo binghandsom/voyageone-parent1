@@ -1,4 +1,5 @@
 package com.voyageone.components.onestop.bean;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -59,9 +60,9 @@ public class OneStopOrder {
 
     private String ShipChoice;
 
-    private String OrderDate;
+    private Date OrderDate;
 
-    private String EstimatedShipDate;
+    private Date EstimatedShipDate;
 
     private List<Addresses> Addresses;
 
@@ -93,7 +94,7 @@ public class OneStopOrder {
 
     private List<Transactions> Transactions;
 
-    private String LastModified;
+    private Date LastModified;
 
     private String FulfillmentType;
 
@@ -163,19 +164,19 @@ public class OneStopOrder {
         return this.ShipChoice;
     }
 
-    public void setOrderDate(String OrderDate) {
+    public void setOrderDate(Date OrderDate) {
         this.OrderDate = OrderDate;
     }
 
-    public String getOrderDate() {
+    public Date getOrderDate() {
         return this.OrderDate;
     }
 
-    public void setEstimatedShipDate(String EstimatedShipDate) {
+    public void setEstimatedShipDate(Date EstimatedShipDate) {
         this.EstimatedShipDate = EstimatedShipDate;
     }
 
-    public String getEstimatedShipDate() {
+    public Date getEstimatedShipDate() {
         return this.EstimatedShipDate;
     }
 
@@ -299,11 +300,11 @@ public class OneStopOrder {
         return this.Transactions;
     }
 
-    public void setLastModified(String LastModified) {
+    public void setLastModified(Date LastModified) {
         this.LastModified = LastModified;
     }
 
-    public String getLastModified() {
+    public Date getLastModified() {
         return this.LastModified;
     }
 
@@ -1205,7 +1206,7 @@ public class OneStopOrder {
         * */
         private int ShipmentId;
 
-        private String ShipDate;
+        private Date ShipDate;
 
         private String CarrierName;
 
@@ -1223,11 +1224,11 @@ public class OneStopOrder {
             return this.ShipmentId;
         }
 
-        public void setShipDate(String ShipDate) {
+        public void setShipDate(Date ShipDate) {
             this.ShipDate = ShipDate;
         }
 
-        public String getShipDate() {
+        public Date getShipDate() {
             return this.ShipDate;
         }
 
@@ -1377,7 +1378,7 @@ public class OneStopOrder {
 
         private String RefundReason;
 
-        private String RefundDate;
+        private Date RefundDate;
 
         private List<Transactions> Transactions;
 
@@ -1405,11 +1406,11 @@ public class OneStopOrder {
             return this.RefundReason;
         }
 
-        public void setRefundDate(String RefundDate) {
+        public void setRefundDate(Date RefundDate) {
             this.RefundDate = RefundDate;
         }
 
-        public String getRefundDate() {
+        public Date getRefundDate() {
             return this.RefundDate;
         }
 

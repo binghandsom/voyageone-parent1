@@ -123,6 +123,7 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     "resetTmProduct": "resetTmProduct",
+                    getMainCategoryInfo:"getMainCategoryInfo",
                     priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
                     updateSkuPrice: "updateSkuPrice",
@@ -419,7 +420,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": session("getNewsCategoryList")
+                        "getNewsCategoryList": session("getNewsCategoryList",[KEY.CHANNEL])
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",

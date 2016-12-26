@@ -237,7 +237,18 @@ public class CmsTranslateByTonggouMqService extends BaseMQCmsService {
         if (ListUtils.isNull(codeList)) {
             // 不设置的场合就是所有code
             JongoQuery queryObj = new JongoQuery();
-            queryObj.setQuery("{}");
+
+            String sqlQuery = "";
+            if (blnNeedTransTitle) {
+                sqlQuery = String.format("'common.fields.%s': {$in: [null, ''] } ", Original_Title_Cn);
+            }
+            for (Map.Entry<String, String> entry : transSrcDesMap.entrySet()) {
+                if (!StringUtils.isEmpty(sqlQuery)) {
+                    sqlQuery = sqlQuery + ", ";
+                }
+                sqlQuery = sqlQuery + String.format("'common.fields.%s': {$in: [null, ''] } ", entry.getValue());
+            }
+            queryObj.setQuery("{" + sqlQuery + "}");
             queryObj.setProjectionExt("common.fields.code");
             List<CmsBtProductModel> productList = cmsBtProductDao.select(queryObj, channelId);
             if (ListUtils.notNull(productList)) {

@@ -45,7 +45,8 @@ define([
             masterCat: {catPath: null},
             feedCat: {catPath: null},
             channelInner: {catPath: null},
-            _cart_tab_act: false
+            _cart_tab_act: false,
+            channelId:""
         };
         $scope.exportStatus = ["正在生成", "完成", "失败"];
         $scope.initialize = initialize;
@@ -146,6 +147,7 @@ define([
                     search();
                     if ($sessionStorage.feedSearch) delete $sessionStorage.feedSearch;
                 }
+                $scope.vm.channelId = res.data.channelId == null ? "" : res.data.channelId;
             })
         }
 
@@ -319,6 +321,8 @@ define([
                 msg = '即将导出Group级的搜索结果，请确认。' + msg;
             } else if (fileType == 3) {
                 msg = '即将导出SKU级的搜索结果，请确认。' + msg;
+            } else if (fileType == 4) {
+                msg = '即将导出Shoemetro聚美上新SKU级的搜索结果，请确认。' + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
@@ -498,7 +502,12 @@ define([
                         prodIds: productIds,
                         catId: selectedCat.catId,
                         catPath: selectedCat.catPath,
+                        catPathEn: selectedCat.catPathEn,
                         pCatList: pCatList,
+                        productType:selectedCat.productTypeEn,
+                        sizeType:selectedCat.sizeTypeEn,
+                        productTypeCn:selectedCat.productTypeCn,
+                        sizeTypeCn:selectedCat.sizeTypeCn,
                         isSelAll: $scope.vm._selall ? 1 : 0
                     };
                     productDetailService.changeCategory(data).then(function (res) {
