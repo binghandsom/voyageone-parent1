@@ -191,7 +191,8 @@ public class CmsAdvanceSearchController extends CmsController {
         resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
 
         // 先统计product件数
-        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
+        long productListTotal = searchIndexService.countProductCodeList(params, userInfo, cmsSession);
+//        long productListTotal = (Long) cmsSession.getAttribute("_adv_search_productListTotal");
 
         // 获取product列表
         List<String> currCodeList = advSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), true);
