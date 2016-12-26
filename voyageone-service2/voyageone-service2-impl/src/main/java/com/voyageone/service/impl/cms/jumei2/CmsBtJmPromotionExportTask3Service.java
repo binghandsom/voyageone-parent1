@@ -195,7 +195,7 @@ public class CmsBtJmPromotionExportTask3Service {
             return parameter.getSelCodeList();
         }
         if(parameter.getSearchInfo() != null){
-            List<MapModel> mapModels = cmsBtJmPromotionProductService.getListByWhere(parameter.getSearchInfo());
+            List<MapModel> mapModels = cmsBtJmPromotionProductService.getByWhere(parameter.getSearchInfo());
             return mapModels.stream().map(mapModel -> (String)mapModel.get("productCode")).collect(Collectors.toList());
         }
         return null;

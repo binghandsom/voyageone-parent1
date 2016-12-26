@@ -24,7 +24,7 @@ public class JmBtPromotionExportJobServiceTest {
     @Test
     public void testOnStartup() throws Exception {
         Map<String,Object> map2 = new HashMap();
-        map2.put("id",308);
+        map2.put("id",321);
         service.onStartup(map2);
     }
 }

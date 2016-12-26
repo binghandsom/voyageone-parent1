@@ -39,11 +39,8 @@ define(['cms',
             spDataService = self.spDataService,
             model = {
                 templateType: 0, cmsBtJmPromotionId: this.promotion.id,
-                parameter: JSON.stringify(self.spDataService.searchInfo)
+                parameter: JSON.stringify(spDataService.getExportInfo())
             };
-
-        console.log(spDataService.getExportInfo());
-
         this.cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
             // $scope.searchExport();
         }, function (res) {
