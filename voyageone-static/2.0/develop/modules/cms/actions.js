@@ -420,7 +420,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": session("getNewsCategoryList")
+                        "getNewsCategoryList": session("getNewsCategoryList",[KEY.CHANNEL])
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",
