@@ -176,6 +176,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     @VOMQStop
     public boolean stopMQ() {
         MQControlHelper.stop(getClass().getName());
+        taskControlList = null;
         return true;
     }
 
