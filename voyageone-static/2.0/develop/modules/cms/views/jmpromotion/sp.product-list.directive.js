@@ -53,6 +53,7 @@ define([
             goPage(1, size);
             jmPromotionDetailService.getPromotionProductInfoCountByWhere(data).then(function (res) {
                 $scope.dataPageOption.total = res.data;
+                spDataService.searchInfo.searchInfo = data;
             }, function (res) {
             });
         };

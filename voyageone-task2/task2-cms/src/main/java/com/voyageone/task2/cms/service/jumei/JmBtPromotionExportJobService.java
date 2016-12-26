@@ -11,6 +11,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,5 +43,10 @@ public class JmBtPromotionExportJobService extends BaseMQCmsService {
         int id = (int) Double.parseDouble(messageMap.get("id").toString());
         service.export(id, exportPath);
         $info("JmBtPromotionExportJobService", "end");
+    }
+
+    class parameter{
+        List<String> selCodeList;
+
     }
 }

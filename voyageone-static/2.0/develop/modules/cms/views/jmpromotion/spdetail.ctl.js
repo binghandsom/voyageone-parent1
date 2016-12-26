@@ -34,7 +34,9 @@ define(['cms',
         });
     };
     SpDetailPageController.prototype.addExport = function () {
-        var model = {templateType: 0, cmsBtJmPromotionId: this.promotion.id};
+        var self = this;
+        var model = {templateType: 0, cmsBtJmPromotionId: this.promotion.id,
+            parameter:JSON.stringify(self.spDataService.searchInfo)};
         this.cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
             // $scope.searchExport();
         }, function (res) {
