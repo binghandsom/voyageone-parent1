@@ -76,15 +76,18 @@ define([
                     });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.selectedList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.adminResService.deleteRes(delList).then(function (res) {
-                            self.search(1);
+                           if(res.data==true) self.search(1);
                         })
                     }
                 );

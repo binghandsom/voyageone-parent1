@@ -98,16 +98,19 @@ define([
                     });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.channelThirdSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.thirdPartyConfigService.deleteThirdPartyConfig(delList).then(function (res) {
-                            if (res.data.success == false)self.confirm(res.data.message);
-                            self.search();
+                            if (res.data == false)self.confirm(res.message);
+                            self.search(1);
                         })
                     }
                 );

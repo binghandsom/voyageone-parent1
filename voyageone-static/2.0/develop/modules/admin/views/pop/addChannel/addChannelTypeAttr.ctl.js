@@ -32,7 +32,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "0" : "1" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelAllList = [self.sourceData.sourceData];
                 } else {

@@ -88,9 +88,9 @@ define([
                     location: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openCartTrackingInfo('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -99,28 +99,28 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.cartList, function (Info) {
-                        if (Info.seq == self.cartTrackingSelList.selList[0].id) {
-                            self.popups.openCartTrackingInfo(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else {
-                                    return false;
-                                }
-                            });
+                    self.popups.openCartTrackingInfo(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else {
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.cartTrackingSelList.selList, function (delInfo) {
                             delList.push({'seq': delInfo.id, 'cartId': delInfo.cartId});
                         });
+                    }else{
+                        delList.push(item);
+                    }
+
                         self.cartTrackingService.deleteCartTracking(delList).then(function (res) {
-                            self.search();
+                            if(res.data==true) self.search(1);
                         })
                     }
                 );

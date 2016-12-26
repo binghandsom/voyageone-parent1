@@ -101,13 +101,16 @@ define([
                     });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.channelSmsSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.smsConfigService.deleteSmsConfig(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search();

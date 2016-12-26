@@ -177,11 +177,17 @@ define([
             },
             delete: function (item) {
                 var self = this,delList = [];
-                delList.push(item);
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        self.adminUserService.deleteUser(delList).then(function (res) {
-                            if(res.data==true) self.search(1);
-                        })
+                    if(item=='batchDel'){
+                        _.forEach(self.adminUserSelList.selList, function (delInfo) {
+                            delList.push(delInfo.id);
+                        });
+                    }else{
+                        delList.push(item);
+                    }
+                    self.adminUserService.deleteUser(delList).then(function (res) {
+                        if(res.data==true) self.search(1);
+                    })
                     }
                 );
             },

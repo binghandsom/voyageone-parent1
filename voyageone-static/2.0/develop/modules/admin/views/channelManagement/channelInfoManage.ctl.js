@@ -119,13 +119,16 @@ define([
                     });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
-                        _.forEach(self.channelSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
+                        if(item=='batchDel'){
+                            _.forEach(self.channelSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                        }else{
+                            delList.push(item);
+                        }
                         self.channelService.deleteChannel(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);

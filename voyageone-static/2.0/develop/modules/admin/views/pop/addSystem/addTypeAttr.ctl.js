@@ -26,7 +26,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.append == false ? (self.sourceData.active == true ? "0" : "1") : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "1" : "0" : '';
                 self.typeService.getAllType().then(function (res) {
                     self.typeList = res.data;
                 });
@@ -46,26 +46,27 @@ define([
             },
             save: function () {
                 var self = this, result = {};
-                self.sourceData.active = self.sourceData.active == '0' ? true : false;
+                self.sourceData.active = self.sourceData.active == '1' ? true : false;
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.typeAttrService.addTypeAttribute(self.sourceData).then(function (res) {
                         if (res.data == false) {
-                            self.confirm(res.data.message);
+                            self.confirm(res.message);
                             return;
                         }
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
+                        self.$uibModalInstance.close(result);
                     });
                 } else {
                     self.typeAttrService.updateTypeAttribute(self.sourceData).then(function (res) {
                         if (res.data == false) {
-                            self.confirm(res.data.message);
+                            self.confirm(res.message);
                             return;
                         }
+                        _.extend(result, {'res': 'success', 'sourceData': self.context});
+                        self.$uibModalInstance.close(result);
                     });
                 }
-                self.sourceData.active = self.sourceData.active ? '0' : '1';
-                _.extend(result, {'res': 'success', 'sourceData': self.context});
-                self.$uibModalInstance.close(result);
             }
         };
         return AddTypeAttrController;
