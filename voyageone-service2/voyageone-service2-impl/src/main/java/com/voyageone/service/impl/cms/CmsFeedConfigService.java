@@ -9,10 +9,9 @@ import com.voyageone.service.model.cms.CmsMtFeedConfigModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Service
@@ -41,6 +40,9 @@ public class CmsFeedConfigService extends BaseService {
                 cmsMtFeedConfigBean.setCfgVal2(bean.getCfgVal2());
                 cmsMtFeedConfigBean.setCfgVal3(bean.getCfgVal3());
                 cmsMtFeedConfigBean.setComment(bean.getComment());
+                cmsMtFeedConfigBean.setCmsIsCfgVal1Display(bean.getCmsIsCfgVal1Display());
+                cmsMtFeedConfigBean.setCmsIsCfgVal2Display(bean.getCmsIsCfgVal3Display());
+                cmsMtFeedConfigBean.setCmsIsCfgVal3Display(bean.getCmsIsCfgVal3Display());
             });
         }
         resultMap.put("configs", cmsMtFeedConfigKeyList);
@@ -62,9 +64,16 @@ public class CmsFeedConfigService extends BaseService {
             CmsMtFeedConfigModel cmsMtFeedConfigModel = new CmsMtFeedConfigModel();
             cmsMtFeedConfigModel.setOrderChannelId(channelId);
             cmsMtFeedConfigModel.setCfgName(cmsMtFeedConfigBean.getCfgName());
-            cmsMtFeedConfigModel.setCfgVal1(cmsMtFeedConfigBean.getCfgVal1());
             cmsMtFeedConfigModel.setCfgVal2(cmsMtFeedConfigBean.getCfgVal2());
-            cmsMtFeedConfigModel.setComment(cmsMtFeedConfigBean.getCfgVal2());
+            cmsMtFeedConfigModel.setCfgVal3(cmsMtFeedConfigBean.getCfgVal3());
+            cmsMtFeedConfigModel.setIsAttribute(0);
+            cmsMtFeedConfigModel.setAttributeType(0);
+            cmsMtFeedConfigModel.setComment(cmsMtFeedConfigBean.getComment());
+            cmsMtFeedConfigModel.setDisplaySort(-1);
+            cmsMtFeedConfigModel.setModifier(userName);
+            cmsMtFeedConfigModel.setModified(new Date());
+            cmsMtFeedConfigModel.setStatus(1);
+            cmsMtFeedConfigModel.setCfgVal1(cmsMtFeedConfigBean.getCfgVal1());
             cmsMtFeedConfigDao.insert(cmsMtFeedConfigModel);
         }
     }

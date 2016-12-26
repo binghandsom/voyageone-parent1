@@ -23,7 +23,11 @@ public class CmsMtFeedConfigBean {
 
     private Integer cmsCfgNameOrder;
 
-    private String cmsCfgNameIsEdit;
+    private Boolean cmsIsCfgVal1Display;
+
+    private Boolean cmsIsCfgVal2Display;
+
+    private Boolean cmsIsCfgVal3Display;
 
     public String getOrderChannelId() {
         return orderChannelId;
@@ -97,11 +101,27 @@ public class CmsMtFeedConfigBean {
         this.cmsCfgNameOrder = cmsCfgNameOrder;
     }
 
-    public String getCmsCfgNameIsEdit() {
-        return cmsCfgNameIsEdit;
+    public Boolean getCmsIsCfgVal1Display() {
+        return cmsIsCfgVal1Display;
     }
 
-    public void setCmsCfgNameIsEdit(String cmsCfgNameIsEdit) {
-        this.cmsCfgNameIsEdit = cmsCfgNameIsEdit;
+    public void setCmsIsCfgVal1Display(Boolean cmsIsCfgVal1Display) {
+        this.cmsIsCfgVal1Display = cmsIsCfgVal1Display;
+    }
+
+    public Boolean getCmsIsCfgVal2Display() {
+        return cmsIsCfgVal2Display;
+    }
+
+    public void setCmsIsCfgVal2Display(Boolean cmsIsCfgVal2Display) {
+        this.cmsIsCfgVal2Display = cmsIsCfgVal2Display;
+    }
+
+    public Boolean getCmsIsCfgVal3Display() {
+        return cmsIsCfgVal3Display;
+    }
+
+    public void setCmsIsCfgVal3Display(Boolean cmsIsCfgVal3Display) {
+        this.cmsIsCfgVal3Display = cmsIsCfgVal3Display;
     }
 }

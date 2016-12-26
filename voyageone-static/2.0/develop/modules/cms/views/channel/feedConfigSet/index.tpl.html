@@ -33,12 +33,15 @@
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
                                     </th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal1"></textarea></th>
+                                            class="form-control" ng-model="element.cfgVal1"
+                                            ng-disabled=element.cmsIsCfgVal1Display></textarea></th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal2"></textarea></th>
+                                            class="form-control" ng-model="element.cfgVal2"
+                                            ng-disabled=element.cmsIsCfgVal2Display></textarea></th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea type="text"
-                                                                                                         class="form-control"
-                                                                                                         ng-model="element.comment"></textarea>
+                                                                                                       class="form-control"
+                                                                                                       ng-disabled="element.cmsIsCfgVal3Display"
+                                                                                                       ng-model="element.comment"></textarea>
                                     </th>
                                 </tr>
                                 </tbody>
@@ -57,11 +60,14 @@
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left">{{element.cmsCfgName}}
                                     </th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal1"></textarea></th>
+                                            class="form-control" ng-model="element.cfgVal1"
+                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.cfgVal2"></textarea></th>
+                                            class="form-control" ng-model="element.cfgVal2"
+                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
                                     <th ng-if="element.cmsCfgNameLev=='1'" class="text-left"><textarea
-                                            class="form-control" ng-model="element.comment"></textarea></th>
+                                            class="form-control" ng-model="element.comment"
+                                            ng-disabled="element.cmsIsCfgVal1Display"></textarea></th>
                                 </tr>
                                 </tbody>
                             </table>
