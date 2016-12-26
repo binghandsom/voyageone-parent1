@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.service.jumei;
 
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionProductService;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
 import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -29,6 +30,7 @@ public class JmBtPromotionExportJobService extends BaseMQCmsService {
 //    private CmsBtJmPromotionExportTaskService service;
     @Autowired
     private CmsBtJmPromotionExportTask3Service service;
+
     @Override
     public void onStartup(Map<String, Object> messageMap) throws Exception {
         $debug("JmBtPromotionExportJobService收到消息：" + JacksonUtil.bean2Json(messageMap));
@@ -43,10 +45,5 @@ public class JmBtPromotionExportJobService extends BaseMQCmsService {
         int id = (int) Double.parseDouble(messageMap.get("id").toString());
         service.export(id, exportPath);
         $info("JmBtPromotionExportJobService", "end");
-    }
-
-    class parameter{
-        List<String> selCodeList;
-
     }
 }
