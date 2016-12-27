@@ -300,7 +300,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
 
                 // 每页开始行
-                int startRowIndex = i * SELECT_PAGE_SIZE + searchValue.getFileType() == 4 ? 1 : 2;
+                int startRowIndex = i * SELECT_PAGE_SIZE + (searchValue.getFileType() == 4 ? 1 : 2);
                 boolean isContinueOutput = false;
                 if (searchValue.getFileType() == 1) {
                     isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex);
@@ -1129,7 +1129,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
@@ -1210,7 +1210,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
