@@ -625,7 +625,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with id=" + m.getId()));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with id=" + m.getId()+"."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -859,7 +859,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()+"."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
