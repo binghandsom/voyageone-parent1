@@ -129,6 +129,16 @@ define([
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
                             scope.vm.productComm.catPathEn = context.selected.catPathEn;
+                            if(context.selected.catPath){
+                                var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
+                                if(temp){
+                                    if(!temp.value.value) {
+                                        var cat = context.selected.catPath.split(">")
+                                        var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeType + ' ' + cat[cat.length-1]
+                                        temp.value.value = titleCn;
+                                    }
+                                }
+                            }
                             if(context.selected.productTypeEn){
                                 var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
                                 if(productType){
