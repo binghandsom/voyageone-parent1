@@ -265,7 +265,7 @@ define([
                         self.list = _.filter(self.portList, function (listItem) {
                             return listItem.code == item.port;
                         });
-                        _.extend(item, {'port': self.list[0].port, 'configType': self.searchInfo.configType});
+                        _.extend(item, {'port': self.list[0].code, 'configType': self.searchInfo.configType});
                         self.popups.openCreateEdit(item).then(function (res) {
                             if (res.res == 'success') self.search(1);
                         });
@@ -326,7 +326,7 @@ define([
                                 seqList.push(item.seq);
                             });
                             self.portConfigService.deletePortConfig(seqList).then(function (res) {
-                                if (res.data == false) self.alert(res.data.message);
+                                if (res.data == false) self.alert(res.message);
                                 self.search(1);
                             });
                             break;
