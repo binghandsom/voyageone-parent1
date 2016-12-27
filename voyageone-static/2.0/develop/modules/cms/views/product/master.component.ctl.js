@@ -132,7 +132,7 @@ define([
                             if(context.selected.catPath){
                                 var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
                                 if(temp){
-                                    if(!temp.value.value) {
+                                    if(!temp.value) {
                                         var cat = context.selected.catPath.split(">");
                                         var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeTypeCn + ' ' + cat[cat.length-1];
                                         temp.value = titleCn;
