@@ -265,7 +265,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 1) {
             searchItemStr += "common.fields.model;common.fields.color;";
         } else if (searchValue.getFileType() == 4) {
-            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;";
+            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
