@@ -510,7 +510,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 for (String prop : _DynColJMSKU) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
-            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
+            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue()) || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColJDSKU) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
@@ -528,7 +529,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 for (String prop : _DynColCNJMSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
-            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
+            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue()) || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColCNJDSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
