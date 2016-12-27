@@ -158,7 +158,8 @@ define(function () {
                     "getCombinedProductDetail" : "getCombinedProductDetail",
                     "edit" : "edit",
                     "onOffShelves" : "onOffShelves",
-                    "getOperateLogs" : "getOperateLogs"
+                    "getOperateLogs" : "getOperateLogs",
+                    "batchGetSkuDetail" : "batchGetSkuDetail"
                 },
                 productTopService: {
                     "root": "/cms/producttop",

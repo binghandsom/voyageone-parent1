@@ -680,6 +680,7 @@ public interface CmsUrlConstants {
             String EDIT = "edit";
             String ON_OFF_SHELVES = "onOffShelves";
             String GET_OPERATE_LOGS = "getOperateLogs";
+            String BATCH_GET_SKU_DETAIL = "batchGetSkuDetail";
         }
     }
     interface ProductTop {

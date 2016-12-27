@@ -81,7 +81,7 @@
                         <th class="mfb-xxx text-left">单品中国最终售价</th>
                         <th class="mfb-xxx text-left">单品优惠售价</th>
                         <th class="mfb-xxxs text-left">商品名称</th>
-                        <th class="mfb-xxt text-center">操作</th>
+                        <th class="text-left">操作</th>
                     </tr>
                     </thead>
                     <tbody ng-if="vm.product.skus">
@@ -101,12 +101,11 @@
                                 <table class="table table-hover-new text-center">
                                     <tbody>
                                         <tr ng-repeat="skuItem in sku.skuItems">
-
                                             <td class="mfb-xxs text-left">
                                                 <input type="text" class="form-control" ng-model="skuItem.skuCode" ng-change="getSkuDetail(sku, skuItem)" required>
                                             </td>
                                             <td class="mfb-xxx text-left">{{skuItem.sellingPriceCn | currency:''}}</td>
-                                            <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="dynamicPrice(sku)" required></td>
+                                            <td class="mfb-xxx text-left"><input type="number" class="form-control" ng-model="skuItem.preferentialPrice" value="{{skuItem.preferentialPrice}}" ng-change="changeSkuItemPrice(sku)" required></td>
                                             <td class="mfb-xxxs text-left">{{skuItem.productName}}</td>
                                             <td class="mfb-xxt text-center">
                                                 <button type="submit" class="btn btn-success btn-xxs" ng-click="deleteSkuItem(sku,$index)">
