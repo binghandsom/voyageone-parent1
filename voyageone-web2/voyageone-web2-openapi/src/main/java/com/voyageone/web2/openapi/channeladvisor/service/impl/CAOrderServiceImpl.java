@@ -328,13 +328,15 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<CAApiException> exceptionList = new ArrayList<>();
         for (Map.Entry<String, Integer> kv : request.getItems().entrySet()) {
             if (StringUtils.isEmpty(kv.getKey())) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSKU is missing."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku is missing."));
+                continue;
             }
             if (kv.getValue() == null) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSKU=" + kv.getKey() + " is missing."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + kv.getKey() + " is missing."));
+                continue;
             }
             if (kv.getValue() <= 0) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSKU=" + kv.getKey() + " is invalid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + kv.getKey() + " is invalid."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -405,13 +407,13 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         if (tempSkuQtyMap.keySet().size() == issueSkuNotExistList.size()) {
             tempSkuQtyMap.keySet().stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSKU=" + key + " is not provided."));
+                        "SellerSku=" + key + " is not provided."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSKU=[" + tempSkuQtyMap.keySet().stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
+                    "SellerSku=[" + tempSkuQtyMap.keySet().stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
         }
 
         //Items.SellerSku 在品牌方订单明细 中不存在，issuelog 输出，处理继续
@@ -421,13 +423,13 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
 
             issueSkuNotExistList.stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "SellerSKU=" + key + " is not provided."));
+                        "SellerSku=" + key + " is not provided."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSKU=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
+                    "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
         }
 
         //Items.SellerSku 对应的数量 > 对应SKU明细件数的数量，issuelog 输出，处理继续
@@ -437,13 +439,13 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                     " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)), ErrorType.OpenAPI, SubSystem.VMS);
             issueSkuQtyNotComplete.stream().forEach(key -> {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                        "The quantity of SellerSKU=" + key + " is invalid."));
+                        "The quantity of SellerSku=" + key + " is invalid."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
             }
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "The quantity of SellerSKU=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is invalid.");*/
+                    "The quantity of SellerSku=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is invalid.");*/
         }
 
         // 检索【品牌方订单明细】vms_bt_client_order_details
@@ -524,20 +526,24 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 if (StringUtils.isEmpty(item.getSellerSku())) {
                     exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID and SellerSku are not provided."));
                 } else {
-                    exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SKUID of SellerSKU=" + item.getSellerSku() + " is not provided."));
+                    exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID of SellerSku=" + item.getSellerSku() + " is not provided."));
                 }
+                continue;
             }
             if (StringUtils.isEmpty(item.getSellerSku())) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku of SkuID=" + item.getId() + " is not provided."));
+                continue;
             }
             /*if (!item.getId().equals(item.getSellerSku())) {
                 throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with id=" + item.getId()+".");
             }*/
             if (item.getQuantity() == null) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSKU=" + item.getSellerSku() + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSku=" + item.getSellerSku() + " is not provided."));
+                continue;
             }
             if (item.getQuantity() <= 0) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSKU=" + item.getSellerSku() + " is invalid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + item.getSellerSku() + " is invalid."));
+                continue;
             }
 
             try {
@@ -619,7 +625,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with id=" + m.getId()));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with id=" + m.getId()+"."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -669,10 +675,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             issueLog.log(new RuntimeException("Items.SellerSku 在品牌方订单明细 中不存在 请求订单号：orderId=" + orderID +
                     " skuList=" + JacksonUtil.bean2Json(issueSkuNotExistList)), ErrorType.OpenAPI, SubSystem.VMS);
            /* throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSKU=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
+                    "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
 
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSKU=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -686,10 +692,10 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                             " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)),
                     ErrorType.OpenAPI, SubSystem.VMS);
            /* throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "The quantity of SellerSKU=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is invalid.");
+                    "The quantity of SellerSku=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is invalid.");
 */
             issueSkuQtyNotComplete.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSKU=" + key + " is invalid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + key + " is invalid."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -757,19 +763,23 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<CAApiException> exceptionList = new ArrayList<>();
         for (OrderItemCancellationModel item : request.getItems()) {
             if (StringUtils.isEmpty(item.getId())) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SKUID of SellerSKU=" + item.getSellerSku() + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID of SellerSku=" + item.getSellerSku() + " is not provided."));
+                continue;
             }
             if (StringUtils.isEmpty(item.getSellerSku())) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku of SkuId=" + item.getId() + " is not provided."));
+                continue;
             }
             /*if (!item.getId().equals(item.getSellerSku())) {
                 throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with id=" + item.getId()+".");
             }*/
             if (item.getQuantity() == null) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSKU=" + item.getSellerSku() + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSku=" + item.getSellerSku() + " is not provided."));
+                continue;
             }
             if (item.getQuantity() <= 0) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity " + item.getQuantity() + " of SellerSKU=" + item.getSellerSku() + " is not valid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity " + item.getQuantity() + " of SellerSku=" + item.getSellerSku() + " is not valid."));
+                continue;
             }
             try {
                 if (!StringUtils.isEmpty(item.getReason())) {
@@ -849,7 +859,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()+"."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -900,9 +910,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                             " skus=" + JacksonUtil.bean2Json(issueSkuNotExistList)),
                     ErrorType.OpenAPI, SubSystem.VMS);
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "SellerSKU=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
+                    "SellerSku=[" + issueSkuNotExistList.stream().reduce((a, b) -> a + "," + b).get() + "] is not provided.");*/
             issueSkuNotExistList.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSKU=" + key + " is not provided."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SellerSku=" + key + " is not provided."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
@@ -916,9 +926,9 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                             " skus=" + JacksonUtil.bean2Json(issueSkuQtyNotComplete)),
                     ErrorType.OpenAPI, SubSystem.VMS);
             /*throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter,
-                    "The quantity of SellerSKU=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is not valid.");*/
+                    "The quantity of SellerSku=[" + issueSkuQtyNotComplete.stream().reduce((a, b) -> a + "," + b).get() + "] is not valid.");*/
             issueSkuQtyNotComplete.stream().forEach(key -> {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSKU=" + key + " is not valid."));
+                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "The quantity of SellerSku=" + key + " is not valid."));
             });
             if (!CollectionUtils.isEmpty(exceptionList)) {
                 throw new CAApiExceptions(exceptionList);
