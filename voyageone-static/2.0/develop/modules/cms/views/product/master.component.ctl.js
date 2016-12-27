@@ -133,9 +133,9 @@ define([
                                 var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
                                 if(temp){
                                     if(!temp.value.value) {
-                                        var cat = context.selected.catPath.split(">")
-                                        var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeType + ' ' + cat[cat.length-1]
-                                        temp.value.value = titleCn;
+                                        var cat = context.selected.catPath.split(">");
+                                        var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeTypeCn + ' ' + cat[cat.length-1];
+                                        temp.value = titleCn;
                                     }
                                 }
                             }
