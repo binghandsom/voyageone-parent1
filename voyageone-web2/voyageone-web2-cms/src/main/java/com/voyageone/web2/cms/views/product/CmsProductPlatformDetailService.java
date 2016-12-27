@@ -273,7 +273,19 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         }
         return null;
     }
-
+    public String getAutoSyncPriceMsrpOption(String channelId, Integer cartId) {
+        String autoSyncPriceMsrpOption = CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO; // 默认配置
+        CmsChannelConfigBean autoSyncPriceMsrp = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP, cartId + "");
+        if (autoSyncPriceMsrp != null
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_NO.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_DIRECT.equals(autoSyncPriceMsrp.getConfigValue1())
+                && !CmsConstants.ChannelConfig.AUTO_SYNC_PRICE_MSRP_AUTO.equals(autoSyncPriceMsrp.getConfigValue1())) {
+            throw new BusinessException("中国建议售价联动配置选项值错误: %s, %s", channelId, autoSyncPriceMsrp.getConfigValue1());
+        }
+        if (autoSyncPriceMsrp != null)
+            autoSyncPriceMsrpOption = autoSyncPriceMsrp.getConfigValue1();
+        return autoSyncPriceMsrpOption;
+    }
     /**
          * 获取产品平台信息
          *
