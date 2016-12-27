@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
 import com.voyageone.service.bean.vms.channeladvisor.ErrorModel;
 import com.voyageone.web2.openapi.channeladvisor.exception.CAApiException;
+import com.voyageone.web2.openapi.channeladvisor.exception.CAApiExceptions;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.service.bean.vms.channeladvisor.enums.ErrorIDEnum;
@@ -13,6 +14,7 @@ import com.voyageone.service.bean.vms.channeladvisor.response.ActionResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.Date;
@@ -93,8 +95,28 @@ public class ResponseUtils {
         response.setStatus(ResponseStatusEnum.Failed);
         response.setPendingUri(null);
         response.setHasErrors(true);
-        ErrorIDEnum errorIDEnum = ErrorIDEnum.getInstance(code);
-        response.addError(new ErrorModel(errorIDEnum, messageNew));
+
+        if(exception instanceof CAApiExceptions){
+            if(CollectionUtils.isEmpty(((CAApiExceptions) exception).getCaApiExceptions())){
+                ErrorIDEnum errorIDEnum = ErrorIDEnum.SystemUnavailable;
+                response.addError(new ErrorModel(errorIDEnum));
+            }else{
+                for (CAApiException exceptionItem : ((CAApiExceptions) exception).getCaApiExceptions()) {
+                    ErrorModel errorModel;
+                    String exceptionItemMsg=exceptionItem.getErrMsg();
+                    ErrorIDEnum errorIDEnum = ErrorIDEnum.getInstance(exceptionItem.getErrCode());
+                    if(StringUtils.isEmpty(exceptionItemMsg)){
+                        errorModel=new ErrorModel(errorIDEnum);
+                    }else {
+                        errorModel=new ErrorModel(errorIDEnum,exceptionItemMsg);
+                    }
+                    response.addError(errorModel);
+                }
+            }
+        }else {
+            ErrorIDEnum errorIDEnum = ErrorIDEnum.getInstance(code);
+            response.addError(new ErrorModel(errorIDEnum, messageNew));
+        }
 
         return response;
     }
