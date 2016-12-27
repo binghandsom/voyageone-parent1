@@ -3,9 +3,9 @@ package com.voyageone.service.bean.com.enumcom;
 /**
  * Created by dell on 2016/12/27.
  */
-public enum  EnumTaskLog_LogType {
-    MQJob(1),
-    Job(0);
+public enum EnumTaskLog_Status {
+    success(1),
+    failed(0);
     short id;
 
     public short getId() {
@@ -16,7 +16,7 @@ public enum  EnumTaskLog_LogType {
         this.id = id;
     }
 
-    EnumTaskLog_LogType(int id) {
+    EnumTaskLog_Status(int id) {
         this.id = (short) id;
     }
 }
