@@ -9,6 +9,7 @@ import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
 import com.voyageone.common.util.GenericSuperclassUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
+import com.voyageone.components.rabbitmq.service.IMQJobLog;
 import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
 import com.voyageone.components.rabbitmq.utils.MQControlHelper;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -19,12 +20,14 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.support.SimpleAmqpHeaderMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +38,8 @@ import java.util.Map;
  */
 public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService implements IVOMQOnStartup<TMQMessageBody> {
 
-
+    @Autowired()
+    IMQJobLog mqJobLogService;
     /**
      * taskControlList job配置
      */
@@ -122,8 +126,33 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
             throw new MQException(ex, message);
         }
     }
-    public  void  startup(TMQMessageBody messageBody) throws Exception {
-        onStartup(messageBody);
+
+    //是否记录Job日志
+    public boolean isMQJobLog() {
+        //  cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
+        String val2 = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.run_flg, "1");
+        return "1".equals(val2);
+    }
+
+    public void startup(TMQMessageBody messageBody) throws Exception {
+        Date beginDate = new Date();
+        try {
+            onStartup(messageBody);
+            if (isMQJobLog()) {
+                log(messageBody, null, beginDate);
+            }
+        }
+        //特殊异常 抛出处理
+        catch (Exception ex) {
+
+            log(messageBody, ex, beginDate);
+            throw ex;
+        }
+    }
+
+    private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
+
+        mqJobLogService.log(messageBody, ex, beginDate, new Date());
     }
     /**
      * MqJobService需要实现此方法

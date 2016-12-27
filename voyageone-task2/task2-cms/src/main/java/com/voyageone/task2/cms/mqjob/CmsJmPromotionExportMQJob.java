@@ -4,7 +4,6 @@ import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.JmExportMQMessageBody;
-import com.voyageone.task2.base.TBaseMQCmsService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
