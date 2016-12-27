@@ -88,11 +88,6 @@
 
     <div class="box">
         <div class="box-body-new">
-            <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
-                <div class="form-group m-t-sm m-r-xs">
-                    <button class="btn btn-default" ng-click="ctrl.viewDetail('')" ng-disabled="ctrl.actionLogSelList.selList.length<=0||ctrl.actionLogSelList.selList.length > 1"><i class="fa fa-eye-slash"></i>&nbsp;参数详情</button>
-                 </div>
-            </div>
             <table class="table table-hover-new table-hover table_main table_fixed">
                 <thead>
                 <tr>
@@ -110,6 +105,7 @@
                     <th class="text-left mfb-xt" translate="TXT_IP_ADDRESS"></th>
                     <th class="text-left mfb-xt" translate="TXT_START_TIME"></th>
                     <th class="text-center mfb-xt" translate="TXT_WASTE_TIME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -131,6 +127,9 @@
                         <td class="text-left v-middle">{{list.ip}}</td>
                         <td class="text-left v-middle">{{list.created|date:'yyyy-MM-dd HH:mm:ss'}}</td>
                         <td class="text-center v-middle">{{list.executionTime}}</td>
+                        <td class="text-center mfb-xt">
+                            <button class="btn btn-default btn-xs" ng-click="ctrl.viewDetail(list)"><i class="fa fa-eye-slash"></i>参数详情</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

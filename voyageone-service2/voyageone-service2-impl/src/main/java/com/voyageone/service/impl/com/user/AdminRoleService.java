@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.com.user;
 
+import com.github.miemiedev.mybatis.paginator.domain.Order;
 import com.voyageone.base.dao.mysql.paginator.MySqlPageHelper;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.VOTransactional;
@@ -121,9 +122,10 @@ public class AdminRoleService extends BaseService {
         if (pageNum != null && pageSize != null) {
             needPage = true;
             paginationResultBean.setCount(adminRoleDaoExt.selectRoleCount(params));
-            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).toMap();
+            params = MySqlPageHelper.build(params).page(pageNum).limit(pageSize).addSort("modified", Order.Direction.DESC).toMap();
+        } else {
+            params = MySqlPageHelper.build(params).addSort("modified", Order.Direction.DESC).toMap();
         }
-
         List<AdminRoleBean> list = adminRoleDaoExt.selectRoleByPage(params);
         if (!needPage) {
             paginationResultBean.setCount(list.size());
@@ -146,6 +148,14 @@ public class AdminRoleService extends BaseService {
      */
     @VOTransactional
     public void updateRole(ComRoleModel model, List<String> appList, List<String> channelIds, List<Integer> storeIds, String allChannel, String allStore) {
+
+        //检查roleName唯一性
+        Map map = new HashMap<>();
+        map.put("roleName", model.getRoleName());
+
+        if (comRoleDao.selectCount(map) > 1) {
+            throw new BusinessException("角色名在系统中已存在。");
+        }
 
         checkParams(allChannel, allStore, appList, channelIds, storeIds);
 
@@ -171,7 +181,7 @@ public class AdminRoleService extends BaseService {
 
         //修改授权系统
 
-        Map map = new HashMap<>();
+
         //查找resource表中的res_id
         map.clear();
         map.put("resType", 0);
@@ -229,6 +239,7 @@ public class AdminRoleService extends BaseService {
 
         //修改Role
         ComRoleModel role = comRoleDao.select(roleId);
+        role.setRoleName(model.getRoleName());
         role.setActive(model.getActive());
         role.setRoleType(model.getRoleType());
         role.setDescription(model.getDescription());

@@ -350,6 +350,8 @@ public interface AdminUrlConstants {
 
 			String MODIFY_PASS = "modifyPass";
 
+			String ADD_ROLES = "addRoles";
+
 			//for dropdown list options
 			String GET_ALL_APP = "getAllApp";
 		}

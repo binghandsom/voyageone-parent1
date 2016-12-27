@@ -172,11 +172,16 @@
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.move('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
-                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
-                            <div class="col-sm-10 form-inline">
-                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name" ng-change="ctrl.move(name?name:'')">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search(name)" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                            <div class="col-sm-12 form-inline">
+                                <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                                <div class="input-group col-sm-10">
+                                    <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="name" ng-change="ctrl.move(name?name:'')">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-vo" type="submit" ng-click="ctrl.search(name)" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
                             </div>
+
                             <div class="column_overflow col-sm-12" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
                                     <ul class="list-unstyled">

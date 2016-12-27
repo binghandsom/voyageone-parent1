@@ -53,11 +53,19 @@ define([
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.smsConfigService.addSmsConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.smsConfigService.updateSmsConfig(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })

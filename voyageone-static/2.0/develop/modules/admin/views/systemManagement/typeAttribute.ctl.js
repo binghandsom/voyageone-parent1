@@ -40,14 +40,14 @@ define([
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.typeAttrService.searchTypeAttributeByPage({
-                        'pageNum': self.searchInfo.pageInfo.curr,
-                        'pageSize': self.searchInfo.pageInfo.size,
-                        'typeId': self.searchInfo.typeId,
-                        'langId': self.searchInfo.langId,
-                        'value': self.searchInfo.value,
-                        'active': self.searchInfo.active,
-                        'name': self.searchInfo.name
-                    })
+                    'pageNum': self.searchInfo.pageInfo.curr,
+                    'pageSize': self.searchInfo.pageInfo.size,
+                    'typeId': self.searchInfo.typeId,
+                    'langId': self.searchInfo.langId,
+                    'value': self.searchInfo.value,
+                    'active': self.searchInfo.active,
+                    'name': self.searchInfo.name
+                })
                     .then(function (res) {
                         self.systemList = res.data.result;
                         self.channelPageOption.total = res.data.count;
@@ -82,38 +82,42 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                switch (type) {
-                    case 'edit':
-                        _.forEach(self.systemList, function (Info) {
-                            if (Info.id == self.sysTypeAttrSelList.selList[0].id) {
-                                self.popups.openTypeAttr(Info);
-                            }
+                if(item=='add'){
+                    self.popups.openTypeAttr('add').then(function (res) {
+                        self.typeService.getAllType().then(function (res) {
+                            self.typeList = res.data;
                         });
-                        break;
-                    case 'add':
-                        self.popups.openTypeAttr('add').then(function (res) {
-                            self.typeService.getAllType().then(function (res) {
-                                self.typeList = res.data;
-                            });
-                            if (res.res == 'success') {
-                                self.search(1);
-                            }
-                        });
-                        break;
+                        if (res.res == 'success') {
+                            self.search(1);
+                        } else {
+                            return false;
+                        }
+                    });
+                }else{
+                    self.popups.openTypeAttr(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        } else {
+                            return false;
+                        }
+                    })
                 }
 
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.sysTypeAttrSelList.selList, function (delInfo) {
                             delList.push(delInfo.typeId);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.typeAttrService.deleteTypeAttribute(delList).then(function (res) {
-                            if (res.data.success == false)self.confirm(res.data.message);
+                            if (res.data == false) self.confirm(res.message);
                             self.search(1);
                         })
                     }

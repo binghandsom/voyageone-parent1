@@ -127,36 +127,50 @@ define([
                     application: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item.type == 'add') {
                     self.popups.openRole('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    var Info = _.filter(self.adminRoleList, function (role) {
-                        return role.id == self.adminUserSelList.selList[0].id
-                    });
-                    if (type == 'copy') {
-                        _.extend(Info[0], {isCopyRole: true});
-                        self.popups.openRole(Info[0]);
-                    } else if (type == 'edit') {
-                        Info[0].isCopyRole == true ? Info[0].isCopyRole = false : Info[0].isCopyRole = false;
-                        self.popups.openRole(Info[0]);
+                    if (item.type == 'copy') {
+                        _.extend(item.value, {isCopyRole: true});
+                        self.popups.openRole(item.value).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }else{
+                                return false;
+                            }
+                        });
+                    } else if (item.type == 'edit') {
+                        item.value.isCopyRole == true ? item.value.isCopyRole = false : item.value.isCopyRole = false;
+                        self.popups.openRole(item.value).then(function (res) {
+                            if (res.res == 'success') {
+                                self.search(1);
+                            }else{
+                                return false;
+                            }
+                        });
                     }
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.adminRoleService.deleteRole(delList).then(function () {
-                            self.search();
+                    }else{
+                        delList.push(item);
+                    }
+                        self.adminRoleService.deleteRole(delList).then(function (res) {
+                            if(res.data==true) self.search(1);
                         })
                     }
                 );

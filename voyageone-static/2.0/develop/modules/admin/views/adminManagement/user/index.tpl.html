@@ -108,12 +108,15 @@
 
     <div class="box">
         <div class="box-body-new">
+            <div class="col-sm-8 pull-left text-left" ng-controller="popupCtrl">
+                <div class="form-group m-t-sm">
+                    <button class="btn btn-default" ng-click="ctrl.addRoles()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-arrow-circle-right"></i>&nbsp;批量添加角色</button>
+                </div>
+            </div>
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0||ctrl.adminUserSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
-                    <button class="btn btn-default" ng-click="ctrl.vieAuthority()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-eye-slash"></i>&nbsp;查看权限</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete('batchDel')" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                     <button class="btn btn-default" ng-click="ctrl.resetPass()" ng-disabled="ctrl.adminUserSelList.selList.length <= 0"><i class="fa fa-key"></i>&nbsp;重置密码</button>
                 </div>
             </div>
@@ -129,9 +132,8 @@
                     </th>
                     <th class="text-left mfb-xxt" translate="TXT_ACCOUNT"></th>
                     <th class="text-left mfb-xt" translate="TXT_USER_NAME"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_EMAIL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_ROLE"></th>
-                    <th class="text-left mfb-xxt" translate="TXT_ORGANIZE"></th>
+                    <th class="text-left mfb-xt" translate="TXT_ORGANIZE"></th>
                     <th class="text-left mfb-xxt" translate="TXT_CHANNEL"></th>
                     <th class="text-left mfb-xxt" translate="TXT_STORE"></th>
                     <th class="text-left mfb-xt" translate="TXT_SYSTEM"></th>
@@ -139,6 +141,7 @@
                     <th class="text-left mfb-xxt" translate="TXT_CART_COMPANY_NAME"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xxt" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -157,10 +160,6 @@
                         <td class="text-left v-middle">
                             <label ng-if="list.userName.length <= 10">{{list.userName}}</label>
                             <label ng-if="list.userName.length > 10"><popover-text content="list.userName" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
-                        </td>
-                        <td class="text-left v-middle wrap">
-                            <label ng-if="list.email.length <= 10">{{list.email}}</label>
-                            <label ng-if="list.email.length > 10"><popover-text content="list.email" direct="top" popover-trigger="mouseenter" size="20"></popover-text></label>
                         </td>
                         <td class="text-left v-middle">
                             <label ng-if="list.roleName.length <= 10">{{list.roleName}}</label>
@@ -183,6 +182,11 @@
                         <td class="text-left v-middle">{{list.company}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-center v-middle">
+                            <button class="btn btn-success btn-xs" ng-click="ctrl.edit(list)" title="编辑"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-default btn-xs" ng-click="ctrl.vieAuthority(list)" title="查看权限"><i class="fa fa-eye-slash"></i></button>
+                            <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(list.id)" title="{{'BTN_INACTIVE'|translate}}"><i class="fa fa-ban"></i></button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

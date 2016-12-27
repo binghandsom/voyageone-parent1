@@ -32,7 +32,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "0" : "1" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelAllList = [self.sourceData.sourceData];
                 } else {
@@ -72,11 +72,19 @@ define([
                 _.extend(self.context, self.sourceData);
                 if (self.append == true) {
                     self.channelAttributeService.addChannelAttribute(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.channelAttributeService.updateChannelAttribute(self.sourceData).then(function (res) {
+                        if (res.data == false) {
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
