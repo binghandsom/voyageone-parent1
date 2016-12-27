@@ -138,7 +138,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         Date beginDate = new Date();
         try {
             onStartup(messageBody);
-            if (isMQJobLog()) {
+            if (isMQJobLog()) {//记录mq日志
                 log(messageBody, null, beginDate);
             }
         }
