@@ -420,11 +420,15 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         mastData.put("groupId", cmsBtProductGroup.getGroupId());
         mastData.put("skus", cmsBtProduct.getCommon().getSkus());
         mastData.put("isMain", finalCmsBtProductGroup.getMainProductCode().equalsIgnoreCase(cmsBtProduct.getCommon().getFields().getCode()));
-        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, cmsBtProduct.getCommon().getFields().getBrand(), cmsBtProduct.getCommon().getFields().getProductType(), cmsBtProduct.getCommon().getFields().getSizeType());
-        if (sizeMap != null && sizeMap.size() > 0) {
-            cmsBtProduct.getCommon().getSkus().forEach(sku -> {
-                sku.setAttribute("platformSize",sizeMap.get(sku.getSize()));
-            });
+        try {
+            Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, cmsBtProduct.getCommon().getFields().getBrand(), cmsBtProduct.getCommon().getFields().getProductType(), cmsBtProduct.getCommon().getFields().getSizeType());
+            if (sizeMap != null && sizeMap.size() > 0) {
+                cmsBtProduct.getCommon().getSkus().forEach(sku -> {
+                    sku.setAttribute("platformSize",sizeMap.get(sku.getSize()));
+                });
+            }
+        }catch (BusinessException e){
+            e.printStackTrace();
         }
 
         // TODO 取得Sku的库存
