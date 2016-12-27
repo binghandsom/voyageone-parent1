@@ -64,8 +64,9 @@ public class Jingdong_928_Jiangxinjie_DictTest {
         // 3. 产品展示标题图(固定图片)
         // 4. 产品展示图 - (商品图片) - 模板()
         // 5. 尺码指南标题(固定)
-        // 6. 共通图片 - 尺码图
-        // 7. 共通图片 - 购物流程图
+        // 6. 微软雅黑， 中号字， 默认左对齐（短描述英文中文， 长描述英文中文）
+        // 7. 共通图片 - 尺码图
+        // 8. 共通图片 - 购物流程图
         // -------------------------------------------
 
         // 生成内容
@@ -167,6 +168,32 @@ public class Jingdong_928_Jiangxinjie_DictTest {
                     String html = "<img src=\"https://img10.360buyimg.com/imgzone/jfs/t2707/89/3170742214/8310/78cabe18/57836560N708b07e4.jpg\">";
                     TextWord word = new TextWord(html);
                     ruleRoot.addRuleWord(word);
+                }
+                {
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+                    // 微软雅黑， 中号字， 默认左对齐
+                    ruleRoot.addRuleWord(new TextWord("<div style=\"text-align: left; width:790px; margin:0 auto;\"><span style=\"font-family:Microsoft YaHei;font-size:medium;\">"));
+
+                    // 短描述 - 英文
+                    ruleRoot.addRuleWord(new MasterWord("shortDesEn"));
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+                    // 短描述 - 中文
+                    ruleRoot.addRuleWord(new MasterWord("shortDesCn"));
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR + C_TEXT_BR));
+
+                    // 长描述 - 英文
+                    ruleRoot.addRuleWord(new MasterWord("longDesEn"));
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+                    // 长描述 - 中文
+                    ruleRoot.addRuleWord(new MasterWord("longDesCn"));
+                    // 回车
+                    ruleRoot.addRuleWord(new TextWord(C_TEXT_BR));
+
+                    ruleRoot.addRuleWord(new TextWord("</span></div>"));
                 }
                 {
                     // 尺码图
