@@ -55,13 +55,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("isMasterMain", isMasterMain == null ? 0 : isMasterMain);
     }
 
-    //尺码表
-    public String getSizeChart() {
-        return getStringAttribute("sizeChart");
-    }
-    public void setSizeChart(String sizeChart) {
-        setStringAttribute("sizeChart", sizeChart);
-    }
+//    尺码表位置有人写错了， 导致这边用不了了， 所以删了（目前是在common下面的sizeChart）
+//    //尺码表
+//    public String getSizeChart() {
+//        return getStringAttribute("sizeChart");
+//    }
+//    public void setSizeChart(String sizeChart) {
+//        setStringAttribute("sizeChart", sizeChart);
+//    }
 
     //产品名称（英文）
     public String getProductNameEn() {
