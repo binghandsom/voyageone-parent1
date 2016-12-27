@@ -78,32 +78,39 @@ define([
                     propVal: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openChannelThird('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (channelInfo) {
-                        if (channelInfo.seq == self.channelThirdSelList.selList[0].id) {
-                            self.popups.openChannelThird(channelInfo);
+                    self.popups.openChannelThird(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.channelThirdSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.thirdPartyConfigService.deleteThirdPartyConfig(delList).then(function (res) {
-                            if (res.data.success == false)self.confirm(res.data.message);
-                            self.search();
+                            if (res.data == false)self.confirm(res.message);
+                            self.search(1);
                         })
                     }
                 );

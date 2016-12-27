@@ -61,11 +61,19 @@ define([
                         }
                         if (self.append == true) {
                             self.channelService.addChannelConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.channelService.updateChannelConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
@@ -79,11 +87,19 @@ define([
                         }
                         if (self.append == true) {
                             self.storeService.addStoreConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.storeService.updateStoreConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
@@ -98,6 +114,10 @@ define([
                             var sourceDataCopy = angular.copy(self.sourceData);
                             sourceDataCopy.taskId = sourceDataCopy.taskName;
                             self.taskService.addTaskConfig(sourceDataCopy).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.sourceData});
                                 self.$uibModalInstance.close(result);
                             });
@@ -111,11 +131,19 @@ define([
                         }
                         if (self.append == true) {
                             self.cartShopService.addCartShopConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.cartShopService.updateCartShopConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
@@ -124,11 +152,19 @@ define([
                     case 'Port':
                         if (self.append == true) {
                             self.portConfigService.addPortConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })
                         } else {
                             self.portConfigService.updatePortConfig(self.sourceData).then(function (res) {
+                                if (res.data == false) {
+                                    self.confirm(res.data.message);
+                                    return;
+                                }
                                 _.extend(result, {'res': 'success', 'sourceData': self.context});
                                 self.$uibModalInstance.close(result);
                             })

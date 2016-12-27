@@ -68,6 +68,8 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
         String sizeTypeEn = (String) requestMap.get("sizeType");
         String productTypeCn = (String) requestMap.get("productTypeCn");
         String sizeTypeCn = (String) requestMap.get("sizeTypeCn");
+        String hscodeName8 = (String) requestMap.get("hscodeName8");
+        String hscodeName10 = (String) requestMap.get("hscodeName10");
 
         if (mCatId == null || mCatPathCn == null || ListUtils.isNull(productCodes)) {
             $warn("切换类目 缺少参数 params=" + requestMap.toString());
@@ -100,6 +102,12 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                         }
                         if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getSizeTypeCn())) {
                             updateMap.put("common.fields.sizeTypeCn", sizeTypeCn);
+                        }
+                        if (!StringUtil.isEmpty(hscodeName8) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodePrivate())) {
+                            updateMap.put("common.fields.hsCodePrivate", hscodeName8);
+                        }
+                        if (!StringUtil.isEmpty(hscodeName10) && StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getHsCodeCross())) {
+                            updateMap.put("common.fields.hsCodeCross", hscodeName10);
                         }
                         BulkUpdateModel model = new BulkUpdateModel();
                         model.setUpdateMap(updateMap);

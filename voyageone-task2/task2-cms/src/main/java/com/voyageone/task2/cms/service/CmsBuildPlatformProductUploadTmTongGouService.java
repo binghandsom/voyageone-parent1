@@ -23,6 +23,7 @@ import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.ims.rule_expression.DictWord;
+import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
@@ -701,7 +702,24 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // 格式：<value>&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/TB2islBkXXXXXXBXFXXXXXXXXXX_!!2640015666.jpg"
         //      /&gt; &lt;br&gt;&lt;img align="middle" src="http://img.alicdn.com/imgextra/i1/2640015666/~~</value>
         // 解析cms_mt_platform_dict表中的数据字典
-        String valDescription = getValueByDict("天猫同购描述", expressionParser, shopProp);
+        // modified by morse.lu 2016/12/23 start
+        // 画面上可以选
+//        String valDescription = getValueByDict("天猫同购描述", expressionParser, shopProp);
+        String valDescription;
+        RuleExpression ruleDetails = new RuleExpression();
+        MasterWord masterWord = new MasterWord("details");
+        ruleDetails.addRuleWord(masterWord);
+        String details = null;
+        try {
+            details = expressionParser.parse(ruleDetails, shopProp, getTaskName(), null);
+        } catch (Exception e) {
+        }
+        if (!StringUtils.isEmpty(details)) {
+            valDescription = getValueByDict(details, expressionParser, shopProp);
+        } else {
+            valDescription = getValueByDict("天猫同购描述", expressionParser, shopProp);
+        }
+        // modified by morse.lu 2016/12/23 end
         productInfoMap.put("description", valDescription);
 
         // 物流信息(必填)

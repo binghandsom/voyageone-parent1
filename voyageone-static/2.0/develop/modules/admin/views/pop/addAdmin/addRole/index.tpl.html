@@ -11,7 +11,7 @@
                     <div class="row form-group"><!-- 角色名 -->
                         <label class="col-sm-3 control-label">{{'TXT_ROLE_NAME' | translate}}</label>
                         <div class="col-sm-8">
-                            <input class="form-control" ng-model="ctrl.saveInfo.roleName" ng-disabled="ctrl.popType=='修改角色'" maxlength="50"/>
+                            <input class="form-control" ng-model="ctrl.saveInfo.roleName" maxlength="50"/>
                         </div>
                     </div>
                     <div class="row form-group"><!-- 角色类型 -->
@@ -94,16 +94,21 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                            <div ng-show="1<0"><button ng-click="ctrl.search({'type':'channel','value':name})"></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.channelMove('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('include')"><i class="fa fa-angle-left"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('exclude')"><i class="fa fa-angle-right"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.channelMove('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
-                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
-                            <div class="col-sm-10 form-inline">
-                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="name">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search({'type':'channel','value':name})" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                            <div class="col-sm-12 form-inline">
+                                <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                                <div class="input-group col-sm-10">
+                                    <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="name" ng-change="ctrl.channelMove(name?name:'')">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-vo" type="submit" ng-click="ctrl.search({'type':'channel','value':name})" ng-disabled="!name"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
                             </div>
                             <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">
@@ -142,16 +147,21 @@
                         </div>
                         <div class="col-sm-2">
                             <label class="col-sm-5 text-center control-label vo_a_ce" >操作</label>
+                            <div ng-show="1<0"><button ng-click="ctrl.search({'type':'store','value':storeName})"></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1 m-t-sm" ng-click="ctrl.storeMove('allInclude')"><i class="fa fa-angle-double-left"></i></button> </div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('include')"><i class="fa fa-angle-left"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('exclude')"><i class="fa fa-angle-right"></i></button></div>
                             <div class="form-group"><button class="btn btn-default btn-pop col-sm-10 col-sm-offset-1" ng-click="ctrl.storeMove('allExclude')"><i class="fa fa-angle-double-right"></i></button></div>
                         </div>
                         <div class="col-sm-5">
-                            <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
-                            <div class="col-sm-10 form-inline">
-                                <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" style="width:88.5%" ng-model="storeName" ng-change="ctrl.storeMove(storeName?storeName:'')">
-                                <button type="submit" class="btn btn-vo btn-xxs" ng-click="ctrl.search({'type':'store','value':storeName})" ng-disabled="!storeName"><i class="fa fa-search"></i></button>
+                            <div class="col-sm-12 form-inline">
+                                <label class="col-sm-2 text-left control-label vo_a_ce" >{{'TXT_CHOOSE' | translate}}</label>
+                                <div class="input-group col-sm-10">
+                                    <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="storeName" ng-change="ctrl.storeMove(storeName?storeName:'')">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-vo" type="submit" ng-click="ctrl.search({'type':'store','value':storeName})" ng-disabled="!storeName"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
                             </div>
                             <div class="column_overflow col-sm-12 m-t-xs" style="border:1px solid silver;overflow-x:hidden;height: 129px;">
                                 <div class="col-sm-12">

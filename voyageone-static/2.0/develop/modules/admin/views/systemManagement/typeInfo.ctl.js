@@ -74,29 +74,36 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openTypeAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.systemList, function (Info) {
-                        if (Info.id == self.sysTypeInfoSelList.selList[0].id) {
-                            self.popups.openTypeAdd(Info);
+                    self.popups.openTypeAdd(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.sysTypeInfoSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.typeService.deleteType(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);

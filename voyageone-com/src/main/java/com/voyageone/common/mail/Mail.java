@@ -127,6 +127,16 @@ public final class Mail {
         send(receiver, subject, content, false);
     }
 
+    public static void sendNotice(String receiver, String subject, String content) throws MessagingException {
+        MailInfo mail = new MailInfo(receiver);
+
+        mail.setSubject(subject);
+        mail.setContent(content);
+        mail.setPriority(false);
+
+        mail.send();
+    }
+
     public static void send(String receiver, String subject, String content, List<String> fileAffix, boolean priority) throws MessagingException {
         MailInfo mail = new MailInfo(receiver);
 

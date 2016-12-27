@@ -161,6 +161,22 @@ define([
                                     }
                                 }
                             }
+                            if(context.selected.hscodeName8){
+                                var sizeType = searchField("税号个人（8位）",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.hscodeName8;
+                                    }
+                                }
+                            }
+                            if(context.selected.hscodeName10){
+                                var sizeType = searchField("税号跨境申报（10位）",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.hscodeName10;
+                                    }
+                                }
+                            }
                         });
                     });
                 }

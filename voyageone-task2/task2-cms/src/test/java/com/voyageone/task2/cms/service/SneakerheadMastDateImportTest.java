@@ -150,8 +150,8 @@ public class SneakerheadMastDateImportTest {
                 }
                 String sizeChartName = ExcelUtils.getString(row, 2);
                 String brandName = ExcelUtils.getString(row, 3).toLowerCase();
-                String sizeType = ExcelUtils.getString(row, 4);
-                String productType = ExcelUtils.getString(row, 6);
+                String sizeType = ExcelUtils.getString(row, 6);
+                String productType = ExcelUtils.getString(row, 4);
                 String originalSize = ExcelUtils.getString(row, 8);
                 String adjustSize = ExcelUtils.getString(row, 9);
 //                String usual = ExcelUtils.getString(row, 9);
