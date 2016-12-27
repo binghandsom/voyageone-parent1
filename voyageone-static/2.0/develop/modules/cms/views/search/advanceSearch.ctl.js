@@ -322,7 +322,7 @@ define([
             } else if (fileType == 3) {
                 msg = '即将导出SKU级的搜索结果，请确认。' + msg;
             } else if (fileType == 4) {
-                msg = '即将导出Shoemetro聚美上新SKU级的搜索结果，请确认。' + msg;
+                msg = '即将导出聚美上新SKU级的搜索结果，请确认。' + msg;
             }
             confirm(msg).then(function () {
                 $scope.vm.searchInfo.fileType = fileType;
