@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.mqjob;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
+import com.voyageone.service.impl.cms.CmsBtOperationLogService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.TBaseMQAnnoService;
 import com.voyageone.task2.base.util.TaskControlUtils;
@@ -24,6 +25,8 @@ public abstract class TBaseMQCmsService<TMQMessageBody  extends IMQMessageBody> 
         return getClass().getSimpleName();
     }
 
+    @Autowired
+    CmsBtOperationLogService cmsBtOperationLogService;
 
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
@@ -32,7 +35,12 @@ public abstract class TBaseMQCmsService<TMQMessageBody  extends IMQMessageBody> 
         } catch (Exception ex) {
             //记异常日志
             // votodo
+            cmsBtOperationLogService.log(messageBody, ex);
             throw ex;
         }
+    }
+    //写日志
+    public void cmsLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(messageBody, msg);
     }
 }

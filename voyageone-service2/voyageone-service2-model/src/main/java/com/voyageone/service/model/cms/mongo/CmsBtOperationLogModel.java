@@ -12,9 +12,12 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
 
     long taskId;
     /**
-     * 任务名称
+     *  队列名称 或 api(请求url)
      */
-    String taskName;
+    String name;
+
+
+
     /**
      *参数
      */
@@ -30,21 +33,32 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
     /**
      * 调用堆栈
     */
+    String msg;
+
+
+
     String stackTrace;
     /**
      *
      */
     List<Map<String,Object>> operateInfo;
 
-
-
-    public String getTaskName() {
-        return taskName;
+    public String getName() {
+        return name;
     }
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
 
     public String getMessageBody() {
         return messageBody;
