@@ -1129,7 +1129,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
@@ -1210,7 +1210,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
