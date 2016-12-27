@@ -627,8 +627,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 //                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart())) {
 //                                prCommonFields.setSizeChart(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart());
 //                            }
-                            if (StringUtil.isEmpty(pr.getCommon().getAttribute("sizeChart"))
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getAttribute("sizeChart"))) {
+                            if (StringUtil.isEmpty(pr.getCommon().getStringAttribute("sizeChart"))
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getStringAttribute("sizeChart"))) {
                                 pr.getCommon().setAttribute("sizeChart", productModel.getCommonNotNull().getAttribute("sizeChart"));
                             }
 
