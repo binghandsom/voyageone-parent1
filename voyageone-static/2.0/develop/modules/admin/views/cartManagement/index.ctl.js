@@ -78,31 +78,38 @@ define([
                     isUsjoi: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openCartAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.cartList, function (Info) {
-                        if (Info.cartId == self.cartSelList.selList[0].id) {
-                            self.popups.openCartAdd(Info);
+                    self.popups.openCartAdd(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.cartSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.AdminCartService.deleteCart(delList).then(function (res) {
-                            self.search();
+                            if(res.data==true) self.search(1);
                         })
                     }
                 );

@@ -134,28 +134,28 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
              Workbook wb = WorkbookFactory.create(inputStream)) {
 
             // 导入主类目数据
-            Sheet categorySheet = wb.getSheet(CATEGORY_SHEET_NAME);
+            Sheet categorySheet = wb.getSheet("Master Data Frame");
             if (categorySheet != null) {
                 importCategoryData(categorySheet);
             }
 
-            // 导入天猫国际类目与主类目的匹配关系
-            Sheet tmallCategorySheet = wb.getSheet(TMALL_MAPPING_SHEET_NAME);
-            if (tmallCategorySheet != null) {
-                importPlatformCategoryData(tmallCategorySheet, 23);
-            }
-
-            // 导入京东类目与主类目的匹配关系
-            Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
-            if (jdCategorySheet != null) {
-                importPlatformCategoryData(jdCategorySheet, 26);
-            }
-
-            // 导入聚美类目与主类目的匹配关系
-            Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
-            if (jdCategorySheet != null) {
-                importPlatformCategoryData(jumeiCategorySheet, 27);
-            }
+//            // 导入天猫国际类目与主类目的匹配关系
+//            Sheet tmallCategorySheet = wb.getSheet(TMALL_MAPPING_SHEET_NAME);
+//            if (tmallCategorySheet != null) {
+//                importPlatformCategoryData(tmallCategorySheet, 23);
+//            }
+//
+//            // 导入京东类目与主类目的匹配关系
+//            Sheet jdCategorySheet = wb.getSheet(JD_MAPPING_SHEET_NAME);
+//            if (jdCategorySheet != null) {
+//                importPlatformCategoryData(jdCategorySheet, 26);
+//            }
+//
+//            // 导入聚美类目与主类目的匹配关系
+//            Sheet jumeiCategorySheet = wb.getSheet(JUMEI_MAPPING_SHEET_NAME);
+//            if (jdCategorySheet != null) {
+//                importPlatformCategoryData(jumeiCategorySheet, 27);
+//            }
         } catch (InvalidFormatException | IOException e) {
             throw new BusinessException("在导入任务中, 打开 excel 文件是出现错误。", e);
         }
@@ -331,17 +331,27 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
 
             // 这一行的类目路径
             String categoryPath = "";
+            String categoryPathEn = "";
 
             // 取得一级主类目名称
             String categoryNamePart1 = ExcelUtils.getString(row, CATEGORY_START_INDEX);
-            categoryPath += categoryNamePart1;
+            String categoryNamePart1En = ExcelUtils.getString(row, 0);
+            $info(categoryNamePart1);
+
 
             if (StringUtils.isEmpty(categoryNamePart1)) {
                 continue;
             }
-
+            String[] categorys = categoryNamePart1.split("/");
+            String[] categorysEn = categoryNamePart1En.split("/");
+            if(categorys.length != categorysEn.length) {
+                $info("中英类目不正確");
+                continue;
+            }
+            categoryPath += categorys[0];
+            categoryPathEn += categorysEn[0];
             // 取得一级主类目对象
-            CmsMtCategoryTreeAllModel categoryTree = categoryTreeAllService.getFirstLevelCategoryByCatPath(categoryNamePart1);
+            CmsMtCategoryTreeAllModel categoryTree = categoryTreeAllService.getFirstLevelCategoryByCatPath(categorys[0]);
 
             if (categoryTree == null) {
 
@@ -350,9 +360,19 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 categoryTree.setCatId(MD5.getMD5(categoryNamePart1));
                 categoryTree.setCatName(categoryNamePart1);
                 categoryTree.setCatPath(categoryNamePart1);
+                categoryTree.setCatNameEn(categoryNamePart1En);
+                categoryTree.setCatPathEn(categoryNamePart1En);
                 categoryTree.setParentCatId("0");
+                categoryTree.setProductTypeEn(ExcelUtils.getString(row, 2));
+                categoryTree.setProductTypeCn(ExcelUtils.getString(row, 3));
+                categoryTree.setSizeTypeEn(ExcelUtils.getString(row, 4));
+                categoryTree.setSizeTypeCn(ExcelUtils.getString(row, 5));
+                categoryTree.setHscode8(ExcelUtils.getString(row, 7));
+                categoryTree.setHscode10(ExcelUtils.getString(row, 8));
+                categoryTree.setHscodeName8(ExcelUtils.getString(row, 9));
+                categoryTree.setHscodeName10(ExcelUtils.getString(row, 10));
 
-                if (StringUtils.isEmpty(ExcelUtils.getString(row, CATEGORY_START_INDEX + 1))) {
+                if (categorys.length==1) {
                     categoryTree.setIsParent(0);
                 } else {
                     categoryTree.setIsParent(1);
@@ -364,22 +384,25 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
                 insertFlg = true;
             }
 
-            categoryTree.setSkuSplit(tryGetSkuSplit(row, 1));
+//            categoryTree.setSkuSplit(tryGetSkuSplit(row, 1));
+            categoryTree.setSkuSplit(0);
 
             CmsMtCategoryTreeAllModel levelModel = categoryTree;
 
             // 取得xls的一行数据，做出这棵树
-            for (int i = CATEGORY_START_INDEX + 1; i < CATEGORY_START_INDEX + CATEGORY_MAX_LEVEL; i++) {
+            for (int i = 1; i < categorys.length; i++) {
 
                 // 某个层级下面的类目对象
-                String categoryNamePart = ExcelUtils.getString(row, i);
+                String categoryNamePart = categorys[i];
+                String categoryNamePartEn = categorysEn[i];
                 // 直到这一列的值为空白，那么这条数据结束
                 if (StringUtils.isEmpty(categoryNamePart))
                     break;
 
                 categoryPath += ">" + categoryNamePart;
+                categoryPathEn += ">" + categoryNamePartEn;
 
-                levelModel = makeCategoryObject(levelModel, categoryNamePart, categoryPath, row, i);
+                levelModel = makeCategoryObject(levelModel, categoryNamePart, categoryPath,categoryNamePartEn, categoryPathEn, row, i);
             }
 
             if (insertFlg) {
@@ -394,7 +417,7 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
     /**
      * 根据类目路径 增加类目对象
      */
-    private CmsMtCategoryTreeAllModel makeCategoryObject(CmsMtCategoryTreeAllModel modelParent, String categoryName, String categoryPath, Row row, int index) {
+    private CmsMtCategoryTreeAllModel makeCategoryObject(CmsMtCategoryTreeAllModel modelParent, String categoryName, String categoryPath, String categoryNameEn, String categoryPathEn, Row row, int index) {
 
         // 找下面的child中是否存在某个类目路径
         CmsMtCategoryTreeAllModel findCategoryTree = null;
@@ -411,6 +434,8 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
             findCategoryTree.setCatId(MD5.getMD5(categoryPath));
             findCategoryTree.setCatName(categoryName);
             findCategoryTree.setCatPath(categoryPath);
+            findCategoryTree.setCatNameEn(categoryNameEn);
+            findCategoryTree.setCatPathEn(categoryPathEn);
             findCategoryTree.setParentCatId(modelParent.getCatId());
             if (StringUtils.isEmpty(ExcelUtils.getString(row, index + 1))) {
                 findCategoryTree.setIsParent(0);
@@ -421,14 +446,23 @@ public class CmsImportCategoryTreeService extends BaseCronTaskService {
             findCategoryTree.setModified(null);
             findCategoryTree.setCreater(null);
             findCategoryTree.setCreated(null);
+            findCategoryTree.setProductTypeEn(ExcelUtils.getString(row, 2));
+            findCategoryTree.setProductTypeCn(ExcelUtils.getString(row, 3));
+            findCategoryTree.setSizeTypeEn(ExcelUtils.getString(row, 4));
+            findCategoryTree.setSizeTypeCn(ExcelUtils.getString(row, 5));
+            findCategoryTree.setHscode8(ExcelUtils.getString(row, 7));
+            findCategoryTree.setHscode10(ExcelUtils.getString(row, 8));
+            findCategoryTree.setHscodeName8(ExcelUtils.getString(row, 9));
+            findCategoryTree.setHscodeName10(ExcelUtils.getString(row, 10));
             modelParent.getChildren().add(findCategoryTree);
         }
 
-        Integer parentSkuSplit = modelParent.getSkuSplit();
-
-        Integer skuSplit = tryGetSkuSplit(row, index);
-
-        findCategoryTree.setSkuSplit(skuSplit.equals(0) ? parentSkuSplit : skuSplit);
+//        Integer parentSkuSplit = modelParent.getSkuSplit();
+//
+//        Integer skuSplit = tryGetSkuSplit(row, index);
+//
+//        findCategoryTree.setSkuSplit(skuSplit.equals(0) ? parentSkuSplit : skuSplit);
+        findCategoryTree.setSkuSplit(0);
 
         return findCategoryTree;
     }

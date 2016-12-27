@@ -259,7 +259,12 @@ public class TypeConfigEnums {
 		/**
 		 * 商品上下架操作结果
 		 */
-		putOnOffStatus(87);
+		putOnOffStatus(87),
+
+		/**
+		 * feed检索排序
+		 */
+		feedSearchSort(97);
 
 
     	private int id;

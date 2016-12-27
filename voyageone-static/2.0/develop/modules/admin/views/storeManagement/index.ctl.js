@@ -37,7 +37,7 @@ define([
                 self.channelService.getAllChannel().then(function (res) {
                     self.channelList = res.data;
                 });
-                self.search();
+                self.search(1);
             },
             search: function (page) {
                 var self = this;
@@ -99,36 +99,44 @@ define([
                     })
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openStoreAdd('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.storeList, function (Info) {
-                        if (Info.storeId == self.storeSelList.selList[0].id) {
-                            Info['areaId'] = Info['areaId'] + '';
-                            var copyData = Info.inventoryHold.split(",");
-                            Info.inventoryHold = copyData[0];
-                            Info.remainNum = copyData[1];
-                            self.popups.openStoreAdd(Info);
+                    item.areaId = item.areaId+ '';
+                    var copyData = item.inventoryHold.split(",");
+                    item.inventoryHold = copyData[0];
+                    item.remainNum = copyData[1];
+                    self.popups.openStoreAdd(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            item.areaId = item.areaId-0;
+                            item.inventoryHold = item.inventoryHold + ',' + item.remainNum;
                         }
-                    })
+                    });
                 }
 
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this, delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.storeSelList.selList, function (delInfo) {
                             delList.push({'orderChannelId': delInfo.orderChannelId, 'storeId': delInfo.id});
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.storeService.deleteStore(delList).then(function (res) {
-                            self.search();
+                           if(res.data==true) self.search(1);
                         })
                     }
                 );

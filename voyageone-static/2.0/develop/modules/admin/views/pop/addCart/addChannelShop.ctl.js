@@ -79,11 +79,19 @@ define([
                 }
                 if (self.append == true) {
                     self.cartShopService.addCartShop(self.sourceData).then(function (res) {
+                        if(res.data == false){
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })
                 } else {
                     self.cartShopService.updateCartShop(self.sourceData).then(function (res) {
+                        if(res.data == false){
+                            self.confirm(res.data.message);
+                            return;
+                        }
                         _.extend(result, {'res': 'success', 'sourceData': self.context});
                         self.$uibModalInstance.close(result);
                     })

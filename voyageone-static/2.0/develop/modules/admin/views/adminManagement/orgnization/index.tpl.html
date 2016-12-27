@@ -48,8 +48,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="ctrl.adminOrgSelList.selList.length <= 0||ctrl.adminOrgSelList.selList.length>1"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.adminOrgSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete('batchDel')" ng-disabled="ctrl.adminOrgSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>
             </div>
 
@@ -69,6 +68,7 @@
                     <th class="text-center mfb-xt" translate="TXT_SORT_PRE"></th>
                     <th class="text-left mfb-xt" translate="TXT_UPDATER"></th>
                     <th class="text-center mfb-xxt" translate="TXT_CART_UPDATE_TIME"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -89,6 +89,10 @@
                         <td class="text-center v-middle">{{list.weight}}</td>
                         <td class="text-left v-middle">{{list.modifier}}</td>
                         <td class="text-center v-middle">{{list.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-center v-middle">
+                            <button class="btn btn-success btn-xs" ng-click="ctrl.edit(list)" title="编辑"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(list.id)" title="{{'BTN_INACTIVE'|translate}}"><i class="fa fa-ban"></i></button>
+                        </td>
                     </tr>
                 </tbody>
             </table>

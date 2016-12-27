@@ -38,8 +38,7 @@
             <div class="col-sm-4 pull-right text-right" ng-controller="popupCtrl">
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default" ng-click="ctrl.edit('add')"><i class="fa fa-plus"></i>&nbsp;新增</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-disabled="selectedList.length <= 0"><i class="fa fa-pencil"></i>&nbsp;编辑</button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete('batchDel')"><i class="fa fa-ban"></i>&nbsp;{{'BTN_INACTIVE'|translate}}</button>
                 </div>
             </div>
             <div class="" ng-controller="treeTable">
@@ -58,6 +57,7 @@
                         <th class="text-center mfb-xt" translate="TXT_INSTRUCTION"></th>
                         <th class="text-center mfb-xt3" translate="TXT_UPDATER"></th>
                         <th class="text-center mfb-xt" translate="TXT_CART_UPDATE_TIME"></th>
+                        <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                     </tr>
                     </thead>
                     <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-repeat="item in ctrl.resList"></tbody>
@@ -81,9 +81,13 @@
                         <td class="text-center mfb-xt">{{item.description}}</td>
                         <td class="text-center mfb-xt3">{{item.modifier}}</td>
                         <td class="text-center mfb-xt">{{item.modified|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                        <td class="text-center mfb-xt">
+                            <button class="btn btn-success btn-xs" ng-click="ctrl.edit(item)" title="编辑"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(item.id)" title="{{'BTN_INACTIVE'|translate}}"><i class="fa fa-ban"></i></button>
+                        </td>
                     </tr>
                     <tr class="children" ng-if="item.children&&item.children.length>0">
-                        <td colspan="10">
+                        <td colspan="11">
                             <table class="table-nested table-hover-new table-hover table_main" style="table-layout: fixed;border-collapse: collapse;border-spacing: 0;width: 100%;">
                                 <tbody ng-class="{opened: item.opened}" ng-include="'table_tree.html'" ng-init="level = level + 1" ng-repeat="item in item.children"></tbody>
                             </table>

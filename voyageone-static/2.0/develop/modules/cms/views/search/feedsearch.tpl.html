@@ -210,7 +210,7 @@
                                     <div class="col-sm-8">
                                         <div class="col-sm-5">
                                             <select class="form-control" ng-change="vm.searchInfo.sortOneName && !vm.searchInfo.sortOneType?vm.searchInfo.sortOneType = -1:''" ng-model="vm.searchInfo.sortOneName"
-                                                    ng-options="sortOne.configCode as sortOne.configValue1 for sortOne in vm.masterData.sortList">
+                                                    ng-options="sortOne.value as sortOne.name for sortOne in vm.masterData.sortList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                         </div>
@@ -232,7 +232,7 @@
                                     <div class="col-sm-8">
                                         <div class="col-sm-5">
                                             <select class="form-control" ng-change="vm.searchInfo.sortTwoName && !vm.searchInfo.sortTwoType?vm.searchInfo.sortTwoType = -1:''" ng-model="vm.searchInfo.sortTwoName"
-                                                    ng-options="sortTwo.configCode as sortTwo.configValue1 for sortTwo in vm.masterData.sortList">
+                                                    ng-options="sortTwo.value as sortTwo.name for sortTwo in vm.masterData.sortList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                         </div>
@@ -254,7 +254,7 @@
                                     <div class="col-sm-8">
                                         <div class="col-sm-5">
                                             <select class="form-control" ng-change="vm.searchInfo.sortThreeName && !vm.searchInfo.sortThreeType?vm.searchInfo.sortThreeType = -1:''" ng-model="vm.searchInfo.sortThreeName"
-                                                    ng-options="sortThree.configCode as sortThree.configValue1 for sortThree in vm.masterData.sortList">
+                                                    ng-options="sortThree.value as sortThree.name for sortThree in vm.masterData.sortList">
                                                 <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             </select>
                                         </div>

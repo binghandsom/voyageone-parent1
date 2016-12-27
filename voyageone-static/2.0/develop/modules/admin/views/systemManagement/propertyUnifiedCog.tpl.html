@@ -114,11 +114,7 @@
                 <div class="form-group m-t-sm m-r-xs">
                     <button class="btn btn-default"  ng-click="ctrl.add({'type':'add', 'orderChannelId': ctrl.searchInfo.orderChannelId,
                          'storeId': ctrl.searchInfo.storeId, 'taskId': ctrl.searchInfo.taskId, 'cartId': ctrl.searchInfo.cartId, 'port': ctrl.searchInfo.port})"><i class="fa fa-plus"></i>&nbsp;添加</button>
-                    <button class="btn btn-default" ng-click="ctrl.edit()" ng-if="ctrl.searchInfo.configType!=='Task'"
-                            ng-disabled="ctrl.configSelList.selList.length <= 0||ctrl.configSelList.selList.length>1"><i
-                            class="fa fa-pencil"></i>&nbsp;修改
-                    </button>
-                    <button class="btn btn-default" ng-click="ctrl.delete()" ng-disabled="ctrl.configSelList.selList.length <= 0"><i class="fa fa-ban"></i>&nbsp;删除</button>
+                    <button class="btn btn-default" ng-click="ctrl.delete('batchDel')" ng-disabled="ctrl.configSelList.selList.length <= 0"><i class="fa fa-trash"></i>&nbsp;删除</button>
                 </div>
             </div>
             <table class="table table-responsive table-hover-new table-hover table_main">
@@ -138,6 +134,7 @@
                     <th class="text-left mfb-xxt">{{'TXT_PROPERTY_VALUE'|translate}}2</th>
                     <th class="text-center mfb-xxt" translate="TXT_TIME_END" ng-if="ctrl.searchInfo.configType=='Task'"></th>
                     <th class="text-left mfb-xxt" translate="TXT_COMMENTS"></th>
+                    <th class="text-center mfb-xt" translate="TXT_ACTION"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -160,6 +157,10 @@
                     <td class="text-left v-middle" style="overflow: auto;max-width: 116px;">{{list.cfgVal2}}</td>
                     <td class="text-center v-middle" ng-if="ctrl.searchInfo.configType=='Task'">{{list.endTime| date: 'yyyy-MM-dd HH:mm:ss'}}</td>
                     <td class="text-left v-middle">{{list.comment}}</td>
+                    <td class="text-center mfb-xt">
+                        <button class="btn btn-success btn-xs" ng-click="ctrl.edit(list)" title="编辑"  ng-if="ctrl.searchInfo.configType!=='Task'"><i class="fa fa-pencil"></i></button>
+                        <button class="btn btn-danger btn-xs" ng-click="ctrl.delete(list)" title="删除"><i class="fa fa-trash"></i></button>
+                    </td>
                 </tr>
                 </tbody>
             </table>

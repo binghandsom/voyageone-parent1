@@ -12,7 +12,7 @@ define([
         bigImageUrl: 'http://image.sneakerhead.com/is/image/sneakerhead/✓?wid=2200&hei=2200'
     };
 
-    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm) {
+    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm,$localStorage) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
@@ -29,7 +29,8 @@ define([
                     hsCodeOrigin: null,
                     sizeChartList:[],
                     selectSizeChart:null,
-                    lockStatus:{}
+                    lockStatus:{},
+                    channelId:$localStorage.user.channel
                 };
 
                 scope.selectSizeChartChange=function () {
@@ -127,7 +128,65 @@ define([
 
                             scope.vm.productComm.catId = context.selected.catId;
                             scope.vm.productComm.catPath = context.selected.catPath;
-
+                            scope.vm.productComm.catPathEn = context.selected.catPathEn;
+                            if(context.selected.catPath){
+                                var temp = searchField("产品名称中文",scope.vm.productComm.schemaFields);
+                                if(temp){
+                                    if(!temp.value) {
+                                        var cat = context.selected.catPath.split(">");
+                                        var titleCn = scope.vm.productComm.fields.brand + ' ' +context.selected.sizeTypeCn + ' ' + cat[cat.length-1];
+                                        temp.value = titleCn;
+                                    }
+                                }
+                            }
+                            if(context.selected.productTypeEn){
+                                var productType = searchField("产品分类",scope.vm.productComm.schemaFields);
+                                if(productType){
+                                    if(!productType.value.value) {
+                                        productType.value.value = context.selected.productTypeEn;
+                                    }
+                                }
+                            }
+                            if(context.selected.productTypeEn){
+                                var productType = searchField("产品分类中文",scope.vm.productComm.schemaFields);
+                                if(productType) {
+                                    if (!productType.value.value) {
+                                        productType.value.value = context.selected.productTypeCn;
+                                    }
+                                }
+                            }
+                            if(context.selected.sizeTypeEn){
+                                var sizeType = searchField("适用人群",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.sizeTypeEn;
+                                    }
+                                }
+                            }
+                            if(context.selected.sizeTypeEn){
+                                var sizeType = searchField("适用人群中文",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.sizeTypeCn;
+                                    }
+                                }
+                            }
+                            if(context.selected.hscodeName8){
+                                var sizeType = searchField("税号个人（8位）",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.hscodeName8;
+                                    }
+                                }
+                            }
+                            if(context.selected.hscodeName10){
+                                var sizeType = searchField("税号跨境申报（10位）",scope.vm.productComm.schemaFields);
+                                if(sizeType) {
+                                    if (!sizeType.value.value) {
+                                        sizeType.value.value = context.selected.hscodeName10;
+                                    }
+                                }
+                            }
                         });
                     });
                 }
