@@ -1577,8 +1577,10 @@ public class ProductService extends BaseService {
                         return sku.getSkuCode().equals(stock.getBase().getSku());
                     }
                 });
-                stock.getBase().setOrigSize(sku.getSize());
-                stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
+                if(sku != null) {
+                    stock.getBase().setOrigSize(sku.getSize());
+                    stock.getBase().setSaleSize(sku.getAttribute("platformSize"));
+                }
             });
         }
 

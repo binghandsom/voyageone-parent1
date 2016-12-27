@@ -28,7 +28,7 @@ define([
                         self.sourceData = self.sourceData;
                     }
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "1" : "0" : '';
                 if (self.sourceData.isReadOnly == true) {
                     self.channelList = [self.sourceData.sourceData];
                     self.changeStore(self.sourceData.orderChannelId);

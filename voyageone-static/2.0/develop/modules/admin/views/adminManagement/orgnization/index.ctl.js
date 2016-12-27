@@ -92,35 +92,38 @@ define([
                     active: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openOrg('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.orgDataList, function (Info) {
-                        if (Info.id == self.adminOrgSelList.selList[0].id) {
-                            self.popups.openOrg(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }
-                            });
+                    self.popups.openOrg(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
-                        _.forEach(self.adminOrgSelList.selList, function (delInfo) {
-                            delList.push(delInfo.id);
-                        });
-                        self.adminOrgService.deleteOrg(delList).then(function (res) {
-                            self.search(1);
+                        if(item=='batchDel'){
+                            _.forEach(self.adminOrgSelList.selList, function (delInfo) {
+                                delList.push(delInfo.id);
+                            });
+                        }else{
+                            delList.push(item);
+                        }
+                        self.adminRoleService.deleteRole(delList).then(function (res) {
+                            if(res.data==true) self.search(1);
                         })
                     }
                 );

@@ -13,6 +13,7 @@
         <if test="id != null">
             AND id = #{id}
         </if>
+
         <if test="channelId != null">
             AND channel_id = #{channelId}
         </if>
@@ -94,6 +95,7 @@
         left JOIN  `cms_bt_jm_product`       AS b ON a.`product_code`=b.`product_code` AND a.`channel_id`=b.`channel_id`
         <where>
             <if test="cmsBtJmPromotionId!=null">
+
                 and a.cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
             </if>
             <if test="codeList!=null and codeList.length!=0">

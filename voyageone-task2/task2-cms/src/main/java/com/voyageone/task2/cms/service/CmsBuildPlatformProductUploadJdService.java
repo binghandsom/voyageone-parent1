@@ -82,9 +82,9 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
     // 京东平台的操作类型(在库)
     private final static String OptioinType_offsale = "offsale";
     // 价格类型(市场价格)
-    private final static String PriceType_marketprice = "retail_price";
+    //private final static String PriceType_marketprice = "retail_price";
     // 价格类型(京东价格)
-    private final static String PriceType_jdprice = "sale_price";
+    //private final static String PriceType_jdprice = "sale_price";
     // 商品属性列表
     private final static String Attrivutes = "attributes";
     // 用户自行输入的类目属性ID串
@@ -965,10 +965,10 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
         // 进货价,精确到2位小数，单位:元(非必须)
 //        jdProductBean.setCostPrice(String.valueOf(jdPrice));     // 不使用
         // 市场价, 精确到2位小数，单位:元(必须)
-        Double marketPrice = getItemPrice(skuList, channelId, cartId, PriceType_marketprice);
+        Double marketPrice = getItemPrice(skuList, channelId, cartId, CmsConstants.ChannelConfig.PRICE_RETAIL_KEY, CmsConstants.ChannelConfig.PRICE_RETAIL_PRICE_CODE);
         jdProductBean.setMarketPrice(String.valueOf(marketPrice));
         // 京东价,精确到2位小数，单位:元(必须)
-        Double jdPrice = getItemPrice(skuList, channelId, cartId, PriceType_jdprice);
+        Double jdPrice = getItemPrice(skuList, channelId, cartId,CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);
         sxData.setMaxPrice(jdPrice);
         jdProductBean.setJdPrice(String.valueOf(jdPrice));
 
@@ -1566,7 +1566,7 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                     }
 
                     // sku价格(100.0|150.0|100.0|100.0)
-                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(), PriceType_jdprice);
+                    Double skuPrice = getSkuPrice(objSku, shop.getOrder_channel_id(), shop.getCart_id(),CmsConstants.ChannelConfig.PRICE_SALE_KEY, CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE);//PriceType_jdprice
                     sbSkuPrice.append(String.valueOf(skuPrice));
                     sbSkuPrice.append(Separtor_Vertical);        // "|"
 
@@ -2120,13 +2120,14 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param skuList List<BaseMongoMap<String, Object>> 所有sku对象列表
      * @param channelId String 渠道id
      * @param cartId String 平台id
-     * @param priceType String 价格类型
+     * @param priceKey
+     * @param priceCode String 价格类型
      * @return double 所有产品全部SKU的最高价格
      */
-    private Double getItemPrice(List<BaseMongoMap<String, Object>> skuList, String channelId, String cartId, String priceType) {
+    private Double getItemPrice(List<BaseMongoMap<String, Object>> skuList, String channelId, String cartId,String priceKey, String priceCode) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // priceType:"retail_price"(市场价)  "sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId  + priceCode);
 
         // 检查一下
         String sxPricePropName;
@@ -2146,13 +2147,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
             return 0.0;
         }
 
-        if (PriceType_jdprice.equals(priceType)) {
+        if (CmsConstants.ChannelConfig.PRICE_SALE_PRICE_CODE.equals(priceCode)) {//PriceType_jdprice
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
-        } else if (PriceType_marketprice.equals(priceType)) {
+        } else if (CmsConstants.ChannelConfig.PRICE_RETAIL_PRICE_CODE.equals(priceCode)) {//PriceType_marketprice
             // 如果是市场价"retail_price"，则取个平台相应的售价(platform.P29.sku.priceMsrp)
             resultPrice = skuList.parallelStream().mapToDouble(p -> p.getDoubleAttribute(sxPricePropName)).max().getAsDouble();
         } else {
-            $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceType);
+            $warn("取得所有SKU价格的最高价格时传入的priceType不正确 [priceType:%s]" + priceCode);
         }
 
         return resultPrice;
@@ -2164,13 +2165,13 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
      * @param cmsBtProductModelSku BaseMongoMap<String, Object> SKU对象
      * @param channelId String 渠道id
      * @param cartId String 平台id
-     * @param priceType String 价格类型 ("sale_price"(京东价))
+     * @param priceCode String 价格类型 ("sale_price"(京东价))
      * @return double SKU价格
      */
-    private double getSkuPrice(BaseMongoMap<String, Object> cmsBtProductModelSku, String channelId, String cartId, String priceType) {
+    private double getSkuPrice(BaseMongoMap<String, Object> cmsBtProductModelSku, String channelId, String cartId,String priceKey,String priceCode) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
         // SKU价格类型应该用"sale_price"(京东价)
-        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.PRICE, cartId + "." + priceType);
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, priceKey, cartId+priceCode);
 
         // 检查一下
         String sxPricePropName;

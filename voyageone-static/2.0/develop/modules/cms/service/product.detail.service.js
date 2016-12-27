@@ -55,6 +55,7 @@ define([
 		this.restoreImg = restoreImg;
 		this.doAppSwitch = doAppSwitch;
 		this.doTranslateStatus = doTranslateStatus;
+		this.getMainCategoryInfo=getMainCategoryInfo;
 		/**
 		 * 获取页面产品信息
 		 * @param formData
@@ -780,5 +781,18 @@ define([
 
 			return defer.promise;
 		}
+
+		function getMainCategoryInfo(req) {
+            var defer = $q.defer();
+            $productDetailService.getMainCategoryInfo(req)
+                .then (function (res) {
+                    defer.resolve(res);
+                },function(res){
+                    defer.reject(res);
+                });
+
+            return defer.promise;
+
+        }
 	}
 });

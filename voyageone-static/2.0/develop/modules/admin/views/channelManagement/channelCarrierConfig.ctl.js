@@ -80,32 +80,39 @@ define([
                     usekd100Flg: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openChannelCarrier('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.carrierList, function (Info) {
-                        if (Info.mainKey == self.carrierSelList.selList[0].id) {
-                            self.popups.openChannelCarrier(Info);
+                    self.popups.openChannelCarrier(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
 
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.carrierSelList.selList, function (delInfo) {
                             delList.push({'orderChannelId': delInfo.orderChannelId, 'carrier': delInfo.code});
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.carrierConfigService.deleteCarrierConfig(delList).then(function (res) {
-                            if (res.data.success == false)self.confirm(res.data.message);
+                            if (res.data == false)self.confirm(res.message);
                             self.search(1);
                         })
                     }

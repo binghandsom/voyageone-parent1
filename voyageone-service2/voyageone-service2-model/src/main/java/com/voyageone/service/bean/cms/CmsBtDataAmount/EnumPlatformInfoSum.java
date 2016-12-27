@@ -36,6 +36,9 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
 
     CMS_PLATFORM_NEW_SKU("CMS_PLATFORM_NEW_SKU", "{'platforms.P%s.status':'Approved','platforms.P%s.isNewSku':'1'}", "/search/advanceSearch", "", "上新商品中有未上新SKU商品数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
+    }),
+    CMS_PLATFORM_pStatus_OnSale_pReallyStatus_InStock("CMS_PLATFORM_pStatus.OnSale_pReallyStatus.InStock","{lock:'0',\"common.fields.quantity\":{ $gt:0},\"platforms.P%s.pStatus\":'OnSale',\"platforms.P%s.pReallyStatus\":'InStock'}","", "", "下架有库存商品数", (m) -> {
+        return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
     });
 
 

@@ -22,7 +22,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "0" : "1" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "0" : "1" : '';
                 self.AdminCartService.getAllPlatform().then(function (res) {
                     self.platformAllList = res.data;
                 });

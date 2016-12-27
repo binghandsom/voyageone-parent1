@@ -36,12 +36,20 @@ public class CmsBtProductModel_Common extends BaseMongoMap<String, Object> {
         setStringAttribute("catId", catId);
     }
 
-    //主类目完整PATH
+    //主类目完整PATH(中文)
     public String getCatPath() {
         return getStringAttribute("catPath");
     }
     public void setCatPath(String catPath) {
         setStringAttribute("catPath", catPath);
+    }
+
+    //主类目完整PATH(英文)
+    public String getCatPathEn() {
+        return getStringAttribute("catPathEn");
+    }
+    public void setCatPathEn(String catPathEn) {
+        setStringAttribute("catPathEn", catPathEn);
     }
 
     //comment

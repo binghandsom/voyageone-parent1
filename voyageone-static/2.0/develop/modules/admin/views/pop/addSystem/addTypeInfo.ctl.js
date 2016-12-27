@@ -22,7 +22,7 @@ define([
                     self.popType = '添加';
                     self.sourceData = {}
                 }
-                self.sourceData.active = self.sourceData.active ? self.sourceData.active ? "1" : "0" : '';
+                self.sourceData.active = self.sourceData.active!=null ? self.sourceData.active ? "1" : "0" : '';
             },
             cancel: function () {
                 var result = {res: 'failure'};

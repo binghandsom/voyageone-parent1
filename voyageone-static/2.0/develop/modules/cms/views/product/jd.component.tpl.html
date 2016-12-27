@@ -345,7 +345,7 @@
                             <div class="row">
                                 <div class="col-sm-5 col-md-offset-7 text-right">
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="vm.status != 'Approved'||!isPublishSucceed">
+                                        <button type="button" class="btn btn-pop btn-info" ng-click="refreshPrice()" ng-disabled="!vm.platform.pNumIId">
                                             <i class="fa fa-refresh"></i>&nbsp;更新价格
                                         </button>
                                     </div>
@@ -387,7 +387,7 @@
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].platformSize}}</td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number" ng-model="entity.priceMsrp" scale="15,2" required>
+                                                <input class="form-control ng-number" type="number" ng-disabled="autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp" scale="15,2" required>
                                             </td>
                                             <td class="text-center v-middle">{{entity.priceRetail}}</td>
                                             <td class="text-center v-middle"><input class="form-control" type="text" ng-model="entity.sizeNick" style="width: 100px;margin: 0px auto;"></td>
@@ -400,7 +400,7 @@
                                             </td>
                                             <td class="mfb-xxx text-center v-middle">
                                                 <label class="col-sm-3 control-label vo_reqfield"></label>
-                                                <input class="form-control ng-number" type="number" ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
+                                                <input class="form-control ng-number" type="number"  ng-model="entity.priceSale" ng-readonly="productInfo.autoApprovePrice.configValue1 == '1'"  scale="15,2" required></td>
                                             <td class="text-center v-middle">{{vm.skuTemp[entity.skuCode].barcode}}</td>
                                         </tr>
                                         </tbody>

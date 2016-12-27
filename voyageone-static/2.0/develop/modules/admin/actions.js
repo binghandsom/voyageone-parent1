@@ -46,7 +46,8 @@ define(function () {
                     "forgetPass": "forgetPass",
                     "getUserByToken": "getUserByToken",
                     "modifyPass": "modifyPass",
-                    "getAllApp": "getAllApp"
+                    "getAllApp": "getAllApp",
+                    "addRoles": "addRoles"
                 },
                 "adminRoleService": {
                     "root": "/admin/user/role",

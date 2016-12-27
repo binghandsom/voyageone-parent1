@@ -8,7 +8,7 @@
         http://www.springframework.org/schema/rabbit
         http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd">
 
-    <!-- 连接配置 -->
+    <!-- 连接配置--> <!--在线查看http://10.0.0.84:15672-->
     <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
         <property name="host" value="10.0.0.84"/>
         <property name="port" value="5672"/>

@@ -75,6 +75,9 @@ public class CmsFieldEditController extends CmsController {
     public AjaxResponse setProductFields(@RequestBody Map<String, Object> params) {
         CmsSessionBean cmsSession = getCmsSession();
         String prop = (String) params.get("_option");
+        Integer cartId = (Integer) params.get("cartId");
+        int cartIdVal;
+
         if (prop != null) {
             if ("approval".equals(prop)) {
                 // 商品审批
@@ -99,16 +102,13 @@ public class CmsFieldEditController extends CmsController {
             }
             return success(null);
         }
-        Integer cartId = (Integer) params.get("cartId");
-        int cartIdVal = 0;
-        if (cartId == null) {
-            cartIdVal = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
-        } else {
-            cartIdVal = cartId;
-        }
 
-        Map<String, Object> rs = fieldEditService.setProductFields(params, getUser(), cartIdVal, cmsSession);
-        return success(rs);
+        if (cartId == null)
+            cartIdVal = Integer.valueOf(cmsSession.getPlatformType().get("cartId").toString());
+        else
+            cartIdVal = cartId;
+
+        return success(fieldEditService.setProductFields(params, getUser(), cartIdVal, cmsSession));
     }
 
     /**

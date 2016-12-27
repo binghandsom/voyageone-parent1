@@ -81,29 +81,36 @@ define([
                     smsCode: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openChannelSms('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.channelList, function (Info) {
-                        if (Info.seq == self.channelSmsSelList.selList[0].id) {
-                            self.popups.openChannelSms(Info);
+                    self.popups.openChannelSms(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.channelSmsSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.smsConfigService.deleteSmsConfig(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search();

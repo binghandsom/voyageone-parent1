@@ -258,6 +258,7 @@ public class AdminUserService extends BaseService {
 
         // 保存用户信息
         model.setCreater(username);
+        String pass = model.getPassword();
         encryptPassword(model);
         comUserDao.insert(model);
 
@@ -282,6 +283,15 @@ public class AdminUserService extends BaseService {
             rModel.setCreater(username);
             comUserRoleDao.insert(rModel);
         }
+
+        //给用户发邮件
+        try {
+            Mail.sendNotice(model.getEmail(), "Your VO account has been created!", getMailContent(model.getUserAccount() , pass));
+        } catch (MessagingException e) {
+            //do nothing
+            e.printStackTrace();
+        }
+
     }
 
     /**
@@ -321,12 +331,66 @@ public class AdminUserService extends BaseService {
         comUserService.clearCachedAuthenticationInfo(user.getUserAccount());
     }
 
+    /**
+     * 通过token查询用户
+     *
+     * @param token
+     * @return
+     */
     public Map getUserByToken(String token) {
         ComUserTokenModel model = getComUserTokenModel(token);
 
         Map<String, Object> result = new HashMap<>();
         result.put("userAccount", model.getUserAccount());
         return result;
+    }
+
+
+    /**
+     * 为用户批量添加角色
+     *
+     * @param userIds
+     * @param roleIds
+     */
+    @VOTransactional
+    public void addRoles(List<Integer> userIds, List<Integer> roleIds, String username)
+    {
+
+        for(Integer userId : userIds)
+        {
+            boolean changed = false;
+            for(Integer roleId : roleIds)
+            {
+                ComUserRoleModel rModel = new ComUserRoleModel();
+                rModel.setRoleId(roleId);
+                rModel.setUserId(userId);
+                rModel.setModifier(username);
+                rModel.setModified(new Date());
+                if(comUserRoleDao.selectCount(rModel) >0)
+                {
+                    ComUserRoleModel  oldModel = comUserRoleDao.selectOne(rModel);
+                    oldModel.setModifier(username);
+                    oldModel.setModified(new Date());
+                    comUserRoleDao.update(oldModel);
+                    changed = true;
+                }
+                else
+                {
+                    comUserRoleDao.insert(rModel);
+                    changed = true;
+                }
+
+            }
+
+            if(changed)
+            {
+                ComUserModel user = comUserDao.select(userId);
+                user.setModifier(username);
+                user.setModified(new Date());
+                comUserDao.update(user);
+            }
+        }
+
     }
 
     private ComUserTokenModel getComUserTokenModel(String token) {
@@ -364,14 +428,29 @@ public class AdminUserService extends BaseService {
         model.setId(userId);
         model.setPassword(pass);
         model.setModifier(username);
-        String account = comUserDao.select(userId).getUserAccount();
-        model.setUserAccount(account);
-        encryptPassword(model);
-        if (!(comUserDao.update(model) > 0)) {
-            throw new BusinessException("重设密码失败");
+        ComUserModel oldModel = comUserDao.select(userId);
+
+        if(oldModel != null) {
+            String account = oldModel.getUserAccount();
+
+            model.setUserAccount(account);
+            encryptPassword(model);
+            if (!(comUserDao.update(model) > 0)) {
+                throw new BusinessException("重设密码失败");
+            }
+            //清除该用户的登录缓存
+            comUserService.clearCachedAuthenticationInfo(account);
+
+            //给用户发邮件
+            if (!account.equals(username)) {
+                try {
+                    Mail.sendNotice(oldModel.getEmail(), "Your VO password has been reset!", getMailContent(account, pass));
+                } catch (MessagingException e) {
+                    //do nothing
+                    e.printStackTrace();
+                }
+            }
         }
-        //清除该用户的登录缓存
-        comUserService.clearCachedAuthenticationInfo(account);
 
     }
 
@@ -437,6 +516,16 @@ public class AdminUserService extends BaseService {
         sb.append("<p>").append("<a href=").append("www.baidu.com/").append(token).append(">").append("www.baidu.com/").append(token).append("</a>").append("</p>");
         sb.append("<p>").append("</p>");
         sb.append("<p>").append("此邮件24小时内有效，如果你忽略这条信息，密码将不进行更改").append("</p>");
+
+        return sb.toString();
+    }
+
+
+    private String getMailContent(String username,  String newPass) {
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("<p>").append("Dear ").append(username).append(":</p>");
+        sb.append("<p>").append("    Your password is: " + newPass).append("</p>");
 
         return sb.toString();
     }
