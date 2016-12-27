@@ -110,15 +110,9 @@ define([
                     endTime: ''
                 }
             },
-            viewDetail: function () {
+            viewDetail: function (item) {
                 var self = this;
-                _.forEach(self.adminList, function (Info) {
-                    if (Info.id == self.actionLogSelList.selList[0].id) {
-                        self.popups.openLogDetail(Info).then(function () {
-                            self.search(1);
-                        });
-                    }
-                })
+                self.popups.openLogDetail(item);
             }
         };
         return ActionLogManagementController;

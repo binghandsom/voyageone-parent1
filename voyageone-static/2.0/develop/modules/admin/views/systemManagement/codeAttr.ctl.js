@@ -79,9 +79,9 @@ define([
                     pageInfo: self.channelPageOption
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openTypeCode('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
@@ -90,27 +90,26 @@ define([
                         }
                     });
                 } else {
-                    _.forEach(self.systemList, function (Info) {
-                        if (Info.mainKey == self.codeSelList.selList[0].id) {
-                            self.popups.openTypeCode(Info).then(function (res) {
-                                if (res.res == 'success') {
-                                    self.search(1);
-                                }else {
-                                    return false;
-                                }
-                            });
+                    self.popups.openTypeCode(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else {
+                            return false;
                         }
-                    })
+                    });
                 }
 
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_DELETE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.codeSelList.selList, function (delInfo) {
                             delList.push({'id': delInfo.delId, 'code': delInfo.delCode});
                         });
+                    }else{
+                        delList.push(item);
+                    }
                         self.codeService.deleteCode(delList).then(function (res) {
                             if (res.data.success == false)self.confirm(res.data.message);
                             self.search(1);
