@@ -351,7 +351,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             //校验状态是否正确
             if (!vmsBtClientOrdersModel.getOrderStatus().equals(AcknowledgedBySeller)) {
                 throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
-                        "OrderId=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
+                        "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
             }
         } else {
             throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
@@ -369,7 +369,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             if (CollectionUtils.isEmpty(mOrderList)) {
                 throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
             } else {
-                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus, "OrderId=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
+                throw new CAApiException(ErrorIDEnum.InvalidOrderStatus, "OrderID=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
             }
         }
 
@@ -535,7 +535,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 continue;
             }
             /*if (!item.getId().equals(item.getSellerSku())) {
-                throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with id=" + item.getId()+".");
+                throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with ID=" + item.getId()+".");
             }*/
             if (item.getQuantity() == null) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSku=" + item.getSellerSku() + " is not provided."));
@@ -625,7 +625,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             }
             if (!validate) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter
-                        , "Cannot find SellerSku=" + m.getSellerSku() + " with id=" + m.getId()+"."));
+                        , "Cannot find SellerSku=" + m.getSellerSku() + " with ID=" + m.getId()+"."));
             }
         }
         if (!CollectionUtils.isEmpty(exceptionList)) {
@@ -763,7 +763,11 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
         List<CAApiException> exceptionList = new ArrayList<>();
         for (OrderItemCancellationModel item : request.getItems()) {
             if (StringUtils.isEmpty(item.getId())) {
-                exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID of SellerSku=" + item.getSellerSku() + " is not provided."));
+                if (StringUtils.isEmpty(item.getSellerSku())) {
+                    exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID and SellerSku are not provided."));
+                } else {
+                    exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "SkuID of SellerSku=" + item.getSellerSku() + " is not provided."));
+                }
                 continue;
             }
             if (StringUtils.isEmpty(item.getSellerSku())) {
@@ -771,7 +775,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 continue;
             }
             /*if (!item.getId().equals(item.getSellerSku())) {
-                throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with id=" + item.getId()+".");
+                throw new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Cannot find SellerSku=" + item.getSellerSku() + " with ID=" + item.getId()+".");
             }*/
             if (item.getQuantity() == null) {
                 exceptionList.add(new CAApiException(ErrorIDEnum.InvalidRequiredParameter, "Quantity of SellerSku=" + item.getSellerSku() + " is not provided."));
@@ -800,7 +804,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
             //校验状态是否正确
             if (!vmsBtClientOrdersModel.getOrderStatus().equals(Shipped)) {
                 throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
-                        "OrderId=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
+                        "OrderID=" + orderID + " status is " + vmsBtClientOrdersModel.getOrderStatus() + " which is invalid.");
             }
         } else {
             throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
@@ -819,7 +823,7 @@ public class CAOrderServiceImpl extends CAOpenApiBaseService implements CAOrderS
                 throw new CAApiException(ErrorIDEnum.OrderNotFound, "OrderID=" + orderID + " is not provided.");
             } else {
                 throw new CAApiException(ErrorIDEnum.InvalidOrderStatus,
-                        "OrderId=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
+                        "OrderID=" + orderID + " status is " + mOrderList.get(0).getStatus() + " which is invalid.");
             }
         }
 
