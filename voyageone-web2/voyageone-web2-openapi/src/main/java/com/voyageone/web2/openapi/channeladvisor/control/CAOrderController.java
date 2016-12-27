@@ -251,10 +251,10 @@ public class CAOrderController extends OpenApiBaseController {
      * @param request request
      * @return response
      */
-    @RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.POST)
+    /*@RequestMapping(value = CAUrlConstants.ORDERS.GET_ORDERS, method = RequestMethod.POST)
     public ActionResponse getOrdersPost(HttpServletRequest request) {
         throw new CAApiException(ErrorIDEnum.InvalidOrderStatus);
-    }
+    }*/
 
     /**
      * @api {get} /rest/channeladvisor/orders/{id} 获取单个订单
@@ -810,6 +810,11 @@ public class CAOrderController extends OpenApiBaseController {
     @RequestMapping(value = CAUrlConstants.ORDERS.REFUND_ORDER, method = RequestMethod.POST)
     public ActionResponse refundOrder(@PathVariable String id, @RequestBody OrderCancellationRequest request) {
         return caOrderService.refundOrder(id, request);
+    }
+
+    @RequestMapping(value = CAUrlConstants.ORDERS.ERROR_PATH_ORDER, method = RequestMethod.POST)
+    public ActionResponse errorPathOrder(@PathVariable String id) {
+        throw new CAApiException(ErrorIDEnum.InvalidRequest,"The endpoint URL does not exist. Please check the URL.");
     }
 
 }

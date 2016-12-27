@@ -1007,7 +1007,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @throws Exception
      */
     private HtDealUpdateRequest fillHtDealUpdateRequest(CmsBtProductModel product, String hashId, ExpressionParser expressionParser, ShopBean shopProp) throws Exception {
-        String channelId = product.getChannelId();
+        String channelId = product.getOrgChannelId();
         BaseMongoMap<String, Object> jmFields = product.getPlatform(CART_ID).getFields();
 
         HtDealUpdateRequest htDealUpdateRequest = new HtDealUpdateRequest();
@@ -1252,7 +1252,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      */
     private JmProductBean fillJmProductBean(CmsBtProductModel product,ExpressionParser expressionParser, ShopBean shopProp, Map<String, Integer> skuLogicQtyMap) throws Exception {
 
-        String channelId = product.getChannelId();
+        String channelId = product.getOrgChannelId();
         CmsBtProductModel_Platform_Cart jmCart = product.getPlatform(CartEnums.Cart.JM);
 
         JmProductBean bean = new JmProductBean();
@@ -1729,7 +1729,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
                 HtMallUpdateInfo mallUpdateInfo = new HtMallUpdateInfo();
                 mallUpdateInfo.setJumeiMallId(mallId);
                 HtMallUpdateInfo.UpdateDataInfo updateDataInfo = mallUpdateInfo.getUpdateDataInfo();
-                updateDataInfo.setShipping_system_id(NumberUtils.toInt(Codes.getCode("JUMEI", product.getChannelId())));
+                updateDataInfo.setShipping_system_id(NumberUtils.toInt(Codes.getCode("JUMEI", product.getOrgChannelId())));
                 updateDataInfo.setProduct_long_name(jmFields.getStringAttribute("productLongName"));
                 updateDataInfo.setProduct_medium_name(jmFields.getStringAttribute("productMediumName"));
                 updateDataInfo.setProduct_short_name(jmFields.getStringAttribute("productShortName"));
