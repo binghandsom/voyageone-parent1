@@ -23,10 +23,12 @@ public class CmsMqSenderService extends BaseService {
 
             mqSenderService.sendMessage(message);
         } catch (MQMessageRuleException ex) {
-            cmsBtOperationLogService.log(message, OperationLog_Type.parameterException, ex);
+            String name = this.getClass().getName();
+            cmsBtOperationLogService.log(name, name, message, OperationLog_Type.parameterException, ex);
             throw ex;
         } catch (Exception ex) {
-            cmsBtOperationLogService.log(message, ex);
+            String name = this.getClass().getName();
+            cmsBtOperationLogService.log(name, name, message, ex);
             throw ex;
         }
     }

@@ -37,6 +37,7 @@ public class ComBtTaskLogService extends BaseService implements IMQJobLog {
      */
     public void log(String jobName,IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate) {
         ComBtTaskLogModel model = new ComBtTaskLogModel();
+        model.setTaskName(jobName);
         if (messageBody != null) {
             final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
             model.setQueueName(voQueue.value());

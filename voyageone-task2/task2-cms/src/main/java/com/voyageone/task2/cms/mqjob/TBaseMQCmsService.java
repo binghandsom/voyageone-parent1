@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
 import com.voyageone.service.bean.cms.enumcms.OperationLog_Type;
@@ -29,24 +30,45 @@ public abstract class TBaseMQCmsService<TMQMessageBody  extends IMQMessageBody> 
     @Autowired
     CmsBtOperationLogService cmsBtOperationLogService;
 
+    //job描述信息
+    public String getTaskComment() {
+        if (ListUtils.isNull(this.taskControlList)) {
+            return "";
+        }
+        return this.taskControlList.get(0).getTask_comment();
+    }
+
     @Override
     public void startup(TMQMessageBody messageBody) throws Exception {
         try {
             onStartup(messageBody);
         } catch (Exception ex) {
             //记异常日志
-            cmsBtOperationLogService.log(messageBody, ex);
+            cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, ex);
             throw ex;
         }
     }
+
     //写日志
     public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String msg) {
-        cmsBtOperationLogService.log(messageBody,operationLog_type, msg);
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, operationLog_type, msg);
     }
+
+    /**
+     * 写配置异常的日志
+     * @param messageBody
+     * @param msg
+     */
     public void cmsConfigExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(messageBody,OperationLog_Type.configException, msg);
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.configException, msg);
     }
+
+    /**
+     * 写业务异常的日志
+     * @param messageBody
+     * @param msg
+     */
     public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(messageBody,OperationLog_Type.businessException, msg);
+        cmsBtOperationLogService.log(getTaskName(), getTaskComment(), messageBody, OperationLog_Type.businessException, msg);
     }
 }

@@ -144,7 +144,6 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
                 log(messageBody, null, beginDate);
             }
         }
-        //特殊异常 抛出处理
         catch (Exception ex) {
 
             log(messageBody, ex, beginDate);
