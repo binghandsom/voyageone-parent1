@@ -114,7 +114,7 @@ public class InputField extends Field {
                 break;
             case INT:
                 if (value.length() > 0) {
-                    result = new Integer(value);
+                    result = value.indexOf(".")==-1?new Integer(value):new Double(value).intValue();
                 }
                 break;
             case DOUBLE:
