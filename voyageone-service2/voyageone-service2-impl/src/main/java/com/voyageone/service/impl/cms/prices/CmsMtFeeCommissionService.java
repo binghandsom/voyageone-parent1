@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.prices;
 
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtFeeCommissionDao;
 import com.voyageone.service.impl.BaseService;
@@ -8,7 +7,10 @@ import com.voyageone.service.model.cms.CmsMtFeeCommissionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 查询, 计算佣金率
@@ -44,9 +46,9 @@ public class CmsMtFeeCommissionService extends BaseService {
      * 佣金查询的条件优先级
      */
     private static final String[][] PRIORITY = {
-            {FIELD_CHANNELID, FIELD_CARTID, FIELD_CATID},
+            {FIELD_CHANNELID, FIELD_PLATFORMID, FIELD_CARTID, FIELD_CATID},
             {FIELD_CHANNELID, FIELD_PLATFORMID, FIELD_CATID},
-            {FIELD_CHANNELID, FIELD_CARTID},
+            {FIELD_CHANNELID, FIELD_PLATFORMID, FIELD_CARTID},
             {FIELD_CHANNELID, FIELD_PLATFORMID},
             {FIELD_CHANNELID},
             {FIELD_PLATFORMID, FIELD_CARTID},

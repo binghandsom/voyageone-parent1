@@ -52,7 +52,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6" ng-if="ctrl.groupInfo.priceInputFlg">
-                                    <input type="number" class="form-control"  name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,0" required>
+                                    <input type="number" class="form-control"  name="priceValue" ng-model="ctrl.groupInfo.priceValue" placeholder="请输入数字" scale="15,2" required>
                                     <div class="m-t-xs">
                                         <vo-message target="ctrl.promotionFrom.priceValue"></vo-message>
                                     </div>
@@ -69,8 +69,8 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <label class="col-sm-6">
-                                        <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
                                     </label>
+                                    <input type="radio" name="roundType" value="3" ng-model="ctrl.groupInfo.roundType" required>&nbsp;个位向上取整
                                     <label class="col-sm-6">
                                         <input type="radio" name="roundType" value="4" ng-model="ctrl.groupInfo.roundType" required>&nbsp;无特殊处理
                                     </label>

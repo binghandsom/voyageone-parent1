@@ -90,24 +90,24 @@ define([
                     })
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openTask('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.taskList, function (Info) {
-                        if (Info.taskId == self.taskSelList.selList[0].id) {
-                            self.popups.openTask(Info).then(function (res) {
-                            	if(res.res == 'success'){
-                                    self.search(1);	
-                            	}
-                            });
+                    self.popups.openTask(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1);
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
             delete: function () {

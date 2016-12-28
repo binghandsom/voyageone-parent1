@@ -123,6 +123,7 @@ define(function () {
                     "copyProperty": "copyProperty",
                     "copyCommonProperty": "copyCommonProperty",
                     "resetTmProduct": "resetTmProduct",
+                    getMainCategoryInfo:"getMainCategoryInfo",
                     priceConfirm: "priceConfirm",
                     getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL},
                     updateSkuPrice: "updateSkuPrice",
@@ -139,7 +140,8 @@ define(function () {
                     getSkuStockInfo: 'getSkuStockInfo',
                     restoreImg: "restoreImg",
                     doAppSwitch: "doAppSwitch",
-                    doTranslateStatus: "doTranslateStatus"
+                    doTranslateStatus: "doTranslateStatus",
+                    getProductIdByCode:"getProductIdByCode"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -418,7 +420,7 @@ define(function () {
                         "getCategoryList": "getCategoryList",
                         "getCategoryDetail": "getCategoryDetail",
                         "updateCategorySchema": "updateCategorySchema",
-                        "getNewsCategoryList": session("getNewsCategoryList")
+                        "getNewsCategoryList": session("getNewsCategoryList",[KEY.CHANNEL])
                     },
                     "categorySettingService": {
                         "root": "/cms/system/category/setting",
@@ -623,6 +625,13 @@ define(function () {
                         "init": "sizeChartDetailSearch",
                         "detailSave": "sizeChartDetailSave",
                         "detailSizeMapSave": "sizeChartDetailSizeMapSave"
+                    }
+                },
+                "MtChannelConfig":{
+                    "cmsMTChannelConfigService": {
+                        "root": "/cms/mt/channel/config",
+                        "search": "search",
+                        "saveList":"saveList"
                     }
                 }
             },

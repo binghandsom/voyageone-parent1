@@ -16,10 +16,18 @@ public class OneStopInventory {
     * */
 
     private String UPC;
-
+    private String sku;
     private int Units;
 
     private int InventoryTypeID;
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
 
     public void setUPC(String UPC) {
         this.UPC = UPC;
@@ -46,4 +54,4 @@ public class OneStopInventory {
     }
 
 
-    }
+}

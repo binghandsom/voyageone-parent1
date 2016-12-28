@@ -71,6 +71,8 @@ define([
                         self.adminRoleService.setAuth(saveInfo).then(function (res) {
                             if (res.data == true) {
                                 self.$uibModalInstance.close();
+                            }else{
+                                self.confirm(res.data.message);
                             }
                         });
                         break;
@@ -78,6 +80,8 @@ define([
                         self.adminRoleService.removeAuth(saveInfo).then(function (res) {
                             if (res.data == true) {
                                 self.$uibModalInstance.close();
+                            }else{
+                                self.confirm(res.data.message);
                             }
                         });
                         break;
@@ -85,6 +89,8 @@ define([
                         self.adminRoleService.addAuth(saveInfo).then(function (res) {
                             if (res.data == true) {
                                 self.$uibModalInstance.close();
+                            }else{
+                                self.confirm(res.data.message);
                             }
                         });
                         break;

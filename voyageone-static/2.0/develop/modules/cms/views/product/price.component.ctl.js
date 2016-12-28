@@ -79,7 +79,7 @@ define([
                             var msrpInfo = _.find(resp.data, function (d) {
                                 return d.cartId == f.cartId
                             });
-                            if (msrpInfo) {
+                            if (msrpInfo && f.autoSyncPriceMsrp != "1") {
                                 f.priceMsrp = msrpInfo.msrp;
                             }
                         });
@@ -101,7 +101,18 @@ define([
                         parameter.priceSale = item.priceSale;//中国最终售价
                     }
 
-                    $productDetailService.saveCartSkuPrice(parameter).then(function (resp) {
+                    if (item.autoSyncPriceMsrp == "2" && (item.priceMsrp < item.priceSale || item.priceMsrp < item.priceSaleEd)) {
+                        confirm("建议售价不能低于指导价和最终售价，是否强制保存？").then(function () {
+                            saveCartSkuPrice(parameter);
+                        });
+                    } else {
+                        saveCartSkuPrice(parameter);
+                    }
+
+                }
+
+                function saveCartSkuPrice(parameter) {
+                    $productDetailService.saveCartSkuPrice(parameter).then(function () {
 
                         if (parameter.priceMsrp > 0) {
                             item.priceMsrpSt=parameter.priceMsrp;

@@ -152,6 +152,10 @@ public final class Constants {
 
         public static final String TMALL_NUM_IID = "http://detail.tmall.com/item.htm?id=";
 
+        public static final String JINDONG_NUM_IID = "https://item.jd.com/%s.html";
+
+        public static final String JUMEI_NUM_IID = "http://item.jumeiglobal.com/%s.html";
+
         public static final String HS_CODE_CROP = "hsCodeCrop";
 
         public static final String HS_CODE_PRIVATE = "hsCodePrivate";

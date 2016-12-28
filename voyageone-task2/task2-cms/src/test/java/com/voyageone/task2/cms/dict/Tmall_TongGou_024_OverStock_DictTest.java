@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.dict;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -25,6 +26,8 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	@Autowired
 	private SxProductService sxProductService;
 
+	private boolean isWatch = false;
+
 	String C_TEXT_BR = "<br />";
 	String C_TEMPLATE_IMG = "<img src=%s>";
 
@@ -35,8 +38,30 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 
 	@Test
 	public void startupTest() {
-
-		doCreateJson("天猫同购描述", false, doDict_详情页描述());
+		doCreateJson("天猫同购描述", false, doDict_详情页描述(null, null));
+		// 手表
+//		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s", false));
+		isWatch = true;
+		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/stock1?$790_700$" +
+				"&$layer_1_src=sneakerhead%%2F%%E6%%89%%8B%%E8%%A1%%A8%%E9%%A6%%96%%E9%%A5%%B0%%E5%%8F%%82%%E6%%95%%B0%%E8%%A1%%A8%%E5%%89%%AF" +
+				"&$layer_2_src=%s" + // 图片
+				"&$layer_3_textps_0=%s" +
+				"&$layer_4_textps_0=%s" +
+				"&$layer_5_textps_0=%s" +
+				"&$layer_6_textps_0=%s" +
+				"&$layer_7_textps_0=%s" +
+				"&$layer_8_textps_0=%s" +
+				"&$layer_9_textps_0=%s" +
+				"&$layer_10_textps_0=%s" +
+				"&$layer_14_textps_0=%s" +
+				"&$layer_12_textps_0=%s" +
+				"&$layer_13_textps_0=%s" +
+				"&$layer_11_textps_0=%s" +
+				"&$layer_15_textps_0=%s" +
+				"&$layer_16_textps_0=%s" +
+				"&$layer_17_textps_0=%s" +
+				"&$layer_18_textps_0=%s", false));
+		isWatch = false;
 
 	}
 
@@ -98,7 +123,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	 * 4. 共通图片 - 购物流程(购物流程+购物须知+7天退货服务须知)
 	 * 5. 共通图片 - 店铺介绍图
 	 */
-	private RuleExpression doDict_详情页描述() {
+	private RuleExpression doDict_详情页描述(String 参数图url, Boolean containsTitle) {
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
 
@@ -139,22 +164,28 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 			ruleRoot.addRuleWord(word);
 		}
 
-		{
-			// 尺码图
-			RuleExpression htmlTemplate = new RuleExpression();
-			htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
-
-			RuleExpression imageType = new RuleExpression();
-			imageType.addRuleWord(new TextWord("2"));
-
-			RuleExpression viewType = new RuleExpression();
-			viewType.addRuleWord(new TextWord("1"));
-
-			RuleExpression useOriUrl = null;
-
-			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
-			ruleRoot.addRuleWord(new CustomWord(word));
+		if (!StringUtils.isEmpty(参数图url)) {
+			do参数图(ruleRoot, 参数图url, containsTitle);
 		}
+
+		// deleted by morse.lu 2016/12/27 start
+//		{
+//			// 尺码图
+//			RuleExpression htmlTemplate = new RuleExpression();
+//			htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+//
+//			RuleExpression imageType = new RuleExpression();
+//			imageType.addRuleWord(new TextWord("2"));
+//
+//			RuleExpression viewType = new RuleExpression();
+//			viewType.addRuleWord(new TextWord("1"));
+//
+//			RuleExpression useOriUrl = null;
+//
+//			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+//			ruleRoot.addRuleWord(new CustomWord(word));
+//		}
+		// deleted by morse.lu 2016/12/27 end
 
 		{
 			{
@@ -166,6 +197,24 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 				String html = "<div style=\"height:80px;line-height:80px;overflow:auto;overflow-x:hidden;\">&nbsp;</div>";
 				ruleRoot.addRuleWord(new TextWord(html));
 			}
+			// added by morse.lu 2016/12/27 start
+			{
+				// 自定义图
+				RuleExpression htmlTemplate = new RuleExpression();
+				htmlTemplate.addRuleWord(new TextWord("<div><img width=790px src=\"%s\"></div><div style=\"height:80px;line-height:80px;overflow:auto;overflow-x:hidden;\">&nbsp;</div></div>"));
+
+				RuleExpression imageTemplate = null;
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord(C_自定义图片));
+
+				RuleExpression useOriUrl = new RuleExpression();
+				useOriUrl.addRuleWord(new TextWord("1"));
+
+				CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+				ruleRoot.addRuleWord(new CustomWord(word));
+			}
+			// added by morse.lu 2016/12/27 end
 			{
 				// 商品图片
 				RuleExpression htmlTemplate = new RuleExpression();
@@ -183,6 +232,32 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 				ruleRoot.addRuleWord(new CustomWord(word));
 			}
 		}
+
+		// added by morse.lu 2016/12/27 start
+		{
+			if (isWatch) {
+				// 维护保养
+				String html = "<div><img src=\"https://img.alicdn.com/imgextra/i4/2939402618/TB2cPsybHlmpuFjSZFlXXbdQXXa-2939402618.jpg\" /></div>";
+				ruleRoot.addRuleWord(new TextWord(html));
+			}
+		}
+		{
+			// 品牌故事图
+			RuleExpression htmlTemplate = new RuleExpression();
+			htmlTemplate.addRuleWord(new TextWord("<div><img src=\"%s\" /></div>"));
+
+			RuleExpression imageType = new RuleExpression();
+			imageType.addRuleWord(new TextWord("3"));
+
+			RuleExpression viewType = new RuleExpression();
+			viewType.addRuleWord(new TextWord("1"));
+
+			RuleExpression useOriUrl = null;
+
+			CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+			ruleRoot.addRuleWord(new CustomWord(word));
+		}
+		// added by morse.lu 2016/12/27 end
 
 		{
 			// 购物流程图
@@ -224,8 +299,9 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 	/**
 	 * OverStock变成官网同购后， 参数图暂时不要了， 不确定以后还要不要
 	 * @param ruleRoot
+	 * @param containsTitle 参数是否包含title
 	 */
-	private void do参数图(RuleExpression ruleRoot) {
+	private void do参数图(RuleExpression ruleRoot, String 参数图url, Boolean containsTitle) {
 		{
 			// 商品参数图
 			{
@@ -237,7 +313,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 			{
 				// imageTemplate
 				RuleExpression imageTemplate = new RuleExpression();
-				String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/over_xq_infor?$790_510$&$layer_2_src=%s&$T1=%s&$text01=%s&$t2=%s&$text02=%s&$t3=%s&$text03=%s&$t4=%s&$text04=%s&$t5=%s&$text05=%s&$t6=%s&$text06=%s&$t7=%s&$text07=%s&$t8=%s&$text08=%s";
+				String htmlTemplate = 参数图url;
 				imageTemplate.addRuleWord(new TextWord(htmlTemplate));
 
 				// 参数imageParams
@@ -262,15 +338,33 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 				}
 
 				{
-					// 第二个开始，共八个属性（品牌名称,产品类别,适用年龄,使用体重,固定方式,外形尺寸,材质用料,产品重量）
-					for (int index = 0; index < 8; index++) {
-						{
+					// 第二个开始，是属性
+					int fixedParam = 1; // 前面有几个固定参数
+					String sp = "%s";
+					int paramCnt = 0;
+					int offset = 0;
+					while ((offset = 参数图url.indexOf(sp, offset)) != -1) {
+						offset = offset + sp.length();
+						paramCnt++;
+					}
+					if (containsTitle != null && containsTitle) {
+						for (int index = 0; index < (paramCnt - fixedParam) / 2; index++) {
+							{
+								RuleExpression ruleExpression = new RuleExpression();
+								ruleExpression.addRuleWord(new FeedCnWord(true, index));
+								imageParams.add(ruleExpression);
+							}
+							{
+								RuleExpression ruleExpression = new RuleExpression();
+								ruleExpression.addRuleWord(new FeedCnWord(false, index));
+								imageParams.add(ruleExpression);
+							}
+						}
+					} else {
+						for (int index = 0; index < paramCnt - fixedParam; index++) {
 							RuleExpression ruleExpression = new RuleExpression();
 							ruleExpression.addRuleWord(new FeedCnWord(true, index));
-							imageParams.add(ruleExpression);
-						}
-						{
-							RuleExpression ruleExpression = new RuleExpression();
+//							ruleExpression.addRuleWord(new TextWord("   "));
 							ruleExpression.addRuleWord(new FeedCnWord(false, index));
 							imageParams.add(ruleExpression);
 						}

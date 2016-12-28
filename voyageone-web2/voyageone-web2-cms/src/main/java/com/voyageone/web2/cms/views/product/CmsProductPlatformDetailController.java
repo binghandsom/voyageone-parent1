@@ -78,6 +78,7 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("mastData", cmsProductPlatformDetailService.getProductMastData(channelId, prodId, cartId));
         result.put("platform", cmsProductPlatformDetailService.getProductPlatform(channelId, prodId, cartId, getLang()));
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
+        result.put("autoSyncPriceMsrp", cmsProductPlatformDetailService.getAutoSyncPriceMsrpOption(channelId, cartId));
 
         return success(result);
     }
@@ -108,7 +109,9 @@ public class CmsProductPlatformDetailController extends CmsController {
 
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
-        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName()));
+        Boolean blnSmartSx = params.get("isUpdate") != null ? !Boolean.valueOf(String.valueOf(params.get("isUpdate"))) : false;
+
+        result.put("modified", cmsProductPlatformDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName(),blnSmartSx));
 
         return success(result);
     }

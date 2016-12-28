@@ -197,8 +197,8 @@ public abstract class AbstractSkuFieldBuilder extends VOAbsLoggable {
 
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 通过配置表判断一下
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                                                        , CmsConstants.ChannelConfig.PRICE
-                                                        , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+                                                        , CmsConstants.ChannelConfig.PRICE_SX_KEY
+                                                        , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
 
         // 检查一下
         String sxPricePropName;

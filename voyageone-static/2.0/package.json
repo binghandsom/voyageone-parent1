@@ -35,6 +35,7 @@
     "through2": "",
     "morgan": "",
     "http-proxy-middleware": "",
+    "url": "",
     "browser-sync": ""
   }
 }

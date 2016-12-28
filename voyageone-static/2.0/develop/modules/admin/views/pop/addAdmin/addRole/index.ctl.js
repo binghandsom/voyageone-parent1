@@ -266,7 +266,7 @@ define([
                                 self.channelAllList.push(self.data);
                                 self.channelList.splice(self.channelList.indexOf(self.data), 1);
                                 self.selectedChannelId = '';
-                                self.filterStoreAllList({ 'value': self.data.orderChannelId });
+                                self.channelList.length ==0 ? self.filterStoreAllList({ 'type': 'showAllStore'}):self.filterStoreAllList({ 'value': self.data.orderChannelId });
                                 break;
                             }
                         } else {
@@ -383,7 +383,8 @@ define([
                         item=='ALL'? self.channelList.splice(self.channelList.indexOf(item),1):self.saveInfo.channelIds.push(item.orderChannelId);
                     });
                 }
-                if (self.saveInfo.allStore == '0') {
+
+                //if (self.saveInfo.allStore == '0') {
                     /**
                      * 授权仓库只有在选择了WMS系统才显示
                      * 未选择WMS系统时，清空授权仓库的信息
@@ -396,7 +397,7 @@ define([
                             item=='ALL'? self.storeList.splice(self.storeList.indexOf(item),1):self.saveInfo.storeIds.push(item.storeId - 0);
                         });
                     }
-                }
+                //}
 
                 if (self.append == true || self.sourceData.isCopyRole == true) {
                     if (self.sourceData.isCopyRole == true) {

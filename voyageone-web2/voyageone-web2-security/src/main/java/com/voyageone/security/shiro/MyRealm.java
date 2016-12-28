@@ -122,7 +122,7 @@ public class MyRealm extends AuthorizingRealm {
 			}
             else if(userModel.getActive() == 0)
             {
-                throw new UnknownAccountException();// 没找到帐号
+                throw new UnknownAccountException("unknown user account.");// 没找到帐号
             }
 			// 从数据库查询出来的账号名和密码,与用户输入的账号和密码对比
 			// 当用户执行登录时,在方法处理上要实现user.login(token);

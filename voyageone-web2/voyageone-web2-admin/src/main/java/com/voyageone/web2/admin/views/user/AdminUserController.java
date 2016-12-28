@@ -8,6 +8,7 @@ import com.voyageone.service.impl.com.user.AdminUserService;
 import com.voyageone.service.bean.com.PaginationResultBean;
 import com.voyageone.web2.admin.AdminController;
 import com.voyageone.web2.admin.AdminUrlConstants;
+import com.voyageone.web2.admin.bean.user.UserAddRolesBean;
 import com.voyageone.web2.admin.bean.user.UserFormBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import java.util.Map;
 @RequestMapping(value = AdminUrlConstants.User.Self.ROOT, method = RequestMethod.POST)
 public class AdminUserController extends AdminController {
 
-    private static final String DEFAULT_PASS = "1234567890";
+//    private static final String DEFAULT_PASS = "1234567890";
 
 
     @Autowired
@@ -90,7 +91,10 @@ public class AdminUserController extends AdminController {
         Preconditions.checkNotNull(bean.getRoleId());
 
         String username = getUser().getUserName();
-        bean.setPassword(DEFAULT_PASS);
+
+        //生成随机密码
+        String pass= CommonUtil.getRomdonPass(6);
+        bean.setPassword(pass);
         adminUserService.addUser(bean, username);
         return success(true);
     }
@@ -236,5 +240,22 @@ public class AdminUserController extends AdminController {
     public AjaxResponse getAllApp()  {
         return success(adminUserService.getAllApp());
     }
+
+
+    /**
+     * 批量添加角色
+     *
+     * @param bean
+     * @return
+     */
+
+    @RequestMapping(AdminUrlConstants.User.Self.ADD_ROLES)
+    public AjaxResponse addRoles(@RequestBody UserAddRolesBean bean)  {
+        String username = getUser().getUserName();
+        adminUserService.addRoles(bean.getUserIds(), bean.getRoleIds(), username);
+        return success(true);
+    }
+
+
 
 }

@@ -43,11 +43,13 @@ public class CategoryTreeAllService extends BaseService {
         List<CmsMtCategoryTreeAllBean> result = new ArrayList<>();
         // 根据channelId取得channel与Category的对应关系
         List<CmsMtChannelCategoryConfigModel> mappings = channelCategoryService.getByChannelId(channelId);
+        $debug("mappings size = " + mappings.size());
         //Map<String, Map<String, CmsMtPlatformCategoryTreeModel>> applyPlatformCategoryMap = null;
 
         // 根据channel与Category的对应关系(多个catId),取得CategoryTree
         for (CmsMtChannelCategoryConfigModel mapping : mappings) {
             String catId = mapping.getCategoryId();
+            $debug("catId = " + catId);
             CmsMtCategoryTreeAllModel model = cmsMtCategoryTreeAllDao.selectByCatId(catId);
             CmsMtCategoryTreeAllBean bean = null;
             if (model != null) {
@@ -74,49 +76,60 @@ public class CategoryTreeAllService extends BaseService {
         bean.setParentCatId(model.getParentCatId());
         bean.setSingleSku(model.getSingleSku());
         bean.setSkuSplit(SkuSplit.valueOf(model.getSkuSplit()));
+        bean.setCatNameEn(model.getCatNameEn());
+        bean.setCatPathEn(model.getCatPathEn());
+        bean.setProductTypeEn(model.getProductTypeEn());
+        bean.setProductTypeCn(model.getProductTypeCn());
+        bean.setSizeTypeEn(model.getSizeTypeEn());
+        bean.setSizeTypeCn(model.getSizeTypeCn());
+        bean.setHscode8(model.getHscode8());
+        bean.setHscode10(model.getHscode10());
+        bean.setHscodeName8(model.getHscodeName8());
+        bean.setHscodeName10(model.getHscodeName10());
 
-        // 取得这个主类目对应的平台类目信息，Map<platformId，CmsMtCategoryTreeAllModel_Platform>
-        List<CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformList = model.getPlatformCategory();
-        Map<String, CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformMap =
-                categoryTreePlatformList.stream().collect(toMap(CmsMtCategoryTreeAllModel_Platform::getPlatformId, item -> item));
 
-        // 获取当前channel, 有多少个cartId
-        List<Map> platformCategoryList = new ArrayList<>();
-        List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", lang); // 取得允许Approve的数据
-        if (typeChannelBeanListApprove != null) {
-            // 根据渠道和平台取得已经申请的平台类目
-            if (applyPlatformCategoryMap == null) {
-                applyPlatformCategoryMap = getApplyPlatformCategory(channelId, typeChannelBeanListApprove);
-            }
-
-            // 生成这个主类目下，以对应的各个cartId为单位的平台类目信息
-            for(TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
-                Map<String, Object> platformCategory = new HashMap<>();
-                platformCategory.put("cartId", String.valueOf(typeChannelBean.getValue()));
-                platformCategory.put("cartName", String.valueOf(typeChannelBean.getName()));
-                CartBean cartBean = Carts.getCart(Integer.parseInt(typeChannelBean.getValue()));
-                if (cartBean !=null && categoryTreePlatformMap.get(cartBean.getPlatform_id()) != null) {
-                    platformCategory.put("catId", categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatId());
-                    platformCategory.put("catPath", categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatPath());
-                } else {
-                    platformCategory.put("catId", "");
-                    platformCategory.put("catPath", "");
-                }
-
-                // 根据channelId对应的平台类目信息，加上这个平台类目是否申请的标志位
-                if (cartBean != null
-                        && categoryTreePlatformMap.get(cartBean.getPlatform_id()) != null
-                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
-                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatId()) == null) {
-                    platformCategory.put("isNotApply", "1");
-                } else {
-                    platformCategory.put("isNotApply", "0");
-                }
-                platformCategoryList.add(platformCategory);
-            }
-        }
-        bean.setPlatformCategory(platformCategoryList);
-
+//        // 取得这个主类目对应的平台类目信息，Map<platformId，CmsMtCategoryTreeAllModel_Platform>
+//        List<CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformList = model.getPlatformCategory();
+//        Map<String, CmsMtCategoryTreeAllModel_Platform> categoryTreePlatformMap =
+//                categoryTreePlatformList.stream().collect(toMap(CmsMtCategoryTreeAllModel_Platform::getPlatformId, item -> item));
+//
+//        // 获取当前channel, 有多少个cartId
+//        List<Map> platformCategoryList = new ArrayList<>();
+//        List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(channelId, "A", lang); // 取得允许Approve的数据
+//        if (typeChannelBeanListApprove != null) {
+//            // 根据渠道和平台取得已经申请的平台类目
+//            if (applyPlatformCategoryMap == null) {
+//                applyPlatformCategoryMap = getApplyPlatformCategory(channelId, typeChannelBeanListApprove);
+//            }
+//
+//            // 生成这个主类目下，以对应的各个cartId为单位的平台类目信息
+//            for(TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+//                Map<String, Object> platformCategory = new HashMap<>();
+//                platformCategory.put("cartId", String.valueOf(typeChannelBean.getValue()));
+//                platformCategory.put("cartName", String.valueOf(typeChannelBean.getName()));
+//                CartBean cartBean = Carts.getCart(Integer.parseInt(typeChannelBean.getValue()));
+//                if (cartBean !=null && categoryTreePlatformMap.get(cartBean.getPlatform_id()) != null) {
+//                    platformCategory.put("catId", categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatId());
+//                    platformCategory.put("catPath", categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatPath());
+//                } else {
+//                    platformCategory.put("catId", "");
+//                    platformCategory.put("catPath", "");
+//                }
+//
+//                // 根据channelId对应的平台类目信息，加上这个平台类目是否申请的标志位
+//                if (cartBean != null
+//                        && categoryTreePlatformMap.get(cartBean.getPlatform_id()) != null
+//                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()) != null
+//                        && applyPlatformCategoryMap.get(typeChannelBean.getValue()).get(categoryTreePlatformMap.get(cartBean.getPlatform_id()).getCatId()) == null) {
+//                    platformCategory.put("isNotApply", "1");
+//                } else {
+//                    platformCategory.put("isNotApply", "0");
+//                }
+//                platformCategoryList.add(platformCategory);
+//            }
+//        }
+//        bean.setPlatformCategory(platformCategoryList);
+//
         // 这个类目的子类目也要这样做
         if (model.getChildren() != null && !model.getChildren().isEmpty()) {
             for (CmsMtCategoryTreeAllModel child : model.getChildren()) {

@@ -9,6 +9,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.CamelUtil;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.onestop.bean.OneStopProduct;
 import com.voyageone.components.onestop.service.OneStopClient;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -67,9 +68,7 @@ public class FryeAnalysisService extends BaseAnalysisService {
         int cnt = 0;
         Date getFeedDate = new Date(0);
         //取得产品productId
-//        List<Long> productIdList = oneStopClient.catalogProductId(getFeedDate);
-        List<Long> productIdList = new ArrayList<>();
-        productIdList.add((long) 17195);
+        List<Long> productIdList = oneStopClient.catalogProductId(getFeedDate);
         if (productIdList.size() > 0) {
             for (Long productId : productIdList) {
                 //根据产品productId取得对应的产品信息
@@ -100,6 +99,20 @@ public class FryeAnalysisService extends BaseAnalysisService {
                                     }
                                     fryeBean.setFabric(String.valueOf(sbFabric));
                                 }
+                                if ("Tax Code".equals(Attribute.getName())) {
+                                    StringBuilder sbTaxCode = new StringBuilder();
+                                    for (Map.Entry<String, String> entry : Attribute.getValues().entrySet()) {
+                                        sbTaxCode.append(entry.getValue());
+                                    }
+                                    fryeBean.setTaxCode(String.valueOf(sbTaxCode));
+                                }
+                                if ("Gender".equals(Attribute.getName())) {
+                                    StringBuilder sbGender = new StringBuilder();
+                                    for (Map.Entry<String, String> entry : Attribute.getValues().entrySet()) {
+                                        sbGender.append(entry.getValue());
+                                    }
+                                    fryeBean.setSex(String.valueOf(sbGender));
+                                }
                             });
                         }
                         if (sb.length() > 0) {
@@ -128,45 +141,109 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         fryeBean.setMetadataDescription2(metaDataBean.getDescription2());
                         fryeBean.setMetadataDescription3(metaDataBean.getDescription3());
                         fryeBean.setMetadataDescription4(metaDataBean.getDescription4());
-                        fryeBean.setMetadataDescription2withformatting(metaDataBean.getDescription2WithFormatting());
-                        fryeBean.setMetadataDescription3withformatting(metaDataBean.getDescription3WithFormatting());
-                        fryeBean.setMetadataDescription4withformatting(metaDataBean.getDescription4WithFormatting());
-                        if(!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())){
-                            String origin = metaDataBean.getDescription4WithFormatting().replaceAll("<ul>","").replaceAll("</ul>",",").replaceAll("<li>","").replaceAll("</li>",",");
-                            String[] originList = origin.split(",");
-                            String countyValue = "";
-                            for(String county:originList){
-                                if(county.contains("Made in the")){
-                                    countyValue=county.replace("Made in the ","");
+                        if (!StringUtil.isEmpty(metaDataBean.getDescription2WithFormatting())) {
+                            fryeBean.setMetadataDescription2withformatting(metaDataBean.getDescription2WithFormatting());
+                        } else {
+                            fryeBean.setMetadataDescription2withformatting("");
+                        }
+                        if (!StringUtil.isEmpty(metaDataBean.getDescription3WithFormatting())) {
+                            fryeBean.setMetadataDescription3withformatting(metaDataBean.getDescription3WithFormatting());
+                        } else {
+                            fryeBean.setMetadataDescription3withformatting("");
+                        }
+                        if (!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())) {
+                            fryeBean.setMetadataDescription4withformatting(metaDataBean.getDescription4WithFormatting());
+                        } else {
+                            fryeBean.setMetadataDescription4withformatting("");
+                        }
+                        if (!StringUtil.isEmpty(metaDataBean.getDescription2WithFormatting())) {
+                            String countryOriginalString = metaDataBean.getDescription2WithFormatting();
+                            countryOriginalString = countryOriginalString.replace("&nbsp;", "</br>")
+                                    .replace("<br />", "</br>")
+                                    .replace("<br/>", "</br>")
+                                    .replace("</ br>", "</br>")
+                                    .replaceAll("\n", "")
+                                    .replaceAll("\r", "");
+                            Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                            Matcher matcher = pattern.matcher(countryOriginalString);
+                            if (matcher.find()) {
+                                String result = matcher.replaceFirst("$1");
+                                fryeBean.setOrigin(result);
+
+                            }
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            if (!StringUtil.isEmpty(metaDataBean.getDescription3WithFormatting())) {
+                                String countryOriginalString = metaDataBean.getDescription3WithFormatting();
+                                countryOriginalString = countryOriginalString.replace("&nbsp", "</br>")
+                                        .replace("<br />", "</br>")
+                                        .replace("<br/>", "</br>")
+                                        .replace("</ br>", "</br>")
+                                        .replaceAll("\n", "")
+                                        .replaceAll("\r", "");
+                                Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                                Matcher matcher = pattern.matcher(countryOriginalString);
+                                if (matcher.find()) {
+                                    String result = matcher.replaceFirst("$1");
+                                    fryeBean.setOrigin(result);
+
                                 }
                             }
-                            fryeBean.setOrigin(countyValue);
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            if (!StringUtil.isEmpty(metaDataBean.getDescription4WithFormatting())) {
+                                String countryOriginalString = metaDataBean.getDescription4WithFormatting();
+                                countryOriginalString = countryOriginalString.replace("&nbsp", "</br>")
+                                        .replace("<br />", "</br>")
+                                        .replace("<br/>", "</br>")
+                                        .replace("</ br>", "</br>")
+                                        .replaceAll("\n", "")
+                                        .replaceAll("\r", "");
+                                Pattern pattern = Pattern.compile(".*Made in (.*?)( |</br>).*");
+                                Matcher matcher = pattern.matcher(countryOriginalString);
+                                if (matcher.find()) {
+                                    String result = matcher.replaceFirst("$1");
+                                    fryeBean.setOrigin(result);
+
+                                }
+                            }
+                        }
+                        if (StringUtil.isEmpty(fryeBean.getOrigin())) {
+                            fryeBean.setOrigin("unknown");
                         }
                         fryeBean.setMetadataCategoryname(metaDataBean.getCategoryName());
-                        if(!StringUtil.isEmpty(metaDataBean.getCategoryName())){
-                            String[] categoryNameList = metaDataBean.getCategoryName().replace(" ","").trim().split("->");
-                            for(String categoryName:categoryNameList){
-                                if("women".equals(categoryName.toLowerCase())||"womens".equals(categoryName.toLowerCase())){
+
+                        if (!StringUtil.isEmpty(metaDataBean.getCategoryName()) && StringUtil.isEmpty(fryeBean.getSex())) {
+                            String[] categoryNameList = metaDataBean.getCategoryName().replace(" ", "").trim().split("->");
+                            for (String categoryName : categoryNameList) {
+                                if ("women".equals(categoryName.toLowerCase()) || "womens".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
-                                if("baby".equals(categoryName.toLowerCase())){
+                                if ("baby".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
-                                if("girl".equals(categoryName.toLowerCase())){
+                                if ("girl".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
-                                if("boy".equals(categoryName.toLowerCase())){
+                                if ("boy".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
-                                if("mens".equals(categoryName.toLowerCase())||"men".equals(categoryName.toLowerCase())){
+                                if ("mens".equals(categoryName.toLowerCase()) || "men".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
-                                if("kids".equals(categoryName.toLowerCase())){
+                                if ("kids".equals(categoryName.toLowerCase())) {
                                     fryeBean.setSex(categoryName);
                                 }
                             }
                         }
+                        if (StringUtil.isEmpty(fryeBean.getSex())) {
+                            fryeBean.setSex("unisex");
+                        }
                         fryeBean.setMetadataDetail(metaDataBean.getDetail());
+                        //如果【Fabric】为空，取MetaData.Detail
+                        if (StringUtil.isEmpty(fryeBean.getFabric())) {
+                            fryeBean.setFabric(metaDataBean.getDetail());
+                        }
                         fryeBean.setMetadataUnitcost(metaDataBean.getUnitCost());
                         fryeBean.setMetadataPreviouscost(metaDataBean.getPreviousCost());
                         fryeBean.setMetadataMaxcost(metaDataBean.getMaxCost());
@@ -184,6 +261,9 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         fryeBean.setMetadataShowwhenoos(metaDataBean.isShowWhenOos());
                         fryeBean.setMetadataNonremovablefromcart(metaDataBean.isNonremovableFromCart());
                         fryeBean.setMetadataProducturl(metaDataBean.getProductUrl());
+                        if (!StringUtil.isEmpty(fryeBean.getMetadataProducturl())) {
+                            fryeBean.getMetadataProducturl().replace("//frye.dev.onestop.com", "http://www.thefryecompany.com ");
+                        }
                         //Variants_UPC
                         fryeBean.setVariantsUpc(variant.getUPC());
                         //Variants_Name
@@ -196,20 +276,22 @@ public class FryeAnalysisService extends BaseAnalysisService {
                         //Variants.Medias.Meta取得开始
                         for (OneStopProduct.VariantsBean.MediasBean medias : variant.getMedias()) {
                             OneStopProduct.VariantsBean.MediasBean.MediaMetaBean metaBean = medias.getMeta();
-                            if(!StringUtil.isEmpty(metaBean.getExtraImageThumb())){
+                            if (!StringUtil.isEmpty(metaBean.getExtraImageThumb())) {
                                 sbExtraImageThumb.append(metaBean.getExtraImageThumb()).append(",");
                             }
-                            if(!StringUtil.isEmpty(metaBean.getExtraImageThumbUrl())){
+                            if (!StringUtil.isEmpty(metaBean.getExtraImageThumbUrl())) {
                                 sbExtraImageThumbUrl.append(metaBean.getExtraImageThumbUrl()).append(",");
                             }
-                            if(!StringUtil.isEmpty(metaBean.getExtraImageLargeThumb())){
+                            if (!StringUtil.isEmpty(metaBean.getExtraImageLargeThumb())) {
                                 sbExtraImageLargeThumb.append(metaBean.getExtraImageLargeThumb()).append(",");
                             }
-                            if(!StringUtil.isEmpty(metaBean.getExtraImageLargeThumbUrl())){
+                            if (!StringUtil.isEmpty(metaBean.getExtraImageLargeThumbUrl())) {
                                 sbExtraImageLargeThumbUrl.append(metaBean.getExtraImageLargeThumbUrl()).append(",");
                             }
-                            if(!StringUtil.isEmpty(medias.getFilePath())){
-                                sbFilePath.append(medias.getFilePath()).append(",");
+                            if (!StringUtil.isEmpty(medias.getFilePath())) {
+                                if(!medias.getFilePath().contains("colors")){
+                                    sbFilePath.append(medias.getFilePath()).append(",");
+                                }
                             }
                         }
                         //Variants_Medias_Meta_ExtraImageThumb
@@ -239,22 +321,28 @@ public class FryeAnalysisService extends BaseAnalysisService {
                             if ("Color".equals(option.getName())) {
                                 //Variants_Options_Color
                                 StringBuilder sbValue = new StringBuilder();
+                                StringBuilder sbName = new StringBuilder();
                                 for (Map.Entry<String, String> entry : option.getValues().entrySet()) {
                                     sbValue.append(entry.getValue());
+                                    sbName.append(entry.getValue());
                                 }
                                 if (sbValue.length() > 0) {
                                     fryeBean.setVariantsOptionsColor(sbValue.toString());
+                                    fryeBean.setVariantsOptionsColorValues(String.valueOf(sbName.toString()));
                                 }
                             }
                             //Variants_Options_size
                             if ("Size".equals(option.getName())) {
                                 //Variants_Options_Color
                                 StringBuilder sbValue = new StringBuilder();
+                                StringBuilder sbName = new StringBuilder();
                                 for (Map.Entry<String, String> entry : option.getValues().entrySet()) {
                                     sbValue.append(entry.getValue());
+                                    sbName.append(entry.getValue());
                                 }
                                 if (sbValue.length() > 0) {
                                     fryeBean.setVariantsOptionsSize(String.valueOf(sbValue.toString()));
+                                    fryeBean.setVariantsOptionsSizeValues(String.valueOf(sbName.toString()));
                                 }
                             }
                         }
@@ -330,6 +418,10 @@ public class FryeAnalysisService extends BaseAnalysisService {
             }
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel(getChannel());
+            if(!ListUtils.isNull(cmsBtFeedInfoModel.getImage())) {
+                cmsBtFeedInfoModel.setImage(cmsBtFeedInfoModel.getImage().stream().map(url -> "http:" + url).collect(Collectors.toList()));
+                cmsBtFeedInfoModel.getSkus().forEach(cmsBtFeedInfoModel_sku -> cmsBtFeedInfoModel_sku.setImage(cmsBtFeedInfoModel.getImage()));
+            }
             cmsBtFeedInfoModel.setAttribute(attribute);
             //设置重量开始
             List<CmsBtFeedInfoModel_Sku> skus = vtmModelBean.getSkus();
@@ -348,12 +440,15 @@ public class FryeAnalysisService extends BaseAnalysisService {
             }
             cmsBtFeedInfoModel.setSkus(skus);
             //设置重量结束
-
+            List<String> imageList = new ArrayList<>();
+            for (String image : cmsBtFeedInfoModel.getImage()) {
+                String im = image.substring(image.indexOf("."), image.length());
+                imageList.add("//s001" + im);
+            }
+            cmsBtFeedInfoModel.setImage(imageList);
             if (codeMap.containsKey(cmsBtFeedInfoModel.getCode())) {
                 CmsBtFeedInfoModel beforeFeed = codeMap.get(cmsBtFeedInfoModel.getCode());
                 beforeFeed.getSkus().addAll(cmsBtFeedInfoModel.getSkus());
-                beforeFeed.getImage().addAll(cmsBtFeedInfoModel.getImage());
-                beforeFeed.setImage(beforeFeed.getImage().stream().distinct().collect(Collectors.toList()));
                 beforeFeed.setAttribute(attributeMerge(beforeFeed.getAttribute(), cmsBtFeedInfoModel.getAttribute()));
             } else {
                 modelBeans.add(cmsBtFeedInfoModel);

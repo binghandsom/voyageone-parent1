@@ -55,13 +55,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("isMasterMain", isMasterMain == null ? 0 : isMasterMain);
     }
 
-    //尺码表
-    public String getSizeChart() {
-        return getStringAttribute("sizeChart");
-    }
-    public void setSizeChart(String sizeChart) {
-        setStringAttribute("sizeChart", sizeChart);
-    }
+//    尺码表位置有人写错了， 导致这边用不了了， 所以删了（目前是在common下面的sizeChart）
+//    //尺码表
+//    public String getSizeChart() {
+//        return getStringAttribute("sizeChart");
+//    }
+//    public void setSizeChart(String sizeChart) {
+//        setStringAttribute("sizeChart", sizeChart);
+//    }
 
     //产品名称（英文）
     public String getProductNameEn() {
@@ -143,7 +144,7 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("origin", origin);
     }
 
-    //产品分类
+    //产品分类(英文)
     public String getProductType() {
         return getStringAttribute("productType");
     }
@@ -151,12 +152,44 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setStringAttribute("productType", productType);
     }
 
-    //适合人群
+    //产品分类(中文)
+    public String getProductTypeCn() {
+        return getStringAttribute("productTypeCn");
+    }
+    public void setProductTypeCn(String productTypeCn) {
+        setStringAttribute("productTypeCn", productTypeCn);
+    }
+
+    //feed原始产品分类(英文)
+    public String getOrigProductType() {
+        return getStringAttribute("origProductType");
+    }
+    public void setOrigProductType(String origProductType) {
+        setStringAttribute("origProductType", origProductType);
+    }
+
+    //适合人群(英文)
     public String getSizeType() {
         return getStringAttribute("sizeType");
     }
     public void setSizeType(String sizeType) {
         setStringAttribute("sizeType", sizeType);
+    }
+
+    //适合人群(中文)
+    public String getSizeTypeCn() {
+        return getStringAttribute("sizeTypeCn");
+    }
+    public void setSizeTypeCn(String sizeTypeCn) {
+        setStringAttribute("sizeTypeCn", sizeTypeCn);
+    }
+
+    //feed原始适合人群(英文)
+    public String getOrigSizeType() {
+        return getStringAttribute("origSizeType");
+    }
+    public void setOrigSizeType(String origSizeType) {
+        setStringAttribute("origSizeType", origSizeType);
     }
 
     //hsCodeCrop 税号集货

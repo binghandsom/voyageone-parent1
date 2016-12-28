@@ -77,6 +77,11 @@ public class CartEnums {
 		LIKING("32"),
 
 		/**
+		 * 分销喜庆
+		 */
+		DT("33"),
+
+		/**
 		 * USJOI测试
 		 */
 		JGT("98"),
@@ -130,6 +135,8 @@ public class CartEnums {
                     return USTT;
 				case "32":
 					return LIKING;
+				case "33":
+					return DT;
 				case "928":
 					return USJGJ;
 				case "929":

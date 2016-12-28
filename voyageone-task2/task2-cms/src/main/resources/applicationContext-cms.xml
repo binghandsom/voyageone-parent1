@@ -122,6 +122,9 @@
         <!-- SneakerHead feed 导入 cms2 -->
         <task:scheduled ref="CmsSneakerHeadAnalysisJob" method="run" cron="0 0 1 * * ?"/>
 
+        <!-- Wmf 导入 cms2 -->
+        <task:scheduled ref="CmsWmfAnalysisJob" method="run" cron="40 * 0/1 * * ?"/>
+
         <!-- 产品数据上新到USJoi -->
         <task:scheduled ref="CmsUploadProductToUSJoiJob" method="run" cron="20 0/3 * * * ?"/>
 
@@ -208,6 +211,9 @@
 
         <!-- 独立域名类目-产品关系（每5分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductSellercatCnTmpJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
+        <!-- 被迫下架的商品 自动上架（每5分钟一次） -->
+        <task:scheduled ref="platformForcedInStockProduct_AutoOnSaleJob" method="run" cron="0 0/5 0-23 * * ?" />
 
     </task:scheduled-tasks>
 

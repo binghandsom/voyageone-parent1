@@ -47,7 +47,7 @@ public class LoggingHandler {
 
         long start = System.currentTimeMillis();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String ip = request.getHeader("x-forwarded-for");
+        String ip = request.getHeader("x-real-ip");
         if (StringUtils.isEmpty(ip)) {
         	ip = request.getRemoteAddr();
         }

@@ -5,13 +5,14 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -84,6 +85,7 @@ public class CmsFeedSearchService extends BaseViewService {
             feedCatList.remove(0);
         }
         List<Integer> delFlgList = new ArrayList<Integer>();
+
         for (int i = 0, leng = feedCatList.size(); i < leng; i++) {
             if (feedCatList.get(i).getIsParent() == 1) {
                 // 非子节点
@@ -93,7 +95,7 @@ public class CmsFeedSearchService extends BaseViewService {
         for (int leng = delFlgList.size(), i = leng - 1; i >= 0; i--) {
             feedCatList.remove(delFlgList.get(i).intValue());
         }
-        masterData.put("sortList", CmsChannelConfigs.getConfigBeans("000", CmsConstants.ChannelConfig.FEED_SEARCH_SORT));
+        masterData.put("sortList", TypeConfigEnums.MastType.feedSearchSort.getList(language));
         masterData.put("categoryList", feedCatList);
         masterData.put("productType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.PRODUCT_TYPE));
         masterData.put("sizeType", cmsMtChannelValuesService.getCmsMtChannelValuesListByChannelIdType(channelId, CmsMtChannelValuesService.SIZE_TYPE));

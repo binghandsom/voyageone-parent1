@@ -3071,7 +3071,7 @@ public class CmsSetMainPropMongoService extends BaseCronTaskService {
                 String URL_FORMAT = "[~@.' ';#+$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 if (cmsChannelConfigBean != null && cmsChannelConfigBean.getChannelId() != null &&
-                        channelId.equals(cmsChannelConfigBean.getChannelId())) {
+                        channelId.equals(cmsChannelConfigBean.getChannelId()) && "1".equalsIgnoreCase(cmsChannelConfigBean.getConfigValue1())) {
                     String[] imgName = originalUrl.split("/");
                     newModel.setImgName(imgName[imgName.length - 1]);
                     newModel.setUpdFlg(1);

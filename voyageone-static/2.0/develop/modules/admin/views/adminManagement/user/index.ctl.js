@@ -88,17 +88,17 @@ define([
                 var self = this;
                 page == 1 ? self.searchInfo.pageInfo.curr = 1 : page;
                 self.adminUserService.searchUser({
-                        'pageNum': self.searchInfo.pageInfo.curr,
-                        'pageSize': self.searchInfo.pageInfo.size,
-                        'userAccount': self.searchInfo.userAccount,
-                        'roleId': self.searchInfo.roleId,
-                        'active': self.searchInfo.active,
-                        'channelId': self.searchInfo.channelId,
-                        'orgId': self.searchInfo.orgId,
-                        'application': self.searchInfo.application,
-                        'companyId': self.searchInfo.company,
-                        'storeId': self.searchInfo.storeId
-                    })
+                    'pageNum': self.searchInfo.pageInfo.curr,
+                    'pageSize': self.searchInfo.pageInfo.size,
+                    'userAccount': self.searchInfo.userAccount,
+                    'roleId': self.searchInfo.roleId,
+                    'active': self.searchInfo.active,
+                    'channelId': self.searchInfo.channelId,
+                    'orgId': self.searchInfo.orgId,
+                    'application': self.searchInfo.application,
+                    'companyId': self.searchInfo.company,
+                    'storeId': self.searchInfo.storeId
+                })
                     .then(function (res) {
                         self.adminList = res.data.result;
                         self.pageOption.total = res.data.count;
@@ -136,44 +136,58 @@ define([
                     storeId: ''
                 }
             },
-            edit: function (type) {
+            edit: function (item) {
                 var self = this;
-                if (type == 'add') {
+                if (item == 'add') {
                     self.popups.openAddUser('add').then(function (res) {
                         if (res.res == 'success') {
                             self.search(1);
+                        }else{
+                            return false;
                         }
                     });
                 } else {
-                    _.forEach(self.adminList, function (Info) {
-                        if (Info.id == self.adminUserSelList.selList[0].id) {
-                            self.popups.openAddUser(Info);
+                    self.popups.openAddUser(item).then(function (res) {
+                        if (res.res == 'success') {
+                            self.search(1)
+                        }else{
+                            return false;
                         }
-                    })
+                    });
                 }
             },
-            vieAuthority: function () {
+            addRoles: function () {
                 var self = this;
-                var popInfo = [];
-                _.forEach(self.adminList, function (Info) {
-                    _.forEach(self.adminUserSelList.selList, function (item) {
-                        if (Info.id == item.id) {
-                            popInfo.push(Info);
-                        }
-                    })
+                var ids = [];
+                _.forEach(self.adminUserSelList.selList, function (sel) {
+                    ids.push(sel.id);
                 });
+                self.popups.openAddRoles(ids).then(function (res) {
+                    if (res.res == 'success') {
+                        self.search(1);
+                    }else{
+                        return false;
+                    }
+                });
+            },
+            vieAuthority: function (item) {
+                var self = this,popInfo = [];
+                popInfo.push(item);
                 self.popups.openUserAuthority(popInfo);
             },
-            delete: function () {
-                var self = this;
+            delete: function (item) {
+                var self = this,delList = [];
                 self.confirm('TXT_CONFIRM_INACTIVE_MSG').then(function () {
-                        var delList = [];
+                    if(item=='batchDel'){
                         _.forEach(self.adminUserSelList.selList, function (delInfo) {
                             delList.push(delInfo.id);
                         });
-                        self.adminUserService.deleteUser(delList).then(function (res) {
-                            self.search();
-                        })
+                    }else{
+                        delList.push(item);
+                    }
+                    self.adminUserService.deleteUser(delList).then(function (res) {
+                        if(res.data==true) self.search(1);
+                    })
                     }
                 );
             },
@@ -186,7 +200,7 @@ define([
                     });
                     self.adminUserService.resetPass(idList).then(function (res) {
                         if (res.data.password) {
-                            self.alert('密码重置成功：' +  res.data.password + "。");
+                            self.alert('密码重置成功：' + res.data.password + "。");
                         } else {
                             self.alert('密码重置失败，请重试');
                         }

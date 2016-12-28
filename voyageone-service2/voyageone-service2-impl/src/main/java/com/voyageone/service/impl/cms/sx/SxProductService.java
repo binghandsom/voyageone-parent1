@@ -1085,8 +1085,11 @@ public class SxProductService extends BaseService {
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
         Integer sizeChartId = null;
-        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getFields().getSizeChart())) {
-            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getFields().getSizeChart());
+//        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getFields().getSizeChart())) {
+//            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getFields().getSizeChart());
+//        }
+        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
+            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
         }
         Map<String, String> sizeMap = getSizeMap(
                 channelId,
@@ -3252,8 +3255,8 @@ public class SxProductService extends BaseService {
     private double calcItemPrice(List<CmsBtProductModel> productlList, Map<String, Integer> skuInventoryMap, String channelId, int cartId) {
         // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
         CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId
-                , CmsConstants.ChannelConfig.PRICE
-                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE);
+                , CmsConstants.ChannelConfig.PRICE_SX_KEY
+                , String.valueOf(cartId) + CmsConstants.ChannelConfig.PRICE_SX_PRICE_CODE);
 
         // 检查一下
         String sxPricePropName;
@@ -3940,6 +3943,13 @@ public class SxProductService extends BaseService {
 						break;
 					case SINGLECHECK:
 						SingleCheckField singleCheckField = (SingleCheckField) field;
+                        if (singleCheckField.getOptions().stream().filter(option -> o.toString().equals(option.getValue())).count() == 0) {
+                            // 如果在CMS 店铺管理>平台默认属性设置一览 画面中设置的类目默认属性值在最新的类目schema中不存在时，报出异常
+                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+                                    "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+                                    "请重新设置该类目的默认值之后再上新!",
+                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), o.toString()));
+                        }
 						singleCheckField.setValue(o.toString());
 						retMap.put(field.getId(), singleCheckField);
 						break;
@@ -3947,10 +3957,24 @@ public class SxProductService extends BaseService {
                         MultiCheckField multiCheckField = (MultiCheckField) field;
                         List<Value> lstValue = new ArrayList<>();
                         ArrayList<String> defaultValueList = (ArrayList<String>) o;
+                        List<String> notExistValues = new ArrayList<>();
                         for (String defaultValue : defaultValueList){
+                            if (multiCheckField.getOptions().stream().filter(option -> defaultValue.equals(option.getValue())).count() == 0) {
+                                // 如果在CMS店铺管理>平台默认属性设置一览画面中设置的类目默认属性值在最新的类目schema中不存在时
+                                notExistValues.add(defaultValue);
+                                continue;
+                            }
                             Value v = new Value();
                             v.setValue(defaultValue);
                             lstValue.add(v);
+                        }
+                        // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
+                        if (ListUtils.notNull(notExistValues)) {
+                            throw new BusinessException(String.format("在CMS店铺管理>平台默认属性设置一览画面中设置的类目(%s)属性(%s)的" +
+                                            "默认属性值(%s)在京东平台最新的类目schema中已经不存在了(默认属性设置一览画面中也会显示为空)，" +
+                                            "请重新设置该类目的默认值之后再上新!",
+                                    sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+                                    multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
                         }
                         multiCheckField.setValues(lstValue);
                         retMap.put(field.getId(), multiCheckField);
@@ -4082,6 +4106,13 @@ public class SxProductService extends BaseService {
                 break;
             case SINGLECHECK:
                 SingleCheckField singleCheckField = (SingleCheckField) field;
+                String value = strfieldItemValue;
+                if (singleCheckField.getOptions().stream().filter(option -> value.equals(option.getValue())).count() == 0) {
+                    // 如果高级检索产品页中设置的属性值在最新的类目schema中不存在时，报出异常
+                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(), singleCheckField.getName(), value));
+                }
                 singleCheckField.setValue(strfieldItemValue);
                 retMap.put(field.getId(), singleCheckField);
                 break;
@@ -4091,8 +4122,22 @@ public class SxProductService extends BaseService {
                 String[] valueArrays = ExpressionParser.decodeString(strfieldItemValue); // 解析"~~"分隔的字符串
 
                 MultiCheckField multiCheckField = (MultiCheckField)field;
+                List<String> notExistValues = new ArrayList<>();
                 for (String val : valueArrays) {
+                    if (multiCheckField.getOptions().stream().filter(option -> val.equals(option.getValue())).count() == 0) {
+                        // 如果在CMS店铺管理>平台默认属性设置一览画面中设置的类目默认属性值在最新的类目schema中不存在时
+                        notExistValues.add(val);
+                        continue;
+                    }
+
                     multiCheckField.addValue(val);
+                }
+                // 如果有在最新的类目schema中已经不存在的属性值的时候，报出异常
+                if (ListUtils.notNull(notExistValues)) {
+                    throw new BusinessException(String.format("类目(%s)属性(%s)的属性值(%s)在京东平台最新的类目schema中已经不存在了，" +
+                                    "请到高级检索该产品的平台页面中重新设置该属性的值之后再上新!",
+                            sxData.getMainProduct().getPlatform(sxData.getCartId()).getpCatPath(),
+                            multiCheckField.getName(), Joiner.on(",").join(notExistValues)));
                 }
                 retMap.put(field.getId(), multiCheckField);
                 break;
