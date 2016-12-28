@@ -500,19 +500,20 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 jdProductBean.setWareId(sxData.getPlatform().getNumIId());
             }
 
-            // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表
-            List<CmsMtPlatformSkusModel> cmsColorList = new ArrayList<>();
-            // 取得cms_mt_platform_skus表里平台类目id对应的尺寸信息列表
-            List<CmsMtPlatformSkusModel> cmsSizeList = new ArrayList<>();
-            for (CmsMtPlatformSkusModel skuModel : cmsMtPlatformSkusList) {
-                // 颜色
-                if (AttrType_Color.equals(skuModel.getAttrType())) {
-                    cmsColorList.add(skuModel);
-                } else if (AttrType_Size.equals(skuModel.getAttrType())) {
-                    // 尺寸
-                    cmsSizeList.add(skuModel);
-                }
-            }
+            // 取得cms_mt_platform_skus表里平台类目id对应的颜色信息列表(按idx升序排列)
+            List<CmsMtPlatformSkusModel> cmsColorList = cmsMtPlatformSkusList
+                    .stream()
+                    .filter(s -> AttrType_Color.equals(s.getAttrType()))
+                    .sorted(Comparator.comparing(s -> s.getIdx()))
+                    .collect(Collectors.toList());
+
+            // 取得cms_mt_platform_skus表里平台类目id对应的尺寸信息列表(按idx升序排列)
+            List<CmsMtPlatformSkusModel> cmsSizeList = cmsMtPlatformSkusList
+                    .stream()
+                    .filter(s -> AttrType_Size.equals(s.getAttrType()))
+                    .sorted(Comparator.comparing(s -> s.getIdx()))
+                    .collect(Collectors.toList());
+
             // 当前平台主类目对应的销售属性状况(1:颜色和尺寸属性都有 2:只有颜色没有尺寸属性 3:没有颜色只有尺寸属性 4:没有颜色没有尺寸属性)
             String salePropStatus = getSalePropStatus(cmsColorList, cmsSizeList, mainProduct.getOrgChannelId());
 
