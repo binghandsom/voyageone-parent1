@@ -191,6 +191,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             fileName = "skuList_";
         } else if (searchValue.getFileType() == 4) {
             fileName = "publishJMSkuList_";
+        } else if (searchValue.getFileType() == 5) {
+            fileName = "filingList_";
         }
 
         String exportPath = Properties.readValue(CmsProperty.Props.SEARCH_ADVANCE_EXPORT_PATH);
@@ -266,6 +268,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             searchItemStr += "common.fields.model;common.fields.color;";
         } else if (searchValue.getFileType() == 4) {
             searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms;";
+        } else if (searchValue.getFileType() == 5) {
+
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
@@ -287,7 +291,9 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
             } else if (searchValue.getFileType() == 3) {
                 writeSkuHead(book, cartList);
             } else if (searchValue.getFileType() == 4) {
-                writeShoemetroJMSkuHead(book);
+                writePublishJMSkuHead(book);
+            } else if (searchValue.getFileType() == 5) {
+                writeFilingHead(book);
             }
 
             int offset = 0; // SKU导出时，startRowIndex可能行数会增加，因为一个code可有有多个sku
@@ -544,10 +550,10 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     }
 
     /**
-     * shoemetro聚美上新SKU数据导出
+     * 聚美上新SKU数据导出
      * @param book
      */
-    private void writeShoemetroJMSkuHead(Workbook book) {
+    private void writePublishJMSkuHead(Workbook book) {
         book.createSheet("jmSkuList");
         Sheet sheet = book.getSheetAt(0);
         Row row = FileUtils.row(sheet, 0); // 第一行，英文标题
@@ -557,6 +563,14 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         for (int i = 0; i < size; i++) {
             FileUtils.cell(row, i, style).setCellValue(_shoemetroColJMSKU[i]);
         }
+    }
+
+    /**
+     * 生成报备文件文档头部
+     * @param workbook
+     */
+    public void writeFilingHead(Workbook workbook) {
+
     }
 
     /**
