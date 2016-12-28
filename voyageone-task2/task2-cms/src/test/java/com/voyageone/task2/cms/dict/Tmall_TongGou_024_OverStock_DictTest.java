@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * Created by zhujiaye on 16/7/15.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:context-cms-test.xml")
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration("classpath:context-cms-test.xml")
 public class Tmall_TongGou_024_OverStock_DictTest {
 	@Autowired
 	private SxProductService sxProductService;
@@ -43,7 +43,7 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 //		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/oswatch1?$790%%5F700$&$layer_17_src=%s&$layer_11_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_14_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_10_textps_0=%s&$layer_9_textps_0=%s&$layer_8_textps_0=%s&$layer_7_textps_0=%s&$layer_6_textps_0=%s&$layer_5_textps_0=%s&$layer_4_textps_0=%s&$layer_3_textps_0=%%20%s&$layer_2_textps_0=%s", false));
 		isWatch = true;
 //		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/stock1?$790_700$&$layer_1_src=sneakerhead%%2F%%E6%%89%%8B%%E8%%A1%%A8%%E9%%A6%%96%%E9%%A5%%B0%%E5%%8F%%82%%E6%%95%%B0%%E8%%A1%%A8%%E5%%89%%AF&$layer_2_src=%s&$layer_3_textps_0=%s&$layer_4_textps_0=%s&$layer_5_textps_0=%s&$layer_6_textps_0=%s&$layer_7_textps_0=%s&$layer_8_textps_0=%s&$layer_9_textps_0=%s&$layer_10_textps_0=%s&$layer_14_textps_0=%s&$layer_12_textps_0=%s&$layer_13_textps_0=%s&$layer_11_textps_0=%s&$layer_15_textps_0=%s&$layer_16_textps_0=%s&$layer_17_textps_0=%s&$layer_18_textps_0=%s", false));
-		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/over2?$790%5F545$" +
+		doCreateJson("天猫同购描述-手表", false, doDict_详情页描述("http://s7d5.scene7.com/is/image/sneakerhead/over2?$790%%5F545$" +
 				"&$layer_10_src=%s" +
 				"&$layer_2_textps_0=%s" +
 				"&$layer_3_textps_0=%s" +
