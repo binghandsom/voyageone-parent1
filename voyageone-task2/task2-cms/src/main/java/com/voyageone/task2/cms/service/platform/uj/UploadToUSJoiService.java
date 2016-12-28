@@ -139,11 +139,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             ie.printStackTrace();
         }
 
-//        // 判断是否需要清空缓存
-//        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
-//            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-//            TypeChannels.reload();
-//        }
+        // 判断是否需要清空缓存
+        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
+            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+            TypeChannels.reload();
+        }
 
         $info("=================子店->USJOI主店导入  最终结果=====================");
         resultMap.entrySet().stream()
