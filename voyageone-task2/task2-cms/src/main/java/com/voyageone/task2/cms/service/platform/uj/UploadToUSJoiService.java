@@ -9,11 +9,9 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.CommonConfigNotFoundException;
 import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
@@ -42,7 +40,10 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -127,7 +128,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             // 启动多线程(每个USJOI channel一个线程)
-            executor.execute(() -> uploadByChannel(channelBean, resultMap, needReloadMap));
+//            executor.execute(() -> uploadByChannel(channelBean, resultMap, needReloadMap));
+            executor.execute(() -> uploadByChannel(channelBean, resultMap));
         }
         // ExecutorService停止接受任何新的任务且等待已经提交的任务执行完成(已经提交的任务会分两类：一类是已经在执行的，另一类是还没有开始执行的)，
         // 当所有已经提交的任务执行完毕后将会关闭ExecutorService。
@@ -139,11 +141,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             ie.printStackTrace();
         }
 
-        // 判断是否需要清空缓存
-        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
-            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
-            TypeChannels.reload();
-        }
+//        // 判断是否需要清空缓存
+//        if ("1".equals(needReloadMap.get(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString()))) {
+//            // 清除缓存（这样就能马上在画面上展示出最新追加的brand，productType，sizeType等初始化mapping信息）
+//            TypeChannels.reload();
+//        }
 
         $info("=================子店->USJOI主店导入  最终结果=====================");
         resultMap.entrySet().stream()
@@ -153,62 +155,65 @@ public class UploadToUSJoiService extends BaseCronTaskService {
 
     }
 
-    public void uploadByChannel(OrderChannelBean channelBean, Map<String, String> resultMap, Map<String, String> needReloadMap) {
+    public void uploadByChannel(OrderChannelBean channelBean, Map<String, String> resultMap) {
         int successCnt = 0;
         int errCnt = 0;
 
         // usjoi的channelId(928,929),同时也是子店product.platform.PXXX的cartId(928,929)
         String usjoiChannelId = channelBean.getOrder_channel_id();
 
-        // --------------------------------------------------------------------------------------------
-        // 品牌mapping表
-        Map<String, String> mapBrandMapping = new HashMap<>();
-        // 产品分类mapping表
-        Map<String, String> mapProductTypeMapping = new HashMap<>();
-        // 适用人群mapping表
-        Map<String, String> mapSizeTypeMapping = new HashMap<>();
-
-        // 品牌mapping作成
-        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
-        if (ListUtils.notNull(brandTypeChannelBeanList)) {
-            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
-                if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
-                        && !StringUtils.isEmpty(typeChannelBean.getName())
-                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                        ) {
-                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
-                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
-                }
-            }
-        }
-
-        // 产品分类mapping作成
-        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usjoiChannelId);
-        if (ListUtils.notNull(productTypeChannelBeanList)) {
-            for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
-                if (!StringUtils.isEmpty(typeChannelBean.getValue())
-                        && !StringUtils.isEmpty(typeChannelBean.getName())
-                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                        ) {
-                    // 产品分类mapping表(value是key,name和add_name1是值)
-                    mapProductTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
-                }
-            }
-        }
-
-        // 适用人群mapping作成
-        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usjoiChannelId);
-        if (ListUtils.notNull(sizeTypeChannelBeanList)) {
-            for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
-                if (!StringUtils.isEmpty(typeChannelBean.getValue())
-                        && !StringUtils.isEmpty(typeChannelBean.getName())
-                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                        ) {
-                    // 适用人群mapping作成(value是key,name和add_name1是值)
-                    mapSizeTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
-                }
-            }
-        }
+        // delete desmond 2016/12/28 start
+        // 小林说主店品牌，产品分类和适用人群在其他地方追加，一定有值的，不用再往Synship.com_mt_value_channel表里面插了
+//        // --------------------------------------------------------------------------------------------
+//        // 品牌mapping表
+//        Map<String, String> mapBrandMapping = new HashMap<>();
+//        // 产品分类mapping表
+//        Map<String, String> mapProductTypeMapping = new HashMap<>();
+//        // 适用人群mapping表
+//        Map<String, String> mapSizeTypeMapping = new HashMap<>();
+//
+//        // 品牌mapping作成
+//        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
+//        if (ListUtils.notNull(brandTypeChannelBeanList)) {
+//            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
+//                if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+//                        && !StringUtils.isEmpty(typeChannelBean.getName())
+//                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+//                        ) {
+//                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+//                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
+//                }
+//            }
+//        }
+//
+//        // 产品分类mapping作成
+//        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usjoiChannelId);
+//        if (ListUtils.notNull(productTypeChannelBeanList)) {
+//            for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
+//                if (!StringUtils.isEmpty(typeChannelBean.getValue())
+//                        && !StringUtils.isEmpty(typeChannelBean.getName())
+//                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+//                        ) {
+//                    // 产品分类mapping表(value是key,name和add_name1是值)
+//                    mapProductTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+//                }
+//            }
+//        }
+//
+//        // 适用人群mapping作成
+//        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usjoiChannelId);
+//        if (ListUtils.notNull(sizeTypeChannelBeanList)) {
+//            for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
+//                if (!StringUtils.isEmpty(typeChannelBean.getValue())
+//                        && !StringUtils.isEmpty(typeChannelBean.getName())
+//                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+//                        ) {
+//                    // 适用人群mapping作成(value是key,name和add_name1是值)
+//                    mapSizeTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
+//                }
+//            }
+//        }
+        // delete desmond 2016/12/28 end
 
         // 获取当前usjoi channel, 有多少个platform
         List<TypeChannelBean> usjoiTypeChannelBeanList = TypeChannels.getTypeListSkuCarts(usjoiChannelId, "D", "en"); // 取得展示用数据
@@ -286,11 +291,11 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             }
         }
 
-        // 取得feed->master导入之前的品牌，产品分类，使用人群等mapping件数，用于判断是否新增之后需要清空缓存
-        int oldBrandCnt = mapBrandMapping.size();
-        int oldProductTypeCnt = mapProductTypeMapping.size();
-        int oldSizeTypeCnt = mapSizeTypeMapping.size();
-        int newBrandCnt, newProductTypeCnt, newSizeTypeCnt;
+//        // 取得feed->master导入之前的品牌，产品分类，使用人群等mapping件数，用于判断是否新增之后需要清空缓存
+//        int oldBrandCnt = mapBrandMapping.size();
+//        int oldProductTypeCnt = mapProductTypeMapping.size();
+//        int oldSizeTypeCnt = mapSizeTypeMapping.size();
+//        int newBrandCnt, newProductTypeCnt, newSizeTypeCnt;
 
         int totalCnt = 0;
         int currentIndex = 0;
@@ -304,7 +309,7 @@ public class UploadToUSJoiService extends BaseCronTaskService {
             currentIndex++;
             try {
                 // 循环上传单个产品到USJOI主店
-                upload(sxWorkloadModel, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
+                upload(sxWorkloadModel, usjoiTypeChannelBeanList,
                         cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime, channelConfigValueMap);
                 successCnt++;
             } catch (CommonConfigNotFoundException ce) {
@@ -323,23 +328,20 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         // 将该channel的子店->主店导入信息加入map，供channel导入线程全部完成一起显示
         resultMap.put(usjoiChannelId, resultInfo);
 
-        // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
-        newBrandCnt = mapBrandMapping.size();
-        newProductTypeCnt = mapProductTypeMapping.size();
-        newSizeTypeCnt = mapSizeTypeMapping.size();
-
-        // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
-        if (oldBrandCnt != newBrandCnt
-                || oldProductTypeCnt != newProductTypeCnt
-                || oldSizeTypeCnt != newSizeTypeCnt) {
-            needReloadMap.put(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString(), "1");
-        }
+//        // 取得feed->master导入之后的品牌，产品分类，使用人群等mapping件数
+//        newBrandCnt = mapBrandMapping.size();
+//        newProductTypeCnt = mapProductTypeMapping.size();
+//        newSizeTypeCnt = mapSizeTypeMapping.size();
+//
+//        // 如果品牌，产品分类或者使用人群等有新增过，则重新导入完成之后重新刷新一次
+//        if (oldBrandCnt != newBrandCnt
+//                || oldProductTypeCnt != newProductTypeCnt
+//                || oldSizeTypeCnt != newSizeTypeCnt) {
+//            needReloadMap.put(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString(), "1");
+//        }
     }
 
     public void upload(CmsBtSxWorkloadModel sxWorkLoadBean,
-                       Map<String, String> mapBrandMapping,
-                       Map<String, String> mapProductTypeMapping,
-                       Map<String, String> mapSizeTypeMapping,
                        List<TypeChannelBean> usjoiTypeChannelBeanList,
                        List<Integer> cartIds,
                        String ccAutoSyncCarts,
@@ -1103,8 +1105,8 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                 doSetSkuCnt(usJoiChannelId, productCodes);
             }
 
-            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
-            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
+//            // 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+//            insertMtValueChannelInfo(usJoiChannelId, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, targetProductList);
 
             // 子店->USJOI主店产品导入的虚拟上新成功之后回写workload表中的状态(1:USJOI上新成功)
             sxWorkLoadBean.setPublishStatus(1);
@@ -1386,61 +1388,61 @@ public class UploadToUSJoiService extends BaseCronTaskService {
         return P0;
     }
 
-    /**
-     * 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
-     *
-     * @param usjoiChannelId String usjoi channel id
-     * @param mapBrandMapping Map<String, String> 品牌mapping一览
-     * @param mapProductTypeMapping Map<String, String> 产品类型mapping一览
-     * @param mapSizeTypeMapping Map<String, String> 适用人群mapping一览
-     * @param usjoiProductModels List<CmsBtProductBean> 产品列表
-     */
-    private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, Map<String, String> mapProductTypeMapping,
-                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductModel> usjoiProductModels) {
-
-        // 循环产品列表，如果品牌，产品类型或适用人群信息，则插入该信息到Synship.com_mt_value_channel表中
-        for (CmsBtProductModel usjoiProductModel : usjoiProductModels) {
-            if (usjoiProductModel.getCommon() == null || usjoiProductModel.getCommon().getFields() == null) {
-                continue;
-            }
-            // 品牌
-            String usjoiBrand = usjoiProductModel.getCommon().getFields().getBrand();
-            // 产品类型
-            String usjoiProductType = usjoiProductModel.getCommon().getFields().getProductType();
-            // 适用人群
-            String usjoiSizeType = usjoiProductModel.getCommon().getFields().getSizeType();
-
-            // 品牌(不区分大小写，全部小写)
-            if (!StringUtils.isEmpty(usjoiBrand)
-                    && !mapBrandMapping.containsKey(usjoiBrand.toLowerCase().trim())) {
-                // 插入品牌初始中英文mapping信息到Synship.com_mt_value_channel表中
-                comMtValueChannelService.insertComMtValueChannelMapping(41, usjoiChannelId,
-                        usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim(), getTaskName());
-                // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
-                mapBrandMapping.put(usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim());
-            }
-
-            // 产品分类
-            if (!StringUtils.isEmpty(usjoiProductType)
-                    && !mapProductTypeMapping.containsKey(usjoiProductType)) {
-                // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
-                comMtValueChannelService.insertComMtValueChannelMapping(57, usjoiChannelId, usjoiProductType,
-                        usjoiProductType, getTaskName());
-                // 将更新完整之后的mapping信息添加到前面取出来的产品分类mapping表中
-                mapProductTypeMapping.put(usjoiProductType, usjoiProductType);
-            }
-
-            // 适用人群
-            if (!StringUtils.isEmpty(usjoiSizeType)
-                    && !mapSizeTypeMapping.containsKey(usjoiSizeType)) {
-                // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
-                comMtValueChannelService.insertComMtValueChannelMapping(58, usjoiChannelId, usjoiSizeType,
-                        usjoiSizeType, getTaskName());
-                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
-                mapSizeTypeMapping.put(usjoiSizeType, usjoiSizeType);
-            }
-        }
-    }
+//    /**
+//     * 如果Synship.com_mt_value_channel表中没有usjoi channel(928,929)对应的品牌，产品类型或适用人群信息，则插入该信息
+//     *
+//     * @param usjoiChannelId String usjoi channel id
+//     * @param mapBrandMapping Map<String, String> 品牌mapping一览
+//     * @param mapProductTypeMapping Map<String, String> 产品类型mapping一览
+//     * @param mapSizeTypeMapping Map<String, String> 适用人群mapping一览
+//     * @param usjoiProductModels List<CmsBtProductBean> 产品列表
+//     */
+//    private void insertMtValueChannelInfo(String usjoiChannelId, Map<String, String> mapBrandMapping, Map<String, String> mapProductTypeMapping,
+//                                          Map<String, String> mapSizeTypeMapping, List<CmsBtProductModel> usjoiProductModels) {
+//
+//        // 循环产品列表，如果品牌，产品类型或适用人群信息，则插入该信息到Synship.com_mt_value_channel表中
+//        for (CmsBtProductModel usjoiProductModel : usjoiProductModels) {
+//            if (usjoiProductModel.getCommon() == null || usjoiProductModel.getCommon().getFields() == null) {
+//                continue;
+//            }
+//            // 品牌
+//            String usjoiBrand = usjoiProductModel.getCommon().getFields().getBrand();
+//            // 产品类型
+//            String usjoiProductType = usjoiProductModel.getCommon().getFields().getProductType();
+//            // 适用人群
+//            String usjoiSizeType = usjoiProductModel.getCommon().getFields().getSizeType();
+//
+//            // 品牌(不区分大小写，全部小写)
+//            if (!StringUtils.isEmpty(usjoiBrand)
+//                    && !mapBrandMapping.containsKey(usjoiBrand.toLowerCase().trim())) {
+//                // 插入品牌初始中英文mapping信息到Synship.com_mt_value_channel表中
+//                comMtValueChannelService.insertComMtValueChannelMapping(41, usjoiChannelId,
+//                        usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim(), getTaskName());
+//                // 将更新完整之后的mapping信息添加到前面取出来的品牌mapping表中
+//                mapBrandMapping.put(usjoiBrand.toLowerCase().trim(), usjoiBrand.toLowerCase().trim());
+//            }
+//
+//            // 产品分类
+//            if (!StringUtils.isEmpty(usjoiProductType)
+//                    && !mapProductTypeMapping.containsKey(usjoiProductType)) {
+//                // 插入产品分类初始中英文mapping信息到Synship.com_mt_value_channel表中
+//                comMtValueChannelService.insertComMtValueChannelMapping(57, usjoiChannelId, usjoiProductType,
+//                        usjoiProductType, getTaskName());
+//                // 将更新完整之后的mapping信息添加到前面取出来的产品分类mapping表中
+//                mapProductTypeMapping.put(usjoiProductType, usjoiProductType);
+//            }
+//
+//            // 适用人群
+//            if (!StringUtils.isEmpty(usjoiSizeType)
+//                    && !mapSizeTypeMapping.containsKey(usjoiSizeType)) {
+//                // 插入适用人群初始中英文mapping信息到Synship.com_mt_value_channel表中
+//                comMtValueChannelService.insertComMtValueChannelMapping(58, usjoiChannelId, usjoiSizeType,
+//                        usjoiSizeType, getTaskName());
+//                // 将更新完整之后的mapping信息添加到前面取出来的适用人群mapping表中
+//                mapSizeTypeMapping.put(usjoiSizeType, usjoiSizeType);
+//            }
+//        }
+//    }
 
 //    /**
 //     * 查看该渠道是否自动同步人民币专柜价格MSRP
