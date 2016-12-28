@@ -25,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,6 +60,9 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
 
     @Test
     public void testUploadProduct() throws Exception {
+        // 清除缓存（cms.channel_config表）
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString());  // 最好不用这种方法清缓存
+//        TypeChannels.reload();   // 最好用reload方法清理缓存
 
         String likingChannelId = "928";
         int cartId = 28;
@@ -69,9 +71,10 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         workload.setId(864987);
         workload.setChannelId(likingChannelId);   // "928"
         workload.setCartId(cartId);               // "29","28","27"
-        workload.setGroupId(Long.parseLong("1907005"));
+        workload.setGroupId(Long.parseLong("864987"));
         workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.initNum);   // 普通上新模式
 //        workload.setPublishStatus(CmsConstants.SxWorkloadPublishStatusNum.smartSx);   // 智能上新模式
+        workload.setModifier("desmond");
 
 //        ShopBean shopProp = Shops.getShop(likingChannelId, cartId);   // "928", "29"
         ShopBean shopProp = new ShopBean();
@@ -113,26 +116,26 @@ public class CmsBuildPlatformProductUploadJdServiceTest {
         uploadJdService.updateSkuIds(shopBean, numIId, true);
     }
 
-    @Test
-    public void testIsSkuNoStock() throws Exception {
-        // 测试判断SKU逻辑库存是否为0的方法
-
-        Map<String, Integer> skuStockMap = new HashMap() {{
-            put("skuCode1", 1);
-            put("skuCode2", 0);
-            put("skuCode3", 2);
-            put("skuCode4", 3);
-        }};
-
-        System.out.println("测试结果:");
-        System.out.println("skuNotExistCode = " + (uploadJdService.isSkuNoStock("skuNotExistCode", skuStockMap) ? "true" : "false"));
-        System.out.println("skuCode1 = " + (uploadJdService.isSkuNoStock("skuCode1", skuStockMap) ? "true" : "false"));
-        System.out.println("skuCode2 = " + (uploadJdService.isSkuNoStock("skuCode2", skuStockMap) ? "true" : "false"));
-        System.out.println("skuCode3 = " + (uploadJdService.isSkuNoStock("skuCode3", skuStockMap) ? "true" : "false"));
-        System.out.println("skuCode4 = " + (uploadJdService.isSkuNoStock("skuCode4", skuStockMap) ? "true" : "false"));
-        System.out.println("skuCode5 = " + (uploadJdService.isSkuNoStock("skuCode5", skuStockMap) ? "true" : "false"));
-        System.out.println("测试结束!");
-    }
+//    @Test
+//    public void testIsSkuNoStock() throws Exception {
+//        // 测试判断SKU逻辑库存是否为0的方法
+//
+//        Map<String, Integer> skuStockMap = new HashMap() {{
+//            put("skuCode1", 1);
+//            put("skuCode2", 0);
+//            put("skuCode3", 2);
+//            put("skuCode4", 3);
+//        }};
+//
+//        System.out.println("测试结果:");
+//        System.out.println("skuNotExistCode = " + (uploadJdService.isSkuNoStock("skuNotExistCode", skuStockMap) ? "true" : "false"));
+//        System.out.println("skuCode1 = " + (uploadJdService.isSkuNoStock("skuCode1", skuStockMap) ? "true" : "false"));
+//        System.out.println("skuCode2 = " + (uploadJdService.isSkuNoStock("skuCode2", skuStockMap) ? "true" : "false"));
+//        System.out.println("skuCode3 = " + (uploadJdService.isSkuNoStock("skuCode3", skuStockMap) ? "true" : "false"));
+//        System.out.println("skuCode4 = " + (uploadJdService.isSkuNoStock("skuCode4", skuStockMap) ? "true" : "false"));
+//        System.out.println("skuCode5 = " + (uploadJdService.isSkuNoStock("skuCode5", skuStockMap) ? "true" : "false"));
+//        System.out.println("测试结束!");
+//    }
 
     @Test
     public void testDoJdForceWareListing() throws Exception {
