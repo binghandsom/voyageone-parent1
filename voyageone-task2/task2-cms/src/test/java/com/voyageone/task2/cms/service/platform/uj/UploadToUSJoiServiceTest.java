@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.platform.uj;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.category.match.*;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
@@ -24,10 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -61,26 +59,26 @@ public class UploadToUSJoiServiceTest {
         String usjoiChannelId = "928";   // Liking
 
 //        // --------------------------------------------------------------------------------------------
-//        // 品牌mapping表
-//        Map<String, String> mapBrandMapping = new HashMap<>();
+        // 品牌mapping表
+        Map<String, String> mapBrandMapping = new HashMap<>();
 //        // 产品分类mapping表
 //        Map<String, String> mapProductTypeMapping = new HashMap<>();
 //        // 适用人群mapping表
 //        Map<String, String> mapSizeTypeMapping = new HashMap<>();
 //
-//        // 品牌mapping作成
-//        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
-//        if (ListUtils.notNull(brandTypeChannelBeanList)) {
-//            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
-//                if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
-//                        && !StringUtils.isEmpty(typeChannelBean.getName())
-//                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-//                        ) {
-//                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
-//                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
-//                }
-//            }
-//        }
+        // 品牌mapping作成
+        List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
+        if (ListUtils.notNull(brandTypeChannelBeanList)) {
+            for (TypeChannelBean typeChannelBean : brandTypeChannelBeanList) {
+                if (!StringUtils.isEmpty(typeChannelBean.getAdd_name1())
+                        && !StringUtils.isEmpty(typeChannelBean.getName())
+                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
+                        ) {
+                    // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
+                    mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
+                }
+            }
+        }
 //
 //        // 产品分类mapping作成
 //        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usjoiChannelId);
@@ -168,7 +166,7 @@ public class UploadToUSJoiServiceTest {
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         uploadToUSJoiService.doChannelConfigInit(usjoiChannelId, channelConfigValueMap);
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, usjoiTypeChannelBeanList,
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, usjoiTypeChannelBeanList,
                 cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime, channelConfigValueMap);
     }
 
@@ -208,11 +206,13 @@ public class UploadToUSJoiServiceTest {
     public void testUploadByChannel() throws Exception {
         // 保存每个channel最终导入结果(成功失败件数信息)
         Map<String, String> resultMap = new ConcurrentHashMap<>();
+        // 保存是否需要清空缓存(添加过品牌等信息时，需要清空缓存)
+        Map<String, String> needReloadMap = new ConcurrentHashMap<>();
 
         for (OrderChannelBean channelBean : Channels.getUsJoiChannelList()) {
             // 只测试928渠道时
             if ("928".equals(channelBean.getOrder_channel_id())) {
-                uploadToUSJoiService.uploadByChannel(channelBean, resultMap);
+                uploadToUSJoiService.uploadByChannel(channelBean, resultMap, needReloadMap);
             }
         }
     }
