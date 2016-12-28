@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.dict;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.ims.rule_expression.*;
 
 /**
@@ -38,8 +39,9 @@ public class BaseDictTest {
         dictRoot.setExpression(ruleRoot);
         dictRoot.setIsUrl(isUrl);
 
-        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-        String json = ruleJsonMapper.serializeRuleWord(dictRoot);
+//        RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//        String json = ruleJsonMapper.serializeRuleWord(dictRoot);
+        String json = JacksonUtil.bean2JsonNotNull(dictRoot);
 
         System.out.println("=====================================");
         System.out.println("字典: " + title);

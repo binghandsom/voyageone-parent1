@@ -1039,6 +1039,7 @@ public class CmsFieldEditService extends BaseViewService {
 
             // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
+                priceService.setPrice(prodObj, cartId, false);
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
             } catch (Exception e) {
                 $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);

@@ -37,7 +37,7 @@ import java.util.*;
 public class SneakerheadMastDateImportTest {
 
     public final static String cms_mt_sizechartrelation = "H:\\sneaker\\尺码表整理12.21.-1.xlsx";
-    public final static String cms_mt_sizechart = "H:\\sneaker\\尺码图整理12.21-1.xlsx";
+    public final static String cms_mt_sizechart = "H:\\sneaker\\尺码图整理.xlsx";
     public final static String sellerCat = "H:\\sneaker\\店铺内分类\\sellerCat.xlsx";
 
     @Autowired
@@ -105,8 +105,12 @@ public class SneakerheadMastDateImportTest {
                 cmsBtImageGroupModel_Image.setOriginUrl(originUrl);
                 cmsBtImageGroupModel_Image.setPlatformUrl(platformUrl);
                 cmsBtImageGroupModel_Image.setErrorMsg(null);
-                cmsBtImageGroupModel_Image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
-                CmsBtImageGroupModel cmsBtImageGroupModel = models.get(imageGroupName);
+                if(StringUtil.isEmpty(platformUrl)){
+                    cmsBtImageGroupModel_Image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.WAITING_UPLOAD));
+                }else{
+                    cmsBtImageGroupModel_Image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
+                }
+                CmsBtImageGroupModel cmsBtImageGroupModel = models.get(imageType + imageGroupName);
                 if (cmsBtImageGroupModel == null) {
                     cmsBtImageGroupModel = new CmsBtImageGroupModel();
                     cmsBtImageGroupModel.setActive(1);
@@ -120,7 +124,7 @@ public class SneakerheadMastDateImportTest {
                     //1:PC端 2:APP端
                     cmsBtImageGroupModel.setViewType(Integer.parseInt(viewType));
                     cmsBtImageGroupModel.setImage(new ArrayList<>());
-                    models.put(imageGroupName, cmsBtImageGroupModel);
+                    models.put(imageType+imageGroupName, cmsBtImageGroupModel);
                 }
                 cmsBtImageGroupModel.getImage().add(cmsBtImageGroupModel_Image);
             } catch (Exception e) {
