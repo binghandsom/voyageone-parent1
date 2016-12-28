@@ -1,6 +1,9 @@
 package com.voyageone.task2.cms.service.product;
 
+import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -17,6 +20,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.ImagesService;
@@ -70,6 +74,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
     private CmsBtExportTaskService cmsBtExportTaskService;
     @Autowired
     private InventoryDao inventoryDao;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     // excel cell的内容长度限制
     private final static int CELL_LENGTH_LIMIT = 2000;
@@ -311,7 +317,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
 
                 // 每页开始行
-                int startRowIndex = i * SELECT_PAGE_SIZE + (searchValue.getFileType() == 4 ? 1 : 2);
+                int startRowIndex = i * SELECT_PAGE_SIZE + ((searchValue.getFileType() == 4 || searchValue.getFileType() == 5) ? 1 : 2);
                 boolean isContinueOutput = false;
                 if (searchValue.getFileType() == 1) {
                     isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex);
@@ -324,7 +330,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     /*isContinueOutput暂时无用*/
                     offset += writePublishJMSkuFile(book, items, startRowIndex + offset);
                 } else if (searchValue.getFileType() == 5) {
-                    writeFilingToFile(book, items, startRowIndex);
+                    offset += writeFilingToFile(book, items, startRowIndex + offset, userName);
                 }
                 // 超过最大行的场合
                 /*if (!isContinueOutput) {
@@ -1247,9 +1253,12 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
      * @param workbook
      * @param items
      * @param startRowIndex
+     * @param userName
      */
-    private void writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex) {
+    private int writeFilingToFile(Workbook workbook, List<CmsBtProductBean> items, int startRowIndex, String userName) {
+        int total = 0;
         List<CmsBtProductBean> products = new ArrayList<CmsBtProductBean>();
+        List<String> codes = new ArrayList<>();
         // 过滤选择的商品
         for (CmsBtProductBean item:items) {
             CmsBtProductModel_Common common = item.getCommon();
@@ -1274,6 +1283,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 continue; // 如果没有任何一个平台的pStatus=Approved，直接跳过
             }
             products.add(item);
+            codes.add(fields.getCode());
         }
         CellStyle unlock = FileUtils.createUnLockStyle(workbook);
         Sheet sheet = workbook.getSheetAt(0);
@@ -1309,12 +1319,31 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getHsCodeCross())); // HSCode
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getHsCodePrivate())); // HSCodePU 个人税号
-
-
-                //FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(skuItem.getP)); // Price (RMB)
+                double priceSale = 0d;
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = item.getPlatforms();
+                for (CmsBtProductModel_Platform_Cart platform : platforms.values()) {
+                    if (CmsConstants.ProductStatus.Approved.name().equals(platform.getpStatus())) {
+                        priceSale = platform.getSkus().get(0).getDoubleAttribute("priceSale");
+                        break;
+                    }
+                }
+                FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(String.valueOf(priceSale)));
+                total++;
             }
         }
-
+        // 批量设置是否报备标志位
+        if (codes.size() > 0) {
+            JongoUpdate updObj = new JongoUpdate();
+            updObj.setQuery("{'common.fields.code':{$in:#}}");
+            updObj.setUpdate("{$set:{'common.fields.isFiled:#,'modified':#,'modifier':#}}");
+            updObj.setQueryParameters(codes);
+            updObj.setUpdateParameters(1, DateTimeUtil.getNowTimeStamp(), userName);
+            WriteResult rs = cmsBtProductDao.updateMulti(updObj, products.get(0).getChannelId());
+            if (rs != null) {
+                $debug(String.format("高级检索报备导出，修改商品报备标识 channelId=%s 执行结果=%s", products.get(0).getChannelId(), rs.toString()));
+            }
+        }
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
