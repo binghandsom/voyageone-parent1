@@ -299,7 +299,7 @@ public class BackDoorController extends CmsController {
                 }
                 newField.setMaterialCn(oldCmsBtProductModel.getFields().getMaterialCn());
                 newField.setOrigin(oldCmsBtProductModel.getFields().getOrigin());
-                newField.setSizeChart("");
+//                newField.setSizeChart("");
                 newField.setQuantity(oldCmsBtProductModel.getFields().getQuantity());
                 newField.setImages1(oldCmsBtProductModel.getFields().getImages1());
                 newField.setImages2(oldCmsBtProductModel.getFields().getImages2());

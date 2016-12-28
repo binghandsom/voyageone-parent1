@@ -128,6 +128,11 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         // 20160513 tom 图片服务器切换 END
 
 //        parseResult = sxProductService.encodeImageUrl(parseResult);
+
+        if (parseResult.contains("%s")) {
+            return parseResult;
+        }
+
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
