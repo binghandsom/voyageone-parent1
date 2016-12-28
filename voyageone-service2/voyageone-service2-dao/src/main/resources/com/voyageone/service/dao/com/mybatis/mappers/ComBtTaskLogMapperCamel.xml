@@ -3,8 +3,9 @@
 <mapper namespace="com.voyageone.service.dao.com.ComBtTaskLogDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.com.ComBtTaskLogModel" />
     <sql id="Base_Column_List" >
-        `id`, `task_id`, `message_body`, `log_type`, `status`, `send_date`, `begin_date`, 
-        `end_date`, `comment`, `stackTrace`, `created`, `creater`, `modified`, `modifier`
+        `id`, `task_name`, `queue_name`, `message_body`, `log_type`, `status`, `send_date`, 
+        `begin_date`, `end_date`, `comment`, `stack_trace`, `created`, `creater`, `modified`, 
+        `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -17,8 +18,11 @@
     <update id="update" parameterType="com.voyageone.service.model.com.ComBtTaskLogModel" >
         update com_bt_task_log
         <set >
-            <if test="taskId != null" >
-                `task_id` = #{taskId,jdbcType=VARCHAR},
+            <if test="taskName != null" >
+                `task_name` = #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="queueName != null" >
+                `queue_name` = #{queueName,jdbcType=VARCHAR},
             </if>
             <if test="messageBody != null" >
                 `message_body` = #{messageBody,jdbcType=VARCHAR},
@@ -41,8 +45,8 @@
             <if test="comment != null" >
                 `comment` = #{comment,jdbcType=VARCHAR},
             </if>
-            <if test="stacktrace != null" >
-                `stackTrace` = #{stacktrace,jdbcType=VARCHAR},
+            <if test="stackTrace != null" >
+                `stack_trace` = #{stackTrace,jdbcType=LONGVARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -73,8 +77,11 @@
         <include refid="Base_Column_List" />
         from com_bt_task_log
         <where >
-            <if test="taskId != null" >
-                and `task_id` = #{taskId,jdbcType=VARCHAR}
+            <if test="taskName != null" >
+                and `task_name` = #{taskName,jdbcType=VARCHAR}
+            </if>
+            <if test="queueName != null" >
+                and `queue_name` = #{queueName,jdbcType=VARCHAR}
             </if>
             <if test="messageBody != null" >
                 and `message_body` = #{messageBody,jdbcType=VARCHAR}
@@ -97,8 +104,8 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="stacktrace != null" >
-                and `stackTrace` = #{stacktrace,jdbcType=VARCHAR}
+            <if test="stackTrace != null" >
+                and `stack_trace` = #{stackTrace,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -121,8 +128,11 @@
         <include refid="Base_Column_List" />
         from com_bt_task_log
         <where >
-            <if test="taskId != null" >
-                and `task_id` = #{taskId,jdbcType=VARCHAR}
+            <if test="taskName != null" >
+                and `task_name` = #{taskName,jdbcType=VARCHAR}
+            </if>
+            <if test="queueName != null" >
+                and `queue_name` = #{queueName,jdbcType=VARCHAR}
             </if>
             <if test="messageBody != null" >
                 and `message_body` = #{messageBody,jdbcType=VARCHAR}
@@ -145,8 +155,8 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="stacktrace != null" >
-                and `stackTrace` = #{stacktrace,jdbcType=VARCHAR}
+            <if test="stackTrace != null" >
+                and `stack_trace` = #{stackTrace,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -166,8 +176,11 @@
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from com_bt_task_log
         <where >
-            <if test="taskId != null" >
-                and `task_id` = #{taskId,jdbcType=VARCHAR}
+            <if test="taskName != null" >
+                and `task_name` = #{taskName,jdbcType=VARCHAR}
+            </if>
+            <if test="queueName != null" >
+                and `queue_name` = #{queueName,jdbcType=VARCHAR}
             </if>
             <if test="messageBody != null" >
                 and `message_body` = #{messageBody,jdbcType=VARCHAR}
@@ -190,8 +203,8 @@
             <if test="comment != null" >
                 and `comment` = #{comment,jdbcType=VARCHAR}
             </if>
-            <if test="stacktrace != null" >
-                and `stackTrace` = #{stacktrace,jdbcType=VARCHAR}
+            <if test="stackTrace != null" >
+                and `stack_trace` = #{stackTrace,jdbcType=LONGVARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -211,8 +224,11 @@
     <insert id="insert" parameterType="com.voyageone.service.model.com.ComBtTaskLogModel" useGeneratedKeys="true" keyProperty="id" >
         insert into com_bt_task_log
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="taskId != null" >
-                `task_id`,
+            <if test="taskName != null" >
+                `task_name`,
+            </if>
+            <if test="queueName != null" >
+                `queue_name`,
             </if>
             <if test="messageBody != null" >
                 `message_body`,
@@ -235,8 +251,8 @@
             <if test="comment != null" >
                 `comment`,
             </if>
-            <if test="stacktrace != null" >
-                `stackTrace`,
+            <if test="stackTrace != null" >
+                `stack_trace`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -251,8 +267,11 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="taskId != null" >
-                #{taskId,jdbcType=VARCHAR},
+            <if test="taskName != null" >
+                #{taskName,jdbcType=VARCHAR},
+            </if>
+            <if test="queueName != null" >
+                #{queueName,jdbcType=VARCHAR},
             </if>
             <if test="messageBody != null" >
                 #{messageBody,jdbcType=VARCHAR},
@@ -275,8 +294,8 @@
             <if test="comment != null" >
                 #{comment,jdbcType=VARCHAR},
             </if>
-            <if test="stacktrace != null" >
-                #{stacktrace,jdbcType=VARCHAR},
+            <if test="stackTrace != null" >
+                #{stackTrace,jdbcType=LONGVARCHAR},
             </if>
             <if test="created == null" >
                 now(),

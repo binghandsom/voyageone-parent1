@@ -154,7 +154,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
 
-        mqJobLogService.log(messageBody, ex, beginDate, new Date());
+        mqJobLogService.log(this.getTaskName(),messageBody, ex, beginDate, new Date());
     }
 
     public  void startup(TMQMessageBody messageBody) throws Exception

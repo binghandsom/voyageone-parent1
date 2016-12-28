@@ -5,7 +5,7 @@ package com.voyageone.service.bean.com.enumcom;
  */
 public enum EnumTaskLog_Status {
     success(1),
-    failed(0);
+    failed(2);
     short id;
 
     public short getId() {

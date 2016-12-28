@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.mqjob;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
+import com.voyageone.service.bean.cms.enumcms.OperationLog_Type;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.TBaseMQAnnoService;
@@ -34,13 +35,18 @@ public abstract class TBaseMQCmsService<TMQMessageBody  extends IMQMessageBody> 
             onStartup(messageBody);
         } catch (Exception ex) {
             //记异常日志
-            // votodo
             cmsBtOperationLogService.log(messageBody, ex);
             throw ex;
         }
     }
     //写日志
-    public void cmsLog(TMQMessageBody messageBody, String msg) {
-        cmsBtOperationLogService.log(messageBody, msg);
+    public void cmsLog(TMQMessageBody messageBody, OperationLog_Type operationLog_type, String msg) {
+        cmsBtOperationLogService.log(messageBody,operationLog_type, msg);
+    }
+    public void cmsConfigExLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(messageBody,OperationLog_Type.configException, msg);
+    }
+    public void cmsBusinessExLog(TMQMessageBody messageBody, String msg) {
+        cmsBtOperationLogService.log(messageBody,OperationLog_Type.businessException, msg);
     }
 }

@@ -32,7 +32,7 @@ public  class CmsJmPromotionExportMQJob extends TBaseMQCmsService<JmExportMQMess
         // 获取Mq的配置信息
         TaskControlBean taskControlBean = getTaskControlBean(taskControlList, "cms.jm.export.path");
         if (taskControlBean == null) {
-            this.cmsLog(messageBody,"请配置cms.jm.export.path");
+            this.cmsConfigExLog(messageBody,"请配置cms.jm.export.path");
             $error("JmBtPromotionExportJobService{0}", "请配置cms.jm.export.path");
             return;
         }

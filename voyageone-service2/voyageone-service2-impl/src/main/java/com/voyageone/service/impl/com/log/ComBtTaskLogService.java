@@ -27,28 +27,39 @@ public class ComBtTaskLogService extends BaseService implements IMQJobLog {
     @Autowired
     ComBtTaskLogDao dao;
 
-    public void log(IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate) {
-        final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-
+    /**
+     *
+     * @param jobName
+     * @param messageBody
+     * @param ex
+     * @param beginDate
+     * @param endDate
+     */
+    public void log(String jobName,IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate) {
         ComBtTaskLogModel model = new ComBtTaskLogModel();
-        model.setTaskId(voQueue.value());
+        if (messageBody != null) {
+            final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
+            model.setQueueName(voQueue.value());
+            model.setMessageBody(JsonUtil.bean2Json(messageBody));
+        } else {
+            model.setQueueName("");
+            model.setMessageBody("");
+        }
         model.setBeginDate(beginDate);
         model.setEndDate(endDate);
         model.setSendDate(DateTimeUtil.getCreatedDefaultDate());
         model.setLogType(EnumTaskLog_LogType.MQJob.getId());
-        model.setMessageBody(JsonUtil.bean2Json(messageBody));
         if (ex != null) {
-            model.setStacktrace(ExceptionUtil.getStackTrace(ex));
+            model.setStackTrace(ExceptionUtil.getStackTrace(ex));
             String errorMsg = ex.getMessage();
             model.setComment(errorMsg);
             model.setStatus(EnumTaskLog_Status.failed.getId());
         } else {
             model.setStatus(EnumTaskLog_Status.success.getId());
             model.setComment("");
-            model.setStacktrace("");
+            model.setStackTrace("");
         }
-        if(StringUtils.isEmpty(model.getComment()))
-        {
+        if (StringUtils.isEmpty(model.getComment())) {
             model.setComment("");
         }
         model.setCreated(new Date());

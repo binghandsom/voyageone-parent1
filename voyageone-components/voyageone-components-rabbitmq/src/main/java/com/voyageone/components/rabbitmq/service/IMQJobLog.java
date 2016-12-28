@@ -8,5 +8,5 @@ import java.util.Date;
  * Created by dell on 2016/12/26.
  */
 public interface IMQJobLog {
-    void log(IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate);
+    void log(String jobName,IMQMessageBody messageBody, Exception ex, Date beginDate, Date endDate);
 }

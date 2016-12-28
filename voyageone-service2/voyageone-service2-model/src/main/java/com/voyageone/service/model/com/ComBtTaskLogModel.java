@@ -15,9 +15,14 @@ import java.util.Date;
  */
 public class ComBtTaskLogModel extends BaseModel {
     /**
+     * job名称
+     */
+    protected String taskName;
+
+    /**
      * 队列名称
      */
-    protected String taskId;
+    protected String queueName;
 
     /**
      * 消息体json
@@ -57,14 +62,22 @@ public class ComBtTaskLogModel extends BaseModel {
     /**
      * 异常堆栈
      */
-    protected String stacktrace;
+    protected String stackTrace;
 
-    public String getTaskId() {
-        return taskId;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId == null ? null : taskId.trim();
+    public void setTaskName(String taskName) {
+        this.taskName = taskName == null ? null : taskName.trim();
+    }
+
+    public String getQueueName() {
+        return queueName;
+    }
+
+    public void setQueueName(String queueName) {
+        this.queueName = queueName == null ? null : queueName.trim();
     }
 
     public String getMessageBody() {
@@ -123,11 +136,11 @@ public class ComBtTaskLogModel extends BaseModel {
         this.comment = comment == null ? null : comment.trim();
     }
 
-    public String getStacktrace() {
-        return stacktrace;
+    public String getStackTrace() {
+        return stackTrace;
     }
 
-    public void setStacktrace(String stacktrace) {
-        this.stacktrace = stacktrace == null ? null : stacktrace.trim();
+    public void setStackTrace(String stackTrace) {
+        this.stackTrace = stackTrace == null ? null : stackTrace.trim();
     }
 }

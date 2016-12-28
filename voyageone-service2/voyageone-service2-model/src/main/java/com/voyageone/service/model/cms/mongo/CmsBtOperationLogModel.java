@@ -9,17 +9,17 @@ import java.util.Map;
  * Created by dell on 2016/12/27.
  */
 public class CmsBtOperationLogModel extends BaseMongoModel {
-    /**
-     *
-     */
-    long operationId;
-    /**
-     *  队列名称 或 api(请求url)
-     */
-    String name;
 
     /**
-     *参数
+     * job名称 或 api(请求url)
+     */
+    String name;
+    /**
+     * 队列名称 或 api(请求url) ->中文显示
+     */
+    String title;
+    /**
+     * 参数
      */
     String messageBody;
     /**
@@ -31,17 +31,13 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
      */
     String comment;
     /**
-     * 调用堆栈
-    */
+     *
+     */
     String msg;
-
-
-
-    String stackTrace;
     /**
      *
      */
-    List<Map<String,Object>> operateInfo;
+    String stackTrace;
 
     public String getName() {
         return name;
@@ -92,18 +88,5 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
         this.stackTrace = stackTrace;
     }
 
-    public List<Map<String, Object>> getOperateInfo() {
-        return operateInfo;
-    }
-
-    public void setOperateInfo(List<Map<String, Object>> operateInfo) {
-        this.operateInfo = operateInfo;
-    }
-    public long getOperationId() {
-        return operationId;
-    }
-
-    public void setOperationId(long operationId) {
-        this.operationId = operationId;
-    }
 }
+
