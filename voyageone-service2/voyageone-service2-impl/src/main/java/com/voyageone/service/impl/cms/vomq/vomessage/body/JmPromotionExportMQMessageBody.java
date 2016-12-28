@@ -14,7 +14,7 @@ import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
  * @since 2.0.0
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_JM_PROMOTION_EXPORT)
-public class JmExportMQMessageBody extends BaseMQMessageBody {
+public class JmPromotionExportMQMessageBody extends BaseMQMessageBody {
 
     // 是cms_bt_jm_promotion_export_task的id
     private int jmBtPromotionExportTaskId;

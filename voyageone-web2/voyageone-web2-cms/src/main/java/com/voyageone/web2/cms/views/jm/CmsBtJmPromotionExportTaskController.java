@@ -7,7 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CallResult;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionExportTask3Service;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.JmExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmPromotionExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -72,10 +72,10 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         message.put("id", model.getId());
         //sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
 
-        JmExportMQMessageBody jmExportMQMessageBody = new JmExportMQMessageBody();
-        jmExportMQMessageBody.setJmBtPromotionExportTaskId(model.getId());
-        jmExportMQMessageBody.setSender(this.getUser().getUserName());
-        service3.sendMessage(jmExportMQMessageBody);
+        JmPromotionExportMQMessageBody jmPromotionExportMQMessageBody = new JmPromotionExportMQMessageBody();
+        jmPromotionExportMQMessageBody.setJmBtPromotionExportTaskId(model.getId());
+        jmPromotionExportMQMessageBody.setSender(this.getUser().getUserName());
+        service3.sendMessage(jmPromotionExportMQMessageBody);
         return success(result);
     }
     @RequestMapping(CmsUrlConstants.CmsBtJmPromotionExportTask.LIST.INDEX.EXPORT_JM_PROMOTION_INFO)
