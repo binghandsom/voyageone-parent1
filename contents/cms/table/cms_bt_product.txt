@@ -16,13 +16,13 @@
   * catPath   ->新的主类目完整路径(中文)
   * catPathEn ->新的主类目完整路径(英文)  (CMSDOC-365)
   * comment   ->添加产品注释(暂时功能不开放)
+  * sizeChart ->选择的尺码对照(☆☆☆本来在common.fields下面，不知道被谁移到common下面来了，也不同时更新这个文件☆☆☆)
   * fields
     * model                        <-款号
     * code                         <-商品编码
     * originalCode ->原始code 原商品编码
     * brand                        <-品牌
     * isMasterMain    ->是否为默认主商品("1", "0")
-    * sizeChart       ->选择的尺码对照
     * productNameEn                <-产品名称英文
     * originalTitleCn              <-产品名称中文
     * shortDesEn                   <-简短描述英语
