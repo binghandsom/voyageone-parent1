@@ -104,7 +104,7 @@ public class CmsBtOperationLogService {
         model.setTitle(title);
         model.setMessageBody(messageBody);
         model.setMsg(msg);
-        model.setComment("");
+        model.setComment(comment);
         model.setStackTrace(stackTrace);
         model.setCreated(DateTimeUtil.getNow());
         model.setCreater(creater);
