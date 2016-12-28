@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.dict;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.*;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -97,8 +98,9 @@ public class Tmall_TongGou_024_OverStock_DictTest {
 		dictRoot.setExpression(ruleRoot);
 		dictRoot.setIsUrl(isUrl);
 
-		RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
-		String json = ruleJsonMapper.serializeRuleWord(dictRoot);
+//		RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
+//		String json = ruleJsonMapper.serializeRuleWord(dictRoot);
+		String json = JacksonUtil.bean2JsonNotNull(dictRoot);
 
 		System.out.println("=====================================");
 		System.out.println("字典: " + title);
