@@ -265,7 +265,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
         } else if (searchValue.getFileType() == 1) {
             searchItemStr += "common.fields.model;common.fields.color;";
         } else if (searchValue.getFileType() == 4) {
-            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;";
+            searchItemStr += "common.skus.clientNetPrice;common.fields.color;common.fields.originalCode;platforms;";
         }
 
         queryObject.setProjectionExt(searchItemStr.split(";"));
@@ -300,7 +300,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
 
                 // 每页开始行
-                int startRowIndex = i * SELECT_PAGE_SIZE + searchValue.getFileType() == 4 ? 1 : 2;
+                int startRowIndex = i * SELECT_PAGE_SIZE + (searchValue.getFileType() == 4 ? 1 : 2);
                 boolean isContinueOutput = false;
                 if (searchValue.getFileType() == 1) {
                     isContinueOutput = writeRecordToFile(book, items, cmsSessionBean, channelId, cartList, startRowIndex);
@@ -510,7 +510,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 for (String prop : _DynColJMSKU) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
-            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
+            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue()) || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColJDSKU) {
                     FileUtils.cell(row1, index++, style1).setCellValue(cartObj.getName() + prop);
                 }
@@ -528,7 +529,8 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 for (String prop : _DynColCNJMSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
-            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())) {
+            }else if (CartEnums.Cart.JD.getId().equals(cartObj.getValue()) || CartEnums.Cart.JG.getId().equals(cartObj.getValue())
+                    || CartEnums.Cart.JGJ.getId().equals(cartObj.getValue()) || CartEnums.Cart.JGY.getId().equals(cartObj.getValue())) {
                 for (String prop : _DynColCNJDSKU) {
                     FileUtils.cell(row2, index++, style2).setCellValue(cartObj.getName() + prop);
                 }
@@ -1127,7 +1129,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**
@@ -1208,7 +1210,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 total++;
             }
         }
-        return total - products.size();
+        return total - SELECT_PAGE_SIZE;
     }
 
     /**

@@ -91,6 +91,12 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
                         updateMap.put("common.fields.categoryStatus", "1");
                         updateMap.put("common.fields.categorySetter", userName);
                         updateMap.put("common.fields.categorySetTime", DateTimeUtil.getNow());
+                        if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getOriginalTitleCn())) {
+                            // 设置商品中文名称（品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称）
+                            String[] temp = mCatPathCn.split(">");
+                            String titleCn = String.format("%s %s %s",getString(cmsBtProductModel.getCommon().getFields().getBrand()), getString(sizeTypeCn), temp[temp.length-1]);
+                            updateMap.put("common.fields.originalTitleCn", titleCn);
+                        }
                         if (StringUtil.isEmpty(cmsBtProductModel.getCommon().getFields().getProductType())) {
                             updateMap.put("common.fields.productType", productTypeEn);
                         }
@@ -157,5 +163,10 @@ public class CmsBatchSetMainCategoryMqService extends BaseMQCmsService {
 //            }
 //
 //        }
+    }
+
+    private String getString(String str){
+        if(str == null) return "";
+        return str;
     }
 }
