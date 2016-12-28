@@ -97,17 +97,23 @@ public class CmsBuildPlatformCategorySchemaTmMqService extends BaseMQCmsService 
 //                    doLogic_type2_channel_cart_category(shopBean, categoryId, categoryPath);
                     CmsMtPlatformCategorySchemaModel schemaModel;
                     if (!StringUtils.isEmpty(categoryId)) {
-                        schemaModel = platformCategoryService.getPlatformCatSchema(categoryId, Integer.valueOf(cartId));
+//                        schemaModel = platformCategoryService.getPlatformCatSchema(categoryId, Integer.valueOf(cartId));
+                        schemaModel = platformCategoryService.getPlatformCatSchemaTm(categoryId, channelId, Integer.valueOf(cartId));
                     } else {
-                        schemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, Integer.valueOf(cartId));
+//                        schemaModel = platformCategoryService.getPlatformSchemaByCategoryPath(categoryPath, Integer.valueOf(cartId));
+                        schemaModel = platformCategoryService.getTmallSchemaByCategoryPath(categoryPath, channelId, Integer.valueOf(cartId));
                     }
 
                     if (schemaModel == null) {
-                        $error("环境里没有此类目,新增加的话,参数categoryId和categoryPath必须都输入!不是的话,请检查参数是否正确!");
-                        return;
+                        if (StringUtils.isEmpty(categoryId) || StringUtils.isEmpty(categoryPath)) {
+                            $error("环境里没有此类目,新增加的话,参数categoryId和categoryPath必须都输入!不是的话,请检查参数是否正确!");
+                            return;
+                        } else {
+                            doLogic_type2_channel_cart_category(shopBean, categoryId, categoryPath);
+                        }
+                    } else {
+                        doLogic_type2_channel_cart_category(shopBean, schemaModel.getCatId(), schemaModel.getCatFullPath());
                     }
-
-                    doLogic_type2_channel_cart_category(shopBean, schemaModel.getCatId(), schemaModel.getCatFullPath());
                     // modified by morse.lu 2016/10/13 end
                 }
                 break;

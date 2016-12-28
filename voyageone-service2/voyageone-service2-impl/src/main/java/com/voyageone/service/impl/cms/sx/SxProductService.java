@@ -1085,8 +1085,11 @@ public class SxProductService extends BaseService {
         // 20160707 tom 将上新用的size全部整理好, 放到sizeSx里, 并排序 START
         // 取得尺码转换信息
         Integer sizeChartId = null;
-        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getFields().getSizeChart())) {
-            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getFields().getSizeChart());
+//        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getFields().getSizeChart())) {
+//            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getFields().getSizeChart());
+//        }
+        if (!StringUtils.isEmpty(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"))) {
+            sizeChartId = Integer.parseInt(sxData.getMainProduct().getCommon().getStringAttribute("sizeChart"));
         }
         Map<String, String> sizeMap = getSizeMap(
                 channelId,
