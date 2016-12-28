@@ -7,4 +7,9 @@
 
     <import resource="applicationContext-core.xml"/>
 
+    <bean class="com.voyageone.common.configs.VOTestContext">
+        <!--是否初始化MQ监听类配置   单元测试不需要启动-->
+        <property name="initMQRabbitListenerConfig" value="false"> </property>
+    </bean>
+
 </beans>

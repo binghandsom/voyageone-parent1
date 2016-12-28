@@ -2,12 +2,11 @@ package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.configs.dao.ShopConfigDao;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.components.jumei.bean.JmCategoryBean;
 import com.voyageone.components.jumei.service.JumeiCategoryService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseMQCmsService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -23,7 +22,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_PlatformCategorySchemaJMJob)
 public class CmsBuildPaltformCategoryTreeJMMqService extends BaseMQCmsService {
 
     @Autowired

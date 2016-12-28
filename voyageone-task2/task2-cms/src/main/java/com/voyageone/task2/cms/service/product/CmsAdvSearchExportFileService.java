@@ -24,7 +24,7 @@ import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0, 2016/08/18
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_AdvSearch_FileDldJob)
 public class CmsAdvSearchExportFileService extends BaseMQCmsService {
 
     @Autowired

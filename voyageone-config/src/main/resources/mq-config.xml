@@ -38,7 +38,7 @@
         <!-- 自动启动取消 -->
     </bean>
 
-    <bean id="voRabbitMqLocalConfig" class="com.voyageone.service.impl.com.mq.config.VoRabbitMqLocalConfig">
+    <bean id="voRabbitMqLocalConfig" class="com.voyageone.components.rabbitmq.config.VoRabbitMqLocalConfig">
         <!-- 是否本地环境 -->
         <property name="local" value="true"/>
     </bean>
@@ -49,7 +49,7 @@
     </bean>
 
     <!-- 致命异常判定策略 -->
-    <bean id="voExceptionStrategy" class="com.voyageone.service.impl.com.mq.handler.VOExceptionStrategy"/>
+    <bean id="voExceptionStrategy" class="com.voyageone.components.rabbitmq.handler.VOExceptionStrategy"/>
 
     <!-- topic-exchange -->
     <rabbit:topic-exchange id="voTopicExchange" name="voTopicExchange"/>

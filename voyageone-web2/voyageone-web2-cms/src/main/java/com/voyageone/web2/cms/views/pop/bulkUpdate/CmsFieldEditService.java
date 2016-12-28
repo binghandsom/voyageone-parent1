@@ -33,7 +33,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.tools.CmsMtPlatformCommonSchemaService;
 import com.voyageone.service.impl.com.cache.CommCacheService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCommonSchemaModel;
@@ -322,7 +322,7 @@ public class CmsFieldEditService extends BaseViewService {
             logParams.put("creater", userInfo.getUserName());
             logParams.put("codeList", productCodes);
             logParams.put("voRate", voRateVal);
-            sender.sendMessage(MqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_ProdcutVoRateUpdateJob, logParams);
 
         } else if ("hsCodePrivate".equals(prop_id) || "hsCodeCrop".equals(prop_id) || "translateStatus".equals(prop_id)) {
             // 税号更新 /翻译状态更新
@@ -341,7 +341,7 @@ public class CmsFieldEditService extends BaseViewService {
             params.put("_taskName", "batchupdate");
             params.put("_channleId", userInfo.getSelChannelId());
             params.put("_userName", userInfo.getUserName());
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
             rsMap.put("ecd", 0);
             return rsMap;
 
@@ -447,7 +447,7 @@ public class CmsFieldEditService extends BaseViewService {
         }
 
         logParams.put("codeList", productCodes);
-        sender.sendMessage(MqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
+        sender.sendMessage(CmsMqRoutingKey.CMS_TASK_PlatformActiveLogJob, logParams);
 
         rsMap.put("ecd", 0);
         return rsMap;
@@ -1235,9 +1235,9 @@ public class CmsFieldEditService extends BaseViewService {
         params.put("_channleId", userInfo.getSelChannelId());
         params.put("_userName", userInfo.getUserName());
         if ("refreshRetailPrice".equalsIgnoreCase((String) params.get("_option"))) {
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_RefreshRetailPriceServiceJob, params);
         } else {
-            sender.sendMessage(MqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
+            sender.sendMessage(CmsMqRoutingKey.CMS_TASK_AdvSearch_AsynProcessJob, params);
         }
 
 
@@ -1338,7 +1338,7 @@ public class CmsFieldEditService extends BaseViewService {
         mqMessage.put("userName", userInfo.getUserName());
         mqMessage.put("fieldsId", prop_id);
         mqMessage.put("fieldsValue", result.get(prop_id));
-        sender.sendMessage(MqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
+        sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_PlatformFieldsTaskJob, mqMessage);
     }
 
     /**

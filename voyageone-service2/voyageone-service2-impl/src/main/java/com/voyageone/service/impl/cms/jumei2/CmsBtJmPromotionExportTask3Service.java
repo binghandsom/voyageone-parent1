@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei2;
 
+import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.common.util.ExceptionUtil;
@@ -12,6 +13,8 @@ import com.voyageone.service.daoext.cms.CmsBtJmProductImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionExportTaskDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionProductDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtJmPromotionSkuDaoExt;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.JmExportMQMessageBody;
+import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.service.model.cms.CmsBtJmPromotionExportTaskModel;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,8 @@ public class CmsBtJmPromotionExportTask3Service {
     CmsBtJmPromotionProductDaoExt daoExtCmsBtJmPromotionProduct;
     @Autowired
     CmsBtJmProductImagesDaoExt daoExtCmsBtJmProductImages;
+    @Autowired
+    MqSenderService mqSenderService;
 
     public CmsBtJmPromotionExportTaskModel get(int id) {
         return dao.select(id);
@@ -45,6 +50,7 @@ public class CmsBtJmPromotionExportTask3Service {
     public List<CmsBtJmPromotionExportTaskModel> getByPromotionId(int promotionId) {
         return daoExt.selectByPromotionId(promotionId);
     }
+
     public void export(int JmBtPromotionExportTaskId, String exportPath) throws IOException, ExcelException {
         CmsBtJmPromotionExportTaskModel model = dao.select(JmBtPromotionExportTaskId);
         String fileName = "Product" + DateTimeUtil.format(new Date(), "yyyyMMddHHmmssSSS") + ".xls";
@@ -115,7 +121,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("尺码类别", "sizeType", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesEn", "cms_bt_jm_product");
         info.addExcelColumn("使用方法_产品介绍", "productDesCn", "cms_bt_jm_product");
-        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
@@ -157,7 +163,7 @@ public class CmsBtJmPromotionExportTask3Service {
         info.addExcelColumn("团购价格", "dealPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("市场价格", "marketPrice", "cms_bt_jm_promotion_sku");
         info.addExcelColumn("聚美HID", "jmHashId", "cms_bt_jm_product");
-        info.addExcelColumn("聚美MallId","jumeiMallId","cms_bt_jm_product");
+        info.addExcelColumn("聚美MallId", "jumeiMallId", "cms_bt_jm_product");
         info.addExcelColumn("聚美SKU", "jmSkuNo", "cms_bt_jm_sku");
         if (isErrorColumn) {
             info.addExcelColumn(info.getErrorColumn());
@@ -175,6 +181,14 @@ public class CmsBtJmPromotionExportTask3Service {
         model.setFileName("");
         model.setFilePath("");
         dao.insert(model);
+    }
+
+    /*
+     1.基类异常处理
+     2.
+    * */
+    public void sendMessage(JmExportMQMessageBody jmExportMQMessageBody) throws MQMessageRuleException {
+        mqSenderService.sendMessage(jmExportMQMessageBody);
     }
 
 }

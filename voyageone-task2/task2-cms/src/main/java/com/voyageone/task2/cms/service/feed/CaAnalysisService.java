@@ -8,7 +8,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtCAdProductDao;
 import com.voyageone.service.dao.vms.VmsBtClientInventoryDao;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.impl.com.mq.MqSender;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.mongo.CmsBtCAdProductModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_BATCH_CA_Feed_Analysis)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_BATCH_CA_Feed_Analysis)
 public class CaAnalysisService extends BaseMQCmsService {
 
     @Autowired
@@ -188,7 +188,7 @@ public class CaAnalysisService extends BaseMQCmsService {
             Map<String,Object> data = new HashMap<>();
             data.put("order_channel_id",channelId);
             data.put("skulist",skulist);
-            sender.sendMessage(MqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
+            sender.sendMessage(CmsMqRoutingKey.CMS_BATCH_CA_Update_Quantity, data);
         }
     }
 
