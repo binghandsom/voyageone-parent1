@@ -810,7 +810,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                 }
             }
         }
-        sheet.autoSizeColumn(nowIdx);
+//        sheet.autoSizeColumn(nowIdx);
 
         return isContinueOutput;
     }
