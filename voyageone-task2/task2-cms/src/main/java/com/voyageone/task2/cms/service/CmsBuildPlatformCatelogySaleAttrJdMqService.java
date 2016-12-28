@@ -13,7 +13,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdCategoryService;
 import com.voyageone.service.impl.cms.CmsMtPlatformSkusService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.com.mq.config.MqRoutingKey;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.model.cms.CmsMtPlatformSkusModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.task2.base.BaseMQCmsService;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * @version 2.10.0
  */
 @Service
-@RabbitListener(queues = MqRoutingKey.CMS_TASK_CatelogySaleAttrJdJob)
+@RabbitListener(queues = CmsMqRoutingKey.CMS_TASK_CatelogySaleAttrJdJob)
 public class CmsBuildPlatformCatelogySaleAttrJdMqService extends BaseMQCmsService {
 
     // 颜色和尺码销售属性都不存在
