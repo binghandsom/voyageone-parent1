@@ -111,7 +111,7 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
             TMQMessageBody messageBody = JacksonUtil.json2Bean(messageStr, messageBodyClass);
 
-            startup(messageBody);
+            doStartup(messageBody);
         } catch (BusinessException be) {
             $error("出现业务异常，任务退出", be);
             throw new MQIgnoreException(be);
@@ -131,13 +131,15 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     public boolean isMQJobLog() {
         //  cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
         String val2 = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.run_flg, "1");
+
+        logger.info(" RUN FLAG  val2为" + val2);
         return "1".equals(val2);
     }
 
-    public void startup(TMQMessageBody messageBody) throws Exception {
+    public void doStartup(TMQMessageBody messageBody) throws Exception {
         Date beginDate = new Date();
         try {
-            onStartup(messageBody);
+            startup(messageBody);
             if (isMQJobLog()) {//记录mq日志
                 log(messageBody, null, beginDate);
             }
@@ -153,6 +155,11 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
 
         mqJobLogService.log(messageBody, ex, beginDate, new Date());
+    }
+
+    public  void startup(TMQMessageBody messageBody) throws Exception
+    {
+        onStartup(messageBody);
     }
     /**
      * MqJobService需要实现此方法

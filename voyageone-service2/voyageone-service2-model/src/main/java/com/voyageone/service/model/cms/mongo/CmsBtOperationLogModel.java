@@ -9,14 +9,14 @@ import java.util.Map;
  * Created by dell on 2016/12/27.
  */
 public class CmsBtOperationLogModel extends BaseMongoModel {
-
-    long taskId;
+    /**
+     *
+     */
+    long operationId;
     /**
      *  队列名称 或 api(请求url)
      */
     String name;
-
-
 
     /**
      *参数
@@ -99,12 +99,11 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
     public void setOperateInfo(List<Map<String, Object>> operateInfo) {
         this.operateInfo = operateInfo;
     }
-    public long getTaskId() {
-        return taskId;
+    public long getOperationId() {
+        return operationId;
     }
 
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
+    public void setOperationId(long operationId) {
+        this.operationId = operationId;
     }
-
 }

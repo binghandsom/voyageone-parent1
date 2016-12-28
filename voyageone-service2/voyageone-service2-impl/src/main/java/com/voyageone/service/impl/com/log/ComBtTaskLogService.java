@@ -3,6 +3,7 @@ package com.voyageone.service.impl.com.log;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
@@ -45,6 +46,10 @@ public class ComBtTaskLogService extends BaseService implements IMQJobLog {
             model.setStatus(EnumTaskLog_Status.success.getId());
             model.setComment("");
             model.setStacktrace("");
+        }
+        if(StringUtils.isEmpty(model.getComment()))
+        {
+            model.setComment("");
         }
         model.setCreated(new Date());
         model.setCreater(messageBody.getSender());

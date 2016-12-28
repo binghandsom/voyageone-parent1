@@ -72,8 +72,9 @@ public class CmsBtJmPromotionExportTaskController extends CmsController {
         message.put("id", model.getId());
         //sender.sendMessage(MqRoutingKey.CMS_BATCH_JmBtPromotionExportTask, message);
 
-        JmExportMQMessageBody jmExportMQMessageBody=new JmExportMQMessageBody();
+        JmExportMQMessageBody jmExportMQMessageBody = new JmExportMQMessageBody();
         jmExportMQMessageBody.setJmBtPromotionExportTaskId(model.getId());
+        jmExportMQMessageBody.setSender(this.getUser().getUserName());
         service3.sendMessage(jmExportMQMessageBody);
         return success(result);
     }

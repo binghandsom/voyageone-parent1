@@ -21,49 +21,39 @@ public class CmsBtOperationLogService {
     @Autowired
     CmsBtOperationLogDao dao;
 
+    @Autowired
+    MongoSequenceService mongoSequenceService;
+
     public void log(IMQMessageBody messageBody, Exception ex) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        CmsBtOperationLogModel model = new CmsBtOperationLogModel();
-        model.setName(voQueue.value());
-        model.setMessageBody(JsonUtil.bean2Json(messageBody));
+        String operationName = voQueue.value();
+        String msg = "";
+        String stackTrace = "";
+        String msgBody = JsonUtil.bean2Json(messageBody);
         if (ex != null) {
-            model.setStackTrace(ExceptionUtil.getStackTrace(ex));
-            String errorMsg = ex.getMessage();
-            model.setMsg(errorMsg);
-            model.setComment(errorMsg);
-        } else {
-            model.setMsg("");
-            model.setComment("");
-            model.setStackTrace("");
+            stackTrace = ExceptionUtil.getStackTrace(ex);
+            msg = ex.getMessage();
         }
-        model.setCreated(DateTimeUtil.getNow());
-        model.setCreater(messageBody.getSender());
-        model.setModified(DateTimeUtil.getNow());
-        model.setModifier(messageBody.getSender());
-        dao.insert(model);
+        log(operationName, msgBody, msg, stackTrace, messageBody.getSender());
     }
 
     public void log(IMQMessageBody messageBody, String msg) {
         final VOMQQueue voQueue = AnnotationUtils.findAnnotation(messageBody.getClass(), VOMQQueue.class);
-        CmsBtOperationLogModel model = new CmsBtOperationLogModel();
-        model.setName(voQueue.value());
-        model.setMessageBody(JsonUtil.bean2Json(messageBody));
-        model.setMsg(msg);
-        model.setComment("");
-        model.setStackTrace("");
-        model.setCreated(DateTimeUtil.getNow());
-        model.setCreater(messageBody.getSender());
-        model.setModified(DateTimeUtil.getNow());
-        model.setModifier(messageBody.getSender());
-        dao.insert(model);
+        log(voQueue.value(), JsonUtil.bean2Json(messageBody), msg, "", messageBody.getSender());
     }
-    public void log(String operationName, String msg,String creater) {
+
+    public void log(String operationName, String msg, String creater) {
+        log(operationName, "", msg, "", creater);
+    }
+
+    public void log(String operationName, String messageBody, String msg, String stackTrace, String creater) {
         CmsBtOperationLogModel model = new CmsBtOperationLogModel();
         model.setName(operationName);
+        model.setOperationId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_IMAGE_TEMPLATE_ID));
         model.setMessageBody("");
         model.setMsg(msg);
         model.setComment("");
-        model.setStackTrace("");
+        model.setStackTrace(stackTrace);
         model.setCreated(DateTimeUtil.getNow());
         model.setCreater(creater);
         model.setModified(DateTimeUtil.getNow());
