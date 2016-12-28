@@ -862,6 +862,7 @@ public class CmsFieldEditService extends BaseViewService {
         List<CmsBtProductModel> prodObjList = productService.getList(userInfo.getSelChannelId(), qryObj);
         $debug("批量修改商品价格 开始批量处理");
         for (CmsBtProductModel prodObj : prodObjList) {
+            prodObj.setChannelId(userInfo.getSelChannelId()); // 为后面调用priceService.setPrice使用
             List<BaseMongoMap<String, Object>> skuList = prodObj.getPlatform(cartId).getSkus();
             String prodCode = prodObj.getCommonNotNull().getFieldsNotNull().getCode();
 
@@ -1039,7 +1040,6 @@ public class CmsFieldEditService extends BaseViewService {
 
             // 是天猫平台时直接调用API更新sku价格(要求已上新)
             try {
-                priceService.setPrice(prodObj, cartId, false);
                 priceService.updateSkuPrice(userInfo.getSelChannelId(), cartId, prodObj);
             } catch (Exception e) {
                 $error(String.format("批量修改商品价格　调用天猫API失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
@@ -1054,6 +1054,11 @@ public class CmsFieldEditService extends BaseViewService {
             BulkWriteResult rs = bulkList.addBulkJongo(updObj);
             if (rs != null) {
                 $debug(String.format("批量修改商品价格 channelId=%s 执行结果=%s", userInfo.getSelChannelId(), rs.toString()));
+            }
+            try {
+                priceService.setPrice(prodObj, cartId, false);
+            }catch (Exception e) {
+                $error(String.format("批量修改商品价格　调用PriceService.setPrice失败 channelId=%s, cartId=%s msg=%s", userInfo.getSelChannelId(), cartId.toString(), e.getMessage()), e);
             }
         }
         BulkWriteResult rs = bulkList.execute();
