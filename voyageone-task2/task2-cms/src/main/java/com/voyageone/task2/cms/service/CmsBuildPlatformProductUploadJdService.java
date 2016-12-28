@@ -715,7 +715,6 @@ public class CmsBuildPlatformProductUploadJdService extends BaseCronTaskService 
                 sxData.setChannelId(channelId);
                 sxData.setCartId(cartId);
                 sxData.setGroupId(groupId);
-                sxData.setErrorMessage("取得上新用的商品数据信息异常,请跟管理员联系! [上新数据为null]");
             }
             if (ex instanceof BusinessException) {
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
