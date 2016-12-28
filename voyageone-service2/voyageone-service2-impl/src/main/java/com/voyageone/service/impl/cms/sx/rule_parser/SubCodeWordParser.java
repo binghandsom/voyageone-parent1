@@ -46,7 +46,7 @@ public class SubCodeWordParser extends VOAbsLoggable {
             // 看看指定的idx是否有存在
             if (codeIdx >= sxData.getProductList().size()) {
                 // 超出索引外
-                return null;
+                return "";
             }
 
             // 看看指定的属性是否存在

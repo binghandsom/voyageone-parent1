@@ -623,9 +623,13 @@ public class UploadToUSJoiService extends BaseCronTaskService {
                             }
 
                             // 选择的尺码对照(common.fields.sizeChart)
-                            if (StringUtil.isEmpty(prCommonFields.getSizeChart())
-                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart())) {
-                                prCommonFields.setSizeChart(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart());
+//                            if (StringUtil.isEmpty(prCommonFields.getSizeChart())
+//                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart())) {
+//                                prCommonFields.setSizeChart(productModel.getCommonNotNull().getFieldsNotNull().getSizeChart());
+//                            }
+                            if (StringUtil.isEmpty(pr.getCommon().getStringAttribute("sizeChart"))
+                                    && !StringUtil.isEmpty(productModel.getCommonNotNull().getStringAttribute("sizeChart"))) {
+                                pr.getCommon().setAttribute("sizeChart", productModel.getCommonNotNull().getAttribute("sizeChart"));
                             }
 
                             // 产品名称英文(common.fields.productNameEn)
