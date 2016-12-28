@@ -6,12 +6,10 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
@@ -54,19 +52,14 @@ public class UploadToUSJoiServiceTest {
     public void testUpload() throws Exception {
 
         // 清除缓存（这样在synship.com_mt_value_channel表中刚追加的brand，productType，sizeType等初始化mapping信息就能立刻取得了）
-        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
+//        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString());
 //        // 清除缓存（这样在synship.tm_order_channel表中刚追加的cartIds信息就能立刻取得了）
 //        CacheHelper.delete(CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigs.toString());
 
         String usjoiChannelId = "928";   // Liking
 
-        // --------------------------------------------------------------------------------------------
         // 品牌mapping表
         Map<String, String> mapBrandMapping = new HashMap<>();
-        // 产品分类mapping表
-        Map<String, String> mapProductTypeMapping = new HashMap<>();
-        // 适用人群mapping表
-        Map<String, String> mapSizeTypeMapping = new HashMap<>();
 
         // 品牌mapping作成
         List<TypeChannelBean> brandTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.BRAND_41, usjoiChannelId);
@@ -78,34 +71,6 @@ public class UploadToUSJoiServiceTest {
                         ) {
                     // 品牌mapping表中key,value都设为小写(feed进来的brand不区分大小写)
                     mapBrandMapping.put(typeChannelBean.getAdd_name1().toLowerCase().trim(), typeChannelBean.getName().toLowerCase().trim());
-                }
-            }
-        }
-
-        // 产品分类mapping作成
-        List<TypeChannelBean> productTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_57, usjoiChannelId);
-        if (ListUtils.notNull(productTypeChannelBeanList)) {
-            for (TypeChannelBean typeChannelBean : productTypeChannelBeanList) {
-                if (!StringUtils.isEmpty(typeChannelBean.getValue())
-                        && !StringUtils.isEmpty(typeChannelBean.getName())
-                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                        ) {
-                    // 产品分类mapping表(value是key,name和add_name1是值)
-                    mapProductTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
-                }
-            }
-        }
-
-        // 适用人群mapping作成
-        List<TypeChannelBean> sizeTypeChannelBeanList = TypeChannels.getTypeList(Constants.comMtTypeChannel.PROUDCT_TYPE_58, usjoiChannelId);
-        if (ListUtils.notNull(sizeTypeChannelBeanList)) {
-            for (TypeChannelBean typeChannelBean : sizeTypeChannelBeanList) {
-                if (!StringUtils.isEmpty(typeChannelBean.getValue())
-                        && !StringUtils.isEmpty(typeChannelBean.getName())
-                        && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                        ) {
-                    // 适用人群mapping作成(value是key,name和add_name1是值)
-                    mapSizeTypeMapping.put(typeChannelBean.getValue().trim(), typeChannelBean.getName().trim());
                 }
             }
         }
@@ -135,7 +100,6 @@ public class UploadToUSJoiServiceTest {
                 ccAutoSyncCartList = Arrays.asList(strAutoSyncCarts.split(","));
             }
         }
-        // --------------------------------------------------------------------------------------------
 
         // 从synship.tm_order_channel表中取得USJOI店铺channel对应的cartId列表（一般只有一条cartId.如928对应28, 929对应29）
         // 用于product.PXX追加平台信息(group表里面用到的用于展示的cartId不是从这里取得的)
@@ -168,7 +132,7 @@ public class UploadToUSJoiServiceTest {
         // 取得cms_mt_channel_config表中配置的渠道级别的配置项目值(如：颜色别名等)
         uploadToUSJoiService.doChannelConfigInit(usjoiChannelId, channelConfigValueMap);
 
-        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, mapProductTypeMapping, mapSizeTypeMapping, usjoiTypeChannelBeanList,
+        uploadToUSJoiService.upload(sxWorkLoadBean, mapBrandMapping, usjoiTypeChannelBeanList,
                 cartIds, ccAutoSyncCarts, ccAutoSyncCartList, currentIndex, totalCnt, startTime, channelConfigValueMap);
     }
 
