@@ -785,7 +785,7 @@ public class CmsAdvSearchExportFileService extends BaseMQCmsService {
                     key = key.substring(6);
                     Integer salesVal = null;
                     if (salesData.getSubNode(key.split("\\.")) instanceof Double)
-                        salesVal = Integer.valueOf(salesData.getSubNode(key.split("\\.")).toString());
+                        salesVal = ((Double)salesData.getSubNode(key.split("\\."))).intValue();
                     else
                         salesVal = (Integer) salesData.getSubNode(key.split("\\."));
 
