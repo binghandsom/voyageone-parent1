@@ -5,14 +5,12 @@ import com.voyageone.common.util.ExceptionUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
-import com.voyageone.service.bean.cms.enumcms.OperationLog_Type;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.dao.cms.mongo.CmsBtOperationLogDao;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 /**
  * Created by dell on 2016/12/27.

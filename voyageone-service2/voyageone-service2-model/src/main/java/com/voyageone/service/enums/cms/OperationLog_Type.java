@@ -1,4 +1,4 @@
-package com.voyageone.service.bean.cms.enumcms;
+package com.voyageone.service.enums.cms;
 
 /**
  * Created by dell on 2016/12/27.
@@ -12,15 +12,15 @@ public enum OperationLog_Type {
     unknownException(6);
     short id;
 
+    OperationLog_Type(int id) {
+        this.id = (short) id;
+    }
+
     public short getId() {
         return id;
     }
 
     public void setId(short id) {
         this.id = id;
-    }
-
-    OperationLog_Type(int id) {
-        this.id = (short) id;
     }
 }

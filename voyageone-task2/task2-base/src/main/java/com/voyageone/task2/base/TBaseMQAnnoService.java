@@ -1,14 +1,14 @@
 package com.voyageone.task2.base;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.GenericSuperclassUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.components.rabbitmq.annotation.VOMQRunnable;
 import com.voyageone.components.rabbitmq.annotation.VOMQStart;
 import com.voyageone.components.rabbitmq.annotation.VOMQStop;
+import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQException;
 import com.voyageone.components.rabbitmq.exception.MQIgnoreException;
-import com.voyageone.common.util.GenericSuperclassUtils;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.service.IMQJobLog;
 import com.voyageone.components.rabbitmq.service.IVOMQOnStartup;
 import com.voyageone.components.rabbitmq.utils.MQControlHelper;
@@ -38,12 +38,12 @@ import java.util.Map;
  */
 public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> extends BaseTaskService implements IVOMQOnStartup<TMQMessageBody> {
 
-    @Autowired()
-    IMQJobLog mqJobLogService;
     /**
      * taskControlList job配置
      */
     protected List<TaskControlBean> taskControlList = null;
+    @Autowired()
+    IMQJobLog mqJobLogService;
 
     /**
      * 默认公开的启动入口
@@ -53,7 +53,10 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     }
 
     /**
-     * RabbitHandler
+     * onMessage
+     * @param message message
+     * @param headers headers
+     * @throws Exception Exception
      */
     @RabbitHandler
     protected void onMessage(byte[] message, @Headers Map<String, Object> headers) throws Exception {
@@ -74,7 +77,6 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
 
     /**
      * 监听通知消息，执行任务
-     *
      * @param message 接受到的消息体
      */
     private void onMessage(Message message) {
@@ -94,13 +96,56 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
             }
         }
         if (taskControlList.isEmpty()) {
-            $info("没有找到任何配置。");
+            $warn("没有找到任何配置。");
             logIssue("没有找到任何配置！！！", getTaskName());
         }
     }
 
     /**
+     * 是否记录Job日志
+     * @return true: 记录, false: 不记录
+     */
+    private boolean isMQJobLog() {
+        //  cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
+        String val2 = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.run_flg, "1");
+
+        logger.info(" RUN FLAG  val2为" + val2);
+        return "1".equals(val2);
+    }
+
+    /**
+     * 启动Mq
+     * @param messageBody messageBody
+     * @throws Exception Exception
+     */
+    private void doStartup(TMQMessageBody messageBody) throws Exception {
+        Date beginDate = new Date();
+        try {
+            startup(messageBody);
+            if (isMQJobLog()) {//记录mq日志
+                log(messageBody, null, beginDate);
+            }
+        } catch (Exception ex) {
+
+            log(messageBody, ex, beginDate);
+            throw ex;
+        }
+    }
+
+    /**
+     * 记录履历
+     * @param messageBody messageBody
+     * @param ex ex
+     * @param beginDate beginDate
+     */
+    private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
+
+        mqJobLogService.log(this.getTaskName(), messageBody, ex, beginDate, new Date());
+    }
+
+    /**
      * 默认公开的启动入口
+     * @param message message
      */
     public void startup(Message message) {
         String messageStr = "";
@@ -127,48 +172,24 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
         }
     }
 
-    //是否记录Job日志
-    public boolean isMQJobLog() {
-        //  cfg_name = 'run_flg'  cfg_val2=1 全量记录mq处理日志   默认只记录异常日志
-        String val2 = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.run_flg, "1");
-
-        logger.info(" RUN FLAG  val2为" + val2);
-        return "1".equals(val2);
-    }
-
-    public void doStartup(TMQMessageBody messageBody) throws Exception {
-        Date beginDate = new Date();
-        try {
-            startup(messageBody);
-            if (isMQJobLog()) {//记录mq日志
-                log(messageBody, null, beginDate);
-            }
-        }
-        catch (Exception ex) {
-
-            log(messageBody, ex, beginDate);
-            throw ex;
-        }
-    }
-
-    private void log(IMQMessageBody messageBody, Exception ex, Date beginDate) {
-
-        mqJobLogService.log(this.getTaskName(),messageBody, ex, beginDate, new Date());
-    }
-
-    public  void startup(TMQMessageBody messageBody) throws Exception
-    {
+    /**
+     *
+     * @param messageBody messageBody
+     * @throws Exception Exception
+     */
+    public void startup(TMQMessageBody messageBody) throws Exception {
         onStartup(messageBody);
     }
+
     /**
      * MqJobService需要实现此方法
-     *
      * @param messageBody Mq消息Map
      */
     public abstract void onStartup(TMQMessageBody messageBody) throws Exception;
 
     /**
      * 判断TASK是否可以执行
+     * @return true: 可执行, false: 不可执行
      */
     @VOMQRunnable
     public boolean isRunnable() {
@@ -184,7 +205,8 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     }
 
     /**
-     * 执行启动TASK
+     * 手动开启监听器
+     * @return true: 开启成功, false: 开启失败
      */
     @VOMQStart
     public boolean startMQ() {
@@ -206,7 +228,8 @@ public abstract class TBaseMQAnnoService<TMQMessageBody extends IMQMessageBody> 
     }
 
     /**
-     * 执行停止TASK
+     * 手动关闭监听器
+     * @return true: 关闭成功
      */
     @VOMQStop
     public boolean stopMQ() {

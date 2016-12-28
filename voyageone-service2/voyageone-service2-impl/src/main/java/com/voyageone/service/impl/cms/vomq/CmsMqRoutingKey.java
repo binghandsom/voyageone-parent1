@@ -7,13 +7,16 @@ package com.voyageone.service.impl.cms.vomq;
  */
 public class CmsMqRoutingKey {
 
+
+    // 聚美活动文件生成导出
+    public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
+
+
     /**
      * jumei mq task
      */
     public static final String CMS_BATCH_JmBtPromotionImportTask = "voyageone_cms_batchjob_JmBtPromotionImportTask_queue";
 
-    // xxxxxxx
-    public static final String CMS_JM_PROMOTION_EXPORT = "VOCmsJmPromotionExportQueue";
 
     public static final String CMS_BATCH_JmPromotionRecovery = "voyageone_cms_batchjob_JmPromotionRecovery_queue";
 

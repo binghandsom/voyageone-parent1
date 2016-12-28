@@ -1,4 +1,4 @@
-package com.voyageone.service.enums;
+package com.voyageone.service.enums.cms;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

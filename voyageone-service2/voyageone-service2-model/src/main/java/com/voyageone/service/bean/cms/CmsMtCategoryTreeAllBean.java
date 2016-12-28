@@ -1,7 +1,7 @@
 package com.voyageone.service.bean.cms;
 
 
-import com.voyageone.service.enums.SkuSplit;
+import com.voyageone.service.enums.cms.SkuSplit;
 
 import java.util.ArrayList;
 import java.util.List;

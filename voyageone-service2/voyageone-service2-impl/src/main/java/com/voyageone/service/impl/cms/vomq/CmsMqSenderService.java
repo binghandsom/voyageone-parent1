@@ -3,12 +3,13 @@ package com.voyageone.service.impl.cms.vomq;
 import com.voyageone.components.rabbitmq.bean.IMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
-import com.voyageone.service.bean.cms.enumcms.OperationLog_Type;
+import com.voyageone.service.enums.cms.OperationLog_Type;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtOperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * CmsMqSenderService
  * Created by dell on 2016/12/28.
  */
 public class CmsMqSenderService extends BaseService {

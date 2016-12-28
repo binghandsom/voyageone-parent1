@@ -27,10 +27,8 @@ import java.util.Map;
  */
 public class VOMQServiceControlListener implements MessageListener, ApplicationContextAware {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private static final String QUEUE_NAME = "VOMQServiceControlQueue" + System.currentTimeMillis();
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private ConnectionFactory rabbitConnectionFactory;
 
     private RabbitAdmin rabbitAdmin;
