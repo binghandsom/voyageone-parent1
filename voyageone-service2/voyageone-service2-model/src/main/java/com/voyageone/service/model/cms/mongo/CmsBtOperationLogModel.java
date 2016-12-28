@@ -47,6 +47,14 @@ public class CmsBtOperationLogModel extends BaseMongoModel {
         this.name = name;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getMsg() {
         return msg;
     }
