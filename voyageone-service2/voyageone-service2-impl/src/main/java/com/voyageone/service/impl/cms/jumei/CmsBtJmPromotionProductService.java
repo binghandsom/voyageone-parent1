@@ -71,6 +71,12 @@ public class CmsBtJmPromotionProductService {
         return list;
     }
 
+    public List<MapModel> getByWhere(Map<String, Object> map) {
+        loadWhere(map);
+        List<MapModel> list = daoExt.selectPageByWhere(map);
+        return list;
+    }
+
     /**
      * Jonas 修改
      * @since 2.8.0
