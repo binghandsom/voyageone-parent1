@@ -11,6 +11,7 @@ public abstract class BaseMQMessageBody implements IMQMessageBody {
     //消息体id
     int id;
     //发送者
+    
     String sender;
 
     @Override

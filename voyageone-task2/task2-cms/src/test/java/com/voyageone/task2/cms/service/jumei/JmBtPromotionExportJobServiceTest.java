@@ -1,6 +1,8 @@
 package com.voyageone.task2.cms.service.jumei;
 
+import com.voyageone.common.configs.MQConfigInitTestUtil;
 import com.voyageone.service.impl.cms.jumei2.CmsBtJmPromotionImportTask3Service;
+import com.voyageone.task2.cms.mqjob.CmsJmPromotionExportMQJob;
 import org.apache.commons.collections.map.HashedMap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,11 +22,10 @@ public class JmBtPromotionExportJobServiceTest {
 
 
     @Autowired
-    JmBtPromotionExportJobService service;
+    CmsJmPromotionExportMQJob service;
     @Test
     public void testOnStartup() throws Exception {
-        Map<String,Object> map2 = new HashMap();
-        map2.put("id",321);
-        service.onStartup(map2);
+        //service.onStartup(map2);
+        MQConfigInitTestUtil.startMQ(service);
     }
 }
